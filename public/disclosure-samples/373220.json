@@ -1,0 +1,99 @@
+{
+  "ticker": "373220",
+  "count": 5,
+  "lookbackDays": 90,
+  "disclosures": [
+    {
+      "corp_name": "LG에너지솔루션",
+      "corp_code": "00377244",
+      "stock_code": "373220",
+      "corp_cls": "Y",
+      "report_nm": "주요사항보고서(자기주식취득결정)",
+      "rcept_no": "20260508800321",
+      "flr_nm": "LG에너지솔루션",
+      "rcept_dt": "20260508",
+      "rm": "",
+      "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260508800321",
+      "signal": {
+        "signalType": "treasury_buy",
+        "signalLabel": "자기주식 취득 결의",
+        "strength": 80,
+        "note": "회사 본인 매수 → 통상 단기·중기 호재 신호"
+      }
+    },
+    {
+      "corp_name": "LG에너지솔루션",
+      "corp_code": "00377244",
+      "stock_code": "373220",
+      "corp_cls": "Y",
+      "report_nm": "분기보고서 (2026.03)",
+      "rcept_no": "20260515800145",
+      "flr_nm": "LG에너지솔루션",
+      "rcept_dt": "20260515",
+      "rm": "",
+      "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260515800145",
+      "signal": null
+    },
+    {
+      "corp_name": "LG에너지솔루션",
+      "corp_code": "00377244",
+      "stock_code": "373220",
+      "corp_cls": "Y",
+      "report_nm": "임원ㆍ주요주주특정증권등소유상황보고서",
+      "rcept_no": "20260430800212",
+      "flr_nm": "권영수",
+      "rcept_dt": "20260430",
+      "rm": "장내매수",
+      "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260430800212",
+      "signal": {
+        "signalType": "insider_buy",
+        "signalLabel": "임원·주요주주 매수",
+        "strength": 85,
+        "note": "장내매수 단서 발견"
+      }
+    },
+    {
+      "corp_name": "LG에너지솔루션",
+      "corp_code": "00377244",
+      "stock_code": "373220",
+      "corp_cls": "Y",
+      "report_nm": "단일판매ㆍ공급계약체결",
+      "rcept_no": "20260418800087",
+      "flr_nm": "LG에너지솔루션",
+      "rcept_dt": "20260418",
+      "rm": "",
+      "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260418800087",
+      "signal": {
+        "signalType": "single_contract",
+        "signalLabel": "단일판매·공급계약",
+        "strength": 70,
+        "note": "계약금액·직전매출 비율은 본문 확인 권장"
+      }
+    },
+    {
+      "corp_name": "LG에너지솔루션",
+      "corp_code": "00377244",
+      "stock_code": "373220",
+      "corp_cls": "Y",
+      "report_nm": "[기재정정]연결재무제표기준영업(잠정)실적공정공시",
+      "rcept_no": "20260405800054",
+      "flr_nm": "LG에너지솔루션",
+      "rcept_dt": "20260405",
+      "rm": "",
+      "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260405800054",
+      "signal": {
+        "signalType": "correction",
+        "signalLabel": "정정공시",
+        "strength": 75,
+        "note": "손익 관련 정정 → 강한 신호"
+      }
+    }
+  ],
+  "signalCount": 4,
+  "signalsByType": {
+    "자기주식 취득 결의": 1,
+    "임원·주요주주 매수": 1,
+    "단일판매·공급계약": 1,
+    "정정공시": 1
+  }
+}

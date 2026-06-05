@@ -1,0 +1,142 @@
+﻿import json, os, sys, time, math
+from datetime import datetime, timedelta
+try:
+    import FinanceDataReader as fdr
+    import pandas as pd
+except ImportError:
+    print("Run: python -m pip install finance-datareader")
+    sys.exit(1)
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def load_stocks():
+    with open(os.path.join(ROOT, "public", "data", "stocks.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+def fetch_historical(ticker, days=365):
+    end = datetime.now(); start = end - timedelta(days=days)
+    try:
+        df = fdr.DataReader(ticker, start, end)
+        if df is None or df.empty or "Close" not in df.columns: return None
+        return df
+    except Exception: return None
+
+def calc_momentum(df):
+    if df is None or len(df) < 130: return None
+    closes = df["Close"].values; last = closes[-1]
+    def ret(n):
+        if len(closes) <= n: return 0
+        prev = closes[-n-1]
+        return (last - prev) / prev * 100 if prev > 0 else 0
+    r1m, r3m, r6m = ret(20), ret(60), ret(120)
+    score = max(0, min(100, 50 + (0.3*r1m + 0.4*r3m + 0.3*r6m) * 1.25))
+    return round(score,1), {"r1m": round(r1m,2), "r3m": round(r3m,2), "r6m": round(r6m,2)}
+
+def calc_vol(df):
+    if df is None or len(df) < 60: return None
+    closes = df["Close"].values
+    rets = [(closes[i]-closes[i-1])/closes[i-1] for i in range(1,len(closes)) if closes[i-1] > 0]
+    if len(rets) < 2: return None
+    mean = sum(rets)/len(rets)
+    std = math.sqrt(sum((r-mean)**2 for r in rets)/len(rets))
+    if std == 0: return None
+    ar, asd = mean*252, std*math.sqrt(252)
+    sharpe = (ar - 0.035) / asd
+    score = max(0, min(100, 50 + sharpe * 25))
+    return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2)}
+
+def calc_flow(df):
+    if df is None or len(df) < 25 or "Volume" not in df.columns: return None
+    vols = df["Volume"].values
+    r5, r20 = sum(vols[-5:])/5, sum(vols[-20:])/20
+    if r20 == 0: return None
+    ratio = r5/r20
+    if ratio < 0.5: score = 10
+    elif ratio < 1.0: score = 10 + (ratio-0.5)*80
+    elif ratio < 3.0: score = 50 + (ratio-1.0)*25
+    else: score = 100
+    return round(score,1), {"recent5dAvg": int(r5), "recent20dAvg": int(r20), "ratio": round(ratio,2)}
+
+def calc_value(stocks):
+    pers = sorted([s["per"] for s in stocks if s.get("per") and s["per"] > 0])
+    pbrs = sorted([s["pbr"] for s in stocks if s.get("pbr") and s["pbr"] > 0])
+    if not pers or not pbrs: return {}
+    scores = {}
+    for s in stocks:
+        per, pbr = s.get("per"), s.get("pbr")
+        if not per or not pbr or per <= 0 or pbr <= 0:
+            scores[s["ticker"]] = None; continue
+        per_rank = sum(1 for p in pers if p < per) / len(pers)
+        pbr_rank = sum(1 for p in pbrs if p < pbr) / len(pbrs)
+        scores[s["ticker"]] = round(((1-per_rank)*100 + (1-pbr_rank)*100) / 2, 1)
+    return scores
+
+def safe_avg(values, default=50):
+    cleaned = [v if v is not None else default for v in values]
+    return round(sum(cleaned) / len(cleaned), 1)
+
+def main():
+    print("="*60)
+    print("  ValueMap - Phase 2 v2 (None-safe)")
+    print("="*60)
+    data = load_stocks(); stocks = data["stocks"]; n = len(stocks)
+    print(f"\n[1/4] Loaded: {n} stocks")
+    print("\n[2/4] VALUE scores...")
+    value_scores = calc_value(stocks)
+    print(f"      OK value: {sum(1 for v in value_scores.values() if v is not None)}/{n}")
+    print(f"\n[3/4] Fetching 1y historical (~{n}s)...")
+    historical = {}
+    for i, item in enumerate(stocks):
+        df = fetch_historical(item["ticker"])
+        if df is not None: historical[item["ticker"]] = df
+        if (i+1) % 25 == 0: print(f"      {i+1}/{n}")
+        time.sleep(0.15)
+    print(f"      OK historical: {len(historical)}/{n}")
+    print("\n[4/4] Computing all 4 metrics + composite...")
+    m_ok = vol_ok = f_ok = 0
+    for item in stocks:
+        df = historical.get(item["ticker"])
+        mr = calc_momentum(df)
+        item["momentum"] = mr[0] if mr else 50
+        item["returns"] = mr[1] if mr else {}
+        if mr: m_ok += 1
+        vr = calc_vol(df)
+        item["volScore"] = vr[0] if vr else 50
+        item["volStats"] = vr[1] if vr else {}
+        if vr: vol_ok += 1
+        fr = calc_flow(df)
+        item["flow"] = fr[0] if fr else 50
+        item["flowStats"] = fr[1] if fr else {}
+        if fr: f_ok += 1
+        v_val = value_scores.get(item["ticker"])
+        item["value"] = v_val if v_val is not None else 50
+        item["compositeScore"] = safe_avg([item["momentum"], item["flow"], item["value"], item["volScore"]])
+    print(f"      momentum: {m_ok}/{n}")
+    print(f"      vol:      {vol_ok}/{n}")
+    print(f"      flow:     {f_ok}/{n}")
+
+    data["stocks"] = stocks
+    data["generatedAt"] = datetime.now().isoformat()
+    data["metricsVersion"] = "phase2-v2"
+    out = os.path.join(ROOT, "public", "data", "stocks.json")
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print(f"\n  Saved: {out}  ({os.path.getsize(out)/1024:.1f} KB)")
+
+    print("\n=== Top 5 by COMPOSITE (most balanced) ===")
+    for it in sorted(stocks, key=lambda x: x.get("compositeScore",0), reverse=True)[:5]:
+        print(f"  {it['ticker']} {it['name'][:10]:12s} comp={it['compositeScore']:>5.1f}  M{it['momentum']:>5.1f} F{it['flow']:>5.1f} V{it['value']:>5.1f} Vol{it['volScore']:>5.1f}")
+
+    print("\n=== Top 5 by VALUE (most undervalued) ===")
+    for it in sorted([s for s in stocks if isinstance(s.get('value'),(int,float))], key=lambda x: x["value"], reverse=True)[:5]:
+        per = f"{it.get('per',0):.1f}" if it.get('per') else "-"
+        pbr = f"{it.get('pbr',0):.2f}" if it.get('pbr') else "-"
+        print(f"  {it['ticker']} {it['name'][:10]:12s} VALUE={it['value']:>5.1f}  PER={per:>6s}  PBR={pbr:>5s}")
+
+    print("\n=== Top 5 by MOMENTUM ===")
+    for it in sorted([s for s in stocks if s.get("returns")], key=lambda x: x["momentum"], reverse=True)[:5]:
+        r = it.get("returns", {})
+        print(f"  {it['ticker']} {it['name'][:10]:12s} MOM={it['momentum']:>5.1f}  1M={r.get('r1m',0):+6.1f}%  3M={r.get('r3m',0):+6.1f}%  6M={r.get('r6m',0):+6.1f}%")
+
+if __name__ == "__main__":
+    main()

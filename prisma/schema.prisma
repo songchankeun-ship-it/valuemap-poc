@@ -1,0 +1,231 @@
+// ValueMap PoC — Prisma 스키마
+// 03_schema.sql의 핵심 도메인을 TypeScript에서 쓰기 좋게 정리
+// 풀 스키마(30+ 테이블)는 03_schema.sql 참고. 여기엔 PoC 단계에 필요한 것만.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// === 1. 마스터 ===
+
+model Market {
+  code     String  @id @db.VarChar(16)
+  name     String  @db.VarChar(64)
+  country  String  @db.Char(2)
+  currency String  @db.Char(3)
+  timezone String  @db.VarChar(32)
+  stocks   Stock[]
+}
+
+model Theme {
+  id           Int       @id @default(autoincrement())
+  slug         String    @unique @db.VarChar(64)
+  nameKo       String    @map("name_ko") @db.VarChar(64)
+  nameEn       String?   @map("name_en") @db.VarChar(128)
+  category     String    @db.VarChar(32)
+  subCategory  String?   @map("sub_category") @db.VarChar(32)
+  description  String?
+  seoPriority  Int       @default(1) @map("seo_priority") @db.SmallInt
+  globalScope  String    @default("KR") @map("global_scope") @db.VarChar(16)
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  stockThemes      StockTheme[]
+  dailyMetrics     DailyThemeMetric[]
+  aiSummaries      AiThemeSummary[]
+
+  @@index([category, subCategory])
+  @@index([seoPriority(sort: Desc)])
+  @@map("themes")
+}
+
+model Stock {
+  id           BigInt    @id @default(autoincrement())
+  ticker       String    @db.VarChar(16)
+  marketCode   String    @map("market_code") @db.VarChar(16)
+  market       Market    @relation(fields: [marketCode], references: [code])
+  nameKo       String    @map("name_ko") @db.VarChar(128)
+  nameEn       String?   @map("name_en") @db.VarChar(128)
+  isin         String?   @db.VarChar(16)
+  sector       String?   @db.VarChar(64)
+  industry     String?   @db.VarChar(64)
+  listedAt     DateTime? @map("listed_at") @db.Date
+  delistedAt   DateTime? @map("delisted_at") @db.Date
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  stockThemes  StockTheme[]
+  dailyPrices  DailyPrice[]
+  dailyMetrics DailyStockMetric[]
+  trading      TradingByInvestor[]
+  disclosures  DartDisclosure[]
+  aiReports    AiStockReport[]
+
+  @@unique([ticker, marketCode])
+  @@index([marketCode])
+  @@map("stocks")
+}
+
+model StockTheme {
+  stockId   BigInt   @map("stock_id")
+  themeId   Int      @map("theme_id")
+  weight    Float    @default(1.0)
+  isPrimary Boolean  @default(false) @map("is_primary")
+  addedAt   DateTime @default(now()) @map("added_at")
+  addedBy   String   @default("manual") @map("added_by") @db.VarChar(32)
+
+  stock     Stock    @relation(fields: [stockId], references: [id], onDelete: Cascade)
+  theme     Theme    @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([stockId, themeId])
+  @@index([themeId])
+  @@map("stock_themes")
+}
+
+// === 2. 시세 시계열 ===
+
+model DailyPrice {
+  stockId           BigInt   @map("stock_id")
+  tradeDate         DateTime @map("trade_date") @db.Date
+  open              Decimal? @db.Decimal(14, 4)
+  high              Decimal? @db.Decimal(14, 4)
+  low               Decimal? @db.Decimal(14, 4)
+  close             Decimal  @db.Decimal(14, 4)
+  adjClose          Decimal? @map("adj_close") @db.Decimal(14, 4)
+  volume            BigInt?
+  value             BigInt?
+  marketCap         BigInt?  @map("market_cap")
+  sharesOutstanding BigInt?  @map("shares_outstanding")
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@id([stockId, tradeDate])
+  @@index([tradeDate(sort: Desc)])
+  @@map("daily_prices")
+}
+
+model TradingByInvestor {
+  stockId        BigInt   @map("stock_id")
+  tradeDate      DateTime @map("trade_date") @db.Date
+  foreignNet     BigInt   @default(0) @map("foreign_net")
+  institutionNet BigInt   @default(0) @map("institution_net")
+  pensionNet     BigInt   @default(0) @map("pension_net")
+  individualNet  BigInt   @default(0) @map("individual_net")
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@id([stockId, tradeDate])
+  @@map("trading_by_investor")
+}
+
+// === 3. 자체 지표 ===
+
+model DailyStockMetric {
+  stockId           BigInt   @map("stock_id")
+  calcDate          DateTime @map("calc_date") @db.Date
+  momentumScore     Int?     @map("momentum_score") @db.SmallInt
+  flowScore         Int?     @map("flow_score") @db.SmallInt
+  valueScore        Int?     @map("value_score") @db.SmallInt
+  volAdjustedScore  Int?     @map("vol_adjusted_score") @db.SmallInt
+  compositeScore    Int?     @map("composite_score") @db.SmallInt
+  neglectScore      Int?     @map("neglect_score") @db.SmallInt
+  per               Decimal? @db.Decimal(10, 4)
+  pbr               Decimal? @db.Decimal(10, 4)
+  dividendYield     Decimal? @map("dividend_yield") @db.Decimal(8, 4)
+  return1m          Decimal? @map("return_1m") @db.Decimal(8, 4)
+  return3m          Decimal? @map("return_3m") @db.Decimal(8, 4)
+  return6m          Decimal? @map("return_6m") @db.Decimal(8, 4)
+  return1y          Decimal? @map("return_1y") @db.Decimal(8, 4)
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@id([stockId, calcDate])
+  @@index([calcDate(sort: Desc), compositeScore(sort: Desc)])
+  @@index([calcDate(sort: Desc), valueScore(sort: Desc)])
+  @@map("daily_stock_metrics")
+}
+
+model DailyThemeMetric {
+  themeId          Int      @map("theme_id")
+  calcDate         DateTime @map("calc_date") @db.Date
+  stockCount       Int?     @map("stock_count") @db.SmallInt
+  totalMarketCap   BigInt?  @map("total_market_cap")
+  momentumScore    Int?     @map("momentum_score") @db.SmallInt
+  flowScore        Int?     @map("flow_score") @db.SmallInt
+  valueScore       Int?     @map("value_score") @db.SmallInt
+  volAdjustedScore Int?     @map("vol_adjusted_score") @db.SmallInt
+  compositeScore   Int?     @map("composite_score") @db.SmallInt
+  neglectScore     Int?     @map("neglect_score") @db.SmallInt
+  avgReturn1m      Decimal? @map("avg_return_1m") @db.Decimal(8, 4)
+  avgReturn3m      Decimal? @map("avg_return_3m") @db.Decimal(8, 4)
+  avgReturn6m      Decimal? @map("avg_return_6m") @db.Decimal(8, 4)
+  avgReturn1y      Decimal? @map("avg_return_1y") @db.Decimal(8, 4)
+
+  theme Theme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([themeId, calcDate])
+  @@index([calcDate(sort: Desc), neglectScore(sort: Desc)])
+  @@map("daily_theme_metrics")
+}
+
+// === 4. 공시 ===
+
+model DartDisclosure {
+  id          BigInt   @id @default(autoincrement())
+  stockId     BigInt?  @map("stock_id")
+  rceptNo     String   @unique @map("rcept_no") @db.VarChar(32)
+  title       String   @db.VarChar(512)
+  reportType  String?  @map("report_type") @db.VarChar(64)
+  submittedAt DateTime @map("submitted_at")
+  url         String?
+
+  stock Stock? @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@index([stockId, submittedAt(sort: Desc)])
+  @@map("dart_disclosures")
+}
+
+// === 5. AI 분석 ===
+
+model AiStockReport {
+  id         BigInt   @id @default(autoincrement())
+  stockId    BigInt   @map("stock_id")
+  reportDate DateTime @map("report_date") @db.Date
+  summary    String
+  valuation  String?
+  risks      String?
+  catalysts  String?
+  score      Int?     @db.SmallInt
+  model      String?  @db.VarChar(64)
+  costCents  Int?     @map("cost_cents")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  stock Stock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@unique([stockId, reportDate])
+  @@map("ai_stock_reports")
+}
+
+model AiThemeSummary {
+  id           BigInt   @id @default(autoincrement())
+  themeId      Int      @map("theme_id")
+  summaryDate  DateTime @map("summary_date") @db.Date
+  summary      String
+  keyTopics    String[] @map("key_topics")
+  newsCount    Int?     @map("news_count")
+  sentimentAvg Decimal? @map("sentiment_avg") @db.Decimal(4, 3)
+  model        String?  @db.VarChar(64)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  theme Theme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@unique([themeId, summaryDate])
+  @@map("ai_theme_summaries")
+}

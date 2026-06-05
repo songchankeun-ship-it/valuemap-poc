@@ -1,0 +1,151 @@
+{
+  "days": 7,
+  "totalDisclosures": 142,
+  "signalCount": 12,
+  "signals": [
+    {
+      "signalType": "insider_buy",
+      "signalLabel": "임원·주요주주 매수",
+      "strength": 85,
+      "note": "장내매수 단서 발견",
+      "disclosure": {
+        "corp_name": "삼성전자",
+        "stock_code": "005930",
+        "report_nm": "임원ㆍ주요주주특정증권등소유상황보고서",
+        "rcept_no": "20260527800118",
+        "flr_nm": "한종희",
+        "rcept_dt": "20260527",
+        "rm": "장내매수",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260527800118"
+      }
+    },
+    {
+      "signalType": "insider_buy",
+      "signalLabel": "임원·주요주주 매수",
+      "strength": 85,
+      "note": "장내매수 단서 발견",
+      "disclosure": {
+        "corp_name": "에코프로비엠",
+        "stock_code": "247540",
+        "report_nm": "임원ㆍ주요주주특정증권등소유상황보고서",
+        "rcept_no": "20260526800455",
+        "flr_nm": "이동채",
+        "rcept_dt": "20260526",
+        "rm": "장내매수",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260526800455"
+      }
+    },
+    {
+      "signalType": "treasury_buy",
+      "signalLabel": "자기주식 취득 결의",
+      "strength": 80,
+      "note": "회사 본인 매수 → 통상 단기·중기 호재 신호",
+      "disclosure": {
+        "corp_name": "LG에너지솔루션",
+        "stock_code": "373220",
+        "report_nm": "주요사항보고서(자기주식취득결정)",
+        "rcept_no": "20260527800321",
+        "flr_nm": "LG에너지솔루션",
+        "rcept_dt": "20260527",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260527800321"
+      }
+    },
+    {
+      "signalType": "treasury_buy",
+      "signalLabel": "자기주식 취득 결의",
+      "strength": 80,
+      "note": "회사 본인 매수 → 통상 단기·중기 호재 신호",
+      "disclosure": {
+        "corp_name": "HD현대중공업",
+        "stock_code": "329180",
+        "report_nm": "주요사항보고서(자기주식취득결정)",
+        "rcept_no": "20260525800174",
+        "flr_nm": "HD현대중공업",
+        "rcept_dt": "20260525",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260525800174"
+      }
+    },
+    {
+      "signalType": "correction",
+      "signalLabel": "정정공시",
+      "strength": 75,
+      "note": "손익 관련 정정 → 강한 신호",
+      "disclosure": {
+        "corp_name": "카카오",
+        "stock_code": "035720",
+        "report_nm": "[기재정정]연결재무제표기준영업(잠정)실적공정공시",
+        "rcept_no": "20260524800067",
+        "flr_nm": "카카오",
+        "rcept_dt": "20260524",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260524800067"
+      }
+    },
+    {
+      "signalType": "single_contract",
+      "signalLabel": "단일판매·공급계약",
+      "strength": 70,
+      "note": "계약금액·직전매출 비율은 본문 확인 권장",
+      "disclosure": {
+        "corp_name": "SK하이닉스",
+        "stock_code": "000660",
+        "report_nm": "단일판매ㆍ공급계약체결",
+        "rcept_no": "20260526800332",
+        "flr_nm": "SK하이닉스",
+        "rcept_dt": "20260526",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260526800332"
+      }
+    },
+    {
+      "signalType": "single_contract",
+      "signalLabel": "단일판매·공급계약",
+      "strength": 70,
+      "note": "계약금액·직전매출 비율은 본문 확인 권장",
+      "disclosure": {
+        "corp_name": "한화에어로스페이스",
+        "stock_code": "012450",
+        "report_nm": "단일판매ㆍ공급계약체결",
+        "rcept_no": "20260523800087",
+        "flr_nm": "한화에어로스페이스",
+        "rcept_dt": "20260523",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260523800087"
+      }
+    },
+    {
+      "signalType": "capital_raise",
+      "signalLabel": "유상증자 발행",
+      "strength": 65,
+      "note": "자금 사용 목적(시설 vs 운영) 확인 권장",
+      "disclosure": {
+        "corp_name": "엔켐",
+        "stock_code": "348370",
+        "report_nm": "주요사항보고서(유상증자결정)",
+        "rcept_no": "20260522800099",
+        "flr_nm": "엔켐",
+        "rcept_dt": "20260522",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260522800099"
+      }
+    },
+    {
+      "signalType": "capital_raise",
+      "signalLabel": "전환사채 발행",
+      "strength": 65,
+      "note": "자금 사용 목적(시설 vs 운영) 확인 권장",
+      "disclosure": {
+        "corp_name": "에이비엘바이오",
+        "stock_code": "298380",
+        "report_nm": "주요사항보고서(전환사채권발행결정)",
+        "rcept_no": "20260521800145",
+        "flr_nm": "에이비엘바이오",
+        "rcept_dt": "20260521",
+        "rm": "",
+        "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260521800145"
+      }
+    }
+  ]
+}
