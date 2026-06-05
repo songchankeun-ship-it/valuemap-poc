@@ -1,188 +1,180 @@
-// /today — 오늘의 시장 한 화면
 import Link from "next/link";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import {
-  getAllStocks,
-  mockMarketIndices,
-  mockInsight,
-} from "@/lib/mockData";
+import { realStockPool, dataMetadata } from "@/lib/realStocks";
 
-async function loadInsight() {
-  try {
-    const path = join(process.cwd(), "public", "daily-insights", "latest.json");
-    const raw = await readFile(path, "utf-8");
-    const data = JSON.parse(raw);
-    return {
-      dateKST: data.dateKST as string,
-      source: data.source as string,
-      headline: data.insight.headline as string,
-      summary: data.insight.summary as string,
-      tags: data.insight.highlightedThemes as string[],
-      watchPoints: (data.insight.watchPoints ?? []) as string[],
-    };
-  } catch {
-    return {
-      dateKST: new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }),
-      source: "fallback",
-      headline: mockInsight.title,
-      summary: mockInsight.body,
-      tags: mockInsight.tags,
-      watchPoints: [] as string[],
-    };
-  }
+function formatDateKST(): string {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }).format(now);
+  return parts;
 }
 
-export const revalidate = 600;
+function formatDataAsOf(iso?: string): string {
+  if (!iso) return "-";
+  try {
+    return new Date(iso).toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    });
+  } catch { return "-"; }
+}
 
 export const metadata = {
   title: "오늘 — 밸류맵",
-  description: "오늘의 시장 요약. 지수, 자금흐름, 추세 종목, 시그널 핫리스트.",
+  description: "오늘 자체 알고리즘이 발견한 종목들 — 균형, 저평가, 모멘텀",
 };
 
-export default async function TodayPage() {
-  const insight = await loadInsight();
-  const allStocks = getAllStocks();
+export const revalidate = 3600;
 
-  // 오늘의 상승 Top 5 (changePct 기준)
-  const topRisers = [...allStocks]
-    .sort((a, b) => b.changePct - a.changePct)
+export default function TodayPage() {
+  const today = formatDateKST();
+  const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
+
+  const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
+
+  const topComposite = [...validStocks]
+    .sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0))
     .slice(0, 5);
 
-  // 자금흐름 Top 5 (flow 기준)
-  const topFlow = [...allStocks]
-    .sort((a, b) => b.flow - a.flow)
+  const topValue = [...validStocks]
+    .filter(s => s.value > 0 && s.per > 0)
+    .sort((a, b) => b.value - a.value)
     .slice(0, 5);
 
-  // 소외 Top 5 (neglectScore 기준)
-  const topNeglected = [...allStocks]
-    .sort((a, b) => b.neglectScore - a.neglectScore)
+  const topMomentum = [...validStocks]
+    .filter(s => s.momentum > 0 && s.returns)
+    .sort((a, b) => b.momentum - a.momentum)
     .slice(0, 5);
+
+  const valid = realStockPool.filter(s => s.per > 0);
+  const avgPer = valid.length > 0
+    ? valid.reduce((sum, s) => sum + s.per, 0) / valid.length
+    : 0;
+  const validPbr = realStockPool.filter(s => s.pbr > 0);
+  const avgPbr = validPbr.length > 0
+    ? validPbr.reduce((sum, s) => sum + s.pbr, 0) / validPbr.length
+    : 0;
 
   return (
     <div className="space-y-6">
-      <nav className="text-xs text-zinc-500 flex items-center gap-1">
-        <Link href="/" className="hover:text-zinc-700">홈</Link>
-        <span>›</span>
-        <span className="text-zinc-900">오늘</span>
-      </nav>
-
-      {/* HERO */}
-      <header className="bg-gradient-to-br from-zinc-50 to-white border border-zinc-200 rounded-xl p-6">
-        <div className="flex items-baseline justify-between mb-3">
-          <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">TODAY · KST</span>
-          <span className="text-xs text-zinc-500 tabular-nums">{insight.dateKST}</span>
-        </div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900">{insight.headline}</h1>
-        <p className="text-sm text-zinc-600 mt-3 leading-relaxed max-w-2xl">{insight.summary}</p>
-        <div className="flex gap-1.5 flex-wrap mt-4">
-          {insight.tags.map((tag) => (
-            <Link key={tag} href={`/stocks?theme=${encodeURIComponent(tag)}`} className="text-[11px] px-2.5 py-1 bg-brand-50 text-brand-700 rounded-full hover:bg-brand-100 transition font-medium">
-              #{tag}
-            </Link>
-          ))}
-        </div>
+      <header className="border-b border-zinc-200 pb-4">
+        <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
+        <h1 className="text-2xl font-bold text-zinc-900">{today}</h1>
+        <p className="text-xs text-zinc-500 mt-2">
+          데이터 기준 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> · 종목 {realStockPool.length}개 · KRX · Naver · DART
+        </p>
       </header>
 
-      {/* 시세 바 */}
-      <section className="grid grid-cols-3 gap-3 bg-white border border-zinc-200 rounded-xl p-4 shadow-soft">
-        <MarketCell label="코스피" {...mockMarketIndices.kospi} />
-        <MarketCell label="코스닥" {...mockMarketIndices.kosdaq} />
-        <MarketCell label="USD/KRW" value={mockMarketIndices.usdkrw.value} changePct={mockMarketIndices.usdkrw.changePct} />
+      <section className="grid grid-cols-3 gap-2">
+        <div className="bg-blue-50 rounded-lg p-3">
+          <div className="text-[10px] text-blue-700 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
+          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{realStockPool.length}</div>
+        </div>
+        <div className="bg-emerald-50 rounded-lg p-3">
+          <div className="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">평균 PER</div>
+          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{avgPer.toFixed(1)}x</div>
+        </div>
+        <div className="bg-amber-50 rounded-lg p-3">
+          <div className="text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">평균 PBR</div>
+          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{avgPbr.toFixed(2)}x</div>
+        </div>
       </section>
 
-      {/* 3-up 리스트 */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <ListCard title="🔥 오늘 상승 Top 5" sub="changePct 기준" stocks={topRisers} valueKey="changePct" valueSuffix="%" />
-        <ListCard title="💰 자금흐름 Top 5" sub="외국인+연기금" stocks={topFlow} valueKey="flow" valueSuffix="" />
-        <ListCard title="🌙 소외 Top 5" sub="52주 고점 대비" stocks={topNeglected} valueKey="neglectScore" valueSuffix="" />
-      </div>
-
-      {/* Watch Points */}
-      {insight.watchPoints.length > 0 && (
-        <section className="bg-white border border-zinc-200 rounded-xl p-5 shadow-soft">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-sm font-semibold text-zinc-900">이번 주 주목 포인트</span>
-          </div>
-          <ul className="text-sm text-zinc-700 space-y-2.5">
-            {insight.watchPoints.map((p, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="text-brand-400 font-bold shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                <span className="leading-relaxed">{p}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* Quick links */}
-      <section className="grid md:grid-cols-2 gap-3">
-        <Link href="/disclosures" className="block bg-white border border-zinc-200 rounded-xl p-5 hover:border-zinc-400 hover:shadow-md transition group">
-          <div className="text-xs font-semibold text-amber-600 mb-1 uppercase tracking-wide">SIGNALS</div>
-          <div className="text-base font-semibold text-zinc-900 mb-1">오늘의 공시 시그널</div>
-          <div className="text-xs text-zinc-500">자기주식·임원매수·대형계약·정정·증자 자동 추출 →</div>
-        </Link>
-        <Link href="/stocks" className="block bg-white border border-zinc-200 rounded-xl p-5 hover:border-zinc-400 hover:shadow-md transition group">
-          <div className="text-xs font-semibold text-brand-600 mb-1 uppercase tracking-wide">EXPLORE</div>
-          <div className="text-base font-semibold text-zinc-900 mb-1">종목 전체 탐색</div>
-          <div className="text-xs text-zinc-500">자체 지표 4종으로 16가지 정렬·필터 →</div>
-        </Link>
-      </section>
-    </div>
-  );
-}
-
-function MarketCell({ label, value, changePct }: { label: string; value: number; changePct: number }) {
-  const isUp = changePct > 0;
-  const isDown = changePct < 0;
-  const color = isUp ? "text-red-600" : isDown ? "text-blue-600" : "text-zinc-500";
-  const arrow = isUp ? "▲" : isDown ? "▼" : "—";
-  return (
-    <div className="text-center">
-      <div className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide mb-1">{label}</div>
-      <div className="text-base font-semibold text-zinc-900 tabular-nums">{value.toLocaleString()}</div>
-      <div className={`text-xs font-medium tabular-nums ${color}`}>{arrow} {Math.abs(changePct).toFixed(2)}%</div>
-    </div>
-  );
-}
-
-interface ListStock {
-  ticker: string;
-  name: string;
-  changePct: number;
-  flow: number;
-  neglectScore: number;
-}
-
-function ListCard({ title, sub, stocks, valueKey, valueSuffix }: {
-  title: string;
-  sub: string;
-  stocks: ListStock[];
-  valueKey: "changePct" | "flow" | "neglectScore";
-  valueSuffix: string;
-}) {
-  return (
-    <section className="bg-white border border-zinc-200 rounded-xl p-4 shadow-soft">
-      <div className="mb-3">
-        <h3 className="text-sm font-semibold text-zinc-900 tracking-tight">{title}</h3>
-        <p className="text-[11px] text-zinc-500 mt-0.5">{sub}</p>
-      </div>
-      <ul className="space-y-1">
-        {stocks.map((s, i) => {
-          const v = s[valueKey];
-          const display = valueKey === "changePct" ? `${v > 0 ? "+" : ""}${v.toFixed(2)}` : Math.round(v);
-          return (
+      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-sm font-semibold text-zinc-900">균형 잡힌 종목 Top 5</h2>
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">composite</span>
+        </div>
+        <p className="text-xs text-zinc-600 mb-3">네 지표 모두 우호적 — 탐색 우선순위 높음</p>
+        <ul className="space-y-0.5">
+          {topComposite.map((s, i) => (
             <li key={s.ticker}>
-              <Link href={`/stock/${s.ticker}`} className="flex items-center gap-2 py-1.5 px-2 -mx-2 rounded hover:bg-zinc-50 transition">
-                <span className="text-[10px] text-zinc-400 font-bold tabular-nums w-5">{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-xs text-zinc-900 flex-1 truncate">{s.name}</span>
-                <span className="text-xs font-semibold text-zinc-700 tabular-nums">{display}{valueSuffix}</span>
+              <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 transition">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-[10px] font-mono text-zinc-400 w-4 text-center">{i + 1}</span>
+                  <span className="font-medium text-zinc-900 truncate">{s.name}</span>
+                  <span className="text-[10px] text-zinc-400 tabular-nums shrink-0">{s.ticker}</span>
+                </div>
+                <div className="flex items-baseline gap-1 shrink-0">
+                  <span className="text-sm font-bold text-blue-700 tabular-nums">{s.compositeScore}</span>
+                  <span className="text-[10px] text-zinc-400">/100</span>
+                </div>
               </Link>
             </li>
-          );
-        })}
-      </ul>
-    </section>
+          ))}
+        </ul>
+      </section>
+
+      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-sm font-semibold text-zinc-900">상대적 저평가 Top 5</h2>
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">value</span>
+        </div>
+        <p className="text-xs text-zinc-600 mb-3">PER · PBR이 풀에서 가장 낮음 — 단, 이유 있는 저평가일 수 있습니다</p>
+        <ul className="space-y-0.5">
+          {topValue.map((s, i) => (
+            <li key={s.ticker}>
+              <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 transition">
+                <div className="flex items-center gap-3 min-w-0 flex-wrap">
+                  <span className="text-[10px] font-mono text-zinc-400 w-4 text-center">{i + 1}</span>
+                  <span className="font-medium text-zinc-900 truncate">{s.name}</span>
+                  <span className="text-[10px] text-zinc-500 tabular-nums">PER {s.per.toFixed(1)}</span>
+                  <span className="text-[10px] text-zinc-500 tabular-nums">PBR {s.pbr.toFixed(2)}</span>
+                </div>
+                <span className="text-sm font-bold text-cyan-700 tabular-nums shrink-0">{s.value}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-sm font-semibold text-zinc-900">강세 추세 Top 5</h2>
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider">momentum</span>
+        </div>
+        <p className="text-xs text-zinc-600 mb-3">최근 1·3·6개월 가중평균 수익률 — 고점 추격 위험 함께 의미</p>
+        <ul className="space-y-0.5">
+          {topMomentum.map((s, i) => {
+            const r6m = s.returns?.r6m;
+            return (
+              <li key={s.ticker}>
+                <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 transition">
+                  <div className="flex items-center gap-3 min-w-0 flex-wrap">
+                    <span className="text-[10px] font-mono text-zinc-400 w-4 text-center">{i + 1}</span>
+                    <span className="font-medium text-zinc-900 truncate">{s.name}</span>
+                    {r6m !== undefined ? (
+                      <span className={"text-[10px] tabular-nums " + (r6m >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                        6M {r6m >= 0 ? "+" : ""}{r6m.toFixed(1)}%
+                      </span>
+                    ) : null}
+                  </div>
+                  <span className="text-sm font-bold text-blue-700 tabular-nums shrink-0">{s.momentum}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      <section className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-5">
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-sm font-semibold text-amber-900">오늘의 공시 신호</h2>
+          <Link href="/disclosures" className="text-xs text-amber-700 hover:underline">전체 보기 →</Link>
+        </div>
+        <p className="text-xs text-amber-900 leading-relaxed">
+          최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 매수 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong> 신호를 자동 분류합니다. 의미 있는 시장 신호만 추려 보여드려요.
+        </p>
+      </section>
+
+      <section className="text-[10px] text-zinc-400 leading-relaxed border-t border-zinc-200 pt-3">
+        본 페이지는 KRX 일별 종가(FinanceDataReader), Naver Finance 재무 지표, DART 공시 실데이터를 기반으로 자동 생성됩니다. 매일 영업일 마감 후 갱신. 본 도구는 투자 추천이 아니라 탐색 우선순위를 제시하는 분석 도구입니다.
+      </section>
+    </div>
   );
 }
