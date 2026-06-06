@@ -3,30 +3,36 @@ import { realStockPool, dataMetadata } from "@/lib/realStocks";
 
 function formatDateKST(): string {
   const now = new Date();
-  const parts = new Intl.DateTimeFormat("ko-KR", {
+  return new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
+    year: "numeric", month: "long", day: "numeric", weekday: "long",
   }).format(now);
-  return parts;
 }
 
 function formatDataAsOf(iso?: string): string {
   if (!iso) return "-";
   try {
-    return new Date(iso).toLocaleString("ko-KR", {
-      timeZone: "Asia/Seoul",
-      year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "2-digit", minute: "2-digit", hour12: false,
-    });
+    const d = new Date(iso);
+    const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    const y = kst.getUTCFullYear();
+    const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
+    const da = String(kst.getUTCDate()).padStart(2, "0");
+    const ho = String(kst.getUTCHours()).padStart(2, "0");
+    const mi = String(kst.getUTCMinutes()).padStart(2, "0");
+    return y + "." + mo + "." + da + " " + ho + ":" + mi;
   } catch { return "-"; }
+}
+
+function median(arr: number[]): number {
+  if (arr.length === 0) return 0;
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
 export const metadata = {
   title: "오늘 — 밸류맵",
-  description: "오늘 자체 알고리즘이 발견한 종목들 — 균형, 저평가, 모멘텀",
+  description: "오늘 자체 알고리즘이 발견한 종목들",
 };
 
 export const revalidate = 3600;
@@ -51,14 +57,11 @@ export default function TodayPage() {
     .sort((a, b) => b.momentum - a.momentum)
     .slice(0, 5);
 
-  const valid = realStockPool.filter(s => s.per > 0);
-  const avgPer = valid.length > 0
-    ? valid.reduce((sum, s) => sum + s.per, 0) / valid.length
-    : 0;
-  const validPbr = realStockPool.filter(s => s.pbr > 0);
-  const avgPbr = validPbr.length > 0
-    ? validPbr.reduce((sum, s) => sum + s.pbr, 0) / validPbr.length
-    : 0;
+  // PER/PBR 중앙값 (극단값 제외: PER 0~150, PBR 0~30)
+  const validPers = realStockPool.filter(s => s.per > 0 && s.per < 150).map(s => s.per);
+  const medianPer = median(validPers);
+  const validPbrs = realStockPool.filter(s => s.pbr > 0 && s.pbr < 30).map(s => s.pbr);
+  const medianPbr = median(validPbrs);
 
   return (
     <div className="space-y-6">
@@ -66,7 +69,7 @@ export default function TodayPage() {
         <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
         <h1 className="text-2xl font-bold text-zinc-900">{today}</h1>
         <p className="text-xs text-zinc-500 mt-2">
-          데이터 기준 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> · 종목 {realStockPool.length}개 · KRX · Naver · DART
+          시장 데이터 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> KST · 전일 장마감 반영 · 종목 {realStockPool.length}개
         </p>
       </header>
 
@@ -74,14 +77,17 @@ export default function TodayPage() {
         <div className="bg-blue-50 rounded-lg p-3">
           <div className="text-[10px] text-blue-700 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
           <div className="text-2xl font-bold text-zinc-900 tabular-nums">{realStockPool.length}</div>
+          <div className="text-[10px] text-blue-700/70 mt-0.5">실데이터 기준</div>
         </div>
         <div className="bg-emerald-50 rounded-lg p-3">
-          <div className="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">평균 PER</div>
-          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{avgPer.toFixed(1)}x</div>
+          <div className="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
+          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{medianPer.toFixed(1)}x</div>
+          <div className="text-[10px] text-emerald-700/70 mt-0.5">유효 종목 · 적자/극단값 제외</div>
         </div>
         <div className="bg-amber-50 rounded-lg p-3">
-          <div className="text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">평균 PBR</div>
-          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{avgPbr.toFixed(2)}x</div>
+          <div className="text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
+          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{medianPbr.toFixed(2)}x</div>
+          <div className="text-[10px] text-amber-700/70 mt-0.5">유효 종목 · 극단값 제외</div>
         </div>
       </section>
 
@@ -90,7 +96,7 @@ export default function TodayPage() {
           <h2 className="text-sm font-semibold text-zinc-900">균형 잡힌 종목 Top 5</h2>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">composite</span>
         </div>
-        <p className="text-xs text-zinc-600 mb-3">네 지표 모두 우호적 — 탐색 우선순위 높음</p>
+        <p className="text-xs text-zinc-600 mb-3">네 지표 모두 우호적인 상태 — 탐색 우선순위 높음</p>
         <ul className="space-y-0.5">
           {topComposite.map((s, i) => (
             <li key={s.ticker}>
@@ -115,7 +121,7 @@ export default function TodayPage() {
           <h2 className="text-sm font-semibold text-zinc-900">상대적 저평가 Top 5</h2>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">value</span>
         </div>
-        <p className="text-xs text-zinc-600 mb-3">PER · PBR이 풀에서 가장 낮음 — 단, 이유 있는 저평가일 수 있습니다</p>
+        <p className="text-xs text-zinc-600 mb-3">PER · PBR이 풀에서 가장 낮음 — 이유 있는 저평가일 수도 있으니 원문 확인 권장</p>
         <ul className="space-y-0.5">
           {topValue.map((s, i) => (
             <li key={s.ticker}>
@@ -168,7 +174,7 @@ export default function TodayPage() {
           <Link href="/disclosures" className="text-xs text-amber-700 hover:underline">전체 보기 →</Link>
         </div>
         <p className="text-xs text-amber-900 leading-relaxed">
-          최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 매수 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong> 신호를 자동 분류합니다. 의미 있는 시장 신호만 추려 보여드려요.
+          최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 매수 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong>를 분류합니다. 원문과 시세 반응을 함께 확인하세요.
         </p>
       </section>
 
