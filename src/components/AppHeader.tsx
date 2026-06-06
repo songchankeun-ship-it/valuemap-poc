@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { dataMetadata } from "@/lib/realStocks";
+import { dataMetadata, allThemes } from "@/lib/realStocks";
+import { getAllStocks } from "@/lib/mockData";
 import { MobileNav } from "./MobileNav";
+import { GlobalSearch } from "./GlobalSearch";
 
 function formatDataAsOf(iso?: string): string {
   if (!iso) return "-";
@@ -13,11 +15,20 @@ function formatDataAsOf(iso?: string): string {
     const ho = String(kst.getUTCHours()).padStart(2, "0");
     const mi = String(kst.getUTCMinutes()).padStart(2, "0");
     return y + "." + mo + "." + da + " " + ho + ":" + mi;
-  } catch { return "-"; }
+  } catch {
+    return "-";
+  }
 }
 
 export function AppHeader() {
   const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
+  const stocks = getAllStocks().map((s) => ({
+    ticker: s.ticker,
+    name: s.name,
+    themes: s.themes,
+  }));
+  const themes = allThemes();
+
   return (
     <>
       <header className="border-b border-zinc-200 bg-white/95 backdrop-blur-md sticky top-0 z-40">
@@ -33,16 +44,7 @@ export function AppHeader() {
           </Link>
 
           <div className="flex-1 flex justify-center max-w-xl mx-auto">
-            <Link
-              href="/stocks"
-              className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 border border-zinc-200 rounded-md text-sm text-zinc-500 hover:bg-zinc-50 hover:border-zinc-300 transition relative block"
-            >
-              종목명 · 티커 · 테마 검색은 종목 탐색에서
-              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M10 10L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </Link>
+            <GlobalSearch stocks={stocks} themes={themes} />
           </div>
 
           <div className="hidden md:flex items-center gap-2 shrink-0">

@@ -13,7 +13,7 @@ interface Props {
 export function MobileSearchButton({ data }: Props) {
   const [open, setOpen] = useState(false);
 
-  // 검색 열렸을 때 body 스크롤 막기
+  // 寃???대졇????body ?ㅽ겕濡?留됯린
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -29,7 +29,7 @@ export function MobileSearchButton({ data }: Props) {
     <>
       <button
         type="button"
-        aria-label="검색 열기"
+        aria-label="寃???닿린"
         onClick={() => setOpen(true)}
         className="md:hidden p-2 rounded-md text-zinc-700 hover:bg-zinc-100 transition shrink-0"
       >
@@ -49,11 +49,11 @@ export function MobileSearchButton({ data }: Props) {
           <div className="absolute left-0 right-0 top-0 bg-white shadow-xl">
             <div className="flex items-center gap-2 px-3 py-3 border-b border-zinc-200">
               <div className="flex-1">
-                <GlobalSearch allStocks={data.stocks} allThemes={data.themes} />
+                <GlobalSearch stocks={data.stocks} themes={data.themes} />
               </div>
               <button
                 type="button"
-                aria-label="검색 닫기"
+                aria-label="寃???リ린"
                 onClick={() => setOpen(false)}
                 className="p-2 rounded-md text-zinc-500 hover:bg-zinc-100 transition shrink-0"
               >

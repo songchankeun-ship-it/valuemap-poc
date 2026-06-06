@@ -1,128 +1,176 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-interface SearchHit {
-  type: "stock" | "theme";
-  label: string;
-  sub: string;
-  href: string;
+interface StockItem {
+  ticker: string;
+  name: string;
+  themes: string[];
 }
 
-export function GlobalSearch({ allStocks, allThemes }: {
-  allStocks: Array<{ name: string; ticker: string; themes: string[] }>;
-  allThemes: string[];
-}) {
-  const [q, setQ] = useState("");
+interface SearchResult {
+  type: "stock" | "theme";
+  ticker?: string;
+  name: string;
+  themeHint?: string;
+}
+
+interface Props {
+  stocks: StockItem[];
+  themes: string[];
+}
+
+export function GlobalSearch({ stocks, themes }: Props) {
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // 외부 클릭 시 닫기
+  const results: SearchResult[] = (() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    const stockResults = stocks
+      .filter((s) => s.name.toLowerCase().includes(q) || s.ticker.includes(q))
+      .slice(0, 4)
+      .map((s) => ({
+        type: "stock" as const,
+        ticker: s.ticker,
+        name: s.name,
+        themeHint: s.themes[0],
+      }));
+    const themeResults = themes
+      .filter((t) => t.toLowerCase().includes(q))
+      .slice(0, 2)
+      .map((t) => ({ type: "theme" as const, name: t }));
+    return [...stockResults, ...themeResults];
+  })();
+
   useEffect(() => {
-    function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+    setSelectedIndex(0);
+  }, [query]);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const hits: SearchHit[] = (() => {
-    if (!q.trim()) return [];
-    const lower = q.trim().toLowerCase();
-    const stockHits: SearchHit[] = allStocks
-      .filter(
-        (s) =>
-          s.name.toLowerCase().includes(lower) ||
-          s.ticker.includes(q.trim())
-      )
-      .slice(0, 5)
-      .map((s) => ({
-        type: "stock" as const,
-        label: s.name,
-        sub: s.ticker,
-        href: `/stock/${s.ticker}`,
-      }));
-    const themeHits: SearchHit[] = allThemes
-      .filter((t) => t.toLowerCase().includes(lower))
-      .slice(0, 4)
-      .map((t) => ({
-        type: "theme" as const,
-        label: t,
-        sub: "테마",
-        href: `/stocks?theme=${encodeURIComponent(t)}`,
-      }));
-    return [...stockHits, ...themeHits];
-  })();
-
-  function pick(idx: number) {
-    const hit = hits[idx];
-    if (hit) {
-      router.push(hit.href);
-      setOpen(false);
-      setQ("");
+  function navigateToResult(result: SearchResult) {
+    if (result.type === "stock" && result.ticker) {
+      router.push("/stock/" + result.ticker);
+    } else {
+      router.push("/stocks?theme=" + encodeURIComponent(result.name));
     }
+    setQuery("");
+    setOpen(false);
+    inputRef.current?.blur();
   }
 
-  function onKey(e: React.KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (results.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIdx((i) => Math.min(hits.length - 1, i + 1));
+      setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveIdx((i) => Math.max(0, i - 1));
+      setSelectedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      pick(activeIdx);
+      navigateToResult(results[selectedIndex]);
     } else if (e.key === "Escape") {
       setOpen(false);
+      inputRef.current?.blur();
     }
   }
 
   return (
-    <div ref={ref} className="relative flex-1 max-w-md">
+    <div ref={containerRef} className="w-full relative">
       <input
-        type="text"
-        value={q}
-        onChange={(e) => { setQ(e.target.value); setOpen(true); setActiveIdx(0); }}
-        onFocus={() => q && setOpen(true)}
-        onKeyDown={onKey}
-        placeholder="종목·테마 검색"
-        className="w-full px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:border-brand-500"
+        ref={inputRef}
+        type="search"
+        placeholder="종목명 · 티커 · 테마 검색"
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={handleKeyDown}
+        autoComplete="off"
+        className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 border border-zinc-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition"
       />
-      {open && hits.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-sm z-50 max-h-80 overflow-y-auto">
-          {hits.map((h, i) => (
-            <button
-              key={`${h.type}-${h.href}`}
-              onClick={() => pick(i)}
-              onMouseEnter={() => setActiveIdx(i)}
-              className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between border-b border-gray-50 last:border-0 ${
-                i === activeIdx ? "bg-brand-50" : "hover:bg-gray-50"
-              }`}
-            >
-              <div>
-                <div className="font-medium text-gray-900">{h.label}</div>
-                <div className="text-[10px] text-gray-400">{h.sub}</div>
-              </div>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                h.type === "stock" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"
-              }`}>
-                {h.type === "stock" ? "종목" : "테마"}
-              </span>
-            </button>
-          ))}
+      <svg
+        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+      >
+        <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M10 10L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+
+      {open && query.trim() ? (
+        <div className="absolute top-full mt-1 left-0 right-0 bg-white border border-zinc-200 rounded-md shadow-lg overflow-hidden z-50">
+          {results.length === 0 ? (
+            <div className="px-3 py-3 text-xs text-zinc-500 text-center">
+              일치하는 종목이나 테마가 없습니다
+            </div>
+          ) : (
+            <ul>
+              {results.map((result, i) => (
+                <li key={result.type === "stock" ? "s-" + result.ticker : "t-" + result.name}>
+                  <button
+                    type="button"
+                    onClick={() => navigateToResult(result)}
+                    onMouseEnter={() => setSelectedIndex(i)}
+                    className={
+                      "w-full text-left px-3 py-2 flex items-center gap-2.5 transition " +
+                      (i === selectedIndex ? "bg-blue-50" : "hover:bg-zinc-50")
+                    }
+                  >
+                    {result.type === "stock" ? (
+                      <>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 font-mono shrink-0 tabular-nums">
+                          {result.ticker}
+                        </span>
+                        <span className="text-sm text-zinc-900 truncate flex-1">
+                          {result.name}
+                        </span>
+                        {result.themeHint ? (
+                          <span className="text-[10px] text-zinc-400 truncate shrink-0 max-w-[120px]">
+                            {result.themeHint}
+                          </span>
+                        ) : null}
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 shrink-0">
+                          테마
+                        </span>
+                        <span className="text-sm text-zinc-900 truncate flex-1">
+                          {result.name}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="px-3 py-1.5 text-[10px] text-zinc-400 border-t border-zinc-100 bg-zinc-50 flex items-center justify-between">
+            <span>↑↓ 이동 · Enter 선택 · Esc 닫기</span>
+            <span>{results.length}건</span>
+          </div>
         </div>
-      )}
-      {open && q.trim() && hits.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md p-3 text-xs text-gray-400">
-          검색 결과 없음
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }
