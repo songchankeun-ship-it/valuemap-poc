@@ -4,6 +4,8 @@ import { getStockByTicker } from "@/lib/mockData";
 import { AiAnalysisCard } from "@/components/AiAnalysisCard";
 import { StockDisclosures } from "@/components/StockDisclosures";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
+import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
+import { RecentViewTracker } from "@/components/RecentViewTracker";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -60,6 +62,8 @@ export default async function StockDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-4">
+      <RecentViewTracker ticker={s.ticker} name={s.name} />
+
       <nav className="text-xs text-gray-500 flex items-center gap-1">
         <Link href="/">홈</Link><span>›</span>
         <Link href="/stocks">종목 탐색</Link><span>›</span>
@@ -79,7 +83,10 @@ export default async function StockDetailPage({ params }: PageProps) {
             </span>
           </div>
         </div>
-        <AddToCompareButton ticker={s.ticker} name={s.name} />
+        <div className="flex items-center gap-2 flex-wrap">
+          <AddToWatchlistButton ticker={s.ticker} name={s.name} />
+          <AddToCompareButton ticker={s.ticker} name={s.name} />
+        </div>
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-2">

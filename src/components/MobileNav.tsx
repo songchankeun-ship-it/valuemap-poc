@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Menu, X } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X } from "lucide-react";
 
 const ITEMS = [
-  { href: "/today", Icon: CalendarDays, label: "오늘" },
-  { href: "/stocks", Icon: Search, label: "종목 탐색" },
-  { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
-  { href: "/backtest", Icon: FlaskConical, label: "백테스트" },
-  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드" },
+  { href: "/today", Icon: CalendarDays, label: "오늘", soon: false },
+  { href: "/stocks", Icon: Search, label: "종목 탐색", soon: false },
+  { href: "/watchlist", Icon: Heart, label: "관심 종목", soon: false },
+  { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
+  { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
+  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -88,7 +89,12 @@ export function MobileNav() {
                     }
                   >
                     <Icon className="w-5 h-5 shrink-0" strokeWidth={1.8} />
-                    <span>{item.label}</span>
+                    <span className="flex-1">{item.label}</span>
+                    {item.soon ? (
+                      <span className={"text-[9px] px-1.5 py-0.5 rounded font-medium " + (active ? "bg-amber-300 text-amber-900" : "bg-amber-100 text-amber-700")}>
+                        SOON
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}

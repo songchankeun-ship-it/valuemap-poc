@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart } from "lucide-react";
 
 const ITEMS = [
   { href: "/today", Icon: CalendarDays, label: "오늘", soon: false },
   { href: "/stocks", Icon: Search, label: "종목 탐색", soon: false },
+  { href: "/watchlist", Icon: Heart, label: "관심 종목", soon: false },
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
   { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },
