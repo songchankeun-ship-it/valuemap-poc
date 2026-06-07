@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
+import { Search, BarChart3, Megaphone } from "lucide-react";
 
 export const metadata = {
   title: "밸류맵 — 한국 테마주 분석 도구",
@@ -33,17 +34,23 @@ export default function HomePage() {
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Link href="/stocks" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
-          <div className="text-2xl mb-2">🔍</div>
+          <div className="w-9 h-9 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center mb-3">
+            <Search className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <div className="text-sm font-semibold text-zinc-900 mb-1">종목 탐색</div>
           <div className="text-xs text-zinc-600">{dataMetadata.count}개 종목을 자체 지표 4종으로 정렬·필터링</div>
         </Link>
         <Link href="/compare" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
-          <div className="text-2xl mb-2">📊</div>
+          <div className="w-9 h-9 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+            <BarChart3 className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <div className="text-sm font-semibold text-zinc-900 mb-1">종목 비교</div>
           <div className="text-xs text-zinc-600">관심 종목 4개까지 PER·PBR·ROE 나란히</div>
         </Link>
         <Link href="/disclosures" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
-          <div className="text-2xl mb-2">📢</div>
+          <div className="w-9 h-9 rounded-md bg-amber-50 text-amber-700 flex items-center justify-center mb-3">
+            <Megaphone className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <div className="text-sm font-semibold text-zinc-900 mb-1">공시 신호</div>
           <div className="text-xs text-zinc-600">DART 5종 신호 자동 분류 (자기주식·임원매수·정정·계약·증자)</div>
         </Link>

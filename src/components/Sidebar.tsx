@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen } from "lucide-react";
 
 const ITEMS = [
-  { href: "/today", icon: "📅", label: "오늘" },
-  { href: "/stocks", icon: "🔍", label: "종목 탐색" },
-  { href: "/disclosures", icon: "📢", label: "공시 신호" },
-  { href: "/backtest", icon: "🧪", label: "백테스트" },
-  { href: "/guide/metrics", icon: "📘", label: "지표 가이드" },
+  { href: "/today", Icon: CalendarDays, label: "오늘" },
+  { href: "/stocks", Icon: Search, label: "종목 탐색" },
+  { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
+  { href: "/backtest", Icon: FlaskConical, label: "백테스트" },
+  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -24,6 +25,7 @@ export function Sidebar() {
         <nav className="space-y-0.5">
           {ITEMS.map((item) => {
             const active = isActive(pathname, item.href);
+            const Icon = item.Icon;
             return (
               <Link
                 key={item.href}
@@ -35,7 +37,7 @@ export function Sidebar() {
                     : "text-zinc-700 hover:bg-zinc-100")
                 }
               >
-                <span className="text-base">{item.icon}</span>
+                <Icon className="w-4 h-4 shrink-0" strokeWidth={1.8} />
                 <span>{item.label}</span>
               </Link>
             );

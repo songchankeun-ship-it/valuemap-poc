@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Menu, X } from "lucide-react";
 
 const ITEMS = [
-  { href: "/today", icon: "📅", label: "오늘" },
-  { href: "/stocks", icon: "🔍", label: "종목 탐색" },
-  { href: "/disclosures", icon: "📢", label: "공시 신호" },
-  { href: "/backtest", icon: "🧪", label: "백테스트" },
-  { href: "/guide/metrics", icon: "📘", label: "지표 가이드" },
+  { href: "/today", Icon: CalendarDays, label: "오늘" },
+  { href: "/stocks", Icon: Search, label: "종목 탐색" },
+  { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
+  { href: "/backtest", Icon: FlaskConical, label: "백테스트" },
+  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -42,13 +43,9 @@ export function MobileNav() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="메뉴 열기"
-        className="lg:hidden w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 transition"
+        className="lg:hidden w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 transition text-zinc-700"
       >
-        <svg width="18" height="14" viewBox="0 0 18 14" fill="none" className="text-zinc-700">
-          <rect width="18" height="2" rx="1" fill="currentColor"/>
-          <rect y="6" width="18" height="2" rx="1" fill="currentColor"/>
-          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
-        </svg>
+        <Menu className="w-5 h-5" strokeWidth={2} />
       </button>
 
       {open ? (
@@ -70,15 +67,14 @@ export function MobileNav() {
                 aria-label="메뉴 닫기"
                 className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 transition"
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
+                <X className="w-4 h-4" strokeWidth={2} />
               </button>
             </div>
 
             <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
               {ITEMS.map((item) => {
                 const active = isActive(pathname, item.href);
+                const Icon = item.Icon;
                 return (
                   <Link
                     key={item.href}
@@ -91,7 +87,7 @@ export function MobileNav() {
                         : "text-zinc-700 hover:bg-zinc-100")
                     }
                   >
-                    <span className="text-lg shrink-0">{item.icon}</span>
+                    <Icon className="w-5 h-5 shrink-0" strokeWidth={1.8} />
                     <span>{item.label}</span>
                   </Link>
                 );
