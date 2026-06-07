@@ -124,14 +124,20 @@ export function DisclosureExplorer() {
 
   if (loading) {
     return (
-      <div className="space-y-3">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="bg-white border border-zinc-200 rounded-lg p-4">
-            <div className="h-4 w-1/3 bg-zinc-200 rounded mb-2 animate-pulse" />
-            <div className="h-3 w-1/4 bg-zinc-100 rounded mb-2 animate-pulse" />
-            <div className="h-3 w-2/3 bg-zinc-100 rounded animate-pulse" />
-          </div>
-        ))}
+      <div>
+        <div className="text-xs text-zinc-500 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <span>최근 {days}일 DART 공시를 불러오고 있습니다...</span>
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="bg-white border border-zinc-200 rounded-lg p-4">
+              <div className="h-4 w-1/3 bg-zinc-200 rounded mb-2 animate-pulse" />
+              <div className="h-3 w-1/4 bg-zinc-100 rounded mb-2 animate-pulse" />
+              <div className="h-3 w-2/3 bg-zinc-100 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
