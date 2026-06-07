@@ -62,7 +62,7 @@ export function AppHeader() {
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
             <span className="truncate">
-              데이터 기준 <strong className="text-zinc-900 tabular-nums">{dataAsOf}</strong> KST · 전일 장마감 반영
+              데이터 기준 <strong className="text-zinc-900 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 기준
             </span>
           </div>
           <span className="text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>

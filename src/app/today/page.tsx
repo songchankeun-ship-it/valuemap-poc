@@ -42,22 +42,10 @@ export default function TodayPage() {
   const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
+  const topComposite = [...validStocks].sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0)).slice(0, 5);
+  const topValue = [...validStocks].filter(s => s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
+  const topMomentum = [...validStocks].filter(s => s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
 
-  const topComposite = [...validStocks]
-    .sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0))
-    .slice(0, 5);
-
-  const topValue = [...validStocks]
-    .filter(s => s.value > 0 && s.per > 0)
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 5);
-
-  const topMomentum = [...validStocks]
-    .filter(s => s.momentum > 0 && s.returns)
-    .sort((a, b) => b.momentum - a.momentum)
-    .slice(0, 5);
-
-  // PER/PBR 중앙값 (극단값 제외: PER 0~150, PBR 0~30)
   const validPers = realStockPool.filter(s => s.per > 0 && s.per < 150).map(s => s.per);
   const medianPer = median(validPers);
   const validPbrs = realStockPool.filter(s => s.pbr > 0 && s.pbr < 30).map(s => s.pbr);
@@ -69,7 +57,7 @@ export default function TodayPage() {
         <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
         <h1 className="text-2xl font-bold text-zinc-900">{today}</h1>
         <p className="text-xs text-zinc-500 mt-2">
-          시장 데이터 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> KST · 전일 장마감 반영 · 종목 {realStockPool.length}개
+          시장 데이터 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 기준 · 종목 {realStockPool.length}개
         </p>
       </header>
 
@@ -179,7 +167,7 @@ export default function TodayPage() {
       </section>
 
       <section className="text-[10px] text-zinc-400 leading-relaxed border-t border-zinc-200 pt-3">
-        본 페이지는 KRX 일별 종가(FinanceDataReader), Naver Finance 재무 지표, DART 공시 실데이터를 기반으로 자동 생성됩니다. 매일 영업일 마감 후 갱신. 본 도구는 투자 추천이 아니라 탐색 우선순위를 제시하는 분석 도구입니다.
+        본 페이지는 KRX 일별 종가(FinanceDataReader), Naver Finance 재무 지표, DART 공시 실데이터를 기반으로 자동 생성됩니다. 영업일 마감 후 자동 갱신. 본 도구는 투자 추천이 아니라 탐색 우선순위를 제시하는 분석 도구입니다.
       </section>
     </div>
   );

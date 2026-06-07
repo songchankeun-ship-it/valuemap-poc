@@ -37,7 +37,32 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
   const [pbrMin, setPbrMin] = useState(0);
   const [pbrMax, setPbrMax] = useState(30);
   const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
+  const [themeQuery, setThemeQuery] = useState("");
+  const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // 인기 테마: 종목 수 기준 상위 10개
+  const popularThemes = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const s of stocks) {
+      for (const t of s.themes) {
+        counts.set(t, (counts.get(t) || 0) + 1);
+      }
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([t]) => t);
+  }, [stocks]);
+
+  const visibleThemes = useMemo(() => {
+    if (themeQuery.trim()) {
+      const q = themeQuery.toLowerCase();
+      return allThemes.filter((t) => t.toLowerCase().includes(q));
+    }
+    if (showAllThemes) return allThemes;
+    return popularThemes;
+  }, [allThemes, themeQuery, showAllThemes, popularThemes]);
 
   const filtered = useMemo(() => {
     return stocks.filter((s) => {
@@ -82,6 +107,8 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
     setPbrMin(0);
     setPbrMax(30);
     setSelectedThemes(new Set());
+    setThemeQuery("");
+    setShowAllThemes(false);
   }
 
   function toggleTheme(t: string) {
@@ -114,20 +141,8 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
             PER 범위: <span className="tabular-nums">{perMin} - {perMax}</span>
           </label>
           <div className="flex gap-2">
-            <input
-              type="number"
-              value={perMin}
-              onChange={(e) => setPerMin(Number(e.target.value))}
-              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
-              min={0}
-            />
-            <input
-              type="number"
-              value={perMax}
-              onChange={(e) => setPerMax(Number(e.target.value))}
-              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
-              min={0}
-            />
+            <input type="number" value={perMin} onChange={(e) => setPerMin(Number(e.target.value))} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded" min={0} />
+            <input type="number" value={perMax} onChange={(e) => setPerMax(Number(e.target.value))} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded" min={0} />
           </div>
         </div>
 
@@ -136,42 +151,73 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
             PBR 범위: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax.toFixed(1)}</span>
           </label>
           <div className="flex gap-2">
-            <input
-              type="number"
-              value={pbrMin}
-              step={0.1}
-              onChange={(e) => setPbrMin(Number(e.target.value))}
-              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
-              min={0}
-            />
-            <input
-              type="number"
-              value={pbrMax}
-              step={0.1}
-              onChange={(e) => setPbrMax(Number(e.target.value))}
-              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
-              min={0}
-            />
+            <input type="number" value={pbrMin} step={0.1} onChange={(e) => setPbrMin(Number(e.target.value))} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded" min={0} />
+            <input type="number" value={pbrMax} step={0.1} onChange={(e) => setPbrMax(Number(e.target.value))} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded" min={0} />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-zinc-700 block mb-2">
-            테마 <span className="text-zinc-400 tabular-nums">({selectedThemes.size}/{allThemes.length})</span>
-          </label>
-          <div className="max-h-48 overflow-y-auto space-y-1 border border-zinc-200 rounded p-2 bg-white">
-            {allThemes.slice(0, 80).map((t) => (
-              <label key={t} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 px-1 py-0.5 rounded">
-                <input
-                  type="checkbox"
-                  checked={selectedThemes.has(t)}
-                  onChange={() => toggleTheme(t)}
-                  className="rounded shrink-0"
-                />
-                <span className="truncate">{t}</span>
-              </label>
-            ))}
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-medium text-zinc-700">
+              테마 <span className="text-zinc-400 tabular-nums">({selectedThemes.size}개 선택)</span>
+            </label>
+            {selectedThemes.size > 0 ? (
+              <button type="button" onClick={() => setSelectedThemes(new Set())} className="text-[10px] text-blue-700 hover:underline">
+                선택 초기화
+              </button>
+            ) : null}
           </div>
+
+          <input
+            type="search"
+            placeholder="테마 검색..."
+            value={themeQuery}
+            onChange={(e) => setThemeQuery(e.target.value)}
+            className="w-full mb-2 px-2 py-1.5 text-xs border border-zinc-200 rounded focus:outline-none focus:border-blue-500"
+          />
+
+          {!themeQuery && !showAllThemes ? (
+            <div className="text-[10px] text-zinc-500 mb-1.5">인기 테마 {popularThemes.length}개</div>
+          ) : null}
+
+          <div className="max-h-44 overflow-y-auto space-y-0.5 border border-zinc-200 rounded p-2 bg-white">
+            {visibleThemes.length === 0 ? (
+              <div className="text-[11px] text-zinc-400 text-center py-3">
+                일치하는 테마가 없습니다
+              </div>
+            ) : (
+              visibleThemes.map((t) => (
+                <label key={t} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 px-1 py-0.5 rounded">
+                  <input
+                    type="checkbox"
+                    checked={selectedThemes.has(t)}
+                    onChange={() => toggleTheme(t)}
+                    className="rounded shrink-0"
+                  />
+                  <span className="truncate">{t}</span>
+                </label>
+              ))
+            )}
+          </div>
+
+          {!themeQuery && !showAllThemes && allThemes.length > popularThemes.length ? (
+            <button
+              type="button"
+              onClick={() => setShowAllThemes(true)}
+              className="mt-2 text-[11px] text-blue-700 hover:underline"
+            >
+              전체 테마 보기 ({allThemes.length}개) →
+            </button>
+          ) : null}
+          {showAllThemes ? (
+            <button
+              type="button"
+              onClick={() => setShowAllThemes(false)}
+              className="mt-2 text-[11px] text-blue-700 hover:underline"
+            >
+              ← 인기 테마만 보기
+            </button>
+          ) : null}
         </div>
 
         <button
@@ -179,7 +225,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
           onClick={resetFilters}
           className="w-full px-3 py-2 text-xs border border-zinc-300 rounded hover:bg-zinc-50 transition"
         >
-          필터 초기화
+          필터 전체 초기화
         </button>
       </div>
     );
@@ -239,13 +285,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
       {activeFilterCount > 0 ? (
         <div className="flex items-center gap-2 text-xs text-zinc-600">
           <span>필터 {activeFilterCount}개 적용 중 ·</span>
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="text-blue-700 hover:underline"
-          >
-            초기화
-          </button>
+          <button type="button" onClick={resetFilters} className="text-blue-700 hover:underline">초기화</button>
         </div>
       ) : null}
 
@@ -303,9 +343,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                 {s.themes.length > 0 ? (
                   <div className="flex gap-1 flex-wrap mt-2">
                     {s.themes.slice(0, 3).map((t) => (
-                      <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
-                        {t}
-                      </span>
+                      <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{t}</span>
                     ))}
                     {s.themes.length > 3 ? (
                       <span className="text-[10px] text-zinc-400">+{s.themes.length - 3}</span>
@@ -325,19 +363,11 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
 
       {drawerOpen ? (
         <>
-          <div
-            onClick={() => setDrawerOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-50"
-            aria-hidden
-          />
-          <div className="lg:hidden fixed inset-y-0 right-0 w-[320px] max-w-[90vw] bg-white z-50 shadow-2xl flex flex-col">
+          <div onClick={() => setDrawerOpen(false)} className="lg:hidden fixed inset-0 bg-black/50 z-50" aria-hidden />
+          <div className="lg:hidden fixed inset-y-0 right-0 w-[340px] max-w-[90vw] bg-white z-50 shadow-2xl flex flex-col">
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 shrink-0">
               <h3 className="text-sm font-semibold text-zinc-900">필터</h3>
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 text-zinc-500"
-              >
+              <button type="button" onClick={() => setDrawerOpen(false)} className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 text-zinc-500">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -347,18 +377,8 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
               <FilterPanel />
             </div>
             <div className="p-3 border-t border-zinc-200 shrink-0 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="px-3 py-2 text-sm border border-zinc-300 rounded hover:bg-zinc-50"
-              >
-                초기화
-              </button>
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                className="px-3 py-2 text-sm bg-zinc-900 text-white rounded hover:bg-zinc-800"
-              >
+              <button type="button" onClick={resetFilters} className="px-3 py-2 text-sm border border-zinc-300 rounded hover:bg-zinc-50">초기화</button>
+              <button type="button" onClick={() => setDrawerOpen(false)} className="px-3 py-2 text-sm bg-zinc-900 text-white rounded hover:bg-zinc-800">
                 {sorted.length}개 보기
               </button>
             </div>

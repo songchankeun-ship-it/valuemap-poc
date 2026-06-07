@@ -13,17 +13,17 @@ export default function HomePage() {
         <span className="inline-block text-[10px] font-semibold tracking-widest text-blue-700 uppercase mb-3 px-2 py-0.5 rounded bg-white/60">
           한국 테마주 분석 도구 · 베타
         </span>
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
-          &quot;<span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">바닥</span>일까,<br/>
-          아직 더 떨어질까.&quot;
+        <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-zinc-900 leading-snug">
+          지금 먼저 확인할 종목을,<br/>
+          <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">네 가지 지표</span>로 좁혀보세요.
         </h1>
         <p className="text-sm md:text-base text-zinc-700 mt-4 max-w-xl leading-relaxed">
-          한 종목을 <strong>네 가지 각도</strong>로 동시에 봅니다.
-          추세 · 자금 흐름 · 저평가 · 위험 대비 수익. 분석에 누락된 게 없도록.
+          추세 · 자금 흐름 · 저평가 · 위험 대비 수익.<br className="hidden md:inline"/>
+          한 종목을 네 각도로 동시에 보는 탐색 우선순위 도구입니다.
         </p>
-        <div className="flex gap-2 mt-5">
+        <div className="flex gap-2 mt-5 flex-wrap">
           <Link href="/stocks" className="px-4 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 transition shadow-sm">
-            {dataMetadata.count}개 종목 분석 보기 →
+            {dataMetadata.count}개 종목 둘러보기 →
           </Link>
           <Link href="/guide/metrics" className="px-4 py-2.5 rounded-lg bg-white border border-zinc-200 text-zinc-900 text-sm font-medium hover:border-zinc-400 transition">
             지표 어떻게 보나
@@ -34,7 +34,7 @@ export default function HomePage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Link href="/stocks" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
           <div className="text-2xl mb-2">🔍</div>
-          <div className="text-sm font-semibold text-zinc-900 mb-1">저평가 종목 찾기</div>
+          <div className="text-sm font-semibold text-zinc-900 mb-1">종목 탐색</div>
           <div className="text-xs text-zinc-600">{dataMetadata.count}개 종목을 자체 지표 4종으로 정렬·필터링</div>
         </Link>
         <Link href="/compare" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
@@ -44,12 +44,12 @@ export default function HomePage() {
         </Link>
         <Link href="/disclosures" className="block bg-white border border-zinc-200 rounded-xl p-4 hover:border-blue-400 transition">
           <div className="text-2xl mb-2">📢</div>
-          <div className="text-sm font-semibold text-zinc-900 mb-1">실시간 공시</div>
+          <div className="text-sm font-semibold text-zinc-900 mb-1">공시 신호</div>
           <div className="text-xs text-zinc-600">DART 5종 신호 자동 분류 (자기주식·임원매수·정정·계약·증자)</div>
         </Link>
       </section>
 
-      <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-xl p-5 flex items-center justify-between text-white shadow-md">
+      <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-xl p-5 flex items-center justify-between text-white shadow-md gap-3 flex-wrap">
         <div>
           <div className="text-xs font-medium text-blue-300 mb-1 uppercase tracking-wider">Coming Soon</div>
           <div className="text-base font-semibold">5년치 실데이터로 전략 검증</div>
@@ -62,7 +62,7 @@ export default function HomePage() {
 
       <section className="bg-blue-50 border border-blue-100 rounded-xl p-5 text-sm text-zinc-700 leading-relaxed">
         <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">왜 밸류맵인가</div>
-        한 종목을 PER만 보고 판단하는 시대는 끝났습니다. 우리는 KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong>모멘텀 · 자금흐름 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
+        한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong>모멘텀 · 자금흐름 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
       </section>
 
       <section className="text-xs text-zinc-500 leading-relaxed border-t border-zinc-200 pt-4">
