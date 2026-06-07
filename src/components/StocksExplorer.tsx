@@ -1,101 +1,102 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import type { MockStock } from "@/lib/mockData";
-import { SORT_OPTIONS, type SortKey, composite } from "@/lib/mockStockPool";
 
-interface Props {
-  initialStocks: MockStock[];
+interface Stock {
+  ticker: string;
+  name: string;
+  currentPrice: number;
+  changePct: number;
+  per: number;
+  pbr: number;
+  roe: number;
+  momentum: number;
+  flow: number;
+  value: number;
+  vol: number;
+  compositeScore?: number;
   themes: string[];
 }
 
-export function StocksExplorer({ initialStocks, themes }: Props) {
-  const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("compositeDesc");
-  const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
+interface Props {
+  stocks: Stock[];
+  allThemes: string[];
+}
+
+type SortKey = "compositeScore" | "momentum" | "value" | "vol" | "per" | "pbr";
+type SortDir = "desc" | "asc";
+
+export function StocksExplorer({ stocks, allThemes }: Props) {
+  const [query, setQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("compositeScore");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [minComposite, setMinComposite] = useState(0);
-  const [perRange, setPerRange] = useState<[number, number]>([0, 100]);
-  const [pbrRange, setPbrRange] = useState<[number, number]>([0, 20]);
+  const [perMin, setPerMin] = useState(0);
+  const [perMax, setPerMax] = useState(200);
+  const [pbrMin, setPbrMin] = useState(0);
+  const [pbrMax, setPbrMax] = useState(30);
+  const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    let out = initialStocks;
-    if (search.trim()) {
-      const q = search.trim().toLowerCase();
-      out = out.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.ticker.includes(search.trim()) ||
-          s.themes.some((t) => t.toLowerCase().includes(q))
-      );
-    }
-    if (selectedThemes.size > 0) {
-      out = out.filter((s) => s.themes.some((t) => selectedThemes.has(t)));
-    }
-    if (minComposite > 0) {
-      out = out.filter((s) => composite(s) >= minComposite);
-    }
-    out = out.filter((s) => s.per >= perRange[0] && s.per <= perRange[1]);
-    out = out.filter((s) => s.pbr >= pbrRange[0] && s.pbr <= pbrRange[1]);
-
-    const sorter = SORT_OPTIONS.find((o) => o.key === sortKey)?.sorter;
-    if (sorter) out = [...out].sort(sorter);
-    return out;
-  }, [initialStocks, search, sortKey, selectedThemes, minComposite, perRange, pbrRange]);
-
-  function toggleTheme(t: string) {
-    setSelectedThemes((prev) => {
-      const next = new Set(prev);
-      if (next.has(t)) next.delete(t);
-      else next.add(t);
-      return next;
+    return stocks.filter((s) => {
+      if (query) {
+        const q = query.toLowerCase();
+        if (!s.name.toLowerCase().includes(q) && !s.ticker.includes(q)) return false;
+      }
+      if ((s.compositeScore || 0) < minComposite) return false;
+      if (s.per > 0 && (s.per < perMin || s.per > perMax)) return false;
+      if (s.pbr > 0 && (s.pbr < pbrMin || s.pbr > pbrMax)) return false;
+      if (selectedThemes.size > 0) {
+        if (!s.themes.some((t) => selectedThemes.has(t))) return false;
+      }
+      return true;
     });
-  }
+  }, [stocks, query, minComposite, perMin, perMax, pbrMin, pbrMax, selectedThemes]);
+
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      let av = 0;
+      let bv = 0;
+      if (sortKey === "compositeScore") { av = a.compositeScore || 0; bv = b.compositeScore || 0; }
+      else if (sortKey === "momentum") { av = a.momentum; bv = b.momentum; }
+      else if (sortKey === "value") { av = a.value; bv = b.value; }
+      else if (sortKey === "vol") { av = a.vol; bv = b.vol; }
+      else if (sortKey === "per") { av = a.per; bv = b.per; }
+      else if (sortKey === "pbr") { av = a.pbr; bv = b.pbr; }
+      return sortDir === "desc" ? bv - av : av - bv;
+    });
+  }, [filtered, sortKey, sortDir]);
+
+  const activeFilterCount =
+    (minComposite > 0 ? 1 : 0) +
+    (perMin > 0 || perMax < 200 ? 1 : 0) +
+    (pbrMin > 0 || pbrMax < 30 ? 1 : 0) +
+    selectedThemes.size;
 
   function resetFilters() {
-    setSearch("");
-    setSortKey("compositeDesc");
-    setSelectedThemes(new Set());
     setMinComposite(0);
-    setPerRange([0, 100]);
-    setPbrRange([0, 20]);
+    setPerMin(0);
+    setPerMax(200);
+    setPbrMin(0);
+    setPbrMax(30);
+    setSelectedThemes(new Set());
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4">
-      {/* 사이드 필터 패널 */}
-      <aside className="space-y-4">
-        {/* 검색 */}
-        <div className="bg-white border border-gray-200 rounded-lg p-3">
-          <label className="text-[11px] text-gray-500 mb-1 block">검색</label>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="종목명·티커·테마"
-            className="w-full px-2 py-1.5 border border-gray-200 rounded-md text-sm"
-          />
-        </div>
+  function toggleTheme(t: string) {
+    const next = new Set(selectedThemes);
+    if (next.has(t)) next.delete(t);
+    else next.add(t);
+    setSelectedThemes(next);
+  }
 
-        {/* 정렬 */}
-        <div className="bg-white border border-gray-200 rounded-lg p-3">
-          <label className="text-[11px] text-gray-500 mb-1 block">정렬</label>
-          <select
-            value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="w-full px-2 py-1.5 border border-gray-200 rounded-md text-sm"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.key} value={o.key}>{o.label}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* 종합점수 최소값 */}
-        <div className="bg-white border border-gray-200 rounded-lg p-3">
-          <label className="text-[11px] text-gray-500 mb-1 block flex justify-between">
-            <span>종합점수 ≥</span>
-            <span className="font-medium text-brand-600">{minComposite}</span>
+  function FilterPanel() {
+    return (
+      <div className="space-y-5">
+        <div>
+          <label className="text-xs font-medium text-zinc-700 block mb-2">
+            최소 종합점수: <span className="tabular-nums">{minComposite}</span>
           </label>
           <input
             type="range"
@@ -108,176 +109,262 @@ export function StocksExplorer({ initialStocks, themes }: Props) {
           />
         </div>
 
-        {/* PER 범위 */}
-        <RangeFilter
-          label="PER 범위"
-          range={perRange}
-          min={0}
-          max={100}
-          step={1}
-          onChange={setPerRange}
-        />
-
-        {/* PBR 범위 */}
-        <RangeFilter
-          label="PBR 범위"
-          range={pbrRange}
-          min={0}
-          max={20}
-          step={0.5}
-          onChange={setPbrRange}
-        />
-
-        {/* 테마 멀티 선택 */}
-        <div className="bg-white border border-gray-200 rounded-lg p-3">
-          <div className="flex justify-between mb-2">
-            <label className="text-[11px] text-gray-500">테마 ({selectedThemes.size}개 선택)</label>
-            {selectedThemes.size > 0 && (
-              <button
-                onClick={() => setSelectedThemes(new Set())}
-                className="text-[10px] text-brand-600"
-              >
-                초기화
-              </button>
-            )}
+        <div>
+          <label className="text-xs font-medium text-zinc-700 block mb-2">
+            PER 범위: <span className="tabular-nums">{perMin} - {perMax}</span>
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={perMin}
+              onChange={(e) => setPerMin(Number(e.target.value))}
+              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
+              min={0}
+            />
+            <input
+              type="number"
+              value={perMax}
+              onChange={(e) => setPerMax(Number(e.target.value))}
+              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
+              min={0}
+            />
           </div>
-          <div className="max-h-48 overflow-y-auto space-y-1">
-            {themes.map((t) => (
-              <label
-                key={t}
-                className="flex items-center gap-2 text-xs cursor-pointer hover:bg-gray-50 px-1 py-0.5 rounded"
-              >
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 block mb-2">
+            PBR 범위: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax.toFixed(1)}</span>
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={pbrMin}
+              step={0.1}
+              onChange={(e) => setPbrMin(Number(e.target.value))}
+              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
+              min={0}
+            />
+            <input
+              type="number"
+              value={pbrMax}
+              step={0.1}
+              onChange={(e) => setPbrMax(Number(e.target.value))}
+              className="w-1/2 px-2 py-1 text-xs border border-zinc-200 rounded"
+              min={0}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-zinc-700 block mb-2">
+            테마 <span className="text-zinc-400 tabular-nums">({selectedThemes.size}/{allThemes.length})</span>
+          </label>
+          <div className="max-h-48 overflow-y-auto space-y-1 border border-zinc-200 rounded p-2 bg-white">
+            {allThemes.slice(0, 80).map((t) => (
+              <label key={t} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 px-1 py-0.5 rounded">
                 <input
                   type="checkbox"
                   checked={selectedThemes.has(t)}
                   onChange={() => toggleTheme(t)}
+                  className="rounded shrink-0"
                 />
-                <span>{t}</span>
+                <span className="truncate">{t}</span>
               </label>
             ))}
           </div>
         </div>
 
         <button
+          type="button"
           onClick={resetFilters}
-          className="w-full py-2 text-xs text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50"
+          className="w-full px-3 py-2 text-xs border border-zinc-300 rounded hover:bg-zinc-50 transition"
         >
-          모든 필터 초기화
+          필터 초기화
         </button>
-      </aside>
-
-      {/* 결과 테이블 */}
-      <main>
-        <div className="text-xs text-gray-500 mb-2">
-          <strong className="text-gray-900">{filtered.length}</strong>개 종목 (전체 {initialStocks.length}개 중)
-        </div>
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[11px] text-gray-500">
-                  <th className="text-left p-2 font-medium">종목</th>
-                  <th className="text-right p-2 font-medium">현재가</th>
-                  <th className="text-right p-2 font-medium">등락률</th>
-                  <th className="text-right p-2 font-medium">PER</th>
-                  <th className="text-right p-2 font-medium">PBR</th>
-                  <th className="text-right p-2 font-medium">ROE</th>
-                  <th className="text-right p-2 font-medium">밸류</th>
-                  <th className="text-right p-2 font-medium">자금</th>
-                  <th className="text-right p-2 font-medium">종합</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((s) => (
-                  <tr
-                    key={s.ticker}
-                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
-                  >
-                    <td className="p-2">
-                      <Link
-                        href={`/stock/${s.ticker}`}
-                        className="hover:text-brand-600"
-                      >
-                        <div className="font-medium text-gray-900">{s.name}</div>
-                        <div className="text-[10px] text-gray-400">{s.ticker}</div>
-                      </Link>
-                    </td>
-                    <td className="text-right p-2 tabular-nums">{s.currentPrice.toLocaleString()}</td>
-                    <td className={`text-right p-2 tabular-nums ${s.changePct >= 0 ? "text-success" : "text-danger"}`}>
-                      {s.changePct >= 0 ? "+" : ""}{s.changePct.toFixed(2)}%
-                    </td>
-                    <td className="text-right p-2 tabular-nums">{s.per.toFixed(1)}</td>
-                    <td className="text-right p-2 tabular-nums">{s.pbr.toFixed(2)}</td>
-                    <td className="text-right p-2 tabular-nums">{s.roe.toFixed(1)}%</td>
-                    <td className="text-right p-2 tabular-nums">
-                      <ScoreCell score={s.value} />
-                    </td>
-                    <td className="text-right p-2 tabular-nums">
-                      <ScoreCell score={s.flow} />
-                    </td>
-                    <td className="text-right p-2 tabular-nums">
-                      <ScoreCell score={composite(s)} highlight />
-                    </td>
-                  </tr>
-                ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={9} className="p-8 text-center text-sm text-gray-400">
-                      조건에 맞는 종목이 없습니다. 필터를 조정해보세요.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function ScoreCell({ score, highlight }: { score: number; highlight?: boolean }) {
-  const tone =
-    score >= 70 ? (highlight ? "text-brand-700 font-semibold" : "text-brand-600 font-medium")
-    : score >= 50 ? "text-gray-700"
-    : "text-gray-400";
-  return <span className={tone}>{score}</span>;
-}
-
-function RangeFilter({
-  label, range, min, max, step, onChange,
-}: {
-  label: string;
-  range: [number, number];
-  min: number; max: number; step: number;
-  onChange: (r: [number, number]) => void;
-}) {
-  return (
-    <div className="bg-white border border-gray-200 rounded-lg p-3">
-      <label className="text-[11px] text-gray-500 mb-1 flex justify-between">
-        <span>{label}</span>
-        <span className="font-medium">{range[0]} ~ {range[1]}</span>
-      </label>
-      <div className="grid grid-cols-2 gap-2 mt-1">
-        <input
-          type="number"
-          value={range[0]}
-          min={min}
-          max={max}
-          step={step}
-          onChange={(e) => onChange([Number(e.target.value), range[1]])}
-          className="px-2 py-1 border border-gray-200 rounded text-xs w-full"
-        />
-        <input
-          type="number"
-          value={range[1]}
-          min={min}
-          max={max}
-          step={step}
-          onChange={(e) => onChange([range[0], Number(e.target.value)])}
-          className="px-2 py-1 border border-gray-200 rounded text-xs w-full"
-        />
       </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-baseline justify-between flex-wrap gap-2">
+        <h1 className="text-xl font-semibold text-zinc-900">종목 탐색</h1>
+        <span className="text-xs text-zinc-500 tabular-nums">
+          {sorted.length}개 / {stocks.length}개 종목
+        </span>
+      </div>
+
+      <div className="flex gap-2 flex-wrap">
+        <input
+          type="search"
+          placeholder="종목명 · 티커"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="flex-1 min-w-[200px] px-3 py-2 text-sm border border-zinc-200 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        />
+        <select
+          value={sortKey + "-" + sortDir}
+          onChange={(e) => {
+            const [k, d] = e.target.value.split("-");
+            setSortKey(k as SortKey);
+            setSortDir(d as SortDir);
+          }}
+          className="px-3 py-2 text-sm border border-zinc-200 rounded-md bg-white"
+        >
+          <option value="compositeScore-desc">종합점수 높은순</option>
+          <option value="momentum-desc">모멘텀 높은순</option>
+          <option value="value-desc">밸류 높은순</option>
+          <option value="vol-desc">변동성조정 높은순</option>
+          <option value="per-asc">PER 낮은순</option>
+          <option value="pbr-asc">PBR 낮은순</option>
+        </select>
+
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          className="lg:hidden px-3 py-2 text-sm border border-zinc-200 rounded-md bg-white flex items-center gap-1.5"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          필터
+          {activeFilterCount > 0 ? (
+            <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">
+              {activeFilterCount}
+            </span>
+          ) : null}
+        </button>
+      </div>
+
+      {activeFilterCount > 0 ? (
+        <div className="flex items-center gap-2 text-xs text-zinc-600">
+          <span>필터 {activeFilterCount}개 적용 중 ·</span>
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="text-blue-700 hover:underline"
+          >
+            초기화
+          </button>
+        </div>
+      ) : null}
+
+      <div className="grid lg:grid-cols-[280px_1fr] gap-6">
+        <aside className="hidden lg:block bg-zinc-50/60 border border-zinc-200 rounded-lg p-4 h-fit sticky top-24">
+          <h3 className="text-sm font-semibold text-zinc-900 mb-4">필터</h3>
+          <FilterPanel />
+        </aside>
+
+        <div className="space-y-2">
+          {sorted.length === 0 ? (
+            <div className="text-sm text-zinc-500 text-center py-12 bg-white border border-zinc-200 rounded-lg">
+              조건에 맞는 종목이 없습니다.
+            </div>
+          ) : (
+            sorted.slice(0, 100).map((s) => (
+              <Link
+                key={s.ticker}
+                href={"/stock/" + s.ticker}
+                className="block bg-white border border-zinc-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                      <span className="font-medium text-zinc-900 truncate">{s.name}</span>
+                      <span className="text-[11px] text-zinc-400 tabular-nums shrink-0">{s.ticker}</span>
+                    </div>
+                    <div className="flex items-baseline gap-2 mb-2 flex-wrap">
+                      <span className="text-sm font-semibold text-zinc-900 tabular-nums">
+                        {s.currentPrice.toLocaleString()}원
+                      </span>
+                      <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                        {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-zinc-500 tabular-nums flex-wrap">
+                      <span>PER {s.per > 0 ? s.per.toFixed(1) : "-"}</span>
+                      <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) : "-"}</span>
+                      <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "-"}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="flex items-baseline gap-1 justify-end mb-2">
+                      <span className="text-lg font-bold text-blue-700 tabular-nums">{s.compositeScore || 0}</span>
+                      <span className="text-[10px] text-zinc-400">/100</span>
+                    </div>
+                    <div className="flex gap-1 justify-end text-[10px] flex-wrap">
+                      <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded tabular-nums">M{s.momentum}</span>
+                      <span className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded tabular-nums">F{s.flow}</span>
+                      <span className="bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded tabular-nums">V{s.value}</span>
+                      <span className="bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded tabular-nums">Vo{s.vol}</span>
+                    </div>
+                  </div>
+                </div>
+                {s.themes.length > 0 ? (
+                  <div className="flex gap-1 flex-wrap mt-2">
+                    {s.themes.slice(0, 3).map((t) => (
+                      <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+                        {t}
+                      </span>
+                    ))}
+                    {s.themes.length > 3 ? (
+                      <span className="text-[10px] text-zinc-400">+{s.themes.length - 3}</span>
+                    ) : null}
+                  </div>
+                ) : null}
+              </Link>
+            ))
+          )}
+          {sorted.length > 100 ? (
+            <div className="text-xs text-zinc-500 text-center py-3">
+              상위 100개만 표시. 필터를 좁혀주세요.
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {drawerOpen ? (
+        <>
+          <div
+            onClick={() => setDrawerOpen(false)}
+            className="lg:hidden fixed inset-0 bg-black/50 z-50"
+            aria-hidden
+          />
+          <div className="lg:hidden fixed inset-y-0 right-0 w-[320px] max-w-[90vw] bg-white z-50 shadow-2xl flex flex-col">
+            <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 shrink-0">
+              <h3 className="text-sm font-semibold text-zinc-900">필터</h3>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 text-zinc-500"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <FilterPanel />
+            </div>
+            <div className="p-3 border-t border-zinc-200 shrink-0 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="px-3 py-2 text-sm border border-zinc-300 rounded hover:bg-zinc-50"
+              >
+                초기화
+              </button>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="px-3 py-2 text-sm bg-zinc-900 text-white rounded hover:bg-zinc-800"
+              >
+                {sorted.length}개 보기
+              </button>
+            </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
