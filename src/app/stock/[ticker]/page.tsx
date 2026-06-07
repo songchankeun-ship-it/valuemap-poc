@@ -103,12 +103,12 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500" },
-            { l: "자금흐름", sc: s.flow, c: "bg-green-500" },
-            { l: "밸류", sc: s.value, c: "bg-cyan-500" },
-            { l: "변동성조정", sc: s.vol, c: "bg-orange-500" },
+            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", anchor: "momentum" },
+            { l: "자금흐름", sc: s.flow, c: "bg-green-500", anchor: "flow" },
+            { l: "밸류", sc: s.value, c: "bg-cyan-500", anchor: "value" },
+            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", anchor: "vol" },
           ].map((x) => (
-            <Link key={x.l} href="/guide/metrics" className="block hover:bg-zinc-50 -mx-1 px-1 py-1 rounded transition">
+            <Link key={x.l} href={"/guide/metrics#" + x.anchor} className="block hover:bg-zinc-50 -mx-1 px-1 py-1 rounded transition">
               <div className="text-xs text-gray-600 mb-1">{x.l}</div>
               <div className="text-lg font-semibold tabular-nums">{x.sc.toFixed(0)}</div>
               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">

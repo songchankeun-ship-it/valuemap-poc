@@ -8,6 +8,7 @@ export const metadata = {
 
 const METRICS = [
   {
+    id: "momentum",
     name: "모멘텀",
     color: "bg-blue-500",
     desc: "최근 1개월·3개월·6개월 수익률을 가중평균한 추세 지표.",
@@ -16,14 +17,16 @@ const METRICS = [
     low: "최근 흐름이 부진. 반대로 저점 매수 기회일 가능성도 있습니다.",
   },
   {
+    id: "flow",
     name: "자금흐름",
     color: "bg-green-500",
     desc: "최근 거래량 변화로 측정한 시장 관심도 지표.",
-    calc: "최근 5일 평균 거래량 / 20일 평균 거래량 비율. 평소대로 = 50점, 2배 = 75점, 3배+ = 100점.",
+    calc: "최근 5일 평균 거래량 / 20일 평균 거래량 비율. 1배 = 50점, 2배 = 75점, 3배+ = 100점.",
     high: "거래량이 평소보다 크게 증가. 시장의 관심이 쏠리는 구간.",
     low: "거래량이 평소보다 줄어든 상태. 관심도 낮음 또는 횡보 중.",
   },
   {
+    id: "value",
     name: "밸류",
     color: "bg-cyan-500",
     desc: "전체 풀 안에서의 상대적 저평가 정도 (PER·PBR 분위).",
@@ -32,6 +35,7 @@ const METRICS = [
     low: "전체 풀에서 상대적으로 고평가. 성장 기대치가 가격에 이미 반영됐을 수 있습니다.",
   },
   {
+    id: "vol",
     name: "변동성조정",
     color: "bg-orange-500",
     desc: "연간화 수익률을 연간화 변동성으로 나눈 위험조정 수익 (Sharpe 유사).",
@@ -52,6 +56,13 @@ export default function GuidePage() {
         </p>
       </header>
 
+      <nav className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 flex gap-2 flex-wrap text-xs">
+        <span className="text-zinc-500 font-medium">바로 가기:</span>
+        {METRICS.map((m) => (
+          <Link key={m.id} href={"#" + m.id} className="text-blue-700 hover:underline">{m.name}</Link>
+        ))}
+      </nav>
+
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
         <p className="text-sm text-amber-900 leading-relaxed">
           <strong>이 도구는 투자 추천이 아닙니다.</strong> 자체 지표는 <strong>어떤 종목을 더 자세히 들여다볼지</strong>를 정하는 <strong>탐색 우선순위</strong>에 도움을 주는 신호이며, 매수·매도 판단의 근거가 아닙니다. 모든 투자 결정과 책임은 사용자 본인에게 있습니다.
@@ -59,7 +70,7 @@ export default function GuidePage() {
       </div>
 
       {METRICS.map((m, i) => (
-        <section key={m.name} className="bg-white border border-zinc-200 rounded-lg p-5">
+        <section key={m.name} id={m.id} className="bg-white border border-zinc-200 rounded-lg p-5 scroll-mt-24">
           <div className="flex items-center gap-3 mb-3">
             <span className={"w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold " + m.color}>
               {i + 1}
