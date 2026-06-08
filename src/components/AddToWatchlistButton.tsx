@@ -1,78 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import {
+  addToWatchlist,
+  removeFromWatchlist,
+  isInWatchlist,
+} from "@/lib/watchlist";
 
-interface Props {
+export function AddToWatchlistButton({
+  ticker,
+  name,
+}: {
   ticker: string;
   name: string;
-}
+}) {
+  const [isAdded, setIsAdded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-interface WatchlistItem {
-  ticker: string;
-  name: string;
-  addedAt: number;
-}
-
-const STORAGE_KEY = "valuemap_watchlist";
-
-export function AddToWatchlistButton({ ticker, name }: Props) {
-  const [inWatchlist, setInWatchlist] = useState(false);
-  const [toast, setToast] = useState({ msg: "", show: false });
-
+  // 초기 상태 로드
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const list: WatchlistItem[] = JSON.parse(raw);
-      setInWatchlist(list.some((item) => item.ticker === ticker));
-    } catch {}
+    let mounted = true;
+    isInWatchlist(ticker).then((result) => {
+      if (mounted) {
+        setIsAdded(result);
+        setLoading(false);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
   }, [ticker]);
 
-  const toggle = () => {
-    let list: WatchlistItem[] = [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) list = JSON.parse(raw);
-    } catch {}
-    const willBeIn = !inWatchlist;
-    if (inWatchlist) {
-      list = list.filter((item) => item.ticker !== ticker);
-    } else {
-      list.push({ ticker, name, addedAt: Date.now() });
+  // 외부 변경 감지
+  useEffect(() => {
+    function onChange() {
+      isInWatchlist(ticker).then((result) => setIsAdded(result));
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    setInWatchlist(willBeIn);
-    window.dispatchEvent(new CustomEvent("watchlist-changed"));
-    setToast({
-      msg: willBeIn ? name + "을(를) 관심 종목에 추가했습니다" : name + "을(를) 관심 종목에서 제거했습니다",
-      show: true,
-    });
-    setTimeout(() => setToast({ msg: "", show: false }), 3000);
-  };
+    window.addEventListener("watchlist-changed", onChange);
+    return () => window.removeEventListener("watchlist-changed", onChange);
+  }, [ticker]);
+
+  async function handleClick() {
+    if (loading) return;
+    if (isAdded) {
+      setIsAdded(false); // 낙관적 업데이트
+      await removeFromWatchlist(ticker);
+    } else {
+      setIsAdded(true); // 낙관적 업데이트
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      await addToWatchlist(ticker);
+    }
+  }
 
   return (
     <>
       <button
         type="button"
-        onClick={toggle}
-        className={"px-3 py-1.5 border rounded-md text-sm transition flex items-center gap-1.5 " + (
-          inWatchlist
-            ? "bg-pink-50 border-pink-300 text-pink-700"
-            : "border-zinc-300 text-zinc-700 hover:border-pink-300 hover:text-pink-600"
-        )}
-        title={inWatchlist ? "관심 종목에서 제거" : "관심 종목에 추가"}
+        onClick={handleClick}
+        disabled={loading}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm font-medium transition disabled:opacity-50 ${
+          isAdded
+            ? "bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
+            : "bg-white border-zinc-300 text-zinc-700 hover:bg-zinc-50"
+        }`}
+        aria-label={isAdded ? "관심 종목에서 제거" : "관심 종목에 추가"}
       >
-        <Heart className="w-3.5 h-3.5" fill={inWatchlist ? "currentColor" : "none"} strokeWidth={2} />
-        <span>{inWatchlist ? "관심" : "관심"}</span>
+        <Heart
+          className="w-4 h-4"
+          fill={isAdded ? "currentColor" : "none"}
+          strokeWidth={isAdded ? 0 : 1.8}
+        />
+        {isAdded ? "관심 등록됨" : "관심 종목"}
       </button>
 
-      {toast.show ? (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-zinc-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-sm flex items-center gap-3 max-w-[90vw]">
-          <span className="truncate">{toast.msg}</span>
-          <Link href="/watchlist" className="text-pink-300 hover:text-pink-200 hover:underline shrink-0 font-medium">
-            관심 종목 →
+      {showToast ? (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-zinc-900 text-white text-sm px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2">
+          <Heart className="w-4 h-4 text-pink-400" fill="currentColor" />
+          <span>{name} 관심 종목 추가됨</span>
+          <Link
+            href="/watchlist"
+            className="text-pink-300 hover:text-pink-200 font-medium ml-2"
+          >
+            [목록 보기 →]
           </Link>
         </div>
       ) : null}
