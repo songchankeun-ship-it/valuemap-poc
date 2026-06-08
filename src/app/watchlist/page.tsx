@@ -23,9 +23,9 @@ export default async function WatchlistPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-xl font-bold text-zinc-900 mb-1">관심 종목</h1>
+    <div className="max-w-3xl mx-auto px-0 md:px-4 py-4 md:py-8">
+      <header className="mb-4 md:mb-6">
+        <h1 className="text-lg md:text-xl font-bold text-zinc-900 mb-1">관심 종목</h1>
         <p className="text-xs text-zinc-600">
           {isLoggedIn
             ? "로그인 됨 — 여러 기기에서 같은 목록이 보입니다."

@@ -70,7 +70,7 @@ export default function GuidePage() {
       </div>
 
       {METRICS.map((m, i) => (
-        <section key={m.name} id={m.id} className="bg-white border border-zinc-200 rounded-lg p-5 scroll-mt-24">
+        <section key={m.name} id={m.id} className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5 scroll-mt-24">
           <div className="flex items-center gap-3 mb-3">
             <span className={"w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold " + m.color}>
               {i + 1}
@@ -97,7 +97,7 @@ export default function GuidePage() {
         </section>
       ))}
 
-      <section className="bg-zinc-900 text-white rounded-lg p-5">
+      <section className="bg-zinc-900 text-white rounded-lg p-3 md:p-5">
         <h2 className="text-lg font-semibold mb-2">종합 점수</h2>
         <p className="text-sm text-zinc-300 leading-relaxed mb-3">
           위 네 지표의 단순 평균입니다. 종합 점수가 높다는 건 <strong className="text-white">"네 각도에서 모두 우호적인 상태"</strong>로 해석할 수 있다는 뜻입니다.

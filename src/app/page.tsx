@@ -9,8 +9,8 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-zinc-200 p-6 md:p-10">
+    <div className="space-y-5 md:space-y-8">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-zinc-200 p-5 md:p-10">
         <span className="inline-block text-[10px] font-semibold tracking-widest text-blue-700 uppercase mb-3 px-2 py-0.5 rounded bg-white/60">
           한국 테마주 분석 도구 · 베타
         </span>
@@ -56,7 +56,7 @@ export default function HomePage() {
         </Link>
       </section>
 
-      <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-xl p-5 flex items-center justify-between text-white shadow-md gap-3 flex-wrap">
+      <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-xl p-4 md:p-5 flex items-center justify-between text-white shadow-md gap-3 flex-wrap">
         <div>
           <div className="text-xs font-medium text-blue-300 mb-1 uppercase tracking-wider">Coming Soon</div>
           <div className="text-base font-semibold">5년치 실데이터로 전략 검증</div>
@@ -67,7 +67,7 @@ export default function HomePage() {
         </Link>
       </section>
 
-      <section className="bg-blue-50 border border-blue-100 rounded-xl p-5 text-sm text-zinc-700 leading-relaxed">
+      <section className="bg-blue-50 border border-blue-100 rounded-xl p-4 md:p-5 text-sm text-zinc-700 leading-relaxed">
         <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">왜 밸류맵인가</div>
         한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong>모멘텀 · 자금흐름 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
       </section>

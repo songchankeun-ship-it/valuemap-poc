@@ -213,9 +213,9 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       <div className="flex items-baseline justify-between flex-wrap gap-2">
-        <h1 className="text-xl font-semibold text-zinc-900">종목 탐색</h1>
+        <h1 className="text-lg md:text-xl font-semibold text-zinc-900">종목 탐색</h1>
         <span className="text-xs text-zinc-500 tabular-nums">{sorted.length}개 / {stocks.length}개 종목</span>
       </div>
 
@@ -291,7 +291,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
             <div className="text-sm text-zinc-500 text-center py-12 bg-white border border-zinc-200 rounded-lg">조건에 맞는 종목이 없습니다.</div>
           ) : (
             sorted.slice(0, 100).map((s) => (
-              <Link key={s.ticker} href={"/stock/" + s.ticker} className="block bg-white border border-zinc-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition">
+              <Link key={s.ticker} href={"/stock/" + s.ticker} className="block bg-white border border-zinc-200 rounded-lg p-3 md:p-4 hover:border-blue-300 hover:shadow-sm transition">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2 mb-1 flex-wrap">

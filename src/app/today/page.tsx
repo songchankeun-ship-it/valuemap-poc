@@ -52,34 +52,34 @@ export default function TodayPage() {
   const medianPbr = median(validPbrs);
 
   return (
-    <div className="space-y-6">
-      <header className="border-b border-zinc-200 pb-4">
-        <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
-        <h1 className="text-2xl font-bold text-zinc-900">{today}</h1>
-        <p className="text-xs text-zinc-500 mt-2">
-          시장 데이터 <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 기준 · 종목 {realStockPool.length}개
+    <div className="space-y-4 md:space-y-6">
+      <header className="border-b border-zinc-200 pb-3 md:pb-4">
+        <div className="text-[10px] md:text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
+        <h1 className="text-lg md:text-2xl font-bold text-zinc-900">{today}</h1>
+        <p className="text-[11px] md:text-xs text-zinc-500 mt-1.5 md:mt-2">
+          <strong className="text-zinc-700 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 · 종목 {realStockPool.length}개
         </p>
       </header>
 
       <section className="grid grid-cols-3 gap-2">
-        <div className="bg-blue-50 rounded-lg p-3">
-          <div className="text-[10px] text-blue-700 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
-          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{realStockPool.length}</div>
-          <div className="text-[10px] text-blue-700/70 mt-0.5">실데이터 기준</div>
+        <div className="bg-blue-50 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-blue-700 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
+          <div className="text-lg md:text-2xl font-bold text-zinc-900 tabular-nums">{realStockPool.length}</div>
+          <div className="text-[9px] md:text-[10px] text-blue-700/70 mt-0.5">실데이터</div>
         </div>
-        <div className="bg-emerald-50 rounded-lg p-3">
-          <div className="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
-          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{medianPer.toFixed(1)}x</div>
-          <div className="text-[10px] text-emerald-700/70 mt-0.5">유효 종목 · 적자/극단값 제외</div>
+        <div className="bg-emerald-50 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
+          <div className="text-lg md:text-2xl font-bold text-zinc-900 tabular-nums">{medianPer.toFixed(1)}x</div>
+          <div className="text-[9px] md:text-[10px] text-emerald-700/70 mt-0.5">극단값 제외</div>
         </div>
-        <div className="bg-amber-50 rounded-lg p-3">
-          <div className="text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
-          <div className="text-2xl font-bold text-zinc-900 tabular-nums">{medianPbr.toFixed(2)}x</div>
-          <div className="text-[10px] text-amber-700/70 mt-0.5">유효 종목 · 극단값 제외</div>
+        <div className="bg-amber-50 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
+          <div className="text-lg md:text-2xl font-bold text-zinc-900 tabular-nums">{medianPbr.toFixed(2)}x</div>
+          <div className="text-[9px] md:text-[10px] text-amber-700/70 mt-0.5">극단값 제외</div>
         </div>
       </section>
 
-      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+      <section className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <h2 className="text-sm font-semibold text-zinc-900">균형 잡힌 종목 Top 5</h2>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">composite</span>
@@ -104,7 +104,7 @@ export default function TodayPage() {
         </ul>
       </section>
 
-      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+      <section className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <h2 className="text-sm font-semibold text-zinc-900">상대적 저평가 Top 5</h2>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">value</span>
@@ -127,7 +127,7 @@ export default function TodayPage() {
         </ul>
       </section>
 
-      <section className="bg-white border border-zinc-200 rounded-lg p-5">
+      <section className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <h2 className="text-sm font-semibold text-zinc-900">강세 추세 Top 5</h2>
           <span className="text-[10px] text-zinc-500 uppercase tracking-wider">momentum</span>
@@ -156,7 +156,7 @@ export default function TodayPage() {
         </ul>
       </section>
 
-      <section className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-5">
+      <section className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <h2 className="text-sm font-semibold text-amber-900">오늘의 공시 신호</h2>
           <Link href="/disclosures" className="text-xs text-amber-700 hover:underline">전체 보기 →</Link>

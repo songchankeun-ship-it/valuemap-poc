@@ -38,7 +38,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12">
+    <div className="max-w-md mx-auto px-3 md:px-4 py-6 md:py-12">
       <Link
         href={next}
         className="inline-flex items-center gap-1.5 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
@@ -47,8 +47,8 @@ function LoginForm() {
         {next === "/" ? "홈으로" : "이전 페이지로"}
       </Link>
 
-      <div className="bg-white rounded-xl border border-zinc-200 p-8">
-        <h1 className="text-2xl font-bold text-zinc-900 mb-2">밸류맵 로그인</h1>
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 md:p-8">
+        <h1 className="text-xl md:text-2xl font-bold text-zinc-900 mb-2">밸류맵 로그인</h1>
         <p className="text-sm text-zinc-600 mb-6">
           이메일로 로그인 링크를 보내드려요. 비밀번호 없이 한 번 클릭으로 로그인됩니다.
         </p>

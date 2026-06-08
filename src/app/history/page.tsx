@@ -19,9 +19,9 @@ export default async function HistoryPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-xl font-bold text-zinc-900 mb-1">AI 분석 기록</h1>
+    <div className="max-w-3xl mx-auto px-0 md:px-4 py-4 md:py-8">
+      <header className="mb-4 md:mb-6">
+        <h1 className="text-lg md:text-xl font-bold text-zinc-900 mb-1">AI 분석 기록</h1>
         <p className="text-xs text-zinc-600">
           종목 페이지에서 받은 AI 분석이 자동으로 저장됩니다. 최근 50개까지 보관.
         </p>
