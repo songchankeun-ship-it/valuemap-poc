@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveAnalysis } from "@/lib/aiHistory";
 
 interface AnalysisOutput {
   oneLineSummary: string;
@@ -25,7 +26,7 @@ interface AnalysisResponse {
   error?: string;
 }
 
-export function AiAnalysisCard({ ticker }: { ticker: string }) {
+export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AnalysisResponse | null>(null);
@@ -44,6 +45,15 @@ export function AiAnalysisCard({ ticker }: { ticker: string }) {
         setError(json.error ?? "분석 생성에 실패했습니다.");
       } else {
         setData(json);
+        // 로그인 상태면 자동으로 DB에 기록 저장 (실패해도 사용자엔 영향 X)
+        saveAnalysis({
+          ticker,
+          tickerName: name,
+          analysis: json.analysis,
+          model: json.model,
+          source: json.source,
+          costKRW: json.costKRW,
+        }).catch(() => {});
       }
     } catch (e) {
       setError((e as Error).message);

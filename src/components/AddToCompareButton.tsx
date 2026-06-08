@@ -2,62 +2,77 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  addToCompare,
+  removeFromCompare,
+  isInCompare,
+  COMPARE_MAX,
+} from "@/lib/compare";
 
 interface Props {
   ticker: string;
   name: string;
 }
 
-const STORAGE_KEY = "valuemap_compare_basket";
-
 export function AddToCompareButton({ ticker, name }: Props) {
   const [inBasket, setInBasket] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; show: boolean }>({ msg: "", show: false });
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const list: string[] = JSON.parse(raw);
-      setInBasket(list.includes(ticker));
-    } catch {}
+    let mounted = true;
+    isInCompare(ticker).then((result) => {
+      if (mounted) {
+        setInBasket(result);
+        setLoading(false);
+      }
+    });
+
+    function onChange() {
+      isInCompare(ticker).then((result) => {
+        if (mounted) setInBasket(result);
+      });
+    }
+    window.addEventListener("compare-basket-changed", onChange);
+    return () => {
+      mounted = false;
+      window.removeEventListener("compare-basket-changed", onChange);
+    };
   }, [ticker]);
 
-  const toggle = () => {
-    let list: string[] = [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) list = JSON.parse(raw);
-    } catch {}
-    const willBeInBasket = !inBasket;
-    if (inBasket) {
-      list = list.filter((t) => t !== ticker);
-    } else {
-      if (list.length >= 4) {
-        setToast({ msg: "비교는 최대 4개까지 가능합니다", show: true });
-        setTimeout(() => setToast({ msg: "", show: false }), 3000);
-        return;
-      }
-      list.push(ticker);
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    setInBasket(willBeInBasket);
-    window.dispatchEvent(new CustomEvent("compare-basket-changed"));
-    setToast({
-      msg: willBeInBasket
-        ? name + "을(를) 비교함에 추가했습니다"
-        : name + "을(를) 비교함에서 제거했습니다",
-      show: true,
-    });
+  function showToast(msg: string) {
+    setToast({ msg, show: true });
     setTimeout(() => setToast({ msg: "", show: false }), 3000);
-  };
+  }
+
+  async function toggle() {
+    if (loading) return;
+
+    if (inBasket) {
+      setInBasket(false); // 낙관적
+      await removeFromCompare(ticker);
+      showToast(name + "을(를) 비교함에서 제거했습니다");
+    } else {
+      // 낙관적 업데이트 전에 결과 확인 필요 (최대 4개 제한)
+      const result = await addToCompare(ticker);
+      if (result.ok) {
+        setInBasket(true);
+        showToast(name + "을(를) 비교함에 추가했습니다");
+      } else if (result.reason === "max") {
+        showToast(`비교는 최대 ${COMPARE_MAX}개까지 가능합니다`);
+      } else {
+        showToast("추가에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
+  }
 
   return (
     <>
       <button
         type="button"
         onClick={toggle}
-        className={"px-3 py-1.5 border rounded-md text-sm transition " + (
+        disabled={loading}
+        className={"px-3 py-1.5 border rounded-md text-sm transition disabled:opacity-50 " + (
           inBasket
             ? "bg-blue-50 border-blue-300 text-blue-700"
             : "border-zinc-300 text-zinc-700 hover:border-blue-300 hover:text-blue-600"

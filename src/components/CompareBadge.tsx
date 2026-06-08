@@ -2,40 +2,31 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const STORAGE_KEY = "valuemap_compare_basket";
+import { getCompareList } from "@/lib/compare";
 
 export function CompareBadge() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    function updateCount() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          setCount(0);
-          return;
-        }
-        const list: string[] = JSON.parse(raw);
-        setCount(Array.isArray(list) ? list.length : 0);
-      } catch {
-        setCount(0);
-      }
-    }
-    updateCount();
+    let mounted = true;
 
-    function onStorage(e: StorageEvent) {
-      if (e.key === STORAGE_KEY) updateCount();
+    function update() {
+      getCompareList().then((list) => {
+        if (mounted) setCount(list.length);
+      });
     }
+    update();
+
     function onCustom() {
-      updateCount();
+      update();
     }
 
-    window.addEventListener("storage", onStorage);
-    window.addEventListener("compare-basket-changed", onCustom as EventListener);
+    window.addEventListener("compare-basket-changed", onCustom);
+    window.addEventListener("valuemap:compare-updated", onCustom);
     return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("compare-basket-changed", onCustom as EventListener);
+      mounted = false;
+      window.removeEventListener("compare-basket-changed", onCustom);
+      window.removeEventListener("valuemap:compare-updated", onCustom);
     };
   }, []);
 

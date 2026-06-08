@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const STORAGE_KEY = "valuemap:compare";
+import {
+  getCompareList,
+  removeFromCompare,
+  clearCompare,
+} from "@/lib/compare";
 
 interface CompareStock {
   ticker: string;
@@ -21,24 +24,6 @@ interface CompareStock {
   vol: number;
   neglectScore: number;
   themes: string[];
-}
-
-function readTickers(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeTickers(tickers: string[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tickers));
-  window.dispatchEvent(new Event("valuemap:compare-updated"));
 }
 
 const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol" | "neglectScore"; label: string; color: string }> = [
@@ -71,27 +56,40 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
+    function reload() {
+      getCompareList().then((list) => {
+        if (active) setTickers(list);
+      });
+    }
+
     setMounted(true);
-    setTickers(readTickers());
+    reload();
 
     function onUpdate() {
-      setTickers(readTickers());
+      reload();
     }
+    window.addEventListener("compare-basket-changed", onUpdate);
     window.addEventListener("valuemap:compare-updated", onUpdate);
     window.addEventListener("storage", onUpdate);
     return () => {
+      active = false;
+      window.removeEventListener("compare-basket-changed", onUpdate);
       window.removeEventListener("valuemap:compare-updated", onUpdate);
       window.removeEventListener("storage", onUpdate);
     };
   }, []);
 
-  function remove(ticker: string) {
-    writeTickers(tickers.filter((t) => t !== ticker));
+  async function remove(ticker: string) {
+    setTickers((prev) => prev.filter((t) => t !== ticker)); // 낙관적
+    await removeFromCompare(ticker);
   }
 
-  function clearAll() {
+  async function clearAll() {
     if (!confirm("비교 목록을 모두 비울까요?")) return;
-    writeTickers([]);
+    setTickers([]); // 낙관적
+    await clearCompare();
   }
 
   if (!mounted) return null;

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Bot } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const ITEMS = [
@@ -11,6 +11,7 @@ const ITEMS = [
   { href: "/stocks", Icon: Search, label: "종목 탐색", soon: false },
   { href: "/watchlist", Icon: Heart, label: "관심 종목", soon: false },
   { href: "/compare", Icon: GitCompare, label: "비교", soon: false },
+  { href: "/history", Icon: Bot, label: "분석 기록", soon: false },
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
   { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },

@@ -163,7 +163,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <section><AiAnalysisCard ticker={s.ticker} /></section>
+      <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
       <section><StockDisclosures ticker={s.ticker} /></section>
     </div>
   );
