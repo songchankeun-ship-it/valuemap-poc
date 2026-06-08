@@ -7,6 +7,7 @@ import { GlobalSearch } from "./GlobalSearch";
 import { CompareBadge } from "./CompareBadge";
 import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
+import { WelcomeToast } from "./WelcomeToast";
 
 function formatDataAsOf(iso?: string): string {
   if (!iso) return "-";
@@ -24,6 +25,16 @@ function formatDataAsOf(iso?: string): string {
   }
 }
 
+async function getUserEmail(): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    return data.user?.email ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function AppHeader() {
   const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
   const stocks = getAllStocks().map((s) => ({
@@ -32,15 +43,13 @@ export async function AppHeader() {
     themes: s.themes,
   }));
   const themes = allThemes();
-
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const userEmail = await getUserEmail();
 
   return (
     <>
       <header className="border-b border-zinc-200 bg-white/95 backdrop-blur-md sticky top-0 z-40">
         <div className="px-4 py-2.5 flex items-center gap-3">
-          <MobileNav />
+          <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
             <span className="text-base font-semibold tracking-tight text-zinc-900">밸류맵</span>
@@ -57,7 +66,7 @@ export async function AppHeader() {
           <div className="flex items-center gap-2 shrink-0">
             <CompareBadge />
             <span className="hidden md:inline text-[11px] text-zinc-500 tabular-nums">{dataMetadata.count}개 종목</span>
-            {user ? <UserMenu email={user.email!} /> : <AccountButtons />}
+            {userEmail ? <UserMenu email={userEmail} /> : <AccountButtons />}
           </div>
         </div>
       </header>
@@ -74,6 +83,8 @@ export async function AppHeader() {
           <span className="text-zinc-500 md:hidden whitespace-nowrap">KRX · DART</span>
         </div>
       </div>
+
+      <WelcomeToast />
     </>
   );
 }

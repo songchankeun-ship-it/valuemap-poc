@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const ITEMS = [
   { href: "/today", Icon: CalendarDays, label: "오늘", soon: false },
   { href: "/stocks", Icon: Search, label: "종목 탐색", soon: false },
   { href: "/watchlist", Icon: Heart, label: "관심 종목", soon: false },
+  { href: "/compare", Icon: GitCompare, label: "비교", soon: false },
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
   { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },
@@ -18,9 +20,10 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function MobileNav() {
+export function MobileNav({ userEmail }: { userEmail: string | null }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
@@ -37,6 +40,19 @@ export function MobileNav() {
     if (open) document.addEventListener("keydown", onEsc);
     return () => document.removeEventListener("keydown", onEsc);
   }, [open]);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setOpen(false);
+    router.refresh();
+  }
+
+  // 현재 페이지를 next로 (홈/로그인 페이지는 제외)
+  const loginNext =
+    pathname && pathname !== "/" && pathname !== "/login"
+      ? `?next=${encodeURIComponent(pathname)}`
+      : "";
 
   return (
     <>
@@ -101,22 +117,30 @@ export function MobileNav() {
             </nav>
 
             <div className="p-3 border-t border-zinc-200 space-y-2">
-              <button
-                type="button"
-                className="w-full px-3 py-2.5 text-zinc-700 hover:bg-zinc-100 rounded-md text-sm font-medium text-center transition"
-              >
-                로그인
-              </button>
-              <button
-                type="button"
-                disabled
-                className="w-full px-3 py-2.5 bg-zinc-200 text-zinc-500 rounded-md text-sm font-medium text-center cursor-not-allowed"
-              >
-                시작하기
-              </button>
-              <p className="text-[10px] text-zinc-500 text-center pt-1">
-                계정 시스템 준비 중
-              </p>
+              {userEmail ? (
+                <>
+                  <div className="px-3 py-2 bg-zinc-50 rounded-md">
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-wide">로그인 됨</div>
+                    <div className="text-xs text-zinc-900 font-medium truncate">{userEmail}</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-zinc-700 hover:bg-zinc-100 rounded-md text-sm font-medium transition"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    로그아웃
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href={`/login${loginNext}`}
+                  onClick={() => setOpen(false)}
+                  className="block w-full px-3 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium text-center hover:bg-zinc-800 transition"
+                >
+                  로그인 / 시작하기
+                </Link>
+              )}
             </div>
 
             <div className="px-4 py-3 bg-amber-50 border-t border-amber-200 text-[11px] text-amber-900 leading-relaxed">
