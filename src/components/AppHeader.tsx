@@ -48,22 +48,21 @@ export async function AppHeader() {
   return (
     <>
       <header className="border-b border-zinc-200 bg-white/95 backdrop-blur-md sticky top-0 z-40">
-        <div className="px-4 py-2.5 flex items-center gap-3">
+        <div className="px-3 md:px-4 py-2 md:py-2.5 flex items-center gap-2 md:gap-3">
           <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
             <span className="text-base font-semibold tracking-tight text-zinc-900">밸류맵</span>
           </Link>
-          <Link href="/" className="lg:hidden flex items-center gap-2 shrink-0">
+          <Link href="/" className="lg:hidden flex items-center shrink-0" aria-label="홈">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
-            <span className="text-base font-semibold tracking-tight text-zinc-900">밸류맵</span>
           </Link>
 
-          <div className="flex-1 flex justify-center max-w-xl mx-auto">
+          <div className="flex-1 flex justify-center max-w-xl mx-auto min-w-0">
             <GlobalSearch stocks={stocks} themes={themes} />
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
             <CompareBadge />
             <span className="hidden md:inline text-[11px] text-zinc-500 tabular-nums">{dataMetadata.count}개 종목</span>
             {userEmail ? <UserMenu email={userEmail} /> : <AccountButtons />}
@@ -72,15 +71,14 @@ export async function AppHeader() {
       </header>
 
       <div className="bg-zinc-50 border-b border-zinc-200">
-        <div className="px-4 py-1.5 flex items-center justify-between gap-2 text-[11px] text-zinc-600">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px] text-zinc-600">
+          <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
             <span className="truncate">
-              데이터 기준 <strong className="text-zinc-900 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 기준
+              <strong className="text-zinc-900 tabular-nums">{dataAsOf}</strong> KST <span className="hidden sm:inline">· 최근 거래일 마감</span>
             </span>
           </div>
           <span className="text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
-          <span className="text-zinc-500 md:hidden whitespace-nowrap">KRX · DART</span>
         </div>
       </div>
 

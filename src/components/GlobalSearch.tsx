@@ -95,7 +95,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
       <input
         ref={inputRef}
         type="search"
-        placeholder="종목명 · 티커 · 테마 검색"
+        placeholder="종목·테마 검색"
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -104,7 +104,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
         onFocus={() => setOpen(true)}
         onKeyDown={handleKeyDown}
         autoComplete="off"
-        className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 border border-zinc-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition"
+        className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 border border-zinc-200 rounded-md text-sm placeholder:text-zinc-500 focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition"
       />
       <svg
         className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"

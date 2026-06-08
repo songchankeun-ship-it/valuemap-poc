@@ -64,7 +64,7 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 
   if (!data) {
     return (
-      <div className="bg-brand-50 rounded-lg p-4">
+      <div className="bg-brand-50 rounded-lg p-3 md:p-4">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="text-sm font-medium text-brand-700 mb-0.5">
@@ -93,7 +93,7 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 
   const a = data.analysis;
   return (
-    <div className="bg-white border border-brand-200 rounded-lg p-4 space-y-4">
+    <div className="bg-white border border-brand-200 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
       <header className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
