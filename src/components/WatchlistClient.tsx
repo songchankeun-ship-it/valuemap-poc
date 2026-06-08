@@ -44,10 +44,36 @@ function formatTime(iso: string): string {
   return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
 }
 
+type StockInfo = {
+  ticker: string;
+  name: string;
+  momentum?: number;
+  flow?: number;
+  value?: number;
+  vol?: number;
+  compositeScore?: number;
+};
+
+type SignalInfo = {
+  signalLabel: string;
+  signalType: string;
+  strength: number;
+};
+
+const SIGNAL_TONE: Record<string, string> = {
+  treasury_buy: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  insider_buy: "bg-blue-50 text-blue-700 border-blue-200",
+  correction: "bg-amber-50 text-amber-700 border-amber-200",
+  single_contract: "bg-sky-50 text-sky-700 border-sky-200",
+  capital_raise: "bg-pink-50 text-pink-700 border-pink-200",
+};
+
 export function WatchlistClient({
   allStocks,
+  tickerToSignal = {},
 }: {
-  allStocks: { ticker: string; name: string }[];
+  allStocks: StockInfo[];
+  tickerToSignal?: Record<string, SignalInfo>;
 }) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
@@ -139,26 +165,43 @@ export function WatchlistClient({
         ) : (
           <ul className="bg-white border border-zinc-200 rounded-lg divide-y divide-zinc-100">
             {watchlist.map((item) => {
-              const name = nameOf(item.ticker);
+              const info = allStocks.find((s) => s.ticker === item.ticker);
+              const name = info?.name ?? item.ticker;
+              const signal = tickerToSignal[item.ticker];
               return (
                 <li key={item.ticker} className="flex items-center justify-between px-4 py-3 hover:bg-zinc-50">
                   <Link
                     href={`/stock/${item.ticker}`}
-                    className="flex-1 flex items-center gap-3 group"
+                    className="flex-1 flex items-center gap-3 group min-w-0"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-zinc-900 group-hover:text-blue-600 truncate">
-                        {name}
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <span className="text-sm font-medium text-zinc-900 group-hover:text-blue-600 truncate">
+                          {name}
+                        </span>
+                        {signal ? (
+                          <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[signal.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
+                            🔔 {signal.signalLabel}
+                          </span>
+                        ) : null}
                       </div>
-                      <div className="text-xs text-zinc-500 tabular-nums">
-                        {item.ticker} · 추가 {formatTime(item.addedAt)}
+                      <div className="text-xs text-zinc-500 tabular-nums flex items-center gap-1.5 flex-wrap">
+                        <span>{item.ticker}</span>
+                        {info?.compositeScore !== undefined ? (
+                          <>
+                            <span className="text-zinc-300">·</span>
+                            <span>점수 <strong className="text-zinc-700">{info.compositeScore}</strong></span>
+                          </>
+                        ) : null}
+                        <span className="text-zinc-300">·</span>
+                        <span>추가 {formatTime(item.addedAt)}</span>
                       </div>
                     </div>
                   </Link>
                   <button
                     type="button"
                     onClick={() => handleRemove(item.ticker)}
-                    className="ml-2 p-1.5 text-zinc-400 hover:text-red-600 transition"
+                    className="ml-2 p-1.5 text-zinc-400 hover:text-red-600 transition shrink-0"
                     aria-label="관심 종목에서 제거"
                   >
                     <X className="w-4 h-4" />

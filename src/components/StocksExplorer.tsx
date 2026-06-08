@@ -276,7 +276,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
       ) : null}
 
       <div className="bg-blue-50 border border-blue-100 rounded-md px-3 py-2 text-[10px] text-blue-800 flex items-center justify-between md:hidden">
-        <span>지표 약어: <strong>M</strong>=모멘텀 · <strong>F</strong>=자금흐름 · <strong>V</strong>=밸류 · <strong>Vo</strong>=변동성조정</span>
+        <span><strong>M</strong>=추세 · <strong>F</strong>=거래 · <strong>V</strong>=저평가 · <strong>Vo</strong>=위험대비</span>
         <Link href="/guide/metrics" className="text-blue-700 underline shrink-0 ml-2">자세히</Link>
       </div>
 
@@ -323,6 +323,23 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                     </div>
                   </div>
                 </div>
+                {(() => {
+                  const insights: { label: string; tone: string }[] = [];
+                  if (s.momentum >= 70) insights.push({ label: "추세 강함", tone: "bg-blue-50 text-blue-700 border-blue-200" });
+                  if (s.flow >= 70) insights.push({ label: "거래 활발", tone: "bg-green-50 text-green-700 border-green-200" });
+                  if (s.value >= 70) insights.push({ label: "저평가 가능", tone: "bg-cyan-50 text-cyan-700 border-cyan-200" });
+                  if (s.vol >= 70) insights.push({ label: "위험 대비 양호", tone: "bg-orange-50 text-orange-700 border-orange-200" });
+                  if (s.momentum < 40 && s.flow < 40) insights.push({ label: "약세 흐름", tone: "bg-zinc-50 text-zinc-600 border-zinc-200" });
+                  return insights.length > 0 ? (
+                    <div className="flex gap-1 flex-wrap mt-2">
+                      {insights.slice(0, 2).map((i) => (
+                        <span key={i.label} className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + i.tone}>
+                          {i.label}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null;
+                })()}
                 {s.themes.length > 0 ? (
                   <div className="flex gap-1 flex-wrap mt-2">
                     {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{t}</span>))}

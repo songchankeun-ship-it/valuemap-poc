@@ -145,6 +145,11 @@ function LoginForm() {
               >
                 {status === "sending" ? "발송 중..." : "로그인 링크 받기"}
               </button>
+
+              <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
+                로그인 링크 외에 <strong>광고성 메일은 보내지 않습니다</strong>.<br />
+                알림 메일도 사용자가 직접 설정할 때만 발송됩니다.
+              </p>
             </form>
           </div>
         )}

@@ -70,10 +70,10 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
         <>
           <div
             onClick={() => setOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-[60] backdrop-blur-[2px]"
+            className="lg:hidden fixed inset-0 bg-black/70 z-[60] backdrop-blur-sm"
             aria-hidden
           />
-          <div className="lg:hidden fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-white z-[61] shadow-2xl flex flex-col">
+          <div className="lg:hidden fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-white z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10">
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">V</span>

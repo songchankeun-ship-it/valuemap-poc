@@ -1,18 +1,43 @@
 import { WatchlistClient } from "@/components/WatchlistClient";
 import { getAllStocks } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/server";
+import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 
 export const metadata = {
   title: "관심 종목 — 밸류맵",
 };
 
+interface RawSignal {
+  signalType?: string;
+  signalLabel?: string;
+  strength?: number;
+  disclosure?: { stock_code?: string };
+}
+
 export default async function WatchlistPage() {
   const allStocks = getAllStocks().map((s) => ({
     ticker: s.ticker,
     name: s.name,
+    momentum: s.momentum,
+    flow: s.flow,
+    value: s.value,
+    vol: s.vol,
+    compositeScore: s.compositeScore,
   }));
 
-  // 로그인 여부 확인 (UI 안내용)
+  // ticker → 최강 신호 매핑
+  const signals = ((recentSignalsRaw as { signals?: RawSignal[] }).signals ?? []);
+  const tickerToSignal: Record<string, { signalLabel: string; signalType: string; strength: number }> = {};
+  for (const s of signals) {
+    const code = s.disclosure?.stock_code;
+    if (!code || !s.signalLabel || !s.signalType) continue;
+    const cur = tickerToSignal[code];
+    const strength = s.strength ?? 0;
+    if (!cur || strength > cur.strength) {
+      tickerToSignal[code] = { signalLabel: s.signalLabel, signalType: s.signalType, strength };
+    }
+  }
+
   let isLoggedIn = false;
   try {
     const supabase = await createClient();
@@ -32,7 +57,7 @@ export default async function WatchlistPage() {
             : "현재는 이 브라우저에만 저장됩니다. 로그인하면 여러 기기에서 이어볼 수 있어요."}
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} />
+      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} />
     </div>
   );
 }

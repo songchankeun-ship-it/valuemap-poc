@@ -32,19 +32,51 @@ export function GlobalSearch({ stocks, themes }: Props) {
   const results: SearchResult[] = (() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
+
+    // 종목: 관련도 점수로 정렬
+    // 1) 이름 정확 일치 (0점) → 2) 이름이 q로 시작 (1점) → 3) 티커 정확 일치 (2점)
+    // → 4) 티커 시작 (3점) → 5) 그 외 포함 (4점)
+    // 같은 점수 내에서는 이름 짧은 순 (대표성)
+    function rank(s: StockItem): number | null {
+      const name = s.name.toLowerCase();
+      const ticker = s.ticker;
+      if (name === q) return 0;
+      if (name.startsWith(q)) return 1;
+      if (ticker === q) return 2;
+      if (ticker.startsWith(q)) return 3;
+      if (name.includes(q) || ticker.includes(q)) return 4;
+      return null;
+    }
+
     const stockResults = stocks
-      .filter((s) => s.name.toLowerCase().includes(q) || s.ticker.includes(q))
+      .map((s) => ({ s, score: rank(s) }))
+      .filter((x): x is { s: StockItem; score: number } => x.score !== null)
+      .sort((a, b) => {
+        if (a.score !== b.score) return a.score - b.score;
+        return a.s.name.length - b.s.name.length;
+      })
       .slice(0, 4)
-      .map((s) => ({
+      .map(({ s }) => ({
         type: "stock" as const,
         ticker: s.ticker,
         name: s.name,
         themeHint: s.themes[0],
       }));
+
+    // 테마: 같은 패턴
     const themeResults = themes
-      .filter((t) => t.toLowerCase().includes(q))
+      .map((t) => {
+        const lower = t.toLowerCase();
+        if (lower === q) return { t, score: 0 };
+        if (lower.startsWith(q)) return { t, score: 1 };
+        if (lower.includes(q)) return { t, score: 2 };
+        return null;
+      })
+      .filter((x): x is { t: string; score: number } => x !== null)
+      .sort((a, b) => a.score - b.score || a.t.length - b.t.length)
       .slice(0, 2)
-      .map((t) => ({ type: "theme" as const, name: t }));
+      .map(({ t }) => ({ type: "theme" as const, name: t }));
+
     return [...stockResults, ...themeResults];
   })();
 

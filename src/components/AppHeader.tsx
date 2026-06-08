@@ -9,20 +9,50 @@ import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 
-function formatDataAsOf(iso?: string): string {
+function formatBusinessDate(dateStr?: string): string {
+  if (!dateStr) return "-";
+  // dateStr 형식: "YYYYMMDD"
+  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
+  if (!m) return dateStr;
+  const [, y, mo, da] = m;
+  const date = new Date(Number(y), Number(mo) - 1, Number(da));
+  const weekday = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
+  return `${y}.${mo}.${da} (${weekday})`;
+}
+
+function formatGeneratedAt(iso?: string): string {
   if (!iso) return "-";
   try {
     const d = new Date(iso);
     const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-    const y = kst.getUTCFullYear();
     const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
     const da = String(kst.getUTCDate()).padStart(2, "0");
     const ho = String(kst.getUTCHours()).padStart(2, "0");
     const mi = String(kst.getUTCMinutes()).padStart(2, "0");
-    return y + "." + mo + "." + da + " " + ho + ":" + mi;
+    return `${mo}.${da} ${ho}:${mi}`;
   } catch {
     return "-";
   }
+}
+
+/** 영업일 기준 며칠 전인지 계산 (주말 제외) */
+function businessDaysSince(dateStr?: string): number | null {
+  if (!dateStr) return null;
+  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
+  if (!m) return null;
+  const [, y, mo, da] = m;
+  const dataDate = new Date(Number(y), Number(mo) - 1, Number(da));
+  const now = new Date();
+  // KST 기준 오늘 0시
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let days = 0;
+  const cursor = new Date(dataDate);
+  while (cursor < today) {
+    cursor.setDate(cursor.getDate() + 1);
+    const wd = cursor.getDay();
+    if (wd !== 0 && wd !== 6) days += 1;
+  }
+  return days;
 }
 
 async function getUserEmail(): Promise<string | null> {
@@ -36,7 +66,12 @@ async function getUserEmail(): Promise<string | null> {
 }
 
 export async function AppHeader() {
-  const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
+  const businessDate = formatBusinessDate(dataMetadata.asOfBusinessDate);
+  const generatedAt = formatGeneratedAt(dataMetadata.generatedAt);
+  const bizDaysSince = businessDaysSince(dataMetadata.asOfBusinessDate);
+  // 영업일 2일 이상 지나면 stale 경고 (장 마감 후 갱신 지연 가능성)
+  const isStale = bizDaysSince !== null && bizDaysSince >= 2;
+
   const stocks = getAllStocks().map((s) => ({
     ticker: s.ticker,
     name: s.name,
@@ -70,12 +105,15 @@ export async function AppHeader() {
         </div>
       </header>
 
-      <div className="bg-zinc-50 border-b border-zinc-200">
-        <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px] text-zinc-600">
-          <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+      <div className={isStale ? "bg-amber-50 border-b border-amber-200" : "bg-zinc-50 border-b border-zinc-200"}>
+        <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px]">
+          <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900" : "text-zinc-600")}>
+            <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
             <span className="truncate">
-              <strong className="text-zinc-900 tabular-nums">{dataAsOf}</strong> KST <span className="hidden sm:inline">· 최근 거래일 마감</span>
+              <span className="hidden sm:inline">최근 영업일 마감 </span>
+              <strong className={isStale ? "text-amber-900 tabular-nums" : "text-zinc-900 tabular-nums"}>{businessDate}</strong>
+              <span className="hidden sm:inline text-zinc-500"> · 갱신 {generatedAt}</span>
+              {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전 데이터</span> : null}
             </span>
           </div>
           <span className="text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>

@@ -94,6 +94,9 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
   const a = data.analysis;
   return (
     <div className="bg-white border border-brand-200 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
+      <div className="bg-amber-50 border border-amber-200 rounded-md p-2.5 text-[11px] text-amber-900 leading-relaxed">
+        ⚠️ 이 분석은 투자 판단을 돕기 위한 <strong>참고 정보</strong>이며, 매수·매도 추천이 아닙니다. 호재·리스크를 함께 확인하세요.
+      </div>
       <header className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">

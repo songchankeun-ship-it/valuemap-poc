@@ -46,7 +46,7 @@ function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 
   } else if (strengths.length > 0 && cautions.length > 0) {
     const sNames = strengths.map(s => s.metric).join("·");
     const cNames = cautions.map(c => c.metric).join("·");
-    interpretation = sNames + "는 강하지만 " + cNames + "는 약한 상태입니다.";
+    interpretation = sNames + " 지표는 강하지만 " + cNames + " 지표는 약한 상태입니다.";
   } else {
     interpretation = "전반적으로 중립~약세 흐름. 추가 분석 권장.";
   }

@@ -72,6 +72,28 @@ export default function HomePage() {
         한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong>모멘텀 · 자금흐름 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
       </section>
 
+      <section className="bg-white border border-zinc-200 rounded-xl p-4 md:p-5">
+        <div className="text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-3">분석 대상 & 한계</div>
+        <dl className="space-y-2.5 text-xs text-zinc-600 leading-relaxed">
+          <div>
+            <dt className="font-semibold text-zinc-800 mb-0.5">왜 {dataMetadata.count}개 종목인가요?</dt>
+            <dd>코스피·코스닥 시가총액 상위 + 거래 활발 + 테마 대표 종목 {dataMetadata.count}개. 풀이 너무 크면 신호의 의미가 흐려져서 의도적으로 좁혔습니다.</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-zinc-800 mb-0.5">데이터는 얼마나 자주 갱신되나요?</dt>
+            <dd>매일 장 마감 후 자동 갱신 (주말·공휴일은 직전 영업일 데이터). 데이터 기준일은 상단 회색 바에 표시됩니다.</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-zinc-800 mb-0.5">지표 점수의 한계는?</dt>
+            <dd>네 지표는 모두 <strong>과거 데이터 기반</strong>입니다. 점수가 높다고 미래 수익을 보장하지 않으며, 점수가 낮아도 회복 구간일 수 있습니다. 항상 원문 공시·재무를 함께 확인하세요.</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-zinc-800 mb-0.5">투자 조언인가요?</dt>
+            <dd>아닙니다. 밸류맵은 <strong>탐색 우선순위</strong>를 정하는 분석 도구입니다. 매수·매도 결정은 본인 책임입니다.</dd>
+          </div>
+        </dl>
+      </section>
+
       <section className="text-xs text-zinc-500 leading-relaxed border-t border-zinc-200 pt-4">
         <strong className="text-zinc-700">데이터 출처:</strong> KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 보조 지표, DART 공시 실데이터. {dataMetadata.count}개 종목 · 매일 갱신.
       </section>
