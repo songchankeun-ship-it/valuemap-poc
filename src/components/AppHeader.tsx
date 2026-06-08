@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { dataMetadata, allThemes } from "@/lib/realStocks";
 import { getAllStocks } from "@/lib/mockData";
+import { createClient } from "@/lib/supabase/server";
 import { MobileNav } from "./MobileNav";
 import { GlobalSearch } from "./GlobalSearch";
 import { CompareBadge } from "./CompareBadge";
 import { AccountButtons } from "./AccountButtons";
+import { UserMenu } from "./UserMenu";
 
 function formatDataAsOf(iso?: string): string {
   if (!iso) return "-";
@@ -22,7 +24,7 @@ function formatDataAsOf(iso?: string): string {
   }
 }
 
-export function AppHeader() {
+export async function AppHeader() {
   const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
   const stocks = getAllStocks().map((s) => ({
     ticker: s.ticker,
@@ -30,6 +32,9 @@ export function AppHeader() {
     themes: s.themes,
   }));
   const themes = allThemes();
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <>
@@ -52,7 +57,7 @@ export function AppHeader() {
           <div className="flex items-center gap-2 shrink-0">
             <CompareBadge />
             <span className="hidden md:inline text-[11px] text-zinc-500 tabular-nums">{dataMetadata.count}개 종목</span>
-            <AccountButtons />
+            {user ? <UserMenu email={user.email!} /> : <AccountButtons />}
           </div>
         </div>
       </header>
