@@ -22,7 +22,7 @@ export default async function WatchlistPage() {
     flow: s.flow,
     value: s.value,
     vol: s.vol,
-    compositeScore: s.compositeScore,
+    compositeScore: Math.round((s.momentum + s.flow + s.value + s.vol) / 4),
   }));
 
   // ticker → 최강 신호 매핑
