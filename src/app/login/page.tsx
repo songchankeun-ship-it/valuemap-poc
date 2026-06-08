@@ -11,7 +11,7 @@ function LoginForm() {
   const next = searchParams.get("next") ?? "/";
 
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "kakao_redirecting">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -37,6 +37,25 @@ function LoginForm() {
     }
   }
 
+  async function handleKakaoLogin() {
+    setStatus("kakao_redirecting");
+    setErrorMsg("");
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    });
+
+    if (error) {
+      setStatus("error");
+      setErrorMsg(error.message);
+    }
+    // 성공이면 자동으로 카카오 페이지로 redirect됨
+  }
+
   return (
     <div className="max-w-md mx-auto px-3 md:px-4 py-6 md:py-12">
       <Link
@@ -50,7 +69,7 @@ function LoginForm() {
       <div className="bg-white rounded-xl border border-zinc-200 p-5 md:p-8">
         <h1 className="text-xl md:text-2xl font-bold text-zinc-900 mb-2">밸류맵 로그인</h1>
         <p className="text-sm text-zinc-600 mb-6">
-          이메일로 로그인 링크를 보내드려요. 비밀번호 없이 한 번 클릭으로 로그인됩니다.
+          카카오로 1초 만에 시작하거나, 이메일로 로그인 링크를 받으세요.
         </p>
 
         {status === "sent" ? (
@@ -71,40 +90,63 @@ function LoginForm() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-1.5">
-                이메일
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full pl-10 pr-3 py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+          <div className="space-y-4">
+            {/* 카카오 로그인 */}
+            <button
+              type="button"
+              onClick={handleKakaoLogin}
+              disabled={status === "kakao_redirecting" || status === "sending"}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FEE500] text-[#191919] rounded-md text-sm font-semibold hover:brightness-95 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M12 3C6.48 3 2 6.48 2 10.84c0 2.74 1.86 5.16 4.66 6.55-.21.79-.76 2.84-.87 3.28-.13.55.2.55.42.4.17-.11 2.66-1.8 3.74-2.53.66.09 1.34.14 2.05.14 5.52 0 10-3.48 10-7.84S17.52 3 12 3z" />
+              </svg>
+              {status === "kakao_redirecting" ? "카카오로 이동 중..." : "카카오로 시작하기"}
+            </button>
+
+            {/* divider */}
+            <div className="flex items-center gap-3 my-1">
+              <div className="flex-1 h-px bg-zinc-200" />
+              <span className="text-[10px] text-zinc-400 uppercase tracking-wider">또는</span>
+              <div className="flex-1 h-px bg-zinc-200" />
             </div>
 
-            {status === "error" ? (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                <div className="text-xs text-red-700">{errorMsg}</div>
+            {/* 이메일 매직링크 */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-1.5">
+                  이메일로 로그인
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    className="w-full pl-10 pr-3 py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-            ) : null}
 
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="w-full px-4 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {status === "sending" ? "발송 중..." : "로그인 링크 받기"}
-            </button>
-          </form>
+              {status === "error" ? (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <div className="text-xs text-red-700">{errorMsg}</div>
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={status === "sending" || status === "kakao_redirecting"}
+                className="w-full px-4 py-2.5 bg-zinc-900 text-white rounded-md text-sm font-medium hover:bg-zinc-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {status === "sending" ? "발송 중..." : "로그인 링크 받기"}
+              </button>
+            </form>
+          </div>
         )}
 
         <div className="mt-6 pt-6 border-t border-zinc-200">
