@@ -4,6 +4,7 @@ import { getAllStocks } from "@/lib/mockData";
 import { MobileNav } from "./MobileNav";
 import { GlobalSearch } from "./GlobalSearch";
 import { CompareBadge } from "./CompareBadge";
+import { AccountButtons } from "./AccountButtons";
 
 function formatDataAsOf(iso?: string): string {
   if (!iso) return "-";
@@ -51,8 +52,7 @@ export function AppHeader() {
           <div className="flex items-center gap-2 shrink-0">
             <CompareBadge />
             <span className="hidden md:inline text-[11px] text-zinc-500 tabular-nums">{dataMetadata.count}개 종목</span>
-            <button type="button" className="hidden md:inline-block px-3 py-1.5 text-zinc-600 hover:text-zinc-900 transition text-sm">로그인</button>
-            <button type="button" className="hidden md:inline-block px-3 py-1.5 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 transition text-sm font-medium">시작하기</button>
+            <AccountButtons />
           </div>
         </div>
       </header>
