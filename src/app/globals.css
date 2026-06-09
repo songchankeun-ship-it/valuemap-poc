@@ -4,11 +4,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================
+ * 디자인 토큰 — Light Mode (기본)
+ * ===================================================== */
 :root {
   --background: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
   --foreground: #18181b;
+  --muted: #71717a;
+  --subtle: #a1a1aa;
+
   --color-text-success: #15803d;
   --color-text-danger: #b91c1c;
+
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: #dbeafe;
+
+  --up: #dc2626;       /* 한국 주식 관례: 상승 빨강 */
+  --down: #2563eb;     /* 하락 파랑 */
+  --warning: #f59e0b;
+  --selection-bg: #fef3c7;
+  --selection-fg: #78350f;
+}
+
+/* =====================================================
+ * Dark Mode — 차콜 계열 (#0B0F14 ~ #151A23)
+ * ===================================================== */
+html.dark {
+  --background: #0B0F14;
+  --surface: #111827;
+  --surface-2: #151A23;
+  --border: #273244;
+  --border-strong: #3a4660;
+  --foreground: #E5E7EB;
+  --muted: #9CA3AF;
+  --subtle: #6b7280;
+
+  --color-text-success: #34D399;
+  --color-text-danger: #F87171;
+
+  --accent: #60A5FA;
+  --accent-strong: #93c5fd;
+  --accent-soft: rgba(96, 165, 250, 0.15);
+
+  --up: #F87171;
+  --down: #60A5FA;
+  --warning: #FBBF24;
+  --selection-bg: #1e3a8a;
+  --selection-fg: #dbeafe;
 }
 
 * {
@@ -27,6 +74,7 @@ body {
   color: var(--foreground);
   font-feature-settings: "ss06", "ss07", "tnum";
   letter-spacing: -0.01em;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 a {
@@ -41,13 +89,16 @@ a {
 .text-success { color: var(--color-text-success); }
 .text-danger  { color: var(--color-text-danger);  }
 
-/* selection color */
 ::selection {
-  background: #fef3c7;
-  color: #78350f;
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
 /* scrollbar polish */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* 다크모드 스크롤바 */
+html.dark ::-webkit-scrollbar-thumb { background: #3a4660; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #4b5670; }

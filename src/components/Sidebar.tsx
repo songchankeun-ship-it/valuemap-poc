@@ -22,8 +22,11 @@ function isActive(pathname: string, href: string) {
 
 export function Sidebar() {
   const pathname = usePathname();
+  // /login 페이지에서는 사이드바 숨김 (집중형 레이아웃)
+  if (pathname === "/login") return null;
+
   return (
-    <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-zinc-200 bg-zinc-50/30">
+    <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/30">
       <div className="sticky top-[5.5rem] px-3 py-4">
         <nav className="space-y-0.5">
           {ITEMS.map((item) => {
@@ -36,14 +39,14 @@ export function Sidebar() {
                 className={
                   "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition " +
                   (active
-                    ? "bg-zinc-900 text-white font-medium"
-                    : "text-zinc-700 hover:bg-zinc-100")
+                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium"
+                    : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800")
                 }
               >
                 <Icon className="w-4 h-4 shrink-0" strokeWidth={1.8} />
                 <span className="flex-1">{item.label}</span>
                 {item.soon ? (
-                  <span className={"text-[9px] px-1.5 py-0.5 rounded font-medium " + (active ? "bg-amber-300 text-amber-900" : "bg-amber-100 text-amber-700")}>
+                  <span className={"text-[9px] px-1.5 py-0.5 rounded font-medium " + (active ? "bg-amber-300 text-amber-900" : "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400")}>
                     SOON
                   </span>
                 ) : null}
@@ -51,9 +54,9 @@ export function Sidebar() {
             );
           })}
         </nav>
-        <div className="mt-8 px-3 py-3 bg-amber-50 border border-amber-200 rounded-md">
-          <div className="text-[10px] font-semibold text-amber-800 uppercase tracking-wider mb-1">베타</div>
-          <p className="text-[11px] text-amber-900 leading-relaxed">
+        <div className="mt-8 px-3 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md">
+          <div className="text-[10px] font-semibold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-1">베타</div>
+          <p className="text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
             이 도구는 투자 추천이 아니라 탐색 우선순위를 정하는 분석 도구입니다.
           </p>
         </div>

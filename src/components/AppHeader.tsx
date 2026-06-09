@@ -8,10 +8,10 @@ import { CompareBadge } from "./CompareBadge";
 import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
+import { ThemeToggle } from "./ThemeToggle";
 
 function formatBusinessDate(dateStr?: string): string {
   if (!dateStr) return "-";
-  // dateStr 형식: "YYYYMMDD"
   const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
   if (!m) return dateStr;
   const [, y, mo, da] = m;
@@ -35,7 +35,6 @@ function formatGeneratedAt(iso?: string): string {
   }
 }
 
-/** 영업일 기준 며칠 전인지 계산 (주말 제외) */
 function businessDaysSince(dateStr?: string): number | null {
   if (!dateStr) return null;
   const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
@@ -43,7 +42,6 @@ function businessDaysSince(dateStr?: string): number | null {
   const [, y, mo, da] = m;
   const dataDate = new Date(Number(y), Number(mo) - 1, Number(da));
   const now = new Date();
-  // KST 기준 오늘 0시
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let days = 0;
   const cursor = new Date(dataDate);
@@ -69,7 +67,6 @@ export async function AppHeader() {
   const businessDate = formatBusinessDate(dataMetadata.asOfBusinessDate);
   const generatedAt = formatGeneratedAt(dataMetadata.generatedAt);
   const bizDaysSince = businessDaysSince(dataMetadata.asOfBusinessDate);
-  // 영업일 2일 이상 지나면 stale 경고 (장 마감 후 갱신 지연 가능성)
   const isStale = bizDaysSince !== null && bizDaysSince >= 2;
 
   const stocks = getAllStocks().map((s) => ({
@@ -82,12 +79,12 @@ export async function AppHeader() {
 
   return (
     <>
-      <header className="border-b border-zinc-200 bg-white/95 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md sticky top-0 z-40">
         <div className="px-3 md:px-4 py-2 md:py-2.5 flex items-center gap-2 md:gap-3">
           <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
-            <span className="text-base font-semibold tracking-tight text-zinc-900">밸류맵</span>
+            <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">밸류맵</span>
           </Link>
           <Link href="/" className="lg:hidden flex items-center shrink-0" aria-label="홈">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
@@ -97,26 +94,29 @@ export async function AppHeader() {
             <GlobalSearch stocks={stocks} themes={themes} />
           </div>
 
-          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <CompareBadge />
-            <span className="hidden md:inline text-[11px] text-zinc-500 tabular-nums">{dataMetadata.count}개 종목</span>
+            <span className="hidden md:inline text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{dataMetadata.count}개 종목</span>
+            <div className="hidden md:block">
+              <ThemeToggle compact />
+            </div>
             {userEmail ? <UserMenu email={userEmail} /> : <AccountButtons />}
           </div>
         </div>
       </header>
 
-      <div className={isStale ? "bg-amber-50 border-b border-amber-200" : "bg-zinc-50 border-b border-zinc-200"}>
+      <div className={isStale ? "bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900" : "bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800"}>
         <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px]">
-          <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900" : "text-zinc-600")}>
+          <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-400")}>
             <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
             <span className="truncate">
               <span className="hidden sm:inline">최근 영업일 마감 </span>
-              <strong className={isStale ? "text-amber-900 tabular-nums" : "text-zinc-900 tabular-nums"}>{businessDate}</strong>
-              <span className="hidden sm:inline text-zinc-500"> · 갱신 {generatedAt}</span>
+              <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
+              <span className="hidden sm:inline text-zinc-500 dark:text-zinc-500"> · 갱신 {generatedAt}</span>
               {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전 데이터</span> : null}
             </span>
           </div>
-          <span className="text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
+          <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
         </div>
       </div>
 

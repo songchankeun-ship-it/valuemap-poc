@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
 import { Sidebar } from "@/components/Sidebar";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -38,17 +39,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <body className="bg-white text-zinc-900 antialiased">
-        <AppHeader />
-        <div className="flex">
-          <Sidebar />
-          <main className="flex-1 min-w-0">
-            <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
-          </main>
-        </div>
-        <Analytics />
-        <SpeedInsights />
+    <html lang="ko" suppressHydrationWarning>
+      <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
+        <ThemeProvider>
+          <AppHeader />
+          <div className="flex">
+            <Sidebar />
+            <main className="flex-1 min-w-0">
+              <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
+            </main>
+          </div>
+          <Analytics />
+          <SpeedInsights />
+        </ThemeProvider>
       </body>
     </html>
   );

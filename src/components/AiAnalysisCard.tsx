@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { saveAnalysis } from "@/lib/aiHistory";
+import { Bot, AlertTriangle } from "lucide-react";
 
 interface AnalysisOutput {
   oneLineSummary: string;
@@ -45,7 +46,6 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         setError(json.error ?? "분석 생성에 실패했습니다.");
       } else {
         setData(json);
-        // 로그인 상태면 자동으로 DB에 기록 저장 (실패해도 사용자엔 영향 X)
         saveAnalysis({
           ticker,
           tickerName: name,
@@ -64,26 +64,29 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 
   if (!data) {
     return (
-      <div className="bg-brand-50 rounded-lg p-3 md:p-4">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+            <Bot className="w-4 h-4" strokeWidth={1.8} />
+          </div>
           <div>
-            <div className="text-sm font-medium text-brand-700 mb-0.5">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               AI 종합 분석
             </div>
-            <div className="text-xs text-brand-700/80">
-              자체 지표 4종 + 재무 + 공시를 통합한 정직한 분석 (1~3초 소요)
+            <div className="text-xs text-zinc-600 dark:text-zinc-400">
+              지표 4종 + 재무 + 공시를 통합한 분석 (1~3초)
             </div>
           </div>
         </div>
         {error && (
-          <div className="mb-2 text-xs text-red-700 bg-red-50 px-3 py-2 rounded-md">
+          <div className="mb-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 px-3 py-2 rounded-md">
             {error}
           </div>
         )}
         <button
           onClick={runAnalysis}
           disabled={loading}
-          className="w-full py-2 bg-brand-600 text-white rounded-md text-sm font-medium disabled:opacity-60"
+          className="w-full py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 transition"
         >
           {loading ? "분석 생성 중…" : "AI 분석 실행"}
         </button>
@@ -93,17 +96,18 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 
   const a = data.analysis;
   return (
-    <div className="bg-white border border-brand-200 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
-      <div className="bg-amber-50 border border-amber-200 rounded-md p-2.5 text-[11px] text-amber-900 leading-relaxed">
-        ⚠️ 이 분석은 투자 판단을 돕기 위한 <strong>참고 정보</strong>이며, 매수·매도 추천이 아닙니다. 호재·리스크를 함께 확인하세요.
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md p-2.5 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed flex items-start gap-2">
+        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" strokeWidth={2} />
+        <span>이 분석은 투자 판단을 돕기 위한 <strong>참고 정보</strong>이며, 매수·매도 추천이 아닙니다. 호재·리스크를 함께 확인하세요.</span>
       </div>
       <header className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium">AI 종합 분석</span>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">AI 종합 분석</span>
             <SourceBadge source={data.source} />
           </div>
-          <p className="text-base font-medium leading-tight">{a.oneLineSummary}</p>
+          <p className="text-base font-medium leading-tight text-zinc-900 dark:text-zinc-100">{a.oneLineSummary}</p>
         </div>
         <ScoreCircle score={a.finalScore} />
       </header>
@@ -115,16 +119,16 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         <Section title="최근 공시 시사점">{a.disclosureInsight}</Section>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
         <BulletBox title="호재 3" color="success" items={a.positives} />
         <BulletBox title="리스크 3" color="danger" items={a.risks} />
       </div>
 
-      <div className="bg-gray-50 rounded-md p-3 text-xs text-gray-700 italic">
+      <div className="bg-zinc-50 dark:bg-zinc-800/60 rounded-md p-3 text-xs text-zinc-700 dark:text-zinc-300 italic">
         {a.finalNote}
       </div>
 
-      <footer className="flex justify-between items-center text-[11px] text-gray-400 pt-2 border-t border-gray-100">
+      <footer className="flex justify-between items-center text-[11px] text-zinc-500 dark:text-zinc-400 pt-2 border-t border-zinc-100 dark:border-zinc-800 flex-wrap gap-2">
         <div>
           {data.source === "sample" && "사전 생성 샘플 (Claude 키 없음)"}
           {data.source === "cache" && "캐시된 결과 (24시간 유효)"}
@@ -132,22 +136,21 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
             <>모델: {data.model} · 비용 약 {data.costKRW?.toFixed(2)}원</>
           )}
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           {typeof data.rateLimitRemaining === "number" && (
             <span>오늘 {data.rateLimitRemaining}회 남음</span>
           )}
           <button
             onClick={() => { setData(null); setError(null); }}
-            className="text-brand-600 hover:underline"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             다시 실행
           </button>
         </div>
       </footer>
 
-      <p className="text-[10px] text-gray-400 leading-relaxed">
-        본 분석은 일반 정보 제공·교육 목적이며 투자 권유가 아닙니다.
-        시세·재무·지표는 시뮬레이션 데이터를 포함할 수 있으며, 실제 매매는 본인 책임입니다.
+      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
+        본 분석은 일반 정보 제공·교육 목적이며 투자 권유가 아닙니다. 시세·재무·지표는 시뮬레이션 데이터를 포함할 수 있으며, 실제 매매는 본인 책임입니다.
       </p>
     </div>
   );
@@ -156,10 +159,10 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[11px] font-medium text-gray-500 mb-1 uppercase tracking-wide">
+      <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1 uppercase tracking-wide">
         {title}
       </div>
-      <p className="text-sm text-gray-800 leading-relaxed">{children}</p>
+      <p className="text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed">{children}</p>
     </div>
   );
 }
@@ -175,15 +178,15 @@ function BulletBox({
 }) {
   const tone =
     color === "success"
-      ? "bg-green-50 border-green-200 text-green-900"
-      : "bg-red-50 border-red-200 text-red-900";
+      ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200"
+      : "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900 text-red-900 dark:text-red-200";
   return (
     <div className={`border rounded-md p-3 ${tone}`}>
-      <div className="text-xs font-medium mb-2 opacity-80">{title}</div>
+      <div className="text-xs font-semibold mb-2 opacity-80 uppercase tracking-wide">{title}</div>
       <ul className="space-y-1.5">
         {items.map((it, i) => (
-          <li key={i} className="text-xs leading-relaxed flex gap-1">
-            <span className="opacity-60">{i + 1}.</span>
+          <li key={i} className="text-xs leading-relaxed flex gap-1.5">
+            <span className="opacity-60 shrink-0">{i + 1}.</span>
             <span>{it}</span>
           </li>
         ))}
@@ -193,29 +196,29 @@ function BulletBox({
 }
 
 function ScoreCircle({ score }: { score: number }) {
-  const color = score >= 70 ? "#1D9E75" : score >= 50 ? "#3B82F6" : "#9CA3AF";
+  const color = score >= 70 ? "#10b981" : score >= 50 ? "#3b82f6" : "#9ca3af";
   return (
-    <div className="text-center">
+    <div className="text-center shrink-0">
       <div
-        className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold text-white"
+        className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white tabular-nums"
         style={{ background: color }}
       >
         {score}
       </div>
-      <div className="text-[10px] text-gray-500 mt-1">/100</div>
+      <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">/100</div>
     </div>
   );
 }
 
 function SourceBadge({ source }: { source: "live" | "cache" | "sample" }) {
   const styles = {
-    live: { bg: "bg-green-100", text: "text-green-700", label: "Live" },
-    cache: { bg: "bg-blue-100", text: "text-blue-700", label: "Cache" },
-    sample: { bg: "bg-amber-100", text: "text-amber-700", label: "Sample" },
+    live: { bg: "bg-emerald-100 dark:bg-emerald-950/50", text: "text-emerald-700 dark:text-emerald-300", label: "Live" },
+    cache: { bg: "bg-blue-100 dark:bg-blue-950/50", text: "text-blue-700 dark:text-blue-300", label: "Cache" },
+    sample: { bg: "bg-amber-100 dark:bg-amber-950/50", text: "text-amber-700 dark:text-amber-300", label: "Sample" },
   };
   const s = styles[source];
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded ${s.bg} ${s.text}`}>
+    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${s.bg} ${s.text}`}>
       {s.label}
     </span>
   );

@@ -215,13 +215,13 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
   return (
     <div className="space-y-3 md:space-y-4">
       <div className="flex items-baseline justify-between flex-wrap gap-2">
-        <h1 className="text-lg md:text-xl font-semibold text-zinc-900">종목 탐색</h1>
-        <span className="text-xs text-zinc-500 tabular-nums">{sorted.length}개 / {stocks.length}개 종목</span>
+        <h1 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">종목 탐색</h1>
+        <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">{sorted.length}개 / {stocks.length}개 종목</span>
       </div>
 
-      <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3">
+      <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <span className="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider">빠른 프리셋</span>
+          <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">빠른 프리셋</span>
           {activePreset ? (
             <button type="button" onClick={resetFilters} className="text-[10px] text-blue-700 hover:underline">초기화</button>
           ) : null}
@@ -291,20 +291,20 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
             <div className="text-sm text-zinc-500 text-center py-12 bg-white border border-zinc-200 rounded-lg">조건에 맞는 종목이 없습니다.</div>
           ) : (
             sorted.slice(0, 100).map((s) => (
-              <Link key={s.ticker} href={"/stock/" + s.ticker} className="block bg-white border border-zinc-200 rounded-lg p-3 md:p-4 hover:border-blue-300 hover:shadow-sm transition">
+              <Link key={s.ticker} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                      <span className="font-medium text-zinc-900 truncate">{s.name}</span>
-                      <span className="text-[11px] text-zinc-400 tabular-nums shrink-0">{s.ticker}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
                     </div>
                     <div className="flex items-baseline gap-2 mb-2 flex-wrap">
-                      <span className="text-sm font-semibold text-zinc-900 tabular-nums">{s.currentPrice.toLocaleString()}원</span>
-                      <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-emerald-600" : "text-rose-600")}>
+                      <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{s.currentPrice.toLocaleString()}원</span>
+                      <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
                         {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-[11px] text-zinc-500 tabular-nums flex-wrap">
+                    <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
                       <span>PER {s.per > 0 ? s.per.toFixed(1) : "-"}</span>
                       <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) : "-"}</span>
                       <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "-"}</span>
@@ -312,14 +312,14 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                   </div>
                   <div className="text-right shrink-0">
                     <div className="flex items-baseline gap-1 justify-end mb-2">
-                      <span className="text-lg font-bold text-blue-700 tabular-nums">{s.compositeScore || 0}</span>
-                      <span className="text-[10px] text-zinc-400">/100</span>
+                      <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore || 0}</span>
+                      <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
                     </div>
                     <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                      <span title="모멘텀" className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded tabular-nums cursor-help">M{s.momentum}</span>
-                      <span title="자금흐름" className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded tabular-nums cursor-help">F{s.flow}</span>
-                      <span title="밸류" className="bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded tabular-nums cursor-help">V{s.value}</span>
-                      <span title="변동성조정" className="bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded tabular-nums cursor-help">Vo{s.vol}</span>
+                      <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">M{s.momentum}</span>
+                      <span title="자금흐름(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">F{s.flow}</span>
+                      <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">V{s.value}</span>
+                      <span title="변동성조정(위험대비)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">Vo{s.vol}</span>
                     </div>
                   </div>
                 </div>
@@ -342,8 +342,8 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                 })()}
                 {s.themes.length > 0 ? (
                   <div className="flex gap-1 flex-wrap mt-2">
-                    {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">{t}</span>))}
-                    {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400">+{s.themes.length - 3}</span>) : null}
+                    {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">{t}</span>))}
+                    {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400 dark:text-zinc-500">+{s.themes.length - 3}</span>) : null}
                   </div>
                 ) : null}
               </Link>
