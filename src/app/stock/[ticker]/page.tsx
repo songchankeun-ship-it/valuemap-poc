@@ -176,6 +176,9 @@ export default async function StockDetailPage({ params }: PageProps) {
               <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed pt-1.5 mt-1.5 border-t border-zinc-200/70 dark:border-zinc-700/70">
                 <strong className="text-zinc-900 dark:text-zinc-100">요약:</strong> {reason.interpretation}
               </div>
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">
+                * 이 점수는 매수·매도 추천이 아닌, 데이터 기반 탐색 우선순위입니다.
+              </p>
             </div>
           </div>
         </div>

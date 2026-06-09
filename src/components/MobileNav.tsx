@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Bot } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Bot, Info } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -16,6 +16,7 @@ const ITEMS = [
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
   { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },
+  { href: "/about", Icon: Info, label: "서비스 소개", soon: false },
 ];
 
 function isActive(pathname: string, href: string) {

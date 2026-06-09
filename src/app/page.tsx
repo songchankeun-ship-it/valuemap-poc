@@ -15,19 +15,22 @@ export default function HomePage() {
           한국 테마주 분석 도구 · 베타
         </span>
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 leading-snug">
-          지금 먼저 확인할 종목을,<br/>
-          <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">네 가지 지표</span>로 좁혀보세요.
+          오늘 먼저 확인할 종목을,<br/>
+          <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">데이터로 좁혀</span>보세요.
         </h1>
         <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 mt-4 max-w-xl leading-relaxed">
-          추세 · 자금 흐름 · 저평가 · 위험 대비 수익.<br className="hidden md:inline"/>
-          한 종목을 네 각도로 동시에 보는 탐색 우선순위 도구입니다.
+          가격 흐름 · 거래량 · 밸류에이션 · 변동성을 함께 분석해서<br className="hidden md:inline"/>
+          먼저 확인할 종목 <strong>후보</strong>를 정리해드립니다.
+        </p>
+        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+          ⚠ 투자 추천이 아닌, 종목 탐색 시간을 줄이는 데이터 도구입니다.
         </p>
         <div className="flex gap-2 mt-5 flex-wrap">
-          <Link href="/stocks" className="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition shadow-sm">
-            {dataMetadata.count}개 종목 둘러보기 →
+          <Link href="/today" className="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition shadow-sm">
+            오늘의 후보 종목 보기 →
           </Link>
           <Link href="/guide/metrics" className="px-4 py-2.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition">
-            지표 어떻게 보나
+            지표 설명 보기
           </Link>
         </div>
       </section>
@@ -101,6 +104,13 @@ export default function HomePage() {
 
       <section className="text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
         <strong className="text-zinc-700 dark:text-zinc-300">데이터 출처:</strong> KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 보조 지표, DART 공시 실데이터. {dataMetadata.count}개 종목 · 매일 갱신.
+        <div className="mt-3 flex items-center gap-3 text-zinc-400 dark:text-zinc-500">
+          <Link href="/about" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">서비스 소개</Link>
+          <span>·</span>
+          <Link href="/terms" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">이용약관</Link>
+          <span>·</span>
+          <Link href="/privacy" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">개인정보처리방침</Link>
+        </div>
       </section>
     </div>
   );
