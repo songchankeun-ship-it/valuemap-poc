@@ -139,61 +139,61 @@ export function WatchlistClient({
       {/* 관심 종목 */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
             <Heart className="w-4 h-4 text-pink-600" fill="currentColor" />
             관심 종목
-            <span className="text-xs text-zinc-500 font-normal">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-normal">
               {watchlist.length}개
             </span>
           </h2>
         </div>
 
         {watchlist.length === 0 ? (
-          <div className="bg-zinc-50 border border-dashed border-zinc-300 rounded-lg p-8 text-center">
-            <Heart className="w-8 h-8 text-zinc-300 mx-auto mb-2" strokeWidth={1.5} />
-            <p className="text-sm text-zinc-600 mb-1">관심 종목이 없어요</p>
-            <p className="text-xs text-zinc-500 mb-4">
+          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-8 text-center">
+            <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">관심 종목이 없어요</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
               종목 페이지에서 ♥ 버튼을 누르면 여기 모입니다.
             </p>
             <Link
               href="/stocks"
-              className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+              className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
             >
               종목 둘러보기 <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         ) : (
-          <ul className="bg-white border border-zinc-200 rounded-lg divide-y divide-zinc-100">
+          <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
             {watchlist.map((item) => {
               const info = allStocks.find((s) => s.ticker === item.ticker);
               const name = info?.name ?? item.ticker;
               const signal = tickerToSignal[item.ticker];
               return (
-                <li key={item.ticker} className="flex items-center justify-between px-4 py-3 hover:bg-zinc-50">
+                <li key={item.ticker} className="flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                   <Link
                     href={`/stock/${item.ticker}`}
                     className="flex-1 flex items-center gap-3 group min-w-0"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                        <span className="text-sm font-medium text-zinc-900 group-hover:text-blue-600 truncate">
+                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
                           {name}
                         </span>
                         {signal ? (
-                          <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[signal.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
+                          <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[signal.signalType] || "bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700")}>
                             🔔 {signal.signalLabel}
                           </span>
                         ) : null}
                       </div>
-                      <div className="text-xs text-zinc-500 tabular-nums flex items-center gap-1.5 flex-wrap">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums flex items-center gap-1.5 flex-wrap">
                         <span>{item.ticker}</span>
                         {info?.compositeScore !== undefined ? (
                           <>
-                            <span className="text-zinc-300">·</span>
-                            <span>점수 <strong className="text-zinc-700">{info.compositeScore}</strong></span>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <span>점수 <strong className="text-zinc-700 dark:text-zinc-300">{info.compositeScore}</strong></span>
                           </>
                         ) : null}
-                        <span className="text-zinc-300">·</span>
+                        <span className="text-zinc-300 dark:text-zinc-600">·</span>
                         <span>추가 {formatTime(item.addedAt)}</span>
                       </div>
                     </div>
@@ -201,7 +201,7 @@ export function WatchlistClient({
                   <button
                     type="button"
                     onClick={() => handleRemove(item.ticker)}
-                    className="ml-2 p-1.5 text-zinc-400 hover:text-red-600 transition shrink-0"
+                    className="ml-2 p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition shrink-0"
                     aria-label="관심 종목에서 제거"
                   >
                     <X className="w-4 h-4" />
@@ -216,10 +216,10 @@ export function WatchlistClient({
       {/* 최근 본 */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900">
-            <Clock className="w-4 h-4 text-zinc-600" />
+          <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
+            <Clock className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
             최근 본 종목
-            <span className="text-xs text-zinc-500 font-normal">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-normal">
               {recent.length}개
             </span>
           </h2>
@@ -227,7 +227,7 @@ export function WatchlistClient({
             <button
               type="button"
               onClick={clearRecent}
-              className="text-xs text-zinc-500 hover:text-red-600"
+              className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
             >
               전체 삭제
             </button>
@@ -235,28 +235,28 @@ export function WatchlistClient({
         </div>
 
         {recent.length === 0 ? (
-          <div className="bg-zinc-50 border border-dashed border-zinc-300 rounded-lg p-6 text-center">
-            <p className="text-xs text-zinc-500">
+          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 text-center">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               종목 페이지를 둘러보면 여기 기록이 쌓여요.
             </p>
           </div>
         ) : (
-          <ul className="bg-white border border-zinc-200 rounded-lg divide-y divide-zinc-100">
+          <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
             {recent.map((item) => (
-              <li key={item.ticker} className="hover:bg-zinc-50">
+              <li key={item.ticker} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                 <Link
                   href={`/stock/${item.ticker}`}
                   className="flex items-center justify-between px-4 py-3 group"
                 >
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-zinc-900 group-hover:text-blue-600 truncate">
+                    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
                       {item.name}
                     </div>
-                    <div className="text-xs text-zinc-500 tabular-nums">
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
                       {item.ticker} · {formatTime(item.viewedAt)}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-blue-600 transition" />
+                  <ArrowRight className="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />
                 </Link>
               </li>
             ))}

@@ -45,7 +45,7 @@ function getBadgeClass(label: string): string {
 function SourceBadge({ source }: { source: string }) {
   if (source === "live") return <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 font-medium">Live</span>;
   if (source === "cache") return <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-medium">Cache</span>;
-  if (source.startsWith("sample")) return <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 font-medium">Preview</span>;
+  if (source.startsWith("sample")) return <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400 font-medium">Preview</span>;
   return null;
 }
 
@@ -82,8 +82,8 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
 
   if (loading) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="text-sm font-medium text-gray-700 mb-3">DART 공시</div>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
+        <div className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">DART 공시</div>
         <div className="space-y-2">
           <div className="h-3 w-3/4 bg-gray-200 rounded animate-pulse" />
           <div className="h-3 w-2/3 bg-gray-200 rounded animate-pulse" />
@@ -96,8 +96,8 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
 
   if (error || !data) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="text-sm font-medium text-gray-700 mb-2">DART 공시</div>
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
+        <div className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">DART 공시</div>
         <div className="text-sm text-rose-600">{error || "공시 데이터를 가져오지 못했습니다."}</div>
       </div>
     );
@@ -107,25 +107,25 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
   const items = data.disclosures.slice(0, 10);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">DART 공시</span>
           <SourceBadge source={data.source} />
         </div>
-        <span className="text-[11px] text-gray-500">
+        <span className="text-[11px] text-gray-500 dark:text-zinc-400">
           최근 90일 {data.count}건 신호 {data.signalCount}건
         </span>
       </div>
 
       {data.count === 0 ? (
-        <div className="text-sm text-gray-500 py-8 text-center">
+        <div className="text-sm text-gray-500 dark:text-zinc-400 py-8 text-center">
           최근 90일간 공시가 없습니다.
         </div>
       ) : (
         <div>
           {signalEntries.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5 mb-3 pb-3 border-b border-gray-100">
+            <div className="flex flex-wrap gap-1.5 mb-3 pb-3 border-b border-gray-100 dark:border-zinc-800">
               {signalEntries.map((entry) => (
                 <span
                   key={entry[0]}
@@ -142,18 +142,18 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                 key={d.rcept_no}
                 type="button"
                 onClick={() => openExternal(d.url)}
-                className="w-full text-left flex items-start justify-between gap-2 py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 -mx-2 px-2 rounded"
+                className="w-full text-left flex items-start justify-between gap-2 py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 dark:hover:bg-zinc-800/50 -mx-2 px-2 rounded"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                    <span className="text-xs text-gray-800 truncate">{d.report_nm}</span>
+                    <span className="text-xs text-gray-800 dark:text-zinc-200 truncate">{d.report_nm}</span>
                     {d.signal ? (
                       <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + getBadgeClass(d.signal.signalLabel)}>
                         {d.signal.signalLabel} {d.signal.strength}
                       </span>
                     ) : null}
                   </div>
-                  <div className="text-[10px] text-gray-400">
+                  <div className="text-[10px] text-gray-400 dark:text-zinc-500">
                     {d.rcept_dt.slice(0, 4)}-{d.rcept_dt.slice(4, 6)}-{d.rcept_dt.slice(6, 8)} {d.flr_nm}
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
       )}
 
       {data.note ? (
-        <p className="text-[10px] text-gray-400 mt-3 italic">{data.note}</p>
+        <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-3 italic">{data.note}</p>
       ) : null}
     </div>
   );

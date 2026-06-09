@@ -37,15 +37,15 @@ export default function ComparePage() {
 
   return (
     <div className="space-y-4">
-      <nav className="text-xs text-zinc-500 flex items-center gap-1">
+      <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
         <Link href="/" className="hover:text-zinc-700">홈</Link>
         <span>›</span>
-        <span className="text-zinc-900">종목 비교</span>
+        <span className="text-zinc-900 dark:text-zinc-100">종목 비교</span>
       </nav>
 
       <header>
         <h1 className="text-xl font-medium mb-1">종목 비교</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-zinc-400">
           종목 페이지에서 "비교에 추가" 한 종목들을 나란히 봅니다.
           자체 지표 4종 + 재무 + 수익률.
         </p>

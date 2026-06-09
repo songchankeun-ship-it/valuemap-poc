@@ -64,15 +64,15 @@ export function HistoryClient() {
   }
 
   if (loading) {
-    return <div className="text-sm text-zinc-500 py-8 text-center">불러오는 중...</div>;
+    return <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center">불러오는 중...</div>;
   }
 
   if (records.length === 0) {
     return (
-      <div className="bg-zinc-50 border border-dashed border-zinc-300 rounded-lg p-10 text-center">
+      <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-300 rounded-lg p-10 text-center">
         <Bot className="w-8 h-8 text-zinc-300 mx-auto mb-2" strokeWidth={1.5} />
-        <p className="text-sm text-zinc-600 mb-1">아직 분석 기록이 없어요</p>
-        <p className="text-xs text-zinc-500 mb-4">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">아직 분석 기록이 없어요</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
           종목 페이지에서 <strong>"AI 분석 실행"</strong>을 누르면 여기 자동 저장됩니다.
         </p>
         <Link
@@ -90,11 +90,11 @@ export function HistoryClient() {
       {records.map((r) => {
         const isOpen = expanded === r.id;
         return (
-          <li key={r.id} className="bg-white border border-zinc-200 rounded-lg p-4">
+          <li key={r.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
             <div className="flex items-start justify-between gap-3 mb-2">
               <Link href={`/stock/${r.ticker}`} className="flex-1 min-w-0 group">
-                <div className="text-[10px] text-zinc-400 tabular-nums font-mono">{r.ticker}</div>
-                <div className="text-sm font-semibold text-zinc-900 group-hover:text-blue-600 truncate">
+                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums font-mono">{r.ticker}</div>
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 truncate">
                   {r.tickerName ?? r.ticker}
                 </div>
               </Link>
@@ -103,11 +103,11 @@ export function HistoryClient() {
                   <div className={`text-2xl font-bold tabular-nums ${scoreColor(r.analysis.finalScore)}`}>
                     {r.analysis.finalScore}
                   </div>
-                  <div className="text-[9px] text-zinc-400">/100</div>
+                  <div className="text-[9px] text-zinc-400 dark:text-zinc-500">/100</div>
                 </div>
                 <button
                   onClick={() => handleDelete(r.id)}
-                  className="p-1.5 text-zinc-400 hover:text-red-600 transition"
+                  className="p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-red-600 transition"
                   aria-label="삭제"
                 >
                   <X className="w-4 h-4" />
@@ -115,21 +115,21 @@ export function HistoryClient() {
               </div>
             </div>
 
-            <p className="text-sm text-zinc-700 mb-3 leading-relaxed">
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-3 leading-relaxed">
               {r.analysis.oneLineSummary}
             </p>
 
-            <div className="flex items-center gap-3 text-[11px] text-zinc-500 mb-2">
+            <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {formatTime(r.createdAt)}
               </span>
               {r.source ? (
-                <span className="px-1.5 py-0.5 bg-zinc-100 rounded text-zinc-600 text-[10px]">
+                <span className="px-1.5 py-0.5 bg-zinc-100 rounded text-zinc-600 dark:text-zinc-400 text-[10px]">
                   {r.source}
                 </span>
               ) : null}
-              {r.model ? <span className="text-zinc-400 text-[10px]">{r.model}</span> : null}
+              {r.model ? <span className="text-zinc-400 dark:text-zinc-500 text-[10px]">{r.model}</span> : null}
             </div>
 
             <button
@@ -148,7 +148,7 @@ export function HistoryClient() {
             </button>
 
             {isOpen ? (
-              <div className="mt-3 space-y-3 border-t border-zinc-100 pt-3">
+              <div className="mt-3 space-y-3 border-t border-zinc-100 dark:border-zinc-800 pt-3">
                 <Section title="자체 지표 해석">{r.analysis.scoreInterpretation}</Section>
                 <Section title="재무 핵심">{r.analysis.financialContext}</Section>
                 <Section title="테마 맥락">{r.analysis.themeContext}</Section>
@@ -185,7 +185,7 @@ export function HistoryClient() {
                   </div>
                 </div>
 
-                <div className="text-[11px] text-zinc-600 italic bg-zinc-50 p-2.5 rounded">
+                <div className="text-[11px] text-zinc-600 dark:text-zinc-400 italic bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded">
                   {r.analysis.finalNote}
                 </div>
               </div>
@@ -200,10 +200,10 @@ export function HistoryClient() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide mb-1">
+      <div className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide mb-1">
         {title}
       </div>
-      <p className="text-xs text-zinc-700 leading-relaxed">{children}</p>
+      <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">{children}</p>
     </div>
   );
 }

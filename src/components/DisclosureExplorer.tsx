@@ -125,13 +125,13 @@ export function DisclosureExplorer() {
   if (loading) {
     return (
       <div>
-        <div className="text-xs text-zinc-500 mb-3 flex items-center gap-2">
+        <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           <span>최근 {days}일 DART 공시를 불러오고 있습니다...</span>
         </div>
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="bg-white border border-zinc-200 rounded-lg p-4">
+            <div key={i} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
               <div className="h-4 w-1/3 bg-zinc-200 rounded mb-2 animate-pulse" />
               <div className="h-3 w-1/4 bg-zinc-100 rounded mb-2 animate-pulse" />
               <div className="h-3 w-2/3 bg-zinc-100 rounded animate-pulse" />
@@ -159,10 +159,10 @@ export function DisclosureExplorer() {
 
   return (
     <div className="space-y-4">
-      <header className="bg-white border border-zinc-200 rounded-lg p-3 md:p-4">
+      <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900">공시 신호</h2>
-          <div className="text-xs text-zinc-500 tabular-nums">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">공시 신호</h2>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
             최근 {days}일 · 총 {data.totalDisclosures}건 · 신호 {data.signalCount}건 · 그룹 {grouped.length}건
           </div>
         </div>
@@ -217,7 +217,7 @@ export function DisclosureExplorer() {
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="text-sm text-zinc-500 text-center py-12">해당 신호가 없습니다.</div>
+          <div className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-12">해당 신호가 없습니다.</div>
         ) : (
           filtered.map((g) => {
             const style = SIGNAL_STYLES[g.signalLabel] || { bg: "bg-zinc-100", text: "text-zinc-700", border: "border-zinc-300" };
@@ -233,21 +233,21 @@ export function DisclosureExplorer() {
                         {g.signalLabel} {g.strength}
                       </span>
                       {g.count > 1 ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400">
                           {g.hasRevision ? "정정 포함 " : ""}{g.count}건
                         </span>
                       ) : null}
                     </div>
                     <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="font-medium text-zinc-900">{g.corp_name}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{g.corp_name}</span>
                       {g.stock_code ? (
-                        <span className="text-[11px] text-zinc-400 tabular-nums">{g.stock_code}</span>
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
                       ) : null}
-                      <span className="text-[11px] text-zinc-400 tabular-nums">{date}</span>
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{date}</span>
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-zinc-600 mb-2 leading-relaxed">{desc}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2 leading-relaxed">{desc}</p>
                 <div className="flex items-center gap-3 text-[11px]">
                   <button
                     type="button"
@@ -260,7 +260,7 @@ export function DisclosureExplorer() {
                     <button
                       type="button"
                       onClick={() => goToStock(g.stock_code!)}
-                      className="text-zinc-500 hover:text-zinc-900"
+                      className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900"
                     >
                       종목 상세 →
                     </button>

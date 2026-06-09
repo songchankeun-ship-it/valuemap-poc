@@ -28,16 +28,16 @@ function WelcomeToastInner() {
   if (!show) return null;
 
   return (
-    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[70] bg-white border border-emerald-200 rounded-lg shadow-lg px-4 py-3 flex items-start gap-3 max-w-md w-[calc(100%-2rem)]">
+    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[70] bg-white dark:bg-zinc-900 border border-emerald-200 rounded-lg shadow-lg px-4 py-3 flex items-start gap-3 max-w-md w-[calc(100%-2rem)]">
       <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-zinc-900">로그인 완료!</div>
-        <div className="text-xs text-zinc-600">관심 종목과 비교 목록이 자동 동기화됩니다.</div>
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">로그인 완료!</div>
+        <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목과 비교 목록이 자동 동기화됩니다.</div>
       </div>
       <button
         type="button"
         onClick={() => setShow(false)}
-        className="text-zinc-400 hover:text-zinc-700 shrink-0"
+        className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 shrink-0"
         aria-label="닫기"
       >
         <X className="w-4 h-4" />

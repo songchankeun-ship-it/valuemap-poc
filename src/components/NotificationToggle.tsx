@@ -32,7 +32,7 @@ export function NotificationToggle() {
 
   if (enabled === null) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm text-zinc-500 border border-zinc-200">
+      <div className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800">
         <Loader2 className="w-4 h-4 animate-spin" />
         불러오는 중...
       </div>
