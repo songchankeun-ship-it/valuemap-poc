@@ -7,6 +7,8 @@ import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
+import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
+import { getScoreHistory } from "@/lib/scoreHistory";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -98,6 +100,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
   const tone = scoreTone(composite);
+  const scoreHistory = await getScoreHistory(ticker, 30);
 
   return (
     <div className="space-y-3 md:space-y-4">
@@ -216,6 +219,10 @@ export default async function StockDetailPage({ params }: PageProps) {
           ))}
         </div>
       </section>
+
+      {scoreHistory.length > 0 ? (
+        <section><ScoreHistoryChart history={scoreHistory} /></section>
+      ) : null}
 
       <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
       <section><StockDisclosures ticker={s.ticker} /></section>
