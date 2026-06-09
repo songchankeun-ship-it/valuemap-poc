@@ -6,6 +6,7 @@ import { StockDisclosures } from "@/components/StockDisclosures";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { RecentViewTracker } from "@/components/RecentViewTracker";
+import { ShareButton } from "@/components/ShareButton";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -13,9 +14,25 @@ export async function generateMetadata({ params }: PageProps) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
   if (!s) return { title: "종목을 찾을 수 없습니다" };
+  const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
+  const title = `${s.name} (${ticker}) 분석 — 밸류맵`;
+  const description = `${s.name} 종합 점수 ${composite}/100 — 모멘텀 ${Math.round(s.momentum)} · 자금흐름 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
   return {
-    title: s.name + " (" + ticker + ") 분석 — 밸류맵",
-    description: s.name + "의 자체 지표 4종, 재무, AI 분석을 한 화면에서.",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://valuemap.kr/stock/${ticker}`,
+      siteName: "밸류맵",
+      locale: "ko_KR",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -106,6 +123,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <div className="flex items-center gap-2 flex-wrap">
           <AddToWatchlistButton ticker={s.ticker} name={s.name} />
           <AddToCompareButton ticker={s.ticker} name={s.name} />
+          <ShareButton name={s.name} ticker={s.ticker} />
         </div>
       </header>
 
