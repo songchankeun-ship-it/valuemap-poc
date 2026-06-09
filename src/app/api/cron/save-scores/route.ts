@@ -8,9 +8,17 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-function toIsoDate(yyyymmdd?: string): string | null {
-  if (!yyyymmdd || yyyymmdd.length !== 8) return null;
-  return `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}`;
+function toIsoDate(input?: string): string | null {
+  if (!input) return null;
+  // YYYYMMDD
+  if (input.length === 8 && /^\d{8}$/.test(input)) {
+    return `${input.slice(0, 4)}-${input.slice(4, 6)}-${input.slice(6, 8)}`;
+  }
+  // ISO (YYYY-MM-DD...)
+  if (input.length >= 10 && input[4] === "-" && input[7] === "-") {
+    return input.slice(0, 10);
+  }
+  return null;
 }
 
 export async function GET(req: Request) {
@@ -22,9 +30,10 @@ export async function GET(req: Request) {
   }
 
   try {
-    const businessDate = toIsoDate(dataMetadata.asOfBusinessDate);
+    // asOfBusinessDate가 없으면 generatedAt(ISO)에서 추출
+    const businessDate = toIsoDate(dataMetadata.asOfBusinessDate) ?? toIsoDate(dataMetadata.generatedAt);
     if (!businessDate) {
-      return NextResponse.json({ error: "No business date in stocks.json" }, { status: 400 });
+      return NextResponse.json({ error: "No business date available" }, { status: 400 });
     }
 
     const records = realStockPool.map((s) => {
