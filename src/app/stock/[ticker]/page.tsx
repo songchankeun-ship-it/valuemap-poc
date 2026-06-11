@@ -9,6 +9,8 @@ import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getScoreHistory } from "@/lib/scoreHistory";
+import { StockPriceChart } from "@/components/StockPriceChart";
+import { getPriceHistory } from "@/lib/priceHistory";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -100,7 +102,10 @@ export default async function StockDetailPage({ params }: PageProps) {
   const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
   const tone = scoreTone(composite);
-  const scoreHistory = await getScoreHistory(ticker, 30);
+  const [scoreHistory, priceHistory] = await Promise.all([
+    getScoreHistory(ticker, 30),
+    getPriceHistory(ticker),
+  ]);
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const jsonLd = {
@@ -170,6 +175,11 @@ export default async function StockDetailPage({ params }: PageProps) {
           <ShareButton name={s.name} ticker={s.ticker} />
         </div>
       </header>
+
+      {/* 주가 차트 (가격 데이터 있을 때만) */}
+      {priceHistory && priceHistory.points.length >= 2 ? (
+        <StockPriceChart ticker={s.ticker} name={s.name} points={priceHistory.points} />
+      ) : null}
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
