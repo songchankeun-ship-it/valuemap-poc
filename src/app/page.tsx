@@ -3,8 +3,26 @@ import { dataMetadata } from "@/lib/realStocks";
 import { Search, BarChart3, Megaphone } from "lucide-react";
 
 export const metadata = {
-  title: "밸류맵 — 한국 테마주 분석 도구",
-  description: "138개 종목의 자체 지표 4종 · PER · PBR · ROE · DART 공시 신호를 한 화면에서.",
+  title: "밸류맵 — 한국 테마주 분석 도구 | 138개 종목 데이터 분석",
+  description: "코스피·코스닥 138개 종목의 모멘텀·자금흐름·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
+  keywords: ["한국주식", "테마주", "종목분석", "코스피", "코스닥", "PER", "PBR", "ROE", "배당주", "공시", "DART", "퀀트", "밸류에이션", "모멘텀"],
+  authors: [{ name: "필로소디" }],
+  openGraph: {
+    title: "밸류맵 — 한국 테마주 분석 도구",
+    description: "138개 종목의 모멘텀·자금흐름·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
+    url: "https://valuemap.kr",
+    siteName: "밸류맵",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "밸류맵 — 한국 테마주 분석 도구",
+    description: "138개 종목의 4대 지표 · 공시 신호를 한 화면에서. 종목 탐색을 데이터로 좁혀보세요.",
+  },
+  alternates: {
+    canonical: "https://valuemap.kr",
+  },
 };
 
 export default function HomePage() {

@@ -102,8 +102,49 @@ export default async function StockDetailPage({ params }: PageProps) {
   const tone = scoreTone(composite);
   const scoreHistory = await getScoreHistory(ticker, 30);
 
+  // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: `${s.name} (${ticker}) 종합 분석 — 점수 ${composite}/100`,
+        description: `${s.name} 모멘텀 ${Math.round(s.momentum)} · 자금흐름 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
+        author: {
+          "@type": "Organization",
+          name: "밸류맵",
+          url: "https://valuemap.kr",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "밸류맵",
+          url: "https://valuemap.kr",
+        },
+        datePublished: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+        mainEntityOfPage: `https://valuemap.kr/stock/${ticker}`,
+        about: {
+          "@type": "Thing",
+          name: `${s.name} (${ticker})`,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "홈", item: "https://valuemap.kr" },
+          { "@type": "ListItem", position: 2, name: "종목 탐색", item: "https://valuemap.kr/stocks" },
+          { "@type": "ListItem", position: 3, name: `${s.name}`, item: `https://valuemap.kr/stock/${ticker}` },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="space-y-3 md:space-y-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <RecentViewTracker ticker={s.ticker} name={s.name} />
 
       <nav className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">

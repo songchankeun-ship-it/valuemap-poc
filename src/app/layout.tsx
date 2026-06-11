@@ -33,6 +33,33 @@ export const metadata: Metadata = {
   },
 };
 
+// 사이트 전체 Organization + WebSite 구조화 데이터
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      name: "밸류맵",
+      url: "https://valuemap.kr",
+      logo: "https://valuemap.kr/icon.png",
+      description: "한국 테마주 데이터 분석 도구",
+      foundingDate: "2026",
+      sameAs: [],
+    },
+    {
+      "@type": "WebSite",
+      name: "밸류맵",
+      url: "https://valuemap.kr",
+      inLanguage: "ko-KR",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://valuemap.kr/stocks?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -40,6 +67,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
+      </head>
       <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
         <ThemeProvider>
           <AppHeader />
