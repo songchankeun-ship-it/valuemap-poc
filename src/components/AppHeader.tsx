@@ -86,7 +86,6 @@ async function getUserEmail(): Promise<string | null> {
 export async function AppHeader() {
   const businessDate = formatBusinessDate(dataMetadata.asOfBusinessDate);
   const businessDateShort = formatBusinessDateShort(dataMetadata.asOfBusinessDate);
-  const generatedAt = formatGeneratedAt(dataMetadata.generatedAt);
   const bizDaysSince = businessDaysSince(dataMetadata.asOfBusinessDate);
   const isStale = bizDaysSince !== null && bizDaysSince >= 2;
 
@@ -136,15 +135,13 @@ export async function AppHeader() {
                   {/* 모바일: 짧고 명확한 형태 */}
                   <span className="sm:hidden">
                     <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDateShort}</strong>
-                    <span className="ml-1 text-zinc-500 dark:text-zinc-500">기준</span>
+                    <span className="ml-1 text-zinc-500 dark:text-zinc-500">장마감</span>
                   </span>
-                  {/* 데스크톱: 풀 정보 */}
+                  {/* 데스크톱: 단일 기준일만 */}
                   <span className="hidden sm:inline">
                     데이터 기준{" "}
                     <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
-                    {generatedAt ? (
-                      <span className="text-zinc-500 dark:text-zinc-500"> · {generatedAt} 갱신</span>
-                    ) : null}
+                    <span className="text-zinc-500 dark:text-zinc-500"> 장마감</span>
                   </span>
                   {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전</span> : null}
                 </>

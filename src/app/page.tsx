@@ -40,6 +40,9 @@ function pickTopSignals(n: number): RecentSignal[] {
     .slice(0, n);
 }
 
+// 캐시 갱신: 1시간 (정적 빌드 캐시가 너무 오래 안 갱신되는 문제 방지)
+export const revalidate = 3600;
+
 function pickTopStocks(n: number) {
   return [...realStockPool]
     .filter((s) => s.compositeScore !== undefined && s.compositeScore > 0)

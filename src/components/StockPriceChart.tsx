@@ -274,10 +274,10 @@ export function StockPriceChart({ ticker, name, points }: Props) {
                 setHover(null);
               }}
               className={
-                "px-2.5 py-1 rounded-md text-xs font-medium transition " +
+                "min-w-[44px] min-h-[36px] px-3 py-1.5 rounded-md text-xs font-medium transition " +
                 (active
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700")
+                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 dark:active:bg-zinc-600")
               }
             >
               {RANGE_LABEL[key]}

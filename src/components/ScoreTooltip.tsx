@@ -86,7 +86,7 @@ export function ScoreTooltip({ kind, inline = true, size = "sm" }: Props) {
           e.stopPropagation();
           setOpen((v) => !v);
         }}
-        className="inline-flex items-center justify-center w-5 h-5 -m-0.5 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition"
+        className="inline-flex items-center justify-center w-9 h-9 -m-2 rounded-full text-zinc-400 dark:text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 active:bg-blue-100 dark:active:bg-blue-900/40 transition"
         aria-label={`${exp.title} 설명`}
         title={exp.oneLine}
       >

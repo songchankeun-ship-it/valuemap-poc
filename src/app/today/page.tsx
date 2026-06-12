@@ -34,18 +34,34 @@ function formatDateKST(): string {
   }).format(now);
 }
 
-function formatDataAsOf(iso?: string): string {
-  if (!iso) return "데이터 준비 중";
-  try {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "데이터 준비 중";
-    const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-    const y = kst.getUTCFullYear();
-    const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
-    const da = String(kst.getUTCDate()).padStart(2, "0");
-    const weekday = ["일", "월", "화", "수", "목", "금", "토"][kst.getUTCDay()];
+/**
+ * 헤더와 동일한 기준 사용 — asOfBusinessDate (YYYYMMDD).
+ * 없으면 generatedAt(ISO)에서 추출.
+ */
+function formatDataAsOf(businessDate?: string, fallbackIso?: string): string {
+  // YYYYMMDD 우선
+  if (businessDate && /^\d{8}$/.test(businessDate)) {
+    const y = businessDate.slice(0, 4);
+    const mo = businessDate.slice(4, 6);
+    const da = businessDate.slice(6, 8);
+    const d = new Date(Number(y), Number(mo) - 1, Number(da));
+    const weekday = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
     return `${y}.${mo}.${da} (${weekday})`;
-  } catch { return "데이터 준비 중"; }
+  }
+  // fallback ISO
+  if (fallbackIso) {
+    try {
+      const d = new Date(fallbackIso);
+      if (Number.isNaN(d.getTime())) return "데이터 준비 중";
+      const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+      const y = kst.getUTCFullYear();
+      const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
+      const da = String(kst.getUTCDate()).padStart(2, "0");
+      const weekday = ["일", "월", "화", "수", "목", "금", "토"][kst.getUTCDay()];
+      return `${y}.${mo}.${da} (${weekday})`;
+    } catch {}
+  }
+  return "데이터 준비 중";
 }
 
 /** Composite Top — 4지표 중 강한 것 위주 */
@@ -109,7 +125,7 @@ export const revalidate = 3600;
 
 export default function TodayPage() {
   const today = formatDateKST();
-  const dataAsOf = formatDataAsOf(dataMetadata.generatedAt);
+  const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
   const topComposite = [...validStocks].sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0)).slice(0, 5);
