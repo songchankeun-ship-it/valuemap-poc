@@ -72,10 +72,10 @@ export function AddToCompareButton({ ticker, name }: Props) {
         type="button"
         onClick={toggle}
         disabled={loading}
-        className={"px-3 py-1.5 border rounded-md text-sm transition disabled:opacity-50 " + (
+        className={"inline-flex items-center px-3.5 py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 " + (
           inBasket
-            ? "bg-blue-50 border-blue-300 text-blue-700"
-            : "border-zinc-300 text-zinc-700 hover:border-blue-300 hover:text-blue-600"
+            ? "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 text-blue-700 dark:text-blue-300"
+            : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-300 hover:text-blue-600 dark:hover:border-blue-700 dark:hover:text-blue-400"
         )}
         title={name + " 비교 바스켓 " + (inBasket ? "제거" : "추가")}
       >

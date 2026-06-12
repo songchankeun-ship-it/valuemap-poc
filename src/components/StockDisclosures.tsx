@@ -142,7 +142,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                 key={d.rcept_no}
                 type="button"
                 onClick={() => openExternal(d.url)}
-                className="w-full text-left flex items-start justify-between gap-2 py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 dark:hover:bg-zinc-800/50 -mx-2 px-2 rounded"
+                className="w-full text-left flex items-start justify-between gap-2 py-3 min-h-[52px] border-b border-gray-50 dark:border-zinc-800 last:border-0 hover:bg-gray-50 dark:hover:bg-zinc-800/50 active:bg-gray-100 dark:active:bg-zinc-800 -mx-2 px-2 rounded transition"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">

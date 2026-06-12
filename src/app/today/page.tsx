@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
+import { ScoreTooltip } from "@/components/ScoreTooltip";
 
 interface SignalDisclosure {
   corp_name: string;
@@ -34,17 +35,62 @@ function formatDateKST(): string {
 }
 
 function formatDataAsOf(iso?: string): string {
-  if (!iso) return "-";
+  if (!iso) return "데이터 준비 중";
   try {
     const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "데이터 준비 중";
     const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
     const y = kst.getUTCFullYear();
     const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
     const da = String(kst.getUTCDate()).padStart(2, "0");
-    const ho = String(kst.getUTCHours()).padStart(2, "0");
-    const mi = String(kst.getUTCMinutes()).padStart(2, "0");
-    return y + "." + mo + "." + da + " " + ho + ":" + mi;
-  } catch { return "-"; }
+    const weekday = ["일", "월", "화", "수", "목", "금", "토"][kst.getUTCDay()];
+    return `${y}.${mo}.${da} (${weekday})`;
+  } catch { return "데이터 준비 중"; }
+}
+
+/** Composite Top — 4지표 중 강한 것 위주 */
+function compositeReason(s: { momentum: number; flow: number; value: number; vol: number }): string {
+  const items = [
+    { label: "모멘텀", v: s.momentum },
+    { label: "자금흐름", v: s.flow },
+    { label: "밸류", v: s.value },
+    { label: "변동성조정", v: s.vol },
+  ];
+  const strong = items.filter((x) => x.v >= 70).sort((a, b) => b.v - a.v);
+  if (strong.length >= 2) {
+    return `${strong[0].label} ${Math.round(strong[0].v)} + ${strong[1].label} ${Math.round(strong[1].v)} 강세`;
+  }
+  if (strong.length === 1) {
+    return `${strong[0].label} ${Math.round(strong[0].v)} 단독 강세`;
+  }
+  const top = [...items].sort((a, b) => b.v - a.v)[0];
+  return `${top.label} ${Math.round(top.v)} (네 지표 모두 중립권)`;
+}
+
+/** Value Top — PER/PBR/ROE 조합 한 줄 */
+function valueReason(s: { per: number; pbr: number; roe: number }, medianPer: number, medianPbr: number): string {
+  const tags: string[] = [];
+  if (medianPer > 0 && s.per > 0 && s.per < medianPer * 0.6) tags.push("저PER");
+  if (medianPbr > 0 && s.pbr > 0 && s.pbr < medianPbr * 0.6) tags.push("저PBR");
+  if (s.roe >= 10) tags.push("ROE " + s.roe.toFixed(0) + "%");
+  if (tags.length === 0) {
+    return `PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}`;
+  }
+  return tags.join(" + ");
+}
+
+/** Momentum Top — 1·3·6개월 수익률 조합 한 줄 */
+function momentumReason(returns?: { r1m?: number; r3m?: number; r6m?: number }): string {
+  const r1 = returns?.r1m;
+  const r3 = returns?.r3m;
+  const r6 = returns?.r6m;
+  if (r1 !== undefined && r3 !== undefined && r6 !== undefined) {
+    const allUp = r1 > 0 && r3 > 0 && r6 > 0;
+    if (allUp) return `1·3·6개월 모두 상승 (6M ${r6 >= 0 ? "+" : ""}${r6.toFixed(0)}%)`;
+    if (r1 > 0 && r1 > r3) return `최근 1개월 급반등 (+${r1.toFixed(0)}%)`;
+  }
+  if (r6 !== undefined) return `6개월 ${r6 >= 0 ? "+" : ""}${r6.toFixed(0)}% 흐름`;
+  return "최근 가격 흐름 강함";
 }
 
 function median(arr: number[]): number {
@@ -78,10 +124,15 @@ export default function TodayPage() {
   return (
     <div className="space-y-4 md:space-y-6">
       <header className="border-b border-zinc-200 dark:border-zinc-800 pb-3 md:pb-4">
-        <div className="text-[10px] md:text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">오늘</div>
+        <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">오늘</div>
         <h1 className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{today}</h1>
-        <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2">
-          <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{dataAsOf}</strong> KST · 최근 거래일 마감 · 종목 {realStockPool.length}개
+        <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
+          <span className="inline-flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span>데이터 기준 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{dataAsOf}</strong></span>
+          </span>
+          <span className="text-zinc-400 dark:text-zinc-500">·</span>
+          <span>종목 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{realStockPool.length}개</strong></span>
         </p>
       </header>
 
@@ -105,21 +156,34 @@ export default function TodayPage() {
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 추가 확인 후보</h2>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 추가 확인 후보</h2>
+            <ScoreTooltip kind="composite" />
+          </div>
           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">composite</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">네 지표 모두 우호적인 상태 — 탐색 우선순위 높음</p>
-        <ul className="space-y-0.5">
+        <ul className="space-y-1">
           {topComposite.map((s, i) => (
             <li key={s.ticker}>
-              <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center">{i + 1}</span>
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0">{s.ticker}</span>
+              <Link
+                href={"/stock/" + s.ticker}
+                className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
+              >
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center pt-0.5 shrink-0">{i + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                      <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
+                      💡 {compositeReason(s)}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-baseline gap-1 shrink-0">
-                  <span className="text-sm font-bold text-blue-700 tabular-nums">{s.compositeScore}</span>
+                <div className="flex items-baseline gap-1 shrink-0 pt-0.5">
+                  <span className="text-base font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore}</span>
                   <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
                 </div>
               </Link>
@@ -130,49 +194,99 @@ export default function TodayPage() {
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">밸류에이션 기준 확인 후보</h2>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">밸류에이션 기준 확인 후보</h2>
+            <ScoreTooltip kind="value" />
+          </div>
           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">value</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">PER · PBR이 풀에서 가장 낮음 — 이유 있는 저평가일 수도 있으니 원문 확인 권장</p>
-        <ul className="space-y-0.5">
-          {topValue.map((s, i) => (
-            <li key={s.ticker}>
-              <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition">
-                <div className="flex items-center gap-3 min-w-0 flex-wrap">
-                  <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center">{i + 1}</span>
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">PER {s.per.toFixed(1)}</span>
-                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">PBR {s.pbr.toFixed(2)}</span>
-                </div>
-                <span className="text-sm font-bold text-cyan-700 tabular-nums shrink-0">{s.value}</span>
-              </Link>
-            </li>
-          ))}
+        <ul className="space-y-1">
+          {topValue.map((s, i) => {
+            const perRatio = medianPer > 0 ? (s.per / medianPer) : null;
+            return (
+              <li key={s.ticker}>
+                <Link
+                  href={"/stock/" + s.ticker}
+                  className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
+                >
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center pt-0.5 shrink-0">{i + 1}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                      </div>
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
+                        💡 {valueReason(s, medianPer, medianPbr)}
+                      </div>
+                      <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 flex items-center gap-2 flex-wrap tabular-nums">
+                        <span>PER {s.per.toFixed(1)}</span>
+                        <span>PBR {s.pbr.toFixed(2)}</span>
+                        {perRatio !== null && perRatio < 0.6 ? (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium">풀 중앙값의 {Math.round(perRatio * 100)}%</span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-base font-bold text-cyan-700 dark:text-cyan-400 tabular-nums shrink-0 pt-0.5">{s.value}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 가격 흐름 강한 후보</h2>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 가격 흐름 강한 후보</h2>
+            <ScoreTooltip kind="momentum" />
+          </div>
           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">momentum</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">최근 1·3·6개월 가중평균 수익률 — 고점 추격 위험 함께 의미</p>
-        <ul className="space-y-0.5">
+        <ul className="space-y-1">
           {topMomentum.map((s, i) => {
+            const r1m = s.returns?.r1m;
+            const r3m = s.returns?.r3m;
             const r6m = s.returns?.r6m;
             return (
               <li key={s.ticker}>
-                <Link href={"/stock/" + s.ticker} className="flex items-center justify-between gap-3 py-2 px-2 -mx-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition">
-                  <div className="flex items-center gap-3 min-w-0 flex-wrap">
-                    <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center">{i + 1}</span>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-                    {r6m !== undefined ? (
-                      <span className={"text-[10px] tabular-nums " + (r6m >= 0 ? "text-emerald-600" : "text-rose-600")}>
-                        6M {r6m >= 0 ? "+" : ""}{r6m.toFixed(1)}%
-                      </span>
-                    ) : null}
+                <Link
+                  href={"/stock/" + s.ticker}
+                  className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
+                >
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center pt-0.5 shrink-0">{i + 1}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                      </div>
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
+                        💡 {momentumReason(s.returns)}
+                      </div>
+                      <div className="text-[10px] mt-0.5 flex items-center gap-2 flex-wrap">
+                        {r1m !== undefined ? (
+                          <span className={"tabular-nums " + (r1m >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
+                            1M {r1m >= 0 ? "+" : ""}{r1m.toFixed(1)}%
+                          </span>
+                        ) : null}
+                        {r3m !== undefined ? (
+                          <span className={"tabular-nums " + (r3m >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
+                            3M {r3m >= 0 ? "+" : ""}{r3m.toFixed(1)}%
+                          </span>
+                        ) : null}
+                        {r6m !== undefined ? (
+                          <span className={"tabular-nums " + (r6m >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400")}>
+                            6M {r6m >= 0 ? "+" : ""}{r6m.toFixed(1)}%
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm font-bold text-blue-700 tabular-nums shrink-0">{s.momentum}</span>
+                  <span className="text-base font-bold text-blue-700 dark:text-blue-400 tabular-nums shrink-0 pt-0.5">{s.momentum}</span>
                 </Link>
               </li>
             );
@@ -204,25 +318,27 @@ export default function TodayPage() {
             {top3.length > 0 ? (
               <ul className="space-y-2 mb-3">
                 {top3.map((s, i) => (
-                  <li key={s.disclosure.rcept_no} className="bg-white/70 rounded-md p-2.5 border border-amber-100">
-                    <div className="flex items-start gap-2.5">
-                      <span className="text-[10px] font-mono text-amber-700 mt-0.5 shrink-0 w-3.5 text-center">{i + 1}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                          <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
-                            {s.signalLabel}
-                          </span>
-                          <span className="text-[10px] text-amber-700/70 tabular-nums">강도 {s.strength}</span>
+                  <li key={s.disclosure.rcept_no}>
+                    <Link
+                      href={"/stock/" + s.disclosure.stock_code}
+                      className="block bg-white/70 dark:bg-zinc-900/70 rounded-md p-3 border border-amber-100 dark:border-amber-900 hover:bg-white dark:hover:bg-zinc-900 hover:border-amber-300 transition active:bg-amber-50 dark:active:bg-amber-950/30 min-h-[68px]"
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 mt-0.5 shrink-0 w-3.5 text-center">{i + 1}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
+                              {s.signalLabel}
+                            </span>
+                            <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">강도 {s.strength}</span>
+                          </div>
+                          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                            {s.disclosure.corp_name}
+                          </div>
+                          <div className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 line-clamp-2">{s.disclosure.report_nm}</div>
                         </div>
-                        <Link
-                          href={"/stock/" + s.disclosure.stock_code}
-                          className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:text-blue-700 truncate block"
-                        >
-                          {s.disclosure.corp_name}
-                        </Link>
-                        <div className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 line-clamp-2">{s.disclosure.report_nm}</div>
                       </div>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

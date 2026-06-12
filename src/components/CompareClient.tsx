@@ -26,12 +26,11 @@ interface CompareStock {
   themes: string[];
 }
 
-const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol" | "neglectScore"; label: string; color: string }> = [
-  { key: "momentum",     label: "모멘텀",   color: "bg-brand-500" },
-  { key: "flow",         label: "자금흐름", color: "bg-blue-500" },
-  { key: "value",        label: "밸류",     color: "bg-emerald-500" },
-  { key: "vol",          label: "변동성조정", color: "bg-purple-500" },
-  { key: "neglectScore", label: "소외",     color: "bg-amber-500" },
+const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol"; label: string; color: string }> = [
+  { key: "momentum", label: "모멘텀",     color: "bg-brand-500" },
+  { key: "flow",     label: "자금흐름",   color: "bg-blue-500" },
+  { key: "value",    label: "밸류",       color: "bg-emerald-500" },
+  { key: "vol",      label: "변동성조정", color: "bg-purple-500" },
 ];
 
 const FUND_ROWS: Array<{ key: "per" | "pbr" | "roe" | "dividendYield"; label: string; suffix: string; better: "low" | "high" }> = [
@@ -190,7 +189,7 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
 
       {/* 자체 지표 비교 */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 md:p-5 shadow-soft">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">자체 지표 4종 + 소외</h3>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">자체 지표 4종</h3>
         <div className="space-y-3">
           {SCORE_KEYS.map(({ key, label, color }) => {
             const max = Math.max(...stocks.map((s) => s[key]));

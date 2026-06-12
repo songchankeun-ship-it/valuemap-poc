@@ -160,12 +160,17 @@ export function DisclosureExplorer() {
   return (
     <div className="space-y-4">
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+        <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">공시 신호</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-            최근 {days}일 · 총 {data.totalDisclosures}건 · 신호 {data.signalCount}건 · 그룹 {grouped.length}건
+            최근 {days}일 중 최신 {data.totalDisclosures}건 · 신호 {data.signalCount}건 · 그룹 {grouped.length}건
           </div>
         </div>
+        {data.totalDisclosures >= 200 ? (
+          <p className="text-[10px] text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1">
+            ℹ DART API 한도(최신 200건)에 도달했어요. 기간을 늘려도 표시되는 건수는 동일할 수 있습니다.
+          </p>
+        ) : null}
 
         <div className="flex gap-2 flex-wrap mb-3">
           {[3, 7, 14, 30].map((d) => (
@@ -247,12 +252,12 @@ export function DisclosureExplorer() {
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2 leading-relaxed">{desc}</p>
-                <div className="flex items-center gap-3 text-[11px]">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3 leading-relaxed">{desc}</p>
+                <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={() => openExternal(g.representative.disclosure.url)}
-                    className="text-blue-700 hover:underline"
+                    className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition"
                   >
                     원문 보기 ↗
                   </button>
@@ -260,7 +265,7 @@ export function DisclosureExplorer() {
                     <button
                       type="button"
                       onClick={() => goToStock(g.stock_code!)}
-                      className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900"
+                      className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
                     >
                       종목 상세 →
                     </button>

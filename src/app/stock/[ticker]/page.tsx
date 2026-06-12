@@ -11,6 +11,7 @@ import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { getScoreHistory } from "@/lib/scoreHistory";
 import { StockPriceChart } from "@/components/StockPriceChart";
 import { getPriceHistory } from "@/lib/priceHistory";
+import { ScoreTooltip } from "@/components/ScoreTooltip";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -107,6 +108,15 @@ export default async function StockDetailPage({ params }: PageProps) {
     getPriceHistory(ticker),
   ]);
 
+  // ★ 가격/날짜는 차트 데이터를 진실의 원천으로 → 헤더 가격과 차트가 항상 일치
+  const lastPoint = priceHistory?.points?.[priceHistory.points.length - 1];
+  const prevPoint = priceHistory?.points?.[priceHistory.points.length - 2];
+  const displayPrice = lastPoint?.c ?? s.currentPrice;
+  const displayChangePct = (lastPoint && prevPoint && prevPoint.c > 0)
+    ? ((lastPoint.c - prevPoint.c) / prevPoint.c) * 100
+    : s.changePct;
+  const priceAsOf = lastPoint?.d ?? null;
+
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const jsonLd = {
     "@context": "https://schema.org",
@@ -164,10 +174,13 @@ export default async function StockDetailPage({ params }: PageProps) {
           <span className="text-[11px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-md tabular-nums font-mono">{s.ticker}</span>
         </div>
         <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-xl md:text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{s.currentPrice.toLocaleString()}<span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-0.5">원</span></span>
-          <span className={"text-sm font-medium tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
-            {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
+          <span className="text-xl md:text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{Math.round(displayPrice).toLocaleString()}<span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-0.5">원</span></span>
+          <span className={"text-sm font-medium tabular-nums " + (displayChangePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
+            {displayChangePct >= 0 ? "▲" : "▼"} {Math.abs(displayChangePct).toFixed(2)}%
           </span>
+          {priceAsOf ? (
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{priceAsOf} 종가</span>
+          ) : null}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <AddToWatchlistButton ticker={s.ticker} name={s.name} />
@@ -202,19 +215,22 @@ export default async function StockDetailPage({ params }: PageProps) {
           <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline">지표 가이드 →</Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-          {[
-            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", anchor: "momentum" },
-            { l: "자금흐름", sc: s.flow, c: "bg-emerald-500", anchor: "flow" },
-            { l: "밸류", sc: s.value, c: "bg-cyan-500", anchor: "value" },
-            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", anchor: "vol" },
-          ].map((x) => (
-            <Link key={x.l} href={"/guide/metrics#" + x.anchor} className="block hover:bg-zinc-50 dark:hover:bg-zinc-800/50 -mx-1 px-1 py-1 rounded transition">
-              <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-400 mb-1">{x.l}</div>
+          {([
+            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", kind: "momentum" as const },
+            { l: "자금흐름", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const },
+            { l: "밸류", sc: s.value, c: "bg-cyan-500", kind: "value" as const },
+            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", kind: "vol" as const },
+          ]).map((x) => (
+            <div key={x.l} className="-mx-1 px-1 py-1 rounded">
+              <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-400 mb-1 flex items-center gap-1">
+                <span>{x.l}</span>
+                <ScoreTooltip kind={x.kind} />
+              </div>
               <div className="text-base md:text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{x.sc.toFixed(0)}</div>
               <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mt-1">
                 <div className={"h-full " + x.c} style={{ width: x.sc + "%" }} />
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -229,7 +245,10 @@ export default async function StockDetailPage({ params }: PageProps) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
-              <strong className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">왜 {composite}점인가요?</strong>
+              <div className="flex items-center gap-1.5">
+                <strong className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">왜 {composite}점인가요?</strong>
+                <ScoreTooltip kind="composite" size="md" />
+              </div>
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위</span>
             </div>
             <div className="space-y-1.5">

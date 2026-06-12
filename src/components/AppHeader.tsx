@@ -20,18 +20,38 @@ function formatBusinessDate(dateStr?: string): string {
   return `${y}.${mo}.${da} (${weekday})`;
 }
 
+/** 모바일용 짧은 형태: "06.11(목)" */
+function formatBusinessDateShort(dateStr?: string): string {
+  if (!dateStr) return "-";
+  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
+  if (!m) return dateStr;
+  const [, , mo, da] = m;
+  const date = new Date(Number(m[1]), Number(mo) - 1, Number(da));
+  const weekday = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
+  return `${mo}.${da}(${weekday})`;
+}
+
 function formatGeneratedAt(iso?: string): string {
-  if (!iso) return "-";
+  if (!iso) return "";
   try {
     const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    // KST 변환
     const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    const now = new Date();
+    const nowKst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const diffMs = nowKst.getTime() - kst.getTime();
+    const diffHr = Math.floor(diffMs / 3600000);
+    const diffDay = Math.floor(diffMs / 86400000);
+
+    if (diffHr < 1) return "방금 전";
+    if (diffHr < 24) return `${diffHr}시간 전`;
+    if (diffDay < 7) return `${diffDay}일 전`;
     const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
     const da = String(kst.getUTCDate()).padStart(2, "0");
-    const ho = String(kst.getUTCHours()).padStart(2, "0");
-    const mi = String(kst.getUTCMinutes()).padStart(2, "0");
-    return `${mo}.${da} ${ho}:${mi}`;
+    return `${mo}.${da}`;
   } catch {
-    return "-";
+    return "";
   }
 }
 
@@ -65,6 +85,7 @@ async function getUserEmail(): Promise<string | null> {
 
 export async function AppHeader() {
   const businessDate = formatBusinessDate(dataMetadata.asOfBusinessDate);
+  const businessDateShort = formatBusinessDateShort(dataMetadata.asOfBusinessDate);
   const generatedAt = formatGeneratedAt(dataMetadata.generatedAt);
   const bizDaysSince = businessDaysSince(dataMetadata.asOfBusinessDate);
   const isStale = bizDaysSince !== null && bizDaysSince >= 2;
@@ -110,10 +131,26 @@ export async function AppHeader() {
           <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-400")}>
             <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
             <span className="truncate">
-              <span className="hidden sm:inline">최근 영업일 마감 </span>
-              <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
-              <span className="hidden sm:inline text-zinc-500 dark:text-zinc-500"> · 갱신 {generatedAt}</span>
-              {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전 데이터</span> : null}
+              {businessDate !== "-" ? (
+                <>
+                  {/* 모바일: 짧고 명확한 형태 */}
+                  <span className="sm:hidden">
+                    <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDateShort}</strong>
+                    <span className="ml-1 text-zinc-500 dark:text-zinc-500">기준</span>
+                  </span>
+                  {/* 데스크톱: 풀 정보 */}
+                  <span className="hidden sm:inline">
+                    데이터 기준{" "}
+                    <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
+                    {generatedAt ? (
+                      <span className="text-zinc-500 dark:text-zinc-500"> · {generatedAt} 갱신</span>
+                    ) : null}
+                  </span>
+                  {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전</span> : null}
+                </>
+              ) : (
+                <span className="text-zinc-500 dark:text-zinc-500">데이터 준비 중</span>
+              )}
             </span>
           </div>
           <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>

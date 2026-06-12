@@ -44,10 +44,36 @@ export function allThemes(): string[] {
   return Array.from(set).sort();
 }
 
+/**
+ * generatedAt(ISO) 또는 YYYYMMDD 형태를 YYYYMMDD로 변환.
+ * stocks.json에 asOfBusinessDate가 없으면 generatedAt 날짜를 영업일로 사용.
+ */
+function deriveBusinessDate(asOf?: string, gen?: string): string | undefined {
+  if (asOf && /^\d{8}$/.test(asOf)) return asOf;
+  if (asOf && asOf.length >= 10 && asOf[4] === "-" && asOf[7] === "-") {
+    return asOf.slice(0, 4) + asOf.slice(5, 7) + asOf.slice(8, 10);
+  }
+  if (gen) {
+    try {
+      const d = new Date(gen);
+      if (!Number.isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const da = String(d.getDate()).padStart(2, "0");
+        return `${y}${m}${da}`;
+      }
+    } catch {}
+  }
+  return undefined;
+}
+
 export const dataMetadata = {
   generatedAt: raw.generatedAt as string | undefined,
   source: raw.source as string | undefined,
   count: (raw.count || realStockPool.length) as number,
   metricsVersion: raw.metricsVersion as string | undefined,
-  asOfBusinessDate: raw.asOfBusinessDate as string | undefined,
+  asOfBusinessDate: deriveBusinessDate(
+    raw.asOfBusinessDate as string | undefined,
+    raw.generatedAt as string | undefined,
+  ),
 };
