@@ -12,6 +12,7 @@ import { getScoreHistory } from "@/lib/scoreHistory";
 import { StockPriceChart } from "@/components/StockPriceChart";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
+import { BeginnerReading } from "@/components/BeginnerReading";
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -234,6 +235,17 @@ export default async function StockDetailPage({ params }: PageProps) {
           ))}
         </div>
       </section>
+
+      {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
+      <BeginnerReading s={{
+        momentum: s.momentum,
+        flow: s.flow,
+        value: s.value,
+        vol: s.vol,
+        per: s.per,
+        pbr: s.pbr,
+        roe: s.roe,
+      }} />
 
       {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
       <section className={"rounded-lg border-2 " + tone.border + " " + tone.bg + " p-4 md:p-5"}>

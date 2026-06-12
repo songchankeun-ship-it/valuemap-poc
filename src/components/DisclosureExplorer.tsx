@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { SignalGuideExpand } from "./SignalGuideExpand";
+import { findGuideByLabel } from "@/lib/signalGuide";
 
 interface DisclosureItem {
   corp_name: string;
@@ -271,6 +273,11 @@ export function DisclosureExplorer() {
                     </button>
                   ) : null}
                 </div>
+                {/* 이 공시 이해하기 — 차별점 */}
+                {(() => {
+                  const guide = findGuideByLabel(g.signalLabel);
+                  return guide ? <SignalGuideExpand guide={guide} /> : null;
+                })()}
               </div>
             );
           })
