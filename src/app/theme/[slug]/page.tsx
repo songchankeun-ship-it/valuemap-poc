@@ -150,7 +150,7 @@ function RadarChart({
   value: number;
   vol: number;
 }) {
-  // 4축 레이더 — 위(모멘텀) 오른쪽(자금흐름) 아래(밸류) 왼쪽(변동성조정)
+  // 4축 레이더 — 위(모멘텀) 오른쪽(거래활성도) 아래(밸류) 왼쪽(변동성조정)
   const cx = 120;
   const cy = 100;
   const r = 70;
@@ -187,7 +187,7 @@ function RadarChart({
         모멘텀 {momentum}
       </text>
       <text x={cx + r + 12} y={cy + 4} fontSize="10" fill="#374151">
-        자금흐름 {flow}
+        거래활성도 {flow}
       </text>
       <text x={cx} y={cy + r + 16} textAnchor="middle" fontSize="10" fill="#374151">
         밸류 {value}

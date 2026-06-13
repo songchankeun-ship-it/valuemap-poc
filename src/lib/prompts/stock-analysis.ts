@@ -78,7 +78,7 @@ export const SYSTEM_PROMPT = `당신은 밸류맵(ValueMap)의 한국 주식 분
 
 **자체 지표 4종 해석 가이드**:
 - 모멘텀(0~100): 80+ 강한 상승 추세 / 50 중립 / 20- 약세 추세
-- 자금흐름(0~100): 80+ 강한 매집 / 20- 매도 출회
+- 거래활성도(0~100): 80+ 강한 매집 / 20- 매도 출회
 - 밸류(0~100): 80+ 동일 테마 대비 저평가 / 20- 고평가
 - 변동성조정(0~100): 80+ 위험 대비 좋은 수익 / 20- 변동성 큰 손실
 - 종합점수: 4종 가중평균. 70+이면 검토 구간.
@@ -129,7 +129,7 @@ export function buildUserMessage(input: StockAnalysisInput): string {
 
 **자체 지표 4종 (0~100, 높을수록 매력적)**
 - 모멘텀: ${input.momentumScore}
-- 자금흐름: ${input.flowScore}
+- 거래활성도: ${input.flowScore}
 - 밸류 (저평가): ${input.valueScore}
 - 변동성조정 수익률: ${input.volAdjustedScore}
 - 종합 점수: ${input.compositeScore}

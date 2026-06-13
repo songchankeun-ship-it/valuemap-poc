@@ -53,7 +53,7 @@ function pickTopStocks(n: number) {
 function quickReason(s: { momentum: number; flow: number; value: number; vol: number }): string {
   const items = [
     { label: "모멘텀", v: s.momentum },
-    { label: "자금흐름", v: s.flow },
+    { label: "거래활성도", v: s.flow },
     { label: "밸류", v: s.value },
     { label: "변동성", v: s.vol },
   ];
@@ -65,12 +65,12 @@ function quickReason(s: { momentum: number; flow: number; value: number; vol: nu
 
 export const metadata = {
   title: "밸류맵 — 한국 테마주 분석 도구 | 138개 종목 데이터 분석",
-  description: "코스피·코스닥 138개 종목의 모멘텀·자금흐름·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
+  description: "코스피·코스닥 138개 종목의 모멘텀·거래활성도·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
   keywords: ["한국주식", "테마주", "종목분석", "코스피", "코스닥", "PER", "PBR", "ROE", "배당주", "공시", "DART", "퀀트", "밸류에이션", "모멘텀"],
   authors: [{ name: "필로소디" }],
   openGraph: {
     title: "밸류맵 — 한국 테마주 분석 도구",
-    description: "138개 종목의 모멘텀·자금흐름·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
+    description: "138개 종목의 모멘텀·거래활성도·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
     url: "https://valuemap.kr",
     siteName: "밸류맵",
     locale: "ko_KR",
@@ -207,7 +207,7 @@ export default function HomePage() {
                     <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
                       {s.signalLabel}
                     </span>
-                    <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">강도 {s.strength}</span>
+                    <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">신뢰도 {s.strength}%</span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums ml-auto">{fmtDate}</span>
                   </div>
                   <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
@@ -222,7 +222,7 @@ export default function HomePage() {
           </div>
 
           <p className="text-[10px] text-amber-800/80 dark:text-amber-400/70 mt-2.5 text-center leading-relaxed">
-            ⚠ 강도는 신호의 신뢰도이지 호재/악재 판단은 아닙니다.
+            ⚠ 숫자는 '분류 신뢰도'(보고서 종류를 맞게 분류했다는 확신)이며 호재/악재 점수가 아닙니다. 임원·주요주주 보유 변동은 매수·매도 방향을 본문에서 확인하세요.
           </p>
         </section>
       ) : null}
@@ -267,7 +267,7 @@ export default function HomePage() {
         <div>
           <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 밸류맵인가</div>
           <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">모멘텀 · 자금흐름 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
+            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">모멘텀 · 거래활성도 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
           </p>
         </div>
 

@@ -95,7 +95,7 @@ const PRESETS: Preset[] = [
 
 // 질문형 프리셋 — 자연어 질문 그대로 클릭
 const QUESTION_PRESETS: Preset[] = [
-  { id: "q-cheap-active", label: "싸고 거래 늘었나?", desc: "PER 15 이하 · 적자 제외 · 자금흐름 높은순", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
+  { id: "q-cheap-active", label: "싸고 거래 늘었나?", desc: "PER 15 이하 · 적자 제외 · 거래활성도 높은순", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
   { id: "q-good-earner", label: "돈 잘 버는 회사?", desc: "ROE 15%+ · 적자 제외", config: { roeMin: 15, excludeLoss: true, sortKey: "roe", sortDir: "desc" } },
   { id: "q-dividend", label: "배당 주는 우량주?", desc: "배당 2%+ · ROE 8%+", config: { divYieldMin: 2, roeMin: 8, excludeLoss: true, sortKey: "dividendYield", sortDir: "desc" } },
   { id: "q-bigcap-stable", label: "대형주 안정형?", desc: "대형주 · 위험대비 우수", config: { capBucket: "large", sortKey: "vol", sortDir: "desc" } },
@@ -347,6 +347,9 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
         <h1 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">종목 탐색</h1>
         <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">{sorted.length}개 / {stocks.length}개 종목</span>
       </div>
+      {activeFilterCount === 0 && !query && sorted.length < stocks.length ? (
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500">기본 화면은 PER 200·PBR 30 이하만 표시해요. 제외된 {stocks.length - sorted.length}개(고PER·고PBR 등)는 위 필터에서 범위를 넓히면 포함됩니다.</p>
+      ) : null}
 
       <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
@@ -469,7 +472,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                     </div>
                     <div className="flex gap-1 justify-end text-[10px] flex-wrap">
                       <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">M{s.momentum}</span>
-                      <span title="자금흐름(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">F{s.flow}</span>
+                      <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">F{s.flow}</span>
                       <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">V{s.value}</span>
                       <span title="변동성조정(위험대비)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">Vo{s.vol}</span>
                     </div>

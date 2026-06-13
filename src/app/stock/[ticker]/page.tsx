@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps) {
   if (!s) return { title: "종목을 찾을 수 없습니다" };
   const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
   const title = `${s.name} (${ticker}) 분석 — 밸류맵`;
-  const description = `${s.name} 종합 점수 ${composite}/100 — 모멘텀 ${Math.round(s.momentum)} · 자금흐름 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
+  const description = `${s.name} 종합 점수 ${composite}/100 — 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
   return {
     title,
     description,
@@ -51,7 +51,7 @@ interface ReasonV2 {
 function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 {
   const metrics = [
     { metric: "모멘텀", score: m },
-    { metric: "자금흐름", score: f },
+    { metric: "거래활성도", score: f },
     { metric: "밸류", score: v },
     { metric: "변동성조정", score: vo },
   ];
@@ -125,7 +125,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       {
         "@type": "Article",
         headline: `${s.name} (${ticker}) 종합 분석 — 점수 ${composite}/100`,
-        description: `${s.name} 모멘텀 ${Math.round(s.momentum)} · 자금흐름 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
+        description: `${s.name} 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
         author: {
           "@type": "Organization",
           name: "밸류맵",
@@ -218,7 +218,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
           {([
             { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", kind: "momentum" as const },
-            { l: "자금흐름", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const },
+            { l: "거래활성도", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const },
             { l: "밸류", sc: s.value, c: "bg-cyan-500", kind: "value" as const },
             { l: "변동성조정", sc: s.vol, c: "bg-orange-500", kind: "vol" as const },
           ]).map((x) => (
@@ -261,7 +261,7 @@ export default async function StockDetailPage({ params }: PageProps) {
                 <strong className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">왜 {composite}점인가요?</strong>
                 <ScoreTooltip kind="composite" size="md" />
               </div>
-              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위</span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위 · <span className="text-amber-600 dark:text-amber-400">실험</span></span>
             </div>
             <div className="space-y-1.5">
               {reason.strengths.length > 0 ? (
@@ -280,7 +280,7 @@ export default async function StockDetailPage({ params }: PageProps) {
                 <strong className="text-zinc-900 dark:text-zinc-100">요약:</strong> {reason.interpretation}
               </div>
               <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">
-                * 이 점수는 매수·매도 추천이 아닌, 데이터 기반 탐색 우선순위입니다.
+                * 실험 지표입니다 — 과거 성과(백테스트) 검증이 진행 중이라 점수는 참고용이며, 매수·매도 추천이 아닌 데이터 기반 탐색 우선순위입니다.
               </p>
             </div>
           </div>

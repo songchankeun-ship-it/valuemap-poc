@@ -54,7 +54,7 @@ function readMomentum(score: number): Reading {
 }
 
 function readFlow(score: number): Reading {
-  const r: Reading = { label: "자금흐름", score, emoji: "💰", meaning: "", action: "", tone: "watch" };
+  const r: Reading = { label: "거래활성도", score, emoji: "💰", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
     r.meaning = "거래량이 평소보다 늘었습니다";
     r.action = "시장의 관심이 모이는 중 — 어떤 이슈인지 공시·뉴스 확인";
@@ -111,14 +111,14 @@ function readVol(score: number): Reading {
 function getChecklistByPattern(s: StockShape): { headline: string; items: string[] } {
   const strong = [
     { k: "M", v: s.momentum, label: "모멘텀" },
-    { k: "F", v: s.flow, label: "자금흐름" },
+    { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
     { k: "Vo", v: s.vol, label: "변동성조정" },
   ].filter((x) => x.v >= 70);
 
   const weak = [
     { k: "M", v: s.momentum, label: "모멘텀" },
-    { k: "F", v: s.flow, label: "자금흐름" },
+    { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
     { k: "Vo", v: s.vol, label: "변동성조정" },
   ].filter((x) => x.v < 40);
@@ -230,7 +230,7 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         <div className="text-xs text-zinc-700 dark:text-zinc-300 mb-1.5">
           초보자는 이걸 먼저 확인하세요:
         </div>
-        <ol className="space-y-1">
+        <ol className="space-y-1 list-none pl-0">
           {checklist.items.map((item, i) => (
             <li key={i} className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed flex gap-2">
               <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0">{i + 1}.</span>

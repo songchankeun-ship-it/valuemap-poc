@@ -39,7 +39,7 @@ export const THEME_INSIGHT_SYSTEM = `당신은 밸류맵(ValueMap)의 시장 인
 1. 짧음: 본문 2~4문장. 길면 안 읽힘.
 2. 정직: "보장", "확실", "쉽다", "추천" 같은 단어 금지.
 3. 행동 권유 금지: "사세요" 대신 "주목", "관찰", "검토" 표현.
-4. 데이터 인용: 모든 주장 옆에 출처(자체 지표/자금흐름/수익률) 명시.
+4. 데이터 인용: 모든 주장 옆에 출처(자체 지표/거래활성도/수익률) 명시.
 5. 패턴 발견: 단순 사실 나열이 아니라 "왜 이 5개가 같이 묶이는가" 같은 통찰.
 
 **좋은 인사이트 예시**:
@@ -60,7 +60,7 @@ JSON만 출력하세요. 마크다운/설명/머리말 없이:
 
 {
   "headline": "인사이트 제목 (50자 이내, 패턴이 보이는 문장)",
-  "summary": "본문 2~4문장. 자체 지표·자금흐름·수익률 등 데이터 인용 필수.",
+  "summary": "본문 2~4문장. 자체 지표·거래활성도·수익률 등 데이터 인용 필수.",
   "highlightedThemes": ["테마1", "테마2"],
   "watchPoints": ["향후 1주일 주목점1", "주목점2"],
   "generatedAt": "ISO date 자동 생성"
@@ -79,7 +79,7 @@ export function buildThemeInsightMessage(input: ThemeInsightInput): string {
       const lines = [
         `${i + 1}. ${t.name} (${t.category}, ${t.stockCount}개 종목)`,
         `   - 일간 평균: ${pctStr(t.return1d)} / 5일 누적: ${pctStr(t.return5d)}`,
-        `   - 자체 지표: 모멘텀 ${t.momentum} / 자금흐름 ${t.flow} / 밸류 ${t.value} / 변동성조정 ${t.vol} / 종합 ${t.composite}`,
+        `   - 자체 지표: 모멘텀 ${t.momentum} / 거래활성도 ${t.flow} / 밸류 ${t.value} / 변동성조정 ${t.vol} / 종합 ${t.composite}`,
         `   - 5일 수급: 외국인 ${formatKRW(t.foreignNetSum)} / 연기금 ${formatKRW(t.pensionNetSum)}`,
         `   - 시총 상위: ${t.topStocks.join(", ")}`,
       ];

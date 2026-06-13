@@ -36,7 +36,7 @@ export default async function Image({ params }: { params: { ticker: string } }) 
 
   const metrics = [
     { label: "M", full: "모멘텀", score: s.momentum, color: "#3B82F6" },
-    { label: "F", full: "자금흐름", score: s.flow, color: "#10B981" },
+    { label: "F", full: "거래활성도", score: s.flow, color: "#10B981" },
     { label: "V", full: "밸류", score: s.value, color: "#06B6D4" },
     { label: "Vo", full: "변동성조정", score: s.vol, color: "#F97316" },
   ];

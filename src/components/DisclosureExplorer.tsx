@@ -46,7 +46,7 @@ interface GroupedSignal {
 
 const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   "자기주식 취득 결의": { bg: "bg-green-50", text: "text-green-700", border: "border-green-200" },
-  "임원·주요주주 매수": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  "임원·주요주주 보유 변동": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
   "정정공시": { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
   "단일판매·공급계약": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
   "유상증자 발행": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
@@ -55,7 +55,7 @@ const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }
 
 const SIGNAL_DESCRIPTIONS: Record<string, string> = {
   "자기주식 취득 결의": "주주환원 관련 이벤트로 분류됨. 원문과 시세 반응 확인 권장.",
-  "임원·주요주주 매수": "내부자 동향. 매수/매도 구분은 본문 확인 필요.",
+  "임원·주요주주 보유 변동": "소유상황보고서. 매수·매도·스톡옵션 등 방향은 본문 확인 필요(매수로 단정 금지).",
   "정정공시": "기존 공시 정정. 변경 사유와 내용은 원문 확인 권장.",
   "단일판매·공급계약": "계약 규모와 직전 매출 비율은 본문 확인 권장.",
   "유상증자 발행": "자금 사용 목적(시설 vs 운영)에 따라 영향 다름.",
@@ -105,7 +105,7 @@ export function DisclosureExplorer() {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [days, setDays] = useState(3);
+  const [days, setDays] = useState(7);
   const [filterType, setFilterType] = useState<string>("all");
 
   useEffect(() => {
@@ -237,7 +237,7 @@ export function DisclosureExplorer() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className={"text-[10px] px-2 py-0.5 rounded font-medium " + style.bg + " " + style.text}>
-                        {g.signalLabel} {g.strength}
+                        {g.signalLabel} · 신뢰도 {g.strength}%
                       </span>
                       {g.count > 1 ? (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400">

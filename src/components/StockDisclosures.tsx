@@ -31,7 +31,7 @@ interface ApiResponse {
 
 const SIGNAL_BG: Record<string, string> = {
   "자기주식 취득 결의": "bg-green-50 text-green-700",
-  "임원·주요주주 매수": "bg-emerald-50 text-emerald-700",
+  "임원·주요주주 보유 변동": "bg-emerald-50 text-emerald-700",
   "정정공시": "bg-amber-50 text-amber-700",
   "단일판매·공급계약": "bg-blue-50 text-blue-700",
   "유상증자 발행": "bg-purple-50 text-purple-700",
@@ -149,7 +149,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                     <span className="text-xs text-gray-800 dark:text-zinc-200 truncate">{d.report_nm}</span>
                     {d.signal ? (
                       <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + getBadgeClass(d.signal.signalLabel)}>
-                        {d.signal.signalLabel} {d.signal.strength}
+                        {d.signal.signalLabel} · 신뢰도 {d.signal.strength}%
                       </span>
                     ) : null}
                   </div>

@@ -121,7 +121,7 @@ export function ScoreHistoryChart({ history }: { history: ScorePoint[] }) {
         <div>
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수 변화</div>
           <div className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-            {firstDate} ~ {lastDate} · {history.length}일
+            {firstDate} ~ {lastDate} · 데이터 {history.length}회{history.length < 20 ? " (수집 중)" : ""}
           </div>
         </div>
         <div className="flex items-baseline gap-2">
@@ -140,7 +140,7 @@ export function ScoreHistoryChart({ history }: { history: ScorePoint[] }) {
       {/* 4지표 작은 차트 */}
       <div className="grid grid-cols-2 gap-3">
         <MiniChart label="모멘텀" values={momentum} color={METRIC_COLORS.momentum} />
-        <MiniChart label="자금흐름" values={flow} color={METRIC_COLORS.flow} />
+        <MiniChart label="거래활성도" values={flow} color={METRIC_COLORS.flow} />
         <MiniChart label="밸류" values={value} color={METRIC_COLORS.value} />
         <MiniChart label="변동성조정" values={vol} color={METRIC_COLORS.vol} />
       </div>

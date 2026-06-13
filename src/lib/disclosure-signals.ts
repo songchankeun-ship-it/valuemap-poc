@@ -14,8 +14,9 @@ export interface SignalHit {
   signalType: SignalType;
   signalLabel: string;
   disclosure: Disclosure;
-  strength: number;       // 0~100
+  strength: number;       // 0~100 — '분류 신뢰도'(보고서 종류를 맞게 분류했다는 확신). 호재/악재 점수 아님.
   note: string;
+  direction?: "긍정 가능" | "부정 가능" | "확인 필요";  // 방향(있을 때만)
 }
 
 // ---------- 정규식 ----------
@@ -46,13 +47,25 @@ function detectTreasuryBuy(d: Disclosure): SignalHit | null {
 function detectInsiderBuy(d: Disclosure): SignalHit | null {
   if (!RE_INSIDER.test(d.report_nm)) return null;
   const rm = (d.rm ?? "").toLowerCase();
-  const isBuyHint = rm.includes("장내매수") || rm.includes("+") || d.report_nm.includes("매수");
+  const nm = d.report_nm;
+  // ⚠️ 소유상황보고서는 제목만으론 매수/매도를 알 수 없음. 단서가 명확할 때만 방향 추정.
+  const buyHint = rm.includes("장내매수") || nm.includes("장내매수");
+  const sellHint = rm.includes("장내매도") || nm.includes("장내매도") || nm.includes("처분");
+  let direction: "긍정 가능" | "부정 가능" | "확인 필요" = "확인 필요";
+  if (buyHint && !sellHint) direction = "긍정 가능";
+  else if (sellHint && !buyHint) direction = "부정 가능";
+  const known = direction !== "확인 필요";
   return {
     signalType: "insider_buy",
-    signalLabel: "임원·주요주주 매수",
+    signalLabel: "임원·주요주주 보유 변동",
+    direction,
     disclosure: d,
-    strength: isBuyHint ? 85 : 60,
-    note: isBuyHint ? "장내매수 단서 발견" : "매수/매도 구분은 본문 확인 필요",
+    strength: known ? 80 : 50,
+    note: direction === "긍정 가능"
+      ? "장내매수 단서 발견 — 다만 주체·규모는 본문 확인 권장"
+      : direction === "부정 가능"
+      ? "장내매도/처분 단서 — 매수 신호 아님, 주의"
+      : "소유 변동 보고서 — 매수·매도·스톡옵션·증여 등 사유는 본문 확인 필요",
   };
 }
 

@@ -152,7 +152,7 @@ export function BacktestClient({ data }: { data: BacktestData }) {
       <section className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-4 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
         <strong className="block mb-1">⚠️ 읽을 때 주의</strong>
         가정: {data.assumptions}. 벤치마크는 <strong>{data.benchmarkLabel}</strong>. 과거 펀더멘털·수급 데이터가 없어
-        밸류·자금흐름 전략은 백테스트에서 제외했고, 가격으로 복원 가능한 신호만 검증했습니다.
+        밸류·거래활성도 전략은 백테스트에서 제외했고, 가격으로 복원 가능한 신호만 검증했습니다.
         과거 성과가 미래 수익을 보장하지 않습니다.
       </section>
 

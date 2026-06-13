@@ -28,7 +28,7 @@ interface CompareStock {
 
 const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol"; label: string; color: string }> = [
   { key: "momentum", label: "모멘텀",     color: "bg-brand-500" },
-  { key: "flow",     label: "자금흐름",   color: "bg-blue-500" },
+  { key: "flow",     label: "거래활성도",   color: "bg-blue-500" },
   { key: "value",    label: "밸류",       color: "bg-emerald-500" },
   { key: "vol",      label: "변동성조정", color: "bg-purple-500" },
 ];

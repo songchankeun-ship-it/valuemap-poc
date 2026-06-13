@@ -68,7 +68,7 @@ function formatDataAsOf(businessDate?: string, fallbackIso?: string): string {
 function compositeReason(s: { momentum: number; flow: number; value: number; vol: number }): string {
   const items = [
     { label: "모멘텀", v: s.momentum },
-    { label: "자금흐름", v: s.flow },
+    { label: "거래활성도", v: s.flow },
     { label: "밸류", v: s.value },
     { label: "변동성조정", v: s.vol },
   ];
@@ -346,7 +346,7 @@ export default function TodayPage() {
                             <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
                               {s.signalLabel}
                             </span>
-                            <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">강도 {s.strength}</span>
+                            <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">신뢰도 {s.strength}%</span>
                           </div>
                           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
                             {s.disclosure.corp_name}
@@ -361,7 +361,7 @@ export default function TodayPage() {
             ) : null}
 
             <p className="text-[11px] text-amber-900 leading-relaxed">
-              최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 매수 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong>를 분류합니다. 강도는 신호의 신뢰도이지 호재/악재 판단은 아닙니다.
+              최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 보유 변동 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong>를 분류해 오늘 확인할 신호를 선정합니다. 숫자는 '분류 신뢰도'(보고서 종류를 맞게 분류했다는 확신)이며 호재/악재 점수가 아닙니다. 임원·주요주주 보유 변동은 매수·매도·스톡옵션 등 방향을 본문에서 확인하세요.
             </p>
           </section>
         );

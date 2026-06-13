@@ -15,7 +15,7 @@ interface ScoreExplanation {
 const EXPLANATIONS: Record<ScoreKind, ScoreExplanation> = {
   composite: {
     title: "종합 점수",
-    oneLine: "네 지표(모멘텀·자금흐름·밸류·변동성조정)의 평균.",
+    oneLine: "네 지표(모멘텀·거래활성도·밸류·변동성조정)의 평균.",
     detail: "0~100 척도. 한 종목의 전반적 '데이터 우호도'를 보여줍니다. 한 지표만 강하면 점수가 평범하고, 여러 지표가 함께 좋으면 점수가 높아집니다.",
     howToRead: "70 이상이면 4지표가 골고루 우호적. 50대는 중립. 30 이하는 4지표 모두 약함. ⚠ 이 점수는 매수 추천이 아니라 '데이터 기반 탐색 우선순위'입니다.",
   },
@@ -26,7 +26,7 @@ const EXPLANATIONS: Record<ScoreKind, ScoreExplanation> = {
     howToRead: "80 이상은 강한 상승세 — 다만 '고점 추격 위험'도 함께 의미합니다. 20 이하는 약세 — '저평가 진입'일 수도, '하락 추세'일 수도.",
   },
   flow: {
-    title: "자금흐름",
+    title: "거래활성도",
     oneLine: "최근 5일 거래량 ÷ 최근 20일 평균.",
     detail: "최근 5일 평균 거래량을 20일 평균과 비교. 1.0보다 크면 거래가 늘었다는 뜻. 자금이 들어오는 종목은 보통 거래량부터 늘어납니다.",
     howToRead: "70 이상은 거래량이 평소보다 1.5배 이상 — 관심이 모이는 중. 30 이하는 거래량이 줄어드는 중 — 시장이 외면.",

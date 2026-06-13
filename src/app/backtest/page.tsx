@@ -51,7 +51,7 @@ export default function BacktestPage() {
           <li className="flex gap-2"><span className="text-gray-400">04.</span>가격종합 점수 상위 10개 월별 리밸런싱 (균형)</li>
         </ul>
         <p className="text-xs text-gray-500 dark:text-zinc-400 mt-3 leading-relaxed">
-          ※ 밸류·자금흐름 전략은 과거 시점의 펀더멘털·수급 데이터가 없어 백테스트에서 제외합니다.
+          ※ 밸류·거래활성도 전략은 과거 시점의 펀더멘털·수급 데이터가 없어 백테스트에서 제외합니다.
           (현재 스냅샷을 과거에 적용하면 미래참조 편향이 생김)
         </p>
       </section>
