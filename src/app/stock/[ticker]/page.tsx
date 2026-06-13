@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps) {
       title,
       description,
       url: `https://valuemap.kr/stock/${ticker}`,
-      siteName: "밸류맵",
+      siteName: "밸류맵 스톡",
       locale: "ko_KR",
       type: "article",
     },
@@ -243,10 +243,10 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { l: "PER", v: s.per.toFixed(1) + "x" },
-          { l: "PBR", v: s.pbr.toFixed(2) + "x" },
-          { l: "ROE", v: s.roe.toFixed(1) + "%" },
-          { l: "배당수익률", v: s.dividendYield.toFixed(2) + "%" },
+          { l: "PER", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
+          { l: "PBR", v: s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—" },
+          { l: "ROE", v: s.roe !== 0 ? s.roe.toFixed(1) + "%" : "—" },
+          { l: "배당수익률", v: s.dividendYield > 0 ? s.dividendYield.toFixed(2) + "%" : "0%" },
         ].map((m) => (
           <div key={m.l} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 md:p-3">
             <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-0.5">{m.l}</div>

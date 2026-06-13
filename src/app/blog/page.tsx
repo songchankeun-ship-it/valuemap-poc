@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "블로그 (준비 중) — 밸류맵",
+  title: "블로그 (준비 중) — 밸류맵 스톡",
 };
 
 export default function BlogPage() {

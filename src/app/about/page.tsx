@@ -3,7 +3,7 @@ import { dataMetadata } from "@/lib/realStocks";
 import { Mail, Database, Code, AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "서비스 소개 — 밸류맵",
+  title: "서비스 소개 — 밸류맵 스톡",
   description: "밸류맵이 누구를, 어떤 목적으로 만들어진 도구인지.",
 };
 

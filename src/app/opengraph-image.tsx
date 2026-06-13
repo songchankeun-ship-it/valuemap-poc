@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "밸류맵 — 한국 테마주 분석 도구";
+export const alt = "밸류맵 스톡 — 한국 주식 탐색 도구";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,7 +61,7 @@ export default async function Image() {
             display: "flex",
           }}
         >
-          한국 테마주 분석 도구
+          한국 주식 탐색 도구
         </div>
         <div
           style={{

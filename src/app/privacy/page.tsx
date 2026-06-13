@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "개인정보처리방침 — 밸류맵",
+  title: "개인정보처리방침 — 밸류맵 스톡",
 };
 
 export default function PrivacyPage() {

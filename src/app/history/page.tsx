@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "분석 기록 — 밸류맵",
+  title: "분석 기록 — 밸류맵 스톡",
 };
 
 export default async function HistoryPage() {

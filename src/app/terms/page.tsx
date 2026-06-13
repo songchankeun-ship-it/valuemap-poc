@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "이용약관 — 밸류맵",
+  title: "이용약관 — 밸류맵 스톡",
 };
 
 export default function TermsPage() {

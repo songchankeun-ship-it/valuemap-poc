@@ -64,21 +64,21 @@ function quickReason(s: { momentum: number; flow: number; value: number; vol: nu
 }
 
 export const metadata = {
-  title: "밸류맵 — 한국 테마주 분석 도구 | 138개 종목 데이터 분석",
+  title: "밸류맵 스톡 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
   description: "코스피·코스닥 138개 종목의 모멘텀·거래활성도·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
   keywords: ["한국주식", "테마주", "종목분석", "코스피", "코스닥", "PER", "PBR", "ROE", "배당주", "공시", "DART", "퀀트", "밸류에이션", "모멘텀"],
   authors: [{ name: "필로소디" }],
   openGraph: {
-    title: "밸류맵 — 한국 테마주 분석 도구",
+    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
     description: "138개 종목의 모멘텀·거래활성도·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
     url: "https://valuemap.kr",
-    siteName: "밸류맵",
+    siteName: "밸류맵 스톡",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "밸류맵 — 한국 테마주 분석 도구",
+    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
     description: "138개 종목의 4대 지표 · 공시 신호를 한 화면에서. 종목 탐색을 데이터로 좁혀보세요.",
   },
   alternates: {
@@ -96,7 +96,7 @@ export default function HomePage() {
 
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-zinc-200 dark:border-zinc-800 p-5 md:p-10">
         <span className="inline-block text-[10px] font-semibold tracking-widest text-blue-700 dark:text-blue-400 uppercase mb-3 px-2 py-0.5 rounded bg-white/60 dark:bg-zinc-900/60">
-          한국 테마주 분석 도구 · 베타
+          한국 주식 탐색 도구 · 베타
         </span>
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 leading-snug">
           오늘 먼저 확인할 종목을,<br/>

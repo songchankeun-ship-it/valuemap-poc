@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Heart, Mail } from "lucide-react";
 
 export const metadata = {
-  title: "알림 설정 — 밸류맵",
+  title: "알림 설정 — 밸류맵 스톡",
 };
 
 export default async function NotificationSettingsPage() {

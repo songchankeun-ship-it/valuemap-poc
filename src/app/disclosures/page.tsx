@@ -2,7 +2,7 @@ import Link from "next/link";
 import { DisclosureExplorer } from "@/components/DisclosureExplorer";
 
 export const metadata = {
-  title: "공시 신호 — 밸류맵",
+  title: "공시 신호 — 밸류맵 스톡",
   description: "최근 7일 한국 상장사 공시에서 5가지 시장 신호만 추출. 자기주식·내부자 매수·정정·대형계약·증자.",
 };
 

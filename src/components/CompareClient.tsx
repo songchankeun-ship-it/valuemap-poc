@@ -140,6 +140,12 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
         <Link href="/stocks" className="inline-block px-4 md:px-5 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 transition">
           종목 둘러보기 →
         </Link>
+        <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">예시로 보기:</span>
+          {[["005930", "삼성전자"], ["000660", "SK하이닉스"], ["005380", "현대차"]].map(([t, n]) => (
+            <Link key={t} href={"/stock/" + t} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 dark:hover:border-blue-600 transition">{n}</Link>
+          ))}
+        </div>
       </section>
     );
   }

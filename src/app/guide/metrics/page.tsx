@@ -2,7 +2,7 @@ import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
 
 export const metadata = {
-  title: "지표 가이드 — 밸류맵",
+  title: "지표 가이드 — 밸류맵 스톡",
   description: "자체 지표 4종이 어떻게 계산되고 어떻게 해석되는지 투명하게 공개합니다.",
 };
 

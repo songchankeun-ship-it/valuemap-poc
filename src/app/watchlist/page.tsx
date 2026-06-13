@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 
 export const metadata = {
-  title: "관심 종목 — 밸류맵",
+  title: "관심 종목 — 밸류맵 스톡",
 };
 
 interface RawSignal {

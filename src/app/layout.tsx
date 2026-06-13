@@ -9,22 +9,22 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://valuemap.kr"),
   title: {
-    default: "밸류맵 — 한국 테마주 분석 도구",
+    default: "밸류맵 스톡 — 한국 주식 탐색 도구",
     template: "%s",
   },
   description:
     "138개 종목의 자체 지표 4종 · PER · PBR · ROE · DART 공시 신호를 한 화면에서.",
   openGraph: {
-    title: "밸류맵 — 한국 테마주 분석 도구",
+    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
     description: "138개 종목 · 자체 지표 4종 · DART 공시 신호. 한국 테마주 분석을 한 화면에서.",
     url: "https://valuemap.kr",
-    siteName: "밸류맵",
+    siteName: "밸류맵 스톡",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "밸류맵 — 한국 테마주 분석 도구",
+    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
     description: "138개 종목 · 자체 지표 4종 · DART 공시 신호",
   },
   robots: {
