@@ -8,12 +8,13 @@
 ## ⏱️ 지금 상태 한눈에 (2026-06-13 갱신 · 최신)
 
 - **메인 작업 PC = dongy** (`C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc`). Cowork 폴더 연결.
-- **외부 리뷰 3건 반영 완료·배포**: 데이터 리뷰 2회(6.5→7.2) + 디자인 리뷰 1회(7.2).
+- **외부 리뷰 4건 반영 완료·배포**: 데이터 2회(6.5→7.2) + 디자인 1회(7.2) + UX 1회.
   - ✅ 1순위 9개 / 2순위 5개 / 3순위(브리핑·오늘의 변화)
   - ✅ 2차 데이터 리뷰 P0: 업종 오분류 수정·백테스트 면책·이상데이터 검증보류·영어라벨
   - ✅ 디자인 P0: 종목상세 상단 재구성(결론·등급·순위·백분위 막대)·백테스트 SOON 제거·**브랜드 "밸류맵 스톡"**·재무 단위(배)·비교 빈화면
   - ✅ 공시 본문 앱연동(코드)·업종 전수 audit(완성차 자동차 분류 수정)
-- 마지막 push commit: `9876a23`. **이후 미push 배치 있음**(공시연동·자동차 audit·이 문서) — 아래 push 필요.
+  - ✅ UX 리뷰 P0/P1(10): 메인↔상세 가격동기화(sync 실행)·백테스트SOON제거·검증보류 등급회색+Top제외(isSuspect)·번호중복(div)·상위/하위+순위·장마감표기·보유변동통일·한글약어(추거저위)·헤더 그룹화·하단카드 중복축소
+- 마지막 push commit: `4063732` (UX P0/P1 8건). **이후 미push 배치**: 헤더 그룹화(Sidebar)·종목상세 하단 중복축소·이 문서 — 아래 push 필요.
 
 ### ▶ 다음 세션에서 바로 할 일 (우선순위)
 1. 작업 시작 전 `git pull`. (아래 '미push 배치' 먼저 push)
@@ -21,7 +22,7 @@
 3. **공시 본문 실데이터**: `python scripts/fetch_insider_details.py`(DART 키) → `public/data/insider-signals.json` 생성. 생성되면 앱이 자동으로 임원 실제 방향(매수/매도)·규모 표시(`src/lib/insiderDetails.ts` 연동 완료).
 4. **백테스트 생존편향 실해결**: 시점별 유니버스 재구성(큰 작업). 현재는 면책 문구로 안내.
 5. **KRX 공식 업종코드 연동**: 현재 sector.ts는 테마 기반 휴리스틱. 공식 업종 매핑으로 교체 권장.
-6. **디자인 2배치**: 색상 역할 고정·카드 중첩 축소·모바일 하단 시트 필터(화면 보며 반복 권장).
+6. **디자인 잔여**: 색상 역할 고정·카드 중첩 축소·모바일 하단 시트 필터·**숫자 포맷 공통함수 통일**(헤더 그룹화는 완료). 화면 보며 반복 권장.
 7. 4순위 수익화: `docs/monetization-strategy.md` 참고(무료/유료 + 법무 가드레일). `/pricing` + waitlist.
 8. 도메인 결정(KSift 유력, valuefit.com 비추) 후 브랜드 마이그레이션.
 
@@ -78,8 +79,8 @@ NEXT_PUBLIC_SUPABASE_URL/_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY / RESEND_API_KEY 
 Claude가 python/bash 편집 + tsc 검증 → 변경파일 마커로 추출 → 송님이 PowerShell에서 `--literal-pathspecs add` + commit + push (Claude는 main 직접 push 안 함).
 
 ## 📌 마지막 commit (push된 것)
-`9876a23` 디자인 브랜드배치 / `d747dd2` 종목상세 상단재구성 / `a7327bb` 2차리뷰P0 / `0d350ee` 브리핑 / `78645f5` 수익화문서 / `018095c` 오늘의변화 ...
-- **미push 배치(이번 세션 마지막)**: `src/lib/insiderDetails.ts`(신규), `src/app/api/disclosures/[ticker]/route.ts`, `src/app/api/disclosures/recent/route.ts`, `src/lib/sector.ts`, `CLAUDE.md` → commit 예: `feat: 공시 본문 앱연동 + 업종 audit(완성차 분류 수정) + 인수인계 갱신`
+`4063732` UX리뷰P0/P1 / `f67bb73` 공시연동+업종audit / `9876a23` 디자인브랜드 / `d747dd2` 종목상세 상단재구성 / `a7327bb` 2차리뷰P0 / `0d350ee` 브리핑 ...
+- **미push 배치(이번 세션 마지막)**: `src/components/Sidebar.tsx`(헤더 그룹화), `src/app/stock/[ticker]/page.tsx`(하단카드 중복축소), `CLAUDE.md` → commit 예: `fix: 헤더 메뉴 그룹화 + 종목상세 하단 중복 축소 + 인수인계 갱신`
 
 ---
-마지막 업데이트: 2026-06-13 (리뷰 3건 반영 + 디자인 + 공시연동 + 업종 audit. 브랜드 밸류맵 스톡)
+마지막 업데이트: 2026-06-13 (리뷰 4건 반영: 데이터2+디자인1+UX1. 가격동기화·검증보류·헤더그룹화까지. 브랜드 밸류맵 스톡)

@@ -343,20 +343,8 @@ export default async function StockDetailPage({ params }: PageProps) {
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위 · <span className="text-amber-600 dark:text-amber-400">실험</span>{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> · 검증 보류</span> : null}</span>
             </div>
             <div className="space-y-1.5">
-              {reason.strengths.length > 0 ? (
-                <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">✓ 강점</span>
-                  <span className="tabular-nums">{reason.strengths.map(s => s.metric + " " + s.score).join(", ")}</span>
-                </div>
-              ) : null}
-              {reason.cautions.length > 0 ? (
-                <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
-                  <span className="font-semibold text-amber-700 dark:text-amber-400 shrink-0">⚠ 주의</span>
-                  <span className="tabular-nums">{reason.cautions.map(c => c.metric + " " + c.score).join(", ")}</span>
-                </div>
-              ) : null}
-              <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed pt-1.5 mt-1.5 border-t border-zinc-200/70 dark:border-zinc-700/70">
-                <strong className="text-zinc-900 dark:text-zinc-100">요약:</strong> {reason.interpretation}
+              <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                종합 {composite}점 = 모멘텀·거래활성도·밸류·변동성조정 4지표의 가중 평균입니다. 강점·위험과 항목별 위치는 위 <strong className="text-zinc-900 dark:text-zinc-100">요약 카드</strong>와 <strong className="text-zinc-900 dark:text-zinc-100">자체 지표 4종</strong>에서 확인하세요.
               </div>
               <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">
                 * 실험 지표입니다 — 과거 성과(백테스트) 검증이 진행 중이라 점수는 참고용이며, 매수·매도 추천이 아닌 데이터 기반 탐색 우선순위입니다. <span className="not-italic font-medium">데이터 완성도 {completeness}%.</span>
