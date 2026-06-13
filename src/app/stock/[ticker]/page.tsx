@@ -13,6 +13,9 @@ import { StockPriceChart } from "@/components/StockPriceChart";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { BeginnerReading } from "@/components/BeginnerReading";
+import { getDataWarnings } from "@/lib/dataQuality";
+
+export const revalidate = 3600;
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
@@ -117,6 +120,7 @@ export default async function StockDetailPage({ params }: PageProps) {
     ? ((lastPoint.c - prevPoint.c) / prevPoint.c) * 100
     : s.changePct;
   const priceAsOf = lastPoint?.d ?? null;
+  const dataWarnings = getDataWarnings(s, priceHistory);
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const jsonLd = {
@@ -246,6 +250,22 @@ export default async function StockDetailPage({ params }: PageProps) {
         pbr: s.pbr,
         roe: s.roe,
       }} />
+
+      {dataWarnings.length > 0 ? (
+        <section className="rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 md:p-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-sm">⚠️</span>
+            <strong className="text-xs md:text-sm font-semibold text-amber-900 dark:text-amber-200">데이터 점검 필요</strong>
+          </div>
+          <ul className="list-none pl-0 space-y-1">
+            {dataWarnings.map((w, i) => (
+              <li key={i} className="text-[11px] md:text-xs text-amber-800 dark:text-amber-300 leading-snug flex gap-1.5">
+                <span className="shrink-0">·</span><span>{w}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
       <section className={"rounded-lg border-2 " + tone.border + " " + tone.bg + " p-4 md:p-5"}>
