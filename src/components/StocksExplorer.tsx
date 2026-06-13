@@ -56,11 +56,11 @@ function inCapBucket(cap: number, bucket: CapBucket): boolean {
 }
 
 function formatCap(cap: number): string {
-  if (cap <= 0) return "-";
+  if (cap <= 0) return "—";
   const jo = cap / 1_000_000_000_000;
-  if (jo >= 1) return jo.toFixed(1) + "조";
+  if (jo >= 1) return jo.toFixed(1) + "조원";
   const eok = cap / 100_000_000;
-  return Math.round(eok).toLocaleString() + "억";
+  return Math.round(eok).toLocaleString() + "억원";
 }
 
 interface PresetConfig {
@@ -459,9 +459,9 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                     </div>
                     <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
                       <span>시총 {formatCap(s.marketCap)}</span>
-                      <span>PER {s.per > 0 ? s.per.toFixed(1) : "-"}</span>
-                      <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) : "-"}</span>
-                      <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "-"}</span>
+                      <span>PER {s.per > 0 ? s.per.toFixed(1) + "배" : "—"}</span>
+                      <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—"}</span>
+                      <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</span>
                       {s.dividendYield > 0 ? <span>배당 {s.dividendYield.toFixed(1)}%</span> : null}
                     </div>
                   </div>

@@ -26,7 +26,7 @@
       "dividendYield": 0.41,
       "beta": 1.33,
       "peg": 0.21,
-      "momentum": 100,
+      "momentum": 97,
       "returns": {
         "r1m": 51.18,
         "r3m": 86.77,
@@ -45,7 +45,7 @@
         "ratio": 1.07
       },
       "value": 42.0,
-      "compositeScore": 73.4
+      "compositeScore": 72.7
     },
     {
       "ticker": "000660",
@@ -69,7 +69,7 @@
       "dividendYield": 0.13,
       "beta": 2.03,
       "peg": 3.34,
-      "momentum": 100,
+      "momentum": 99,
       "returns": {
         "r1m": 58.81,
         "r3m": 148.7,
@@ -88,7 +88,7 @@
         "ratio": 0.98
       },
       "value": 63.1,
-      "compositeScore": 77.9
+      "compositeScore": 77.7
     },
     {
       "ticker": "042700",
@@ -110,7 +110,7 @@
       "dividendYield": 0.29,
       "beta": 2.27,
       "peg": 1.53,
-      "momentum": 94.6,
+      "momentum": 86,
       "returns": {
         "r1m": -19.58,
         "r3m": -8.85,
@@ -129,7 +129,7 @@
         "ratio": 1.12
       },
       "value": 27.4,
-      "compositeScore": 68.6
+      "compositeScore": 66.4
     },
     {
       "ticker": "000990",
@@ -152,7 +152,7 @@
       "dividendYield": 0.48,
       "beta": 2.19,
       "peg": null,
-      "momentum": 100,
+      "momentum": 93,
       "returns": {
         "r1m": 9.09,
         "r3m": 96.0,
@@ -171,7 +171,7 @@
         "ratio": 0.92
       },
       "value": 64.6,
-      "compositeScore": 77.0
+      "compositeScore": 75.2
     },
     {
       "ticker": "058470",
@@ -192,7 +192,7 @@
       "dividendYield": 0.86,
       "beta": 0.32,
       "peg": null,
-      "momentum": 51.7,
+      "momentum": 57,
       "returns": {
         "r1m": -17.55,
         "r3m": -21.57,
@@ -211,7 +211,7 @@
         "ratio": 1.06
       },
       "value": 28.1,
-      "compositeScore": 54.8
+      "compositeScore": 56.1
     },
     {
       "ticker": "095340",
@@ -232,7 +232,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 78.4,
+      "momentum": 80,
       "returns": {
         "r1m": -13.54,
         "r3m": 1.18,
@@ -251,7 +251,7 @@
         "ratio": 1.05
       },
       "value": 17.5,
-      "compositeScore": 61.8
+      "compositeScore": 62.2
     },
     {
       "ticker": "240810",
@@ -273,7 +273,7 @@
       "dividendYield": 0.2,
       "beta": 1.59,
       "peg": null,
-      "momentum": 87.2,
+      "momentum": 85,
       "returns": {
         "r1m": 3.84,
         "r3m": -7.69,
@@ -292,7 +292,7 @@
         "ratio": 1.0
       },
       "value": 31.4,
-      "compositeScore": 67.2
+      "compositeScore": 66.6
     },
     {
       "ticker": "064290",
@@ -313,7 +313,7 @@
       "dividendYield": 0,
       "beta": 2.23,
       "peg": null,
-      "momentum": 100,
+      "momentum": 98,
       "returns": {
         "r1m": 32.22,
         "r3m": 169.51,
@@ -332,7 +332,7 @@
         "ratio": 0.86
       },
       "value": 17.2,
-      "compositeScore": 64.0
+      "compositeScore": 63.5
     },
     {
       "ticker": "403870",
@@ -354,7 +354,7 @@
       "dividendYield": 1.13,
       "beta": 1.6,
       "peg": null,
-      "momentum": 64.8,
+      "momentum": 69,
       "returns": {
         "r1m": -12.68,
         "r3m": -0.73,
@@ -373,7 +373,7 @@
         "ratio": 1.08
       },
       "value": 16.8,
-      "compositeScore": 54.5
+      "compositeScore": 55.6
     },
     {
       "ticker": "373220",
@@ -398,7 +398,7 @@
       "dividendYield": 0,
       "beta": 1.01,
       "peg": 7.45,
-      "momentum": 52.3,
+      "momentum": 50,
       "returns": {
         "r1m": -10.59,
         "r3m": 11.79,
@@ -417,7 +417,7 @@
         "ratio": 1.87
       },
       "value": 17.9,
-      "compositeScore": 53.7
+      "compositeScore": 53.1
     },
     {
       "ticker": "006400",
@@ -441,7 +441,7 @@
       "dividendYield": 0.36,
       "beta": 1.62,
       "peg": 12.29,
-      "momentum": 100,
+      "momentum": 88,
       "returns": {
         "r1m": -13.9,
         "r3m": 47.87,
@@ -460,7 +460,7 @@
         "ratio": 1.42
       },
       "value": 50.4,
-      "compositeScore": 77.7
+      "compositeScore": 74.7
     },
     {
       "ticker": "096770",
@@ -483,7 +483,7 @@
       "dividendYield": 1.84,
       "beta": 1.58,
       "peg": null,
-      "momentum": 39.6,
+      "momentum": 31,
       "returns": {
         "r1m": -19.84,
         "r3m": -6.49,
@@ -502,7 +502,7 @@
         "ratio": 0.9
       },
       "value": 50.7,
-      "compositeScore": 49.6
+      "compositeScore": 47.5
     },
     {
       "ticker": "247540",
@@ -525,7 +525,7 @@
       "dividendYield": 0.05,
       "beta": 0.93,
       "peg": null,
-      "momentum": 55.3,
+      "momentum": 58,
       "returns": {
         "r1m": -8.4,
         "r3m": -2.52,
@@ -544,7 +544,7 @@
         "ratio": 1.06
       },
       "value": 4.4,
-      "compositeScore": 48.8
+      "compositeScore": 49.5
     },
     {
       "ticker": "086520",
@@ -566,7 +566,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 45.6,
+      "momentum": 45,
       "returns": {
         "r1m": -17.33,
         "r3m": -24.24,
@@ -585,7 +585,7 @@
         "ratio": 1.0
       },
       "value": 6.9,
-      "compositeScore": 48.4
+      "compositeScore": 48.3
     },
     {
       "ticker": "066970",
@@ -606,7 +606,7 @@
       "dividendYield": 0,
       "beta": 0.86,
       "peg": null,
-      "momentum": 59.1,
+      "momentum": 56,
       "returns": {
         "r1m": -29.53,
         "r3m": 26.56,
@@ -625,7 +625,7 @@
         "ratio": 1.38
       },
       "value": 12.0,
-      "compositeScore": 55.0
+      "compositeScore": 54.2
     },
     {
       "ticker": "121600",
@@ -647,7 +647,7 @@
       "dividendYield": 0.4,
       "beta": 0.8,
       "peg": null,
-      "momentum": 40.4,
+      "momentum": 32,
       "returns": {
         "r1m": -25.21,
         "r3m": -8.01,
@@ -666,7 +666,7 @@
         "ratio": 0.87
       },
       "value": 16.1,
-      "compositeScore": 40.2
+      "compositeScore": 38.1
     },
     {
       "ticker": "348370",
@@ -687,7 +687,7 @@
       "dividendYield": 0,
       "beta": 0.82,
       "peg": null,
-      "momentum": 1.8,
+      "momentum": 1,
       "returns": {
         "r1m": -19.82,
         "r3m": -43.44,
@@ -706,7 +706,7 @@
         "ratio": 1.02
       },
       "value": 7.3,
-      "compositeScore": 25.7
+      "compositeScore": 25.5
     },
     {
       "ticker": "207940",
@@ -728,7 +728,7 @@
       "dividendYield": 0,
       "beta": 0.26,
       "peg": 2.06,
-      "momentum": 30.8,
+      "momentum": 23,
       "returns": {
         "r1m": -9.09,
         "r3m": -17.88,
@@ -747,7 +747,7 @@
         "ratio": 1.07
       },
       "value": 13.9,
-      "compositeScore": 35.0
+      "compositeScore": 33.0
     },
     {
       "ticker": "068270",
@@ -769,7 +769,7 @@
       "dividendYield": 0.4,
       "beta": 0.35,
       "peg": 0.85,
-      "momentum": 41.6,
+      "momentum": 37,
       "returns": {
         "r1m": -6.38,
         "r3m": -12.86,
@@ -788,7 +788,7 @@
         "ratio": 1.01
       },
       "value": 25.5,
-      "compositeScore": 45.3
+      "compositeScore": 44.2
     },
     {
       "ticker": "196170",
@@ -810,7 +810,7 @@
       "dividendYield": 0.1,
       "beta": 0.99,
       "peg": null,
-      "momentum": 31.2,
+      "momentum": 20,
       "returns": {
         "r1m": -7.1,
         "r3m": -7.1,
@@ -829,7 +829,7 @@
         "ratio": 0.84
       },
       "value": 5.1,
-      "compositeScore": 31.8
+      "compositeScore": 29.0
     },
     {
       "ticker": "328130",
@@ -851,7 +851,7 @@
       "dividendYield": 0,
       "beta": 1.31,
       "peg": null,
-      "momentum": 28.6,
+      "momentum": 15,
       "returns": {
         "r1m": -26.73,
         "r3m": -9.93,
@@ -870,7 +870,7 @@
         "ratio": 1.23
       },
       "value": 4.7,
-      "compositeScore": 32.6
+      "compositeScore": 29.2
     },
     {
       "ticker": "145020",
@@ -892,7 +892,7 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 50.3,
+      "momentum": 52,
       "returns": {
         "r1m": -3.82,
         "r3m": -3.82,
@@ -911,7 +911,7 @@
         "ratio": 0.79
       },
       "value": 40.9,
-      "compositeScore": 41.7
+      "compositeScore": 42.1
     },
     {
       "ticker": "214150",
@@ -933,7 +933,7 @@
       "dividendYield": 2.34,
       "beta": 0.71,
       "peg": null,
-      "momentum": 22.6,
+      "momentum": 11,
       "returns": {
         "r1m": -22.74,
         "r3m": -21.34,
@@ -952,7 +952,7 @@
         "ratio": 1.07
       },
       "value": 23.7,
-      "compositeScore": 34.7
+      "compositeScore": 31.8
     },
     {
       "ticker": "253450",
@@ -975,7 +975,7 @@
       "dividendYield": 0,
       "beta": 0.32,
       "peg": null,
-      "momentum": 8.7,
+      "momentum": 4,
       "returns": {
         "r1m": -26.01,
         "r3m": -37.12,
@@ -994,7 +994,7 @@
         "ratio": 0.95
       },
       "value": 29.6,
-      "compositeScore": 23.8
+      "compositeScore": 22.6
     },
     {
       "ticker": "298380",
@@ -1016,7 +1016,7 @@
       "dividendYield": 0,
       "beta": 0.33,
       "peg": null,
-      "momentum": 2.6,
+      "momentum": 2,
       "returns": {
         "r1m": -20.0,
         "r3m": -44.3,
@@ -1035,7 +1035,7 @@
         "ratio": 0.72
       },
       "value": 3.3,
-      "compositeScore": 25.8
+      "compositeScore": 25.6
     },
     {
       "ticker": "005380",
@@ -1058,7 +1058,7 @@
       "dividendYield": 1.37,
       "beta": 1.54,
       "peg": 4.13,
-      "momentum": 100,
+      "momentum": 92,
       "returns": {
         "r1m": 29.87,
         "r3m": 26.58,
@@ -1077,7 +1077,7 @@
         "ratio": 0.89
       },
       "value": 85.4,
-      "compositeScore": 81.6
+      "compositeScore": 79.6
     },
     {
       "ticker": "000270",
@@ -1100,7 +1100,7 @@
       "dividendYield": 4.03,
       "beta": 0.99,
       "peg": 0.42,
-      "momentum": 66.1,
+      "momentum": 74,
       "returns": {
         "r1m": 6.69,
         "r3m": -1.62,
@@ -1119,7 +1119,7 @@
         "ratio": 0.9
       },
       "value": 79.9,
-      "compositeScore": 68.0
+      "compositeScore": 70.0
     },
     {
       "ticker": "012330",
@@ -1142,7 +1142,7 @@
       "dividendYield": 0.86,
       "beta": 0.95,
       "peg": 0.09,
-      "momentum": 100,
+      "momentum": 95,
       "returns": {
         "r1m": 73.35,
         "r3m": 68.47,
@@ -1161,7 +1161,7 @@
         "ratio": 1.26
       },
       "value": 83.6,
-      "compositeScore": 85.0
+      "compositeScore": 83.8
     },
     {
       "ticker": "011210",
@@ -1183,7 +1183,7 @@
       "dividendYield": 1.42,
       "beta": 1.03,
       "peg": null,
-      "momentum": 54.2,
+      "momentum": 59,
       "returns": {
         "r1m": -2.05,
         "r3m": -11.06,
@@ -1202,7 +1202,7 @@
         "ratio": 0.68
       },
       "value": 67.5,
-      "compositeScore": 57.6
+      "compositeScore": 58.8
     },
     {
       "ticker": "204270",
@@ -1224,7 +1224,7 @@
       "dividendYield": 0,
       "beta": 1.71,
       "peg": null,
-      "momentum": 46.8,
+      "momentum": 46,
       "returns": {
         "r1m": 1.2,
         "r3m": 0.36,
@@ -1243,7 +1243,7 @@
         "ratio": 0.96
       },
       "value": 33.6,
-      "compositeScore": 47.3
+      "compositeScore": 47.1
     },
     {
       "ticker": "009540",
@@ -1265,7 +1265,7 @@
       "dividendYield": 2.37,
       "beta": 1.3,
       "peg": 0.21,
-      "momentum": 36.2,
+      "momentum": 26,
       "returns": {
         "r1m": -19.17,
         "r3m": -5.6,
@@ -1284,7 +1284,7 @@
         "ratio": 1.18
       },
       "value": 48.9,
-      "compositeScore": 50.8
+      "compositeScore": 48.3
     },
     {
       "ticker": "042660",
@@ -1307,7 +1307,7 @@
       "dividendYield": 0,
       "beta": 0.96,
       "peg": 0.44,
-      "momentum": 42.8,
+      "momentum": 36,
       "returns": {
         "r1m": -13.46,
         "r3m": -9.16,
@@ -1326,7 +1326,7 @@
         "ratio": 0.98
       },
       "value": 38.3,
-      "compositeScore": 50.6
+      "compositeScore": 48.9
     },
     {
       "ticker": "329180",
@@ -1348,7 +1348,7 @@
       "dividendYield": 1.15,
       "beta": 1.08,
       "peg": null,
-      "momentum": 65.4,
+      "momentum": 69,
       "returns": {
         "r1m": -4.26,
         "r3m": 17.51,
@@ -1367,7 +1367,7 @@
         "ratio": 0.95
       },
       "value": 17.9,
-      "compositeScore": 51.2
+      "compositeScore": 52.1
     },
     {
       "ticker": "064350",
@@ -1390,7 +1390,7 @@
       "dividendYield": 0.3,
       "beta": 1.8,
       "peg": null,
-      "momentum": 34.6,
+      "momentum": 25,
       "returns": {
         "r1m": -28.36,
         "r3m": -17.3,
@@ -1409,7 +1409,7 @@
         "ratio": 1.13
       },
       "value": 48.5,
-      "compositeScore": 50.5
+      "compositeScore": 48.1
     },
     {
       "ticker": "012450",
@@ -1433,7 +1433,7 @@
       "dividendYield": 0.65,
       "beta": 0.89,
       "peg": null,
-      "momentum": 34.6,
+      "momentum": 27,
       "returns": {
         "r1m": -27.1,
         "r3m": -27.89,
@@ -1452,7 +1452,7 @@
         "ratio": 1.27
       },
       "value": 58.8,
-      "compositeScore": 53.3
+      "compositeScore": 51.4
     },
     {
       "ticker": "009830",
@@ -1475,7 +1475,7 @@
       "dividendYield": 1.13,
       "beta": 1.57,
       "peg": null,
-      "momentum": 47.0,
+      "momentum": 47,
       "returns": {
         "r1m": -20.04,
         "r3m": -22.97,
@@ -1516,7 +1516,7 @@
       "dividendYield": 1.29,
       "beta": 1.36,
       "peg": null,
-      "momentum": 48.1,
+      "momentum": 41,
       "returns": {
         "r1m": -23.73,
         "r3m": 7.43,
@@ -1535,7 +1535,7 @@
         "ratio": 0.58
       },
       "value": 48.9,
-      "compositeScore": 45.3
+      "compositeScore": 43.5
     },
     {
       "ticker": "005490",
@@ -1558,7 +1558,7 @@
       "dividendYield": 2.38,
       "beta": 1.67,
       "peg": 0.9,
-      "momentum": 60.8,
+      "momentum": 61,
       "returns": {
         "r1m": -19.92,
         "r3m": 13.72,
@@ -1599,7 +1599,7 @@
       "dividendYield": 2.28,
       "beta": 1.33,
       "peg": null,
-      "momentum": 10.8,
+      "momentum": 5,
       "returns": {
         "r1m": -26.22,
         "r3m": -38.94,
@@ -1618,7 +1618,7 @@
         "ratio": 1.06
       },
       "value": 82.8,
-      "compositeScore": 51.8
+      "compositeScore": 50.4
     },
     {
       "ticker": "267260",
@@ -1641,7 +1641,7 @@
       "dividendYield": 0.84,
       "beta": 1.19,
       "peg": null,
-      "momentum": 51.1,
+      "momentum": 48,
       "returns": {
         "r1m": -23.09,
         "r3m": 3.2,
@@ -1660,7 +1660,7 @@
         "ratio": 1.26
       },
       "value": 47.1,
-      "compositeScore": 63.0
+      "compositeScore": 62.3
     },
     {
       "ticker": "035420",
@@ -1684,7 +1684,7 @@
       "dividendYield": 0.94,
       "beta": 1.13,
       "peg": 32.68,
-      "momentum": 73.8,
+      "momentum": 79,
       "returns": {
         "r1m": 27.99,
         "r3m": 20.22,
@@ -1703,7 +1703,7 @@
         "ratio": 2.86
       },
       "value": 43.8,
-      "compositeScore": 71.4
+      "compositeScore": 72.7
     },
     {
       "ticker": "035720",
@@ -1727,7 +1727,7 @@
       "dividendYield": 0.18,
       "beta": 1.27,
       "peg": 1.2,
-      "momentum": 23.6,
+      "momentum": 15,
       "returns": {
         "r1m": -10.83,
         "r3m": -21.64,
@@ -1746,7 +1746,7 @@
         "ratio": 1.76
       },
       "value": 17.9,
-      "compositeScore": 40.7
+      "compositeScore": 38.5
     },
     {
       "ticker": "377300",
@@ -1769,7 +1769,7 @@
       "dividendYield": 0,
       "beta": 2.13,
       "peg": null,
-      "momentum": 29.1,
+      "momentum": 18,
       "returns": {
         "r1m": -17.14,
         "r3m": -24.68,
@@ -1788,7 +1788,7 @@
         "ratio": 0.54
       },
       "value": 10.6,
-      "compositeScore": 29.5
+      "compositeScore": 26.8
     },
     {
       "ticker": "293490",
@@ -1810,7 +1810,7 @@
       "dividendYield": 0,
       "beta": 0.46,
       "peg": null,
-      "momentum": 14.5,
+      "momentum": 7,
       "returns": {
         "r1m": -17.6,
         "r3m": -27.2,
@@ -1829,7 +1829,7 @@
         "ratio": 1.02
       },
       "value": 24.5,
-      "compositeScore": 29.1
+      "compositeScore": 27.2
     },
     {
       "ticker": "352820",
@@ -1852,7 +1852,7 @@
       "dividendYield": 0.23,
       "beta": 0.89,
       "peg": null,
-      "momentum": 14.0,
+      "momentum": 8,
       "returns": {
         "r1m": -16.5,
         "r3m": -39.09,
@@ -1871,7 +1871,7 @@
         "ratio": 1.32
       },
       "value": 24.1,
-      "compositeScore": 33.3
+      "compositeScore": 31.8
     },
     {
       "ticker": "041510",
@@ -1893,7 +1893,7 @@
       "dividendYield": 2.07,
       "beta": 0.4,
       "peg": null,
-      "momentum": 21.1,
+      "momentum": 10,
       "returns": {
         "r1m": -18.7,
         "r3m": -24.83,
@@ -1912,7 +1912,7 @@
         "ratio": 1.19
       },
       "value": 33.9,
-      "compositeScore": 33.9
+      "compositeScore": 31.1
     },
     {
       "ticker": "122870",
@@ -1934,7 +1934,7 @@
       "dividendYield": 0.69,
       "beta": 0.57,
       "peg": null,
-      "momentum": 12.2,
+      "momentum": 7,
       "returns": {
         "r1m": -19.16,
         "r3m": -37.77,
@@ -1953,7 +1953,7 @@
         "ratio": 1.08
       },
       "value": 47.8,
-      "compositeScore": 32.0
+      "compositeScore": 30.7
     },
     {
       "ticker": "251270",
@@ -1974,7 +1974,7 @@
       "dividendYield": 1.95,
       "beta": 0.93,
       "peg": null,
-      "momentum": 29.6,
+      "momentum": 20,
       "returns": {
         "r1m": -11.41,
         "r3m": -18.8,
@@ -1993,7 +1993,7 @@
         "ratio": 0.99
       },
       "value": 38.0,
-      "compositeScore": 39.0
+      "compositeScore": 36.6
     },
     {
       "ticker": "030200",
@@ -2015,7 +2015,7 @@
       "dividendYield": 4.45,
       "beta": 0.16,
       "peg": 4.43,
-      "momentum": 43.5,
+      "momentum": 39,
       "returns": {
         "r1m": -10.07,
         "r3m": -7.63,
@@ -2034,7 +2034,7 @@
         "ratio": 0.98
       },
       "value": 79.9,
-      "compositeScore": 57.4
+      "compositeScore": 56.3
     },
     {
       "ticker": "034220",
@@ -2057,7 +2057,7 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": null,
-      "momentum": 88.8,
+      "momentum": 84,
       "returns": {
         "r1m": 30.95,
         "r3m": 34.78,
@@ -2076,7 +2076,7 @@
         "ratio": 1.98
       },
       "value": 58.4,
-      "compositeScore": 76.1
+      "compositeScore": 74.9
     },
     {
       "ticker": "036570",
@@ -2098,7 +2098,7 @@
       "dividendYield": 0.34,
       "beta": 0.9,
       "peg": null,
-      "momentum": 83.3,
+      "momentum": 81,
       "returns": {
         "r1m": 8.22,
         "r3m": 34.97,
@@ -2117,7 +2117,7 @@
         "ratio": 1.71
       },
       "value": 48.5,
-      "compositeScore": 69.8
+      "compositeScore": 69.3
     },
     {
       "ticker": "033780",
@@ -2139,7 +2139,7 @@
       "dividendYield": 3.25,
       "beta": 0.21,
       "peg": 3.72,
-      "momentum": 64.1,
+      "momentum": 68,
       "returns": {
         "r1m": -2.12,
         "r3m": 13.64,
@@ -2158,7 +2158,7 @@
         "ratio": 1.03
       },
       "value": 62.4,
-      "compositeScore": 64.9
+      "compositeScore": 65.9
     },
     {
       "ticker": "032830",
@@ -2181,7 +2181,7 @@
       "dividendYield": 1.1,
       "beta": 0.78,
       "peg": 1.51,
-      "momentum": 100,
+      "momentum": 96,
       "returns": {
         "r1m": 65.28,
         "r3m": 108.57,
@@ -2200,7 +2200,7 @@
         "ratio": 1.32
       },
       "value": 90.5,
-      "compositeScore": 87.1
+      "compositeScore": 86.1
     },
     {
       "ticker": "018260",
@@ -2223,7 +2223,7 @@
       "dividendYield": 1.06,
       "beta": 0.82,
       "peg": null,
-      "momentum": 100,
+      "momentum": 91,
       "returns": {
         "r1m": 60.58,
         "r3m": 63.51,
@@ -2242,7 +2242,7 @@
         "ratio": 1.94
       },
       "value": 50.4,
-      "compositeScore": 76.6
+      "compositeScore": 74.3
     },
     {
       "ticker": "009150",
@@ -2307,7 +2307,7 @@
       "dividendYield": 3.04,
       "beta": 0.34,
       "peg": null,
-      "momentum": 100,
+      "momentum": 90,
       "returns": {
         "r1m": 54.17,
         "r3m": 47.03,
@@ -2326,7 +2326,7 @@
         "ratio": 1.18
       },
       "value": 77.7,
-      "compositeScore": 77.6
+      "compositeScore": 75.1
     },
     {
       "ticker": "097950",
@@ -2349,7 +2349,7 @@
       "dividendYield": 2.99,
       "beta": 0.25,
       "peg": null,
-      "momentum": 42.9,
+      "momentum": 34,
       "returns": {
         "r1m": -16.6,
         "r3m": 2.6,
@@ -2368,7 +2368,7 @@
         "ratio": 1.11
       },
       "value": 67.2,
-      "compositeScore": 49.6
+      "compositeScore": 47.4
     },
     {
       "ticker": "000720",
@@ -2391,7 +2391,7 @@
       "dividendYield": 0.6,
       "beta": 1.49,
       "peg": null,
-      "momentum": 73.4,
+      "momentum": 77,
       "returns": {
         "r1m": -14.3,
         "r3m": -12.88,
@@ -2410,7 +2410,7 @@
         "ratio": 0.92
       },
       "value": 83.9,
-      "compositeScore": 71.0
+      "compositeScore": 71.9
     },
     {
       "ticker": "055550",
@@ -2432,7 +2432,7 @@
       "dividendYield": 2.86,
       "beta": 0.74,
       "peg": 5.14,
-      "momentum": 64.8,
+      "momentum": 70,
       "returns": {
         "r1m": 2.14,
         "r3m": 9.04,
@@ -2451,7 +2451,7 @@
         "ratio": 1.26
       },
       "value": 90.9,
-      "compositeScore": 76.0
+      "compositeScore": 77.3
     },
     {
       "ticker": "105560",
@@ -2474,7 +2474,7 @@
       "dividendYield": 2.94,
       "beta": 0.77,
       "peg": 0.74,
-      "momentum": 66.5,
+      "momentum": 72,
       "returns": {
         "r1m": 4.06,
         "r3m": 11.4,
@@ -2493,7 +2493,7 @@
         "ratio": 1.23
       },
       "value": 91.6,
-      "compositeScore": 74.1
+      "compositeScore": 75.5
     },
     {
       "ticker": "086790",
@@ -2515,7 +2515,7 @@
       "dividendYield": 3.91,
       "beta": 0.83,
       "peg": 4.79,
-      "momentum": 62.5,
+      "momentum": 65,
       "returns": {
         "r1m": -4.74,
         "r3m": 9.34,
@@ -2534,7 +2534,7 @@
         "ratio": 1.1
       },
       "value": 93.8,
-      "compositeScore": 73.9
+      "compositeScore": 74.5
     },
     {
       "ticker": "316140",
@@ -2556,7 +2556,7 @@
       "dividendYield": 4.62,
       "beta": 0.67,
       "peg": 2.56,
-      "momentum": 45.2,
+      "momentum": 42,
       "returns": {
         "r1m": -8.71,
         "r3m": -8.02,
@@ -2575,7 +2575,7 @@
         "ratio": 1.16
       },
       "value": 93.8,
-      "compositeScore": 69.0
+      "compositeScore": 68.2
     },
     {
       "ticker": "003490",
@@ -2597,7 +2597,7 @@
       "dividendYield": 2.96,
       "beta": 0.83,
       "peg": null,
-      "momentum": 56.4,
+      "momentum": 60,
       "returns": {
         "r1m": 2.24,
         "r3m": 2.24,
@@ -2616,7 +2616,7 @@
         "ratio": 0.97
       },
       "value": 71.2,
-      "compositeScore": 58.5
+      "compositeScore": 59.4
     },
     {
       "ticker": "034730",
@@ -2638,7 +2638,7 @@
       "dividendYield": 1.2,
       "beta": 1.3,
       "peg": null,
-      "momentum": 100,
+      "momentum": 94,
       "returns": {
         "r1m": 40.48,
         "r3m": 86.33,
@@ -2657,7 +2657,7 @@
         "ratio": 0.89
       },
       "value": 77.4,
-      "compositeScore": 79.6
+      "compositeScore": 78.1
     },
     {
       "ticker": "003550",
@@ -2679,7 +2679,7 @@
       "dividendYield": 2.21,
       "beta": 0.91,
       "peg": null,
-      "momentum": 100,
+      "momentum": 88,
       "returns": {
         "r1m": 26.98,
         "r3m": 38.19,
@@ -2698,7 +2698,7 @@
         "ratio": 2.14
       },
       "value": 77.4,
-      "compositeScore": 84.2
+      "compositeScore": 81.2
     },
     {
       "ticker": "004020",
@@ -2720,7 +2720,7 @@
       "dividendYield": 1.32,
       "beta": 1.44,
       "peg": null,
-      "momentum": 52.9,
+      "momentum": 55,
       "returns": {
         "r1m": -11.61,
         "r3m": -4.28,
@@ -2739,7 +2739,7 @@
         "ratio": 0.68
       },
       "value": 85.8,
-      "compositeScore": 58.0
+      "compositeScore": 58.5
     },
     {
       "ticker": "010140",
@@ -2762,7 +2762,7 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": 0.11,
-      "momentum": 52.6,
+      "momentum": 53,
       "returns": {
         "r1m": -11.94,
         "r3m": 2.9,
@@ -2802,7 +2802,7 @@
       "dividendYield": 0.89,
       "beta": 0.73,
       "peg": null,
-      "momentum": 52.3,
+      "momentum": 49,
       "returns": {
         "r1m": -11.79,
         "r3m": 12.61,
@@ -2821,7 +2821,7 @@
         "ratio": 1.16
       },
       "value": 52.9,
-      "compositeScore": 46.9
+      "compositeScore": 46.0
     },
     {
       "ticker": "078340",
@@ -2842,7 +2842,7 @@
       "dividendYield": 4.88,
       "beta": 0.5,
       "peg": null,
-      "momentum": 27.2,
+      "momentum": 16,
       "returns": {
         "r1m": -20.65,
         "r3m": -19.7,
@@ -2861,7 +2861,7 @@
         "ratio": 1.27
       },
       "value": 71.9,
-      "compositeScore": 45.0
+      "compositeScore": 42.2
     },
     {
       "ticker": "095660",
@@ -2882,7 +2882,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 22.0,
+      "momentum": 13,
       "returns": {
         "r1m": -10.0,
         "r3m": -29.1,
@@ -2901,7 +2901,7 @@
         "ratio": 1.33
       },
       "value": 63.1,
-      "compositeScore": 45.0
+      "compositeScore": 42.8
     },
     {
       "ticker": "194480",
@@ -2922,7 +2922,7 @@
       "dividendYield": 0,
       "beta": 0.07,
       "peg": null,
-      "momentum": 0,
+      "momentum": 1,
       "returns": {
         "r1m": -30.71,
         "r3m": -61.05,
@@ -2941,7 +2941,7 @@
         "ratio": 0.78
       },
       "value": 42.3,
-      "compositeScore": 22.7
+      "compositeScore": 23.0
     },
     {
       "ticker": "145720",
@@ -2963,7 +2963,7 @@
       "dividendYield": 1.31,
       "beta": 0.63,
       "peg": null,
-      "momentum": 36.9,
+      "momentum": 29,
       "returns": {
         "r1m": -12.78,
         "r3m": -8.27,
@@ -2982,7 +2982,7 @@
         "ratio": 0.8
       },
       "value": 45.6,
-      "compositeScore": 36.8
+      "compositeScore": 34.9
     },
     {
       "ticker": "145995",
@@ -3004,7 +3004,7 @@
       "dividendYield": 5.79,
       "beta": 0.44,
       "peg": null,
-      "momentum": 35.1,
+      "momentum": 28,
       "returns": {
         "r1m": -6.69,
         "r3m": -11.42,
@@ -3023,7 +3023,7 @@
         "ratio": 1.67
       },
       "value": 94.5,
-      "compositeScore": 57.4
+      "compositeScore": 55.6
     },
     {
       "ticker": "139130",
@@ -3045,7 +3045,7 @@
       "dividendYield": 4.01,
       "beta": 0.63,
       "peg": null,
-      "momentum": 56.4,
+      "momentum": 58,
       "returns": {
         "r1m": -8.65,
         "r3m": 3.4,
@@ -3064,7 +3064,7 @@
         "ratio": 1.22
       },
       "value": 97.8,
-      "compositeScore": 73.3
+      "compositeScore": 73.7
     },
     {
       "ticker": "071050",
@@ -3085,7 +3085,7 @@
       "dividendYield": 3.6,
       "beta": 1.48,
       "peg": null,
-      "momentum": 72.4,
+      "momentum": 75,
       "returns": {
         "r1m": -4.39,
         "r3m": 8.91,
@@ -3104,7 +3104,7 @@
         "ratio": 0.97
       },
       "value": 89.1,
-      "compositeScore": 74.6
+      "compositeScore": 75.3
     },
     {
       "ticker": "006800",
@@ -3126,7 +3126,7 @@
       "dividendYield": 0.52,
       "beta": 1.46,
       "peg": null,
-      "momentum": 98.4,
+      "momentum": 87,
       "returns": {
         "r1m": -17.07,
         "r3m": -12.74,
@@ -3145,7 +3145,7 @@
         "ratio": 0.71
       },
       "value": 71.9,
-      "compositeScore": 73.6
+      "compositeScore": 70.7
     },
     {
       "ticker": "298040",
@@ -3168,7 +3168,7 @@
       "dividendYield": 0.21,
       "beta": 2.17,
       "peg": null,
-      "momentum": 95.3,
+      "momentum": 83,
       "returns": {
         "r1m": -17.5,
         "r3m": 40.76,
@@ -3187,7 +3187,7 @@
         "ratio": 0.98
       },
       "value": 60.2,
-      "compositeScore": 75.9
+      "compositeScore": 72.8
     },
     {
       "ticker": "093370",
@@ -3209,7 +3209,7 @@
       "dividendYield": 0,
       "beta": 1.62,
       "peg": null,
-      "momentum": 85.6,
+      "momentum": 80,
       "returns": {
         "r1m": -18.9,
         "r3m": 56.13,
@@ -3228,7 +3228,7 @@
         "ratio": 0.92
       },
       "value": 16.1,
-      "compositeScore": 58.3
+      "compositeScore": 56.9
     },
     {
       "ticker": "078930",
@@ -3250,7 +3250,7 @@
       "dividendYield": 4.13,
       "beta": 0.66,
       "peg": null,
-      "momentum": 67.4,
+      "momentum": 71,
       "returns": {
         "r1m": -5.69,
         "r3m": 16.31,
@@ -3269,7 +3269,7 @@
         "ratio": 0.86
       },
       "value": 96.7,
-      "compositeScore": 71.8
+      "compositeScore": 72.7
     },
     {
       "ticker": "030000",
@@ -3291,7 +3291,7 @@
       "dividendYield": 6.68,
       "beta": 0.22,
       "peg": null,
-      "momentum": 35.5,
+      "momentum": 28,
       "returns": {
         "r1m": -7.19,
         "r3m": -9.26,
@@ -3310,7 +3310,7 @@
         "ratio": 1.04
       },
       "value": 60.2,
-      "compositeScore": 48.7
+      "compositeScore": 46.8
     },
     {
       "ticker": "003670",
@@ -3332,7 +3332,7 @@
       "dividendYield": 0.11,
       "beta": 1.66,
       "peg": 4.51,
-      "momentum": 47.8,
+      "momentum": 45,
       "returns": {
         "r1m": -17.04,
         "r3m": 2.78,
@@ -3351,7 +3351,7 @@
         "ratio": 0.97
       },
       "value": 4.7,
-      "compositeScore": 45.6
+      "compositeScore": 45.0
     },
     {
       "ticker": "271560",
@@ -3372,7 +3372,7 @@
       "dividendYield": 2.73,
       "beta": 0.36,
       "peg": null,
-      "momentum": 58.2,
+      "momentum": 62,
       "returns": {
         "r1m": -8.26,
         "r3m": 3.56,
@@ -3391,7 +3391,7 @@
         "ratio": 1.16
       },
       "value": 56.2,
-      "compositeScore": 58.2
+      "compositeScore": 59.1
     },
     {
       "ticker": "097230",
@@ -3414,7 +3414,7 @@
       "dividendYield": 0,
       "beta": 1.46,
       "peg": null,
-      "momentum": 39.0,
+      "momentum": 31,
       "returns": {
         "r1m": -22.92,
         "r3m": -4.1,
@@ -3433,7 +3433,7 @@
         "ratio": 0.77
       },
       "value": 39.1,
-      "compositeScore": 50.6
+      "compositeScore": 48.6
     },
     {
       "ticker": "272210",
@@ -3456,7 +3456,7 @@
       "dividendYield": 0.51,
       "beta": 1.51,
       "peg": null,
-      "momentum": 62.3,
+      "momentum": 72,
       "returns": {
         "r1m": -19.72,
         "r3m": -39.52,
@@ -3475,7 +3475,7 @@
         "ratio": 1.01
       },
       "value": 61.7,
-      "compositeScore": 64.1
+      "compositeScore": 66.5
     },
     {
       "ticker": "180640",
@@ -3498,7 +3498,7 @@
       "dividendYield": 0.31,
       "beta": 0.93,
       "peg": null,
-      "momentum": 55.4,
+      "momentum": 61,
       "returns": {
         "r1m": 7.3,
         "r3m": -2.59,
@@ -3517,7 +3517,7 @@
         "ratio": 2.46
       },
       "value": 52.9,
-      "compositeScore": 60.7
+      "compositeScore": 62.1
     },
     {
       "ticker": "128940",
@@ -3539,7 +3539,7 @@
       "dividendYield": 0.39,
       "beta": 0.43,
       "peg": null,
-      "momentum": 56.5,
+      "momentum": 64,
       "returns": {
         "r1m": 10.45,
         "r3m": -4.75,
@@ -3558,7 +3558,7 @@
         "ratio": 1.76
       },
       "value": 27.7,
-      "compositeScore": 57.8
+      "compositeScore": 59.7
     },
     {
       "ticker": "000100",
@@ -3581,7 +3581,7 @@
       "dividendYield": 0.74,
       "beta": 0.46,
       "peg": null,
-      "momentum": 23.7,
+      "momentum": 14,
       "returns": {
         "r1m": -11.49,
         "r3m": -19.34,
@@ -3600,7 +3600,7 @@
         "ratio": 1.19
       },
       "value": 28.5,
-      "compositeScore": 35.8
+      "compositeScore": 33.3
     },
     {
       "ticker": "018880",
@@ -3622,7 +3622,7 @@
       "dividendYield": 0,
       "beta": 1.06,
       "peg": null,
-      "momentum": 69.5,
+      "momentum": 74,
       "returns": {
         "r1m": -0.62,
         "r3m": 16.43,
@@ -3641,7 +3641,7 @@
         "ratio": 0.77
       },
       "value": 31.4,
-      "compositeScore": 52.2
+      "compositeScore": 53.3
     },
     {
       "ticker": "019170",
@@ -3663,7 +3663,7 @@
       "dividendYield": 0,
       "beta": 1.26,
       "peg": null,
-      "momentum": 21.8,
+      "momentum": 9,
       "returns": {
         "r1m": -17.83,
         "r3m": -14.78,
@@ -3682,7 +3682,7 @@
         "ratio": 0.51
       },
       "value": 22.6,
-      "compositeScore": 26.9
+      "compositeScore": 23.7
     },
     {
       "ticker": "009420",
@@ -3704,7 +3704,7 @@
       "dividendYield": 0,
       "beta": 0.65,
       "peg": null,
-      "momentum": 59.4,
+      "momentum": 67,
       "returns": {
         "r1m": 19.65,
         "r3m": 0.0,
@@ -3723,7 +3723,7 @@
         "ratio": 1.24
       },
       "value": 4.7,
-      "compositeScore": 51.0
+      "compositeScore": 52.8
     },
     {
       "ticker": "014130",
@@ -3744,7 +3744,7 @@
       "dividendYield": 3.22,
       "beta": 0.78,
       "peg": null,
-      "momentum": 27.6,
+      "momentum": 17,
       "returns": {
         "r1m": -13.95,
         "r3m": -14.41,
@@ -3763,7 +3763,7 @@
         "ratio": 1.34
       },
       "value": 80.7,
-      "compositeScore": 42.6
+      "compositeScore": 39.9
     },
     {
       "ticker": "030610",
@@ -3784,7 +3784,7 @@
       "dividendYield": 4.94,
       "beta": 1.07,
       "peg": null,
-      "momentum": 46.9,
+      "momentum": 43,
       "returns": {
         "r1m": -20.46,
         "r3m": -8.09,
@@ -3803,7 +3803,7 @@
         "ratio": 0.58
       },
       "value": 92.0,
-      "compositeScore": 57.6
+      "compositeScore": 56.6
     },
     {
       "ticker": "037560",
@@ -3825,7 +3825,7 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 73.3,
+      "momentum": 76,
       "returns": {
         "r1m": 16.6,
         "r3m": 22.32,
@@ -3844,7 +3844,7 @@
         "ratio": 3.83
       },
       "value": 51.5,
-      "compositeScore": 70.6
+      "compositeScore": 71.2
     },
     {
       "ticker": "004170",
@@ -3867,7 +3867,7 @@
       "dividendYield": 0.23,
       "beta": 1.04,
       "peg": null,
-      "momentum": 100,
+      "momentum": 96,
       "returns": {
         "r1m": 60.54,
         "r3m": 97.31,
@@ -3886,7 +3886,7 @@
         "ratio": 1.08
       },
       "value": 85.0,
-      "compositeScore": 84.2
+      "compositeScore": 83.2
     },
     {
       "ticker": "139480",
@@ -3908,7 +3908,7 @@
       "dividendYield": 2.83,
       "beta": 0.49,
       "peg": null,
-      "momentum": 52.4,
+      "momentum": 54,
       "returns": {
         "r1m": -10.58,
         "r3m": 2.27,
@@ -3927,7 +3927,7 @@
         "ratio": 0.83
       },
       "value": 80.3,
-      "compositeScore": 57.0
+      "compositeScore": 57.4
     },
     {
       "ticker": "097520",
@@ -3949,7 +3949,7 @@
       "dividendYield": 4.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 32.6,
+      "momentum": 23,
       "returns": {
         "r1m": -9.98,
         "r3m": -11.11,
@@ -3968,7 +3968,7 @@
         "ratio": 0.83
       },
       "value": 47.4,
-      "compositeScore": 38.7
+      "compositeScore": 36.3
     },
     {
       "ticker": "001740",
@@ -3990,7 +3990,7 @@
       "dividendYield": 1.95,
       "beta": 0.69,
       "peg": null,
-      "momentum": 100,
+      "momentum": 99,
       "returns": {
         "r1m": 97.42,
         "r3m": 148.28,
@@ -4009,7 +4009,7 @@
         "ratio": 0.89
       },
       "value": 65.3,
-      "compositeScore": 76.6
+      "compositeScore": 76.3
     },
     {
       "ticker": "005250",
@@ -4031,7 +4031,7 @@
       "dividendYield": 2.65,
       "beta": 0.59,
       "peg": null,
-      "momentum": 18.2,
+      "momentum": 9,
       "returns": {
         "r1m": -21.58,
         "r3m": -22.14,
@@ -4050,7 +4050,7 @@
         "ratio": 0.58
       },
       "value": 52.6,
-      "compositeScore": 28.8
+      "compositeScore": 26.5
     },
     {
       "ticker": "001440",
@@ -4072,7 +4072,7 @@
       "dividendYield": 0,
       "beta": 2.37,
       "peg": null,
-      "momentum": 90.4,
+      "momentum": 82,
       "returns": {
         "r1m": -30.23,
         "r3m": 40.0,
@@ -4091,7 +4091,7 @@
         "ratio": 0.66
       },
       "value": 56.6,
-      "compositeScore": 66.5
+      "compositeScore": 64.4
     },
     {
       "ticker": "007660",
@@ -4113,7 +4113,7 @@
       "dividendYield": 0.17,
       "beta": 2.1,
       "peg": null,
-      "momentum": 52.9,
+      "momentum": 51,
       "returns": {
         "r1m": -10.27,
         "r3m": 16.67,
@@ -4132,7 +4132,7 @@
         "ratio": 1.05
       },
       "value": 21.2,
-      "compositeScore": 55.9
+      "compositeScore": 55.4
     },
     {
       "ticker": "011930",
@@ -4154,7 +4154,7 @@
       "dividendYield": 0,
       "beta": 1.49,
       "peg": null,
-      "momentum": 47.9,
+      "momentum": 39,
       "returns": {
         "r1m": -43.18,
         "r3m": -1.73,
@@ -4173,7 +4173,7 @@
         "ratio": 0.75
       },
       "value": 43.8,
-      "compositeScore": 48.4
+      "compositeScore": 46.2
     },
     {
       "ticker": "298050",
@@ -4195,7 +4195,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 42.9,
+      "momentum": 34,
       "returns": {
         "r1m": -21.72,
         "r3m": -1.42,
@@ -4214,7 +4214,7 @@
         "ratio": 1.02
       },
       "value": 30.3,
-      "compositeScore": 44.9
+      "compositeScore": 42.7
     },
     {
       "ticker": "032640",
@@ -4237,7 +4237,7 @@
       "dividendYield": 4.09,
       "beta": 0.28,
       "peg": 0.78,
-      "momentum": 52.2,
+      "momentum": 55,
       "returns": {
         "r1m": -2.0,
         "r3m": 3.84,
@@ -4256,7 +4256,7 @@
         "ratio": 1.86
       },
       "value": 83.2,
-      "compositeScore": 68.5
+      "compositeScore": 69.2
     },
     {
       "ticker": "285130",
@@ -4279,7 +4279,7 @@
       "dividendYield": 1.79,
       "beta": 0.84,
       "peg": null,
-      "momentum": 8.5,
+      "momentum": 3,
       "returns": {
         "r1m": -29.65,
         "r3m": -29.05,
@@ -4298,7 +4298,7 @@
         "ratio": 0.93
       },
       "value": 57.3,
-      "compositeScore": 36.2
+      "compositeScore": 34.9
     },
     {
       "ticker": "181710",
@@ -4320,7 +4320,7 @@
       "dividendYield": 0.94,
       "beta": 0.65,
       "peg": null,
-      "momentum": 84.7,
+      "momentum": 82,
       "returns": {
         "r1m": 15.52,
         "r3m": 28.14,
@@ -4339,7 +4339,7 @@
         "ratio": 2.7
       },
       "value": 63.1,
-      "compositeScore": 81.8
+      "compositeScore": 81.1
     },
     {
       "ticker": "089030",
@@ -4360,7 +4360,7 @@
       "dividendYield": 0.27,
       "beta": 1.43,
       "peg": null,
-      "momentum": 38.1,
+      "momentum": 33,
       "returns": {
         "r1m": -12.4,
         "r3m": -24.47,
@@ -4379,7 +4379,7 @@
         "ratio": 0.9
       },
       "value": 24.1,
-      "compositeScore": 44.1
+      "compositeScore": 42.8
     },
     {
       "ticker": "030190",
@@ -4400,7 +4400,7 @@
       "dividendYield": 3.6,
       "beta": 0.22,
       "peg": null,
-      "momentum": 35.3,
+      "momentum": 30,
       "returns": {
         "r1m": -4.66,
         "r3m": -13.41,
@@ -4419,7 +4419,7 @@
         "ratio": 1.18
       },
       "value": 60.9,
-      "compositeScore": 50.8
+      "compositeScore": 49.5
     },
     {
       "ticker": "078160",
@@ -4482,7 +4482,7 @@
       "dividendYield": 3.7,
       "beta": 0.33,
       "peg": null,
-      "momentum": 44.8,
+      "momentum": 42,
       "returns": {
         "r1m": -2.81,
         "r3m": 0.97,
@@ -4501,7 +4501,7 @@
         "ratio": 1.13
       },
       "value": 41.2,
-      "compositeScore": 40.0
+      "compositeScore": 39.4
     },
     {
       "ticker": "004990",
@@ -4523,7 +4523,7 @@
       "dividendYield": 4.96,
       "beta": 0.66,
       "peg": null,
-      "momentum": 33.7,
+      "momentum": 26,
       "returns": {
         "r1m": -13.31,
         "r3m": -17.82,
@@ -4542,7 +4542,7 @@
         "ratio": 0.92
       },
       "value": 70.1,
-      "compositeScore": 48.3
+      "compositeScore": 46.3
     },
     {
       "ticker": "281820",
@@ -4563,7 +4563,7 @@
       "dividendYield": 0.75,
       "beta": 1.5,
       "peg": null,
-      "momentum": 96.6,
+      "momentum": 85,
       "returns": {
         "r1m": 1.8,
         "r3m": 42.23,
@@ -4582,7 +4582,7 @@
         "ratio": 1.07
       },
       "value": 57.7,
-      "compositeScore": 75.0
+      "compositeScore": 72.2
     },
     {
       "ticker": "237690",
@@ -4604,7 +4604,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 32.7,
+      "momentum": 24,
       "returns": {
         "r1m": -19.7,
         "r3m": -22.81,
@@ -4623,7 +4623,7 @@
         "ratio": 0.97
       },
       "value": 22.6,
-      "compositeScore": 45.0
+      "compositeScore": 42.8
     },
     {
       "ticker": "083650",
@@ -4645,7 +4645,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 41.6,
+      "momentum": 35,
       "returns": {
         "r1m": -28.93,
         "r3m": -25.63,
@@ -4664,7 +4664,7 @@
         "ratio": 0.86
       },
       "value": 30.7,
-      "compositeScore": 47.8
+      "compositeScore": 46.1
     },
     {
       "ticker": "319400",
@@ -4687,7 +4687,7 @@
       "dividendYield": 0.13,
       "beta": 2.41,
       "peg": null,
-      "momentum": 100,
+      "momentum": 93,
       "returns": {
         "r1m": 7.86,
         "r3m": 10.06,
@@ -4706,7 +4706,7 @@
         "ratio": 0.67
       },
       "value": 22.3,
-      "compositeScore": 61.5
+      "compositeScore": 59.8
     },
     {
       "ticker": "088980",
@@ -4728,7 +4728,7 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 45.2,
+      "momentum": 44,
       "returns": {
         "r1m": -2.48,
         "r3m": -3.16,
@@ -4747,7 +4747,7 @@
         "ratio": 1.17
       },
       "value": 50,
-      "compositeScore": 44.2
+      "compositeScore": 43.9
     },
     {
       "ticker": "002320",
@@ -4769,7 +4769,7 @@
       "dividendYield": 3.67,
       "beta": 0.66,
       "peg": null,
-      "momentum": 29.8,
+      "momentum": 18,
       "returns": {
         "r1m": -13.94,
         "r3m": -15.86,
@@ -4788,7 +4788,7 @@
         "ratio": 0.87
       },
       "value": 80.7,
-      "compositeScore": 44.4
+      "compositeScore": 41.5
     },
     {
       "ticker": "383220",
@@ -4810,7 +4810,7 @@
       "dividendYield": 3.8,
       "beta": 0.53,
       "peg": null,
-      "momentum": 53.3,
+      "momentum": 53,
       "returns": {
         "r1m": -6.4,
         "r3m": 14.17,
@@ -4829,7 +4829,7 @@
         "ratio": 0.89
       },
       "value": 51.5,
-      "compositeScore": 48.7
+      "compositeScore": 48.6
     },
     {
       "ticker": "282330",
@@ -4851,7 +4851,7 @@
       "dividendYield": 3.09,
       "beta": -0.06,
       "peg": 2.18,
-      "momentum": 60.8,
+      "momentum": 64,
       "returns": {
         "r1m": -2.57,
         "r3m": 12.17,
@@ -4870,7 +4870,7 @@
         "ratio": 0.87
       },
       "value": 51.5,
-      "compositeScore": 53.6
+      "compositeScore": 54.4
     },
     {
       "ticker": "085620",
@@ -4892,7 +4892,7 @@
       "dividendYield": 0,
       "beta": 0.12,
       "peg": null,
-      "momentum": 100,
+      "momentum": 89,
       "returns": {
         "r1m": 18.07,
         "r3m": 33.22,
@@ -4911,7 +4911,7 @@
         "ratio": 2.32
       },
       "value": 88.3,
-      "compositeScore": 91.2
+      "compositeScore": 88.5
     },
     {
       "ticker": "383310",
@@ -4933,7 +4933,7 @@
       "dividendYield": 0.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 46.5,
+      "momentum": 47,
       "returns": {
         "r1m": -6.09,
         "r3m": -13.46,
@@ -4952,7 +4952,7 @@
         "ratio": 1.33
       },
       "value": 22.3,
-      "compositeScore": 48.0
+      "compositeScore": 48.1
     },
     {
       "ticker": "226320",
@@ -4974,7 +4974,7 @@
       "dividendYield": 2.85,
       "beta": 0.51,
       "peg": null,
-      "momentum": 32.2,
+      "momentum": 19,
       "returns": {
         "r1m": -21.76,
         "r3m": -5.87,
@@ -4993,7 +4993,7 @@
         "ratio": 0.82
       },
       "value": 50.0,
-      "compositeScore": 37.8
+      "compositeScore": 34.5
     },
     {
       "ticker": "002790",
@@ -5015,7 +5015,7 @@
       "dividendYield": 1.82,
       "beta": 1.03,
       "peg": null,
-      "momentum": 24.5,
+      "momentum": 12,
       "returns": {
         "r1m": -21.89,
         "r3m": -18.01,
@@ -5034,7 +5034,7 @@
         "ratio": 1.02
       },
       "value": 58.0,
-      "compositeScore": 43.2
+      "compositeScore": 40.1
     },
     {
       "ticker": "090430",
@@ -5056,7 +5056,7 @@
       "dividendYield": 1.13,
       "beta": 1.18,
       "peg": null,
-      "momentum": 31.6,
+      "momentum": 22,
       "returns": {
         "r1m": -17.2,
         "r3m": -15.5,
@@ -5075,7 +5075,7 @@
         "ratio": 1.35
       },
       "value": 28.8,
-      "compositeScore": 40.0
+      "compositeScore": 37.5
     },
     {
       "ticker": "020150",
@@ -5097,7 +5097,7 @@
       "dividendYield": 0,
       "beta": 1.41,
       "peg": null,
-      "momentum": 82.7,
+      "momentum": 78,
       "returns": {
         "r1m": -22.29,
         "r3m": 48.78,
@@ -5116,7 +5116,7 @@
         "ratio": 1.48
       },
       "value": 35.0,
-      "compositeScore": 67.4
+      "compositeScore": 66.3
     },
     {
       "ticker": "044340",
@@ -5138,7 +5138,7 @@
       "dividendYield": 2.28,
       "beta": 0.85,
       "peg": null,
-      "momentum": 23.7,
+      "momentum": 12,
       "returns": {
         "r1m": -22.09,
         "r3m": -14.71,
@@ -5157,7 +5157,7 @@
         "ratio": 1.04
       },
       "value": 60.9,
-      "compositeScore": 37.8
+      "compositeScore": 34.9
     },
     {
       "ticker": "020560",
@@ -5178,7 +5178,7 @@
       "dividendYield": 0,
       "beta": 0.51,
       "peg": null,
-      "momentum": 41.9,
+      "momentum": 36,
       "returns": {
         "r1m": -2.28,
         "r3m": -2.55,
@@ -5197,7 +5197,7 @@
         "ratio": 0.55
       },
       "value": 71.2,
-      "compositeScore": 35.9
+      "compositeScore": 34.5
     },
     {
       "ticker": "005440",
@@ -5219,7 +5219,7 @@
       "dividendYield": 1.86,
       "beta": 0.93,
       "peg": null,
-      "momentum": 61.4,
+      "momentum": 66,
       "returns": {
         "r1m": -11.55,
         "r3m": -10.27,
@@ -5238,7 +5238,7 @@
         "ratio": 0.82
       },
       "value": 99.6,
-      "compositeScore": 68.8
+      "compositeScore": 70.0
     },
     {
       "ticker": "000150",
@@ -5260,7 +5260,7 @@
       "dividendYield": 0.26,
       "beta": 1.94,
       "peg": null,
-      "momentum": 100,
+      "momentum": 91,
       "returns": {
         "r1m": 5.57,
         "r3m": 71.43,
@@ -5279,7 +5279,7 @@
         "ratio": 1.58
       },
       "value": 35.4,
-      "compositeScore": 74.5
+      "compositeScore": 72.2
     },
     {
       "ticker": "034020",
@@ -5302,7 +5302,7 @@
       "dividendYield": 0,
       "beta": 1.9,
       "peg": null,
-      "momentum": 52.3,
+      "momentum": 50,
       "returns": {
         "r1m": -22.01,
         "r3m": 1.22,
@@ -5321,7 +5321,7 @@
         "ratio": 0.95
       },
       "value": 32.1,
-      "compositeScore": 54.4
+      "compositeScore": 53.9
     },
     {
       "ticker": "241560",
@@ -5343,7 +5343,7 @@
       "dividendYield": 2.61,
       "beta": 0.87,
       "peg": null,
-      "momentum": 60.5,
+      "momentum": 63,
       "returns": {
         "r1m": -7.57,
         "r3m": 15.15,
@@ -5362,7 +5362,7 @@
         "ratio": 1.27
       },
       "value": 78.1,
-      "compositeScore": 67.2
+      "compositeScore": 67.8
     },
     {
       "ticker": "006360",
@@ -5384,7 +5384,7 @@
       "dividendYield": 1.77,
       "beta": 0.85,
       "peg": null,
-      "momentum": 81.7,
+      "momentum": 77,
       "returns": {
         "r1m": -21.0,
         "r3m": 43.0,
@@ -5403,7 +5403,7 @@
         "ratio": 0.79
       },
       "value": 91.6,
-      "compositeScore": 67.5
+      "compositeScore": 66.3
     },
     {
       "ticker": "089860",
@@ -5425,7 +5425,7 @@
       "dividendYield": 3.88,
       "beta": 0.37,
       "peg": null,
-      "momentum": 44.5,
+      "momentum": 40,
       "returns": {
         "r1m": -6.82,
         "r3m": -3.0,
@@ -5444,7 +5444,7 @@
         "ratio": 0.96
       },
       "value": 73.7,
-      "compositeScore": 52.1
+      "compositeScore": 51.0
     },
     {
       "ticker": "267270",
@@ -5466,7 +5466,7 @@
       "dividendYield": 0.37,
       "beta": 1.44,
       "peg": null,
-      "momentum": 71.5,
+      "momentum": 73,
       "returns": {
         "r1m": -22.19,
         "r3m": 17.74,
@@ -5485,7 +5485,7 @@
         "ratio": 1.15
       },
       "value": 79.9,
-      "compositeScore": 72.8
+      "compositeScore": 73.2
     },
     {
       "ticker": "267250",
@@ -5507,7 +5507,7 @@
       "dividendYield": 1.88,
       "beta": 1.15,
       "peg": null,
-      "momentum": 62.3,
+      "momentum": 66,
       "returns": {
         "r1m": -7.44,
         "r3m": 0.36,
@@ -5526,7 +5526,7 @@
         "ratio": 1.05
       },
       "value": 65.0,
-      "compositeScore": 68.7
+      "compositeScore": 69.6
     },
     {
       "ticker": "079160",
@@ -5548,7 +5548,7 @@
       "dividendYield": 0,
       "beta": 1.03,
       "peg": null,
-      "momentum": 31.1,
+      "momentum": 21,
       "returns": {
         "r1m": -11.18,
         "r3m": -12.33,
@@ -5567,7 +5567,7 @@
         "ratio": 0.86
       },
       "value": 22.6,
-      "compositeScore": 33.4
+      "compositeScore": 30.9
     },
     {
       "ticker": "009240",
@@ -5589,7 +5589,7 @@
       "dividendYield": 0,
       "beta": 0.97,
       "peg": null,
-      "momentum": 12.6,
+      "momentum": 6,
       "returns": {
         "r1m": -26.76,
         "r3m": -28.64,
@@ -5608,7 +5608,7 @@
         "ratio": 0.65
       },
       "value": 52.9,
-      "compositeScore": 28.3
+      "compositeScore": 26.6
     },
     {
       "ticker": "352480",
@@ -5629,7 +5629,7 @@
       "dividendYield": 3.19,
       "beta": 0.22,
       "peg": 0.18,
-      "momentum": 11.5,
+      "momentum": 4,
       "returns": {
         "r1m": -28.75,
         "r3m": -27.08,
@@ -5648,7 +5648,7 @@
         "ratio": 1.04
       },
       "value": 33.6,
-      "compositeScore": 30.9
+      "compositeScore": 29.0
     },
     {
       "ticker": "011200",
@@ -5669,7 +5669,7 @@
       "dividendYield": 3.59,
       "beta": 0.89,
       "peg": null,
-      "momentum": 42.7,
+      "momentum": 38,
       "returns": {
         "r1m": -7.23,
         "r3m": -7.23,
@@ -5688,10 +5688,10 @@
         "ratio": 1.41
       },
       "value": 73.0,
-      "compositeScore": 55.4
+      "compositeScore": 54.2
     }
   ],
-  "metricsVersion": "phase2-v2",
+  "metricsVersion": "phase2-v2+momPctile",
   "asOfBusinessDate": "20260612",
   "pricesSyncedAt": "2026-06-13T15:08:59.454732"
 }
