@@ -76,9 +76,9 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     print(f"[2/3] Output dir: {out_dir}")
 
-    # 1년 + 여유 1개월
+    # 5년 + 여유 (백테스트용). 차트는 최근 구간만 사용.
     end_dt = datetime.now()
-    start_dt = end_dt - timedelta(days=400)
+    start_dt = end_dt - timedelta(days=365 * 5 + 40)
     start_str = start_dt.strftime("%Y-%m-%d")
     end_str = end_dt.strftime("%Y-%m-%d")
     print(f"      Range: {start_str} ~ {end_str}")

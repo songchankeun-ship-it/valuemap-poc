@@ -9,6 +9,7 @@ export interface RealStock extends MockStock {
   flowStats?: { recent5dAvg?: number; recent20dAvg?: number; ratio?: number };
   compositeScore?: number;
   market?: string;
+  eps?: number;
 }
 
 const raw = stocksData as any;
@@ -36,6 +37,7 @@ export const realStockPool: RealStock[] = (raw.stocks || []).map((s: any) => ({
   flowStats: s.flowStats ?? {},
   compositeScore: s.compositeScore ?? 50,
   market: s.market ?? "KOSPI",
+  eps: s.eps ?? 0,
 }));
 
 export function allThemes(): string[] {

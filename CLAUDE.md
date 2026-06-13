@@ -1,323 +1,189 @@
 # ValueMap (밸류맵) 프로젝트 인수인계 문서
 
-> 이 파일은 Claude(나)가 송찬근 송님의 ValueMap 프로젝트 작업을 다른 PC/세션에서 매끄럽게 이어가기 위한 인수인계 문서입니다.
+> 이 파일은 Claude(나)가 송찬근 송님의 ValueMap 작업을 다른 PC/세션에서 매끄럽게 이어가기 위한 인수인계 문서입니다.
 > 다른 PC에서 Claude(Cowork mode)를 시작하면, 이 파일을 첫 메시지로 보여주세요.
 
 ---
 
+## ⏱️ 지금 상태 한눈에 (2026-06-13 갱신)
+
+- **종목 탐색 필터 강화** → ✅ 코드 완성, tsc 통과. **아직 push 안 됨** → 송님이 적용+push 하면 끝.
+- **백테스트 실데이터 엔진** → ✅ 엔진/페이지 완성. **5년 가격 데이터 수집 후** `run_real.py` 돌리면 자동 활성화.
+- **브랜드 마이그레이션** → ⏸️ 도메인 미결정 대기 (아래 도메인 섹션 참고).
+
+### ▶ 다음 세션에서 바로 할 일 (우선순위)
+1. 송님이 두 작업(필터 / 백테스트)을 push 했는지 확인 → 안 했으면 `handoff/적용방법.md` 순서대로 적용 지원.
+2. push 후 운영 사이트(valuemap.kr)에서 결과 확인.
+3. 그다음 후보: 공시 신호 고도화 / 검색 콘솔 준비 / 도메인 결정 후 브랜드 마이그레이션.
+
+---
+
 ## 👤 사용자 정보
-- **이름**: 송찬근 (Song)
-- **이메일**: songchankeun@gmail.com
-- **회사**: 필로소디
+- **이름**: 송찬근 (Song) / **이메일**: songchankeun@gmail.com / **회사**: 필로소디
 - **대화 언어**: 한국어 (친근한 반말, "송님" 호칭)
 - **작업 스타일**: 적극적 푸시 선호, 빠른 행동, 친근한 톤. 작업 끝에 격려/이모지 OK.
 
 ---
 
 ## 🌐 프로젝트 개요
-
-- **현재 사이트명**: 밸류맵 (ValueMap)
-- **배포 URL**: https://valuemap.kr (운영 중)
+- **사이트명**: 밸류맵 (ValueMap) / **배포 URL**: https://valuemap.kr (운영 중)
 - **GitHub**: https://github.com/songchankeun-ship-it/valuemap-poc
-- **로컬 작업 폴더**: `C:\Users\csgk0\Desktop\새 폴더\04_poc_app`
 - **브랜치**: `main` (push 시 Vercel 자동 배포)
+- **로컬 작업 폴더(구 PC)**: `C:\Users\csgk0\Desktop\새 폴더\04_poc_app` (PC 바뀌면 경로 달라짐)
 
-### ⚠️ 진행 중: 브랜드 마이그레이션
-- "밸류맵"이 부동산 앱과 충돌 (50만+ DAU) → 이름 변경 결정
-- **결정된 새 이름: KSift (케이씨프트)**
-- 도메인 확인 중: `ksift.com`, `ksift.kr` (가비아에서 확인 중)
-- 도메인 확보되면 사이트 전체 마이그레이션 작업 예정
+### ⚠️ 진행 중: 브랜드 마이그레이션 (도메인 미결정)
+- "밸류맵"이 부동산 앱과 충돌(50만+ DAU) → 이름 변경 결정.
+- 후보 1: **KSift (케이씨프트)** — 독창적, 충돌 적음. 여전히 유력.
+- 후보 검토: **`valuefit.com` → 비추천** (2026-06-13 확인)
+  - 이미 등록된 도메인(파킹 상태)이라 신규 구매 불가, 프리미엄 협상 필요.
+  - "Valuefit" 상표 충돌: HELLA(자동차 조명) 제품라인 + valuesfit.com(채용 서비스).
+  - 의미 약함: 영어로 "피트니스/가치매칭" 느낌, 주식·투자가 안 읽힘.
+- 대안 .kr 후보(미확인): valuescope.kr, valpick.kr, valuesight.kr 등.
+- **도메인 구매·결제는 송님 본인이 가비아에서 직접.** 확보되면 사이트 전체 마이그레이션 작업.
 
 ---
 
 ## 🛠️ 기술 스택
-
 - **Framework**: Next.js 14 App Router (server components)
-- **Styling**: Tailwind CSS v4 (다크모드 `darkMode: "class"`)
-- **DB**: Supabase PostgreSQL + Row Level Security
-- **Auth**: Magic link + Kakao OAuth (Supabase)
-- **Email**: Resend REST API (fetch 사용, SDK 아님)
-- **Deploy**: Vercel (자동 배포)
-- **Cron**: vercel.json 설정 (3개 cron 운영)
+- **Styling**: Tailwind CSS v4 (다크모드 `darkMode: "class"`, next-themes)
+- **DB**: Supabase PostgreSQL + RLS / **Auth**: Magic link + Kakao OAuth
+- **Email**: Resend REST API (fetch) / **Deploy**: Vercel / **Cron**: vercel.json
 - **Data**:
-  - `public/data/stocks.json` — 138개 종목 메타데이터
-  - `public/data/prices/{ticker}.json` — 종목별 1년 가격 시계열
+  - `public/data/stocks.json` — 138개 종목 메타데이터 (asOfBusinessDate 포함)
+    - 필드: ticker, name, market, marketCap, currentPrice, changePct, per, pbr, roe, eps, bps, dividendYield, beta, peg, momentum, flow, value, volScore, compositeScore, themes ...
+  - `public/data/prices/{ticker}.json` — 종목별 가격 시계열 (현재 1년, **5년으로 확장 예정**)
+  - `public/backtest-result.json` — 백테스트 결과 (realData 플래그로 mock/실데이터 구분)
   - Supabase `daily_scores` 테이블 — 일별 점수 히스토리
-
-### 핵심 라이브러리
-- `next-themes` (다크모드)
-- `lucide-react` (아이콘)
-- `@vercel/analytics`, `@vercel/speed-insights`
-- Python scripts: `FinanceDataReader`, `yfinance`, `pandas`
+- Python: FinanceDataReader, yfinance, pandas
 
 ---
 
 ## 📊 4대 지표 + 공시 신호 (서비스 핵심)
-
-### 자체 지표 4종
-1. **모멘텀 (Momentum)**: 1·3·6개월 가중평균 수익률
-2. **자금흐름 (Flow)**: 5일 평균 거래량 ÷ 20일 평균
-3. **밸류 (Value)**: PER·PBR 풀 내 분위
-4. **변동성조정 (Vol)**: Sharpe Ratio 기반
-
-### DART 공시 5종 신호
-1. 자기주식 취득 (treasury_buy)
-2. 임원·주요주주 매수 (insider_buy)
-3. 정정공시 (correction)
-4. 단일판매·공급 계약 (single_contract)
-5. 유상증자·CB 발행 (capital_raise)
+- **자체 지표 4종**: 모멘텀(1·3·6개월 가중수익) / 자금흐름(거래량비) / 밸류(PER·PBR 분위) / 변동성조정(Sharpe)
+- **DART 공시 5종 신호**: 자기주식취득 / 임원·주요주주 매수 / 정정공시 / 단일판매·공급계약 / 유상증자·CB
 
 ---
 
-## ✅ 완료된 주요 작업 (시간순)
+## ✅ 완료된 주요 작업
 
-### SEO 패키지
-- `src/app/sitemap.ts` — 148개 URL 동적 sitemap
-- `src/app/robots.ts` — 크롤링 규칙
-- 종목 페이지 JSON-LD (Article + BreadcrumbList)
-- 사이트 전체 JSON-LD (Organization + WebSite)
+### 기존 (이전 세션)
+SEO 패키지(sitemap/robots/JSON-LD), 주가 SVG 차트, 신뢰 디테일(기준일 통일), 첫 사용자 온보딩,
+⭐초보자 해석 레이어(BeginnerReading), ⭐공시 신호 차별화(signalGuide/SignalGuideExpand),
+알림 시스템(cron/notify), 점수 변화 차트(ScoreHistoryChart), 다크모드, 정적 페이지(about/terms/privacy),
++ 추가 라우트: backtest, blog, guide, history, theme, AiAnalysisCard, GlobalSearch.
 
-### 주가 차트
-- `scripts/fetch_prices.py` — 138개 종목 1년 가격 수집 (FinanceDataReader)
-- `scripts/sync_prices_to_stocks.py` — stocks.json과 가격 데이터 동기화
-- `src/lib/priceHistory.ts` — 서버 컴포넌트용 데이터 로더
-- `src/components/StockPriceChart.tsx` — SVG 차트 (1주/1개월/3개월/6개월/1년 토글, 호버, 다크모드)
-
-### 신뢰 디테일 (외부 피드백 반영)
-- 데이터 기준일 통일 (`asOfBusinessDate` 우선, generatedAt fallback)
-- 모바일 헤더 "06.12(금) 장마감" 형태로 정리
-- 종목 페이지에서 차트 데이터를 진실의 원천으로 (헤더 가격 = 차트 마지막 가격)
-- 모바일 터치 영역 44px+ (관심 종목/비교/공유 버튼)
-- today 카드 한 줄 이유 ("💡 모멘텀 92 + 자금흐름 88 강세")
-- 홈 Top 3 미리보기 + 최근 공시 신호 2개
-
-### 첫 사용자 온보딩
-- `src/components/ScoreTooltip.tsx` — 점수 옆 (?) 아이콘
-- `src/components/WelcomeOnboarding.tsx` — 모바일 컴팩트 (한 줄 + 펼치기), 데스크톱 풀 카드
-- 종목 페이지 + today 헤더에 (?) 아이콘
-
-### 초보자 해석 레이어 ⭐
-- `src/components/BeginnerReading.tsx`
-  - 종목 점수 패턴 자동 판정 (추세형/저평가형/관심집중형 등 8가지)
-  - "확인할 3가지" 자동 생성
-  - 4지표 한 줄 한국어 해석 ("모멘텀 100 → 따라 사기 전 급등 이유 확인")
-- 종목 페이지 상단에 통합
-
-### 공시 신호 차별화 ⭐ (USP)
-- `src/lib/signalGuide.ts` — 5종 신호 해석 데이터 (왜 중요한지 + 확인할 3가지 + 과거 패턴 + 주의점)
-- `src/components/SignalGuideExpand.tsx` — "이 공시 이해하기 ▼" 펼침
-- 공시 페이지에 통합
-
-### 알림 시스템
-- `src/app/api/cron/notify` — 매일 KST 16:30 (UTC 07:30) 발사
-- 관심 종목 ∩ 공시 신호 매칭
-- Resend API로 이메일 발송
-
-### 점수 변화 차트
-- `src/components/ScoreHistoryChart.tsx` — composite + 4지표 SVG sparkline
-- `src/lib/scoreHistory.ts` — Supabase 조회
-- `src/app/api/cron/save-scores` — 매일 KST 17:00 자동 저장
-
-### 다크모드
-- `next-themes` ThemeProvider
-- 모든 컴포넌트 `dark:` 변형
-- ThemeToggle 헤더 통합
-
-### 정적 페이지 (P1 작업)
-- `src/app/about/page.tsx` — 서비스 소개 + 운영자 정보 + 산식 공개 + 한계
-- `src/app/terms/page.tsx` — 이용약관 8조
-- `src/app/privacy/page.tsx` — 개인정보처리방침 8조
+### 🆕 2026-06-13 세션 (이 핸드오프와 함께 전달, 아직 push 전)
+- **종목 탐색 필터 강화** (외부 피드백 3순위 ✅)
+  - `src/components/StocksExplorer.tsx` — 시장(코스피/코스닥)·시가총액 구간(대형5조+/중형/소형)·ROE 최소·배당수익률 최소·적자제외(EPS>0) 필터 추가. 질문형 프리셋 5종("싸고 거래 늘었나?","돈 잘 버는 회사?","배당 주는 우량주?","대형주 안정형?","숨은 소형 저평가?"). 정렬에 ROE/배당/시총 추가, 카드에 시총·배당 표시, 다크모드 보강.
+  - `src/lib/realStocks.ts` — eps 매핑 추가.
+  - `src/app/stocks/page.tsx` — marketCap/market/dividendYield/eps 전달.
+  - ※ "관리종목 제외"는 stocks.json에 flag 없어 보류(추후 데이터에 flag 추가 시 가능).
+- **백테스트 실데이터** (외부 피드백 5순위 — 엔진 완성, 데이터 대기)
+  - `scripts/fetch_prices.py` — 수집 기간 1년→**5년**으로 변경.
+  - `scripts/backtest/run_real.py` — **신규** 실데이터 백테스트 엔진. 가격 기반 신호(모멘텀/변동성조정/소외도/가격종합) Top10 월별 리밸런싱. 누적수익·CAGR·MDD·Sharpe·알파 산출 → backtest-result.json(realData:true).
+  - `src/components/BacktestClient.tsx` — **신규** 결과 차트(전략 토글 + SVG equity curve + 메트릭 카드).
+  - `src/app/backtest/page.tsx` — realData 있으면 차트, 없으면 "준비 중" 표시.
+  - ⚠️ 정직성 원칙: 밸류·자금흐름은 과거 펀더멘털 없어 백테스트 제외(미래참조 편향 방지). 가격 복원 가능한 신호만.
+  - 1년 데이터로 사전 테스트 완료(엔진 정상, tsc 통과). 5년 넣으면 의미 있는 결과.
 
 ---
 
 ## 🎯 외부 피드백 우선순위 진척
-
-피드백 출처: 외부 컨설팅/AI 평가 (송님이 받아옴)
-
 | 순위 | 작업 | 상태 |
 |---|---|---|
-| 1 | 데이터 정합성 (날짜/가격 통일) | ✅ 완료 |
+| 1 | 데이터 정합성(날짜/가격 통일) | ✅ 완료 |
 | 2 | 초보자 해석 레이어 | ✅ 완료 |
-| 3 | 종목 탐색 필터 강화 (시총·ROE·업종·배당) | ⏳ 대기 |
+| 3 | 종목 탐색 필터 강화 | ✅ 완료 (push 대기) |
 | 4 | 공시 신호 차별화 | ✅ 완료 |
-| 5 | 백테스트 완성 | ⏳ 대기 |
+| 5 | 백테스트 완성 | 🔧 엔진 완성 / 5년 데이터 수집 대기 |
 
 ---
 
-## 🚧 진행 중 / 다음 작업
-
-### 즉시 다음 (도메인 결정 후)
-1. **브랜드 마이그레이션** (ValueMap → KSift)
-   - 모든 페이지 "밸류맵" → "KSift" 변경
-   - metadata, OG, JSON-LD 도메인 변경
-   - sitemap.xml 도메인 변경
-   - 로고 (V → K)
-   - valuemap.kr → ksift.com 리디렉션 (Vercel 설정)
-   - 검색 콘솔 새 도메인 등록
-
-### 중장기
-2. **종목 탐색 필터 강화** (외부 피드백 3순위)
-   - 시가총액 구간, ROE 최소값, 업종, 배당수익률
-   - 적자 기업 제외, 관리종목 제외
-   - "저평가 + 거래량 증가" 같은 질문형 프리셋
-3. **백테스트 완성** (5순위)
-   - 5년 데이터로 4가지 전략 검증
-   - 누적 수익률, MDD, Sharpe, KOSPI 대비 알파
-4. **공시 신호 추가 고도화**
-   - 과거 유사 공시 후 주가 흐름 (백테스트 결과)
-   - 같은 업종 내 유사 공시 찾기
-
-### 잠재 작업
-- 검색 콘솔 등록 (구글/네이버) — 도메인 변경 후
-- 첫 사용자 모집 (커뮤니티 글, SNS 공유)
-- 유료 플랜 설계 (시간 절약 도구 컨셉)
+## 🚧 다음 작업
+1. **(즉시) 필터 + 백테스트 push** — `handoff/적용방법.md` 참고.
+   - 필터: 파일 3개 덮어쓰고 push → 바로 배포.
+   - 백테스트: `pip install finance-datareader pandas` → `python scripts/fetch_prices.py`(5년, 5~15분) → `python scripts/backtest/run_real.py` → push.
+2. **공시 신호 추가 고도화** — 과거 유사 공시 후 주가 흐름, 같은 업종 유사 공시.
+3. **검색 콘솔 등록** (구글/네이버) — 도메인 변경 후.
+4. **브랜드 마이그레이션** — 도메인 확보 시 "밸류맵"→새이름 전체 변경(metadata/OG/JSON-LD/sitemap/로고/리디렉션).
+5. 백테스트 고도화 — KOSPI 지수 벤치마크 추가(현재는 동일가중 근사), 거래비용 반영.
 
 ---
 
-## 📁 핵심 파일 구조
-
+## 📁 핵심 파일 구조 (변경/신규 ⭐)
 ```
 src/
 ├── app/
-│   ├── page.tsx                 # 홈 (히어로 + Top 3 + 공시 2개)
-│   ├── today/page.tsx           # 오늘의 후보 종목
-│   ├── stocks/page.tsx          # 전체 138개 탐색
-│   ├── stock/[ticker]/page.tsx  # 종목 상세 (가장 중요)
-│   ├── compare/                 # 종목 비교
-│   ├── disclosures/             # 공시 신호 탐색
-│   ├── watchlist/               # 관심 종목 (로그인)
-│   ├── settings/notifications/  # 알림 설정
-│   ├── about/, terms/, privacy/ # 정적
-│   ├── sitemap.ts               # SEO
-│   ├── robots.ts                # SEO
-│   ├── layout.tsx               # 루트 + Organization JSON-LD
-│   └── api/
-│       ├── cron/notify/         # 매일 알림 발사
-│       ├── cron/save-scores/    # 매일 점수 저장
-│       └── cron/daily-insight/  # AI 인사이트
+│   ├── stock/[ticker]/page.tsx   # 종목 상세 (가장 중요)
+│   ├── stocks/page.tsx           # ⭐ 전체 탐색 (필터 강화 — 필드 전달 수정)
+│   ├── backtest/page.tsx         # ⭐ 백테스트 (실결과 렌더로 교체)
+│   ├── today/ compare/ disclosures/ watchlist/ about/ terms/ privacy/
+│   ├── sitemap.ts robots.ts layout.tsx
+│   └── api/cron/{notify,save-scores,daily-insight}/
 ├── components/
-│   ├── AppHeader.tsx            # 글로벌 헤더 (데이터 기준일 표시)
-│   ├── BeginnerReading.tsx      # ⭐ 초보자 해석 카드
-│   ├── ScoreTooltip.tsx         # 점수 옆 (?) 아이콘
-│   ├── StockPriceChart.tsx      # SVG 가격 차트
-│   ├── ScoreHistoryChart.tsx    # 점수 변화 sparkline
-│   ├── SignalGuideExpand.tsx    # ⭐ 공시 가이드 펼침
-│   ├── WelcomeOnboarding.tsx    # 첫 방문 환영
-│   ├── DisclosureExplorer.tsx   # 공시 탐색
-│   ├── CompareClient.tsx        # 종목 비교
-│   ├── AddToWatchlistButton.tsx # ❤️ 관심 종목
-│   ├── AddToCompareButton.tsx   # 비교 추가
-│   ├── ShareButton.tsx          # 공유
-│   └── ...
+│   ├── StocksExplorer.tsx        # ⭐ 강화된 필터 + 질문형 프리셋
+│   ├── BacktestClient.tsx        # ⭐ 신규 백테스트 차트 컴포넌트
+│   ├── BeginnerReading.tsx SignalGuideExpand.tsx StockPriceChart.tsx
+│   ├── ScoreHistoryChart.tsx AppHeader.tsx ... (총 31개)
 ├── lib/
-│   ├── realStocks.ts            # stocks.json 로더 + asOfBusinessDate fallback
-│   ├── priceHistory.ts          # 가격 데이터 (fs.readFile)
-│   ├── scoreHistory.ts          # Supabase 조회
-│   ├── signalGuide.ts           # ⭐ 공시 5종 해석 데이터
-│   └── supabase/                # Supabase 클라이언트
-public/
-└── data/
-    ├── stocks.json              # 138개 종목 + asOfBusinessDate
-    └── prices/{ticker}.json     # 1년 가격 시계열 (138개)
+│   ├── realStocks.ts             # ⭐ eps 매핑 추가
+│   ├── signalGuide.ts priceHistory.ts scoreHistory.ts metrics.ts supabase/
+public/data/
+│   ├── stocks.json (138종목)  prices/{ticker}.json (→5년)
+│   └── backtest-result.json (realData 플래그)
 scripts/
-├── fetch_stock_data.py          # FDR + Naver + yfinance 종목 데이터
-├── fetch_prices.py              # 가격 시계열 수집
-├── sync_prices_to_stocks.py     # ⭐ stocks.json과 prices 동기화
-└── compute_metrics.py           # 4지표 계산
+├── fetch_prices.py               # ⭐ 1년→5년
+├── backtest/run_real.py          # ⭐ 신규 실데이터 백테스트 엔진
+├── backtest/{engine,metrics,run,sample_data}.py  # 기존(더미 데이터용)
+├── fetch_stock_data.py sync_prices_to_stocks.py compute_metrics.py
 ```
 
 ---
 
 ## 🔑 환경변수 (Vercel)
-
 ```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-RESEND_API_KEY=
-CRON_SECRET=
-DART_API_KEY=
-ANTHROPIC_API_KEY=
+NEXT_PUBLIC_SUPABASE_URL=  NEXT_PUBLIC_SUPABASE_ANON_KEY=  SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=  CRON_SECRET=  DART_API_KEY=  ANTHROPIC_API_KEY=
 ```
 
 ---
 
-## 🚀 새 PC 설정 가이드
+## 🚀 새 PC / 새 세션 시작 방법
 
-### 1. 필수 소프트웨어
-```powershell
-# Git
-winget install Git.Git
+### 방법 A) Cowork에 폴더 직접 연결 (권장)
+1. Git/Node/Python 설치 → `git clone https://github.com/songchankeun-ship-it/valuemap-poc.git` → `npm install`
+2. Claude 데스크톱 앱 Cowork 모드 → `valuemap-poc` 폴더 선택.
+3. 첫 메시지: "CLAUDE.md 읽고 맥락 잡아줘. 이어서 작업하자!"
 
-# Node.js LTS
-winget install OpenJS.NodeJS.LTS
+### 방법 B) 폴더를 zip으로 업로드 (이번 세션에서 쓴 방법)
+- 작업 폴더(04_poc_app)를 zip으로 압축해 채팅에 업로드 → Claude가 압축 풀어 맥락 파악.
+- node_modules 포함하면 용량 큼(200MB+) — 소스만 필요하면 node_modules/.next 빼고 압축해도 OK.
 
-# Python
-winget install Python.Python.3.12
-
-# Claude 데스크톱 앱 (같은 계정 로그인)
-# https://claude.ai 에서 다운로드 또는 https://www.anthropic.com/claude
-```
-
-### 2. 프로젝트 클론
-```powershell
-cd ~\Desktop
-mkdir 작업폴더
-cd 작업폴더
-git clone https://github.com/songchankeun-ship-it/valuemap-poc.git
-cd valuemap-poc
-
-# 의존성 설치
-npm install
-pip install finance-datareader yfinance pandas requests
-```
-
-### 3. Cowork에서 폴더 선택
-- Claude 데스크톱 앱 실행
-- Cowork 모드
-- `valuemap-poc` 폴더 선택
-
-### 4. 새 Claude 세션 첫 메시지 템플릿
-```
-이 프로젝트를 다른 PC에서 이어가려고 해.
-먼저 `CLAUDE.md` 파일 읽고 맥락 잡아줘.
-
-지금 진행 중인 작업: KSift 도메인 결정 대기 중.
-가비아에서 ksift.com / ksift.kr 확인했어 (결과: 여기에 입력).
-
-이어서 작업하자!
-```
+### 작업 사이클
+TodoList → 코드 작성/tsc 검증 → 변경 파일 핸드오프(present_files) → 송님이 PowerShell에서 적용+push.
+- 코드 변경, sync 스크립트 실행, git push는 송님이 PowerShell에서 (또는 폴더 연결 시 함께).
+- 도메인 구매/결제/외부 가입은 송님 본인.
 
 ---
 
 ## 💡 작업 스타일 메모 (Claude → 다른 세션의 Claude에게)
-
-송님과 작업할 때:
-- **친근한 반말 + "송님" 호칭** (예: "송님 진짜 잘했어!", "이제 가자")
-- **이모지 적극 사용** (🎯, ✅, ⚠️, 🚀, 💡, ⭐)
-- **TaskCreate/TaskUpdate 적극 사용** — 진행 상황 시각화 좋아함
-- **AskUserQuestion** 모호한 결정 시 사용
-- **TodoList → 작업 → push 한 사이클**로 끝내기
-- **PowerShell 명령어는 복붙 가능하게 정확히** 적어주기
-- **`mcp__cowork__present_files`** 로 결과물 공유
-
-송님이 자주 받는 외부 피드백 → 즉시 작업으로 전환 → push.
-이게 작업 패턴.
-
-송님이 직접 결정해야 할 일은 명확히 분리해서 알려주기:
-- 도메인 구매, 결제, 외부 서비스 가입은 송님 본인이 해야 함
-- 코드 변경, sync 스크립트 실행, git push는 함께 또는 송님이 PowerShell에서 실행
+- 친근한 반말 + "송님" 호칭, 이모지 적극(🎯✅⚠️🚀💡⭐).
+- TaskCreate/TaskUpdate 적극 사용(진행 시각화 좋아함).
+- AskUserQuestion으로 모호한 결정 분리.
+- 코드 작성 시 tsc로 타입 검증 후 핸드오프.
+- 외부 피드백 → 즉시 작업 전환 → push. 이게 작업 패턴.
+- show_widget으로 배포 전 인터랙티브 미리보기 제공하면 송님이 좋아함.
 
 ---
 
 ## 📌 마지막 push 시점 (참고)
-
-- 최신 commit: `6b0d6f4` "feat: 초보자 해석 레이어 + 공시 신호 가이드 + 표시 일관성"
-- 이전: `c0ed07e` "fix: 기준일 통일/모바일 컴팩트 환영/터치 타겟/갱신 표현 정리"
-- 이전: `57d3b63` "data: sync prices to stocks.json (가격 일치)"
-
-다른 PC에서 `git log --oneline -5` 로 확인 후 이어가기.
+- 최신 commit (push된 것): `4b03d51` "docs: 다른 PC 인수인계 문서 추가"
+- 이전: `6b0d6f4` 초보자 해석 레이어 + 공시 신호 가이드 / `c0ed07e` 기준일 통일 등
+- 🆕 **미push 작업**: 2026-06-13 세션의 필터 강화 + 백테스트 엔진 (이 핸드오프 폴더 파일들). 적용 후 commit 예정:
+  - `feat: 종목 탐색 필터 강화 (시총·ROE·배당·적자제외·시장 + 질문형 프리셋)`
+  - `feat: 백테스트 실데이터(5년) + 결과 페이지`
+- 다른 PC에서 `git log --oneline -5`로 확인 후 이어가기.
 
 ---
 
-마지막 업데이트: 2026-06-13 (KSift 도메인 결정 대기 시점)
+마지막 업데이트: 2026-06-13 (필터 강화 완료 + 백테스트 엔진 추가, 도메인 valuefit 검토 후 보류)

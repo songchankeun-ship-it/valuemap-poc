@@ -1,46 +1,64 @@
 import Link from "next/link";
+import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
+import rawResult from "../../../public/backtest-result.json";
 
 export const metadata = {
   title: "백테스트 — 밸류맵",
-  description: "5년치 실데이터 기반 전략 검증. 곧 출시 예정.",
+  description: "실데이터 기반 가격 신호 전략 검증. 누적수익률·MDD·Sharpe·알파 공개.",
 };
 
+// backtest-result.json 은 mock(준비 중) 또는 실데이터 두 형태일 수 있음.
+// realData 플래그가 켜진 경우에만 차트를 렌더링한다.
+const result = rawResult as unknown as Partial<BacktestData>;
+
 export default function BacktestPage() {
+  const ready = !!result.realData && Array.isArray(result.strategies) && result.strategies.length > 0;
+
+  if (ready) {
+    return <BacktestClient data={result as BacktestData} />;
+  }
+
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
-        <Link href="/" className="text-xs text-gray-500 hover:text-gray-900">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2">백테스트 엔진</h1>
+        <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">백테스트 엔진</h1>
       </header>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-6">
         <div className="flex items-start gap-3">
           <span className="text-2xl">🚧</span>
           <div>
-            <h2 className="font-semibold text-amber-900 mb-2">개발 중입니다</h2>
-            <p className="text-sm text-amber-800 leading-relaxed">
-              5년치 KRX 일별 데이터로 자체 지표 4종 전략을 검증하는 엔진을 만들고 있습니다.
-              완성되면 "저평가 Top 10 월별 리밸런싱" 같은 전략의 실제 누적 수익률·MDD·Sharpe·KOSPI 대비 알파를 모두 투명하게 공개합니다.
+            <h2 className="font-semibold text-amber-900 dark:text-amber-200 mb-2">실데이터 준비 중</h2>
+            <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
+              5년치 KRX 일별 데이터로 가격 기반 신호 전략을 검증하는 엔진이 준비됐습니다.
+              데이터 수집 후 <code className="px-1 rounded bg-amber-100 dark:bg-amber-900/50">python scripts/backtest/run_real.py</code> 를 실행하면
+              이 페이지에 실제 누적 수익률·MDD·Sharpe·알파가 자동으로 표시됩니다.
             </p>
-            <p className="text-xs text-amber-700 mt-3">
-              가짜 시뮬레이션 숫자를 보여주는 것보다 정직하게 "준비 중"이라고 말하는 게 맞다고 생각합니다.
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-3">
+              가짜 시뮬레이션 숫자를 보여주는 것보다, 실데이터가 준비되면 정직하게 공개하는 게 맞다고 생각합니다.
             </p>
           </div>
         </div>
       </div>
 
-      <section className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="font-semibold mb-3">검증 예정 전략</h3>
-        <ul className="space-y-2 text-sm text-gray-700">
-          <li className="flex gap-2"><span className="text-gray-400">01.</span>밸류 점수 상위 10개 월별 리밸런싱 (저평가 전략)</li>
-          <li className="flex gap-2"><span className="text-gray-400">02.</span>모멘텀 점수 상위 10개 월별 리밸런싱 (추세 추종)</li>
-          <li className="flex gap-2"><span className="text-gray-400">03.</span>종합 점수 상위 10개 월별 리밸런싱 (균형)</li>
-          <li className="flex gap-2"><span className="text-gray-400">04.</span>밸류 상위 & 모멘텀 상위 교집합 (가치+모멘텀)</li>
+      <section className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-6">
+        <h3 className="font-semibold mb-3 text-zinc-900 dark:text-zinc-100">검증 전략 (가격 기반)</h3>
+        <ul className="space-y-2 text-sm text-gray-700 dark:text-zinc-300">
+          <li className="flex gap-2"><span className="text-gray-400">01.</span>모멘텀 점수 상위 10개 월별 리밸런싱 (추세 추종)</li>
+          <li className="flex gap-2"><span className="text-gray-400">02.</span>변동성조정 점수 상위 10개 월별 리밸런싱 (위험대비)</li>
+          <li className="flex gap-2"><span className="text-gray-400">03.</span>소외도(낙폭) 점수 상위 10개 월별 리밸런싱</li>
+          <li className="flex gap-2"><span className="text-gray-400">04.</span>가격종합 점수 상위 10개 월별 리밸런싱 (균형)</li>
         </ul>
+        <p className="text-xs text-gray-500 dark:text-zinc-400 mt-3 leading-relaxed">
+          ※ 밸류·자금흐름 전략은 과거 시점의 펀더멘털·수급 데이터가 없어 백테스트에서 제외합니다.
+          (현재 스냅샷을 과거에 적용하면 미래참조 편향이 생김)
+        </p>
       </section>
 
-      <section className="text-xs text-gray-500 leading-relaxed">
-        <strong className="text-gray-700">사용 데이터:</strong> KRX 일별 종가 (FDR 경유), Naver Finance PER/PBR/ROE, yfinance 보조 지표. 138개 종목, 5년치.
+      <section className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
+        <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 일별 종가 (FDR 경유). 138개 종목.
+        벤치마크는 유니버스 동일가중 매수후보유(시장 근사).
       </section>
     </div>
   );
