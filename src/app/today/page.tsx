@@ -2,6 +2,7 @@ import Link from "next/link";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
+import { getScoreChangesBatch } from "@/lib/scoreHistory";
 
 interface SignalDisclosure {
   corp_name: string;
@@ -123,7 +124,7 @@ export const metadata = {
 
 export const revalidate = 3600;
 
-export default function TodayPage() {
+export default async function TodayPage() {
   const today = formatDateKST();
   const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
 
@@ -144,6 +145,22 @@ export default function TodayPage() {
   const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
   const briefingSignalCount = ((recentSignalsRaw as { signals?: unknown[] }).signals ?? []).length;
+
+  // 어제 대비 변화 (Supabase daily_scores) — 데이터 없으면 빈 객체
+  const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
+  const hasDeltas = Object.keys(scoreDeltas).length > 0;
+  const newEntrants = hasDeltas
+    ? realStockPool
+        .filter((s) => (s.compositeScore || 0) >= 80 && scoreDeltas[s.ticker] !== undefined && (s.compositeScore || 0) - scoreDeltas[s.ticker] < 80)
+        .sort((a, b) => (scoreDeltas[b.ticker] || 0) - (scoreDeltas[a.ticker] || 0))
+        .slice(0, 6)
+    : [];
+  const bigMovers = hasDeltas
+    ? realStockPool
+        .filter((s) => Math.abs(scoreDeltas[s.ticker] ?? 0) >= 8)
+        .sort((a, b) => Math.abs(scoreDeltas[b.ticker]) - Math.abs(scoreDeltas[a.ticker]))
+        .slice(0, 6)
+    : [];
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -204,6 +221,45 @@ export default function TodayPage() {
         </div>
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">상승 종목 비율 {breadthPct}% · 매일 장마감 후 갱신됩니다.</p>
       </section>
+
+      {hasDeltas && (newEntrants.length > 0 || bigMovers.length > 0) ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
+          <div className="flex items-center gap-1.5 mb-3">
+            <span className="text-sm">🔔</span>
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘의 변화</h2>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">어제 대비</span>
+          </div>
+          {newEntrants.length > 0 ? (
+            <div className="mb-3">
+              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">🆕 오늘 종합 80+ 신규 진입</div>
+              <div className="flex flex-wrap gap-1.5">
+                {newEntrants.map((s) => (
+                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
+                    {s.name} <span className="tabular-nums">{s.compositeScore} (▲{Math.round(scoreDeltas[s.ticker])})</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {bigMovers.length > 0 ? (
+            <div>
+              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">📊 점수 급변 종목</div>
+              <div className="flex flex-wrap gap-1.5">
+                {bigMovers.map((s) => {
+                  const d = scoreDeltas[s.ticker];
+                  const up = d >= 0;
+                  return (
+                    <Link key={s.ticker} href={"/stock/" + s.ticker} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
+                      {s.name} <span className="tabular-nums">{up ? "▲" : "▼"}{Math.abs(Math.round(d))}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">관심 종목으로 등록하면 이런 변화를 이메일로 받을 수 있어요 (설정 &gt; 알림).</p>
+        </section>
+      ) : null}
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
