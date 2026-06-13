@@ -3,6 +3,7 @@ import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
+import { isSuspect } from "@/lib/dataQuality";
 
 interface SignalDisclosure {
   corp_name: string;
@@ -129,7 +130,7 @@ export default async function TodayPage() {
   const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
-  const topComposite = [...validStocks].sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0)).slice(0, 5);
+  const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0)).slice(0, 5);
   const topValue = [...validStocks].filter(s => s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
   const topMomentum = [...validStocks].filter(s => s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
 

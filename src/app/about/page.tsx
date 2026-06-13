@@ -67,7 +67,7 @@ export default function AboutPage() {
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>DART</strong> — 공시 실데이터 (자기주식·임원매수·정정·계약·증자)</span>
+            <span><strong>DART</strong> — 공시 실데이터 (자기주식·임원·주요주주 보유변동·정정·계약·자금조달)</span>
           </li>
         </ul>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">

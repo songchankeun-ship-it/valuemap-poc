@@ -57,3 +57,14 @@ export function dataCompleteness(
   const filled = checks.filter(Boolean).length;
   return Math.round((filled / checks.length) * 100);
 }
+
+/** 풀 레벨 이상치 판정(stocks.json 필드만으로) — Top/오늘 후보에서 제외용. */
+export function isSuspect(s: { per: number; pbr: number; roe: number; returns?: { r6m?: number } }): boolean {
+  if (s.per > 0 && s.per < 1) return true;
+  if (s.per >= 300) return true;
+  if (s.roe >= 80) return true;
+  if (s.pbr >= 20) return true;
+  const r6 = s.returns?.r6m;
+  if (typeof r6 === "number" && Math.abs(r6) >= 150) return true;
+  return false;
+}

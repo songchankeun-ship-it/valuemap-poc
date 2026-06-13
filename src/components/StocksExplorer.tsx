@@ -428,7 +428,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
       ) : null}
 
       <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2 text-[10px] text-blue-800 dark:text-blue-300 flex items-center justify-between md:hidden">
-        <span><strong>M</strong>=추세 · <strong>F</strong>=거래 · <strong>V</strong>=저평가 · <strong>Vo</strong>=위험대비</span>
+        <span><strong>추</strong>=추세(모멘텀) · <strong>거</strong>=거래활성도 · <strong>저</strong>=저평가(밸류) · <strong>위</strong>=위험대비</span>
         <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">자세히</Link>
       </div>
 
@@ -471,10 +471,10 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                       <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
                     </div>
                     <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                      <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">M{s.momentum}</span>
-                      <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">F{s.flow}</span>
-                      <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">V{s.value}</span>
-                      <span title="변동성조정(위험대비)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">Vo{s.vol}</span>
+                      <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">추 {s.momentum}</span>
+                      <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">거 {s.flow}</span>
+                      <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">저 {s.value}</span>
+                      <span title="변동성조정(위험대비)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
                     </div>
                   </div>
                 </div>

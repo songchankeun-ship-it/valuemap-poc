@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { dataMetadata, realStockPool } from "@/lib/realStocks";
+import { isSuspect } from "@/lib/dataQuality";
 import { Search, BarChart3, Megaphone, TrendingUp, Bell } from "lucide-react";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
 import recentSignalsRaw from "../../public/disclosure-samples/recent-signals.json";
@@ -45,7 +46,7 @@ export const revalidate = 3600;
 
 function pickTopStocks(n: number) {
   return [...realStockPool]
-    .filter((s) => s.compositeScore !== undefined && s.compositeScore > 0)
+    .filter((s) => s.compositeScore !== undefined && s.compositeScore > 0 && !isSuspect(s))
     .sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0))
     .slice(0, n);
 }
@@ -170,7 +171,7 @@ export default function HomePage() {
           </div>
 
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2.5 text-center">
-            실시간 데이터 · {dataMetadata.count}개 종목 중 종합 점수 상위
+            최근 장마감 데이터 · {dataMetadata.count}개 종목 중 종합 점수 상위
           </p>
         </section>
       ) : null}
@@ -247,18 +248,18 @@ export default function HomePage() {
             <Megaphone className="w-5 h-5" strokeWidth={1.8} />
           </div>
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">공시 신호</div>
-          <div className="text-xs text-zinc-600 dark:text-zinc-400">DART 5종 신호 자동 분류 (자기주식·임원매수·정정·계약·증자)</div>
+          <div className="text-xs text-zinc-600 dark:text-zinc-400">DART 5종 신호 자동 분류 (자기주식·임원·주요주주 보유변동·정정·계약·자금조달)</div>
         </Link>
       </section>
 
       <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-800 dark:border-zinc-700 rounded-xl p-4 md:p-5 flex items-center justify-between text-white gap-3 flex-wrap">
         <div>
-          <div className="text-xs font-medium text-blue-300 mb-1 uppercase tracking-wider">Coming Soon</div>
+          <div className="text-xs font-medium text-blue-300 mb-1 uppercase tracking-wider">실데이터 검증</div>
           <div className="text-base font-semibold">5년치 실데이터로 전략 검증</div>
-          <div className="text-xs text-zinc-400 mt-0.5">백테스트 엔진 — 가짜 숫자 없이 정직하게</div>
+          <div className="text-xs text-zinc-400 mt-0.5">가격 기반 4개 전략의 수익률·위험을 5년 데이터로 비교</div>
         </div>
         <Link href="/backtest" className="px-4 py-2.5 min-h-[44px] inline-flex items-center bg-white text-zinc-900 rounded-lg text-sm font-semibold hover:bg-zinc-100 active:bg-zinc-200 transition shrink-0">
-          자세히 →
+          백테스트 결과 보기 →
         </Link>
       </section>
 

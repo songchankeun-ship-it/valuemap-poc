@@ -230,14 +230,14 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         <div className="text-xs text-zinc-700 dark:text-zinc-300 mb-1.5">
           초보자는 이걸 먼저 확인하세요:
         </div>
-        <ol className="space-y-1 list-none pl-0">
+        <div className="space-y-1">
           {checklist.items.map((item, i) => (
-            <li key={i} className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed flex gap-2">
+            <div key={i} className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed flex gap-2">
               <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0">{i + 1}.</span>
               <span>{item}</span>
-            </li>
+            </div>
           ))}
-        </ol>
+        </div>
       </div>
 
       {/* 지표별 한 줄 해석 */}

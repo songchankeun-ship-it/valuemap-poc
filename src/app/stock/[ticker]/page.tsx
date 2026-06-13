@@ -137,6 +137,8 @@ export default async function StockDetailPage({ params }: PageProps) {
     const better = realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length;
     return Math.max(1, Math.round(((better + 1) / poolN) * 100));
   };
+  const rankOf = (val: number, key: "momentum" | "flow" | "value" | "vol") =>
+    realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length + 1;
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const jsonLd = {
@@ -213,12 +215,12 @@ export default async function StockDetailPage({ params }: PageProps) {
       {/* 결론 헤드라인 — 등급·순위·강점/위험 먼저 (디자인 리뷰 P0) */}
       <section className={"rounded-lg border-2 " + tone.border + " " + tone.bg + " p-3 md:p-4"}>
         <div className="flex items-start gap-3">
-          <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + tone.ring + " bg-white dark:bg-zinc-900"}>
-            <div className={"text-xl md:text-2xl font-bold leading-none " + tone.text}>{grade.grade}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
+          <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + (dataWarnings.length > 0 ? "ring-zinc-300 dark:ring-zinc-700" : tone.ring) + " bg-white dark:bg-zinc-900"}>
+            <div className={"text-xl md:text-2xl font-bold leading-none " + (dataWarnings.length > 0 ? "text-zinc-400 dark:text-zinc-500" : tone.text)}>{grade.grade}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
             <div className="text-[8px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">{composite}/100</div>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{reason.interpretation}</div>
+            <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{dataWarnings.length > 0 ? "데이터 검증 중 · 임시등급 — " : ""}{reason.interpretation}</div>
             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
               <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
@@ -263,21 +265,21 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
           {([
-            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", kind: "momentum" as const, top: topPctOf(s.momentum, "momentum") },
-            { l: "거래활성도", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const, top: topPctOf(s.flow, "flow") },
-            { l: "밸류", sc: s.value, c: "bg-cyan-500", kind: "value" as const, top: topPctOf(s.value, "value") },
-            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", kind: "vol" as const, top: topPctOf(s.vol, "vol") },
+            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", kind: "momentum" as const, top: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum") },
+            { l: "거래활성도", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const, top: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow") },
+            { l: "밸류", sc: s.value, c: "bg-cyan-500", kind: "value" as const, top: topPctOf(s.value, "value"), rank: rankOf(s.value, "value") },
+            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", kind: "vol" as const, top: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol") },
           ]).map((x) => (
             <div key={x.l} className="-mx-1 px-1 py-1 rounded">
               <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-400 mb-1 flex items-center gap-1">
                 <span>{x.l}</span>
                 <ScoreTooltip kind={x.kind} />
               </div>
-              <div className="text-sm md:text-base font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">상위 {x.top}%</div>
+              <div className="text-sm md:text-base font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{x.top <= 50 ? "상위 " + x.top + "%" : "하위 " + (100 - x.top) + "%"}</div>
               <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mt-1">
                 <div className={"h-full " + x.c} style={{ width: (100 - x.top) + "%" }} />
               </div>
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">점수 {x.sc.toFixed(0)}</div>
+              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">{poolN}중 {x.rank}위 · 점수 {x.sc.toFixed(0)}</div>
             </div>
           ))}
         </div>
