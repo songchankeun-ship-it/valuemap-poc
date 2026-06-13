@@ -13,6 +13,7 @@ const METRICS = [
     color: "bg-blue-500",
     desc: "최근 1개월·3개월·6개월 수익률을 가중평균한 추세 지표.",
     calc: "1개월(30%) + 3개월(40%) + 6개월(30%) 가중평균 수익률. -40%~+40% 범위를 0~100점으로 매핑.",
+    detail: "수익률 산정: 수정종가 기준 · 기간: 1·3·6개월(약 21·63·126거래일) · 6개월 데이터 미달 종목은 중립(50점) 처리.",
     high: "최근 추세가 강한 상태. 단, 고점 추격의 위험도 함께 의미합니다.",
     low: "최근 흐름이 부진. 반대로 저점 매수 기회일 가능성도 있습니다.",
   },
@@ -22,6 +23,7 @@ const METRICS = [
     color: "bg-green-500",
     desc: "최근 거래량 변화로 측정한 시장 관심도 지표.",
     calc: "최근 5일 평균 거래량 / 20일 평균 거래량 비율. 1배 = 50점, 2배 = 75점, 3배+ = 100점.",
+    detail: "기준: 최근 5거래일 vs 20거래일 평균 거래량 · 한계: 거래대금·가격 방향·수급(외국인/기관)은 미반영(순수 거래량 변화).",
     high: "거래량이 평소보다 크게 증가. 시장의 관심이 쏠리는 구간.",
     low: "거래량이 평소보다 줄어든 상태. 관심도 낮음 또는 횡보 중.",
   },
@@ -31,6 +33,7 @@ const METRICS = [
     color: "bg-cyan-500",
     desc: "전체 풀 안에서의 상대적 저평가 정도 (PER·PBR 분위).",
     calc: "PER 분위(낮을수록 점수↑) + PBR 분위 평균. 100 = 풀에서 가장 저PER·저PBR.",
+    detail: "분위 기준: 전체 138개 종목 풀 · 한계: 업종 차이 미보정(금융·지주사가 구조적으로 상위에 몰릴 수 있음) — 업종 분위 보정 개발 중.",
     high: "전체 풀에서 상대적으로 저평가된 위치. 단, 이유 있는 저평가일 수 있습니다.",
     low: "전체 풀에서 상대적으로 고평가. 성장 기대치가 가격에 이미 반영됐을 수 있습니다.",
   },
@@ -40,6 +43,7 @@ const METRICS = [
     color: "bg-orange-500",
     desc: "연간화 수익률을 연간화 변동성으로 나눈 위험조정 수익 (Sharpe 유사).",
     calc: "(연간 수익 - 무위험률 3.5%) / 연간 변동성. -2~+2 범위를 0~100점으로 매핑.",
+    detail: "기간: 최근 1년(약 252거래일) · 수익률: 수정종가 일별 · 무위험률: 연 3.5% · 최소 관측치 미달 시 중립 처리.",
     high: "변동성 대비 수익이 양호. 안정적으로 우상향한 흐름.",
     low: "변동성 대비 수익이 부진. 흔들림은 큰데 결과가 못 따라간 상태일 수 있습니다.",
   },
@@ -82,6 +86,7 @@ export default function GuidePage() {
           <div className="bg-zinc-50 rounded-md p-3 mb-3">
             <div className="text-[11px] font-semibold text-zinc-500 mb-1 uppercase tracking-wide">계산 방법</div>
             <p className="text-xs text-zinc-700 leading-relaxed">{m.calc}</p>
+            <p className="text-[11px] text-zinc-500 leading-relaxed mt-1.5 pt-1.5 border-t border-zinc-200">{m.detail}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -105,6 +110,17 @@ export default function GuidePage() {
         <p className="text-xs text-zinc-400 leading-relaxed">
           종합 점수는 매수 점수가 아니라 <strong className="text-white">탐색 우선순위</strong>입니다. 어떤 종목을 더 자세히 들여다볼지 정하는 데 활용하세요. 점수 100인 종목이 항상 좋은 투자라는 보장은 없습니다.
         </p>
+      </section>
+
+      <section className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5">
+        <h2 className="text-lg font-semibold mb-2 text-zinc-900">계산 공통 기준</h2>
+        <ul className="list-none pl-0 space-y-1.5 text-xs text-zinc-700 leading-relaxed">
+          <li>· 가격은 <strong>수정종가</strong>(액면분할·배당락 반영) 기준으로 계산합니다.</li>
+          <li>· 결측·거래정지 구간은 가능한 데이터만 사용하고, <strong>최소 관측치 미달 시 중립(50점)</strong>으로 처리합니다.</li>
+          <li>· 무위험률은 <strong>연 3.5%</strong>를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).</li>
+          <li>· 점수는 <strong className="text-amber-700">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
+          <li>· 정확한 산식은 오픈소스로 공개되어 있습니다: <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts (GitHub)</a></li>
+        </ul>
       </section>
 
       <section className="text-xs text-zinc-500 leading-relaxed border-t border-zinc-200 pt-4">

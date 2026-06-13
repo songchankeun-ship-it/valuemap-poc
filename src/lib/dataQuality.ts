@@ -40,3 +40,20 @@ export function getDataWarnings(s: QualityInput, price?: PriceHistory | null): s
   }
   return w;
 }
+
+/** 데이터 완성도(%) — 핵심 필드가 얼마나 채워졌는지. 결측 많으면 점수 신뢰도↓를 투명하게. */
+export function dataCompleteness(
+  s: { per: number; pbr: number; roe: number; marketCap: number; currentPrice: number },
+  price?: PriceHistory | null,
+): number {
+  const checks = [
+    s.per > 0,
+    s.pbr > 0,
+    s.roe !== 0,
+    s.marketCap > 0,
+    s.currentPrice > 0,
+    !!(price?.points && price.points.length >= 120),
+  ];
+  const filled = checks.filter(Boolean).length;
+  return Math.round((filled / checks.length) * 100);
+}
