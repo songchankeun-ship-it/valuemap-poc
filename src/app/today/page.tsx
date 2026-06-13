@@ -137,6 +137,14 @@ export default function TodayPage() {
   const validPbrs = realStockPool.filter(s => s.pbr > 0 && s.pbr < 30).map(s => s.pbr);
   const medianPbr = median(validPbrs);
 
+  // 오늘의 브리핑 통계 (스냅샷 기반)
+  const upCount = realStockPool.filter((s) => s.changePct > 0).length;
+  const downCount = realStockPool.filter((s) => s.changePct < 0).length;
+  const strongCount = realStockPool.filter((s) => (s.compositeScore || 0) >= 80).length;
+  const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
+  const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
+  const briefingSignalCount = ((recentSignalsRaw as { signals?: unknown[] }).signals ?? []).length;
+
   return (
     <div className="space-y-4 md:space-y-6">
       <header className="border-b border-zinc-200 dark:border-zinc-800 pb-3 md:pb-4">
@@ -168,6 +176,33 @@ export default function TodayPage() {
           <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPbr.toFixed(2)}x</div>
           <div className="text-[9px] md:text-[10px] text-amber-700/70 mt-0.5">극단값 제외</div>
         </div>
+      </section>
+
+      <section className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-100 dark:border-blue-900 rounded-lg p-3 md:p-4">
+        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+          <span className="text-sm">📋</span>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘의 브리핑</h2>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">{dataAsOf} 기준</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">시장 분위</div>
+            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">상승 {upCount} <span className="text-[10px] font-normal text-zinc-400">/ 하락 {downCount}</span></div>
+          </div>
+          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">종합 80+ 종목</div>
+            <div className="text-sm font-bold text-blue-700 dark:text-blue-400 tabular-nums">{strongCount}개</div>
+          </div>
+          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">거래활성도 급증</div>
+            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{flowSurgeCount}개</div>
+          </div>
+          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">공시 신호</div>
+            <div className="text-sm font-bold text-amber-700 dark:text-amber-400 tabular-nums">{briefingSignalCount}건</div>
+          </div>
+        </div>
+        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">상승 종목 비율 {breadthPct}% · 매일 장마감 후 갱신됩니다.</p>
       </section>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
