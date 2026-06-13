@@ -22,6 +22,7 @@ interface DisclosureSignal {
   disclosure: DisclosureItem;
   strength: number;
   note: string;
+  direction?: "긍정 가능" | "부정 가능" | "확인 필요";
 }
 
 interface ApiResponse {
@@ -239,6 +240,11 @@ export function DisclosureExplorer() {
                       <span className={"text-[10px] px-2 py-0.5 rounded font-medium " + style.bg + " " + style.text}>
                         {g.signalLabel} · 신뢰도 {g.strength}%
                       </span>
+                      {g.representative.direction ? (
+                        <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + (g.representative.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400" : g.representative.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400" : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400")}>
+                          방향 {g.representative.direction}
+                        </span>
+                      ) : null}
                       {g.count > 1 ? (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400">
                           {g.hasRevision ? "정정 포함 " : ""}{g.count}건

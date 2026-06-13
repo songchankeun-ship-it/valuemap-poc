@@ -7,6 +7,7 @@ interface SignalInfo {
   signalLabel: string;
   strength: number;
   note: string;
+  direction?: "긍정 가능" | "부정 가능" | "확인 필요";
 }
 
 interface DisclosureItem {
@@ -150,6 +151,11 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                     {d.signal ? (
                       <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + getBadgeClass(d.signal.signalLabel)}>
                         {d.signal.signalLabel} · 신뢰도 {d.signal.strength}%
+                      </span>
+                    ) : null}
+                    {d.signal?.direction ? (
+                      <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + (d.signal.direction === "긍정 가능" ? "bg-red-50 text-red-700" : d.signal.direction === "부정 가능" ? "bg-blue-50 text-blue-700" : "bg-amber-50 text-amber-700")}>
+                        방향 {d.signal.direction}
                       </span>
                     ) : null}
                   </div>

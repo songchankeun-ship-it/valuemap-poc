@@ -47,9 +47,10 @@
       "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260430800212",
       "signal": {
         "signalType": "insider_buy",
-        "signalLabel": "임원·주요주주 매수",
-        "strength": 85,
-        "note": "장내매수 단서 발견"
+        "signalLabel": "임원·주요주주 보유 변동",
+        "strength": 80,
+        "note": "장내매수 단서 발견 — 다만 주체·규모는 본문 확인 권장",
+        "direction": "긍정 가능"
       }
     },
     {
@@ -92,8 +93,8 @@
   "signalCount": 4,
   "signalsByType": {
     "자기주식 취득 결의": 1,
-    "임원·주요주주 매수": 1,
     "단일판매·공급계약": 1,
-    "정정공시": 1
+    "정정공시": 1,
+    "임원·주요주주 보유 변동": 1
   }
 }
