@@ -97,7 +97,7 @@ export function BacktestClient({ data }: { data: BacktestData }) {
   const metricCards: { label: string; value: string; tone?: string }[] = [
     { label: "총수익률", value: pct(m.totalReturn), tone: m.totalReturn >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
     { label: "CAGR", value: pct(m.cagr) },
-    { label: `알파 (vs 벤치마크)`, value: pct(m.alpha), tone: m.alpha >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
+    { label: "누적 초과수익 (vs 벤치)", value: pct(m.alpha), tone: m.alpha >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
     { label: "MDD", value: pct(m.maxDrawdown), tone: "text-blue-600 dark:text-blue-400" },
     { label: "Sharpe", value: m.sharpe.toFixed(2) },
     { label: "승률(월)", value: (m.winRate * 100).toFixed(0) + "%" },
@@ -112,6 +112,10 @@ export function BacktestClient({ data }: { data: BacktestData }) {
           실데이터 검증 · {data.period.from} ~ {data.period.to} ({data.period.years}년) · 유니버스 {data.universe}종목
         </p>
       </header>
+
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-lg p-3 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+        <strong>이 결과는 가격 기반 전략의 시뮬레이션</strong>이며, 현재 제공되는 4개 지표 종합점수의 성과를 검증한 결과가 아닙니다. 현재 유니버스를 과거에 소급 적용해 <strong>생존편향</strong>이 있을 수 있고, <strong>거래비용 0%</strong>를 가정합니다. 아이디어 검증용으로만 참고하세요.
+      </div>
 
       <div className="flex gap-1.5 flex-wrap">
         {data.strategies.map((s) => (
@@ -153,7 +157,7 @@ export function BacktestClient({ data }: { data: BacktestData }) {
         <strong className="block mb-1">⚠️ 읽을 때 주의</strong>
         가정: {data.assumptions}. 벤치마크는 <strong>{data.benchmarkLabel}</strong>. 과거 펀더멘털·수급 데이터가 없어
         밸류·거래활성도 전략은 백테스트에서 제외했고, 가격으로 복원 가능한 신호만 검증했습니다.
-        과거 성과가 미래 수익을 보장하지 않습니다.
+        신호는 월말 종가로 계산해 같은 종가에 체결한 단순화 모델이라 실제 체결가와 차이가 있을 수 있고, '알파'는 회귀분석이 아닌 벤치마크 대비 누적 초과수익(%p)입니다. 과거 성과가 미래 수익을 보장하지 않습니다.
       </section>
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500">

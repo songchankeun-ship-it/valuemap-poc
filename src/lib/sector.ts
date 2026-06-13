@@ -23,7 +23,8 @@ const SECTOR_RULES: { sector: string; keys: string[] }[] = [
 ];
 
 export function sectorOf(themes: string[] | undefined): string {
-  const ts = themes ?? [];
+  // 기업집단(○○그룹)은 업종이 아니므로 매칭에서 제외 — "현대자동차그룹"의 '자동차' 오매칭 방지
+  const ts = (themes ?? []).filter((t) => !t.includes("그룹"));
   for (const rule of SECTOR_RULES) {
     if (ts.some((t) => rule.keys.some((k) => t.includes(k)))) return rule.sector;
   }

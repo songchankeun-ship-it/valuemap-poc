@@ -277,7 +277,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <div className="rounded-lg border border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-[11px] md:text-xs text-cyan-800 dark:text-cyan-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개 중 PER·PBR 상대 위치 (전체 풀 밸류 {Math.round(s.value)}점과 비교)</div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개 중 PER·PBR 상대 위치 (전체 풀 밸류 {Math.round(s.value)}점과 비교){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
           </div>
           <div className="text-right shrink-0">
             <span className="text-lg font-bold tabular-nums text-cyan-700 dark:text-cyan-400">{sectorValue.score}</span>
@@ -293,7 +293,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div className={"shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full ring-4 " + tone.ring + " bg-white dark:bg-zinc-900 flex flex-col items-center justify-center"}>
             <div className={"text-2xl md:text-3xl font-bold tabular-nums " + tone.text}>{composite}</div>
             <div className="text-[9px] text-zinc-500 dark:text-zinc-400">/100</div>
-            <div className={"text-[11px] md:text-xs font-bold leading-none mt-0.5 " + tone.text}>{grade.grade}</div>
+            <div className={"text-[11px] md:text-xs font-bold leading-none mt-0.5 " + tone.text}>{grade.grade}{dataWarnings.length > 0 ? " ⚠" : ""}</div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
@@ -301,7 +301,7 @@ export default async function StockDetailPage({ params }: PageProps) {
                 <strong className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">왜 {composite}점인가요?</strong>
                 <ScoreTooltip kind="composite" size="md" />
               </div>
-              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위 · <span className="text-amber-600 dark:text-amber-400">실험</span></span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위 · <span className="text-amber-600 dark:text-amber-400">실험</span>{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> · 검증 보류</span> : null}</span>
             </div>
             <div className="space-y-1.5">
               {reason.strengths.length > 0 ? (

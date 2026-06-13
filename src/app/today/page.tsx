@@ -267,7 +267,7 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 추가 확인 후보</h2>
             <ScoreTooltip kind="composite" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">composite</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">종합</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">네 지표 모두 우호적인 상태 — 탐색 우선순위 높음</p>
         <ul className="space-y-1">
@@ -305,7 +305,7 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">밸류에이션 기준 확인 후보</h2>
             <ScoreTooltip kind="value" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">value</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">밸류</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">PER · PBR이 풀에서 가장 낮음 — 이유 있는 저평가일 수도 있으니 원문 확인 권장</p>
         <ul className="space-y-1">
@@ -350,7 +350,7 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 가격 흐름 강한 후보</h2>
             <ScoreTooltip kind="momentum" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">momentum</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">모멘텀</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">최근 1·3·6개월 가중평균 수익률 — 고점 추격 위험 함께 의미</p>
         <ul className="space-y-1">

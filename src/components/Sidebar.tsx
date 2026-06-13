@@ -11,7 +11,7 @@ const ITEMS = [
   { href: "/compare", Icon: GitCompare, label: "비교", soon: false },
   { href: "/history", Icon: Bot, label: "분석 기록", soon: false },
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호", soon: false },
-  { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: true },
+  { href: "/backtest", Icon: FlaskConical, label: "백테스트", soon: false },
   { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", soon: false },
   { href: "/about", Icon: Info, label: "서비스 소개", soon: false },
 ];
