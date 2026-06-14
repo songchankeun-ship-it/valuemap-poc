@@ -8,6 +8,7 @@ import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
+import { StockEventTimeline } from "@/components/StockEventTimeline";
 import { getScoreHistory } from "@/lib/scoreHistory";
 import { StockPriceChart } from "@/components/StockPriceChart";
 import { getPriceHistory } from "@/lib/priceHistory";
@@ -435,6 +436,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       {scoreHistory.length > 0 ? (
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
+      <section><StockEventTimeline ticker={s.ticker} scores={scoreHistory} /></section>
 
       <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
               </>
