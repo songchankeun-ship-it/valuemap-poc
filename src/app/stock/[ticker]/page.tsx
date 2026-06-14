@@ -339,7 +339,8 @@ export default async function StockDetailPage({ params }: PageProps) {
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">같은 업종 비교 · {mySector}</div>
             <Link href={"/stocks?theme=" + encodeURIComponent(mySector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline">업종 전체 →</Link>
           </div>
-          <table className="w-full text-xs">
+          <div className="overflow-x-auto -mx-1 px-1">
+          <table className="w-full text-xs min-w-[280px]">
             <thead>
               <tr className="text-[10px] text-zinc-400 dark:text-zinc-500 text-left">
                 <th className="font-normal py-1">종목</th>
@@ -368,6 +369,7 @@ export default async function StockDetailPage({ params }: PageProps) {
               })}
             </tbody>
           </table>
+          </div>
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">같은 업종 {sectorCount}곳 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
         </section>
       ) : null}

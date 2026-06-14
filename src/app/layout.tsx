@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
@@ -79,7 +80,7 @@ export default function RootLayout({
           <AppHeader />
           <div className="flex">
             <Sidebar />
-            <main className="flex-1 min-w-0">
+            <main className="flex-1 min-w-0 pb-16 lg:pb-0">
               <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
               <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
                 <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataMetadata.asOfBusinessDate} 장마감</span>
@@ -95,6 +96,7 @@ export default function RootLayout({
               </footer>
             </main>
           </div>
+          <MobileBottomNav />
           <Analytics />
           <SpeedInsights />
         </ThemeProvider>
