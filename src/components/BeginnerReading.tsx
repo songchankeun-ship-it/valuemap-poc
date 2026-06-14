@@ -256,4 +256,26 @@ export function BeginnerReading({ s }: { s: StockShape }) {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm">{r.emoji}</span>
-              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-10
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{r.label}</span>
+              <span className="text-xs font-bold tabular-nums text-zinc-700 dark:text-zinc-300">
+                {Math.round(r.score)}
+              </span>
+              <span className="ml-auto">{toneIcon[r.tone]}</span>
+            </div>
+            <div className="text-[11px] text-zinc-700 dark:text-zinc-300 mb-0.5 leading-snug">
+              <strong>{r.meaning}</strong>
+            </div>
+            <div className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-snug">
+              → {r.action}
+            </div>
+          </div>
+        ))}
+        </div>
+      </details>
+
+      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
+        ⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.
+      </p>
+    </section>
+  );
+}
