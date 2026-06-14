@@ -214,7 +214,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             {displayChangePct >= 0 ? "▲" : "▼"} {Math.abs(displayChangePct).toFixed(2)}%
           </span>
           {priceAsOf ? (
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{priceAsOf} 종가</span>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">· {priceAsOf} 종가</span>
           ) : null}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
