@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 
 export interface StockTab {
   id: string;
@@ -9,12 +9,35 @@ export interface StockTab {
 }
 
 /**
- * 종목 상세 탭. 헤더·결론 요약은 탭 밖(항상 노출),
- * 차트·재무·공시·점수근거는 탭으로 분리해 페이지 길이를 줄인다.
+ * 종목 상세 탭. 헤더·결론 요약은 탭 밖(항상 노출).
+ * URL 해시(#disclosures 등)로 특정 탭 딥링크 — 초보자 해석의 '관련 공시 보기' 등에서 사용.
  */
 export function StockTabs({ tabs }: { tabs: StockTab[] }) {
   const [active, setActive] = useState(tabs[0]?.id ?? "");
+
+  useEffect(() => {
+    const apply = () => {
+      const h = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+      if (h && tabs.some((t) => t.id === h)) setActive(h);
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, [tabs]);
+
+  function select(id: string) {
+    setActive(id);
+    if (typeof window !== "undefined") {
+      try {
+        history.replaceState(null, "", "#" + id);
+      } catch {
+        /* noop */
+      }
+    }
+  }
+
   const current = tabs.find((t) => t.id === active) ?? tabs[0];
+
   return (
     <div>
       <div className="sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800 bg-[var(--background)] -mx-3 md:-mx-4 px-3 md:px-4">
@@ -22,7 +45,7 @@ export function StockTabs({ tabs }: { tabs: StockTab[] }) {
           <button
             key={t.id}
             type="button"
-            onClick={() => setActive(t.id)}
+            onClick={() => select(t.id)}
             className={
               "shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 -mb-px transition " +
               (active === t.id

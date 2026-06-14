@@ -9,6 +9,13 @@ import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bel
 function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/";
+  const CONTEXT_MSG: Record<string, string> = {
+    "/history": "분석 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
+    "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
+    "/compare": "비교 목록을 저장하려면 로그인하세요.",
+    "/settings/notifications": "알림을 설정하려면 로그인하세요.",
+  };
+  const contextMsg = CONTEXT_MSG[next];
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "kakao_redirecting">("idle");
@@ -68,9 +75,14 @@ function LoginForm() {
 
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 md:p-8">
         <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">밸류맵 스톡 로그인</h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
           카카오로 1초 만에 시작하거나, 이메일로 로그인 링크를 받으세요.
         </p>
+        {contextMsg ? (
+          <div className="mb-5 text-xs text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2">
+            {contextMsg}
+          </div>
+        ) : <div className="mb-3" />}
 
         {status === "sent" ? (
           <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg p-4">
@@ -103,6 +115,9 @@ function LoginForm() {
               </svg>
               {status === "kakao_redirecting" ? "카카오로 이동 중..." : "카카오로 시작하기"}
             </button>
+            <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center leading-relaxed">
+              계속하면 <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">이용약관</Link>과 <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>에 동의하게 됩니다.
+            </p>
 
             <div className="flex items-center gap-3 my-1">
               <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />

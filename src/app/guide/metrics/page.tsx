@@ -83,11 +83,11 @@ export default function GuidePage() {
           </div>
           <p className="text-sm text-zinc-700 mb-3 leading-relaxed">{m.desc}</p>
 
-          <div className="bg-zinc-50 rounded-md p-3 mb-3">
-            <div className="text-[11px] font-semibold text-zinc-500 mb-1 uppercase tracking-wide">계산 방법</div>
-            <p className="text-xs text-zinc-700 leading-relaxed">{m.calc}</p>
+          <details className="bg-zinc-50 rounded-md p-3 mb-3">
+            <summary className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide cursor-pointer select-none">계산 방법 펼치기 ▾</summary>
+            <p className="text-xs text-zinc-700 leading-relaxed mt-2">{m.calc}</p>
             <p className="text-[11px] text-zinc-500 leading-relaxed mt-1.5 pt-1.5 border-t border-zinc-200">{m.detail}</p>
-          </div>
+          </details>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="bg-emerald-50 rounded-md p-3">

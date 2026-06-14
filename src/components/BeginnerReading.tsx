@@ -238,6 +238,11 @@ export function BeginnerReading({ s }: { s: StockShape }) {
             </div>
           ))}
         </div>
+        <div className="flex flex-wrap gap-1.5 mt-3 pt-2.5 border-t border-zinc-200 dark:border-zinc-800">
+          <a href="#disclosures" className="text-[11px] px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">📋 관련 공시 확인</a>
+          <a href="#financials" className="text-[11px] px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">💰 재무 보기</a>
+          <a href="#basis" className="text-[11px] px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">📊 점수 근거</a>
+        </div>
       </div>
 
       {/* 지표별 한 줄 해석 — 기본 접힘 */}
