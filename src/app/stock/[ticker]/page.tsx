@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
 import { AiAnalysisCard } from "@/components/AiAnalysisCard";
 import { StockDisclosures } from "@/components/StockDisclosures";
@@ -220,15 +221,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <h1 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">{s.name}</h1>
           <span className="text-[11px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-md tabular-nums font-mono">{s.ticker}</span>
         </div>
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span className="text-xl md:text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{Math.round(displayPrice).toLocaleString()}<span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-0.5">원</span></span>
-          <span className={"text-sm font-medium tabular-nums " + (displayChangePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
-            {displayChangePct >= 0 ? "▲" : "▼"} {Math.abs(displayChangePct).toFixed(2)}%
-          </span>
-          {priceAsOf ? (
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">· {priceAsOf} 종가</span>
-          ) : null}
-        </div>
+        <LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={priceAsOf} />
         <div className="flex items-center gap-2 flex-wrap">
           <AddToWatchlistButton ticker={s.ticker} name={s.name} />
           <AddToCompareButton ticker={s.ticker} name={s.name} />
