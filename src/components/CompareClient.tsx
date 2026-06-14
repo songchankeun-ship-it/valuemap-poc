@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   getCompareList,
+  addToCompare,
   removeFromCompare,
   clearCompare,
 } from "@/lib/compare";
 import { sectorOf } from "@/lib/sector";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
+import { StockSearchBox } from "@/components/StockSearchBox";
 
 interface CompareStock {
   ticker: string;
@@ -126,10 +128,12 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-8 md:p-10 text-center">
         <div className="text-3xl md:text-4xl mb-3">📊</div>
         <h2 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">비교할 종목이 없어요</h2>
-        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-5 md:mb-6 max-w-md mx-auto leading-relaxed">
-          종목 페이지에서 <strong>"비교에 추가"</strong> 버튼을 눌러 종목을 모아주세요.
-          여기서 나란히 보여드릴게요.
+        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-3 max-w-md mx-auto leading-relaxed">
+          종목 페이지의 <strong>"비교에 추가"</strong> 버튼을 쓰거나, 아래에서 바로 검색해 담으세요. (최대 4개)
         </p>
+        <div className="mb-5 md:mb-6">
+          <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="비교할 종목 검색" />
+        </div>
         <Link href="/stocks" className="inline-block px-4 md:px-5 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 transition">
           종목 둘러보기 →
         </Link>

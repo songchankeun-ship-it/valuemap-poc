@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, X, Clock, ArrowRight } from "lucide-react";
+import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
+  addToWatchlist,
   removeFromWatchlist,
   type WatchlistItem,
 } from "@/lib/watchlist";
@@ -169,9 +171,12 @@ export function WatchlistClient({
           <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-8 text-center">
             <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">관심 종목이 없어요</p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
-              종목 페이지에서 ♥ 버튼을 누르면 여기 모입니다.
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
+              종목 페이지에서 ♥ 버튼을 누르거나, 아래에서 바로 검색해 추가하세요.
             </p>
+            <div className="mb-4">
+              <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
+            </div>
             <Link
               href="/stocks"
               className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"

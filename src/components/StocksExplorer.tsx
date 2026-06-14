@@ -116,6 +116,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
   const [themeQuery, setThemeQuery] = useState("");
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
 
@@ -490,6 +491,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
             <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>
           ) : null}
         </button>
+        <button type="button" onClick={() => setShowAdvanced((v) => !v)} className="hidden lg:inline-flex px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 items-center gap-1.5">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+          {showAdvanced ? "상세 필터 닫기 ▴" : "상세 필터 열기 ▾"}
+          {activeFilterCount > 0 ? (
+            <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>
+          ) : null}
+        </button>
       </div>
 
       {activeFilterCount > 0 ? (
@@ -504,11 +512,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
         <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">자세히</Link>
       </div>
 
-      <div className="grid lg:grid-cols-[280px_1fr] gap-6">
-        <aside className="hidden lg:block bg-zinc-50/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 h-fit sticky top-24">
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">필터</h3>
-          <FilterPanel />
-        </aside>
+      <div className={"grid gap-6 " + (showAdvanced ? "lg:grid-cols-[280px_1fr]" : "lg:grid-cols-1")}>
+        {showAdvanced ? (
+          <aside className="hidden lg:block bg-zinc-50/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 h-fit sticky top-24">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">필터</h3>
+            <FilterPanel />
+          </aside>
+        ) : null}
 
         <div className="space-y-2">
           {sorted.length === 0 ? (
