@@ -137,36 +137,48 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
               ))}
             </div>
           ) : null}
-          <div>
-            {items.map((d) => (
-              <button
-                key={d.rcept_no}
-                type="button"
-                onClick={() => openExternal(d.url)}
-                className="w-full text-left flex items-start justify-between gap-2 py-3 min-h-[52px] border-b border-gray-50 dark:border-zinc-800 last:border-0 hover:bg-gray-50 dark:hover:bg-zinc-800/50 active:bg-gray-100 dark:active:bg-zinc-800 -mx-2 px-2 rounded transition"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                    <span className="text-xs text-gray-800 dark:text-zinc-200 truncate">{d.report_nm}</span>
+          <ol className="relative ml-1 border-l border-gray-200 dark:border-zinc-800">
+            {items.map((d) => {
+              const dir = d.signal?.direction;
+              const dotColor = !d.signal
+                ? "bg-gray-300 dark:bg-zinc-600"
+                : dir === "긍정 가능"
+                ? "bg-red-500"
+                : dir === "부정 가능"
+                ? "bg-blue-500"
+                : "bg-amber-500";
+              return (
+                <li key={d.rcept_no} className="ml-4 pb-4 last:pb-0">
+                  <span
+                    className={"absolute -left-[5px] mt-1.5 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-zinc-900 " + dotColor}
+                    aria-hidden="true"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => openExternal(d.url)}
+                    className="w-full text-left -mx-2 px-2 py-1 rounded hover:bg-gray-50 dark:hover:bg-zinc-800/50 active:bg-gray-100 dark:active:bg-zinc-800 transition"
+                  >
+                    <div className="text-[10px] text-gray-400 dark:text-zinc-500 mb-0.5 tabular-nums">
+                      {d.rcept_dt.slice(0, 4)}-{d.rcept_dt.slice(4, 6)}-{d.rcept_dt.slice(6, 8)} · {d.flr_nm}
+                    </div>
+                    <div className="text-xs text-gray-800 dark:text-zinc-200">{d.report_nm}</div>
                     {d.signal ? (
-                      <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + getBadgeClass(d.signal.signalLabel)}>
-                        {d.signal.signalLabel} · 신뢰도 {d.signal.strength}%
-                      </span>
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        <span className={"text-[10px] px-1.5 py-0.5 rounded " + getBadgeClass(d.signal.signalLabel)}>
+                          {d.signal.signalLabel} · 신뢰도 {d.signal.strength}%
+                        </span>
+                        {d.signal.direction ? (
+                          <span className={"text-[10px] px-1.5 py-0.5 rounded " + (d.signal.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300" : d.signal.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300" : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300")}>
+                            방향 {d.signal.direction}
+                          </span>
+                        ) : null}
+                      </div>
                     ) : null}
-                    {d.signal?.direction ? (
-                      <span className={"text-[10px] px-1.5 py-0.5 rounded shrink-0 " + (d.signal.direction === "긍정 가능" ? "bg-red-50 text-red-700" : d.signal.direction === "부정 가능" ? "bg-blue-50 text-blue-700" : "bg-amber-50 text-amber-700")}>
-                        방향 {d.signal.direction}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="text-[10px] text-gray-400 dark:text-zinc-500">
-                    {d.rcept_dt.slice(0, 4)}-{d.rcept_dt.slice(4, 6)}-{d.rcept_dt.slice(6, 8)} {d.flr_nm}
-                  </div>
-                </div>
-                <span className="text-[10px] text-gray-300 shrink-0">{"->"}</span>
-              </button>
-            ))}
-          </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       )}
 
