@@ -211,7 +211,7 @@ export default async function HomePage() {
                     <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
                       {s.signalLabel}
                     </span>
-                    <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 tabular-nums">신뢰도 {s.strength}%</span>
+                    <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70">유형 자동분류</span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums ml-auto">{fmtDate}</span>
                   </div>
                   <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">

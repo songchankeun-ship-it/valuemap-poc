@@ -255,7 +255,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className={"text-[10px] px-2 py-0.5 rounded font-medium " + style.bg + " " + style.text}>
-                        {g.signalLabel} · 신뢰도 {g.strength}%
+                        {g.signalLabel} · 유형 자동분류
                       </span>
                       {g.representative.direction ? (
                         <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + (g.representative.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400" : g.representative.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400" : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400")}>

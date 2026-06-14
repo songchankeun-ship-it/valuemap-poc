@@ -61,7 +61,7 @@ export default function BacktestPage() {
 
       <section className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
         <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 일별 종가 (FDR 경유). 138개 종목.
-        벤치마크는 유니버스 동일가중 매수후보유(시장 근사).
+        벤치마크는 분석 유니버스 138종목 동일가중 매수후보유 전략입니다 (KOSPI·KOSDAQ 같은 실제 시장지수가 아닙니다).
       </section>
     </div>
   );

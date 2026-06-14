@@ -333,7 +333,7 @@ def main():
         "generatedAt": datetime.now().isoformat(),
         "period": {"from": all_dates[0], "to": all_dates[-1], "years": primary["metrics"]["years"]},
         "universe": len(series),
-        "benchmarkLabel": "유니버스 동일가중 매수후보유(시장 근사)",
+        "benchmarkLabel": "분석 유니버스 동일가중 매수후보유 (시장지수 아님)",
         "assumptions": "월별 리밸런싱 · 동일가중 · 거래비용 0.3%(편도) · 월말 신호→당월 첫 거래일 체결(미래참조 제거) · 가격 기반 신호만(밸류/자금흐름 제외) · 현재 유니버스 소급(생존편향 가능)",
         "config": {"topN": TOP_N, "rebalance": "monthly", "initialCapital": INITIAL_CAPITAL},
         "strategies": strat_payloads,

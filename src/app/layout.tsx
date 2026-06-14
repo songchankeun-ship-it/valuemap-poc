@@ -82,15 +82,11 @@ export default function RootLayout({
             <main className="flex-1 min-w-0">
               <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
               <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                <span className="tabular-nums">데이터 {dataMetadata.asOfBusinessDate} 장마감 스냅샷</span>
+                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataMetadata.asOfBusinessDate} 장마감</span>
                 <span>·</span>
                 <span>산식 Metrics v2.3</span>
-                {process.env.VERCEL_GIT_COMMIT_SHA ? (
-                  <>
-                    <span>·</span>
-                    <span className="tabular-nums">코드 {process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7)}</span>
-                  </>
-                ) : null}
+                <span>·</span>
+                <span className="text-emerald-600/80 dark:text-emerald-500/80">데이터 상태 정상</span>
                 <span>·</span>
                 <span>밸류맵 스톡 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>

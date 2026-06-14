@@ -165,7 +165,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                     {d.signal ? (
                       <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                         <span className={"text-[10px] px-1.5 py-0.5 rounded " + getBadgeClass(d.signal.signalLabel)}>
-                          {d.signal.signalLabel} · 신뢰도 {d.signal.strength}%
+                          {d.signal.signalLabel} · 유형 자동분류
                         </span>
                         {d.signal.direction ? (
                           <span className={"text-[10px] px-1.5 py-0.5 rounded " + (d.signal.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300" : d.signal.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300" : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300")}>
