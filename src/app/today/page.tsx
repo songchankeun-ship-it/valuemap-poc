@@ -128,6 +128,8 @@ export const revalidate = 3600;
 
 export default async function TodayPage() {
   const today = formatDateKST();
+  const kstDay = new Date(Date.now() + 9 * 3600 * 1000).getUTCDay(); // 0=일,6=토
+  const isClosed = kstDay === 0 || kstDay === 6;
   const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
@@ -180,6 +182,9 @@ export default async function TodayPage() {
           <span className="text-zinc-400 dark:text-zinc-500">·</span>
           <span>종목 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{realStockPool.length}개</strong></span>
         </p>
+        {isClosed ? (
+          <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">오늘은 휴장일입니다 — 가장 최근 거래일 <strong className="tabular-nums">{dataAsOf}</strong> 장마감 데이터를 보여드립니다.</p>
+        ) : null}
       </header>
 
       <section className="grid grid-cols-3 gap-2">
@@ -190,12 +195,12 @@ export default async function TodayPage() {
         </div>
         <div className="bg-emerald-50 rounded-lg p-2.5 md:p-3">
           <div className="text-[9px] md:text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
-          <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPer.toFixed(1)}x</div>
+          <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPer.toFixed(1)}배</div>
           <div className="text-[9px] md:text-[10px] text-emerald-700/70 mt-0.5">극단값 제외</div>
         </div>
         <div className="bg-amber-50 rounded-lg p-2.5 md:p-3">
           <div className="text-[9px] md:text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
-          <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPbr.toFixed(2)}x</div>
+          <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPbr.toFixed(2)}배</div>
           <div className="text-[9px] md:text-[10px] text-amber-700/70 mt-0.5">극단값 제외</div>
         </div>
       </section>

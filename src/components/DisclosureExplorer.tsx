@@ -54,6 +54,15 @@ const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }
   "전환사채 발행": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
 };
 
+// 고정 분류 체계 — 결과 0건이어도 항상 노출(어떤 종류를 검사했는지 보이게).
+const CANON_TYPES: { type: string; label: string }[] = [
+  { type: "treasury_buy", label: "자기주식" },
+  { type: "insider_buy", label: "보유 변동" },
+  { type: "single_contract", label: "단일계약" },
+  { type: "correction", label: "정정" },
+  { type: "capital_raise", label: "유증/CB" },
+];
+
 const SIGNAL_DESCRIPTIONS: Record<string, string> = {
   "자기주식 취득 결의": "주주환원 관련 이벤트로 분류됨. 원문과 시세 반응 확인 권장.",
   "임원·주요주주 보유 변동": "소유상황보고서. 매수·매도·스톡옵션 등 방향은 본문 확인 필요(매수로 단정 금지).",
@@ -208,21 +217,23 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           >
             전체 {grouped.length}
           </button>
-          {Object.entries(signalCounts).map(([type, count]) => {
-            const rep = grouped.find((g) => g.signalType === type);
-            if (!rep) return null;
-            const style = SIGNAL_STYLES[rep.signalLabel] || { bg: "bg-zinc-100", text: "text-zinc-700", border: "border-zinc-300" };
+          {CANON_TYPES.map(({ type, label }) => {
+            const count = signalCounts[type] ?? 0;
+            const active = filterType === type;
             return (
               <button
                 key={type}
                 type="button"
                 onClick={() => setFilterType(type)}
+                disabled={count === 0}
                 className={"text-[11px] px-2.5 py-1 rounded-full border transition " +
-                  (filterType === type
-                    ? style.bg + " " + style.text + " " + style.border + " font-semibold"
-                    : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400")}
+                  (active
+                    ? "bg-zinc-900 text-white border-zinc-900 font-semibold"
+                    : count === 0
+                    ? "bg-white dark:bg-zinc-900 text-zinc-300 dark:text-zinc-600 border-zinc-100 dark:border-zinc-800 cursor-default"
+                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400")}
               >
-                {rep.signalLabel} {count}
+                {label} {count}
               </button>
             );
           })}
