@@ -3,7 +3,7 @@ import { DisclosureExplorer } from "@/components/DisclosureExplorer";
 
 export const metadata = {
   title: "공시 신호 — 밸류맵 스톡",
-  description: "최근 7일 한국 상장사 공시에서 5가지 시장 신호만 추출. 자기주식·내부자 매수·정정·대형계약·증자.",
+  description: "최근 7일 한국 상장사 공시에서 5가지 시장 신호만 추출. 자기주식·임원·주요주주 보유변동·정정·대형계약·증자.",
 };
 
 export default function DisclosuresPage() {
@@ -19,7 +19,7 @@ export default function DisclosuresPage() {
         <h1 className="text-xl font-medium mb-1">공시 신호</h1>
         <p className="text-sm text-gray-500 dark:text-zinc-400">
           최근 7일 코스피·코스닥 공시에서 자체 추출한 <strong>5가지 시장 신호</strong>.
-          자기주식 취득, 임원 매수, 손익 정정, 대형 계약, 유증/CB.
+          자기주식 취득, 임원·주요주주 보유 변동, 손익 정정, 대형 계약, 유증/CB.
         </p>
       </header>
 

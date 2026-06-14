@@ -42,7 +42,7 @@ export default async function NotificationSettingsPage() {
           <div className="min-w-0">
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">공시 신호 알림</div>
             <div className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              관심 종목에 자기주식 취득·임원 매수·정정공시·단일판매 계약·유상증자 등 신호가 발견되면 매일 한 번 이메일로 발송됩니다.
+              관심 종목에 자기주식 취득·임원·주요주주 보유 변동·정정공시·단일판매 계약·유상증자 등 신호가 발견되면 매일 한 번 이메일로 발송됩니다.
             </div>
           </div>
           <NotificationToggle />

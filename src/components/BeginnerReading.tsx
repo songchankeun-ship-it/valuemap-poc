@@ -163,7 +163,7 @@ function getChecklistByPattern(s: StockShape): { headline: string; items: string
     return {
       headline: "관심 집중 종목 — 거래량 + 가격 동반",
       items: [
-        "최근 공시/뉴스 (자기주식 취득? 임원 매수? 대형 계약?)",
+        "최근 공시/뉴스 (자기주식 취득? 임원·주요주주 보유 변동? 대형 계약?)",
         "거래 급증이 일시적인지 추세적인지",
         "고점 추격 위험 — 어디까지 사도 괜찮을지 본인 기준",
       ],
