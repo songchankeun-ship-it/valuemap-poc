@@ -14,6 +14,7 @@ import { getPriceHistory } from "@/lib/priceHistory";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
+import { MetricStrip } from "@/components/MetricStrip";
 import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool } from "@/lib/realStocks";
@@ -263,26 +264,12 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">자체 지표 4종 <span className="text-[10px] font-normal text-zinc-400">전체 {poolN}종목 대비</span></div>
           <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline">지표 가이드 →</Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-          {([
-            { l: "모멘텀", sc: s.momentum, c: "bg-blue-500", kind: "momentum" as const, top: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum") },
-            { l: "거래활성도", sc: s.flow, c: "bg-emerald-500", kind: "flow" as const, top: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow") },
-            { l: "밸류", sc: s.value, c: "bg-cyan-500", kind: "value" as const, top: topPctOf(s.value, "value"), rank: rankOf(s.value, "value") },
-            { l: "변동성조정", sc: s.vol, c: "bg-orange-500", kind: "vol" as const, top: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol") },
-          ]).map((x) => (
-            <div key={x.l} className="-mx-1 px-1 py-1 rounded">
-              <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-400 mb-1 flex items-center gap-1">
-                <span>{x.l}</span>
-                <ScoreTooltip kind={x.kind} />
-              </div>
-              <div className="text-sm md:text-base font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{x.top <= 50 ? "상위 " + x.top + "%" : "하위 " + (100 - x.top) + "%"}</div>
-              <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mt-1">
-                <div className={"h-full " + x.c} style={{ width: (100 - x.top) + "%" }} />
-              </div>
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">{poolN}중 {x.rank}위 · 점수 {x.sc.toFixed(0)}</div>
-            </div>
-          ))}
-        </div>
+        <MetricStrip axes={[
+          { label: "추세", kind: "momentum", topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN, raw: s.momentum },
+          { label: "거래활성도", kind: "flow", topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN, raw: s.flow },
+          { label: "밸류", kind: "value", topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, raw: s.value },
+          { label: "위험대비", kind: "vol", topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN, raw: s.vol },
+        ]} />
       </section>
 
       {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
