@@ -240,8 +240,10 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         </div>
       </div>
 
-      {/* 지표별 한 줄 해석 */}
-      <div className="space-y-1.5">
+      {/* 지표별 한 줄 해석 — 기본 접힘 */}
+      <details className="mt-1">
+        <summary className="text-xs text-blue-700 dark:text-blue-400 cursor-pointer select-none">지표별 상세 해석 펼치기 ▾</summary>
+        <div className="space-y-1.5 mt-2">
         {readings.map((r) => (
           <div
             key={r.label}
@@ -263,7 +265,8 @@ export function BeginnerReading({ s }: { s: StockShape }) {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      </details>
 
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
         ⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.

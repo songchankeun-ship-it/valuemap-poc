@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { dataMetadata } from "@/lib/realStocks";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://valuemap.kr"),
@@ -80,6 +81,16 @@ export default function RootLayout({
             <Sidebar />
             <main className="flex-1 min-w-0">
               <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
+              <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+                <span className="tabular-nums">데이터 {dataMetadata.asOfBusinessDate} 기준</span>
+                <span>·</span>
+                <span>산식 Metrics v2.3</span>
+                <span>·</span>
+                <span>밸류맵 스톡 — 투자 권유가 아닌 탐색 도구입니다</span>
+                <span>·</span>
+                <a href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">이용약관</a>
+                <a href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">개인정보</a>
+              </footer>
             </main>
           </div>
           <Analytics />

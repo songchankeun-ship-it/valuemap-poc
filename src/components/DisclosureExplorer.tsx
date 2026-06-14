@@ -102,7 +102,8 @@ function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
   return Array.from(groups.values()).sort((a, b) => b.rcept_dt_latest.localeCompare(a.rcept_dt_latest));
 }
 
-export function DisclosureExplorer({ initialData }: { initialData?: ApiResponse }) {
+export function DisclosureExplorer({ initialData, universe = [] }: { initialData?: ApiResponse; universe?: string[] }) {
+  const universeSet = new Set(universe);
   const [data, setData] = useState<ApiResponse | null>(initialData ?? null);
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +172,7 @@ export function DisclosureExplorer({ initialData }: { initialData?: ApiResponse 
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">공시 신호</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-            최근 {days}일 중 최신 {data.totalDisclosures}건 · 신호 {data.signalCount}건 · 그룹 {grouped.length}건
+            최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
         </div>
         {data.totalDisclosures >= 200 ? (
@@ -274,7 +275,7 @@ export function DisclosureExplorer({ initialData }: { initialData?: ApiResponse 
                   >
                     원문 보기 ↗
                   </button>
-                  {g.stock_code ? (
+                  {g.stock_code && universeSet.has(g.stock_code) ? (
                     <button
                       type="button"
                       onClick={() => goToStock(g.stock_code!)}
@@ -282,6 +283,8 @@ export function DisclosureExplorer({ initialData }: { initialData?: ApiResponse 
                     >
                       종목 상세 →
                     </button>
+                  ) : g.stock_code ? (
+                    <span className="inline-flex items-center px-3 py-2 text-[11px] text-zinc-400 dark:text-zinc-500">분석 대상 외 · DART 원문만</span>
                   ) : null}
                 </div>
                 {/* 이 공시 이해하기 — 차별점 */}

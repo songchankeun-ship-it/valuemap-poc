@@ -99,11 +99,11 @@ export function BacktestClient({ data }: { data: BacktestData }) {
   const m = active.metrics;
 
   const metricCards: { label: string; value: string; tone?: string }[] = [
-    { label: "총수익률", value: pct(m.totalReturn), tone: m.totalReturn >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
-    { label: "CAGR", value: pct(m.cagr) },
-    { label: "누적 초과수익 (vs 벤치)", value: pct(m.alpha), tone: m.alpha >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
-    { label: "MDD", value: pct(m.maxDrawdown), tone: "text-blue-600 dark:text-blue-400" },
+    { label: "CAGR (연복리)", value: pct(m.cagr), tone: m.cagr >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
+    { label: "MDD (최대낙폭)", value: pct(m.maxDrawdown), tone: "text-blue-600 dark:text-blue-400" },
     { label: "Sharpe", value: m.sharpe.toFixed(2) },
+    { label: "누적 초과수익 (vs 벤치)", value: pct(m.alpha), tone: m.alpha >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
+    { label: "총수익률", value: pct(m.totalReturn), tone: m.totalReturn >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
     { label: "승률(월)", value: (m.winRate * 100).toFixed(0) + "%" },
   ];
 

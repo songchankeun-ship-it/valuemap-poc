@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DisclosureExplorer } from "@/components/DisclosureExplorer";
 import { getRecentSignals } from "@/lib/recentSignals";
+import { realStockPool } from "@/lib/realStocks";
 
 export const metadata = {
   title: "공시 신호 — 밸류맵 스톡",
@@ -11,6 +12,7 @@ export const revalidate = 1800;
 
 export default async function DisclosuresPage() {
   const initial = await getRecentSignals(7);
+  const universe = realStockPool.map((s) => s.ticker);
   return (
     <div className="space-y-4">
       <nav className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1">
@@ -27,7 +29,7 @@ export default async function DisclosuresPage() {
         </p>
       </header>
 
-      <DisclosureExplorer initialData={initial} />
+      <DisclosureExplorer initialData={initial} universe={universe} />
 
       <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-relaxed">
         본 페이지의 신호는 DART 공시 보고서명 매칭 기반 1차 필터입니다.

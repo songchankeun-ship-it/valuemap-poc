@@ -23,6 +23,11 @@ import { compositeOf } from "@/lib/score";
 
 export const revalidate = 3600;
 
+// 138개 종목 페이지를 빌드 시 전부 정적 생성 → 배포마다 전체 갱신(구버전 캐시 잔존 방지).
+export function generateStaticParams() {
+  return realStockPool.map((s) => ({ ticker: s.ticker }));
+}
+
 interface PageProps { params: Promise<{ ticker: string }>; }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -220,7 +225,13 @@ export default async function StockDetailPage({ params }: PageProps) {
       </header>
 
       {/* 결론 헤드라인 — 등급·순위·강점/위험 먼저 (디자인 리뷰 P0) */}
-      <section className={"rounded-lg border-2 " + tone.border + " " + tone.bg + " p-3 md:p-4"}>
+      <section className={"rounded-lg border-2 " + (dataWarnings.length > 0 ? "border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20" : tone.border + " " + tone.bg) + " p-3 md:p-4"}>
+        {dataWarnings.length > 0 ? (
+          <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300">
+            <span aria-hidden="true">⚠</span>
+            <span>가격 데이터 검증 중 — 아래 등급·점수는 임시 계산값이며, 공식 후보·순위에서 제외됩니다.</span>
+          </div>
+        ) : null}
         <div className="flex items-start gap-3">
           <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + (dataWarnings.length > 0 ? "ring-zinc-300 dark:ring-zinc-700" : tone.ring) + " bg-white dark:bg-zinc-900"}>
             <div className={"text-xl md:text-2xl font-bold leading-none " + (dataWarnings.length > 0 ? "text-zinc-400 dark:text-zinc-500" : tone.text)}>{grade.grade}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
@@ -231,7 +242,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
               <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
-              <span>데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong></span>
+              <span>필수 데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong> 충족</span>
               {dataWarnings.length > 0 ? (
                 <>
                   <span className="text-amber-600 dark:text-amber-400 font-medium">값 검증 중</span>
