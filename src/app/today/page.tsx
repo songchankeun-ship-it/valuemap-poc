@@ -4,6 +4,7 @@ import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
 import { isSuspect } from "@/lib/dataQuality";
+import { compositeOf } from "@/lib/score";
 
 interface SignalDisclosure {
   corp_name: string;
@@ -130,7 +131,7 @@ export default async function TodayPage() {
   const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
-  const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0)).slice(0, 5);
+  const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => compositeOf(b) - compositeOf(a)).slice(0, 5);
   const topValue = [...validStocks].filter(s => s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
   const topMomentum = [...validStocks].filter(s => s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
 
@@ -142,7 +143,7 @@ export default async function TodayPage() {
   // 오늘의 브리핑 통계 (스냅샷 기반)
   const upCount = realStockPool.filter((s) => s.changePct > 0).length;
   const downCount = realStockPool.filter((s) => s.changePct < 0).length;
-  const strongCount = realStockPool.filter((s) => (s.compositeScore || 0) >= 80).length;
+  const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80).length;
   const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
   const briefingSignalCount = ((recentSignalsRaw as { signals?: unknown[] }).signals ?? []).length;
@@ -152,7 +153,7 @@ export default async function TodayPage() {
   const hasDeltas = Object.keys(scoreDeltas).length > 0;
   const newEntrants = hasDeltas
     ? realStockPool
-        .filter((s) => (s.compositeScore || 0) >= 80 && scoreDeltas[s.ticker] !== undefined && (s.compositeScore || 0) - scoreDeltas[s.ticker] < 80)
+        .filter((s) => compositeOf(s) >= 80 && scoreDeltas[s.ticker] !== undefined && compositeOf(s) - scoreDeltas[s.ticker] < 80)
         .sort((a, b) => (scoreDeltas[b.ticker] || 0) - (scoreDeltas[a.ticker] || 0))
         .slice(0, 6)
     : [];
@@ -236,7 +237,7 @@ export default async function TodayPage() {
               <div className="flex flex-wrap gap-1.5">
                 {newEntrants.map((s) => (
                   <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
-                    {s.name} <span className="tabular-nums">{s.compositeScore} (▲{Math.round(scoreDeltas[s.ticker])})</span>
+                    {s.name} <span className="tabular-nums">{Math.round(compositeOf(s))} (▲{Math.round(scoreDeltas[s.ticker])})</span>
                   </Link>
                 ))}
               </div>
@@ -291,7 +292,7 @@ export default async function TodayPage() {
                   </div>
                 </div>
                 <div className="flex items-baseline gap-1 shrink-0 pt-0.5">
-                  <span className="text-base font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore}</span>
+                  <span className="text-base font-bold text-blue-700 dark:text-blue-400 tabular-nums">{Math.round(compositeOf(s))}</span>
                   <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
                 </div>
               </Link>

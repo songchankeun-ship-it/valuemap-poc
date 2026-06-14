@@ -118,7 +118,7 @@ export function BacktestClient({ data }: { data: BacktestData }) {
       </header>
 
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-lg p-3 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-        <strong>이 결과는 가격 기반 전략의 시뮬레이션</strong>이며, 현재 제공되는 4개 지표 종합점수의 성과를 검증한 결과가 아닙니다. 현재 유니버스를 과거에 소급 적용해 <strong>생존편향</strong>이 있을 수 있고, <strong>거래비용 0%</strong>를 가정합니다. 아이디어 검증용으로만 참고하세요.
+        <strong>이 결과는 가격 기반 전략의 시뮬레이션</strong>이며, 현재 제공되는 4개 지표 종합점수의 성과를 검증한 결과가 아닙니다. 현재 유니버스를 과거에 소급 적용해 <strong>생존편향</strong>이 있을 수 있습니다. <strong>편도 0.3% 거래비용</strong>을 반영했으나 슬리피지·체결오차는 단순화했습니다. 아이디어 검증용으로만 참고하세요.
       </div>
 
       <div className="flex gap-1.5 flex-wrap">
@@ -184,7 +184,7 @@ export function BacktestClient({ data }: { data: BacktestData }) {
         <strong className="block mb-1">⚠️ 읽을 때 주의</strong>
         가정: {data.assumptions}. 벤치마크는 <strong>{data.benchmarkLabel}</strong>. 과거 펀더멘털·수급 데이터가 없어
         밸류·거래활성도 전략은 백테스트에서 제외했고, 가격으로 복원 가능한 신호만 검증했습니다.
-        신호는 월말 종가로 계산해 같은 종가에 체결한 단순화 모델이라 실제 체결가와 차이가 있을 수 있고, '알파'는 회귀분석이 아닌 벤치마크 대비 누적 초과수익(%p)입니다. 과거 성과가 미래 수익을 보장하지 않습니다.
+        신호는 전월 마지막 거래일 종가까지만 사용해 다음 거래일에 체결(미래참조 제거)하고 편도 0.3% 거래비용을 반영하지만, 실제 체결가·슬리피지와는 차이가 있을 수 있습니다. '알파'는 회귀분석이 아닌 벤치마크 대비 누적 초과수익(%p)입니다. 과거 성과가 미래 수익을 보장하지 않습니다.
       </section>
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500">

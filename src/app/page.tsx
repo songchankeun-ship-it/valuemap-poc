@@ -5,6 +5,7 @@ import { Search, BarChart3, Megaphone, TrendingUp, Bell } from "lucide-react";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
 import recentSignalsRaw from "../../public/disclosure-samples/recent-signals.json";
 import { fmtWon } from "@/lib/format";
+import { compositeOf } from "@/lib/score";
 
 interface RecentSignal {
   signalType: string;
@@ -47,8 +48,8 @@ export const revalidate = 3600;
 
 function pickTopStocks(n: number) {
   return [...realStockPool]
-    .filter((s) => s.compositeScore !== undefined && s.compositeScore > 0 && !isSuspect(s))
-    .sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0))
+    .filter((s) => compositeOf(s) > 0 && !isSuspect(s))
+    .sort((a, b) => compositeOf(b) - compositeOf(a))
     .slice(0, n);
 }
 
@@ -153,7 +154,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex items-baseline gap-0.5 shrink-0">
                     <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums leading-none">
-                      {Math.round(s.compositeScore || 0)}
+                      {Math.round(compositeOf(s))}
                     </span>
                     <span className="text-[9px] text-zinc-400 dark:text-zinc-500">/100</span>
                   </div>

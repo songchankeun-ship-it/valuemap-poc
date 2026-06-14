@@ -18,6 +18,7 @@ import { MetricStrip } from "@/components/MetricStrip";
 import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool } from "@/lib/realStocks";
+import { compositeOf } from "@/lib/score";
 
 export const revalidate = 3600;
 
@@ -27,8 +28,8 @@ export async function generateMetadata({ params }: PageProps) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
   if (!s) return { title: "종목을 찾을 수 없습니다" };
-  const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
-  const title = `${s.name} (${ticker}) 분석 — 밸류맵`;
+  const composite = Math.round(compositeOf(s));
+  const title = `${s.name} (${ticker}) 분석 — 밸류맵 스톡`;
   const description = `${s.name} 종합 점수 ${composite}/100 — 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
   return {
     title,
@@ -108,7 +109,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
   if (!s) notFound();
-  const composite = Math.round((s.momentum + s.flow + s.value + s.vol) / 4);
+  const composite = Math.round(compositeOf(s));
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
   const tone = scoreTone(composite);
   const [scoreHistory, priceHistory] = await Promise.all([
@@ -129,10 +130,10 @@ export default async function StockDetailPage({ params }: PageProps) {
   const completeness = dataCompleteness(s, priceHistory);
   const sectorValue = sectorValueScore(s, realStockPool);
   const poolN = realStockPool.length;
-  const overallRank = realStockPool.filter((p) => (p.compositeScore || 0) > composite).length + 1;
+  const overallRank = realStockPool.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
   const mySector = sectorOf(s.themes);
   const sectorPeers = realStockPool.filter((p) => sectorOf(p.themes) === mySector);
-  const sectorRank = sectorPeers.filter((p) => (p.compositeScore || 0) > composite).length + 1;
+  const sectorRank = sectorPeers.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
   const sectorCount = sectorPeers.length;
   const topPctOf = (val: number, key: "momentum" | "flow" | "value" | "vol") => {
     const better = realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length;
@@ -151,12 +152,12 @@ export default async function StockDetailPage({ params }: PageProps) {
         description: `${s.name} 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
         author: {
           "@type": "Organization",
-          name: "밸류맵",
+          name: "밸류맵 스톡",
           url: "https://valuemap.kr",
         },
         publisher: {
           "@type": "Organization",
-          name: "밸류맵",
+          name: "밸류맵 스톡",
           url: "https://valuemap.kr",
         },
         datePublished: new Date().toISOString(),
