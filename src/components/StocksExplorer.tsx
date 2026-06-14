@@ -396,7 +396,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
     <div className="space-y-3 md:space-y-4">
       <div className="flex items-baseline justify-between flex-wrap gap-2">
         <h1 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">종목 탐색</h1>
-        <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">{sorted.length}개 / {stocks.length}개 종목</span>
+        <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">조건 충족 {sorted.length}개 / 전체 {stocks.length}개</span>
       </div>
       {activeFilterCount === 0 && !query && sorted.length < stocks.length ? (
         <p className="text-[11px] text-zinc-400 dark:text-zinc-500">기본 화면은 PER 200·PBR 30 이하만 표시해요. 제외된 {stocks.length - sorted.length}개(고PER·고PBR 등)는 위 필터에서 범위를 넓히면 포함됩니다.</p>
@@ -586,7 +586,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
               </Link>
             ))
           )}
-          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">상위 100개만 표시. 필터를 좁혀주세요.</div>) : null}
+          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">조건 충족 {sorted.length}개 중 상위 100개 표시 · 조건을 좁히면 비교하기 쉬워요.</div>) : null}
         </div>
       </div>
 

@@ -132,6 +132,8 @@ export default async function TodayPage() {
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
   const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => compositeOf(b) - compositeOf(a)).slice(0, 5);
+  const overallRankOf = (x: { momentum: number; flow: number; value: number; vol: number }) =>
+    realStockPool.filter((p) => Math.round(compositeOf(p)) > Math.round(compositeOf(x))).length + 1;
   const topValue = [...validStocks].filter(s => !isSuspect(s) && s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
   const topMomentum = [...validStocks].filter(s => !isSuspect(s) && s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
 
@@ -270,9 +272,9 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 추가 확인 후보</h2>
             <ScoreTooltip kind="composite" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">종합 상위 5</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">종합점수 상위 5</span>
         </div>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">네 지표 모두 우호적인 상태 — 탐색 우선순위 높음</p>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">여러 지표에서 상대적으로 강점이 확인된 종목 — 탐색 우선순위 높음 (검증 보류 종목 제외)</p>
         <ul className="space-y-1">
           {topComposite.map((s, i) => (
             <li key={s.ticker}>
@@ -281,7 +283,7 @@ export default async function TodayPage() {
                 className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
               >
                 <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center pt-0.5 shrink-0">{i + 1}</span>
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums pt-0.5 shrink-0 whitespace-nowrap">전체 {overallRankOf(s)}위</span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
