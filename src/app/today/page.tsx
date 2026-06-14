@@ -70,10 +70,10 @@ function formatDataAsOf(businessDate?: string, fallbackIso?: string): string {
 /** Composite Top — 4지표 중 강한 것 위주 */
 function compositeReason(s: { momentum: number; flow: number; value: number; vol: number }): string {
   const items = [
-    { label: "모멘텀", v: s.momentum },
+    { label: "추세", v: s.momentum },
     { label: "거래활성도", v: s.flow },
     { label: "밸류", v: s.value },
-    { label: "변동성조정", v: s.vol },
+    { label: "위험대비", v: s.vol },
   ];
   const strong = items.filter((x) => x.v >= 70).sort((a, b) => b.v - a.v);
   if (strong.length >= 2) {
@@ -352,7 +352,7 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 가격 흐름 강한 후보</h2>
             <ScoreTooltip kind="momentum" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">모멘텀</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">추세</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">최근 1·3·6개월 가중평균 수익률 — 고점 추격 위험 함께 의미</p>
         <ul className="space-y-1">

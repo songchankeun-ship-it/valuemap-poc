@@ -58,10 +58,10 @@ interface ReasonV2 {
 
 function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 {
   const metrics = [
-    { metric: "모멘텀", score: m },
+    { metric: "추세", score: m },
     { metric: "거래활성도", score: f },
     { metric: "밸류", score: v },
-    { metric: "변동성조정", score: vo },
+    { metric: "위험대비", score: vo },
   ];
   const strengths = metrics.filter(x => x.score >= 70).map(x => ({ metric: x.metric, score: x.score }));
   const cautions = metrics.filter(x => x.score < 50).map(x => ({ metric: x.metric, score: x.score }));
@@ -226,8 +226,15 @@ export default async function StockDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
               <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
-              <span>데이터 완성도 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong></span>
-              {dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400 font-medium">검증 보류</span> : null}
+              <span>데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong></span>
+              {dataWarnings.length > 0 ? (
+                <>
+                  <span className="text-amber-600 dark:text-amber-400 font-medium">값 검증 중</span>
+                  <span className="text-amber-600 dark:text-amber-400 font-medium">임시 점수 · 순위 참고용</span>
+                </>
+              ) : (
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">값 검증 완료</span>
+              )}
             </div>
             {(reason.strengths.length > 0 || reason.cautions.length > 0) ? (
               <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-[11px]">
@@ -332,7 +339,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             </div>
             <div className="space-y-1.5">
               <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                종합 {composite}점 = 모멘텀·거래활성도·밸류·변동성조정 4지표의 가중 평균입니다. 강점·위험과 항목별 위치는 위 <strong className="text-zinc-900 dark:text-zinc-100">요약 카드</strong>와 <strong className="text-zinc-900 dark:text-zinc-100">자체 지표 4종</strong>에서 확인하세요.
+                종합 {composite}점 = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 강점·위험과 항목별 위치는 위 <strong className="text-zinc-900 dark:text-zinc-100">요약 카드</strong>와 <strong className="text-zinc-900 dark:text-zinc-100">자체 지표 4종</strong>에서 확인하세요.
               </div>
               <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">
                 * 실험 지표입니다 — 과거 성과(백테스트) 검증이 진행 중이라 점수는 참고용이며, 매수·매도 추천이 아닌 데이터 기반 탐색 우선순위입니다. <span className="not-italic font-medium">데이터 완성도 {completeness}%.</span>
@@ -358,7 +365,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       </section>
 
       {scoreHistory.length > 0 ? (
-        <section><ScoreHistoryChart history={scoreHistory} /></section>
+        <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
 
       <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>

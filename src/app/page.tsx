@@ -55,7 +55,7 @@ function pickTopStocks(n: number) {
 
 function quickReason(s: { momentum: number; flow: number; value: number; vol: number }): string {
   const items = [
-    { label: "모멘텀", v: s.momentum },
+    { label: "추세", v: s.momentum },
     { label: "거래활성도", v: s.flow },
     { label: "밸류", v: s.value },
     { label: "변동성", v: s.vol },

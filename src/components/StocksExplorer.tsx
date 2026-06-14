@@ -80,9 +80,9 @@ interface Preset {
 
 const PRESETS: Preset[] = [
   { id: "lowper", label: "저평가 (저PER)", desc: "PER 15 이하 · 밸류 정렬", config: { perMax: 15, sortKey: "value", sortDir: "desc" } },
-  { id: "momentum", label: "모멘텀 강세", desc: "추세 강한 종목 · 종합 60+", config: { minComposite: 60, sortKey: "momentum", sortDir: "desc" } },
+  { id: "momentum", label: "추세 강세", desc: "추세 강한 종목 · 종합 60+", config: { minComposite: 60, sortKey: "momentum", sortDir: "desc" } },
   { id: "lowpbr", label: "저PBR", desc: "PBR 1.0 이하 · 밸류 정렬", config: { pbrMax: 1.0, sortKey: "value", sortDir: "desc" } },
-  { id: "value-momentum", label: "밸류+모멘텀", desc: "두 지표 모두 우호적", config: { minComposite: 70, sortKey: "compositeScore", sortDir: "desc" } },
+  { id: "value-momentum", label: "밸류+추세", desc: "두 지표 모두 우호적", config: { minComposite: 70, sortKey: "compositeScore", sortDir: "desc" } },
   { id: "balanced", label: "균형 종목", desc: "종합 80+", config: { minComposite: 80, sortKey: "compositeScore", sortDir: "desc" } },
 ];
 

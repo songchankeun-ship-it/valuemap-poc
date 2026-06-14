@@ -35,10 +35,10 @@ export default async function Image({ params }: { params: { ticker: string } }) 
   const scoreColor = composite >= 70 ? "#10B981" : composite >= 50 ? "#3B82F6" : "#94A3B8";
 
   const metrics = [
-    { label: "M", full: "모멘텀", score: s.momentum, color: "#3B82F6" },
+    { label: "M", full: "추세", score: s.momentum, color: "#3B82F6" },
     { label: "F", full: "거래활성도", score: s.flow, color: "#10B981" },
     { label: "V", full: "밸류", score: s.value, color: "#06B6D4" },
-    { label: "Vo", full: "변동성조정", score: s.vol, color: "#F97316" },
+    { label: "Vo", full: "위험대비", score: s.vol, color: "#F97316" },
   ];
 
   const isUp = s.changePct >= 0;
@@ -192,7 +192,7 @@ export default async function Image({ params }: { params: { ticker: string } }) 
           }}
         >
           <div>탐색 우선순위 · 매수·매도 추천이 아닙니다</div>
-          <div style={{ fontWeight: 600, color: "#0F172A" }}>밸류맵 · 한국 테마주 분석 도구</div>
+          <div style={{ fontWeight: 600, color: "#0F172A" }}>밸류맵 · 한국 주식 탐색 도구</div>
         </div>
       </div>
     ),

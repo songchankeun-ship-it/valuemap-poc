@@ -26,7 +26,7 @@ interface Reading {
 
 function readMomentum(score: number): Reading {
   const r: Reading = {
-    label: "모멘텀",
+    label: "추세",
     score,
     emoji: "📈",
     meaning: "",
@@ -90,7 +90,7 @@ function readValue(score: number, per: number, pbr: number): Reading {
 }
 
 function readVol(score: number): Reading {
-  const r: Reading = { label: "변동성조정", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
+  const r: Reading = { label: "위험대비", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
     r.meaning = "수익률 대비 변동성이 낮은 편입니다";
     r.action = "꾸준한 흐름의 종목 — 큰 출렁임 없이 움직임";
@@ -110,17 +110,17 @@ function readVol(score: number): Reading {
 /** 종목의 점수 패턴에 따라 '이 종목 볼 때 먼저 확인할 3가지' 생성 */
 function getChecklistByPattern(s: StockShape): { headline: string; items: string[] } {
   const strong = [
-    { k: "M", v: s.momentum, label: "모멘텀" },
+    { k: "M", v: s.momentum, label: "추세" },
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
-    { k: "Vo", v: s.vol, label: "변동성조정" },
+    { k: "Vo", v: s.vol, label: "위험대비" },
   ].filter((x) => x.v >= 70);
 
   const weak = [
-    { k: "M", v: s.momentum, label: "모멘텀" },
+    { k: "M", v: s.momentum, label: "추세" },
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
-    { k: "Vo", v: s.vol, label: "변동성조정" },
+    { k: "Vo", v: s.vol, label: "위험대비" },
   ].filter((x) => x.v < 40);
 
   const hasMomentum = strong.find((x) => x.k === "M");
