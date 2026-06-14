@@ -237,7 +237,7 @@ export default async function TodayPage() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">오늘 등락 ({realStockPool.length}종목)</div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">최근 거래일 등락 ({realStockPool.length}종목)</div>
             <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">상승 {upCount} <span className="text-[10px] font-normal text-zinc-400">/ 하락 {downCount} / 보합 {flatCount}</span></div>
           </div>
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
@@ -253,15 +253,15 @@ export default async function TodayPage() {
             <div className="text-sm font-bold text-amber-700 dark:text-amber-400 tabular-nums">{briefingSignalCount}건</div>
           </div>
         </div>
-        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">상승 종목 비율 {breadthPct}% · 매일 장마감 후 갱신됩니다.</p>
+        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">최근 거래일 상승 비율 {breadthPct}% · 영업일 장마감 후 갱신.</p>
       </section>
 
       {hasDeltas && (newEntrants.length > 0 || dropouts.length > 0 || rankRisers.length > 0 || bigMovers.length > 0) ? (
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
           <div className="flex items-center gap-1.5 mb-3">
             <span className="text-sm">🔔</span>
-            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘의 변화</h2>
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">어제 대비</span>
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 장마감 변화</h2>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">전 거래일 대비</span>
           </div>
           {newEntrants.length > 0 ? (
             <div className="mb-3">
@@ -341,6 +341,7 @@ export default async function TodayPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
                       <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                      {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-[9px] px-1 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-medium shrink-0">🔺급등 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
                     </div>
                     <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
                       💡 {compositeReason(s)}

@@ -254,7 +254,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + (dataWarnings.length > 0 ? "ring-zinc-300 dark:ring-zinc-700" : tone.ring) + " bg-white dark:bg-zinc-900"}>
             <div className={"text-xl md:text-2xl font-bold leading-none " + (dataWarnings.length > 0 ? "text-zinc-400 dark:text-zinc-500" : tone.text)}>{grade.grade}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
             <div className="text-[8px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">{composite}/100</div>
-            <div className="text-[7px] text-zinc-400 dark:text-zinc-500 leading-none uppercase tracking-wide">탐색순위</div>
+            <div className="text-[7px] text-zinc-400 dark:text-zinc-500 leading-none uppercase tracking-wide">탐색등급</div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{dataWarnings.length > 0 ? "데이터 검증 중 · 임시등급 — " : ""}{reason.interpretation}</div>

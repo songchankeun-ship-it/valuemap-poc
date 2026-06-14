@@ -168,6 +168,7 @@ export default async function HomePage() {
                   <span className={s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"}>
                     {s.changePct >= 0 ? "▲" : "▼"}{Math.abs(s.changePct).toFixed(2)}%
                   </span>
+                  {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-rose-600 dark:text-rose-400 font-medium">🔺급등 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
                 </div>
               </Link>
             ))}

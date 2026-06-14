@@ -475,9 +475,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
         <input type="search" placeholder="종목명 · 티커" value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 min-w-[200px] px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
         <select value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900">
           <option value="compositeScore-desc">종합점수 높은순</option>
-          <option value="momentum-desc">모멘텀 높은순</option>
+          <option value="momentum-desc">추세 높은순</option>
           <option value="value-desc">밸류 높은순</option>
-          <option value="vol-desc">변동성조정 높은순</option>
+          <option value="vol-desc">위험대비 높은순</option>
           <option value="roe-desc">ROE 높은순</option>
           <option value="dividendYield-desc">배당수익률 높은순</option>
           <option value="marketCap-desc">시가총액 큰순</option>
