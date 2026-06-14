@@ -61,10 +61,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: `${SITE}/guide`,
+      url: `${SITE}/guide/metrics`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
+    },
+    {
+      url: `${SITE}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
       url: `${SITE}/about`,
@@ -91,8 +97,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${SITE}/stock/${s.ticker}`,
     lastModified: dataDate,
     changeFrequency: "daily" as const,
-    // 시총 큰 종목일수록 우선순위 약간 더 ↑
-    priority: 0.7,
+    // 시총 큰 종목일수록 우선순위 ↑ (대형 0.8 / 중형 0.7 / 소형 0.6)
+    priority: s.marketCap >= 5_000_000_000_000 ? 0.8 : s.marketCap >= 1_000_000_000_000 ? 0.7 : 0.6,
   }));
 
   return [...staticPages, ...stockPages];
