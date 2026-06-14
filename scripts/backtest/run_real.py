@@ -101,6 +101,9 @@ def run_strategy(aligned, all_dates, reb_idxs, strategy):
     trade_count = 0
     turnover_ratios = []
     reb_set = set(reb_idxs)
+    contrib = {}        # ticker -> 누적 손익 기여(원)
+    prev_prices = {}    # ticker -> 전일 종가(보유 중)
+    latest_holdings = []  # 마지막 리밸런싱의 보유 종목
 
     for i, d in enumerate(all_dates):
         if i in reb_set:
@@ -144,18 +147,32 @@ def run_strategy(aligned, all_dates, reb_idxs, strategy):
                         new_positions[tk] = alloc / px
                 trade_count += sum(1 for tk in new_positions if tk not in positions)
                 positions = new_positions
-        # 일별 평가액
+                latest_holdings = list(picks)
+                # 새 보유의 기준가 = 매입가(당일 기여 0)
+                prev_prices = {tk: aligned[tk][i] for tk in positions if aligned[tk][i]}
+        # 일별 평가액 + 종목별 기여(전일 대비 MTM)
         if positions:
             val = 0.0
             for tk, sh in positions.items():
                 px = aligned[tk][i]
                 if px:
                     val += sh * px
+                    pp = prev_prices.get(tk)
+                    if pp is not None and i not in reb_set:
+                        contrib[tk] = contrib.get(tk, 0.0) + sh * (px - pp)
+                    prev_prices[tk] = px
             if val > 0:
                 equity = val
         equity_curve.append((d, equity))
     avg_turnover = (sum(turnover_ratios) / len(turnover_ratios)) if turnover_ratios else 0.0
-    return equity_curve, trade_count, avg_turnover
+    # 상위 기여 종목(손익 큰 순)
+    total_pnl = sum(contrib.values()) or 1.0
+    top_contrib = sorted(contrib.items(), key=lambda kv: kv[1], reverse=True)
+    contributors = [
+        {"ticker": tk, "pnl": round(v), "pct": round(v / total_pnl * 100, 1)}
+        for tk, v in (top_contrib[:6] + top_contrib[-3:] if len(top_contrib) > 9 else top_contrib)
+    ]
+    return equity_curve, trade_count, avg_turnover, latest_holdings, contributors
 
 
 def run_benchmark(aligned, all_dates):
@@ -285,7 +302,7 @@ def main():
     strat_payloads = []
     for sid, label in STRATEGIES:
         print(f"⚙️  전략 실행: {label}")
-        curve, trades, avg_turnover = run_strategy(aligned, all_dates, reb_idxs, sid)
+        curve, trades, avg_turnover, latest_holdings, contributors = run_strategy(aligned, all_dates, reb_idxs, sid)
         m = metrics_from(curve, bm_curve)
         m["tradeCount"] = trades
         m["avgTurnover"] = round(avg_turnover, 4)
@@ -303,6 +320,8 @@ def main():
             "id": sid, "label": label, "metrics": m,
             "equityCurveMonthly": equity_curve_monthly,
             "monthlyReturns": monthly_returns,
+            "latestHoldings": latest_holdings,
+            "contributors": contributors,
         })
         print(f"     총수익 {m['totalReturn']*100:+.1f}% · CAGR {m['cagr']*100:+.1f}% · "
               f"알파 {m['alpha']*100:+.1f}% · MDD {m['maxDrawdown']*100:.1f}% · Sharpe {m['sharpe']}")
