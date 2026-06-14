@@ -272,7 +272,7 @@ export default async function HomePage() {
         <div>
           <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 오른스코어인가</div>
           <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">추세 · 거래활성도 · 밸류 · 위험대비</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 출처와 계산 근거를 확인할 수 있는 데이터만 사용합니다.
+            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">추세 · 거래활성도 · 밸류 · 위험조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 출처와 계산 근거를 확인할 수 있는 데이터만 사용합니다.
           </p>
         </div>
 
@@ -293,7 +293,7 @@ export default async function HomePage() {
             </div>
             <div>
               <dt className="font-semibold text-zinc-800 dark:text-zinc-200 mb-0.5">투자 조언인가요?</dt>
-              <dd>아닙니다. 오른스코어은 <strong className="text-zinc-900 dark:text-zinc-100">탐색 우선순위</strong>를 정하는 분석 도구입니다. 매수·매도 결정은 본인 책임입니다.</dd>
+              <dd>아닙니다. 오른스코어는 <strong className="text-zinc-900 dark:text-zinc-100">탐색 우선순위</strong>를 정하는 분석 도구입니다. 매수·매도 결정은 본인 책임입니다.</dd>
             </div>
           </dl>
         </div>

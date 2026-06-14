@@ -30,4 +30,34 @@ for e in errors[:25]:
     print("  ❌", e)
 if not errors:
     print("  ✅ compositeScore·모멘텀 백분위 모두 정합")
-sys.exit(1 if errors else 0)
+# ===== 브랜드/문구 금칙어 게이트 (설계서 14.5) =====
+# 배포 대상 src/ 에 아래 문자열이 있으면 빌드 실패 처리.
+import glob as _glob
+FORBIDDEN = ["밸류맵", "ValueMap", "valuemap.kr", "오른스코어은", "오른스코어 스톡",
+             "테마주 분석", "AI 분석 무제한 또는 크레딧", "월말 신호", "당월 첫 거래일"]
+brand_errors = []
+src_root = os.path.join(os.path.dirname(__file__), "..", "src")
+for fp in _glob.glob(os.path.join(src_root, "**", "*.tsx"), recursive=True) + \
+          _glob.glob(os.path.join(src_root, "**", "*.ts"), recursive=True):
+    try:
+        txt = open(fp, encoding="utf-8").read()
+    except (UnicodeDecodeError, OSError):
+        continue
+    for bad in FORBIDDEN:
+        # github repo 식별자(valuemap-poc)는 예외 허용
+        if bad == "valuemap.kr" and "valuemap.kr" not in txt:
+            continue
+        if bad in txt:
+            if bad == "valuemap" and "valuemap-poc" in txt and txt.count("valuemap") == txt.count("valuemap-poc"):
+                continue
+            rel = os.path.relpath(fp, src_root)
+            brand_errors.append(f"{rel}: 금칙어 '{bad}'")
+
+print(f"브랜드 검사 · 금칙어 {len(brand_errors)}건")
+for e in brand_errors[:25]:
+    print("  ❌", e)
+if not brand_errors:
+    print("  ✅ 금칙 브랜드/문구 노출 없음")
+
+all_ok = (not errors) and (not brand_errors)
+sys.exit(0 if all_ok else 1)

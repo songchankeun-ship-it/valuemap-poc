@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "138개 종목의 자체 지표 4종 · PER · PBR · ROE · DART 공시 신호를 한 화면에서.",
   openGraph: {
     title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "138개 종목 · 자체 지표 4종 · DART 공시 신호. 한국 테마주 분석을 한 화면에서.",
+    description: "138개 종목 · 자체 지표 4종 · DART 공시 신호. 한국 주식 데이터 탐색을 한 화면에서.",
     url: "https://ornscore.com",
     siteName: "오른스코어",
     locale: "ko_KR",

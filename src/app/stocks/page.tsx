@@ -13,7 +13,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   if (theme) {
     return {
       title: `${theme} 관련 종목 — 오른스코어`,
-      description: `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험대비)으로 정렬·필터링합니다.`,
+      description: `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`,
     };
   }
   return {

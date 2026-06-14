@@ -90,7 +90,7 @@ function readValue(score: number, per: number, pbr: number): Reading {
 }
 
 function readVol(score: number): Reading {
-  const r: Reading = { label: "위험대비", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
+  const r: Reading = { label: "위험조정", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
     r.meaning = "관측 기간엔 변동성 대비 수익률이 높았습니다";
     r.action = "절대 변동성이 낮다는 뜻은 아님 — 실제 일간 변동·최대낙폭도 함께 확인";
@@ -113,14 +113,14 @@ function getChecklistByPattern(s: StockShape): { headline: string; items: string
     { k: "M", v: s.momentum, label: "추세" },
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
-    { k: "Vo", v: s.vol, label: "위험대비" },
+    { k: "Vo", v: s.vol, label: "위험조정" },
   ].filter((x) => x.v >= 70);
 
   const weak = [
     { k: "M", v: s.momentum, label: "추세" },
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
-    { k: "Vo", v: s.vol, label: "위험대비" },
+    { k: "Vo", v: s.vol, label: "위험조정" },
   ].filter((x) => x.v < 40);
 
   const hasMomentum = strong.find((x) => x.k === "M");
@@ -256,26 +256,4 @@ export function BeginnerReading({ s }: { s: StockShape }) {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm">{r.emoji}</span>
-              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{r.label}</span>
-              <span className="text-xs font-bold tabular-nums text-zinc-700 dark:text-zinc-300">
-                {Math.round(r.score)}
-              </span>
-              <span className="ml-auto">{toneIcon[r.tone]}</span>
-            </div>
-            <div className="text-[11px] text-zinc-700 dark:text-zinc-300 mb-0.5 leading-snug">
-              <strong>{r.meaning}</strong>
-            </div>
-            <div className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-snug">
-              → {r.action}
-            </div>
-          </div>
-        ))}
-        </div>
-      </details>
-
-      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
-        ⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.
-      </p>
-    </section>
-  );
-}
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-10

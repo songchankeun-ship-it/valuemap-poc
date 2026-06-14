@@ -35,7 +35,7 @@ const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol"; label: str
   { key: "momentum", label: "추세",     color: "bg-brand-500" },
   { key: "flow",     label: "거래활성도",   color: "bg-blue-500" },
   { key: "value",    label: "밸류",       color: "bg-emerald-500" },
-  { key: "vol",      label: "위험대비", color: "bg-purple-500" },
+  { key: "vol",      label: "위험조정", color: "bg-purple-500" },
 ];
 
 const FUND_ROWS: Array<{ key: "per" | "pbr" | "roe" | "dividendYield"; label: string; suffix: string; better: "low" | "high" }> = [

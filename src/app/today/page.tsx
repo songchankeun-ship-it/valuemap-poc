@@ -74,7 +74,7 @@ function compositeReason(s: { momentum: number; flow: number; value: number; vol
     { label: "추세", v: s.momentum },
     { label: "거래활성도", v: s.flow },
     { label: "밸류", v: s.value },
-    { label: "위험대비", v: s.vol },
+    { label: "위험조정", v: s.vol },
   ];
   const strong = items.filter((x) => x.v >= 70).sort((a, b) => b.v - a.v);
   if (strong.length >= 2) {

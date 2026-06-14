@@ -38,7 +38,7 @@ export default async function Image({ params }: { params: { ticker: string } }) 
     { label: "M", full: "추세", score: s.momentum, color: "#3B82F6" },
     { label: "F", full: "거래활성도", score: s.flow, color: "#10B981" },
     { label: "V", full: "밸류", score: s.value, color: "#06B6D4" },
-    { label: "Vo", full: "위험대비", score: s.vol, color: "#F97316" },
+    { label: "Vo", full: "위험조정", score: s.vol, color: "#F97316" },
   ];
 
   const isUp = s.changePct >= 0;

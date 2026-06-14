@@ -49,7 +49,7 @@ export default function BacktestPage() {
         <h3 className="font-semibold mb-3 text-zinc-900 dark:text-zinc-100">검증 전략 (가격 기반)</h3>
         <ul className="space-y-2 text-sm text-gray-700 dark:text-zinc-300">
           <li className="flex gap-2"><span className="text-gray-400">01.</span>모멘텀 점수 상위 10개 월별 리밸런싱 (추세 추종)</li>
-          <li className="flex gap-2"><span className="text-gray-400">02.</span>변동성조정 점수 상위 10개 월별 리밸런싱 (위험대비)</li>
+          <li className="flex gap-2"><span className="text-gray-400">02.</span>변동성조정 점수 상위 10개 월별 리밸런싱 (위험조정)</li>
           <li className="flex gap-2"><span className="text-gray-400">03.</span>소외도(낙폭) 점수 상위 10개 월별 리밸런싱</li>
           <li className="flex gap-2"><span className="text-gray-400">04.</span>가격종합 점수 상위 10개 월별 리밸런싱 (균형)</li>
         </ul>

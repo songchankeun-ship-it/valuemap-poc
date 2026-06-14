@@ -68,7 +68,7 @@ function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 
     { metric: "추세", score: m },
     { metric: "거래활성도", score: f },
     { metric: "밸류", score: v },
-    { metric: "위험대비", score: vo },
+    { metric: "위험조정", score: vo },
   ];
   const strengths = metrics.filter(x => x.score >= 70).map(x => ({ metric: x.metric, score: x.score }));
   const cautions = metrics.filter(x => x.score < 50).map(x => ({ metric: x.metric, score: x.score }));
@@ -265,11 +265,11 @@ export default async function StockDetailPage({ params }: PageProps) {
               {s.per <= 0 ? <span className="text-rose-600 dark:text-rose-400 font-medium">적자·밸류 점수 제한</span> : null}
               {dataWarnings.length > 0 ? (
                 <>
-                  <span className="text-amber-600 dark:text-amber-400 font-medium">값 검증 중</span>
+                  <span className="text-amber-600 dark:text-amber-400 font-medium">이상값 점검 중</span>
                   <span className="text-amber-600 dark:text-amber-400 font-medium">임시 점수 · 순위 참고용</span>
                 </>
               ) : (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">값 검증 완료</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">이상값 점검 통과</span>
               )}
             </div>
             {(reason.strengths.length > 0 || reason.cautions.length > 0) ? (
@@ -305,7 +305,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           { label: "추세", kind: "momentum", topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN, raw: s.momentum },
           { label: "거래활성도", kind: "flow", topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN, raw: s.flow },
           { label: "밸류", kind: "value", topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, raw: s.value },
-          { label: "위험대비", kind: "vol", topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN, raw: s.vol },
+          { label: "위험조정", kind: "vol", topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN, raw: s.vol },
         ]} />
       </section>
 
@@ -450,7 +450,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <ScoreTooltip kind="composite" size="md" />
         </div>
         <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
+          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험조정 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
         </p>
       </section>
 

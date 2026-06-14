@@ -29,9 +29,9 @@ def calc_momentum(df):
         if len(closes) <= n: return 0
         prev = closes[-n-1]
         return (last - prev) / prev * 100 if prev > 0 else 0
-    r1m, r3m, r6m = ret(20), ret(60), ret(120)
+    r1m, r3m, r6m, r1y = ret(21), ret(63), ret(126), ret(252)  # 설계서: 21/63/126/252 거래일
     weighted = 0.3*r1m + 0.4*r3m + 0.3*r6m  # 원시 가중수익률 (백분위 환산 전)
-    return weighted, {"r1m": round(r1m,2), "r3m": round(r3m,2), "r6m": round(r6m,2)}
+    return weighted, {"r1m": round(r1m,2), "r3m": round(r3m,2), "r6m": round(r6m,2), "r1y": round(r1y,2)}
 
 def calc_vol(df):
     if df is None or len(df) < 60: return None
@@ -44,7 +44,15 @@ def calc_vol(df):
     ar, asd = mean*252, std*math.sqrt(252)
     sharpe = (ar - 0.035) / asd
     score = max(0, min(100, 50 + sharpe * 25))
-    return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2), "days": len(closes)}
+    # 최대낙폭(peak-to-trough) · 최악의 하루
+    peak = closes[0]; mdd = 0.0
+    for c in closes:
+        if c > peak: peak = c
+        if peak > 0:
+            dd = c/peak - 1
+            if dd < mdd: mdd = dd
+    worst = min(rets) if rets else 0
+    return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2), "days": len(closes), "maxDrawdown": round(mdd*100,2), "worstDay": round(worst*100,2)}
 
 def calc_flow(df):
     if df is None or len(df) < 25 or "Volume" not in df.columns: return None

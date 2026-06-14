@@ -94,7 +94,7 @@ const QUESTION_PRESETS: Preset[] = [
   { id: "q-cheap-active", label: "싸고 거래 늘었나?", desc: "PER 15 이하 · 적자 제외 · 거래활성도 높은순", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
   { id: "q-good-earner", label: "돈 잘 버는 회사?", desc: "ROE 15%+ · 적자 제외", config: { roeMin: 15, excludeLoss: true, sortKey: "roe", sortDir: "desc" } },
   { id: "q-dividend", label: "배당 주는 우량주?", desc: "배당 2%+ · ROE 8%+", config: { divYieldMin: 2, roeMin: 8, excludeLoss: true, sortKey: "dividendYield", sortDir: "desc" } },
-  { id: "q-bigcap-stable", label: "대형주 안정형?", desc: "대형주 · 위험대비 우수", config: { capBucket: "large", sortKey: "vol", sortDir: "desc" } },
+  { id: "q-bigcap-stable", label: "대형주 안정형?", desc: "대형주 · 위험조정 우수", config: { capBucket: "large", sortKey: "vol", sortDir: "desc" } },
   { id: "q-small-value", label: "숨은 소형 저평가?", desc: "소형주 · PBR 1.0 이하 · 적자 제외", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
 ];
 
@@ -477,7 +477,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
           <option value="compositeScore-desc">종합점수 높은순</option>
           <option value="momentum-desc">추세 높은순</option>
           <option value="value-desc">밸류 높은순</option>
-          <option value="vol-desc">위험대비 높은순</option>
+          <option value="vol-desc">위험조정 높은순</option>
           <option value="roe-desc">ROE 높은순</option>
           <option value="dividendYield-desc">배당수익률 높은순</option>
           <option value="marketCap-desc">시가총액 큰순</option>
@@ -508,7 +508,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
       ) : null}
 
       <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2 text-[10px] text-blue-800 dark:text-blue-300 flex items-center justify-between md:hidden">
-        <span><strong>추</strong>=추세(모멘텀) · <strong>거</strong>=거래활성도 · <strong>저</strong>=저평가(밸류) · <strong>위</strong>=위험대비</span>
+        <span><strong>추</strong>=추세(모멘텀) · <strong>거</strong>=거래활성도 · <strong>저</strong>=저평가(밸류) · <strong>위</strong>=위험조정</span>
         <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">자세히</Link>
       </div>
 
@@ -556,7 +556,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
                       <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">추 {s.momentum}</span>
                       <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">거 {s.flow}</span>
                       <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">저 {s.value}</span>
-                      <span title="변동성조정(위험대비)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
+                      <span title="변동성조정(위험조정)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
                     </div>
                   </div>
                 </div>

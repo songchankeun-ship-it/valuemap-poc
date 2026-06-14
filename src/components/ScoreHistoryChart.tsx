@@ -112,7 +112,7 @@ export function ScoreHistoryChart({ history, currentScore }: { history: ScorePoi
         <MiniChart label="추세" values={momentum} color={METRIC_COLORS.momentum} />
         <MiniChart label="거래활성도" values={flow} color={METRIC_COLORS.flow} />
         <MiniChart label="밸류" values={value} color={METRIC_COLORS.value} />
-        <MiniChart label="위험대비" values={vol} color={METRIC_COLORS.vol} />
+        <MiniChart label="위험조정" values={vol} color={METRIC_COLORS.vol} />
       </div>
     </div>
   );
