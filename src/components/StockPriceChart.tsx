@@ -136,9 +136,15 @@ export function StockPriceChart({ ticker, name, points }: Props) {
         </div>
       ) : (
         <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-1">
-          (차트 위에 마우스/손가락을 올려보세요)
+          (차트를 길게 터치하면 날짜·가격 표시)
         </div>
       )}
+
+      <div className="flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums mb-1.5">
+        <span>기간 고가 <strong className="text-zinc-700 dark:text-zinc-300">{maxC.toLocaleString()}</strong></span>
+        <span>저가 <strong className="text-zinc-700 dark:text-zinc-300">{minC.toLocaleString()}</strong></span>
+        <span className={changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"}>기간 수익률 {changePct >= 0 ? "+" : ""}{changePct.toFixed(1)}%</span>
+      </div>
 
       {/* 차트 */}
       <div className="relative">
@@ -274,7 +280,7 @@ export function StockPriceChart({ ticker, name, points }: Props) {
                 setHover(null);
               }}
               className={
-                "min-w-[44px] min-h-[36px] px-3 py-1.5 rounded-md text-xs font-medium transition " +
+                "min-w-[44px] min-h-[44px] px-3 py-2 rounded-md text-xs font-medium transition " +
                 (active
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
                   : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:bg-zinc-300 dark:active:bg-zinc-600")

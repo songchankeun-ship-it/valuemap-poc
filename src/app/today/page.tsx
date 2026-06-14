@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
-import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
+import { getRecentSignals } from "@/lib/recentSignals";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
 import { isSuspect } from "@/lib/dataQuality";
@@ -152,7 +152,8 @@ export default async function TodayPage() {
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80).length;
   const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
-  const briefingSignalCount = ((recentSignalsRaw as { signals?: unknown[] }).signals ?? []).length;
+  const recentSig = await getRecentSignals(7);
+  const briefingSignalCount = (recentSig.signals ?? []).length;
 
   // 어제 대비 변화 (Supabase daily_scores) — 데이터 없으면 빈 객체
   const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
@@ -485,7 +486,7 @@ export default async function TodayPage() {
 
 
       {(() => {
-        const allSignals = (recentSignalsRaw as { signals?: Signal[] }).signals ?? [];
+        const allSignals = (recentSig.signals as unknown as Signal[]) ?? [];
         // 종목별 최강 신호 1개씩만 → strength 높은 순 Top 3
         const byStock = new Map<string, Signal>();
         for (const s of allSignals) {
