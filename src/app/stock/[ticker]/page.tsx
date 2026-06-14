@@ -224,7 +224,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
               <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
-              <span>데이터 신뢰도 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong></span>
+              <span>데이터 완성도 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong></span>
               {dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400 font-medium">검증 보류</span> : null}
             </div>
             {(reason.strengths.length > 0 || reason.cautions.length > 0) ? (
