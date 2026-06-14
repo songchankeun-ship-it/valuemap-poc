@@ -1,6 +1,6 @@
 // /compare — 종목 비교 페이지
 import Link from "next/link";
-import { getAllStocks } from "@/lib/mockData";
+import { realStockPool } from "@/lib/realStocks";
 import { CompareClient } from "@/components/CompareClient";
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 export default function ComparePage() {
-  const allStocks = getAllStocks();
+  const allStocks = realStockPool;
 
   // 비교용 최소 정보만 직렬화
   const stockMap = Object.fromEntries(
@@ -31,6 +31,7 @@ export default function ComparePage() {
         vol: s.vol,
         neglectScore: s.neglectScore,
         themes: s.themes,
+        returns: s.returns ?? {},
       },
     ])
   );

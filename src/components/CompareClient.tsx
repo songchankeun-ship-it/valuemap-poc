@@ -7,6 +7,7 @@ import {
   removeFromCompare,
   clearCompare,
 } from "@/lib/compare";
+import { sectorOf } from "@/lib/sector";
 
 interface CompareStock {
   ticker: string;
@@ -24,6 +25,7 @@ interface CompareStock {
   vol: number;
   neglectScore: number;
   themes: string[];
+  returns?: { r1m?: number; r3m?: number; r6m?: number };
 }
 
 const SCORE_KEYS: Array<{ key: "momentum" | "flow" | "value" | "vol"; label: string; color: string }> = [
@@ -42,12 +44,12 @@ const FUND_ROWS: Array<{ key: "per" | "pbr" | "roe" | "dividendYield"; label: st
 
 function formatMarketCap(value: number): string {
   if (value >= 1_000_000_000_000) {
-    return `${(value / 1_000_000_000_000).toFixed(1)}조`;
+    return `${(value / 1_000_000_000_000).toFixed(1)}조원`;
   }
   if (value >= 100_000_000) {
-    return `${(value / 100_000_000).toFixed(0)}억`;
+    return `${(value / 100_000_000).toFixed(0)}억원`;
   }
-  return value.toLocaleString();
+  return value > 0 ? value.toLocaleString() + "원" : "—";
 }
 
 // 모바일에서 가로 스크롤 wrapper. 데스크톱에선 그냥 grid.
@@ -187,6 +189,7 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
                   {isUp ? "▲" : isDown ? "▼" : "—"} {Math.abs(s.changePct).toFixed(2)}%
                 </div>
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">시총 {formatMarketCap(s.marketCap)}</div>
+                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sectorOf(s.themes)}</div>
               </Link>
             </div>
           );
@@ -262,6 +265,44 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
           </table>
         </div>
         <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">* PER/PBR은 낮을수록, ROE/배당은 높을수록 좋음 — 가장 좋은 값을 <span className="text-emerald-700 font-semibold">초록</span>으로 표시.</p>
+      </section>
+
+      {/* 수익률 비교 */}
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 md:p-5 shadow-soft">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">수익률 <span className="text-[10px] font-normal text-zinc-400">(높을수록 강세)</span></h3>
+        <div className="-mx-3 md:mx-0 px-3 md:px-0 overflow-x-auto">
+          <table className="w-full text-xs" style={{ minWidth: stocks.length > 2 ? `${100 + stocks.length * 80}px` : "auto" }}>
+            <thead>
+              <tr className="border-b border-zinc-200 dark:border-zinc-800">
+                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900">기간</th>
+                {stocks.map((s) => (
+                  <th key={s.ticker} className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {([["r1m", "1개월"], ["r3m", "3개월"], ["r6m", "6개월"]] as const).map(([k, label]) => {
+                const nums = stocks.map((s) => s.returns?.[k]).filter((v): v is number => typeof v === "number");
+                const best = nums.length > 0 ? Math.max(...nums) : undefined;
+                return (
+                  <tr key={k} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900">{label}</td>
+                    {stocks.map((s) => {
+                      const v = s.returns?.[k];
+                      const has = typeof v === "number";
+                      const isBest = has && v === best && stocks.length > 1;
+                      return (
+                        <td key={s.ticker} className={"py-2.5 px-2 text-right tabular-nums whitespace-nowrap " + (isBest ? "font-semibold " : "") + (has ? (v >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400") : "text-zinc-400")}>
+                          {has ? (v >= 0 ? "+" : "") + v.toFixed(0) + "%" : "—"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {/* 테마 비교 */}
