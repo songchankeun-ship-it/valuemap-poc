@@ -83,7 +83,7 @@ export default function AboutPage() {
         <dl className="space-y-3 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
           <div>
             <dt className="font-semibold text-zinc-900 dark:text-zinc-100 mb-0.5">분석 종목</dt>
-            <dd>코스피·코스닥 시가총액 상위 + 거래 활발 + 테마 대표 {dataMetadata.count}개 종목. 풀이 너무 크면 신호의 의미가 흐려져 의도적으로 좁혔습니다.</dd>
+            <dd>코스피·코스닥 시가총액 상위 + 거래 활발 + 테마 대표 {dataMetadata.count}개 종목. 베타 기간 동안 데이터 품질이 검증된 대표 종목부터 제공하며, 유니버스는 점진적으로 확대할 예정입니다. 순위는 모두 이 분석 대상 {dataMetadata.count}종목 내 순위입니다.</dd>
           </div>
           <div>
             <dt className="font-semibold text-zinc-900 dark:text-zinc-100 mb-0.5">점수 산식</dt>

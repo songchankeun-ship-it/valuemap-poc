@@ -44,7 +44,7 @@ def calc_vol(df):
     ar, asd = mean*252, std*math.sqrt(252)
     sharpe = (ar - 0.035) / asd
     score = max(0, min(100, 50 + sharpe * 25))
-    return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2)}
+    return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2), "days": len(closes)}
 
 def calc_flow(df):
     if df is None or len(df) < 25 or "Volume" not in df.columns: return None
@@ -110,7 +110,7 @@ def main():
         item["flowStats"] = fr[1] if fr else {}
         if fr: f_ok += 1
         v_val = value_scores.get(item["ticker"])
-        item["value"] = v_val if v_val is not None else 50
+        item["value"] = v_val  # 계산 불가 시 None 유지(아래에서 재가중)
 
     # 추세: 원시 가중수익률 → 전체 유니버스 백분위(0~100). 고정 매핑의 고점 포화 방지.
     mraws = sorted(it["_mraw"] for it in stocks if it.get("_mraw") is not None)
@@ -122,7 +122,17 @@ def main():
             below = sum(1 for v in mraws if v < mraw)
             item["momentum"] = round(below / len(mraws) * 100, 1)
 
-    # 종합: 네 지표 단순 평균 (momentum 백분위 확정 후 계산)
+    # 밸류 계산 불가(적자·결측): 50 중립 대신 가용 지표(추세·거래·위험대비) 평균으로 재가중.
+    #   적자기업이 중립 50을 받아 유리해지는 문제 방지. valueNA 플래그로 표시.
+    for item in stocks:
+        if item.get("value") is None:
+            avail = [item["momentum"], item["flow"], item["volScore"]]
+            item["value"] = round(sum(avail) / len(avail), 1)
+            item["valueNA"] = True
+        else:
+            item["valueNA"] = False
+
+    # 종합: 네 지표 단순 평균 (momentum 백분위·value 재가중 확정 후 계산)
     for item in stocks:
         item["compositeScore"] = safe_avg([item["momentum"], item["flow"], item["value"], item["volScore"]])
 

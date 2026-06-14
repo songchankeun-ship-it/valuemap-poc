@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+# 데이터 정합성 검사 — 공개 산식(compute_metrics) 결과와 stocks.json 표시값 일치 확인.
+# 배포 전 실행 권장. 오류 시 exit 1.
+import json, sys, os
+
+path = os.path.join(os.path.dirname(__file__), "..", "public", "data", "stocks.json")
+d = json.load(open(path, encoding="utf-8-sig"))
+stocks = d["stocks"]
+errors = []
+
+for s in stocks:
+    m, f, v, vo = s.get("momentum"), s.get("flow"), s.get("value"), s.get("volScore")
+    if any(not isinstance(x, (int, float)) for x in (m, f, v, vo)):
+        errors.append(f"{s.get('ticker')} 지표 결측")
+        continue
+    comp = round((m + f + v + vo) / 4, 1)
+    stored = s.get("compositeScore")
+    if not isinstance(stored, (int, float)) or abs(stored - comp) > 0.1:
+        errors.append(f"{s.get('ticker')} compositeScore {stored} != 계산 {comp}")
+
+# 모멘텀 백분위 범위 (선형 매핑 잔존 = max 100 포화)
+ms = [s["momentum"] for s in stocks if isinstance(s.get("momentum"), (int, float))]
+if ms and max(ms) > 99.6:
+    errors.append(f"momentum max {max(ms)} > 99.6 — 백분위 아님(선형 잔존). compute_metrics 재실행 필요")
+
+print(f"검사 {len(stocks)}종목 · 오류 {len(errors)}건")
+for e in errors[:25]:
+    print("  ❌", e)
+if not errors:
+    print("  ✅ compositeScore·모멘텀 백분위 모두 정합")
+sys.exit(1 if errors else 0)

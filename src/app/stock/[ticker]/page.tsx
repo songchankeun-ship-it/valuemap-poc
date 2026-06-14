@@ -259,7 +259,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div className="flex-1 min-w-0">
             <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{dataWarnings.length > 0 ? "데이터 검증 중 · 임시등급 — " : ""}{reason.interpretation}</div>
             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-              <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
+              <span>분석 대상 {poolN}종목 중 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
               <span>필수 데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong> 충족</span>
               {s.per <= 0 ? <span className="text-rose-600 dark:text-rose-400 font-medium">적자·밸류 점수 제한</span> : null}
