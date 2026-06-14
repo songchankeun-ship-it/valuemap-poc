@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { fmtMarketCap } from "@/lib/format";
 
 interface Stock {
   ticker: string;
@@ -53,14 +54,6 @@ function inCapBucket(cap: number, bucket: CapBucket): boolean {
   if (bucket === "mid") return cap >= CAP_MID && cap < CAP_LARGE;
   if (bucket === "small") return cap > 0 && cap < CAP_MID;
   return true;
-}
-
-function formatCap(cap: number): string {
-  if (cap <= 0) return "—";
-  const jo = cap / 1_000_000_000_000;
-  if (jo >= 1) return jo.toFixed(1) + "조원";
-  const eok = cap / 100_000_000;
-  return Math.round(eok).toLocaleString() + "억원";
 }
 
 interface PresetConfig {
@@ -458,7 +451,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
-                      <span>시총 {formatCap(s.marketCap)}</span>
+                      <span>시총 {fmtMarketCap(s.marketCap)}</span>
                       <span>PER {s.per > 0 ? s.per.toFixed(1) + "배" : "—"}</span>
                       <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—"}</span>
                       <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</span>

@@ -8,6 +8,7 @@ import {
   clearCompare,
 } from "@/lib/compare";
 import { sectorOf } from "@/lib/sector";
+import { fmtMarketCap, fmtWon } from "@/lib/format";
 
 interface CompareStock {
   ticker: string;
@@ -41,16 +42,6 @@ const FUND_ROWS: Array<{ key: "per" | "pbr" | "roe" | "dividendYield"; label: st
   { key: "roe",           label: "ROE",   suffix: "%",   better: "high" },
   { key: "dividendYield", label: "배당", suffix: "%",   better: "high" },
 ];
-
-function formatMarketCap(value: number): string {
-  if (value >= 1_000_000_000_000) {
-    return `${(value / 1_000_000_000_000).toFixed(1)}조원`;
-  }
-  if (value >= 100_000_000) {
-    return `${(value / 100_000_000).toFixed(0)}억원`;
-  }
-  return value > 0 ? value.toLocaleString() + "원" : "—";
-}
 
 // 모바일에서 가로 스크롤 wrapper. 데스크톱에선 그냥 grid.
 function ScrollX({
@@ -184,11 +175,11 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
               <Link href={`/stock/${s.ticker}`} className="block pr-6">
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono mb-0.5">{s.ticker}</div>
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2 truncate">{s.name}</div>
-                <div className="text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{s.currentPrice.toLocaleString()}<span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 ml-1">원</span></div>
+                <div className="text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</div>
                 <div className={`text-xs font-medium tabular-nums ${priceColor}`}>
                   {isUp ? "▲" : isDown ? "▼" : "—"} {Math.abs(s.changePct).toFixed(2)}%
                 </div>
-                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">시총 {formatMarketCap(s.marketCap)}</div>
+                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">시총 {fmtMarketCap(s.marketCap)}</div>
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sectorOf(s.themes)}</div>
               </Link>
             </div>
