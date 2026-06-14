@@ -25,6 +25,8 @@ interface Strategy {
   metrics: StratMetrics;
   equityCurveMonthly: EquityPoint[];
   monthlyReturns: Record<string, number>;
+  latestHoldings?: string[];
+  contributors?: { ticker: string; pnl: number; pct: number }[];
 }
 export interface BacktestData {
   realData: boolean;
@@ -91,7 +93,7 @@ function EquityChart({ data }: { data: EquityPoint[] }) {
   );
 }
 
-export function BacktestClient({ data }: { data: BacktestData }) {
+export function BacktestClient({ data, names = {} }: { data: BacktestData; names?: Record<string, string> }) {
   const [activeId, setActiveId] = useState(
     data.strategies.find((s) => s.id === "composite")?.id || data.strategies[0]?.id
   );
@@ -177,6 +179,31 @@ export function BacktestClient({ data }: { data: BacktestData }) {
             {m.avgTurnover !== undefined ? <div>월평균 회전율 <strong className="text-zinc-900 dark:text-zinc-100">{(m.avgTurnover * 100).toFixed(0)}%</strong></div> : null}
             <div>총 거래 <strong className="text-zinc-900 dark:text-zinc-100">{m.tradeCount}건</strong></div>
           </div>
+        </section>
+      ) : null}
+
+      {active.contributors && active.contributors.length > 0 ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-1">성과 기여 종목</h3>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">전체 기간 누적 손익에 크게 기여(±)한 종목. % = 전략 총손익 대비 비중.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {active.contributors.map((c) => (
+              <Link key={c.ticker} href={"/stock/" + c.ticker} className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition">
+                <span className="text-xs text-zinc-800 dark:text-zinc-200 truncate">{names[c.ticker] ?? c.ticker}</span>
+                <span className={"text-xs font-semibold tabular-nums shrink-0 " + (c.pnl >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{c.pct >= 0 ? "+" : ""}{c.pct}%</span>
+              </Link>
+            ))}
+          </div>
+          {active.latestHoldings && active.latestHoldings.length > 0 ? (
+            <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">마지막 리밸런싱 보유 {active.latestHoldings.length}종목</div>
+              <div className="flex flex-wrap gap-1.5">
+                {active.latestHoldings.map((tk) => (
+                  <Link key={tk} href={"/stock/" + tk} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </section>
       ) : null}
 

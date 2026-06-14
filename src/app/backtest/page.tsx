@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
 import rawResult from "../../../public/backtest-result.json";
+import { realStockPool } from "@/lib/realStocks";
 
 export const metadata = {
   title: "백테스트 — 밸류맵 스톡",
@@ -15,7 +16,9 @@ export default function BacktestPage() {
   const ready = !!result.realData && Array.isArray(result.strategies) && result.strategies.length > 0;
 
   if (ready) {
-    return <BacktestClient data={result as BacktestData} />;
+    const names: Record<string, string> = {};
+    for (const st of realStockPool) names[st.ticker] = st.name;
+    return <BacktestClient data={result as BacktestData} names={names} />;
   }
 
   return (

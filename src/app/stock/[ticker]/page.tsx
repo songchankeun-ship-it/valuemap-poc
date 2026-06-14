@@ -133,6 +133,17 @@ export default async function StockDetailPage({ params }: PageProps) {
     : s.changePct;
   const priceAsOf = lastPoint?.d ?? null;
   const dataWarnings = getDataWarnings(s, priceHistory);
+  // 3개월(약 63거래일) 급등 위험 — 점수보다 먼저 노출
+  let surge3m: number | null = null;
+  {
+    const pp = priceHistory?.points;
+    if (pp && pp.length > 63) {
+      const lastC = pp[pp.length - 1]?.c;
+      const pastC = pp[pp.length - 1 - 63]?.c;
+      if (lastC && pastC && pastC > 0) surge3m = ((lastC - pastC) / pastC) * 100;
+    }
+  }
+  const surgeRisk = surge3m !== null && surge3m >= 80;
   const grade = gradeOf(composite);
   const completeness = dataCompleteness(s, priceHistory);
   const sectorValue = sectorValueScore(s, realStockPool);
@@ -227,6 +238,12 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       {/* 결론 헤드라인 — 등급·순위·강점/위험 먼저 (디자인 리뷰 P0) */}
       <section className={"rounded-lg border-2 " + (dataWarnings.length > 0 ? "border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20" : tone.border + " " + tone.bg) + " p-3 md:p-4"}>
+        {surgeRisk ? (
+          <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1.5 rounded-md border border-rose-200 dark:border-rose-900">
+            <span aria-hidden="true">🔺</span>
+            <span>급등 위험 — 최근 3개월 +{Math.round(surge3m as number)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.</span>
+          </div>
+        ) : null}
         {dataWarnings.length > 0 ? (
           <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300">
             <span aria-hidden="true">⚠</span>
@@ -237,6 +254,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + (dataWarnings.length > 0 ? "ring-zinc-300 dark:ring-zinc-700" : tone.ring) + " bg-white dark:bg-zinc-900"}>
             <div className={"text-xl md:text-2xl font-bold leading-none " + (dataWarnings.length > 0 ? "text-zinc-400 dark:text-zinc-500" : tone.text)}>{grade.grade}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
             <div className="text-[8px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">{composite}/100</div>
+            <div className="text-[7px] text-zinc-400 dark:text-zinc-500 leading-none uppercase tracking-wide">탐색순위</div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{dataWarnings.length > 0 ? "데이터 검증 중 · 임시등급 — " : ""}{reason.interpretation}</div>
@@ -244,6 +262,7 @@ export default async function StockDetailPage({ params }: PageProps) {
               <span>전체 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>/{poolN}위</span>
               <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
               <span>필수 데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong> 충족</span>
+              {s.per <= 0 ? <span className="text-rose-600 dark:text-rose-400 font-medium">적자·밸류 점수 제한</span> : null}
               {dataWarnings.length > 0 ? (
                 <>
                   <span className="text-amber-600 dark:text-amber-400 font-medium">값 검증 중</span>
