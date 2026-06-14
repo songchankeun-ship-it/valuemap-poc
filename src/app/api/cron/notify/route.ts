@@ -4,9 +4,8 @@
 // CRON_SECRET, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY 환경변수 필요.
 
 import { NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getRecentSignals } from "@/lib/recentSignals";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -132,11 +131,9 @@ export async function GET(req: Request) {
   }
 
   try {
-    // 1. 최근 신호 파일 읽기
-    const filePath = join(process.cwd(), "public", "disclosure-samples", "recent-signals.json");
-    const fileContent = await readFile(filePath, "utf-8");
-    const data: SignalsFile = JSON.parse(fileContent);
-    const signals = (data.signals ?? []).filter((s) => s.disclosure?.stock_code && s.disclosure?.rcept_no);
+    // 1. 라이브 DART에서 최근 신호 추출 (실패 시 getRecentSignals 내부에서 샘플 fallback)
+    const data = await getRecentSignals(7);
+    const signals = ((data.signals ?? []) as unknown as Signal[]).filter((s) => s.disclosure?.stock_code && s.disclosure?.rcept_no);
 
     if (signals.length === 0) {
       return NextResponse.json({ message: "No signals to notify", sent: 0 });
