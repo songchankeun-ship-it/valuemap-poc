@@ -3,7 +3,8 @@ import { dataMetadata, realStockPool } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { Search, BarChart3, Megaphone, TrendingUp, Bell } from "lucide-react";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
-import recentSignalsRaw from "../../public/disclosure-samples/recent-signals.json";
+import { getRecentSignals } from "@/lib/recentSignals";
+import { FREE_COMPARE_LIMIT } from "@/lib/limits";
 import { fmtWon } from "@/lib/format";
 import { compositeOf } from "@/lib/score";
 
@@ -28,8 +29,7 @@ const SIGNAL_TONE: Record<string, string> = {
   capital_raise: "bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-400 border-pink-200 dark:border-pink-900",
 };
 
-function pickTopSignals(n: number): RecentSignal[] {
-  const all = (recentSignalsRaw as { signals?: RecentSignal[] }).signals ?? [];
+function pickTopSignals(n: number, all: RecentSignal[]): RecentSignal[] {
   // 종목별 최강 신호 1개씩만
   const byStock = new Map<string, RecentSignal>();
   for (const s of all) {
@@ -89,9 +89,10 @@ export const metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const recentSig = await getRecentSignals(7);
   const top3 = pickTopStocks(3);
-  const topSignals = pickTopSignals(2);
+  const topSignals = pickTopSignals(2, (recentSig.signals as unknown as RecentSignal[]) ?? []);
 
   return (
     <div className="space-y-5 md:space-y-8">
@@ -243,7 +244,7 @@ export default function HomePage() {
             <BarChart3 className="w-5 h-5" strokeWidth={1.8} />
           </div>
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목 비교</div>
-          <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목 4개까지 PER·PBR·ROE 나란히</div>
+          <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목 {FREE_COMPARE_LIMIT}개까지 PER·PBR·ROE 나란히</div>
         </Link>
         <Link href="/disclosures" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
           <div className="w-9 h-9 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center mb-3">
@@ -257,8 +258,8 @@ export default function HomePage() {
       <section className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-800 dark:border-zinc-700 rounded-xl p-4 md:p-5 flex items-center justify-between text-white gap-3 flex-wrap">
         <div>
           <div className="text-xs font-medium text-blue-300 mb-1 uppercase tracking-wider">실데이터 검증</div>
-          <div className="text-base font-semibold">5년치 실데이터로 전략 검증</div>
-          <div className="text-xs text-zinc-400 mt-0.5">가격 기반 4개 전략의 수익률·위험을 5년 데이터로 비교</div>
+          <div className="text-base font-semibold">가격 기반 전략 5년 백테스트</div>
+          <div className="text-xs text-zinc-400 mt-0.5">가격 기반 4개 전략의 수익률·위험을 5년 데이터로. 현재 종합점수 성과 검증과는 다릅니다.</div>
         </div>
         <Link href="/backtest" className="px-4 py-2.5 min-h-[44px] inline-flex items-center bg-white text-zinc-900 rounded-lg text-sm font-semibold hover:bg-zinc-100 active:bg-zinc-200 transition shrink-0">
           백테스트 결과 보기 →

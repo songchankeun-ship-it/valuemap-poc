@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { FREE_COMPARE_LIMIT, FREE_WATCHLIST_LIMIT } from "@/lib/limits";
 
 export const metadata = {
   title: "요금제 — 밸류맵 스톡",
@@ -10,7 +11,7 @@ const FREE = [
   "오늘의 후보 종목 · 오늘의 브리핑",
   "138개 종목 탐색 + 질문형 프리셋",
   "종목 상세(등급·차트·초보자 해석·공시)",
-  "관심 종목 5개 · 비교 2개",
+  `관심 종목 ${FREE_WATCHLIST_LIMIT}개 · 비교 ${FREE_COMPARE_LIMIT}개`,
   "AI 분석 월 3회",
 ];
 

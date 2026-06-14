@@ -92,8 +92,8 @@ function readValue(score: number, per: number, pbr: number): Reading {
 function readVol(score: number): Reading {
   const r: Reading = { label: "위험대비", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
-    r.meaning = "수익률 대비 변동성이 낮은 편입니다";
-    r.action = "꾸준한 흐름의 종목 — 큰 출렁임 없이 움직임";
+    r.meaning = "관측 기간엔 변동성 대비 수익률이 높았습니다";
+    r.action = "절대 변동성이 낮다는 뜻은 아님 — 실제 일간 변동·최대낙폭도 함께 확인";
     r.tone = "good";
   } else if (score >= 40) {
     r.meaning = "변동성과 수익률이 평이한 균형입니다";

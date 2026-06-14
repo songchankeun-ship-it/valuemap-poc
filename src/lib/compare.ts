@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-export const COMPARE_MAX = 4;
+import { FREE_COMPARE_LIMIT } from "@/lib/limits";
+export const COMPARE_MAX = FREE_COMPARE_LIMIT;
 
 const LOCAL_KEY = "valuemap_compare_basket";
 const LEGACY_KEY = "valuemap:compare"; // 옛 키 (CompareClient에서 사용했던 거)
