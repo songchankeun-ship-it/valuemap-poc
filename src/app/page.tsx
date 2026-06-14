@@ -270,7 +270,7 @@ export default function HomePage() {
         <div>
           <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 밸류맵인가</div>
           <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">모멘텀 · 거래활성도 · 밸류 · 변동성조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 추측 대신 검증된 데이터만 보여줍니다.
+            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">추세 · 거래활성도 · 밸류 · 위험대비</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 출처와 계산 근거를 확인할 수 있는 데이터만 사용합니다.
           </p>
         </div>
 

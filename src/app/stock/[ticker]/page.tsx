@@ -135,6 +135,10 @@ export default async function StockDetailPage({ params }: PageProps) {
   const sectorPeers = realStockPool.filter((p) => sectorOf(p.themes) === mySector);
   const sectorRank = sectorPeers.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
   const sectorCount = sectorPeers.length;
+  const sectorSorted = [...sectorPeers].sort((a, b) => compositeOf(b) - compositeOf(a));
+  const meInTop = sectorSorted.slice(0, 6).some((p) => p.ticker === s.ticker);
+  const meRow = sectorPeers.find((p) => p.ticker === s.ticker);
+  const sectorTop = meInTop || !meRow ? sectorSorted.slice(0, 6) : [...sectorSorted.slice(0, 5), meRow];
   const topPctOf = (val: number, key: "momentum" | "flow" | "value" | "vol") => {
     const better = realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length;
     return Math.max(1, Math.round(((better + 1) / poolN) * 100));
@@ -320,33 +324,54 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
       ) : null}
 
+      {sectorCount >= 2 ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">같은 업종 비교 · {mySector}</div>
+            <Link href={"/stocks?theme=" + encodeURIComponent(mySector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline">업종 전체 →</Link>
+          </div>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-[10px] text-zinc-400 dark:text-zinc-500 text-left">
+                <th className="font-normal py-1">종목</th>
+                <th className="font-normal py-1 text-right">종합</th>
+                <th className="font-normal py-1 text-right">PER</th>
+                <th className="font-normal py-1 text-right">등락</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sectorTop.map((p) => {
+                const isMe = p.ticker === s.ticker;
+                return (
+                  <tr key={p.ticker} className={"border-t border-zinc-100 dark:border-zinc-800 " + (isMe ? "bg-blue-50/60 dark:bg-blue-950/20" : "")}>
+                    <td className="py-1.5 truncate max-w-[140px]">
+                      {isMe ? (
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{p.name} <span className="text-[9px] text-blue-600 dark:text-blue-400">현재</span></span>
+                      ) : (
+                        <Link href={"/stock/" + p.ticker} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400">{p.name}</Link>
+                      )}
+                    </td>
+                    <td className="py-1.5 text-right tabular-nums font-semibold text-zinc-900 dark:text-zinc-100">{Math.round(compositeOf(p))}</td>
+                    <td className="py-1.5 text-right tabular-nums text-zinc-600 dark:text-zinc-400">{p.per > 0 ? p.per.toFixed(1) : "—"}</td>
+                    <td className={"py-1.5 text-right tabular-nums " + (p.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{p.changePct >= 0 ? "+" : ""}{p.changePct.toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">같은 업종 {sectorCount}곳 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
+        </section>
+      ) : null}
+
       {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
-      <section className={"rounded-lg border-2 " + tone.border + " " + tone.bg + " p-4 md:p-5"}>
-        <div className="flex items-start gap-4">
-          {/* 큰 점수 */}
-          <div className={"shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full ring-4 " + tone.ring + " bg-white dark:bg-zinc-900 flex flex-col items-center justify-center"}>
-            <div className={"text-2xl md:text-3xl font-bold tabular-nums " + tone.text}>{composite}</div>
-            <div className="text-[9px] text-zinc-500 dark:text-zinc-400">/100</div>
-            <div className={"text-[11px] md:text-xs font-bold leading-none mt-0.5 " + tone.text}>{grade.grade}{dataWarnings.length > 0 ? " ⚠" : ""}</div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <strong className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">왜 {composite}점인가요?</strong>
-                <ScoreTooltip kind="composite" size="md" />
-              </div>
-              <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider shrink-0">탐색 우선순위 · <span className="text-amber-600 dark:text-amber-400">실험</span>{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> · 검증 보류</span> : null}</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                종합 {composite}점 = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 강점·위험과 항목별 위치는 위 <strong className="text-zinc-900 dark:text-zinc-100">요약 카드</strong>와 <strong className="text-zinc-900 dark:text-zinc-100">자체 지표 4종</strong>에서 확인하세요.
-              </div>
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">
-                * 실험 지표입니다 — 과거 성과(백테스트) 검증이 진행 중이라 점수는 참고용이며, 매수·매도 추천이 아닌 데이터 기반 탐색 우선순위입니다. <span className="not-italic font-medium">데이터 완성도 {completeness}%.</span>
-              </p>
-            </div>
-          </div>
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <strong className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수는 어떻게 나오나요?</strong>
+          <ScoreTooltip kind="composite" size="md" />
         </div>
+        <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
+        </p>
       </section>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">

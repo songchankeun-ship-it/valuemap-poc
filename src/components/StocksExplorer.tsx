@@ -27,6 +27,7 @@ interface Stock {
 interface Props {
   stocks: Stock[];
   allThemes: string[];
+  initialThemes?: string[];
 }
 
 type SortKey =
@@ -95,7 +96,7 @@ const QUESTION_PRESETS: Preset[] = [
   { id: "q-small-value", label: "숨은 소형 저평가?", desc: "소형주 · PBR 1.0 이하 · 적자 제외", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
 ];
 
-export function StocksExplorer({ stocks, allThemes }: Props) {
+export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("compositeScore");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -109,7 +110,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
   const [capBucket, setCapBucket] = useState<CapBucket>("all");
   const [market, setMarket] = useState<MarketFilter>("all");
   const [excludeLoss, setExcludeLoss] = useState(false);
-  const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
+  const [selectedThemes, setSelectedThemes] = useState<Set<string>>(() => new Set(initialThemes ?? []));
   const [themeQuery, setThemeQuery] = useState("");
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
