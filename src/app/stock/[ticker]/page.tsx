@@ -15,6 +15,7 @@ import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
 import { MetricStrip } from "@/components/MetricStrip";
+import { StockTabs } from "@/components/StockTabs";
 import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool } from "@/lib/realStocks";
@@ -251,24 +252,17 @@ export default async function StockDetailPage({ params }: PageProps) {
         <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">실험 지표 · 매수·매도 추천이 아닌 탐색 우선순위입니다.</p>
       </section>
 
+      <StockTabs
+        tabs={[
+          {
+            id: "summary",
+            label: "요약",
+            content: (
+              <>
       {/* 주가 차트 (가격 데이터 있을 때만) */}
       {priceHistory && priceHistory.points.length >= 2 ? (
         <StockPriceChart ticker={s.ticker} name={s.name} points={priceHistory.points} />
       ) : null}
-
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {[
-          { l: "PER", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
-          { l: "PBR", v: s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—" },
-          { l: "ROE", v: s.roe !== 0 ? s.roe.toFixed(1) + "%" : "—" },
-          { l: "배당수익률", v: s.dividendYield > 0 ? s.dividendYield.toFixed(2) + "%" : "0%" },
-        ].map((m) => (
-          <div key={m.l} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 md:p-3">
-            <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-0.5">{m.l}</div>
-            <div className="text-base md:text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{m.v}</div>
-          </div>
-        ))}
-      </section>
 
       {/* 자체 지표 4종 (시각 차트) */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
@@ -294,22 +288,6 @@ export default async function StockDetailPage({ params }: PageProps) {
         pbr: s.pbr,
         roe: s.roe,
       }} />
-
-      {dataWarnings.length > 0 ? (
-        <section className="rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 md:p-4">
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="text-sm">⚠️</span>
-            <strong className="text-xs md:text-sm font-semibold text-amber-900 dark:text-amber-200">데이터 점검 필요</strong>
-          </div>
-          <ul className="list-none pl-0 space-y-1">
-            {dataWarnings.map((w, i) => (
-              <li key={i} className="text-[11px] md:text-xs text-amber-800 dark:text-amber-300 leading-snug flex gap-1.5">
-                <span className="shrink-0">·</span><span>{w}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
 
       {sectorValue.score >= 0 ? (
         <div className="rounded-lg border border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
@@ -363,15 +341,26 @@ export default async function StockDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <strong className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수는 어떻게 나오나요?</strong>
-          <ScoreTooltip kind="composite" size="md" />
-        </div>
-        <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
-        </p>
+              </>
+            ),
+          },
+          {
+            id: "financials",
+            label: "재무",
+            content: (
+              <>
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {[
+          { l: "PER", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
+          { l: "PBR", v: s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—" },
+          { l: "ROE", v: s.roe !== 0 ? s.roe.toFixed(1) + "%" : "—" },
+          { l: "배당수익률", v: s.dividendYield > 0 ? s.dividendYield.toFixed(2) + "%" : "0%" },
+        ].map((m) => (
+          <div key={m.l} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 md:p-3">
+            <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-0.5">{m.l}</div>
+            <div className="text-base md:text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{m.v}</div>
+          </div>
+        ))}
       </section>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
@@ -389,12 +378,60 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
       </section>
 
+              </>
+            ),
+          },
+          {
+            id: "disclosures",
+            label: "공시",
+            content: (
+              <>
+      <section><StockDisclosures ticker={s.ticker} /></section>              </>
+            ),
+          },
+          {
+            id: "basis",
+            label: "점수 근거",
+            content: (
+              <>
+      {dataWarnings.length > 0 ? (
+        <section className="rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 md:p-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-sm">⚠️</span>
+            <strong className="text-xs md:text-sm font-semibold text-amber-900 dark:text-amber-200">데이터 점검 필요</strong>
+          </div>
+          <ul className="list-none pl-0 space-y-1">
+            {dataWarnings.map((w, i) => (
+              <li key={i} className="text-[11px] md:text-xs text-amber-800 dark:text-amber-300 leading-snug flex gap-1.5">
+                <span className="shrink-0">·</span><span>{w}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <strong className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수는 어떻게 나오나요?</strong>
+          <ScoreTooltip kind="composite" size="md" />
+        </div>
+        <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험대비 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
+        </p>
+      </section>
+
       {scoreHistory.length > 0 ? (
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
 
       <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
-      <section><StockDisclosures ticker={s.ticker} /></section>
+              </>
+            ),
+          },
+        ]}
+      />
+
     </div>
   );
 }
