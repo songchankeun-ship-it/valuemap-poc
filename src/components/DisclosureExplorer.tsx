@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { findGuideByLabel } from "@/lib/signalGuide";
 
@@ -25,7 +25,7 @@ interface DisclosureSignal {
   direction?: "긍정 가능" | "부정 가능" | "확인 필요";
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   days: number;
   totalDisclosures: number;
   signalCount: number;
@@ -102,14 +102,19 @@ function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
   return Array.from(groups.values()).sort((a, b) => b.rcept_dt_latest.localeCompare(a.rcept_dt_latest));
 }
 
-export function DisclosureExplorer() {
-  const [data, setData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+export function DisclosureExplorer({ initialData }: { initialData?: ApiResponse }) {
+  const [data, setData] = useState<ApiResponse | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
-  const [days, setDays] = useState(7);
+  const [days, setDays] = useState(initialData?.days ?? 7);
   const [filterType, setFilterType] = useState<string>("all");
+  const firstRender = useRef(true);
 
   useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      if (initialData) return; // SSR 초기 데이터 사용 — 첫 fetch 생략
+    }
     let alive = true;
     setLoading(true);
     setError(null);

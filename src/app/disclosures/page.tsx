@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { DisclosureExplorer } from "@/components/DisclosureExplorer";
+import { getRecentSignals } from "@/lib/recentSignals";
 
 export const metadata = {
   title: "공시 신호 — 밸류맵 스톡",
   description: "최근 7일 한국 상장사 공시에서 5가지 시장 신호만 추출. 자기주식·임원·주요주주 보유변동·정정·대형계약·증자.",
 };
 
-export default function DisclosuresPage() {
+export const revalidate = 1800;
+
+export default async function DisclosuresPage() {
+  const initial = await getRecentSignals(7);
   return (
     <div className="space-y-4">
       <nav className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1">
@@ -23,7 +27,7 @@ export default function DisclosuresPage() {
         </p>
       </header>
 
-      <DisclosureExplorer />
+      <DisclosureExplorer initialData={initial} />
 
       <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-relaxed">
         본 페이지의 신호는 DART 공시 보고서명 매칭 기반 1차 필터입니다.
