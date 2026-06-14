@@ -5,6 +5,7 @@ import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
 import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
+import { StockTabs } from "@/components/StockTabs";
 
 interface SignalDisclosure {
   corp_name: string;
@@ -319,6 +320,12 @@ export default async function TodayPage() {
         </section>
       ) : null}
 
+      <StockTabs
+        tabs={[
+          {
+            id: "composite",
+            label: "종합",
+            content: (
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <div className="flex items-center gap-1.5">
@@ -356,8 +363,14 @@ export default async function TodayPage() {
             </li>
           ))}
         </ul>
-      </section>
 
+      </section>
+            ),
+          },
+          {
+            id: "value",
+            label: "저평가",
+            content: (
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <div className="flex items-center gap-1.5">
@@ -401,8 +414,14 @@ export default async function TodayPage() {
             );
           })}
         </ul>
-      </section>
 
+      </section>
+            ),
+          },
+          {
+            id: "momentum",
+            label: "추세",
+            content: (
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
         <div className="flex items-baseline justify-between mb-2">
           <div className="flex items-center gap-1.5">
@@ -459,6 +478,11 @@ export default async function TodayPage() {
           })}
         </ul>
       </section>
+            ),
+          },
+        ]}
+      />
+
 
       {(() => {
         const allSignals = (recentSignalsRaw as { signals?: Signal[] }).signals ?? [];
