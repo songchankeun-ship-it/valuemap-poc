@@ -1,0 +1,60 @@
+name: Daily data refresh
+
+# 한국장 마감(15:30 KST) 후 데이터 정산 시간을 두고 17:00 KST(=08:00 UTC) 평일 실행.
+# 수동 실행 버튼(workflow_dispatch)도 제공 — Actions 탭에서 "Run workflow"로 즉시 테스트 가능.
+on:
+  schedule:
+    - cron: "0 8 * * 1-5"
+  workflow_dispatch: {}
+
+# 봇이 stocks.json/prices를 커밋·푸시할 수 있도록 쓰기 권한 부여
+permissions:
+  contents: write
+
+# 동시 실행 방지(이전 실행이 끝나기 전 새 실행 시작 안 함)
+concurrency:
+  group: daily-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install finance-datareader pandas
+
+      - name: Fetch prices (5y OHLCV per ticker)
+        run: python scripts/fetch_prices.py
+
+      - name: Sync latest price into stocks.json
+        run: python scripts/sync_prices_to_stocks.py
+
+      - name: Recompute metrics (momentum/flow/value/vol)
+        run: python scripts/compute_metrics.py
+
+      - name: Verify data integrity (gate)
+        run: python scripts/verify_metrics.py
+
+      - name: Commit and push if data changed
+        run: |
+          git config user.name "ornscore-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/stocks.json public/data/prices
+          if git diff --cached --quiet; then
+            echo "No data changes — skip commit."
+          else
+            git commit -m "chore(data): daily refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+            echo "Pushed — Vercel will auto-deploy."
+          fi
