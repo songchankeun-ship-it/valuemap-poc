@@ -179,7 +179,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
     <div className="space-y-4">
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">공시 신호</h2>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호{data.totalDisclosures >= 200 ? <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400">일부 결과 · 최신 200건</span> : null}</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
             최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
