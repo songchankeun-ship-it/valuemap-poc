@@ -41,6 +41,8 @@ export interface MockStock {
   vol: number;
   neglectScore: number;
   themes: string[];
+  volStats?: { annualReturn?: number; annualStd?: number; sharpe?: number; days?: number; maxDrawdown?: number; worstDay?: number };
+  returns?: { r1m?: number; r3m?: number; r6m?: number; r1y?: number };
 }
 
 export const mockStocksInTheme: Record<string, MockStock[]> = {

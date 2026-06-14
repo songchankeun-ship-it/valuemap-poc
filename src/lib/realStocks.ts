@@ -4,8 +4,8 @@ import type { MockStock } from "./mockData";
 export interface RealStock extends MockStock {
   beta?: number | null;
   peg?: number | null;
-  returns?: { r1m?: number; r3m?: number; r6m?: number };
-  volStats?: { annualReturn?: number; annualStd?: number; sharpe?: number; days?: number };
+  returns?: { r1m?: number; r3m?: number; r6m?: number; r1y?: number };
+  volStats?: { annualReturn?: number; annualStd?: number; sharpe?: number; days?: number; maxDrawdown?: number; worstDay?: number };
   flowStats?: { recent5dAvg?: number; recent20dAvg?: number; ratio?: number };
   compositeScore?: number;
   market?: string;

@@ -132,6 +132,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   const displayChangePct = (lastPoint && prevPoint && prevPoint.c > 0)
     ? ((lastPoint.c - prevPoint.c) / prevPoint.c) * 100
     : s.changePct;
+  const vs = s.volStats;
   const priceAsOf = lastPoint?.d ?? null;
   const dataWarnings = getDataWarnings(s, priceHistory);
   // 3개월(약 63거래일) 급등 위험 — 점수보다 먼저 노출
@@ -301,6 +302,31 @@ export default async function StockDetailPage({ params }: PageProps) {
           { label: "위험조정", kind: "vol", topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN, raw: s.vol },
         ]} />
       </section>
+
+      {/* 위험 상세 — 위험조정 점수와 별개로 실제 변동성·낙폭 (설계서 6.4) */}
+      {vs && (vs.annualStd != null || vs.maxDrawdown != null) ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">위험 상세 <span className="text-[10px] font-normal text-zinc-400">위험조정 점수와 별개</span></div>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">관측 {vs.days ?? 0}거래일 · 신뢰도 {(() => { const d = vs?.days ?? 0; return d >= 252 ? "정상" : d >= 200 ? "보통" : d >= 120 ? "낮음" : "부족"; })()}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">연환산 변동성</div>
+              <div className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{vs.annualStd != null ? vs.annualStd.toFixed(1) + "%" : "—"}</div>
+            </div>
+            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">최대낙폭</div>
+              <div className="text-sm font-semibold tabular-nums text-rose-600 dark:text-rose-400">{vs.maxDrawdown != null ? vs.maxDrawdown.toFixed(1) + "%" : "—"}</div>
+            </div>
+            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">최악의 하루</div>
+              <div className="text-sm font-semibold tabular-nums text-rose-600 dark:text-rose-400">{vs.worstDay != null ? vs.worstDay.toFixed(1) + "%" : "—"}</div>
+            </div>
+          </div>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">위험조정 점수가 높아도 절대 변동성이 낮거나 향후 하락 위험이 작다는 의미는 아닙니다.</p>
+        </section>
+      ) : null}
 
       {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
       <BeginnerReading s={{
