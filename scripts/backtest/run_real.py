@@ -28,6 +28,7 @@ OUT_PATH = os.path.join(ROOT, "public", "backtest-result.json")
 TOP_N = 10
 INITIAL_CAPITAL = 10_000_000
 MIN_HISTORY = 130  # 신호 계산에 필요한 최소 거래일 (모멘텀 6개월=126)
+COST = 0.003       # 편도 거래비용 0.3% (수수료+거래세+슬리피지 근사)
 
 
 def load_prices():
@@ -94,44 +95,53 @@ def signal_value(closes_up_to, strategy):
 
 
 def run_strategy(aligned, all_dates, reb_idxs, strategy):
-    n = len(all_dates)
     equity = float(INITIAL_CAPITAL)
     positions = {}  # ticker -> shares
-    equity_curve = []  # (date, equity)
+    equity_curve = []
     trade_count = 0
+    turnover_ratios = []
     reb_set = set(reb_idxs)
 
     for i, d in enumerate(all_dates):
-        # 리밸런싱: 오늘 종가 기준 현재 평가액 산출 후 재배분
         if i in reb_set:
-            # 현재 평가액
+            # 현재 종목별 가치 + 평가액 (오늘 종가)
+            cur_vals = {}
             cur = 0.0
-            if positions:
-                for tk, sh in positions.items():
-                    px = aligned[tk][i]
-                    if px:
-                        cur += sh * px
-                equity = cur if cur > 0 else equity
-            # 신호 계산 (오늘까지의 종가만 사용)
+            for tk, sh in positions.items():
+                px = aligned[tk][i]
+                if px:
+                    v = sh * px
+                    cur_vals[tk] = v
+                    cur += v
+            if positions and cur > 0:
+                equity = cur
+            # 신호: '전일(i-1)까지'의 종가만 사용 → 같은 날 종가 미래참조 제거
             scored = []
             for tk, ser in aligned.items():
-                px = ser[i]
-                if not px:
+                if not ser[i]:
                     continue
-                closes = [c for c in ser[: i + 1] if c is not None]
+                closes = [c for c in ser[:i] if c is not None]
                 sv = signal_value(closes, strategy)
                 if sv is not None:
                     scored.append((sv, tk))
             if scored:
                 scored.sort(reverse=True)
                 picks = [tk for _, tk in scored[:TOP_N]]
+                target = equity / len(picks)
+                # 회전율·거래비용: |목표가치 - 현재가치| 합(매수+매도 양변)
+                traded = 0.0
+                for tk in set(cur_vals) | set(picks):
+                    newv = target if tk in picks else 0.0
+                    traded += abs(newv - cur_vals.get(tk, 0.0))
+                if equity > 0:
+                    turnover_ratios.append(traded / equity)
+                equity = max(equity - COST * traded, 0.0)  # 거래비용 차감
                 alloc = equity / len(picks)
                 new_positions = {}
                 for tk in picks:
                     px = aligned[tk][i]
                     if px and px > 0:
                         new_positions[tk] = alloc / px
-                # 거래 수 = 신규 진입 종목 (단순 추정)
                 trade_count += sum(1 for tk in new_positions if tk not in positions)
                 positions = new_positions
         # 일별 평가액
@@ -144,7 +154,8 @@ def run_strategy(aligned, all_dates, reb_idxs, strategy):
             if val > 0:
                 equity = val
         equity_curve.append((d, equity))
-    return equity_curve, trade_count
+    avg_turnover = (sum(turnover_ratios) / len(turnover_ratios)) if turnover_ratios else 0.0
+    return equity_curve, trade_count, avg_turnover
 
 
 def run_benchmark(aligned, all_dates):
@@ -214,15 +225,34 @@ def metrics_from(curve, bm_curve):
         win_rate = sum(1 for x in rets if x > 0) / len(rets)
     else:
         sharpe, win_rate = 0.0, 0.0
+    # 벤치마크 위험지표
+    bm_mv = list(to_monthly(bm_curve).items())
+    bm_rets = [bm_mv[k][1] / bm_mv[k - 1][1] - 1 for k in range(1, len(bm_mv)) if bm_mv[k - 1][1] > 0]
+    if len(bm_rets) >= 2:
+        bmean = sum(bm_rets) / len(bm_rets)
+        bstd = math.sqrt(sum((x - bmean) ** 2 for x in bm_rets) / (len(bm_rets) - 1))
+        bm_sharpe = (bmean / bstd * math.sqrt(12)) if bstd > 0 else 0.0
+    else:
+        bm_sharpe = 0.0
+    # 연도별 수익률 (월별 복리)
+    ymul = {}
+    for k in range(1, len(mv)):
+        y = mv[k][0][:4]
+        r = mv[k][1] / mv[k - 1][1] - 1 if mv[k - 1][1] > 0 else 0.0
+        ymul[y] = ymul.get(y, 1.0) * (1 + r)
+    yearly = {y: round(v - 1, 4) for y, v in ymul.items()}
     return {
         "totalReturn": round(total_return, 4),
         "cagr": round(cagr, 4),
         "benchmarkReturn": round(bm_return, 4),
         "alpha": round(total_return - bm_return, 4),
         "maxDrawdown": round(max_drawdown(curve), 4),
+        "benchmarkMdd": round(max_drawdown(bm_curve), 4),
         "sharpe": round(sharpe, 2),
+        "benchmarkSharpe": round(bm_sharpe, 2),
         "winRate": round(win_rate, 4),
         "years": round(years, 2),
+        "yearly": yearly,
     }
 
 
@@ -255,9 +285,10 @@ def main():
     strat_payloads = []
     for sid, label in STRATEGIES:
         print(f"⚙️  전략 실행: {label}")
-        curve, trades = run_strategy(aligned, all_dates, reb_idxs, sid)
+        curve, trades, avg_turnover = run_strategy(aligned, all_dates, reb_idxs, sid)
         m = metrics_from(curve, bm_curve)
         m["tradeCount"] = trades
+        m["avgTurnover"] = round(avg_turnover, 4)
         eq_monthly = to_monthly(curve)
         equity_curve_monthly = [
             {"month": ym, "equity": round(eq), "benchmark": round(bm_monthly.get(ym, 0), 2)}
@@ -284,7 +315,7 @@ def main():
         "period": {"from": all_dates[0], "to": all_dates[-1], "years": primary["metrics"]["years"]},
         "universe": len(series),
         "benchmarkLabel": "유니버스 동일가중 매수후보유(시장 근사)",
-        "assumptions": "월별 리밸런싱 · 동일가중 · 거래비용 0% 가정 · 가격 기반 신호만(밸류/자금흐름 제외)",
+        "assumptions": "월별 리밸런싱 · 동일가중 · 거래비용 0.3%(편도) · 월말 신호→당월 첫 거래일 체결(미래참조 제거) · 가격 기반 신호만(밸류/자금흐름 제외) · 현재 유니버스 소급(생존편향 가능)",
         "config": {"topN": TOP_N, "rebalance": "monthly", "initialCapital": INITIAL_CAPITAL},
         "strategies": strat_payloads,
         # 하위호환: 대표 전략을 최상위에도 노출

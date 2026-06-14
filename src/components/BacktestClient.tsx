@@ -9,10 +9,14 @@ interface StratMetrics {
   benchmarkReturn: number;
   alpha: number;
   maxDrawdown: number;
+  benchmarkMdd?: number;
   sharpe: number;
+  benchmarkSharpe?: number;
   winRate: number;
   years: number;
   tradeCount: number;
+  avgTurnover?: number;
+  yearly?: Record<string, number>;
 }
 interface EquityPoint { month: string; equity: number; benchmark: number }
 interface Strategy {
@@ -152,6 +156,29 @@ export function BacktestClient({ data }: { data: BacktestData }) {
         </div>
         <EquityChart data={active.equityCurveMonthly} />
       </section>
+
+      {m.yearly && Object.keys(m.yearly).length > 0 ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-3">연도별 수익률</h3>
+          <div className="space-y-1.5">
+            {Object.entries(m.yearly).map(([y, r]) => (
+              <div key={y} className="flex items-center gap-2 text-xs">
+                <span className="w-10 text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0">{y}</span>
+                <div className="flex-1 h-4 bg-zinc-100 dark:bg-zinc-800 rounded overflow-hidden">
+                  <div className={"h-full " + (r >= 0 ? "bg-red-400 dark:bg-red-500" : "bg-blue-400 dark:bg-blue-500")} style={{ width: Math.min(100, Math.abs(r) * 100) + "%" }} />
+                </div>
+                <span className={"w-16 text-right tabular-nums shrink-0 " + (r >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{pct(r)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-zinc-600 dark:text-zinc-400">
+            <div>전략 MDD <strong className="text-zinc-900 dark:text-zinc-100">{pct(m.maxDrawdown)}</strong>{m.benchmarkMdd !== undefined ? <> vs 벤치 {pct(m.benchmarkMdd)}</> : null}</div>
+            <div>전략 Sharpe <strong className="text-zinc-900 dark:text-zinc-100">{m.sharpe.toFixed(2)}</strong>{m.benchmarkSharpe !== undefined ? <> vs 벤치 {m.benchmarkSharpe.toFixed(2)}</> : null}</div>
+            {m.avgTurnover !== undefined ? <div>월평균 회전율 <strong className="text-zinc-900 dark:text-zinc-100">{(m.avgTurnover * 100).toFixed(0)}%</strong></div> : null}
+            <div>총 거래 <strong className="text-zinc-900 dark:text-zinc-100">{m.tradeCount}건</strong></div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-4 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
         <strong className="block mb-1">⚠️ 읽을 때 주의</strong>
