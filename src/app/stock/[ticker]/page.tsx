@@ -20,7 +20,7 @@ import { MetricStrip } from "@/components/MetricStrip";
 import { StockTabs } from "@/components/StockTabs";
 import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
-import { realStockPool } from "@/lib/realStocks";
+import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 
 export const revalidate = 3600;
@@ -327,6 +327,17 @@ export default async function StockDetailPage({ params }: PageProps) {
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">위험조정 점수가 높아도 절대 변동성이 낮거나 향후 하락 위험이 작다는 의미는 아닙니다.</p>
         </section>
       ) : null}
+
+      {/* 데이터 기준 (설계서 12.2) */}
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-3">
+        <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 mb-1.5">데이터 기준</div>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
+          <div>주가 <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} 장마감</span></div>
+          <div>분석 대상 <span className="text-zinc-700 dark:text-zinc-300">{poolN}종목</span></div>
+          <div>점수 계산 <span className="text-zinc-700 dark:text-zinc-300">{dataMetadata.asOfBusinessDate ?? dataMetadata.generatedAt?.slice(0, 10) ?? "—"}</span></div>
+          <div>산식 버전 <span className="text-zinc-700 dark:text-zinc-300">{dataMetadata.metricsVersion ?? "—"}</span></div>
+        </div>
+      </div>
 
       {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
       <BeginnerReading s={{

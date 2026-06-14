@@ -1,4 +1,4 @@
-# 산식 버전: Metrics v2.3 (적용일 2026-06-14) — 추세=백분위·거래활성도=거래량비·밸류=풀분위·위험대비=1년샤프(rf3.5%)·종합=단순평균
+# 산식 버전: Metrics v2.4 (적용일 2026-06-14) — 추세=백분위·거래활성도=거래량비·밸류=풀분위·위험조정=샤프백분위·종합=단순평균
 import json, os, sys, time, math
 from datetime import datetime, timedelta
 try:
@@ -112,6 +112,7 @@ def main():
         vr = calc_vol(df)
         item["volScore"] = vr[0] if vr else 50
         item["volStats"] = vr[1] if vr else {}
+        item["_vraw"] = vr[1].get("sharpe") if vr else None
         if vr: vol_ok += 1
         fr = calc_flow(df)
         item["flow"] = fr[0] if fr else 50
@@ -129,6 +130,16 @@ def main():
         else:
             below = sum(1 for v in mraws if v < mraw)
             item["momentum"] = round(below / len(mraws) * 100, 1)
+
+    # 위험조정: 원시 샤프값 → 전체 유니버스 백분위(0~100). 선형 매핑의 100점 포화 방지 (설계서 8.4).
+    vraws = sorted(it["_vraw"] for it in stocks if it.get("_vraw") is not None)
+    for item in stocks:
+        vraw = item.pop("_vraw", None)
+        if vraw is None or not vraws:
+            item["volScore"] = 50.0
+        else:
+            below = sum(1 for v in vraws if v < vraw)
+            item["volScore"] = round(below / len(vraws) * 100, 1)
 
     # 밸류 계산 불가(적자·결측): 50 중립 대신 가용 지표(추세·거래·위험대비) 평균으로 재가중.
     #   적자기업이 중립 50을 받아 유리해지는 문제 방지. valueNA 플래그로 표시.

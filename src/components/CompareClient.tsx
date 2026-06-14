@@ -92,6 +92,17 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
     setMounted(true);
     reload();
 
+    // 공유 링크(?stocks=005930,000660)에서 비교 바스켓 시드
+    try {
+      const shared = new URLSearchParams(window.location.search).get("stocks");
+      if (shared) {
+        const codes = shared.split(",").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+        if (codes.length) Promise.all(codes.map((c) => addToCompare(c))).then(reload);
+      }
+    } catch {
+      /* noop */
+    }
+
     function onUpdate() {
       reload();
     }
@@ -115,6 +126,15 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
     if (!confirm("비교 목록을 모두 비울까요?")) return;
     setTickers([]);
     await clearCompare();
+  }
+
+  function shareLink() {
+    const url = `${window.location.origin}/compare?stocks=${tickers.join(",")}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => alert("공유 링크가 복사됐어요"));
+    } else {
+      alert(url);
+    }
   }
 
   if (!mounted) return null;
@@ -152,7 +172,10 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
       {/* Header bar */}
       <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <span>비교 중인 종목 <strong className="text-zinc-900 dark:text-zinc-100">{stocks.length}</strong>개</span>
-        <button onClick={clearAll} className="text-zinc-500 dark:text-zinc-400 hover:text-red-600 transition">모두 비우기</button>
+        <div className="flex items-center gap-3">
+          <button onClick={shareLink} className="text-blue-600 dark:text-blue-400 hover:underline">공유 링크 복사</button>
+          <button onClick={clearAll} className="text-zinc-500 dark:text-zinc-400 hover:text-red-600 transition">모두 비우기</button>
+        </div>
       </div>
 
       {stocks.length > 2 ? (
