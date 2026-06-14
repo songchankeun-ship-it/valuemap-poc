@@ -24,18 +24,23 @@ export function getDataWarnings(s: QualityInput, price?: PriceHistory | null): s
     w.push("PBR 20배 이상 — 고평가 또는 자본 잠식 여부 확인");
   }
 
-  // 6개월(약 126거래일) 수익률 — 수정주가·액면분할·합병 점검
+  // 단일일 급변(±32% 초과) 탐지 — 한국 상·하한가 ±30%를 넘는 하루 점프는
+  // 액면분할·병합·미수정주가 신호. 누적 상승률만으로는 경고하지 않는다(실제 강세일 수 있음).
   const pts = price?.points;
   if (pts && pts.length > 30) {
-    const last = pts[pts.length - 1]?.c;
-    const past = pts[Math.max(0, pts.length - 1 - 126)]?.c;
-    if (last && past && past > 0) {
-      const ret = (last - past) / past;
-      if (Math.abs(ret) >= 1.5) {
-        w.push(
-          `6개월 수익률 ${ret >= 0 ? "+" : ""}${Math.round(ret * 100)}% — 수정주가·액면분할·합병 반영 여부 확인`,
-        );
+    let maxJump = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1]?.c;
+      const cur = pts[i]?.c;
+      if (prev && cur && prev > 0) {
+        const ch = cur / prev - 1;
+        if (Math.abs(ch) > Math.abs(maxJump)) maxJump = ch;
       }
+    }
+    if (Math.abs(maxJump) > 0.32) {
+      w.push(
+        `하루 ${maxJump >= 0 ? "+" : ""}${Math.round(maxJump * 100)}% 급변 — 액면분할·병합 미반영 가능성, 수정주가 확인 필요`,
+      );
     }
   }
   return w;
@@ -58,13 +63,13 @@ export function dataCompleteness(
   return Math.round((filled / checks.length) * 100);
 }
 
-/** 풀 레벨 이상치 판정(stocks.json 필드만으로) — Top/오늘 후보에서 제외용. */
-export function isSuspect(s: { per: number; pbr: number; roe: number; returns?: { r6m?: number } }): boolean {
+/** 풀 레벨 이상치 판정(stocks.json 필드만으로) — Top/오늘 후보에서 제외용.
+ *  누적수익률(r6m)은 제외: 실제 강세주(삼성·SK 등)를 오탐하던 문제. 분할 아티팩트는
+ *  종목 상세에서 가격 시계열의 단일일 급변(getDataWarnings)으로 별도 감지한다. */
+export function isSuspect(s: { per: number; pbr: number; roe: number }): boolean {
   if (s.per > 0 && s.per < 1) return true;
   if (s.per >= 300) return true;
   if (s.roe >= 80) return true;
   if (s.pbr >= 20) return true;
-  const r6 = s.returns?.r6m;
-  if (typeof r6 === "number" && Math.abs(r6) >= 150) return true;
   return false;
 }

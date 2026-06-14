@@ -119,7 +119,8 @@ export default function GuidePage() {
           <li>· 결측·거래정지 구간은 가능한 데이터만 사용하고, <strong>최소 관측치 미달 시 중립(50점)</strong>으로 처리합니다.</li>
           <li>· 무위험률은 <strong>연 3.5%</strong>를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).</li>
           <li>· 점수는 <strong className="text-amber-700">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
-          <li>· 정확한 산식은 오픈소스로 공개되어 있습니다: <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts (GitHub)</a></li>
+          <li>· <strong className="text-zinc-900">산식 버전: Metrics v2.3</strong> (적용일 2026-06-14). <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
+          <li>· 오픈소스 공개 — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
         </ul>
       </section>
 

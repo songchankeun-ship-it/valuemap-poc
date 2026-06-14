@@ -132,8 +132,8 @@ export default async function TodayPage() {
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
   const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => compositeOf(b) - compositeOf(a)).slice(0, 5);
-  const topValue = [...validStocks].filter(s => s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
-  const topMomentum = [...validStocks].filter(s => s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
+  const topValue = [...validStocks].filter(s => !isSuspect(s) && s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 5);
+  const topMomentum = [...validStocks].filter(s => !isSuspect(s) && s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 5);
 
   const validPers = realStockPool.filter(s => s.per > 0 && s.per < 150).map(s => s.per);
   const medianPer = median(validPers);
@@ -143,6 +143,7 @@ export default async function TodayPage() {
   // 오늘의 브리핑 통계 (스냅샷 기반)
   const upCount = realStockPool.filter((s) => s.changePct > 0).length;
   const downCount = realStockPool.filter((s) => s.changePct < 0).length;
+  const flatCount = realStockPool.length - upCount - downCount;
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80).length;
   const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
@@ -205,8 +206,8 @@ export default async function TodayPage() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">시장 분위</div>
-            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">상승 {upCount} <span className="text-[10px] font-normal text-zinc-400">/ 하락 {downCount}</span></div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">오늘 등락 ({realStockPool.length}종목)</div>
+            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">상승 {upCount} <span className="text-[10px] font-normal text-zinc-400">/ 하락 {downCount} / 보합 {flatCount}</span></div>
           </div>
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
             <div className="text-[10px] text-zinc-500 dark:text-zinc-400">종합 80+ 종목</div>
@@ -269,7 +270,7 @@ export default async function TodayPage() {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 추가 확인 후보</h2>
             <ScoreTooltip kind="composite" />
           </div>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">종합</span>
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">종합 상위 5</span>
         </div>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">네 지표 모두 우호적인 상태 — 탐색 우선순위 높음</p>
         <ul className="space-y-1">

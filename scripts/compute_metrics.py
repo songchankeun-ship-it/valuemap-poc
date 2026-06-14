@@ -1,4 +1,5 @@
-﻿import json, os, sys, time, math
+# 산식 버전: Metrics v2.3 (적용일 2026-06-14) — 추세=백분위·거래활성도=거래량비·밸류=풀분위·위험대비=1년샤프(rf3.5%)·종합=단순평균
+import json, os, sys, time, math
 from datetime import datetime, timedelta
 try:
     import FinanceDataReader as fdr
@@ -29,8 +30,8 @@ def calc_momentum(df):
         prev = closes[-n-1]
         return (last - prev) / prev * 100 if prev > 0 else 0
     r1m, r3m, r6m = ret(20), ret(60), ret(120)
-    score = max(0, min(100, 50 + (0.3*r1m + 0.4*r3m + 0.3*r6m) * 1.25))
-    return round(score,1), {"r1m": round(r1m,2), "r3m": round(r3m,2), "r6m": round(r6m,2)}
+    weighted = 0.3*r1m + 0.4*r3m + 0.3*r6m  # 원시 가중수익률 (백분위 환산 전)
+    return weighted, {"r1m": round(r1m,2), "r3m": round(r3m,2), "r6m": round(r6m,2)}
 
 def calc_vol(df):
     if df is None or len(df) < 60: return None
@@ -97,7 +98,7 @@ def main():
     for item in stocks:
         df = historical.get(item["ticker"])
         mr = calc_momentum(df)
-        item["momentum"] = mr[0] if mr else 50
+        item["_mraw"] = mr[0] if mr else None
         item["returns"] = mr[1] if mr else {}
         if mr: m_ok += 1
         vr = calc_vol(df)
@@ -110,7 +111,21 @@ def main():
         if fr: f_ok += 1
         v_val = value_scores.get(item["ticker"])
         item["value"] = v_val if v_val is not None else 50
+
+    # 추세: 원시 가중수익률 → 전체 유니버스 백분위(0~100). 고정 매핑의 고점 포화 방지.
+    mraws = sorted(it["_mraw"] for it in stocks if it.get("_mraw") is not None)
+    for item in stocks:
+        mraw = item.pop("_mraw", None)
+        if mraw is None or not mraws:
+            item["momentum"] = 50.0
+        else:
+            below = sum(1 for v in mraws if v < mraw)
+            item["momentum"] = round(below / len(mraws) * 100, 1)
+
+    # 종합: 네 지표 단순 평균 (momentum 백분위 확정 후 계산)
+    for item in stocks:
         item["compositeScore"] = safe_avg([item["momentum"], item["flow"], item["value"], item["volScore"]])
+
     print(f"      momentum: {m_ok}/{n}")
     print(f"      vol:      {vol_ok}/{n}")
     print(f"      flow:     {f_ok}/{n}")
