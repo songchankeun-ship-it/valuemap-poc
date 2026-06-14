@@ -4,6 +4,7 @@ import { isSuspect } from "@/lib/dataQuality";
 import { Search, BarChart3, Megaphone, TrendingUp, Bell } from "lucide-react";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
 import recentSignalsRaw from "../../public/disclosure-samples/recent-signals.json";
+import { fmtWon } from "@/lib/format";
 
 interface RecentSignal {
   signalType: string;
@@ -161,7 +162,7 @@ export default function HomePage() {
                   💡 {quickReason(s)}
                 </div>
                 <div className="flex items-center gap-2 mt-1.5 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-                  <span>{s.currentPrice.toLocaleString()}원</span>
+                  <span>{fmtWon(s.currentPrice)}</span>
                   <span className={s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"}>
                     {s.changePct >= 0 ? "▲" : "▼"}{Math.abs(s.changePct).toFixed(2)}%
                   </span>

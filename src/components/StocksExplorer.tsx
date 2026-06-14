@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { fmtMarketCap } from "@/lib/format";
+import { fmtMarketCap, fmtWon } from "@/lib/format";
 
 interface Stock {
   ticker: string;
@@ -445,7 +445,7 @@ export function StocksExplorer({ stocks, allThemes }: Props) {
                       <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
                     </div>
                     <div className="flex items-baseline gap-2 mb-2 flex-wrap">
-                      <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{s.currentPrice.toLocaleString()}원</span>
+                      <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</span>
                       <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
                         {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
                       </span>
