@@ -1,4 +1,5 @@
 import { NotificationToggle } from "@/components/NotificationToggle";
+import { ConditionAlertsManager } from "@/components/ConditionAlertsManager";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -53,6 +54,10 @@ export default async function NotificationSettingsPage() {
             발송: <strong className="text-zinc-700 dark:text-zinc-300">{userEmail}</strong>
           </span>
         </div>
+      </div>
+
+      <div className="mb-4 md:mb-6">
+        <ConditionAlertsManager />
       </div>
 
       <div className="bg-zinc-50 dark:bg-zinc-900/50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">

@@ -78,6 +78,17 @@ export function WatchlistClient({
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<"simple" | "analysis">("simple");
+
+  useEffect(() => {
+    const v = typeof window !== "undefined" ? localStorage.getItem("valuemap_watchlist_view") : null;
+    if (v === "analysis" || v === "simple") setView(v);
+  }, []);
+
+  function changeView(v: "simple" | "analysis") {
+    setView(v);
+    if (typeof window !== "undefined") localStorage.setItem("valuemap_watchlist_view", v);
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -146,6 +157,12 @@ export function WatchlistClient({
               {watchlist.length}개
             </span>
           </h2>
+          {watchlist.length > 0 ? (
+            <div className="flex gap-0.5 text-[11px] bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
+              <button type="button" onClick={() => changeView("simple")} className={"px-2.5 py-1 rounded-md transition " + (view === "simple" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>간단</button>
+              <button type="button" onClick={() => changeView("analysis")} className={"px-2.5 py-1 rounded-md transition " + (view === "analysis" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>분석</button>
+            </div>
+          ) : null}
         </div>
 
         {watchlist.length === 0 ? (
@@ -202,6 +219,16 @@ export function WatchlistClient({
                         <span className="text-zinc-300 dark:text-zinc-600">·</span>
                         <span>추가 {formatTime(item.addedAt)}</span>
                       </div>
+                      {view === "analysis" && info ? (
+                        <div className="mt-2 grid grid-cols-4 gap-1.5">
+                          {([["추세", info.momentum], ["거래", info.flow], ["밸류", info.value], ["위험", info.vol]] as const).map(([l, v]) => (
+                            <div key={l} className="bg-zinc-50 dark:bg-zinc-800/50 rounded px-1.5 py-1 text-center">
+                              <div className="text-[9px] text-zinc-400 dark:text-zinc-500">{l}</div>
+                              <div className="text-[11px] font-semibold tabular-nums text-zinc-700 dark:text-zinc-300">{v !== undefined ? Math.round(v) : "—"}</div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                   </Link>
                   <button

@@ -2,6 +2,7 @@ import { WatchlistClient } from "@/components/WatchlistClient";
 import { getAllStocks } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/server";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
+import { compositeOf } from "@/lib/score";
 
 export const metadata = {
   title: "관심 종목 — 밸류맵 스톡",
@@ -22,7 +23,7 @@ export default async function WatchlistPage() {
     flow: s.flow,
     value: s.value,
     vol: s.vol,
-    compositeScore: Math.round((s.momentum + s.flow + s.value + s.vol) / 4),
+    compositeScore: Math.round(compositeOf(s)),
   }));
 
   // ticker → 최강 신호 매핑

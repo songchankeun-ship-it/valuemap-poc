@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
+import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { addConditionAlert } from "@/lib/conditionAlerts";
 
 interface Stock {
   ticker: string;
@@ -115,6 +117,60 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    const load = () => { listSavedSearches().then((r) => { if (alive) setSavedSearches(r); }); };
+    load();
+    window.addEventListener("saved-searches-changed", load);
+    return () => { alive = false; window.removeEventListener("saved-searches-changed", load); };
+  }, []);
+
+  function buildCurrentConfig(): SavedSearchConfig {
+    return { query, sortKey, sortDir, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, capBucket, market, excludeLoss, themes: [...selectedThemes] };
+  }
+  function applySavedConfig(c: SavedSearchConfig) {
+    setActivePreset(null);
+    setQuery(c.query ?? "");
+    setSortKey((c.sortKey as SortKey) ?? "compositeScore");
+    setSortDir((c.sortDir as SortDir) ?? "desc");
+    setMinComposite(c.minComposite ?? 0);
+    setPerMin(c.perMin ?? 0);
+    setPerMax(c.perMax ?? 200);
+    setPbrMin(c.pbrMin ?? 0);
+    setPbrMax(c.pbrMax ?? 30);
+    setRoeMin(c.roeMin ?? 0);
+    setDivYieldMin(c.divYieldMin ?? 0);
+    setCapBucket((c.capBucket as CapBucket) ?? "all");
+    setMarket((c.market as MarketFilter) ?? "all");
+    setExcludeLoss(c.excludeLoss ?? false);
+    setSelectedThemes(new Set(c.themes ?? []));
+  }
+  async function handleSaveSearch() {
+    const name = (typeof window !== "undefined" ? window.prompt("이 검색 조건의 이름을 정해주세요 (예: 저PER 배당주)") : "")?.trim();
+    if (!name) return;
+    const ok = await addSavedSearch(name, buildCurrentConfig());
+    if (ok) listSavedSearches().then(setSavedSearches);
+  }
+  async function handleRemoveSaved(id: string) {
+    const ok = await removeSavedSearch(id);
+    if (ok) setSavedSearches((prev) => prev.filter((sv) => sv.id !== id));
+  }
+  async function handleCreateAlert() {
+    const name = (typeof window !== "undefined" ? window.prompt("알림 이름을 정해주세요 (예: 저PER 배당주 신규)") : "")?.trim();
+    if (!name) return;
+    const r = await addConditionAlert(name, buildCurrentConfig());
+    if (r === "login") {
+      if (typeof window !== "undefined" && window.confirm("조건 알림은 로그인 후 이메일로 받을 수 있어요. 로그인하러 갈까요?")) {
+        window.location.href = "/login?next=/stocks";
+      }
+    } else if (r === "ok") {
+      if (typeof window !== "undefined") window.alert("알림을 등록했어요. 조건에 새 종목이 들어오면 이메일로 알려드릴게요. (설정 > 알림에서 관리)");
+    } else {
+      if (typeof window !== "undefined") window.alert("등록에 실패했어요. 잠시 후 다시 시도해주세요.");
+    }
+  }
 
   function applyPreset(p: Preset) {
     setActivePreset(p.id);
@@ -390,6 +446,28 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
             적용 중: <strong className="text-zinc-700 dark:text-zinc-300">{[...PRESETS, ...QUESTION_PRESETS].find(p => p.id === activePreset)?.desc}</strong>
           </div>
         ) : null}
+      </div>
+
+      <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
+        <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+          <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">내 검색 조건</span>
+          <div className="flex gap-1.5">
+            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">+ 현재 조건 저장</button>
+            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">🔔 이 조건 알림</button>
+          </div>
+        </div>
+        {savedSearches.length === 0 ? (
+          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">자주 쓰는 필터 조합을 저장해 한 번에 불러올 수 있어요. 로그인하면 기기 간 동기화돼요.</p>
+        ) : (
+          <div className="flex gap-1.5 flex-wrap">
+            {savedSearches.map((sv) => (
+              <span key={sv.id} className="inline-flex items-center gap-1 text-xs pl-3 pr-1 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800">
+                <button type="button" onClick={() => applySavedConfig(sv.config)} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400">{sv.name}</button>
+                <button type="button" onClick={() => handleRemoveSaved(sv.id)} aria-label="삭제" className="w-4 h-4 flex items-center justify-center rounded-full text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 dark:hover:bg-zinc-700">×</button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex gap-2 flex-wrap">
