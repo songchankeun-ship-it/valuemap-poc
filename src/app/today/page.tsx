@@ -168,6 +168,30 @@ export default async function TodayPage() {
         .sort((a, b) => Math.abs(scoreDeltas[b.ticker]) - Math.abs(scoreDeltas[a.ticker]))
         .slice(0, 6)
     : [];
+  // 후보 이탈: 어제 종합 80+ → 오늘 80 미만 (신규 진입의 역)
+  const dropouts = hasDeltas
+    ? realStockPool
+        .filter((s) => compositeOf(s) < 80 && scoreDeltas[s.ticker] !== undefined && compositeOf(s) - scoreDeltas[s.ticker] >= 80)
+        .sort((a, b) => (scoreDeltas[a.ticker] || 0) - (scoreDeltas[b.ticker] || 0))
+        .slice(0, 6)
+    : [];
+  // 전일 대비 순위 변화: 어제 점수(=오늘−변화량)로 어제 순위 복원해 비교
+  const todayComp: Record<string, number> = {};
+  const yesterComp: Record<string, number> = {};
+  for (const s of realStockPool) {
+    const t = Math.round(compositeOf(s));
+    todayComp[s.ticker] = t;
+    yesterComp[s.ticker] = t - Math.round(scoreDeltas[s.ticker] ?? 0);
+  }
+  const rankIn = (map: Record<string, number>, val: number) =>
+    realStockPool.filter((p) => map[p.ticker] > val).length + 1;
+  const rankRisers = hasDeltas
+    ? realStockPool
+        .map((s) => ({ s, change: rankIn(yesterComp, yesterComp[s.ticker]) - rankIn(todayComp, todayComp[s.ticker]) }))
+        .filter((x) => x.change >= 5)
+        .sort((a, b) => b.change - a.change)
+        .slice(0, 6)
+    : [];
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -232,7 +256,7 @@ export default async function TodayPage() {
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">상승 종목 비율 {breadthPct}% · 매일 장마감 후 갱신됩니다.</p>
       </section>
 
-      {hasDeltas && (newEntrants.length > 0 || bigMovers.length > 0) ? (
+      {hasDeltas && (newEntrants.length > 0 || dropouts.length > 0 || rankRisers.length > 0 || bigMovers.length > 0) ? (
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
           <div className="flex items-center gap-1.5 mb-3">
             <span className="text-sm">🔔</span>
@@ -246,6 +270,30 @@ export default async function TodayPage() {
                 {newEntrants.map((s) => (
                   <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
                     {s.name} <span className="tabular-nums">{Math.round(compositeOf(s))} (▲{Math.round(scoreDeltas[s.ticker])})</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {dropouts.length > 0 ? (
+            <div className="mb-3">
+              <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-400 mb-1.5">↘ 오늘 종합 80+ 이탈</div>
+              <div className="flex flex-wrap gap-1.5">
+                {dropouts.map((s) => (
+                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:border-blue-400 transition">
+                    {s.name} <span className="tabular-nums">{Math.round(compositeOf(s))} (▼{Math.abs(Math.round(scoreDeltas[s.ticker]))})</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {rankRisers.length > 0 ? (
+            <div className="mb-3">
+              <div className="text-[11px] font-semibold text-red-700 dark:text-red-400 mb-1.5">↑ 전일 대비 순위 상승 (5단계+)</div>
+              <div className="flex flex-wrap gap-1.5">
+                {rankRisers.map(({ s, change }) => (
+                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition">
+                    {s.name} <span className="tabular-nums">▲{change}단계</span>
                   </Link>
                 ))}
               </div>
