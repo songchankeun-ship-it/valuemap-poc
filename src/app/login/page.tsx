@@ -74,7 +74,7 @@ function LoginForm() {
       </Link>
 
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 md:p-8">
-        <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">밸류맵 스톡 로그인</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">오른스코어 로그인</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
           카카오로 1초 만에 시작하거나, 이메일로 로그인 링크를 받으세요.
         </p>

@@ -22,7 +22,7 @@ PRICES_DIR = os.path.join(ROOT, "public", "data", "prices")
 
 def main():
     print("=" * 60)
-    print("  ValueMap - Sync prices to stocks.json")
+    print("  Ornscore - Sync prices to stocks.json")
     print("=" * 60)
 
     if not os.path.exists(STOCKS_PATH):

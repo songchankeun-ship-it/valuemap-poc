@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps) {
   const s = getStockByTicker(ticker);
   if (!s) return { title: "종목을 찾을 수 없습니다" };
   const composite = Math.round(compositeOf(s));
-  const title = `${s.name} (${ticker}) 분석 — 밸류맵 스톡`;
+  const title = `${s.name} (${ticker}) 분석 — 오른스코어`;
   const description = `${s.name} 종합 점수 ${composite}/100 — 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
   return {
     title,
@@ -44,8 +44,8 @@ export async function generateMetadata({ params }: PageProps) {
     openGraph: {
       title,
       description,
-      url: `https://valuemap.kr/stock/${ticker}`,
-      siteName: "밸류맵 스톡",
+      url: `https://ornscore.com/stock/${ticker}`,
+      siteName: "오른스코어",
       locale: "ko_KR",
       type: "article",
     },
@@ -174,17 +174,17 @@ export default async function StockDetailPage({ params }: PageProps) {
         description: `${s.name} 모멘텀 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 변동성조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
         author: {
           "@type": "Organization",
-          name: "밸류맵 스톡",
-          url: "https://valuemap.kr",
+          name: "오른스코어",
+          url: "https://ornscore.com",
         },
         publisher: {
           "@type": "Organization",
-          name: "밸류맵 스톡",
-          url: "https://valuemap.kr",
+          name: "오른스코어",
+          url: "https://ornscore.com",
         },
         datePublished: new Date().toISOString(),
         dateModified: new Date().toISOString(),
-        mainEntityOfPage: `https://valuemap.kr/stock/${ticker}`,
+        mainEntityOfPage: `https://ornscore.com/stock/${ticker}`,
         about: {
           "@type": "Thing",
           name: `${s.name} (${ticker})`,
@@ -193,9 +193,9 @@ export default async function StockDetailPage({ params }: PageProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "홈", item: "https://valuemap.kr" },
-          { "@type": "ListItem", position: 2, name: "종목 탐색", item: "https://valuemap.kr/stocks" },
-          { "@type": "ListItem", position: 3, name: `${s.name}`, item: `https://valuemap.kr/stock/${ticker}` },
+          { "@type": "ListItem", position: 1, name: "홈", item: "https://ornscore.com" },
+          { "@type": "ListItem", position: 2, name: "종목 탐색", item: "https://ornscore.com/stocks" },
+          { "@type": "ListItem", position: 3, name: `${s.name}`, item: `https://ornscore.com/stock/${ticker}` },
         ],
       },
     ],

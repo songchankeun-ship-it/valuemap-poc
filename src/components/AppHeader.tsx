@@ -104,7 +104,7 @@ export async function AppHeader() {
           <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>
-            <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">밸류맵<span className="text-blue-600 dark:text-blue-400"> 스톡</span></span>
+            <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">오른스코어<span className="text-blue-600 dark:text-blue-400"> 스톡</span></span>
           </Link>
           <Link href="/" className="lg:hidden flex items-center shrink-0" aria-label="홈">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">V</span>

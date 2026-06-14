@@ -20,7 +20,7 @@ async function sendEmailViaResend(params: { to: string; subject: string; html: s
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "밸류맵 스톡 <noreply@valuemap.kr>",
+        from: "오른스코어 <noreply@ornscore.com>",
         to: [params.to],
         subject: params.subject,
         html: params.html,
@@ -39,7 +39,7 @@ function renderAlertEmail(alertName: string, matched: StockForMatch[]): string {
       (s) => `
       <div style="margin-bottom: 10px; padding: 12px 14px; border: 1px solid #e4e4e7; border-radius: 8px;">
         <div style="font-size: 11px; color: #a1a1aa; font-family: monospace;">${s.ticker}</div>
-        <a href="https://www.valuemap.kr/stock/${s.ticker}" style="font-size: 15px; font-weight: 700; color: #18181b; text-decoration: none;">${s.name} →</a>
+        <a href="https://www.ornscore.com/stock/${s.ticker}" style="font-size: 15px; font-weight: 700; color: #18181b; text-decoration: none;">${s.name} →</a>
         <div style="font-size: 12px; color: #52525b; margin-top: 4px;">종합 ${s.score} · PER ${s.per > 0 ? s.per.toFixed(1) : "—"} · ROE ${s.roe ? s.roe.toFixed(1) + "%" : "—"}</div>
       </div>`
     )
@@ -47,14 +47,14 @@ function renderAlertEmail(alertName: string, matched: StockForMatch[]): string {
   return `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #18181b; line-height: 1.6;">
     <div style="display:inline-flex; align-items:center; gap:8px; margin-bottom:20px;">
       <span style="display:inline-block; width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; text-align:center; line-height:28px; font-weight:700;">V</span>
-      <span style="font-size:16px; font-weight:600;">밸류맵 스톡</span>
+      <span style="font-size:16px; font-weight:600;">오른스코어</span>
     </div>
     <h1 style="font-size:20px; font-weight:700; margin:0 0 8px;">'${alertName}' 조건에 새 종목 ${matched.length}곳</h1>
     <p style="font-size:14px; color:#52525b; margin:0 0 20px;">저장하신 조건을 새로 충족한 종목이에요. 자체 지표는 탐색 우선순위용 실험 지표입니다.</p>
     ${rows}
     <div style="margin-top:24px; padding-top:20px; border-top:1px solid #e4e4e7; font-size:12px; color:#71717a;">
-      <p style="margin:0 0 8px;">알림은 <a href="https://www.valuemap.kr/settings/notifications" style="color:#3f3f46;">알림 설정</a>에서 끌 수 있어요.</p>
-      <p style="margin:0; color:#a1a1aa;">ⓒ 밸류맵 스톡 · 투자 권유가 아닙니다.</p>
+      <p style="margin:0 0 8px;">알림은 <a href="https://www.ornscore.com/settings/notifications" style="color:#3f3f46;">알림 설정</a>에서 끌 수 있어요.</p>
+      <p style="margin:0; color:#a1a1aa;">ⓒ 오른스코어 · 투자 권유가 아닙니다.</p>
     </div>
   </div>`;
 }
@@ -127,7 +127,7 @@ export async function GET(req: Request) {
 
       const send = await sendEmailViaResend({
         to: email,
-        subject: `[밸류맵 스톡] '${a.name}' 조건에 새 종목 ${fresh.length}곳`,
+        subject: `[오른스코어] '${a.name}' 조건에 새 종목 ${fresh.length}곳`,
         html: renderAlertEmail(a.name, fresh.slice(0, 20)),
       });
       if (send.ok) {

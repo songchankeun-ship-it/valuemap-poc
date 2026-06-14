@@ -66,7 +66,7 @@ def fetch_one(ticker: str, start: str, end: str):
 
 def main():
     print("=" * 60)
-    print("  ValueMap - Price History Fetcher")
+    print("  Ornscore - Price History Fetcher")
     print("=" * 60)
 
     tickers = load_tickers()

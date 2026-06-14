@@ -50,7 +50,7 @@ def fetch_naver(ticker):
 
 def main():
     print("="*60)
-    print("  ValueMap - Phase 1.2 v3 (167 tickers from SEED file)")
+    print("  Ornscore - Phase 1.2 v3 (167 tickers from SEED file)")
     print("="*60)
     tk_dict = extract_tickers()
     print(f"\n[1/4] Tickers from SEED: {len(tk_dict)}")

@@ -5,7 +5,7 @@ import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.
 import { compositeOf } from "@/lib/score";
 
 export const metadata = {
-  title: "관심 종목 — 밸류맵 스톡",
+  title: "관심 종목 — 오른스코어",
 };
 
 interface RawSignal {

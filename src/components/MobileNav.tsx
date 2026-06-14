@@ -79,7 +79,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">V</span>
-                <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">밸류맵</span>
+                <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">오른스코어</span>
               </Link>
               <button
                 type="button"

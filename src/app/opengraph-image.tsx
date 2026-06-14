@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "밸류맵 스톡 — 한국 주식 탐색 도구";
+export const alt = "오른스코어 — 한국 주식 탐색 도구";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -48,7 +48,7 @@ export default async function Image() {
             V
           </div>
           <div style={{ fontSize: 36, color: "#0F172A", fontWeight: 700 }}>
-            밸류맵
+            오른스코어
           </div>
         </div>
         <div
@@ -111,7 +111,7 @@ export default async function Image() {
             }}
           />
           <div style={{ fontSize: 22, color: "#64748B", fontWeight: 500 }}>
-            valuemap.kr
+            ornscore.com
           </div>
         </div>
       </div>

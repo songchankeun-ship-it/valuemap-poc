@@ -30,7 +30,7 @@ export interface ThemeInsightOutput {
   generatedAt: string;       // ISO date
 }
 
-export const THEME_INSIGHT_SYSTEM = `당신은 밸류맵(ValueMap)의 시장 인사이트 분석가입니다.
+export const THEME_INSIGHT_SYSTEM = `당신은 오른스코어(Ornscore)의 시장 인사이트 분석가입니다.
 
 **역할**:
 매일 아침 발행되는 "오늘의 인사이트" 단 한 편을 작성합니다. 사용자는 사이트 메인에서 이 인사이트를 30초 안에 읽고 오늘의 시장 흐름을 파악합니다.

@@ -9,8 +9,8 @@ export function ShareButton({ name, ticker }: { name: string; ticker: string }) 
   async function handleShare() {
     if (typeof window === "undefined") return;
     const url = `${window.location.origin}/stock/${ticker}`;
-    const title = `${name} (${ticker}) — 밸류맵`;
-    const text = `${name}의 자체 지표 4종 분석을 밸류맵에서 확인하세요.`;
+    const title = `${name} (${ticker}) — 오른스코어`;
+    const text = `${name}의 자체 지표 4종 분석을 오른스코어에서 확인하세요.`;
 
     // 모바일: Web Share API
     if (navigator.share) {

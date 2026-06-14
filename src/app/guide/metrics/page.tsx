@@ -2,7 +2,7 @@ import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
 
 export const metadata = {
-  title: "지표 가이드 — 밸류맵 스톡",
+  title: "지표 가이드 — 오른스코어",
   description: "자체 지표 4종이 어떻게 계산되고 어떻게 해석되는지 투명하게 공개합니다.",
 };
 
@@ -56,7 +56,7 @@ export default function GuidePage() {
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900">← 홈으로</Link>
         <h1 className="text-2xl font-bold mt-2">지표 가이드</h1>
         <p className="text-sm text-zinc-600 mt-2 leading-relaxed">
-          밸류맵은 한 종목을 네 각도로 봅니다. 각 지표가 어떻게 계산되고 무엇을 의미하는지 모두 공개합니다.
+          오른스코어은 한 종목을 네 각도로 봅니다. 각 지표가 어떻게 계산되고 무엇을 의미하는지 모두 공개합니다.
         </p>
       </header>
 

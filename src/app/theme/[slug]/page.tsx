@@ -67,7 +67,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
           </div>
           <div className="mt-2 p-3 bg-brand-50 rounded-md">
             <div className="text-[11px] text-brand-700 font-medium mb-0.5">
-              밸류맵 평가
+              오른스코어 평가
             </div>
             <div className="text-xs text-brand-700">
               {evaluate(theme.return1y, theme.value)}

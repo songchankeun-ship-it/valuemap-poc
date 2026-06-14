@@ -121,7 +121,7 @@ function median(arr: number[]): number {
 }
 
 export const metadata = {
-  title: "오늘 — 밸류맵 스톡",
+  title: "오늘 — 오른스코어",
   description: "오늘 자체 알고리즘이 발견한 종목들",
 };
 

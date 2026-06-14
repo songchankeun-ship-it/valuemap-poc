@@ -4,7 +4,7 @@ import { realStockPool } from "@/lib/realStocks";
 import { CompareClient } from "@/components/CompareClient";
 
 export const metadata = {
-  title: "종목 비교 — 밸류맵 스톡",
+  title: "종목 비교 — 오른스코어",
   description: "선택한 종목들의 지표·재무 데이터를 한눈에 비교.",
 };
 

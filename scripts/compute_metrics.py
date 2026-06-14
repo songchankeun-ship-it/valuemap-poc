@@ -78,7 +78,7 @@ def safe_avg(values, default=50):
 
 def main():
     print("="*60)
-    print("  ValueMap - Phase 2 v2 (None-safe)")
+    print("  Ornscore - Phase 2 v2 (None-safe)")
     print("="*60)
     data = load_stocks(); stocks = data["stocks"]; n = len(stocks)
     print(f"\n[1/4] Loaded: {n} stocks")

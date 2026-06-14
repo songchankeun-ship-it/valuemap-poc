@@ -12,12 +12,12 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const { theme } = await searchParams;
   if (theme) {
     return {
-      title: `${theme} 관련 종목 — 밸류맵 스톡`,
+      title: `${theme} 관련 종목 — 오른스코어`,
       description: `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험대비)으로 정렬·필터링합니다.`,
     };
   }
   return {
-    title: "종목 탐색 — 밸류맵 스톡",
+    title: "종목 탐색 — 오른스코어",
     description: "138개 종목을 자체 지표 4종으로 정렬·필터링",
   };
 }

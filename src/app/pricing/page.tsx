@@ -3,8 +3,8 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 import { FREE_COMPARE_LIMIT, FREE_WATCHLIST_LIMIT } from "@/lib/limits";
 
 export const metadata = {
-  title: "요금제 — 밸류맵 스톡",
-  description: "밸류맵 스톡 무료/Pro 요금제. 종목 탐색·기본 지표는 무료, 알림·조건 저장·백테스트는 Pro(출시 예정).",
+  title: "요금제 — 오른스코어",
+  description: "오른스코어 무료/Pro 요금제. 종목 탐색·기본 지표는 무료, 알림·조건 저장·백테스트는 Pro(출시 예정).",
 };
 
 const FREE = [
@@ -74,7 +74,7 @@ export default function PricingPage() {
       </div>
 
       <section className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-4 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-        밸류맵 스톡은 <strong>투자 추천 서비스가 아니라 데이터 기반 탐색 도구</strong>입니다. 유료 기능도 개별 종목 매수·매도 조언이 아니라
+        오른스코어은 <strong>투자 추천 서비스가 아니라 데이터 기반 탐색 도구</strong>입니다. 유료 기능도 개별 종목 매수·매도 조언이 아니라
         "정보·변화 알림"을 제공합니다. 모든 투자 판단과 책임은 본인에게 있습니다.
       </section>
     </div>

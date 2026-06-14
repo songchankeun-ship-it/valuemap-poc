@@ -4,7 +4,7 @@ import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 
 export const metadata = {
-  title: "백테스트 — 밸류맵 스톡",
+  title: "백테스트 — 오른스코어",
   description: "실데이터 기반 가격 신호 전략 검증. 누적수익률·MDD·Sharpe·알파 공개.",
 };
 

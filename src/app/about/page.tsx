@@ -3,8 +3,8 @@ import { dataMetadata } from "@/lib/realStocks";
 import { Mail, Database, Code, AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "서비스 소개 — 밸류맵 스톡",
-  description: "밸류맵이 누구를, 어떤 목적으로 만들어진 도구인지.",
+  title: "서비스 소개 — 오른스코어",
+  description: "오른스코어이 누구를, 어떤 목적으로 만들어진 도구인지.",
 };
 
 export default function AboutPage() {
@@ -13,7 +13,7 @@ export default function AboutPage() {
       <header>
         <h1 className="text-xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">서비스 소개</h1>
         <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          밸류맵은 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">"오늘 어떤 종목부터 봐야 할지"</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
+          오른스코어은 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">"오늘 어떤 종목부터 봐야 할지"</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
         </p>
       </header>
 
@@ -27,7 +27,7 @@ export default function AboutPage() {
             대부분의 개인 투자자는 종목 후보를 좁히는 데 시간을 가장 많이 씁니다. PER만 보면 다른 지표를 놓치고, 모멘텀만 보면 고평가 위험을 놓칩니다. 그래서 <strong className="text-zinc-900 dark:text-zinc-100">한 종목을 여러 각도로 동시에 보는 도구</strong>가 필요했습니다.
           </p>
           <p>
-            밸류맵은 <strong>모멘텀(추세) · 거래활성도(거래) · 밸류(저평가) · 변동성조정(위험 대비)</strong> 네 지표로 종목을 입체적으로 봅니다. 각 점수는 공개된 산식으로 계산되며, 어떤 데이터로 어떻게 만들어졌는지 모두 투명하게 공개합니다.
+            오른스코어은 <strong>모멘텀(추세) · 거래활성도(거래) · 밸류(저평가) · 변동성조정(위험 대비)</strong> 네 지표로 종목을 입체적으로 봅니다. 각 점수는 공개된 산식으로 계산되며, 어떤 데이터로 어떻게 만들어졌는지 모두 투명하게 공개합니다.
           </p>
         </div>
       </section>
@@ -35,7 +35,7 @@ export default function AboutPage() {
       <section className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-5 md:p-6">
         <div className="flex items-start gap-3 mb-3">
           <AlertTriangle className="w-5 h-5 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
-          <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">밸류맵은 투자 추천이 아닙니다</h2>
+          <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-200">오른스코어은 투자 추천이 아닙니다</h2>
         </div>
         <div className="space-y-2 text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
           <p>

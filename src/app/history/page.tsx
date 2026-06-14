@@ -3,7 +3,7 @@ import { HistoryClient } from "@/components/HistoryClient";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
-  title: "분석 기록 — 밸류맵 스톡",
+  title: "분석 기록 — 오른스코어",
 };
 
 export default async function HistoryPage() {

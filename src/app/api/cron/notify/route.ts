@@ -47,7 +47,7 @@ async function sendEmailViaResend(params: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "밸류맵 <noreply@valuemap.kr>",
+        from: "오른스코어 <noreply@ornscore.com>",
         to: [params.to],
         subject: params.subject,
         html: params.html,
@@ -101,7 +101,7 @@ function renderEmail(signals: Signal[]): string {
     sectionsHtml += `
       <div style="margin-bottom: 16px; padding: 14px 16px; border: 1px solid #e4e4e7; border-radius: 8px;">
         <div style="font-size: 11px; color: #a1a1aa; font-family: monospace; margin-bottom: 2px;">${stockCode}</div>
-        <a href="https://www.valuemap.kr/stock/${stockCode}" style="display: inline-block; font-size: 16px; font-weight: 700; color: #18181b; text-decoration: none;">${corpName} →</a>
+        <a href="https://www.ornscore.com/stock/${stockCode}" style="display: inline-block; font-size: 16px; font-weight: 700; color: #18181b; text-decoration: none;">${corpName} →</a>
         <div style="margin-top: 8px;">${signalListHtml}</div>
       </div>`;
   }
@@ -110,15 +110,15 @@ function renderEmail(signals: Signal[]): string {
   <div style="margin-bottom: 24px;">
     <div style="display: inline-flex; align-items: center; gap: 8px;">
       <span style="display: inline-block; width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; text-align: center; line-height: 28px; font-weight: 700; font-size: 14px;">V</span>
-      <span style="font-size: 16px; font-weight: 600;">밸류맵</span>
+      <span style="font-size: 16px; font-weight: 600;">오른스코어</span>
     </div>
   </div>
   <h1 style="font-size: 20px; font-weight: 700; margin: 0 0 8px;">관심 종목 새 공시 신호 ${signals.length}건</h1>
   <p style="font-size: 14px; color: #52525b; margin: 0 0 24px;">회원님의 관심 종목에서 새로운 DART 공시 신호가 발견됐어요.</p>
   ${sectionsHtml}
   <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e4e4e7; font-size: 12px; color: #71717a;">
-    <p style="margin: 0 0 8px;">알림이 너무 많거나 받고 싶지 않으면 <a href="https://www.valuemap.kr/settings/notifications" style="color: #3f3f46;">알림 설정</a>에서 끌 수 있어요.</p>
-    <p style="margin: 0; color: #a1a1aa;">ⓒ 밸류맵 · 본 분석은 투자 권유가 아닙니다. 원문 확인 권장.</p>
+    <p style="margin: 0 0 8px;">알림이 너무 많거나 받고 싶지 않으면 <a href="https://www.ornscore.com/settings/notifications" style="color: #3f3f46;">알림 설정</a>에서 끌 수 있어요.</p>
+    <p style="margin: 0; color: #a1a1aa;">ⓒ 오른스코어 · 본 분석은 투자 권유가 아닙니다. 원문 확인 권장.</p>
   </div>
 </div>`;
 }
@@ -205,7 +205,7 @@ export async function GET(req: Request) {
 
       // 이메일 발송
       const html = renderEmail(toSend);
-      const subject = `[밸류맵] 관심 종목 새 공시 신호 ${toSend.length}건`;
+      const subject = `[오른스코어] 관심 종목 새 공시 신호 ${toSend.length}건`;
       const sendResult = await sendEmailViaResend({ to: email, subject, html });
 
       if (sendResult.ok) {

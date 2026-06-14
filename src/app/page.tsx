@@ -67,25 +67,25 @@ function quickReason(s: { momentum: number; flow: number; value: number; vol: nu
 }
 
 export const metadata = {
-  title: "밸류맵 스톡 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
+  title: "오른스코어 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
   description: "코스피·코스닥 138개 종목의 모멘텀·거래활성도·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
   keywords: ["한국주식", "테마주", "종목분석", "코스피", "코스닥", "PER", "PBR", "ROE", "배당주", "공시", "DART", "퀀트", "밸류에이션", "모멘텀"],
   authors: [{ name: "필로소디" }],
   openGraph: {
-    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
+    title: "오른스코어 — 한국 주식 탐색 도구",
     description: "138개 종목의 모멘텀·거래활성도·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
-    url: "https://valuemap.kr",
-    siteName: "밸류맵 스톡",
+    url: "https://ornscore.com",
+    siteName: "오른스코어",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
+    title: "오른스코어 — 한국 주식 탐색 도구",
     description: "138개 종목의 4대 지표 · 공시 신호를 한 화면에서. 종목 탐색을 데이터로 좁혀보세요.",
   },
   alternates: {
-    canonical: "https://valuemap.kr",
+    canonical: "https://ornscore.com",
   },
 };
 
@@ -267,10 +267,10 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* 왜 밸류맵 + 분석 대상 & 한계 — 통합 정보 섹션 */}
+      {/* 왜 오른스코어 + 분석 대상 & 한계 — 통합 정보 섹션 */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-6 space-y-5">
         <div>
-          <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 밸류맵인가</div>
+          <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 오른스코어인가</div>
           <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
             한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">추세 · 거래활성도 · 밸류 · 위험대비</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 출처와 계산 근거를 확인할 수 있는 데이터만 사용합니다.
           </p>
@@ -293,7 +293,7 @@ export default async function HomePage() {
             </div>
             <div>
               <dt className="font-semibold text-zinc-800 dark:text-zinc-200 mb-0.5">투자 조언인가요?</dt>
-              <dd>아닙니다. 밸류맵은 <strong className="text-zinc-900 dark:text-zinc-100">탐색 우선순위</strong>를 정하는 분석 도구입니다. 매수·매도 결정은 본인 책임입니다.</dd>
+              <dd>아닙니다. 오른스코어은 <strong className="text-zinc-900 dark:text-zinc-100">탐색 우선순위</strong>를 정하는 분석 도구입니다. 매수·매도 결정은 본인 책임입니다.</dd>
             </div>
           </dl>
         </div>

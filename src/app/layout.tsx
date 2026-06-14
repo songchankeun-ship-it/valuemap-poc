@@ -9,24 +9,24 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { dataMetadata } from "@/lib/realStocks";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://valuemap.kr"),
+  metadataBase: new URL("https://ornscore.com"),
   title: {
-    default: "밸류맵 스톡 — 한국 주식 탐색 도구",
+    default: "오른스코어 — 한국 주식 탐색 도구",
     template: "%s",
   },
   description:
     "138개 종목의 자체 지표 4종 · PER · PBR · ROE · DART 공시 신호를 한 화면에서.",
   openGraph: {
-    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
+    title: "오른스코어 — 한국 주식 탐색 도구",
     description: "138개 종목 · 자체 지표 4종 · DART 공시 신호. 한국 테마주 분석을 한 화면에서.",
-    url: "https://valuemap.kr",
-    siteName: "밸류맵 스톡",
+    url: "https://ornscore.com",
+    siteName: "오른스코어",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "밸류맵 스톡 — 한국 주식 탐색 도구",
+    title: "오른스코어 — 한국 주식 탐색 도구",
     description: "138개 종목 · 자체 지표 4종 · DART 공시 신호",
   },
   robots: {
@@ -41,21 +41,21 @@ const siteJsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      name: "밸류맵",
-      url: "https://valuemap.kr",
-      logo: "https://valuemap.kr/icon.png",
+      name: "오른스코어",
+      url: "https://ornscore.com",
+      logo: "https://ornscore.com/icon.png",
       description: "한국 테마주 데이터 분석 도구",
       foundingDate: "2026",
       sameAs: [],
     },
     {
       "@type": "WebSite",
-      name: "밸류맵",
-      url: "https://valuemap.kr",
+      name: "오른스코어",
+      url: "https://ornscore.com",
       inLanguage: "ko-KR",
       potentialAction: {
         "@type": "SearchAction",
-        target: "https://valuemap.kr/stocks?q={search_term_string}",
+        target: "https://ornscore.com/stocks?q={search_term_string}",
         "query-input": "required name=search_term_string",
       },
     },
@@ -89,7 +89,7 @@ export default function RootLayout({
                 <span>·</span>
                 <span className="text-emerald-600/80 dark:text-emerald-500/80">데이터 상태 정상</span>
                 <span>·</span>
-                <span>밸류맵 스톡 — 투자 권유가 아닌 탐색 도구입니다</span>
+                <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>
                 <a href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">이용약관</a>
                 <a href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">개인정보</a>

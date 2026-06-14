@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "개인정보처리방침 — 밸류맵 스톡",
+  title: "개인정보처리방침 — 오른스코어",
 };
 
 export default function PrivacyPage() {
@@ -14,7 +14,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">1. 수집하는 개인정보</h2>
-          <p>밸류맵 스톡은 서비스 제공을 위해 다음 정보를 수집합니다:</p>
+          <p>오른스코어은 서비스 제공을 위해 다음 정보를 수집합니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>이메일 주소</strong> — 로그인, 알림 발송, 계정 식별</li>
             <li><strong>카카오 로그인 사용 시</strong> — 카카오 계정 식별자, 닉네임, 프로필 사진 (선택)</li>

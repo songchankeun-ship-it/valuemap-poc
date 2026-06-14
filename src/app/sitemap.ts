@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 
-const SITE = "https://valuemap.kr";
+const SITE = "https://ornscore.com";
 
 /**
  * 동적 sitemap: 정적 페이지 + 138개 종목 페이지 자동 포함.

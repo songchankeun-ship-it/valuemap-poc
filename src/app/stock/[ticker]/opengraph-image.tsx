@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getStockByTicker } from "@/lib/mockData";
 
 export const runtime = "nodejs";
-export const alt = "밸류맵 종목 분석";
+export const alt = "오른스코어 종목 분석";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -56,7 +56,7 @@ export default async function Image({ params }: { params: { ticker: string } }) 
           position: "relative",
         }}
       >
-        {/* 헤더 — 밸류맵 로고 */}
+        {/* 헤더 — 오른스코어 로고 */}
         <div
           style={{
             display: "flex",
@@ -82,11 +82,11 @@ export default async function Image({ params }: { params: { ticker: string } }) 
             V
           </div>
           <div style={{ fontSize: 30, color: "#0F172A", fontWeight: 700 }}>
-            밸류맵
+            오른스코어
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
-            <div style={{ fontSize: 18, color: "#64748B", fontWeight: 500 }}>valuemap.kr</div>
+            <div style={{ fontSize: 18, color: "#64748B", fontWeight: 500 }}>ornscore.com</div>
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default async function Image({ params }: { params: { ticker: string } }) 
           }}
         >
           <div>탐색 우선순위 · 매수·매도 추천이 아닙니다</div>
-          <div style={{ fontWeight: 600, color: "#0F172A" }}>밸류맵 · 한국 주식 탐색 도구</div>
+          <div style={{ fontWeight: 600, color: "#0F172A" }}>오른스코어 · 한국 주식 탐색 도구</div>
         </div>
       </div>
     ),
