@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T00:58:23.009773",
+  "generatedAt": "2026-06-14T18:19:40.056303",
   "source": "FDR + Naver + yfinance",
   "count": 138,
   "stocks": [
@@ -26,18 +26,21 @@
       "dividendYield": 0.41,
       "beta": 1.33,
       "peg": 0.21,
-      "momentum": 93.5,
+      "momentum": 94.2,
       "returns": {
-        "r1m": 13.56,
-        "r3m": 70.91,
-        "r6m": 200.56
+        "r1m": 15.59,
+        "r3m": 69.74,
+        "r6m": 208.61,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 197.34,
         "annualStd": 57.9,
         "sharpe": 3.35,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -23.3,
+        "worstDay": -11.74
       },
       "flow": 45.2,
       "flowStats": {
@@ -46,7 +49,7 @@
         "ratio": 0.94
       },
       "value": 42.0,
-      "compositeScore": 70.2,
+      "compositeScore": 70.4,
       "valueNA": false
     },
     {
@@ -73,16 +76,19 @@
       "peg": 3.34,
       "momentum": 97.1,
       "returns": {
-        "r1m": 8.81,
-        "r3m": 120.74,
-        "r6m": 280.53
+        "r1m": 17.17,
+        "r3m": 125.13,
+        "r6m": 289.49,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 251.42,
         "annualStd": 71.86,
         "sharpe": 3.45,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -26.57,
+        "worstDay": -11.5
       },
       "flow": 50.0,
       "flowStats": {
@@ -116,16 +122,19 @@
       "peg": 1.53,
       "momentum": 87.7,
       "returns": {
-        "r1m": -9.86,
-        "r3m": 20.33,
-        "r6m": 198.35
+        "r1m": -4.37,
+        "r3m": 15.52,
+        "r6m": 197.12,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 185.56,
         "annualStd": 89.16,
         "sharpe": 2.04,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -38.1,
+        "worstDay": -14.09
       },
       "flow": 58.1,
       "flowStats": {
@@ -158,18 +167,21 @@
       "dividendYield": 0.48,
       "beta": 2.19,
       "peg": null,
-      "momentum": 92.0,
+      "momentum": 92.8,
       "returns": {
-        "r1m": -6.09,
-        "r3m": 98.29,
-        "r6m": 162.11
+        "r1m": 5.13,
+        "r3m": 105.06,
+        "r6m": 165.7,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 171.34,
         "annualStd": 75.47,
         "sharpe": 2.22,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -31.53,
+        "worstDay": -14.59
       },
       "flow": 61.8,
       "flowStats": {
@@ -178,7 +190,7 @@
         "ratio": 1.47
       },
       "value": 64.6,
-      "compositeScore": 79.6,
+      "compositeScore": 79.8,
       "valueNA": false
     },
     {
@@ -200,18 +212,21 @@
       "dividendYield": 0.86,
       "beta": 0.32,
       "peg": null,
-      "momentum": 70.3,
+      "momentum": 71.7,
       "returns": {
-        "r1m": -6.95,
-        "r3m": -6.7,
-        "r6m": 62.02
+        "r1m": -3.6,
+        "r3m": -8.09,
+        "r6m": 58.33,
+        "r1y": 0
       },
       "volScore": 87.7,
       "volStats": {
         "annualReturn": 101.29,
         "annualStd": 64.83,
         "sharpe": 1.51,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.99,
+        "worstDay": -11.74
       },
       "flow": 64.7,
       "flowStats": {
@@ -220,7 +235,7 @@
         "ratio": 1.59
       },
       "value": 28.1,
-      "compositeScore": 62.7,
+      "compositeScore": 63.0,
       "valueNA": false
     },
     {
@@ -242,18 +257,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 84.1,
+      "momentum": 85.5,
       "returns": {
-        "r1m": -5.74,
-        "r3m": 4.55,
-        "r6m": 111.4
+        "r1m": -7.44,
+        "r3m": 31.88,
+        "r6m": 101.75,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 187.1,
         "annualStd": 83.46,
         "sharpe": 2.2,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.46,
+        "worstDay": -15.92
       },
       "flow": 68.3,
       "flowStats": {
@@ -262,7 +280,7 @@
         "ratio": 1.73
       },
       "value": 17.5,
-      "compositeScore": 67.5,
+      "compositeScore": 67.8,
       "valueNA": false
     },
     {
@@ -285,18 +303,21 @@
       "dividendYield": 0.2,
       "beta": 1.59,
       "peg": null,
-      "momentum": 92.8,
+      "momentum": 93.5,
       "returns": {
-        "r1m": 39.71,
-        "r3m": 51.36,
-        "r6m": 197.56
+        "r1m": 46.64,
+        "r3m": 52.75,
+        "r6m": 196.12,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 257.0,
         "annualStd": 101.48,
         "sharpe": 2.5,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.86,
+        "worstDay": -20.95
       },
       "flow": 74.6,
       "flowStats": {
@@ -305,7 +326,7 @@
         "ratio": 1.99
       },
       "value": 31.4,
-      "compositeScore": 74.7,
+      "compositeScore": 74.9,
       "valueNA": false
     },
     {
@@ -327,18 +348,21 @@
       "dividendYield": 0,
       "beta": 2.23,
       "peg": null,
-      "momentum": 97.8,
+      "momentum": 98.6,
       "returns": {
-        "r1m": 43.24,
-        "r3m": 175.15,
-        "r6m": 208.14
+        "r1m": 49.56,
+        "r3m": 179.68,
+        "r6m": 197.34,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 201.71,
         "annualStd": 85.66,
         "sharpe": 2.31,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -43.89,
+        "worstDay": -12.5
       },
       "flow": 33.4,
       "flowStats": {
@@ -347,7 +371,7 @@
         "ratio": 0.79
       },
       "value": 17.2,
-      "compositeScore": 62.1,
+      "compositeScore": 62.3,
       "valueNA": false
     },
     {
@@ -372,16 +396,19 @@
       "peg": null,
       "momentum": 89.9,
       "returns": {
-        "r1m": 29.29,
-        "r3m": 63.06,
-        "r6m": 142.78
+        "r1m": 39.38,
+        "r3m": 63.99,
+        "r6m": 130.65,
+        "r1y": 0
       },
       "volScore": 89.2,
       "volStats": {
         "annualReturn": 126.82,
         "annualStd": 78.68,
         "sharpe": 1.57,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -26.54,
+        "worstDay": -15.2
       },
       "flow": 72.3,
       "flowStats": {
@@ -416,18 +443,21 @@
       "dividendYield": 0,
       "beta": 1.01,
       "peg": 7.45,
-      "momentum": 50.7,
+      "momentum": 52.9,
       "returns": {
-        "r1m": -6.98,
-        "r3m": 9.29,
-        "r6m": -10.31
+        "r1m": -9.71,
+        "r3m": 8.25,
+        "r6m": -4.31,
+        "r1y": 0
       },
       "volScore": 69.9,
       "volStats": {
         "annualReturn": 47.42,
         "annualStd": 55.14,
         "sharpe": 0.8,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.39,
+        "worstDay": -11.58
       },
       "flow": 24.7,
       "flowStats": {
@@ -436,7 +466,7 @@
         "ratio": 0.68
       },
       "value": 17.9,
-      "compositeScore": 40.8,
+      "compositeScore": 41.4,
       "valueNA": false
     },
     {
@@ -461,18 +491,21 @@
       "dividendYield": 0.36,
       "beta": 1.62,
       "peg": 12.29,
-      "momentum": 84.8,
+      "momentum": 83.3,
       "returns": {
-        "r1m": -14.98,
-        "r3m": 40.73,
-        "r6m": 75.0
+        "r1m": -14.31,
+        "r3m": 34.75,
+        "r6m": 76.72,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 142.12,
         "annualStd": 65.43,
         "sharpe": 2.12,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.27,
+        "worstDay": -13.97
       },
       "flow": 30.2,
       "flowStats": {
@@ -481,7 +514,7 @@
         "ratio": 0.75
       },
       "value": 50.4,
-      "compositeScore": 66.4,
+      "compositeScore": 66.0,
       "valueNA": false
     },
     {
@@ -505,18 +538,21 @@
       "dividendYield": 1.84,
       "beta": 1.58,
       "peg": null,
-      "momentum": 31.9,
+      "momentum": 23.9,
       "returns": {
-        "r1m": -18.2,
-        "r3m": -2.93,
-        "r6m": -5.52
+        "r1m": -17.43,
+        "r3m": -11.21,
+        "r6m": -8.46,
+        "r1y": 0
       },
       "volScore": 61.8,
       "volStats": {
         "annualReturn": 31.34,
         "annualStd": 58.82,
         "sharpe": 0.47,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -31.11,
+        "worstDay": -16.73
       },
       "flow": 37.5,
       "flowStats": {
@@ -525,7 +561,7 @@
         "ratio": 0.84
       },
       "value": 50.7,
-      "compositeScore": 45.5,
+      "compositeScore": 43.5,
       "valueNA": false
     },
     {
@@ -549,18 +585,21 @@
       "dividendYield": 0.05,
       "beta": 0.93,
       "peg": null,
-      "momentum": 29.0,
+      "momentum": 34.1,
       "returns": {
-        "r1m": -13.75,
-        "r3m": -9.28,
-        "r6m": -2.19
+        "r1m": -17.27,
+        "r3m": -13.92,
+        "r6m": 8.35,
+        "r1y": 0
       },
       "volScore": 80.6,
       "volStats": {
         "annualReturn": 91.75,
         "annualStd": 71.99,
         "sharpe": 1.23,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.08,
+        "worstDay": -16.99
       },
       "flow": 42.0,
       "flowStats": {
@@ -569,7 +608,7 @@
         "ratio": 0.9
       },
       "value": 4.4,
-      "compositeScore": 39.0,
+      "compositeScore": 40.3,
       "valueNA": false
     },
     {
@@ -592,18 +631,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 24.6,
+      "momentum": 30.4,
       "returns": {
-        "r1m": -14.3,
-        "r3m": -20.7,
-        "r6m": 2.57
+        "r1m": -17.18,
+        "r3m": -28.4,
+        "r6m": 23.88,
+        "r1y": 0
       },
       "volScore": 89.8,
       "volStats": {
         "annualReturn": 140.92,
         "annualStd": 86.28,
         "sharpe": 1.59,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -43.14,
+        "worstDay": -18.41
       },
       "flow": 36.2,
       "flowStats": {
@@ -612,7 +654,7 @@
         "ratio": 0.83
       },
       "value": 6.9,
-      "compositeScore": 39.4,
+      "compositeScore": 40.8,
       "valueNA": false
     },
     {
@@ -634,18 +676,21 @@
       "dividendYield": 0,
       "beta": 0.86,
       "peg": null,
-      "momentum": 60.1,
+      "momentum": 55.8,
       "returns": {
-        "r1m": -20.71,
-        "r3m": 27.5,
-        "r6m": 5.51
+        "r1m": -23.43,
+        "r3m": 17.44,
+        "r6m": 5.59,
+        "r1y": 0
       },
       "volScore": 91.0,
       "volStats": {
         "annualReturn": 141.63,
         "annualStd": 84.28,
         "sharpe": 1.64,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -41.5,
+        "worstDay": -17.08
       },
       "flow": 23.1,
       "flowStats": {
@@ -654,7 +699,7 @@
         "ratio": 0.66
       },
       "value": 12.0,
-      "compositeScore": 46.6,
+      "compositeScore": 45.5,
       "valueNA": false
     },
     {
@@ -677,18 +722,21 @@
       "dividendYield": 0.4,
       "beta": 0.8,
       "peg": null,
-      "momentum": 31.2,
+      "momentum": 31.9,
       "returns": {
-        "r1m": -21.5,
-        "r3m": -2.37,
-        "r6m": -3.03
+        "r1m": -21.28,
+        "r3m": -7.38,
+        "r6m": 0.7,
+        "r1y": 0
       },
       "volScore": 64.5,
       "volStats": {
         "annualReturn": 42.35,
         "annualStd": 66.89,
         "sharpe": 0.58,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.75,
+        "worstDay": -18.1
       },
       "flow": 49.8,
       "flowStats": {
@@ -697,7 +745,7 @@
         "ratio": 1.0
       },
       "value": 16.1,
-      "compositeScore": 40.4,
+      "compositeScore": 40.6,
       "valueNA": false
     },
     {
@@ -721,16 +769,19 @@
       "peg": null,
       "momentum": 2.2,
       "returns": {
-        "r1m": -7.91,
-        "r3m": -37.59,
-        "r6m": -48.68
+        "r1m": -10.96,
+        "r3m": -40.26,
+        "r6m": -52.51,
+        "r1y": 0
       },
       "volScore": 47.6,
       "volStats": {
         "annualReturn": -5.8,
         "annualStd": 95.66,
         "sharpe": -0.1,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -69.41,
+        "worstDay": -29.94
       },
       "flow": 54.3,
       "flowStats": {
@@ -762,18 +813,21 @@
       "dividendYield": 0,
       "beta": 0.26,
       "peg": 2.06,
-      "momentum": 15.9,
+      "momentum": 15.2,
       "returns": {
-        "r1m": -8.16,
-        "r3m": -17.41,
-        "r6m": -22.41
+        "r1m": -10.26,
+        "r3m": -21.85,
+        "r6m": -21.7,
+        "r1y": 0
       },
       "volScore": 40.8,
       "volStats": {
         "annualReturn": -9.07,
         "annualStd": 34.01,
         "sharpe": -0.37,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -36.74,
+        "worstDay": -9.82
       },
       "flow": 44.8,
       "flowStats": {
@@ -782,7 +836,7 @@
         "ratio": 0.93
       },
       "value": 13.9,
-      "compositeScore": 28.8,
+      "compositeScore": 28.7,
       "valueNA": false
     },
     {
@@ -805,18 +859,21 @@
       "dividendYield": 0.4,
       "beta": 0.35,
       "peg": 0.85,
-      "momentum": 37.0,
+      "momentum": 36.2,
       "returns": {
-        "r1m": -4.72,
-        "r3m": -9.25,
-        "r6m": -2.78
+        "r1m": -6.1,
+        "r3m": -13.16,
+        "r6m": -0.98,
+        "r1y": 0
       },
       "volScore": 60.3,
       "volStats": {
         "annualReturn": 19.72,
         "annualStd": 39.45,
         "sharpe": 0.41,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.7,
+        "worstDay": -12.27
       },
       "flow": 44.8,
       "flowStats": {
@@ -825,7 +882,7 @@
         "ratio": 0.94
       },
       "value": 25.5,
-      "compositeScore": 41.9,
+      "compositeScore": 41.7,
       "valueNA": false
     },
     {
@@ -848,18 +905,21 @@
       "dividendYield": 0.1,
       "beta": 0.99,
       "peg": null,
-      "momentum": 26.1,
+      "momentum": 19.6,
       "returns": {
-        "r1m": -4.8,
-        "r3m": -5.07,
-        "r6m": -25.69
+        "r1m": -1.46,
+        "r3m": -6.39,
+        "r6m": -35.44,
+        "r1y": 0
       },
       "volScore": 49.1,
       "volStats": {
         "annualReturn": 1.32,
         "annualStd": 63.59,
         "sharpe": -0.03,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -48.21,
+        "worstDay": -22.35
       },
       "flow": 50.0,
       "flowStats": {
@@ -868,7 +928,7 @@
         "ratio": 1.0
       },
       "value": 5.1,
-      "compositeScore": 32.6,
+      "compositeScore": 30.9,
       "valueNA": false
     },
     {
@@ -891,18 +951,21 @@
       "dividendYield": 0,
       "beta": 1.31,
       "peg": null,
-      "momentum": 14.5,
+      "momentum": 17.4,
       "returns": {
-        "r1m": -17.54,
-        "r3m": -17.24,
-        "r6m": -16.14
+        "r1m": -16.28,
+        "r3m": -12.77,
+        "r6m": -19.67,
+        "r1y": 0
       },
       "volScore": 43.1,
       "volStats": {
         "annualReturn": -14.67,
         "annualStd": 66.15,
         "sharpe": -0.27,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -46.41,
+        "worstDay": -18.04
       },
       "flow": 68.9,
       "flowStats": {
@@ -911,7 +974,7 @@
         "ratio": 1.76
       },
       "value": 4.7,
-      "compositeScore": 32.8,
+      "compositeScore": 33.5,
       "valueNA": false
     },
     {
@@ -934,18 +997,21 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 52.2,
+      "momentum": 50.0,
       "returns": {
-        "r1m": -12.05,
-        "r3m": 1.03,
-        "r6m": 7.47
+        "r1m": -12.83,
+        "r3m": -1.41,
+        "r6m": 6.77,
+        "r1y": 0
       },
       "volScore": 35.2,
       "volStats": {
         "annualReturn": -28.17,
         "annualStd": 53.61,
         "sharpe": -0.59,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -44.85,
+        "worstDay": -10.27
       },
       "flow": 39.5,
       "flowStats": {
@@ -954,7 +1020,7 @@
         "ratio": 0.87
       },
       "value": 40.9,
-      "compositeScore": 42.0,
+      "compositeScore": 41.4,
       "valueNA": false
     },
     {
@@ -979,16 +1045,19 @@
       "peg": null,
       "momentum": 11.6,
       "returns": {
-        "r1m": -13.82,
-        "r3m": -16.6,
-        "r6m": -26.51
+        "r1m": -19.65,
+        "r3m": -19.65,
+        "r6m": -20.95,
+        "r1y": 0
       },
       "volScore": 40.0,
       "volStats": {
         "annualReturn": -18.46,
         "annualStd": 55.02,
         "sharpe": -0.4,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -44.44,
+        "worstDay": -11.9
       },
       "flow": 58.5,
       "flowStats": {
@@ -1023,16 +1092,19 @@
       "peg": null,
       "momentum": 4.3,
       "returns": {
-        "r1m": -14.58,
-        "r3m": -37.08,
-        "r6m": -35.38
+        "r1m": -15.58,
+        "r3m": -35.88,
+        "r6m": -35.96,
+        "r1y": 0
       },
       "volScore": 2.7,
       "volStats": {
         "annualReturn": -68.95,
         "annualStd": 38.26,
         "sharpe": -1.89,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -56.86,
+        "worstDay": -9.64
       },
       "flow": 52.3,
       "flowStats": {
@@ -1066,16 +1138,19 @@
       "peg": null,
       "momentum": 1.4,
       "returns": {
-        "r1m": -26.47,
-        "r3m": -51.28,
-        "r6m": -53.59
+        "r1m": -29.92,
+        "r3m": -50.05,
+        "r6m": -54.68,
+        "r1y": 0
       },
       "volScore": 65.9,
       "volStats": {
         "annualReturn": 60.01,
         "annualStd": 88.95,
         "sharpe": 0.64,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -63.91,
+        "worstDay": -19.47
       },
       "flow": 50.1,
       "flowStats": {
@@ -1108,18 +1183,21 @@
       "dividendYield": 1.37,
       "beta": 1.54,
       "peg": 4.13,
-      "momentum": 85.5,
+      "momentum": 86.2,
       "returns": {
-        "r1m": -14.51,
-        "r3m": 19.96,
-        "r6m": 105.41
+        "r1m": -6.04,
+        "r3m": 14.53,
+        "r6m": 127.77,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 134.54,
         "annualStd": 62.9,
         "sharpe": 2.08,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -33.9,
+        "worstDay": -15.8
       },
       "flow": 30.0,
       "flowStats": {
@@ -1128,7 +1206,7 @@
         "ratio": 0.75
       },
       "value": 85.4,
-      "compositeScore": 75.2,
+      "compositeScore": 75.4,
       "valueNA": false
     },
     {
@@ -1152,18 +1230,21 @@
       "dividendYield": 4.03,
       "beta": 0.99,
       "peg": 0.42,
-      "momentum": 62.3,
+      "momentum": 70.3,
       "returns": {
-        "r1m": -7.08,
+        "r1m": -0.89,
         "r3m": 2.96,
-        "r6m": 35.72
+        "r6m": 40.64,
+        "r1y": 0
       },
       "volScore": 82.2,
       "volStats": {
         "annualReturn": 68.7,
         "annualStd": 50.61,
         "sharpe": 1.29,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -29.51,
+        "worstDay": -14.04
       },
       "flow": 53.2,
       "flowStats": {
@@ -1172,7 +1253,7 @@
         "ratio": 1.13
       },
       "value": 79.9,
-      "compositeScore": 69.4,
+      "compositeScore": 71.4,
       "valueNA": false
     },
     {
@@ -1196,18 +1277,21 @@
       "dividendYield": 0.86,
       "beta": 0.95,
       "peg": 0.09,
-      "momentum": 86.2,
+      "momentum": 87.0,
       "returns": {
-        "r1m": -6.47,
-        "r3m": 51.37,
-        "r6m": 68.38
+        "r1m": 10.77,
+        "r3m": 43.5,
+        "r6m": 89.98,
+        "r1y": 0
       },
       "volScore": 86.9,
       "volStats": {
         "annualReturn": 98.73,
         "annualStd": 64.49,
         "sharpe": 1.48,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.54,
+        "worstDay": -14.83
       },
       "flow": 30.8,
       "flowStats": {
@@ -1216,7 +1300,7 @@
         "ratio": 0.76
       },
       "value": 83.6,
-      "compositeScore": 71.9,
+      "compositeScore": 72.1,
       "valueNA": false
     },
     {
@@ -1239,18 +1323,21 @@
       "dividendYield": 1.42,
       "beta": 1.03,
       "peg": null,
-      "momentum": 43.5,
+      "momentum": 47.1,
       "returns": {
-        "r1m": -21.13,
-        "r3m": -5.3,
-        "r6m": 18.86
+        "r1m": -17.67,
+        "r3m": -10.58,
+        "r6m": 21.1,
+        "r1y": 0
       },
       "volScore": 78.6,
       "volStats": {
         "annualReturn": 70.89,
         "annualStd": 58.85,
         "sharpe": 1.15,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -29.32,
+        "worstDay": -19.67
       },
       "flow": 34.7,
       "flowStats": {
@@ -1259,7 +1346,7 @@
         "ratio": 0.81
       },
       "value": 67.5,
-      "compositeScore": 56.1,
+      "compositeScore": 57.0,
       "valueNA": false
     },
     {
@@ -1282,18 +1369,21 @@
       "dividendYield": 0,
       "beta": 1.71,
       "peg": null,
-      "momentum": 18.1,
+      "momentum": 13.8,
       "returns": {
-        "r1m": -19.9,
-        "r3m": -6.81,
-        "r6m": -19.51
+        "r1m": -22.36,
+        "r3m": -12.38,
+        "r6m": -23.81,
+        "r1y": 0
       },
       "volScore": 53.2,
       "volStats": {
         "annualReturn": 13.27,
         "annualStd": 77.08,
         "sharpe": 0.13,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -50.42,
+        "worstDay": -16.88
       },
       "flow": 25.4,
       "flowStats": {
@@ -1302,7 +1392,7 @@
         "ratio": 0.69
       },
       "value": 33.6,
-      "compositeScore": 32.6,
+      "compositeScore": 31.5,
       "valueNA": false
     },
     {
@@ -1325,18 +1415,21 @@
       "dividendYield": 2.37,
       "beta": 1.3,
       "peg": 0.21,
-      "momentum": 29.7,
+      "momentum": 34.8,
       "returns": {
-        "r1m": -13.57,
-        "r3m": -2.81,
-        "r6m": -10.66
+        "r1m": -14.32,
+        "r3m": -5.24,
+        "r6m": -5.91,
+        "r1y": 0
       },
       "volScore": 58.8,
       "volStats": {
         "annualReturn": 21.56,
         "annualStd": 51.37,
         "sharpe": 0.35,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.26,
+        "worstDay": -14.16
       },
       "flow": 51.5,
       "flowStats": {
@@ -1345,7 +1438,7 @@
         "ratio": 1.06
       },
       "value": 48.9,
-      "compositeScore": 47.2,
+      "compositeScore": 48.5,
       "valueNA": false
     },
     {
@@ -1369,18 +1462,21 @@
       "dividendYield": 0,
       "beta": 0.96,
       "peg": 0.44,
-      "momentum": 33.3,
+      "momentum": 37.0,
       "returns": {
-        "r1m": -7.17,
-        "r3m": -14.56,
-        "r6m": -0.35
+        "r1m": -7.62,
+        "r3m": -15.64,
+        "r6m": 4.16,
+        "r1y": 0
       },
       "volScore": 68.0,
       "volStats": {
         "annualReturn": 48.93,
         "annualStd": 63.03,
         "sharpe": 0.72,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -31.82,
+        "worstDay": -19.87
       },
       "flow": 44.2,
       "flowStats": {
@@ -1389,7 +1485,7 @@
         "ratio": 0.93
       },
       "value": 38.3,
-      "compositeScore": 46.0,
+      "compositeScore": 46.9,
       "valueNA": false
     },
     {
@@ -1412,18 +1508,21 @@
       "dividendYield": 1.15,
       "beta": 1.08,
       "peg": null,
-      "momentum": 59.4,
+      "momentum": 61.6,
       "returns": {
-        "r1m": -11.32,
-        "r3m": 11.49,
-        "r6m": 16.28
+        "r1m": -8.06,
+        "r3m": 10.17,
+        "r6m": 21.72,
+        "r1y": 0
       },
       "volScore": 72.5,
       "volStats": {
         "annualReturn": 54.47,
         "annualStd": 56.56,
         "sharpe": 0.9,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.25,
+        "worstDay": -13.39
       },
       "flow": 38.2,
       "flowStats": {
@@ -1432,7 +1531,7 @@
         "ratio": 0.85
       },
       "value": 17.9,
-      "compositeScore": 47.0,
+      "compositeScore": 47.6,
       "valueNA": false
     },
     {
@@ -1456,18 +1555,21 @@
       "dividendYield": 0.3,
       "beta": 1.8,
       "peg": null,
-      "momentum": 61.6,
+      "momentum": 59.4,
       "returns": {
         "r1m": -3.02,
-        "r3m": 7.92,
-        "r6m": 16.35
+        "r3m": 2.71,
+        "r6m": 19.42,
+        "r1y": 0
       },
       "volScore": 58.5,
       "volStats": {
         "annualReturn": 24.66,
         "annualStd": 62.36,
         "sharpe": 0.34,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.94,
+        "worstDay": -18.88
       },
       "flow": 50.0,
       "flowStats": {
@@ -1476,7 +1578,7 @@
         "ratio": 1.0
       },
       "value": 48.5,
-      "compositeScore": 54.6,
+      "compositeScore": 54.1,
       "valueNA": false
     },
     {
@@ -1501,18 +1603,21 @@
       "dividendYield": 0.65,
       "beta": 0.89,
       "peg": null,
-      "momentum": 27.5,
+      "momentum": 37.7,
       "returns": {
-        "r1m": -16.17,
-        "r3m": -26.96,
-        "r6m": 19.25
+        "r1m": -16.04,
+        "r3m": -23.55,
+        "r6m": 24.48,
+        "r1y": 0
       },
       "volScore": 60.3,
       "volStats": {
         "annualReturn": 27.03,
         "annualStd": 57.15,
         "sharpe": 0.41,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.55,
+        "worstDay": -8.09
       },
       "flow": 41.8,
       "flowStats": {
@@ -1521,7 +1626,7 @@
         "ratio": 0.9
       },
       "value": 58.8,
-      "compositeScore": 47.1,
+      "compositeScore": 49.7,
       "valueNA": false
     },
     {
@@ -1545,18 +1650,21 @@
       "dividendYield": 1.13,
       "beta": 1.57,
       "peg": null,
-      "momentum": 49.3,
+      "momentum": 39.1,
       "returns": {
-        "r1m": -14.25,
-        "r3m": -19.65,
-        "r6m": 34.3
+        "r1m": -13.95,
+        "r3m": -28.02,
+        "r6m": 32.38,
+        "r1y": 0
       },
       "volScore": 59.3,
       "volStats": {
         "annualReturn": 33.72,
         "annualStd": 81.26,
         "sharpe": 0.37,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -40.6,
+        "worstDay": -18.22
       },
       "flow": 38.8,
       "flowStats": {
@@ -1565,7 +1673,7 @@
         "ratio": 0.86
       },
       "value": 62.4,
-      "compositeScore": 52.4,
+      "compositeScore": 49.9,
       "valueNA": false
     },
     {
@@ -1588,18 +1696,21 @@
       "dividendYield": 1.29,
       "beta": 1.36,
       "peg": null,
-      "momentum": 53.6,
+      "momentum": 46.4,
       "returns": {
-        "r1m": -11.36,
-        "r3m": 10.71,
-        "r6m": 5.66
+        "r1m": -14.14,
+        "r3m": 0.53,
+        "r6m": 2.68,
+        "r1y": 0
       },
       "volScore": 63.2,
       "volStats": {
         "annualReturn": 37.91,
         "annualStd": 64.92,
         "sharpe": 0.53,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.71,
+        "worstDay": -16.34
       },
       "flow": 31.7,
       "flowStats": {
@@ -1608,7 +1719,7 @@
         "ratio": 0.77
       },
       "value": 48.9,
-      "compositeScore": 49.3,
+      "compositeScore": 47.6,
       "valueNA": false
     },
     {
@@ -1634,16 +1745,19 @@
       "peg": 0.9,
       "momentum": 57.2,
       "returns": {
-        "r1m": -21.21,
-        "r3m": 13.04,
-        "r6m": 22.4
+        "r1m": -21.29,
+        "r3m": 9.28,
+        "r6m": 22.2,
+        "r1y": 0
       },
       "volScore": 74.3,
       "volStats": {
         "annualReturn": 50.96,
         "annualStd": 48.75,
         "sharpe": 0.97,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -33.08,
+        "worstDay": -14.15
       },
       "flow": 37.6,
       "flowStats": {
@@ -1675,18 +1789,21 @@
       "dividendYield": 2.28,
       "beta": 1.33,
       "peg": null,
-      "momentum": 7.2,
+      "momentum": 6.5,
       "returns": {
-        "r1m": -18.61,
-        "r3m": -25.5,
-        "r6m": -27.05
+        "r1m": -19.76,
+        "r3m": -30.35,
+        "r6m": -26.47,
+        "r1y": 0
       },
       "volScore": 40.9,
       "volStats": {
         "annualReturn": -19.24,
         "annualStd": 62.23,
         "sharpe": -0.37,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -58.91,
+        "worstDay": -15.73
       },
       "flow": 54.0,
       "flowStats": {
@@ -1695,7 +1812,7 @@
         "ratio": 1.16
       },
       "value": 82.8,
-      "compositeScore": 46.2,
+      "compositeScore": 46.1,
       "valueNA": false
     },
     {
@@ -1719,18 +1836,21 @@
       "dividendYield": 0.84,
       "beta": 1.19,
       "peg": null,
-      "momentum": 73.9,
+      "momentum": 74.6,
       "returns": {
-        "r1m": -11.72,
-        "r3m": 24.86,
-        "r6m": 33.57
+        "r1m": -13.67,
+        "r3m": 20.34,
+        "r6m": 37.8,
+        "r1y": 0
       },
       "volScore": 95.5,
       "volStats": {
         "annualReturn": 112.33,
         "annualStd": 59.85,
         "sharpe": 1.82,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.39,
+        "worstDay": -11.75
       },
       "flow": 55.3,
       "flowStats": {
@@ -1739,7 +1859,7 @@
         "ratio": 1.21
       },
       "value": 47.1,
-      "compositeScore": 67.9,
+      "compositeScore": 68.1,
       "valueNA": false
     },
     {
@@ -1764,18 +1884,21 @@
       "dividendYield": 0.94,
       "beta": 1.13,
       "peg": 32.68,
-      "momentum": 67.4,
+      "momentum": 66.7,
       "returns": {
-        "r1m": 22.58,
-        "r3m": 13.3,
-        "r6m": 1.44
+        "r1m": 21.08,
+        "r3m": 11.26,
+        "r6m": 0.2,
+        "r1y": 0
       },
       "volScore": 62.9,
       "volStats": {
         "annualReturn": 32.51,
         "annualStd": 56.05,
         "sharpe": 0.52,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.08,
+        "worstDay": -11.86
       },
       "flow": 61.7,
       "flowStats": {
@@ -1784,7 +1907,7 @@
         "ratio": 1.47
       },
       "value": 43.8,
-      "compositeScore": 59.0,
+      "compositeScore": 58.8,
       "valueNA": false
     },
     {
@@ -1809,18 +1932,21 @@
       "dividendYield": 0.18,
       "beta": 1.27,
       "peg": 1.2,
-      "momentum": 15.2,
+      "momentum": 15.9,
       "returns": {
-        "r1m": -3.38,
-        "r3m": -17.33,
-        "r6m": -29.9
+        "r1m": -4.71,
+        "r3m": -18.47,
+        "r6m": -31.52,
+        "r1y": 0
       },
       "volScore": 41.9,
       "volStats": {
         "annualReturn": -12.99,
         "annualStd": 50.6,
         "sharpe": -0.33,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -45.81,
+        "worstDay": -16.28
       },
       "flow": 38.9,
       "flowStats": {
@@ -1829,7 +1955,7 @@
         "ratio": 0.86
       },
       "value": 17.9,
-      "compositeScore": 28.5,
+      "compositeScore": 28.6,
       "valueNA": false
     },
     {
@@ -1853,18 +1979,21 @@
       "dividendYield": 0,
       "beta": 2.13,
       "peg": null,
-      "momentum": 18.8,
+      "momentum": 12.3,
       "returns": {
-        "r1m": -12.62,
-        "r3m": -22.35,
-        "r6m": -5.3
+        "r1m": -22.48,
+        "r3m": -25.95,
+        "r6m": -9.34,
+        "r1y": 0
       },
       "volScore": 47.8,
       "volStats": {
         "annualReturn": -3.53,
         "annualStd": 78.62,
         "sharpe": -0.09,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -55.22,
+        "worstDay": -16.19
       },
       "flow": 47.5,
       "flowStats": {
@@ -1873,7 +2002,7 @@
         "ratio": 0.97
       },
       "value": 10.6,
-      "compositeScore": 31.2,
+      "compositeScore": 29.6,
       "valueNA": false
     },
     {
@@ -1898,16 +2027,19 @@
       "peg": null,
       "momentum": 2.9,
       "returns": {
-        "r1m": -17.76,
-        "r3m": -33.18,
-        "r6m": -43.98
+        "r1m": -17.53,
+        "r3m": -31.6,
+        "r6m": -45.59,
+        "r1y": 0
       },
       "volScore": 21.2,
       "volStats": {
         "annualReturn": -55.01,
         "annualStd": 50.85,
         "sharpe": -1.15,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -63.79,
+        "worstDay": -12.5
       },
       "flow": 51.8,
       "flowStats": {
@@ -1942,16 +2074,19 @@
       "peg": null,
       "momentum": 8.7,
       "returns": {
-        "r1m": -2.39,
-        "r3m": -35.71,
-        "r6m": -23.6
+        "r1m": -2.81,
+        "r3m": -36.35,
+        "r6m": -23.99,
+        "r1y": 0
       },
       "volScore": 37.4,
       "volStats": {
         "annualReturn": -19.25,
         "annualStd": 45.22,
         "sharpe": -0.5,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -51.2,
+        "worstDay": -15.55
       },
       "flow": 45.4,
       "flowStats": {
@@ -1983,18 +2118,21 @@
       "dividendYield": 2.07,
       "beta": 0.4,
       "peg": null,
-      "momentum": 21.0,
+      "momentum": 18.8,
       "returns": {
-        "r1m": -1.76,
-        "r3m": -16.06,
-        "r6m": -18.2
+        "r1m": -4.46,
+        "r3m": -15.3,
+        "r6m": -20.61,
+        "r1y": 0
       },
       "volScore": 31.6,
       "volStats": {
         "annualReturn": -36.06,
         "annualStd": 53.68,
         "sharpe": -0.74,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -53.53,
+        "worstDay": -10.12
       },
       "flow": 60.4,
       "flowStats": {
@@ -2003,7 +2141,7 @@
         "ratio": 1.42
       },
       "value": 33.9,
-      "compositeScore": 36.7,
+      "compositeScore": 36.2,
       "valueNA": false
     },
     {
@@ -2026,18 +2164,21 @@
       "dividendYield": 0.69,
       "beta": 0.57,
       "peg": null,
-      "momentum": 10.1,
+      "momentum": 10.9,
       "returns": {
-        "r1m": -7.18,
-        "r3m": -25.73,
-        "r6m": -25.49
+        "r1m": -6.04,
+        "r3m": -27.83,
+        "r6m": -27.03,
+        "r1y": 0
       },
       "volScore": 20.4,
       "volStats": {
         "annualReturn": -54.66,
         "annualStd": 49.18,
         "sharpe": -1.18,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -62.34,
+        "worstDay": -9.7
       },
       "flow": 54.6,
       "flowStats": {
@@ -2046,7 +2187,7 @@
         "ratio": 1.18
       },
       "value": 47.8,
-      "compositeScore": 33.2,
+      "compositeScore": 33.4,
       "valueNA": false
     },
     {
@@ -2068,18 +2209,21 @@
       "dividendYield": 1.95,
       "beta": 0.93,
       "peg": null,
-      "momentum": 23.2,
+      "momentum": 21.0,
       "returns": {
-        "r1m": 1.07,
-        "r3m": -20.21,
-        "r6m": -13.63
+        "r1m": 1.19,
+        "r3m": -18.68,
+        "r6m": -20.65,
+        "r1y": 0
       },
       "volScore": 36.1,
       "volStats": {
         "annualReturn": -20.95,
         "annualStd": 44.02,
         "sharpe": -0.56,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -41.18,
+        "worstDay": -10.99
       },
       "flow": 54.6,
       "flowStats": {
@@ -2088,7 +2232,7 @@
         "ratio": 1.18
       },
       "value": 38.0,
-      "compositeScore": 38.0,
+      "compositeScore": 37.4,
       "valueNA": false
     },
     {
@@ -2111,18 +2255,21 @@
       "dividendYield": 4.45,
       "beta": 0.16,
       "peg": 4.43,
-      "momentum": 42.8,
+      "momentum": 41.3,
       "returns": {
-        "r1m": -7.59,
-        "r3m": -6.96,
-        "r6m": 6.82
+        "r1m": -8.51,
+        "r3m": -8.51,
+        "r6m": 3.4,
+        "r1y": 0
       },
       "volScore": 53.8,
       "volStats": {
         "annualReturn": 8.37,
         "annualStd": 31.67,
         "sharpe": 0.15,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -24.67,
+        "worstDay": -12.86
       },
       "flow": 49.8,
       "flowStats": {
@@ -2131,7 +2278,7 @@
         "ratio": 1.0
       },
       "value": 79.9,
-      "compositeScore": 56.6,
+      "compositeScore": 56.2,
       "valueNA": false
     },
     {
@@ -2155,18 +2302,21 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": null,
-      "momentum": 65.2,
+      "momentum": 68.1,
       "returns": {
-        "r1m": -1.91,
-        "r3m": 21.61,
-        "r6m": 11.38
+        "r1m": 8.93,
+        "r3m": 15.35,
+        "r6m": 8.68,
+        "r1y": 0
       },
       "volScore": 75.0,
       "volStats": {
         "annualReturn": 68.7,
         "annualStd": 65.13,
         "sharpe": 1.0,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -31.55,
+        "worstDay": -14.46
       },
       "flow": 10,
       "flowStats": {
@@ -2175,7 +2325,7 @@
         "ratio": 0.39
       },
       "value": 58.4,
-      "compositeScore": 52.2,
+      "compositeScore": 52.9,
       "valueNA": false
     },
     {
@@ -2198,18 +2348,21 @@
       "dividendYield": 0.34,
       "beta": 0.9,
       "peg": null,
-      "momentum": 75.4,
+      "momentum": 77.5,
       "returns": {
-        "r1m": 0.0,
-        "r3m": 16.37,
-        "r6m": 36.2
+        "r1m": 5.2,
+        "r3m": 25.24,
+        "r6m": 21.76,
+        "r1y": 0
       },
       "volScore": 75.7,
       "volStats": {
         "annualReturn": 60.0,
         "annualStd": 54.9,
         "sharpe": 1.03,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -23.96,
+        "worstDay": -14.61
       },
       "flow": 26.7,
       "flowStats": {
@@ -2218,7 +2371,7 @@
         "ratio": 0.71
       },
       "value": 48.5,
-      "compositeScore": 56.6,
+      "compositeScore": 57.1,
       "valueNA": false
     },
     {
@@ -2243,16 +2396,19 @@
       "peg": 3.72,
       "momentum": 78.3,
       "returns": {
-        "r1m": 5.51,
-        "r3m": 23.15,
-        "r6m": 32.63
+        "r1m": 3.13,
+        "r3m": 21.47,
+        "r6m": 29.79,
+        "r1y": 0
       },
       "volScore": 87.5,
       "volStats": {
         "annualReturn": 48.63,
         "annualStd": 30.11,
         "sharpe": 1.5,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -15.64,
+        "worstDay": -6.59
       },
       "flow": 53.8,
       "flowStats": {
@@ -2287,16 +2443,19 @@
       "peg": 1.51,
       "momentum": 91.3,
       "returns": {
-        "r1m": 25.98,
-        "r3m": 81.84,
-        "r6m": 151.8
+        "r1m": 28.71,
+        "r3m": 70.2,
+        "r6m": 146.33,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 130.6,
         "annualStd": 56.12,
         "sharpe": 2.26,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -23.96,
+        "worstDay": -10.84
       },
       "flow": 48.3,
       "flowStats": {
@@ -2329,18 +2488,21 @@
       "dividendYield": 1.06,
       "beta": 0.82,
       "peg": null,
-      "momentum": 87.0,
+      "momentum": 84.1,
       "returns": {
         "r1m": 32.18,
-        "r3m": 49.53,
-        "r6m": 35.89
+        "r3m": 44.95,
+        "r6m": 37.71,
+        "r1y": 0
       },
       "volScore": 70.2,
       "volStats": {
         "annualReturn": 59.49,
         "annualStd": 69.41,
         "sharpe": 0.81,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.85,
+        "worstDay": -16.99
       },
       "flow": 19.4,
       "flowStats": {
@@ -2349,7 +2511,7 @@
         "ratio": 0.62
       },
       "value": 50.4,
-      "compositeScore": 56.8,
+      "compositeScore": 56.0,
       "valueNA": false
     },
     {
@@ -2375,16 +2537,19 @@
       "peg": 4.23,
       "momentum": 99.3,
       "returns": {
-        "r1m": 66.57,
-        "r3m": 315.01,
-        "r6m": 535.99
+        "r1m": 78.91,
+        "r3m": 322.17,
+        "r6m": 556.7,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 296.71,
         "annualStd": 70.82,
         "sharpe": 4.14,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -22.29,
+        "worstDay": -11.37
       },
       "flow": 43.7,
       "flowStats": {
@@ -2417,18 +2582,21 @@
       "dividendYield": 3.04,
       "beta": 0.34,
       "peg": null,
-      "momentum": 81.2,
+      "momentum": 82.6,
       "returns": {
-        "r1m": 31.33,
-        "r3m": 40.65,
-        "r6m": 3.81
+        "r1m": 29.5,
+        "r3m": 31.46,
+        "r6m": 32.52,
+        "r1y": 0
       },
       "volScore": 73.0,
       "volStats": {
         "annualReturn": 56.85,
         "annualStd": 58.08,
         "sharpe": 0.92,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.08,
+        "worstDay": -22.3
       },
       "flow": 43.6,
       "flowStats": {
@@ -2437,7 +2605,7 @@
         "ratio": 0.92
       },
       "value": 77.7,
-      "compositeScore": 68.9,
+      "compositeScore": 69.2,
       "valueNA": false
     },
     {
@@ -2463,16 +2631,19 @@
       "peg": null,
       "momentum": 44.9,
       "returns": {
-        "r1m": -4.7,
-        "r3m": -0.3,
-        "r6m": -3.31
+        "r1m": -6.49,
+        "r3m": -0.2,
+        "r6m": -6.93,
+        "r1y": 0
       },
       "volScore": 34.0,
       "volStats": {
         "annualReturn": -15.49,
         "annualStd": 29.67,
         "sharpe": -0.64,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -29.5,
+        "worstDay": -8.29
       },
       "flow": 44.8,
       "flowStats": {
@@ -2505,18 +2676,21 @@
       "dividendYield": 0.6,
       "beta": 1.49,
       "peg": null,
-      "momentum": 82.6,
+      "momentum": 84.8,
       "returns": {
-        "r1m": -1.99,
-        "r3m": -1.32,
-        "r6m": 113.99
+        "r1m": 0.96,
+        "r3m": 5.85,
+        "r6m": 123.4,
+        "r1y": 0
       },
       "volScore": 81.5,
       "volStats": {
         "annualReturn": 99.82,
         "annualStd": 76.53,
         "sharpe": 1.26,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -38.26,
+        "worstDay": -15.68
       },
       "flow": 48.6,
       "flowStats": {
@@ -2525,7 +2699,7 @@
         "ratio": 0.98
       },
       "value": 83.9,
-      "compositeScore": 74.2,
+      "compositeScore": 74.7,
       "valueNA": false
     },
     {
@@ -2548,18 +2722,21 @@
       "dividendYield": 2.86,
       "beta": 0.74,
       "peg": 5.14,
-      "momentum": 72.5,
+      "momentum": 69.6,
       "returns": {
-        "r1m": 4.62,
-        "r3m": 10.67,
-        "r6m": 29.18
+        "r1m": 3.0,
+        "r3m": 9.33,
+        "r6m": 24.66,
+        "r1y": 0
       },
       "volScore": 87.7,
       "volStats": {
         "annualReturn": 58.41,
         "annualStd": 36.37,
         "sharpe": 1.51,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -17.26,
+        "worstDay": -9.67
       },
       "flow": 54.5,
       "flowStats": {
@@ -2568,7 +2745,7 @@
         "ratio": 1.18
       },
       "value": 90.9,
-      "compositeScore": 76.4,
+      "compositeScore": 75.7,
       "valueNA": false
     },
     {
@@ -2592,18 +2769,21 @@
       "dividendYield": 2.94,
       "beta": 0.77,
       "peg": 0.74,
-      "momentum": 69.6,
+      "momentum": 65.9,
       "returns": {
-        "r1m": 6.05,
-        "r3m": 7.97,
-        "r6m": 29.17
+        "r1m": 4.95,
+        "r3m": 6.54,
+        "r6m": 22.4,
+        "r1y": 0
       },
       "volScore": 79.2,
       "volStats": {
         "annualReturn": 49.83,
         "annualStd": 39.63,
         "sharpe": 1.17,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -18.42,
+        "worstDay": -11.71
       },
       "flow": 53.8,
       "flowStats": {
@@ -2612,7 +2792,7 @@
         "ratio": 1.15
       },
       "value": 91.6,
-      "compositeScore": 73.6,
+      "compositeScore": 72.6,
       "valueNA": false
     },
     {
@@ -2635,18 +2815,21 @@
       "dividendYield": 3.91,
       "beta": 0.83,
       "peg": 4.79,
-      "momentum": 71.7,
+      "momentum": 63.0,
       "returns": {
-        "r1m": -1.06,
-        "r3m": 11.62,
-        "r6m": 32.1
+        "r1m": -1.71,
+        "r3m": 6.7,
+        "r6m": 26.04,
+        "r1y": 0
       },
       "volScore": 80.6,
       "volStats": {
         "annualReturn": 51.16,
         "annualStd": 38.96,
         "sharpe": 1.22,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -19.65,
+        "worstDay": -12.16
       },
       "flow": 51.6,
       "flowStats": {
@@ -2655,7 +2838,7 @@
         "ratio": 1.07
       },
       "value": 93.8,
-      "compositeScore": 74.4,
+      "compositeScore": 72.2,
       "valueNA": false
     },
     {
@@ -2678,18 +2861,21 @@
       "dividendYield": 4.62,
       "beta": 0.67,
       "peg": 2.56,
-      "momentum": 54.3,
+      "momentum": 55.1,
       "returns": {
-        "r1m": 0.0,
-        "r3m": -2.35,
-        "r6m": 13.27
+        "r1m": -2.04,
+        "r3m": -6.6,
+        "r6m": 9.3,
+        "r1y": 0
       },
       "volScore": 81.1,
       "volStats": {
         "annualReturn": 47.99,
         "annualStd": 35.72,
         "sharpe": 1.25,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -29.29,
+        "worstDay": -9.92
       },
       "flow": 53.9,
       "flowStats": {
@@ -2698,7 +2884,7 @@
         "ratio": 1.16
       },
       "value": 93.8,
-      "compositeScore": 70.8,
+      "compositeScore": 71.0,
       "valueNA": false
     },
     {
@@ -2721,18 +2907,21 @@
       "dividendYield": 2.96,
       "beta": 0.83,
       "peg": null,
-      "momentum": 64.5,
+      "momentum": 67.4,
       "returns": {
-        "r1m": 3.3,
-        "r3m": 7.91,
-        "r6m": 20.36
+        "r1m": 7.04,
+        "r3m": 8.13,
+        "r6m": 18.75,
+        "r1y": 0
       },
       "volScore": 66.7,
       "volStats": {
         "annualReturn": 31.78,
         "annualStd": 42.23,
         "sharpe": 0.67,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -22.63,
+        "worstDay": -10.32
       },
       "flow": 50.9,
       "flowStats": {
@@ -2741,7 +2930,7 @@
         "ratio": 1.04
       },
       "value": 71.2,
-      "compositeScore": 63.3,
+      "compositeScore": 64.0,
       "valueNA": false
     },
     {
@@ -2764,18 +2953,21 @@
       "dividendYield": 1.2,
       "beta": 1.3,
       "peg": null,
-      "momentum": 89.1,
+      "momentum": 88.4,
       "returns": {
-        "r1m": 7.82,
-        "r3m": 79.43,
-        "r6m": 126.77
+        "r1m": 9.61,
+        "r3m": 64.95,
+        "r6m": 122.1,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 130.43,
         "annualStd": 59.3,
         "sharpe": 2.14,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.76,
+        "worstDay": -13.04
       },
       "flow": 36.8,
       "flowStats": {
@@ -2784,7 +2976,7 @@
         "ratio": 0.83
       },
       "value": 77.4,
-      "compositeScore": 75.8,
+      "compositeScore": 75.6,
       "valueNA": false
     },
     {
@@ -2807,18 +2999,21 @@
       "dividendYield": 2.21,
       "beta": 0.91,
       "peg": null,
-      "momentum": 74.6,
+      "momentum": 73.2,
       "returns": {
-        "r1m": -2.02,
-        "r3m": 20.2,
-        "r6m": 30.35
+        "r1m": -3.53,
+        "r3m": 14.15,
+        "r6m": 30.84,
+        "r1y": 0
       },
       "volScore": 70.8,
       "volStats": {
         "annualReturn": 52.55,
         "annualStd": 59.04,
         "sharpe": 0.83,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.77,
+        "worstDay": -15.56
       },
       "flow": 16.4,
       "flowStats": {
@@ -2827,7 +3022,7 @@
         "ratio": 0.58
       },
       "value": 77.4,
-      "compositeScore": 59.8,
+      "compositeScore": 59.4,
       "valueNA": false
     },
     {
@@ -2850,18 +3045,21 @@
       "dividendYield": 1.32,
       "beta": 1.44,
       "peg": null,
-      "momentum": 50.0,
+      "momentum": 45.7,
       "returns": {
-        "r1m": -19.56,
-        "r3m": 0.14,
-        "r6m": 14.4
+        "r1m": -17.57,
+        "r3m": -6.55,
+        "r6m": 14.97,
+        "r1y": 0
       },
       "volScore": 63.1,
       "volStats": {
         "annualReturn": 35.22,
         "annualStd": 60.36,
         "sharpe": 0.53,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.86,
+        "worstDay": -18.48
       },
       "flow": 35.1,
       "flowStats": {
@@ -2870,7 +3068,7 @@
         "ratio": 0.81
       },
       "value": 85.8,
-      "compositeScore": 58.5,
+      "compositeScore": 57.4,
       "valueNA": false
     },
     {
@@ -2894,18 +3092,21 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": 0.11,
-      "momentum": 39.1,
+      "momentum": 44.2,
       "returns": {
-        "r1m": -13.37,
-        "r3m": -6.43,
-        "r6m": 4.26
+        "r1m": -14.33,
+        "r3m": -6.6,
+        "r6m": 8.91,
+        "r1y": 0
       },
       "volScore": 74.1,
       "volStats": {
         "annualReturn": 56.31,
         "annualStd": 54.81,
         "sharpe": 0.96,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -26.45,
+        "worstDay": -16.07
       },
       "flow": 36.3,
       "flowStats": {
@@ -2914,7 +3115,7 @@
         "ratio": 0.83
       },
       "value": 24.8,
-      "compositeScore": 43.6,
+      "compositeScore": 44.8,
       "valueNA": false
     },
     {
@@ -2936,18 +3137,21 @@
       "dividendYield": 0.89,
       "beta": 0.73,
       "peg": null,
-      "momentum": 39.9,
+      "momentum": 42.0,
       "returns": {
-        "r1m": -15.66,
-        "r3m": 1.07,
-        "r6m": -1.86
+        "r1m": -14.59,
+        "r3m": 4.18,
+        "r6m": -5.95,
+        "r1y": 0
       },
       "volScore": 23.6,
       "volStats": {
         "annualReturn": -38.53,
         "annualStd": 39.86,
         "sharpe": -1.05,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -44.84,
+        "worstDay": -10.59
       },
       "flow": 40.9,
       "flowStats": {
@@ -2956,7 +3160,7 @@
         "ratio": 0.89
       },
       "value": 52.9,
-      "compositeScore": 39.3,
+      "compositeScore": 39.8,
       "valueNA": false
     },
     {
@@ -2978,18 +3182,21 @@
       "dividendYield": 4.88,
       "beta": 0.5,
       "peg": null,
-      "momentum": 13.0,
+      "momentum": 14.5,
       "returns": {
-        "r1m": -13.58,
-        "r3m": -22.88,
-        "r6m": -14.74
+        "r1m": -14.74,
+        "r3m": -21.09,
+        "r6m": -18.56,
+        "r1y": 0
       },
       "volScore": 17.6,
       "volStats": {
         "annualReturn": -42.8,
         "annualStd": 35.77,
         "sharpe": -1.29,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -43.44,
+        "worstDay": -10.75
       },
       "flow": 42.0,
       "flowStats": {
@@ -2998,7 +3205,7 @@
         "ratio": 0.9
       },
       "value": 71.9,
-      "compositeScore": 36.1,
+      "compositeScore": 36.5,
       "valueNA": false
     },
     {
@@ -3020,18 +3227,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 13.8,
+      "momentum": 16.7,
       "returns": {
         "r1m": -2.32,
-        "r3m": -28.46,
-        "r6m": -17.93
+        "r3m": -24.5,
+        "r6m": -25.5,
+        "r1y": 0
       },
       "volScore": 43.7,
       "volStats": {
         "annualReturn": -7.64,
         "annualStd": 43.94,
         "sharpe": -0.25,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.42,
+        "worstDay": -13.7
       },
       "flow": 59.7,
       "flowStats": {
@@ -3040,7 +3250,7 @@
         "ratio": 1.39
       },
       "value": 63.1,
-      "compositeScore": 45.1,
+      "compositeScore": 45.8,
       "valueNA": false
     },
     {
@@ -3065,15 +3275,18 @@
       "momentum": 0.7,
       "returns": {
         "r1m": -22.04,
-        "r3m": -66.24,
-        "r6m": -50.51
+        "r3m": -62.39,
+        "r6m": -54.4,
+        "r1y": 0
       },
       "volScore": 14.2,
       "volStats": {
         "annualReturn": -90.44,
         "annualStd": 65.61,
         "sharpe": -1.43,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -75.3,
+        "worstDay": -13.65
       },
       "flow": 53.1,
       "flowStats": {
@@ -3105,18 +3318,21 @@
       "dividendYield": 1.31,
       "beta": 0.63,
       "peg": null,
-      "momentum": 22.5,
+      "momentum": 21.7,
       "returns": {
-        "r1m": -14.19,
-        "r3m": -13.05,
-        "r6m": -8.24
+        "r1m": -9.6,
+        "r3m": -16.54,
+        "r6m": -11.87,
+        "r1y": 0
       },
       "volScore": 29.6,
       "volStats": {
         "annualReturn": -30.05,
         "annualStd": 41.11,
         "sharpe": -0.82,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -40.33,
+        "worstDay": -9.45
       },
       "flow": 31.7,
       "flowStats": {
@@ -3125,7 +3341,7 @@
         "ratio": 0.77
       },
       "value": 45.6,
-      "compositeScore": 32.4,
+      "compositeScore": 32.2,
       "valueNA": false
     },
     {
@@ -3148,18 +3364,21 @@
       "dividendYield": 5.79,
       "beta": 0.44,
       "peg": null,
-      "momentum": 26.8,
+      "momentum": 27.5,
       "returns": {
         "r1m": -2.02,
-        "r3m": -11.41,
-        "r6m": -17.13
+        "r3m": -11.03,
+        "r6m": -17.56,
+        "r1y": 0
       },
       "volScore": 26.9,
       "volStats": {
         "annualReturn": -12.67,
         "annualStd": 17.48,
         "sharpe": -0.93,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -23.62,
+        "worstDay": -4.38
       },
       "flow": 67.9,
       "flowStats": {
@@ -3168,7 +3387,7 @@
         "ratio": 1.72
       },
       "value": 94.5,
-      "compositeScore": 54.0,
+      "compositeScore": 54.2,
       "valueNA": false
     },
     {
@@ -3191,18 +3410,21 @@
       "dividendYield": 4.01,
       "beta": 0.63,
       "peg": null,
-      "momentum": 63.0,
+      "momentum": 60.1,
       "returns": {
-        "r1m": -2.85,
-        "r3m": 7.21,
-        "r6m": 26.52
+        "r1m": -4.17,
+        "r3m": 2.43,
+        "r6m": 21.73,
+        "r1y": 0
       },
       "volScore": 80.3,
       "volStats": {
         "annualReturn": 49.21,
         "annualStd": 37.71,
         "sharpe": 1.21,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -24.8,
+        "worstDay": -10.06
       },
       "flow": 53.3,
       "flowStats": {
@@ -3211,7 +3433,7 @@
         "ratio": 1.13
       },
       "value": 97.8,
-      "compositeScore": 73.6,
+      "compositeScore": 72.9,
       "valueNA": false
     },
     {
@@ -3233,18 +3455,21 @@
       "dividendYield": 3.6,
       "beta": 1.48,
       "peg": null,
-      "momentum": 76.1,
+      "momentum": 73.9,
       "returns": {
-        "r1m": -4.37,
-        "r3m": 7.61,
-        "r6m": 53.18
+        "r1m": -3.61,
+        "r3m": 4.79,
+        "r6m": 46.2,
+        "r1y": 0
       },
       "volScore": 83.3,
       "volStats": {
         "annualReturn": 87.07,
         "annualStd": 62.82,
         "sharpe": 1.33,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.77,
+        "worstDay": -14.14
       },
       "flow": 43.9,
       "flowStats": {
@@ -3253,7 +3478,7 @@
         "ratio": 0.92
       },
       "value": 89.1,
-      "compositeScore": 73.1,
+      "compositeScore": 72.6,
       "valueNA": false
     },
     {
@@ -3276,18 +3501,21 @@
       "dividendYield": 0.52,
       "beta": 1.46,
       "peg": null,
-      "momentum": 80.4,
+      "momentum": 79.7,
       "returns": {
-        "r1m": -28.26,
-        "r3m": -26.23,
-        "r6m": 145.46
+        "r1m": -29.61,
+        "r3m": -26.43,
+        "r6m": 136.09,
+        "r1y": 0
       },
       "volScore": 89.8,
       "volStats": {
         "annualReturn": 133.36,
         "annualStd": 81.61,
         "sharpe": 1.59,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -40.63,
+        "worstDay": -15.16
       },
       "flow": 56.9,
       "flowStats": {
@@ -3296,7 +3524,7 @@
         "ratio": 1.28
       },
       "value": 71.9,
-      "compositeScore": 74.8,
+      "compositeScore": 74.6,
       "valueNA": false
     },
     {
@@ -3323,15 +3551,18 @@
       "momentum": 81.9,
       "returns": {
         "r1m": -19.56,
-        "r3m": 34.13,
-        "r6m": 70.68
+        "r3m": 33.28,
+        "r6m": 78.15,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 174.74,
         "annualStd": 64.48,
         "sharpe": 2.66,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -30.54,
+        "worstDay": -12.37
       },
       "flow": 50.6,
       "flowStats": {
@@ -3365,16 +3596,19 @@
       "peg": null,
       "momentum": 96.4,
       "returns": {
-        "r1m": 58.02,
-        "r3m": 178.33,
-        "r6m": 137.62
+        "r1m": 53.31,
+        "r3m": 165.13,
+        "r6m": 130.42,
+        "r1y": 0
       },
       "volScore": 97.6,
       "volStats": {
         "annualReturn": 170.03,
         "annualStd": 87.53,
         "sharpe": 1.9,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.24,
+        "worstDay": -15.95
       },
       "flow": 98.6,
       "flowStats": {
@@ -3406,18 +3640,21 @@
       "dividendYield": 4.13,
       "beta": 0.66,
       "peg": null,
-      "momentum": 73.2,
+      "momentum": 64.5,
       "returns": {
-        "r1m": 0.83,
-        "r3m": 16.37,
-        "r6m": 29.23
+        "r1m": -4.86,
+        "r3m": 11.2,
+        "r6m": 23.93,
+        "r1y": 0
       },
       "volScore": 77.8,
       "volStats": {
         "annualReturn": 52.69,
         "annualStd": 44.16,
         "sharpe": 1.11,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -21.35,
+        "worstDay": -12.91
       },
       "flow": 46.1,
       "flowStats": {
@@ -3426,7 +3663,7 @@
         "ratio": 0.95
       },
       "value": 96.7,
-      "compositeScore": 73.4,
+      "compositeScore": 71.3,
       "valueNA": false
     },
     {
@@ -3449,18 +3686,21 @@
       "dividendYield": 6.68,
       "beta": 0.22,
       "peg": null,
-      "momentum": 52.9,
+      "momentum": 53.6,
       "returns": {
-        "r1m": 8.78,
-        "r3m": 0.25,
-        "r6m": -10.11
+        "r1m": 7.8,
+        "r3m": -0.24,
+        "r6m": -9.71,
+        "r1y": 0
       },
       "volScore": 50.5,
       "volStats": {
         "annualReturn": 3.96,
         "annualStd": 25.21,
         "sharpe": 0.02,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -21.21,
+        "worstDay": -7.31
       },
       "flow": 64.1,
       "flowStats": {
@@ -3469,7 +3709,7 @@
         "ratio": 1.56
       },
       "value": 60.2,
-      "compositeScore": 56.9,
+      "compositeScore": 57.1,
       "valueNA": false
     },
     {
@@ -3492,18 +3732,21 @@
       "dividendYield": 0.11,
       "beta": 1.66,
       "peg": 4.51,
-      "momentum": 34.1,
+      "momentum": 28.3,
       "returns": {
-        "r1m": -20.72,
-        "r3m": 4.29,
-        "r6m": -10.18
+        "r1m": -23.6,
+        "r3m": -5.27,
+        "r6m": -3.2,
+        "r1y": 0
       },
       "volScore": 77.3,
       "volStats": {
         "annualReturn": 75.94,
         "annualStd": 66.29,
         "sharpe": 1.09,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.6,
+        "worstDay": -18.23
       },
       "flow": 49.4,
       "flowStats": {
@@ -3512,7 +3755,7 @@
         "ratio": 0.99
       },
       "value": 4.7,
-      "compositeScore": 41.4,
+      "compositeScore": 39.9,
       "valueNA": false
     },
     {
@@ -3534,18 +3777,21 @@
       "dividendYield": 2.73,
       "beta": 0.36,
       "peg": null,
-      "momentum": 65.9,
+      "momentum": 63.8,
       "returns": {
-        "r1m": -1.67,
+        "r1m": -2.59,
         "r3m": 5.04,
-        "r6m": 33.37
+        "r6m": 29.67,
+        "r1y": 0
       },
       "volScore": 68.1,
       "volStats": {
         "annualReturn": 25.11,
         "annualStd": 29.8,
         "sharpe": 0.73,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -18.34,
+        "worstDay": -5.95
       },
       "flow": 39.8,
       "flowStats": {
@@ -3554,7 +3800,7 @@
         "ratio": 0.87
       },
       "value": 56.2,
-      "compositeScore": 57.5,
+      "compositeScore": 57.0,
       "valueNA": false
     },
     {
@@ -3578,18 +3824,21 @@
       "dividendYield": 0,
       "beta": 1.46,
       "peg": null,
-      "momentum": 25.4,
+      "momentum": 29.0,
       "returns": {
-        "r1m": -12.02,
-        "r3m": -18.64,
-        "r6m": -2.04
+        "r1m": -14.96,
+        "r3m": -11.11,
+        "r6m": -3.57,
+        "r1y": 0
       },
       "volScore": 91.5,
       "volStats": {
         "annualReturn": 146.67,
         "annualStd": 86.19,
         "sharpe": 1.66,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -42.01,
+        "worstDay": -17.17
       },
       "flow": 24.0,
       "flowStats": {
@@ -3598,7 +3847,7 @@
         "ratio": 0.68
       },
       "value": 39.1,
-      "compositeScore": 45.0,
+      "compositeScore": 45.9,
       "valueNA": false
     },
     {
@@ -3622,18 +3871,21 @@
       "dividendYield": 0.51,
       "beta": 1.51,
       "peg": null,
-      "momentum": 68.8,
+      "momentum": 72.5,
       "returns": {
-        "r1m": -12.41,
-        "r3m": -31.43,
-        "r6m": 99.79
+        "r1m": -14.06,
+        "r3m": -35.0,
+        "r6m": 105.13,
+        "r1y": 0
       },
       "volScore": 71.2,
       "volStats": {
         "annualReturn": 76.95,
         "annualStd": 86.62,
         "sharpe": 0.85,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -46.83,
+        "worstDay": -20.93
       },
       "flow": 52.7,
       "flowStats": {
@@ -3642,7 +3894,7 @@
         "ratio": 1.11
       },
       "value": 61.7,
-      "compositeScore": 63.6,
+      "compositeScore": 64.5,
       "valueNA": false
     },
     {
@@ -3666,18 +3918,21 @@
       "dividendYield": 0.31,
       "beta": 0.93,
       "peg": null,
-      "momentum": 58.0,
+      "momentum": 58.7,
       "returns": {
-        "r1m": 6.86,
-        "r3m": 3.18,
-        "r6m": 8.41
+        "r1m": 9.3,
+        "r3m": -0.58,
+        "r6m": 10.1,
+        "r1y": 0
       },
       "volScore": 51.9,
       "volStats": {
         "annualReturn": 8.51,
         "annualStd": 65.07,
         "sharpe": 0.08,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.48,
+        "worstDay": -17.22
       },
       "flow": 18.6,
       "flowStats": {
@@ -3686,7 +3941,7 @@
         "ratio": 0.61
       },
       "value": 52.9,
-      "compositeScore": 45.4,
+      "compositeScore": 45.5,
       "valueNA": false
     },
     {
@@ -3709,18 +3964,21 @@
       "dividendYield": 0.39,
       "beta": 0.43,
       "peg": null,
-      "momentum": 21.7,
+      "momentum": 26.8,
       "returns": {
-        "r1m": -7.64,
-        "r3m": -17.8,
-        "r6m": -8.67
+        "r1m": -9.57,
+        "r3m": -16.12,
+        "r6m": -5.3,
+        "r1y": 0
       },
       "volScore": 71.9,
       "volStats": {
         "annualReturn": 58.22,
         "annualStd": 62.54,
         "sharpe": 0.87,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.35,
+        "worstDay": -16.4
       },
       "flow": 30.9,
       "flowStats": {
@@ -3729,7 +3987,7 @@
         "ratio": 0.76
       },
       "value": 27.7,
-      "compositeScore": 38.0,
+      "compositeScore": 39.3,
       "valueNA": false
     },
     {
@@ -3755,16 +4013,19 @@
       "peg": null,
       "momentum": 9.4,
       "returns": {
-        "r1m": -8.85,
-        "r3m": -20.74,
-        "r6m": -33.45
+        "r1m": -9.07,
+        "r3m": -21.62,
+        "r6m": -35.34,
+        "r1y": 0
       },
       "volScore": 32.8,
       "volStats": {
         "annualReturn": -24.93,
         "annualStd": 41.32,
         "sharpe": -0.69,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -46.69,
+        "worstDay": -13.24
       },
       "flow": 37.5,
       "flowStats": {
@@ -3796,18 +4057,21 @@
       "dividendYield": 0,
       "beta": 1.06,
       "peg": null,
-      "momentum": 68.1,
+      "momentum": 68.8,
       "returns": {
-        "r1m": -6.75,
-        "r3m": 17.5,
-        "r6m": 27.37
+        "r1m": -8.91,
+        "r3m": 15.62,
+        "r6m": 27.37,
+        "r1y": 0
       },
       "volScore": 76.6,
       "volStats": {
         "annualReturn": 78.99,
         "annualStd": 70.84,
         "sharpe": 1.07,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.44,
+        "worstDay": -15.51
       },
       "flow": 10,
       "flowStats": {
@@ -3816,7 +4080,7 @@
         "ratio": 0.47
       },
       "value": 31.4,
-      "compositeScore": 46.5,
+      "compositeScore": 46.7,
       "valueNA": false
     },
     {
@@ -3839,18 +4103,21 @@
       "dividendYield": 0,
       "beta": 1.26,
       "peg": null,
-      "momentum": 5.8,
+      "momentum": 7.2,
       "returns": {
-        "r1m": -20.99,
-        "r3m": -15.78,
-        "r6m": -40.87
+        "r1m": -18.51,
+        "r3m": -17.24,
+        "r6m": -39.73,
+        "r1y": 0
       },
       "volScore": 54.6,
       "volStats": {
         "annualReturn": 17.2,
         "annualStd": 74.86,
         "sharpe": 0.18,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -52.61,
+        "worstDay": -14.25
       },
       "flow": 12.4,
       "flowStats": {
@@ -3859,7 +4126,7 @@
         "ratio": 0.53
       },
       "value": 22.6,
-      "compositeScore": 23.8,
+      "compositeScore": 24.2,
       "valueNA": false
     },
     {
@@ -3882,18 +4149,21 @@
       "dividendYield": 0,
       "beta": 0.65,
       "peg": null,
-      "momentum": 55.1,
+      "momentum": 52.2,
       "returns": {
-        "r1m": 16.91,
-        "r3m": -3.92,
-        "r6m": 0.0
+        "r1m": 10.4,
+        "r3m": -10.28,
+        "r6m": -1.9,
+        "r1y": 0
       },
       "volScore": 80.1,
       "volStats": {
         "annualReturn": 107.15,
         "annualStd": 86.22,
         "sharpe": 1.2,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.13,
+        "worstDay": -17.73
       },
       "flow": 11.3,
       "flowStats": {
@@ -3902,7 +4172,7 @@
         "ratio": 0.52
       },
       "value": 4.7,
-      "compositeScore": 37.8,
+      "compositeScore": 37.1,
       "valueNA": false
     },
     {
@@ -3924,18 +4194,21 @@
       "dividendYield": 3.22,
       "beta": 0.78,
       "peg": null,
-      "momentum": 10.9,
+      "momentum": 13.0,
       "returns": {
-        "r1m": -15.89,
-        "r3m": -16.51,
-        "r6m": -28.8
+        "r1m": -13.96,
+        "r3m": -15.89,
+        "r6m": -30.34,
+        "r1y": 0
       },
       "volScore": 0,
       "volStats": {
         "annualReturn": -43.1,
         "annualStd": 21.28,
         "sharpe": -2.19,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -38.36,
+        "worstDay": -6.07
       },
       "flow": 36.1,
       "flowStats": {
@@ -3944,7 +4217,7 @@
         "ratio": 0.83
       },
       "value": 80.7,
-      "compositeScore": 31.9,
+      "compositeScore": 32.4,
       "valueNA": false
     },
     {
@@ -3968,16 +4241,19 @@
       "peg": null,
       "momentum": 35.5,
       "returns": {
-        "r1m": -20.49,
-        "r3m": -12.06,
-        "r6m": 15.16
+        "r1m": -21.46,
+        "r3m": -13.93,
+        "r6m": 14.92,
+        "r1y": 0
       },
       "volScore": 68.1,
       "volStats": {
         "annualReturn": 41.6,
         "annualStd": 52.73,
         "sharpe": 0.72,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.74,
+        "worstDay": -12.85
       },
       "flow": 53.6,
       "flowStats": {
@@ -4009,18 +4285,21 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 45.7,
+      "momentum": 49.3,
       "returns": {
-        "r1m": 3.3,
-        "r3m": -2.67,
-        "r6m": -7.98
+        "r1m": 3.06,
+        "r3m": -3.74,
+        "r6m": -7.4,
+        "r1y": 0
       },
       "volScore": 45.6,
       "volStats": {
         "annualReturn": -5.71,
         "annualStd": 52.02,
         "sharpe": -0.18,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -36.05,
+        "worstDay": -13.56
       },
       "flow": 10,
       "flowStats": {
@@ -4029,7 +4308,7 @@
         "ratio": 0.45
       },
       "value": 51.5,
-      "compositeScore": 38.2,
+      "compositeScore": 39.1,
       "valueNA": false
     },
     {
@@ -4055,16 +4334,19 @@
       "peg": null,
       "momentum": 94.9,
       "returns": {
-        "r1m": 44.04,
-        "r3m": 99.14,
-        "r6m": 171.48
+        "r1m": 57.42,
+        "r3m": 103.22,
+        "r6m": 179.68,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 162.86,
         "annualStd": 57.46,
         "sharpe": 2.77,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -20.19,
+        "worstDay": -12.0
       },
       "flow": 58.2,
       "flowStats": {
@@ -4096,18 +4378,21 @@
       "dividendYield": 2.83,
       "beta": 0.49,
       "peg": null,
-      "momentum": 42.0,
+      "momentum": 38.4,
       "returns": {
-        "r1m": -16.42,
-        "r3m": -5.14,
-        "r6m": 12.01
+        "r1m": -17.27,
+        "r3m": -7.71,
+        "r6m": 6.62,
+        "r1y": 0
       },
       "volScore": 58.4,
       "volStats": {
         "annualReturn": 19.84,
         "annualStd": 48.79,
         "sharpe": 0.33,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.17,
+        "worstDay": -13.65
       },
       "flow": 26.8,
       "flowStats": {
@@ -4116,7 +4401,7 @@
         "ratio": 0.71
       },
       "value": 80.3,
-      "compositeScore": 51.9,
+      "compositeScore": 51.0,
       "valueNA": false
     },
     {
@@ -4139,18 +4424,21 @@
       "dividendYield": 4.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 16.7,
+      "momentum": 24.6,
       "returns": {
-        "r1m": -12.91,
-        "r3m": -11.27,
-        "r6m": -23.01
+        "r1m": -5.97,
+        "r3m": -9.38,
+        "r6m": -21.3,
+        "r1y": 0
       },
       "volScore": 38.3,
       "volStats": {
         "annualReturn": -16.11,
         "annualStd": 41.89,
         "sharpe": -0.47,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.94,
+        "worstDay": -12.26
       },
       "flow": 41.9,
       "flowStats": {
@@ -4159,7 +4447,7 @@
         "ratio": 0.9
       },
       "value": 47.4,
-      "compositeScore": 36.1,
+      "compositeScore": 38.0,
       "valueNA": false
     },
     {
@@ -4182,18 +4470,21 @@
       "dividendYield": 1.95,
       "beta": 0.69,
       "peg": null,
-      "momentum": 98.6,
+      "momentum": 97.8,
       "returns": {
-        "r1m": 113.82,
-        "r3m": 148.09,
-        "r6m": 177.48
+        "r1m": 108.67,
+        "r3m": 144.82,
+        "r6m": 175.42,
+        "r1y": 0
       },
       "volScore": 96.2,
       "volStats": {
         "annualReturn": 140.52,
         "annualStd": 74.07,
         "sharpe": 1.85,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -18.33,
+        "worstDay": -16.22
       },
       "flow": 55.1,
       "flowStats": {
@@ -4202,7 +4493,7 @@
         "ratio": 1.21
       },
       "value": 65.3,
-      "compositeScore": 78.8,
+      "compositeScore": 78.6,
       "valueNA": false
     },
     {
@@ -4225,18 +4516,21 @@
       "dividendYield": 2.65,
       "beta": 0.59,
       "peg": null,
-      "momentum": 3.6,
+      "momentum": 5.1,
       "returns": {
-        "r1m": -34.62,
-        "r3m": -23.06,
-        "r6m": -35.6
+        "r1m": -25.21,
+        "r3m": -23.83,
+        "r6m": -35.01,
+        "r1y": 0
       },
       "volScore": 25.8,
       "volStats": {
         "annualReturn": -38.64,
         "annualStd": 43.46,
         "sharpe": -0.97,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -43.62,
+        "worstDay": -10.96
       },
       "flow": 15.6,
       "flowStats": {
@@ -4245,7 +4539,7 @@
         "ratio": 0.57
       },
       "value": 52.6,
-      "compositeScore": 24.4,
+      "compositeScore": 24.8,
       "valueNA": false
     },
     {
@@ -4268,18 +4562,21 @@
       "dividendYield": 0,
       "beta": 2.37,
       "peg": null,
-      "momentum": 76.8,
+      "momentum": 75.4,
       "returns": {
-        "r1m": -42.13,
-        "r3m": 28.96,
-        "r6m": 69.73
+        "r1m": -43.68,
+        "r3m": 24.71,
+        "r6m": 64.92,
+        "r1y": 0
       },
       "volScore": 87.7,
       "volStats": {
         "annualReturn": 118.53,
         "annualStd": 76.35,
         "sharpe": 1.51,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -48.89,
+        "worstDay": -18.72
       },
       "flow": 22.8,
       "flowStats": {
@@ -4288,7 +4585,7 @@
         "ratio": 0.66
       },
       "value": 56.6,
-      "compositeScore": 61.0,
+      "compositeScore": 60.6,
       "valueNA": false
     },
     {
@@ -4311,18 +4608,21 @@
       "dividendYield": 0.17,
       "beta": 2.1,
       "peg": null,
-      "momentum": 51.4,
+      "momentum": 54.3,
       "returns": {
-        "r1m": -8.04,
-        "r3m": 15.69,
-        "r6m": -17.41
+        "r1m": -4.67,
+        "r3m": 11.27,
+        "r6m": -12.38,
+        "r1y": 0
       },
       "volScore": 91.8,
       "volStats": {
         "annualReturn": 137.46,
         "annualStd": 80.11,
         "sharpe": 1.67,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.51,
+        "worstDay": -14.09
       },
       "flow": 51.9,
       "flowStats": {
@@ -4331,7 +4631,7 @@
         "ratio": 1.07
       },
       "value": 21.2,
-      "compositeScore": 54.1,
+      "compositeScore": 54.8,
       "valueNA": false
     },
     {
@@ -4354,18 +4654,21 @@
       "dividendYield": 0,
       "beta": 1.49,
       "peg": null,
-      "momentum": 30.4,
+      "momentum": 26.1,
       "returns": {
         "r1m": -47.81,
-        "r3m": -6.92,
-        "r6m": 29.26
+        "r3m": -14.37,
+        "r6m": 28.55,
+        "r1y": 0
       },
       "volScore": 68.5,
       "volStats": {
         "annualReturn": 63.91,
         "annualStd": 81.53,
         "sharpe": 0.74,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -55.16,
+        "worstDay": -17.9
       },
       "flow": 10,
       "flowStats": {
@@ -4374,7 +4677,7 @@
         "ratio": 0.45
       },
       "value": 43.8,
-      "compositeScore": 38.2,
+      "compositeScore": 37.1,
       "valueNA": false
     },
     {
@@ -4397,18 +4700,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 36.2,
+      "momentum": 32.6,
       "returns": {
-        "r1m": -13.77,
-        "r3m": -5.76,
-        "r6m": 1.38
+        "r1m": -15.79,
+        "r3m": -9.01,
+        "r6m": -1.0,
+        "r1y": 0
       },
       "volScore": 54.3,
       "volStats": {
         "annualReturn": 11.81,
         "annualStd": 48.58,
         "sharpe": 0.17,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.65,
+        "worstDay": -15.09
       },
       "flow": 42.2,
       "flowStats": {
@@ -4417,7 +4723,7 @@
         "ratio": 0.9
       },
       "value": 30.3,
-      "compositeScore": 40.8,
+      "compositeScore": 39.8,
       "valueNA": false
     },
     {
@@ -4441,18 +4747,21 @@
       "dividendYield": 4.09,
       "beta": 0.28,
       "peg": 0.78,
-      "momentum": 55.8,
+      "momentum": 58.0,
       "returns": {
-        "r1m": 2.97,
-        "r3m": 4.93,
-        "r6m": 6.76
+        "r1m": 1.4,
+        "r3m": 6.05,
+        "r6m": 4.66,
+        "r1y": 0
       },
       "volScore": 66.3,
       "volStats": {
         "annualReturn": 25.82,
         "annualStd": 34.26,
         "sharpe": 0.65,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -18.14,
+        "worstDay": -9.5
       },
       "flow": 50.9,
       "flowStats": {
@@ -4461,7 +4770,7 @@
         "ratio": 1.04
       },
       "value": 83.2,
-      "compositeScore": 64.0,
+      "compositeScore": 64.6,
       "valueNA": false
     },
     {
@@ -4485,18 +4794,21 @@
       "dividendYield": 1.79,
       "beta": 0.84,
       "peg": null,
-      "momentum": 8.0,
+      "momentum": 5.8,
       "returns": {
-        "r1m": -11.01,
-        "r3m": -21.76,
-        "r6m": -35.41
+        "r1m": -12.77,
+        "r3m": -26.58,
+        "r6m": -39.33,
+        "r1y": 0
       },
       "volScore": 40.4,
       "volStats": {
         "annualReturn": -15.99,
         "annualStd": 50.88,
         "sharpe": -0.38,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -51.44,
+        "worstDay": -14.91
       },
       "flow": 50.4,
       "flowStats": {
@@ -4505,7 +4817,7 @@
         "ratio": 1.02
       },
       "value": 57.3,
-      "compositeScore": 39.0,
+      "compositeScore": 38.5,
       "valueNA": false
     },
     {
@@ -4528,18 +4840,21 @@
       "dividendYield": 0.94,
       "beta": 0.65,
       "peg": null,
-      "momentum": 71.0,
+      "momentum": 65.2,
       "returns": {
-        "r1m": 8.15,
-        "r3m": 2.84,
-        "r6m": 34.23
+        "r1m": 5.15,
+        "r3m": 8.74,
+        "r6m": 18.45,
+        "r1y": 0
       },
       "volScore": 71.4,
       "volStats": {
         "annualReturn": 59.18,
         "annualStd": 65.13,
         "sharpe": 0.85,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -33.22,
+        "worstDay": -12.01
       },
       "flow": 39.5,
       "flowStats": {
@@ -4548,7 +4863,7 @@
         "ratio": 0.87
       },
       "value": 63.1,
-      "compositeScore": 61.2,
+      "compositeScore": 59.8,
       "valueNA": false
     },
     {
@@ -4570,18 +4885,21 @@
       "dividendYield": 0.27,
       "beta": 1.43,
       "peg": null,
-      "momentum": 77.5,
+      "momentum": 76.8,
       "returns": {
-        "r1m": 13.96,
-        "r3m": 1.87,
-        "r6m": 50.98
+        "r1m": 22.06,
+        "r3m": 0.46,
+        "r6m": 37.62,
+        "r1y": 0
       },
       "volScore": 79.7,
       "volStats": {
         "annualReturn": 97.44,
         "annualStd": 78.97,
         "sharpe": 1.19,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -44.64,
+        "worstDay": -16.26
       },
       "flow": 89.9,
       "flowStats": {
@@ -4590,7 +4908,7 @@
         "ratio": 2.6
       },
       "value": 24.1,
-      "compositeScore": 67.8,
+      "compositeScore": 67.6,
       "valueNA": false
     },
     {
@@ -4612,18 +4930,21 @@
       "dividendYield": 3.6,
       "beta": 0.22,
       "peg": null,
-      "momentum": 32.6,
+      "momentum": 29.7,
       "returns": {
-        "r1m": 7.73,
-        "r3m": -12.6,
-        "r6m": -18.45
+        "r1m": 5.86,
+        "r3m": -17.48,
+        "r6m": -14.84,
+        "r1y": 0
       },
       "volScore": 54.9,
       "volStats": {
         "annualReturn": 11.0,
         "annualStd": 38.18,
         "sharpe": 0.2,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -26.51,
+        "worstDay": -6.52
       },
       "flow": 31.9,
       "flowStats": {
@@ -4632,7 +4953,7 @@
         "ratio": 0.77
       },
       "value": 60.9,
-      "compositeScore": 45.1,
+      "compositeScore": 44.4,
       "valueNA": false
     },
     {
@@ -4657,16 +4978,19 @@
       "peg": null,
       "momentum": 0.0,
       "returns": {
-        "r1m": -53.91,
-        "r3m": -53.49,
-        "r6m": -43.28
+        "r1m": -60.81,
+        "r3m": -53.38,
+        "r6m": -48.43,
+        "r1y": 0
       },
       "volScore": 56.1,
       "volStats": {
         "annualReturn": 24.83,
         "annualStd": 87.87,
         "sharpe": 0.24,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -66.46,
+        "worstDay": -20.5
       },
       "flow": 10,
       "flowStats": {
@@ -4698,18 +5022,21 @@
       "dividendYield": 3.7,
       "beta": 0.33,
       "peg": null,
-      "momentum": 40.6,
+      "momentum": 39.9,
       "returns": {
-        "r1m": 0.25,
-        "r3m": -1.98,
-        "r6m": -12.71
+        "r1m": -0.49,
+        "r3m": -2.91,
+        "r6m": -13.77,
+        "r1y": 0
       },
       "volScore": 22.3,
       "volStats": {
         "annualReturn": -18.45,
         "annualStd": 19.84,
         "sharpe": -1.11,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.64,
+        "worstDay": -6.17
       },
       "flow": 35.1,
       "flowStats": {
@@ -4718,7 +5045,7 @@
         "ratio": 0.81
       },
       "value": 41.2,
-      "compositeScore": 34.8,
+      "compositeScore": 34.6,
       "valueNA": false
     },
     {
@@ -4741,18 +5068,21 @@
       "dividendYield": 4.96,
       "beta": 0.66,
       "peg": null,
-      "momentum": 34.8,
+      "momentum": 31.2,
       "returns": {
-        "r1m": -4.67,
-        "r3m": -11.65,
-        "r6m": -3.98
+        "r1m": -7.17,
+        "r3m": -14.08,
+        "r6m": -4.67,
+        "r1y": 0
       },
       "volScore": 48.7,
       "volStats": {
         "annualReturn": 0.87,
         "annualStd": 51.31,
         "sharpe": -0.05,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.44,
+        "worstDay": -12.17
       },
       "flow": 57.7,
       "flowStats": {
@@ -4761,7 +5091,7 @@
         "ratio": 1.31
       },
       "value": 70.1,
-      "compositeScore": 52.8,
+      "compositeScore": 51.9,
       "valueNA": false
     },
     {
@@ -4785,16 +5115,19 @@
       "peg": null,
       "momentum": 90.6,
       "returns": {
-        "r1m": 17.23,
-        "r3m": 88.94,
-        "r6m": 135.09
+        "r1m": 27.34,
+        "r3m": 95.51,
+        "r6m": 113.74,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 152.2,
         "annualStd": 73.66,
         "sharpe": 2.02,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.0,
+        "worstDay": -15.07
       },
       "flow": 58.2,
       "flowStats": {
@@ -4826,18 +5159,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 17.4,
+      "momentum": 20.3,
       "returns": {
-        "r1m": -14.45,
-        "r3m": -21.34,
-        "r6m": -5.65
+        "r1m": -16.5,
+        "r3m": -23.22,
+        "r6m": 2.61,
+        "r1y": 0
       },
       "volScore": 74.6,
       "volStats": {
         "annualReturn": 61.12,
         "annualStd": 58.63,
         "sharpe": 0.98,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.09,
+        "worstDay": -15.49
       },
       "flow": 47.2,
       "flowStats": {
@@ -4846,7 +5182,7 @@
         "ratio": 0.97
       },
       "value": 22.6,
-      "compositeScore": 40.4,
+      "compositeScore": 41.2,
       "valueNA": false
     },
     {
@@ -4869,18 +5205,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 60.9,
+      "momentum": 62.3,
       "returns": {
-        "r1m": -3.24,
-        "r3m": -20.59,
-        "r6m": 52.94
+        "r1m": -6.28,
+        "r3m": -19.72,
+        "r6m": 60.88,
+        "r1y": 0
       },
       "volScore": 78.1,
       "volStats": {
         "annualReturn": 95.82,
         "annualStd": 82.14,
         "sharpe": 1.12,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -45.39,
+        "worstDay": -18.22
       },
       "flow": 51.2,
       "flowStats": {
@@ -4889,7 +5228,7 @@
         "ratio": 1.05
       },
       "value": 30.7,
-      "compositeScore": 55.2,
+      "compositeScore": 55.6,
       "valueNA": false
     },
     {
@@ -4913,18 +5252,21 @@
       "dividendYield": 0.13,
       "beta": 2.41,
       "peg": null,
-      "momentum": 94.2,
+      "momentum": 92.0,
       "returns": {
-        "r1m": -10.31,
-        "r3m": 31.38,
-        "r6m": 280.84
+        "r1m": -7.88,
+        "r3m": 20.28,
+        "r6m": 275.36,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 289.43,
         "annualStd": 107.3,
         "sharpe": 2.66,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -48.54,
+        "worstDay": -27.62
       },
       "flow": 53.2,
       "flowStats": {
@@ -4933,7 +5275,7 @@
         "ratio": 1.13
       },
       "value": 22.3,
-      "compositeScore": 67.4,
+      "compositeScore": 66.9,
       "valueNA": false
     },
     {
@@ -4956,18 +5298,21 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 44.2,
+      "momentum": 47.8,
       "returns": {
-        "r1m": -0.98,
+        "r1m": -1.34,
         "r3m": -2.04,
-        "r6m": -4.82
+        "r6m": -5.55,
+        "r1y": 0
       },
       "volScore": 29.7,
       "volStats": {
         "annualReturn": -5.34,
         "annualStd": 10.91,
         "sharpe": -0.81,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -10.1,
+        "worstDay": -2.95
       },
       "flow": 52.6,
       "flowStats": {
@@ -4975,8 +5320,8 @@
         "recent20dAvg": 2157198,
         "ratio": 1.1
       },
-      "value": 42.2,
-      "compositeScore": 42.2,
+      "value": 43.4,
+      "compositeScore": 43.4,
       "valueNA": true
     },
     {
@@ -4999,18 +5344,21 @@
       "dividendYield": 3.67,
       "beta": 0.66,
       "peg": null,
-      "momentum": 20.3,
+      "momentum": 18.1,
       "returns": {
-        "r1m": -8.35,
-        "r3m": -14.09,
-        "r6m": -17.31
+        "r1m": -9.15,
+        "r3m": -14.62,
+        "r6m": -18.73,
+        "r1y": 0
       },
       "volScore": 30.7,
       "volStats": {
         "annualReturn": -17.21,
         "annualStd": 26.9,
         "sharpe": -0.77,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -31.88,
+        "worstDay": -6.86
       },
       "flow": 33.0,
       "flowStats": {
@@ -5019,7 +5367,7 @@
         "ratio": 0.79
       },
       "value": 80.7,
-      "compositeScore": 41.2,
+      "compositeScore": 40.6,
       "valueNA": false
     },
     {
@@ -5042,18 +5390,21 @@
       "dividendYield": 3.8,
       "beta": 0.53,
       "peg": null,
-      "momentum": 79.7,
+      "momentum": 79.0,
       "returns": {
-        "r1m": 4.63,
-        "r3m": 39.22,
-        "r6m": 18.48
+        "r1m": 2.87,
+        "r3m": 32.77,
+        "r6m": 15.3,
+        "r1y": 0
       },
       "volScore": 60.7,
       "volStats": {
         "annualReturn": 21.87,
         "annualStd": 42.76,
         "sharpe": 0.43,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.05,
+        "worstDay": -9.7
       },
       "flow": 60.3,
       "flowStats": {
@@ -5062,7 +5413,7 @@
         "ratio": 1.41
       },
       "value": 51.5,
-      "compositeScore": 63.0,
+      "compositeScore": 62.9,
       "valueNA": false
     },
     {
@@ -5085,18 +5436,21 @@
       "dividendYield": 3.09,
       "beta": -0.06,
       "peg": 2.18,
-      "momentum": 58.7,
+      "momentum": 60.9,
       "returns": {
-        "r1m": -3.29,
-        "r3m": 3.86,
-        "r6m": 17.97
+        "r1m": -2.49,
+        "r3m": 8.84,
+        "r6m": 15.45,
+        "r1y": 0
       },
       "volScore": 59.0,
       "volStats": {
         "annualReturn": 17.02,
         "annualStd": 37.49,
         "sharpe": 0.36,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -21.42,
+        "worstDay": -11.3
       },
       "flow": 55.7,
       "flowStats": {
@@ -5105,7 +5459,7 @@
         "ratio": 1.23
       },
       "value": 51.5,
-      "compositeScore": 56.2,
+      "compositeScore": 56.8,
       "valueNA": false
     },
     {
@@ -5130,16 +5484,19 @@
       "peg": null,
       "momentum": 95.7,
       "returns": {
-        "r1m": 100.14,
-        "r3m": 64.92,
-        "r6m": 219.41
+        "r1m": 94.23,
+        "r3m": 81.88,
+        "r6m": 198.84,
+        "r1y": 0
       },
       "volScore": 100,
       "volStats": {
         "annualReturn": 189.02,
         "annualStd": 88.16,
         "sharpe": 2.1,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.24,
+        "worstDay": -14.43
       },
       "flow": 94.0,
       "flowStats": {
@@ -5171,18 +5528,21 @@
       "dividendYield": 0.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 47.1,
+      "momentum": 43.5,
       "returns": {
-        "r1m": 2.36,
-        "r3m": -7.24,
-        "r6m": 0.18
+        "r1m": -1.05,
+        "r3m": -13.63,
+        "r6m": 4.83,
+        "r1y": 0
       },
       "volScore": 63.8,
       "volStats": {
         "annualReturn": 41.55,
         "annualStd": 69.04,
         "sharpe": 0.55,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -41.66,
+        "worstDay": -17.0
       },
       "flow": 56.6,
       "flowStats": {
@@ -5191,7 +5551,7 @@
         "ratio": 1.26
       },
       "value": 22.3,
-      "compositeScore": 47.4,
+      "compositeScore": 46.6,
       "valueNA": false
     },
     {
@@ -5214,18 +5574,21 @@
       "dividendYield": 2.85,
       "beta": 0.51,
       "peg": null,
-      "momentum": 23.9,
+      "momentum": 22.5,
       "returns": {
-        "r1m": -18.58,
-        "r3m": -3.55,
-        "r6m": -16.14
+        "r1m": -19.39,
+        "r3m": -4.22,
+        "r6m": -18.04,
+        "r1y": 0
       },
       "volScore": 33.3,
       "volStats": {
         "annualReturn": -22.58,
         "annualStd": 39.02,
         "sharpe": -0.67,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -36.98,
+        "worstDay": -10.08
       },
       "flow": 22.6,
       "flowStats": {
@@ -5234,7 +5597,7 @@
         "ratio": 0.66
       },
       "value": 50.0,
-      "compositeScore": 32.4,
+      "compositeScore": 32.1,
       "valueNA": false
     },
     {
@@ -5257,18 +5620,21 @@
       "dividendYield": 1.82,
       "beta": 1.03,
       "peg": null,
-      "momentum": 37.7,
+      "momentum": 33.3,
       "returns": {
-        "r1m": -1.2,
-        "r3m": -6.81,
-        "r6m": -8.36
+        "r1m": -3.33,
+        "r3m": -8.53,
+        "r6m": -13.81,
+        "r1y": 0
       },
       "volScore": 46.4,
       "volStats": {
         "annualReturn": -2.95,
         "annualStd": 44.92,
         "sharpe": -0.14,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -39.09,
+        "worstDay": -10.53
       },
       "flow": 56.4,
       "flowStats": {
@@ -5277,7 +5643,7 @@
         "ratio": 1.26
       },
       "value": 58.0,
-      "compositeScore": 49.6,
+      "compositeScore": 48.5,
       "valueNA": false
     },
     {
@@ -5300,18 +5666,21 @@
       "dividendYield": 1.13,
       "beta": 1.18,
       "peg": null,
-      "momentum": 28.3,
+      "momentum": 25.4,
       "returns": {
-        "r1m": -7.05,
-        "r3m": -12.7,
-        "r6m": -8.05
+        "r1m": -9.09,
+        "r3m": -14.44,
+        "r6m": -10.54,
+        "r1y": 0
       },
       "volScore": 43.4,
       "volStats": {
         "annualReturn": -8.0,
         "annualStd": 43.88,
         "sharpe": -0.26,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -36.4,
+        "worstDay": -9.52
       },
       "flow": 44.2,
       "flowStats": {
@@ -5320,7 +5689,7 @@
         "ratio": 0.93
       },
       "value": 28.8,
-      "compositeScore": 36.2,
+      "compositeScore": 35.4,
       "valueNA": false
     },
     {
@@ -5343,18 +5712,21 @@
       "dividendYield": 0,
       "beta": 1.41,
       "peg": null,
-      "momentum": 83.3,
+      "momentum": 80.4,
       "returns": {
-        "r1m": -16.42,
-        "r3m": 55.22,
-        "r6m": 53.74
+        "r1m": -21.42,
+        "r3m": 50.67,
+        "r6m": 33.73,
+        "r1y": 0
       },
       "volScore": 87.1,
       "volStats": {
         "annualReturn": 134.68,
         "annualStd": 88.37,
         "sharpe": 1.48,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -42.04,
+        "worstDay": -17.19
       },
       "flow": 42.4,
       "flowStats": {
@@ -5363,7 +5735,7 @@
         "ratio": 0.9
       },
       "value": 35.0,
-      "compositeScore": 62.0,
+      "compositeScore": 61.2,
       "valueNA": false
     },
     {
@@ -5386,18 +5758,21 @@
       "dividendYield": 2.28,
       "beta": 0.85,
       "peg": null,
-      "momentum": 6.5,
+      "momentum": 8.0,
       "returns": {
-        "r1m": -21.85,
-        "r3m": -19.73,
-        "r6m": -34.27
+        "r1m": -21.21,
+        "r3m": -18.62,
+        "r6m": -33.59,
+        "r1y": 0
       },
       "volScore": 13.7,
       "volStats": {
         "annualReturn": -50.03,
         "annualStd": 36.84,
         "sharpe": -1.45,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -55.53,
+        "worstDay": -8.26
       },
       "flow": 19.9,
       "flowStats": {
@@ -5406,7 +5781,7 @@
         "ratio": 0.62
       },
       "value": 60.9,
-      "compositeScore": 25.2,
+      "compositeScore": 25.6,
       "valueNA": false
     },
     {
@@ -5428,18 +5803,21 @@
       "dividendYield": 0,
       "beta": 0.51,
       "peg": null,
-      "momentum": 47.8,
+      "momentum": 50.7,
       "returns": {
-        "r1m": 5.05,
+        "r1m": 3.82,
         "r3m": 1.43,
-        "r6m": -13.46
+        "r6m": -13.57,
+        "r1y": 0
       },
       "volScore": 24.5,
       "volStats": {
         "annualReturn": -26.29,
         "annualStd": 29.16,
         "sharpe": -1.02,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.03,
+        "worstDay": -7.77
       },
       "flow": 10,
       "flowStats": {
@@ -5448,7 +5826,7 @@
         "ratio": 0.39
       },
       "value": 71.2,
-      "compositeScore": 38.4,
+      "compositeScore": 39.1,
       "valueNA": false
     },
     {
@@ -5471,18 +5849,21 @@
       "dividendYield": 1.86,
       "beta": 0.93,
       "peg": null,
-      "momentum": 66.7,
+      "momentum": 76.1,
       "returns": {
-        "r1m": -6.39,
-        "r3m": -11.67,
-        "r6m": 60.61
+        "r1m": -3.16,
+        "r3m": -2.61,
+        "r6m": 64.83,
+        "r1y": 0
       },
       "volScore": 78.2,
       "volStats": {
         "annualReturn": 69.43,
         "annualStd": 58.35,
         "sharpe": 1.13,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -35.84,
+        "worstDay": -8.94
       },
       "flow": 39.6,
       "flowStats": {
@@ -5491,7 +5872,7 @@
         "ratio": 0.87
       },
       "value": 99.6,
-      "compositeScore": 71.0,
+      "compositeScore": 73.4,
       "valueNA": false
     },
     {
@@ -5514,18 +5895,21 @@
       "dividendYield": 0.26,
       "beta": 1.94,
       "peg": null,
-      "momentum": 88.4,
+      "momentum": 89.1,
       "returns": {
-        "r1m": 12.72,
-        "r3m": 74.26,
-        "r6m": 123.58
+        "r1m": 13.13,
+        "r3m": 72.21,
+        "r6m": 111.61,
+        "r1y": 0
       },
       "volScore": 96.3,
       "volStats": {
         "annualReturn": 151.89,
         "annualStd": 80.05,
         "sharpe": 1.85,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -28.92,
+        "worstDay": -16.41
       },
       "flow": 50.9,
       "flowStats": {
@@ -5534,7 +5918,7 @@
         "ratio": 1.03
       },
       "value": 35.4,
-      "compositeScore": 67.8,
+      "compositeScore": 67.9,
       "valueNA": false
     },
     {
@@ -5558,18 +5942,21 @@
       "dividendYield": 0,
       "beta": 1.9,
       "peg": null,
-      "momentum": 38.4,
+      "momentum": 40.6,
       "returns": {
-        "r1m": -22.42,
-        "r3m": -11.92,
-        "r6m": 20.44
+        "r1m": -25.88,
+        "r3m": -7.82,
+        "r6m": 18.75,
+        "r1y": 0
       },
       "volScore": 74.4,
       "volStats": {
         "annualReturn": 68.4,
         "annualStd": 66.37,
         "sharpe": 0.98,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -37.1,
+        "worstDay": -16.82
       },
       "flow": 37.8,
       "flowStats": {
@@ -5578,7 +5965,7 @@
         "ratio": 0.85
       },
       "value": 32.1,
-      "compositeScore": 45.7,
+      "compositeScore": 46.2,
       "valueNA": false
     },
     {
@@ -5603,16 +5990,19 @@
       "peg": null,
       "momentum": 56.5,
       "returns": {
-        "r1m": -7.97,
-        "r3m": 12.13,
-        "r6m": 8.74
+        "r1m": -9.89,
+        "r3m": 6.24,
+        "r6m": 9.11,
+        "r1y": 0
       },
       "volScore": 66.4,
       "volStats": {
         "annualReturn": 35.4,
         "annualStd": 48.57,
         "sharpe": 0.66,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -20.75,
+        "worstDay": -18.18
       },
       "flow": 51.3,
       "flowStats": {
@@ -5644,18 +6034,21 @@
       "dividendYield": 1.77,
       "beta": 0.85,
       "peg": null,
-      "momentum": 79.0,
+      "momentum": 81.2,
       "returns": {
-        "r1m": -13.25,
-        "r3m": 28.57,
-        "r6m": 46.71
+        "r1m": -15.29,
+        "r3m": 34.89,
+        "r6m": 50.23,
+        "r1y": 0
       },
       "volScore": 64.0,
       "volStats": {
         "annualReturn": 41.22,
         "annualStd": 67.27,
         "sharpe": 0.56,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -40.6,
+        "worstDay": -12.18
       },
       "flow": 54.8,
       "flowStats": {
@@ -5664,7 +6057,7 @@
         "ratio": 1.19
       },
       "value": 91.6,
-      "compositeScore": 72.4,
+      "compositeScore": 72.9,
       "valueNA": false
     },
     {
@@ -5687,18 +6080,21 @@
       "dividendYield": 3.88,
       "beta": 0.37,
       "peg": null,
-      "momentum": 41.3,
+      "momentum": 42.8,
       "returns": {
-        "r1m": -2.53,
-        "r3m": -4.2,
-        "r6m": -3.14
+        "r1m": -4.5,
+        "r3m": -4.79,
+        "r6m": -3.75,
+        "r1y": 0
       },
       "volScore": 39.1,
       "volStats": {
         "annualReturn": -7.46,
         "annualStd": 25.08,
         "sharpe": -0.44,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -18.69,
+        "worstDay": -5.18
       },
       "flow": 23.1,
       "flowStats": {
@@ -5707,7 +6103,7 @@
         "ratio": 0.66
       },
       "value": 73.7,
-      "compositeScore": 44.3,
+      "compositeScore": 44.7,
       "valueNA": false
     },
     {
@@ -5730,18 +6126,21 @@
       "dividendYield": 0.37,
       "beta": 1.44,
       "peg": null,
-      "momentum": 63.8,
+      "momentum": 71.0,
       "returns": {
-        "r1m": -20.51,
-        "r3m": 14.54,
-        "r6m": 35.04
+        "r1m": -20.29,
+        "r3m": 10.89,
+        "r6m": 49.48,
+        "r1y": 0
       },
       "volScore": 83.2,
       "volStats": {
         "annualReturn": 95.08,
         "annualStd": 68.98,
         "sharpe": 1.33,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -32.96,
+        "worstDay": -15.98
       },
       "flow": 59.6,
       "flowStats": {
@@ -5750,7 +6149,7 @@
         "ratio": 1.38
       },
       "value": 79.9,
-      "compositeScore": 71.6,
+      "compositeScore": 73.4,
       "valueNA": false
     },
     {
@@ -5773,18 +6172,21 @@
       "dividendYield": 1.88,
       "beta": 1.15,
       "peg": null,
-      "momentum": 46.4,
+      "momentum": 48.6,
       "returns": {
-        "r1m": -18.26,
-        "r3m": -7.22,
-        "r6m": 20.2
+        "r1m": -14.98,
+        "r3m": -12.23,
+        "r6m": 21.7,
+        "r1y": 0
       },
       "volScore": 82.8,
       "volStats": {
         "annualReturn": 75.23,
         "annualStd": 54.64,
         "sharpe": 1.31,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -22.38,
+        "worstDay": -10.14
       },
       "flow": 41.4,
       "flowStats": {
@@ -5793,7 +6195,7 @@
         "ratio": 0.89
       },
       "value": 65.0,
-      "compositeScore": 58.9,
+      "compositeScore": 59.4,
       "valueNA": false
     },
     {
@@ -5816,18 +6218,21 @@
       "dividendYield": 0,
       "beta": 1.03,
       "peg": null,
-      "momentum": 19.6,
+      "momentum": 23.2,
       "returns": {
-        "r1m": -7.59,
-        "r3m": -7.97,
-        "r6m": -26.51
+        "r1m": -10.62,
+        "r3m": -7.68,
+        "r6m": -21.1,
+        "r1y": 0
       },
       "volScore": 47.9,
       "volStats": {
         "annualReturn": 0.22,
         "annualStd": 38.4,
         "sharpe": -0.09,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -34.47,
+        "worstDay": -13.09
       },
       "flow": 26.4,
       "flowStats": {
@@ -5836,7 +6241,7 @@
         "ratio": 0.7
       },
       "value": 22.6,
-      "compositeScore": 29.1,
+      "compositeScore": 30.0,
       "valueNA": false
     },
     {
@@ -5859,18 +6264,21 @@
       "dividendYield": 0,
       "beta": 0.97,
       "peg": null,
-      "momentum": 12.3,
+      "momentum": 10.1,
       "returns": {
-        "r1m": -5.14,
-        "r3m": -21.23,
-        "r6m": -28.14
+        "r1m": -9.66,
+        "r3m": -23.59,
+        "r6m": -29.29,
+        "r1y": 0
       },
       "volScore": 33.3,
       "volStats": {
         "annualReturn": -22.81,
         "annualStd": 39.46,
         "sharpe": -0.67,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -44.46,
+        "worstDay": -11.16
       },
       "flow": 35.8,
       "flowStats": {
@@ -5879,7 +6287,7 @@
         "ratio": 0.82
       },
       "value": 52.9,
-      "compositeScore": 33.6,
+      "compositeScore": 33.0,
       "valueNA": false
     },
     {
@@ -5901,18 +6309,21 @@
       "dividendYield": 3.19,
       "beta": 0.22,
       "peg": 0.18,
-      "momentum": 5.1,
+      "momentum": 3.6,
       "returns": {
-        "r1m": -21.7,
-        "r3m": -28.4,
-        "r6m": -38.66
+        "r1m": -24.68,
+        "r3m": -27.58,
+        "r6m": -42.15,
+        "r1y": 0
       },
       "volScore": 27.0,
       "volStats": {
         "annualReturn": -44.78,
         "annualStd": 52.42,
         "sharpe": -0.92,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -61.12,
+        "worstDay": -14.09
       },
       "flow": 57.5,
       "flowStats": {
@@ -5921,7 +6332,7 @@
         "ratio": 1.3
       },
       "value": 33.6,
-      "compositeScore": 30.8,
+      "compositeScore": 30.4,
       "valueNA": false
     },
     {
@@ -5943,18 +6354,21 @@
       "dividendYield": 3.59,
       "beta": 0.89,
       "peg": null,
-      "momentum": 48.6,
+      "momentum": 51.4,
       "returns": {
-        "r1m": 1.11,
-        "r3m": -4.3,
-        "r6m": -1.72
+        "r1m": 1.26,
+        "r3m": -4.52,
+        "r6m": -0.5,
+        "r1y": 0
       },
       "volScore": 39.4,
       "volStats": {
         "annualReturn": -12.64,
         "annualStd": 38.24,
         "sharpe": -0.42,
-        "days": 243
+        "days": 243,
+        "maxDrawdown": -29.17,
+        "worstDay": -16.33
       },
       "flow": 41.1,
       "flowStats": {
@@ -5963,11 +6377,11 @@
         "ratio": 0.89
       },
       "value": 73.0,
-      "compositeScore": 50.5,
+      "compositeScore": 51.2,
       "valueNA": false
     }
   ],
   "metricsVersion": "phase2-v2",
   "asOfBusinessDate": "20260612",
-  "pricesSyncedAt": "2026-06-13T15:08:59.454732"
+  "pricesSyncedAt": "2026-06-14T18:17:10.070363"
 }
