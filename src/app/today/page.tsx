@@ -3,6 +3,7 @@ import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch, getMetricChangesBatch } from "@/lib/scoreHistory";
+import { getLatestStoredInsight } from "@/lib/ai-insight";
 import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
 import { StockTabs } from "@/components/StockTabs";
@@ -158,6 +159,7 @@ export default async function TodayPage() {
   // 어제 대비 변화 (Supabase daily_scores) — 데이터 없으면 빈 객체
   const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
   const metricChanges = await getMetricChangesBatch(realStockPool.map((s) => s.ticker));
+  const aiInsight = await getLatestStoredInsight();
   const hasDeltas = Object.keys(scoreDeltas).length > 0;
   const newEntrants = hasDeltas
     ? realStockPool
@@ -256,6 +258,20 @@ export default async function TodayPage() {
             <div className="text-sm font-bold text-amber-700 dark:text-amber-400 tabular-nums">{briefingSignalCount}건</div>
           </div>
         </div>
+        {aiInsight ? (
+          <div className="mt-3 pt-3 border-t border-blue-100 dark:border-blue-900/50">
+            <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1">{aiInsight.insight.headline}</div>
+            <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{aiInsight.insight.summary}</p>
+            {aiInsight.insight.watchPoints && aiInsight.insight.watchPoints.length > 0 ? (
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {aiInsight.insight.watchPoints.map((w, i) => (
+                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-white/70 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400">👁 {w}</span>
+                ))}
+              </div>
+            ) : null}
+            <div className="text-[9px] text-zinc-400 dark:text-zinc-500 mt-1">AI 테마 요약 · {aiInsight.dateKst} · 투자 추천 아님</div>
+          </div>
+        ) : null}
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">최근 거래일 상승 비율 {breadthPct}% · 영업일 장마감 후 갱신.</p>
       </section>
 

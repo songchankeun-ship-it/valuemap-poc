@@ -27,6 +27,7 @@ export default function UniversePage() {
           오른스코어의 모든 순위·점수는 아래 <strong>{dataMetadata.count}종목</strong> 안에서 계산됩니다.
           한국 주식 전체가 아닙니다.
         </p>
+        <Link href="/status" className="text-xs text-blue-700 dark:text-blue-400 hover:underline">→ 데이터 상태·신선도 보기</Link>
       </header>
 
       {/* 데이터 기준 */}

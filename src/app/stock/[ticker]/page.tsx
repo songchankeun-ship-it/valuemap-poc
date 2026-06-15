@@ -235,7 +235,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         {surgeRisk ? (
           <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1.5 rounded-md border border-rose-200 dark:border-rose-900">
             <span aria-hidden="true">🔺</span>
-            <span>급등 위험 — 최근 3개월 +{Math.round(surge3m as number)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.</span>
+            <span>급등 위험 — 최근 63거래일(약 3개월) +{Math.round(surge3m as number)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.</span>
           </div>
         ) : null}
         {dataWarnings.length > 0 ? (
@@ -415,7 +415,7 @@ export default async function StockDetailPage({ params }: PageProps) {
               <>
       <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { l: "PER", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
+          { l: "PER(최근 실적)", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
           { l: "PBR", v: s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—" },
           { l: "ROE", v: s.roe !== 0 ? s.roe.toFixed(1) + "%" : "—" },
           { l: "배당수익률", v: s.dividendYield > 0 ? s.dividendYield.toFixed(2) + "%" : "0%" },
@@ -426,6 +426,10 @@ export default async function StockDetailPage({ params }: PageProps) {
           </div>
         ))}
       </section>
+
+      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
+        PER·PBR은 <strong>최근 실적(후행) 기준</strong>이며 현재가에 따라 매일 달라집니다. 향후 이익을 반영한 예상(Forward) PER과는 다릅니다. 적자(EPS 0 이하)·결측 종목은 밸류 점수를 임의값으로 채우지 않고 <strong>—</strong>로 표시합니다.
+      </p>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="text-sm font-semibold mb-2 text-zinc-900 dark:text-zinc-100">소속 테마 {s.themes.length}</div>

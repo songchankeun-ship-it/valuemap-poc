@@ -69,3 +69,26 @@ export async function generateThemeInsight(input: ThemeInsightInput): Promise<Th
     source: "live",
   };
 }
+
+import { createClient as createSbClient } from "@supabase/supabase-js";
+
+/** Supabase daily_insights에서 최신 1건 조회(서버·익명키). 없으면 null. */
+export async function getLatestStoredInsight(): Promise<{ dateKst: string; insight: ThemeInsightOutput } | null> {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return null;
+    const sb = createSbClient(url, key, { auth: { persistSession: false } });
+    const { data } = await sb
+      .from("daily_insights")
+      .select("date_kst, insight")
+      .order("date_kst", { ascending: false })
+      .limit(1);
+    if (data && data[0]) {
+      return { dateKst: data[0].date_kst as string, insight: data[0].insight as ThemeInsightOutput };
+    }
+  } catch {
+    /* 테이블 없거나 오류 → null */
+  }
+  return null;
+}

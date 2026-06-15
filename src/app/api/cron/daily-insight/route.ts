@@ -5,9 +5,8 @@
 // CRON_SECRET 환경변수로 외부 호출 차단.
 
 import { NextResponse } from "next/server";
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { generateThemeInsight } from "@/lib/ai-insight";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { mockTopNeglectedThemes, mockStocksInTheme } from "@/lib/mockData";
 
 function todayKST(): string {
@@ -56,14 +55,15 @@ export async function GET(req: Request) {
       insight: result.insight,
     };
 
-    // ⚠️ Vercel은 함수에서 public/에 쓰기 불가 — 운영은 외부 저장소(KV/S3) 필요
-    // PoC는 파일 시스템 쓰기 시도, 실패해도 메모리 캐시 OK
+    // Supabase daily_insights 영속화 (Vercel 함수는 fs 쓰기 불가)
     try {
-      const dir = join(process.cwd(), "public", "daily-insights");
-      await writeFile(join(dir, "latest.json"), JSON.stringify(payload, null, 2), "utf-8");
-      await writeFile(join(dir, `${date}.json`), JSON.stringify(payload, null, 2), "utf-8");
-    } catch {
-      // Vercel 환경에서 fs 쓰기 실패는 정상. 운영 시 Vercel KV / Supabase로 교체.
+      const supabase = createAdminClient();
+      await supabase.from("daily_insights").upsert(
+        { date_kst: date, insight: result.insight, source: result.source, model: result.model },
+        { onConflict: "date_kst" },
+      );
+    } catch (e) {
+      console.error("daily_insights 저장 실패:", e);
     }
 
     return NextResponse.json({ ok: true, ...payload });
