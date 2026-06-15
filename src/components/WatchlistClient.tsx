@@ -172,7 +172,7 @@ export function WatchlistClient({
             <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">관심 종목이 없어요</p>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
-              종목 페이지에서 ♥ 버튼을 누르거나, 아래에서 바로 검색해 추가하세요.
+              추가하면 점수 변화·신규 공시·시장경보·거래량 급증을 한눈에 확인할 수 있어요. ♥ 버튼이나 아래 검색으로 추가하세요.
             </p>
             <div className="mb-4">
               <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />

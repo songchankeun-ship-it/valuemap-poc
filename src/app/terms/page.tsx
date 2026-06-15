@@ -49,6 +49,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제5조 (지적재산권)</h2>
           <p>본 서비스가 자체 개발한 점수 산식, UI 디자인, 코드는 운영자의 지적재산입니다. 무단 복제·배포·상업적 활용을 금지합니다.</p>
+          <p>산식 검증을 위해 일부 계산 코드를 공개 저장소에 게시하나, 이는 오픈소스 라이선스 부여가 아니며 사용 조건은 본 약관과 저장소의 LICENSE를 따릅니다.</p>
           <p>원본 데이터(KRX·DART·Naver Finance 등)의 저작권은 각 출처에 있습니다.</p>
         </section>
 

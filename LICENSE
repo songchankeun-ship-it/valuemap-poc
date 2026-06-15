@@ -1,0 +1,12 @@
+오른스코어(OrnScore) — All Rights Reserved
+Copyright (c) 2026 OrnScore. All rights reserved.
+
+본 저장소의 소스 코드, 점수 산식, UI 디자인은 운영자의 지적재산입니다.
+산식 검증과 투명성을 위해 일부 코드를 공개하나, 이는 오픈소스 라이선스 부여가 아닙니다.
+사전 서면 허가 없는 복제, 수정, 재배포, 상업적 이용을 금지합니다.
+
+This repository is source-available for transparency and verification only.
+It is NOT open source. No license is granted to copy, modify, redistribute,
+or use this code commercially without prior written permission of the owner.
+
+원본 시장 데이터(KRX, DART, Naver Finance 등)의 저작권은 각 출처에 있습니다.

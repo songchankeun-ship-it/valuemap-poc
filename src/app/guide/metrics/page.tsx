@@ -121,7 +121,7 @@ export default function GuidePage() {
           <li>· 종합점수의 <strong>밸류</strong>는 <strong>전체 138개 기준</strong> 분위입니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 별도 참고 지표로, <strong>종합점수에는 포함되지 않습니다.</strong></li>
           <li>· 점수는 <strong className="text-amber-700">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
           <li>· <strong className="text-zinc-900">산식 버전: Metrics v2.3</strong> (적용일 2026-06-14). <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
-          <li>· 오픈소스 공개 — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
+          <li>· 계산 코드 공개(산식 검증용) — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
         </ul>
       </section>
 
