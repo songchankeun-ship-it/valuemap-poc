@@ -184,7 +184,7 @@ function LoginForm() {
             </li>
             <li className="flex items-start gap-2.5">
               <Bell className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">공시·지표 알림 (출시 예정)</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목 공시 알림 (등록 시 · 무료)</div>
             </li>
           </ul>
         </div>

@@ -186,7 +186,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         </div>
         {data.totalDisclosures >= 200 ? (
           <p className="text-[10px] text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1">
-            ℹ DART API 한도(최신 200건)에 도달했어요. 기간을 늘려도 표시되는 건수는 동일할 수 있습니다.
+            ℹ 현재 오른스코어는 성능·비용을 위해 최신 공시 200건까지만 분석합니다. 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.
           </p>
         ) : null}
 

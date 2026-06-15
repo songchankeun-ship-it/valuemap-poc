@@ -82,6 +82,7 @@ export function WatchlistClient({
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
 
   useEffect(() => {
@@ -98,14 +99,21 @@ export function WatchlistClient({
     let mounted = true;
 
     async function load() {
-      const wl = await getWatchlist();
-      if (mounted) {
-        setWatchlist(wl);
-        setRecent(readRecent());
-        setLoading(false);
+      try {
+        const wl = await getWatchlist();
+        if (mounted) {
+          setWatchlist(wl);
+          setRecent(readRecent());
+        }
+      } catch {
+        if (mounted) setLoadError(true);
+      } finally {
+        if (mounted) setLoading(false);
       }
     }
     load();
+    // 무한 로딩 방지 — 8초 후 강제 종료
+    const loadTimeout = setTimeout(() => { if (mounted) setLoading(false); }, 8000);
 
     function onWatchlistChange() {
       getWatchlist().then((wl) => {
@@ -121,6 +129,7 @@ export function WatchlistClient({
 
     return () => {
       mounted = false;
+      clearTimeout(loadTimeout);
       window.removeEventListener("watchlist-changed", onWatchlistChange);
       window.removeEventListener("recent-views-changed", onRecentChange);
     };
@@ -145,6 +154,15 @@ export function WatchlistClient({
     return (
       <div className="text-sm text-zinc-500 py-8 text-center">
         불러오는 중...
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center space-y-2">
+        <div>관심 종목을 불러오지 못했어요.</div>
+        <button onClick={() => window.location.reload()} className="text-xs px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">다시 시도</button>
       </div>
     );
   }
