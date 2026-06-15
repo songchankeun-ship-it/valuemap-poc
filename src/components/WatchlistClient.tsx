@@ -73,9 +73,11 @@ const SIGNAL_TONE: Record<string, string> = {
 export function WatchlistClient({
   allStocks,
   tickerToSignal = {},
+  tickerToDelta = {},
 }: {
   allStocks: StockInfo[];
   tickerToSignal?: Record<string, SignalInfo>;
+  tickerToDelta?: Record<string, number>;
 }) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
@@ -218,7 +220,7 @@ export function WatchlistClient({
                         {info?.compositeScore !== undefined ? (
                           <>
                             <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                            <span>점수 <strong className="text-zinc-700 dark:text-zinc-300">{info.compositeScore}</strong></span>
+                            <span>점수 <strong className="text-zinc-700 dark:text-zinc-300">{info.compositeScore}</strong>{tickerToDelta[item.ticker] !== undefined && Math.round(tickerToDelta[item.ticker]) !== 0 ? <span className={"ml-0.5 " + (tickerToDelta[item.ticker] > 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{tickerToDelta[item.ticker] > 0 ? "▲" : "▼"}{Math.abs(Math.round(tickerToDelta[item.ticker]))}</span> : null}</span>
                           </>
                         ) : null}
                         <span className="text-zinc-300 dark:text-zinc-600">·</span>

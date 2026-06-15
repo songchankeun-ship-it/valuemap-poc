@@ -3,6 +3,7 @@ import { getAllStocks } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/server";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 import { compositeOf } from "@/lib/score";
+import { getScoreChangesBatch } from "@/lib/scoreHistory";
 
 export const metadata = {
   title: "관심 종목 — 오른스코어",
@@ -25,6 +26,8 @@ export default async function WatchlistPage() {
     vol: s.vol,
     compositeScore: Math.round(compositeOf(s)),
   }));
+
+  const tickerToDelta = await getScoreChangesBatch(allStocks.map((s) => s.ticker));
 
   // ticker → 최강 신호 매핑
   const signals = ((recentSignalsRaw as { signals?: RawSignal[] }).signals ?? []);
@@ -58,7 +61,7 @@ export default async function WatchlistPage() {
             : "현재는 이 브라우저에만 저장됩니다. 로그인하면 여러 기기에서 이어볼 수 있어요."}
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} />
+      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} />
     </div>
   );
 }

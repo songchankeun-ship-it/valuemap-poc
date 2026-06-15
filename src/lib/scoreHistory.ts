@@ -80,6 +80,43 @@ export async function getScoreChange(ticker: string): Promise<{
 }
 
 /** 여러 종목의 어제 대비 변화량 일괄 조회 */
+export interface MetricChange { momentum: number; flow: number; value: number; vol: number }
+
+/** 지표별(추세·거래활성도·밸류·위험조정) 전일 대비 변화. daily_scores 최근 2영업일 기준. */
+export async function getMetricChangesBatch(tickers: string[]): Promise<Record<string, MetricChange>> {
+  if (tickers.length === 0) return {};
+  try {
+    const supabase = getClient();
+    const { data } = await supabase
+      .from("daily_scores")
+      .select("ticker, business_date, momentum, flow, value, vol")
+      .in("ticker", tickers)
+      .order("business_date", { ascending: false });
+    if (!data) return {};
+    const byTicker = new Map<string, MetricChange[]>();
+    for (const r of data) {
+      const t = r.ticker as string;
+      if (!byTicker.has(t)) byTicker.set(t, []);
+      const arr = byTicker.get(t)!;
+      if (arr.length < 2) arr.push({ momentum: Number(r.momentum), flow: Number(r.flow), value: Number(r.value), vol: Number(r.vol) });
+    }
+    const result: Record<string, MetricChange> = {};
+    for (const [ticker, rows] of byTicker.entries()) {
+      if (rows.length === 2) {
+        result[ticker] = {
+          momentum: rows[0].momentum - rows[1].momentum,
+          flow: rows[0].flow - rows[1].flow,
+          value: rows[0].value - rows[1].value,
+          vol: rows[0].vol - rows[1].vol,
+        };
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 export async function getScoreChangesBatch(tickers: string[]): Promise<Record<string, number>> {
   if (tickers.length === 0) return {};
   try {
