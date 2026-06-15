@@ -103,11 +103,11 @@ export async function AppHeader() {
         <div className="px-3 md:px-4 py-2 md:py-2.5 flex items-center gap-2 md:gap-3">
           <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">
-            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">O</span>
+            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-sm"><svg width="16" height="16" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="13" cy="15" r="7" stroke="white" strokeWidth="2.4"/><path d="M8 19L20 8" stroke="white" strokeWidth="2.4" strokeLinecap="round"/></svg></span>
             <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">오른스코어</span>
           </Link>
           <Link href="/" className="lg:hidden flex items-center shrink-0" aria-label="홈">
-            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold shadow-sm">O</span>
+            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-sm"><svg width="16" height="16" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="13" cy="15" r="7" stroke="white" strokeWidth="2.4"/><path d="M8 19L20 8" stroke="white" strokeWidth="2.4" strokeLinecap="round"/></svg></span>
           </Link>
 
           <div className="flex-1 flex justify-center max-w-xl mx-auto min-w-0">

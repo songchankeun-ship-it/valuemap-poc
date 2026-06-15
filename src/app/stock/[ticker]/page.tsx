@@ -93,20 +93,27 @@ function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 
 }
 
 function scoreTone(score: number): { text: string; bg: string; border: string; ring: string } {
-  if (score >= 70) return {
-    text: "text-emerald-700 dark:text-emerald-400",
-    bg: "bg-emerald-50 dark:bg-emerald-950/30",
-    border: "border-emerald-200 dark:border-emerald-900",
-    ring: "ring-emerald-200 dark:ring-emerald-900",
+  // 종합점수는 상승빨강/하락파랑과 혼동되지 않게 브랜드 인디고+중립 단계색 사용 (디자인 설계서 §3)
+  if (score >= 80) return {
+    text: "text-indigo-700 dark:text-indigo-300",
+    bg: "bg-indigo-50 dark:bg-indigo-950/30",
+    border: "border-indigo-200 dark:border-indigo-900",
+    ring: "ring-indigo-300 dark:ring-indigo-800",
   };
-  if (score >= 50) return {
-    text: "text-blue-700 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-950/30",
-    border: "border-blue-200 dark:border-blue-900",
-    ring: "ring-blue-200 dark:ring-blue-900",
+  if (score >= 60) return {
+    text: "text-indigo-600 dark:text-indigo-400",
+    bg: "bg-indigo-50/60 dark:bg-indigo-950/20",
+    border: "border-indigo-100 dark:border-indigo-900/60",
+    ring: "ring-indigo-200 dark:ring-indigo-900",
+  };
+  if (score >= 40) return {
+    text: "text-zinc-700 dark:text-zinc-300",
+    bg: "bg-zinc-50 dark:bg-zinc-900/50",
+    border: "border-zinc-200 dark:border-zinc-800",
+    ring: "ring-zinc-300 dark:ring-zinc-700",
   };
   return {
-    text: "text-zinc-600 dark:text-zinc-400",
+    text: "text-zinc-500 dark:text-zinc-400",
     bg: "bg-zinc-50 dark:bg-zinc-900",
     border: "border-zinc-200 dark:border-zinc-800",
     ring: "ring-zinc-200 dark:ring-zinc-800",

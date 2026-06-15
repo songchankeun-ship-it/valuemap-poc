@@ -24,6 +24,9 @@ function isActive(pathname: string, href: string) {
 
 export function Sidebar() {
   const pathname = usePathname();
+  // 인증·문서 레이아웃에서는 앱 사이드바 숨김 (디자인 설계서 §2, P0-6)
+  const HIDE = ["/login", "/terms", "/privacy"];
+  if (pathname && HIDE.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
   // /login 페이지에서는 사이드바 숨김 (집중형 레이아웃)
   if (pathname === "/login") return null;
 

@@ -24,6 +24,8 @@ const MORE = [
 export function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname() || "";
+  const HIDE = ["/login", "/terms", "/privacy"];
+  if (HIDE.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
