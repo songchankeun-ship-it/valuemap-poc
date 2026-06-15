@@ -2,7 +2,7 @@ import Link from "next/link";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
-import { getScoreChangesBatch } from "@/lib/scoreHistory";
+import { getScoreChangesBatch, getMetricChangesBatch } from "@/lib/scoreHistory";
 import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
 import { StockTabs } from "@/components/StockTabs";
@@ -157,6 +157,7 @@ export default async function TodayPage() {
 
   // 어제 대비 변화 (Supabase daily_scores) — 데이터 없으면 빈 객체
   const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
+  const metricChanges = await getMetricChangesBatch(realStockPool.map((s) => s.ticker));
   const hasDeltas = Object.keys(scoreDeltas).length > 0;
   const newEntrants = hasDeltas
     ? realStockPool
@@ -308,8 +309,11 @@ export default async function TodayPage() {
                 {bigMovers.map((s) => {
                   const d = scoreDeltas[s.ticker];
                   const up = d >= 0;
+                  const mc = metricChanges[s.ticker];
+                  const fmtd = (v: number) => (v >= 0 ? "+" : "") + Math.round(v);
+                  const cause = mc ? `추세 ${fmtd(mc.momentum)} · 거래활성도 ${fmtd(mc.flow)} · 밸류 ${fmtd(mc.value)} · 위험조정 ${fmtd(mc.vol)}` : undefined;
                   return (
-                    <Link key={s.ticker} href={"/stock/" + s.ticker} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
+                    <Link key={s.ticker} href={"/stock/" + s.ticker} title={cause} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
                       {s.name} <span className="tabular-nums">{up ? "▲" : "▼"}{Math.abs(Math.round(d))}</span>
                     </Link>
                   );
