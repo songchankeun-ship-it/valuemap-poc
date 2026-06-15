@@ -160,6 +160,7 @@ export default async function TodayPage() {
   const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
   const metricChanges = await getMetricChangesBatch(realStockPool.map((s) => s.ticker));
   const aiInsight = await getLatestStoredInsight();
+  const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   const hasDeltas = Object.keys(scoreDeltas).length > 0;
   const newEntrants = hasDeltas
     ? realStockPool
@@ -369,7 +370,7 @@ export default async function TodayPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
                       <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
-                      {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-[9px] px-1 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-medium shrink-0">🔺급등 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
+                      {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-[9px] px-1 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-medium shrink-0">🔺3개월 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
                     </div>
                     <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
                       💡 {compositeReason(s)}
@@ -531,7 +532,9 @@ export default async function TodayPage() {
                 {top3.map((s, i) => (
                   <li key={s.disclosure.rcept_no}>
                     <Link
-                      href={"/stock/" + s.disclosure.stock_code}
+                      href={universeTickers.has(s.disclosure.stock_code) ? "/stock/" + s.disclosure.stock_code : `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${s.disclosure.rcept_no}`}
+                      target={universeTickers.has(s.disclosure.stock_code) ? undefined : "_blank"}
+                      rel={universeTickers.has(s.disclosure.stock_code) ? undefined : "noopener noreferrer"}
                       className="block bg-white/70 dark:bg-zinc-900/70 rounded-md p-3 border border-amber-100 dark:border-amber-900 hover:bg-white dark:hover:bg-zinc-900 hover:border-amber-300 transition active:bg-amber-50 dark:active:bg-amber-950/30 min-h-[68px]"
                     >
                       <div className="flex items-start gap-2.5">
@@ -542,6 +545,7 @@ export default async function TodayPage() {
                               {s.signalLabel}
                             </span>
                             <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70">유형 자동분류</span>
+                            {!universeTickers.has(s.disclosure.stock_code) ? <span className="text-[10px] text-zinc-400 dark:text-zinc-500">· 분석 대상 외 · DART ↗</span> : null}
                           </div>
                           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
                             {s.disclosure.corp_name}

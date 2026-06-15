@@ -5,6 +5,14 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+
+## 🆕 라이브 리뷰(2026-06) P0/P1 — 실사용 발견 버그
+- ✅ P0-02 공시카드 404 — 홈·오늘 공시카드가 분석대상外 종목도 /stock/로 연결 → DART 원문(외부)+배지로 분기
+- ✅ P0-03 수익률 불일치 — 홈/오늘 r3m(FDR)≠차트(prices/json). compute_metrics가 prices/json 읽게 통일(최근253일) → r3m=차트 일치 + r1y 복구. **다음 Run에서 데이터 반영**
+- ⬜ P0-01 www.ornscore.com 502 — Vercel에 www 도메인 추가 + apex 리다이렉트(너)
+- ⬜ P0-04 알림 출시상태 페이지마다 다름 — feature flag 중앙화
+- ⬜ P1-01 DART 200건 문구 / P1-02 산식버전(phase2-v2 vs v2.3) / P1-03 동점순위(공동) / P1-04 업종 17·18 분모 / P1-06 V로고 / P1-07 데이터상태 정상 정적
+
 마지막 업데이트: 2026-06-15 (세션: 금지문구·게이트·문자등급제거·신뢰도% + 로드맵)
 
 ---

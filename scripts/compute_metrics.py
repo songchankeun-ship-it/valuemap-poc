@@ -22,6 +22,21 @@ def fetch_historical(ticker, days=365):
         return df
     except Exception: return None
 
+def load_prices(ticker, lookback=253):
+    """차트와 동일한 prices/{ticker}.json을 읽어 지표 계산(수익률 소스 통일·P0-03).
+       최근 lookback(≈1년) 거래일만 사용 → vol 관측기간 252+ 충족, r3m=차트 3개월 일치."""
+    p = os.path.join(ROOT, "public", "data", "prices", f"{ticker}.json")
+    try:
+        with open(p, encoding="utf-8-sig") as fp:
+            d = json.load(fp)
+        pts = [x for x in d.get("points", []) if isinstance(x.get("c"), (int, float)) and x["c"] > 0]
+        if len(pts) < 60:
+            return None
+        pts = pts[-lookback:]
+        return pd.DataFrame({"Close": [x["c"] for x in pts], "Volume": [x.get("v", 0) or 0 for x in pts]})
+    except Exception:
+        return None
+
 def calc_momentum(df):
     if df is None or len(df) < 130: return None
     closes = df["Close"].values; last = closes[-1]
@@ -93,14 +108,13 @@ def main():
     print("\n[2/4] VALUE scores...")
     value_scores = calc_value(stocks)
     print(f"      OK value: {sum(1 for v in value_scores.values() if v is not None)}/{n}")
-    print(f"\n[3/4] Fetching 1y historical (~{n}s)...")
+    print(f"\n[3/4] Loading prices (local prices/json, 차트와 동일 소스)...")
     historical = {}
     for i, item in enumerate(stocks):
-        df = fetch_historical(item["ticker"])
+        df = load_prices(item["ticker"])
         if df is not None: historical[item["ticker"]] = df
         if (i+1) % 25 == 0: print(f"      {i+1}/{n}")
-        time.sleep(0.15)
-    print(f"      OK historical: {len(historical)}/{n}")
+    print(f"      OK prices: {len(historical)}/{n}")
     print("\n[4/4] Computing all 4 metrics + composite...")
     m_ok = vol_ok = f_ok = 0
     for item in stocks:

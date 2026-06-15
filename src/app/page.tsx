@@ -91,6 +91,7 @@ export const metadata = {
 
 export default async function HomePage() {
   const recentSig = await getRecentSignals(7);
+  const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   const top3 = pickTopStocks(3);
   const topSignals = pickTopSignals(2, (recentSig.signals as unknown as RecentSignal[]) ?? []);
 
@@ -168,7 +169,7 @@ export default async function HomePage() {
                   <span className={s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400"}>
                     {s.changePct >= 0 ? "▲" : "▼"}{Math.abs(s.changePct).toFixed(2)}%
                   </span>
-                  {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-rose-600 dark:text-rose-400 font-medium">🔺급등 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
+                  {(s.returns?.r3m ?? 0) >= 80 ? <span className="text-rose-600 dark:text-rose-400 font-medium">🔺3개월 +{Math.round(s.returns?.r3m ?? 0)}%</span> : null}
                 </div>
               </Link>
             ))}
@@ -200,19 +201,20 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {topSignals.map((s) => {
+              const code = s.disclosure.stock_code;
+              const inUniv = universeTickers.has(code);
+              const dartUrl = `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${s.disclosure.rcept_no}`;
               const date = s.disclosure.rcept_dt;
               const fmtDate = date.length === 8 ? `${date.slice(4, 6)}.${date.slice(6, 8)}` : date;
-              return (
-                <Link
-                  key={s.disclosure.rcept_no}
-                  href={"/stock/" + s.disclosure.stock_code}
-                  className="block bg-white/80 dark:bg-zinc-900/60 border border-amber-100 dark:border-amber-900/50 rounded-lg p-3 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-white dark:hover:bg-zinc-900 transition active:bg-amber-50 dark:active:bg-amber-950/40 min-h-[88px]"
-                >
+              const cardClass = "block bg-white/80 dark:bg-zinc-900/60 border border-amber-100 dark:border-amber-900/50 rounded-lg p-3 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-white dark:hover:bg-zinc-900 transition active:bg-amber-50 dark:active:bg-amber-950/40 min-h-[88px]";
+              const inner = (
+                <>
                   <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
                     <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[s.signalType] || "bg-zinc-50 text-zinc-700 border-zinc-200")}>
                       {s.signalLabel}
                     </span>
                     <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70">유형 자동분류</span>
+                    {!inUniv ? <span className="text-[10px] text-zinc-400 dark:text-zinc-500">· 분석 대상 외 · DART 원문 ↗</span> : null}
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums ml-auto">{fmtDate}</span>
                   </div>
                   <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
@@ -221,7 +223,12 @@ export default async function HomePage() {
                   <div className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 line-clamp-2 leading-snug">
                     {s.disclosure.report_nm}
                   </div>
-                </Link>
+                </>
+              );
+              return inUniv ? (
+                <Link key={s.disclosure.rcept_no} href={"/stock/" + code} className={cardClass}>{inner}</Link>
+              ) : (
+                <a key={s.disclosure.rcept_no} href={dartUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>{inner}</a>
               );
             })}
           </div>
