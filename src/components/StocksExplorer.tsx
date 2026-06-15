@@ -119,6 +119,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -402,6 +403,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
         <p className="text-[11px] text-zinc-400 dark:text-zinc-500">기본 화면은 PER 200·PBR 30 이하만 표시해요. 제외된 {stocks.length - sorted.length}개(고PER·고PBR 등)는 위 필터에서 범위를 넓히면 포함됩니다.</p>
       ) : null}
 
+      <button type="button" onClick={() => setToolsOpen((v) => !v)} aria-expanded={toolsOpen} className="lg:hidden w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg">
+        <span className="flex items-center gap-1.5">빠른 탐색 · 저장된 조건
+          {activeFilterCount > 0 ? (<span className="px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>) : null}
+        </span>
+        <span className="text-zinc-400 dark:text-zinc-500">{toolsOpen ? "닫기 ▴" : "열기 ▾"}</span>
+      </button>
+      <div className={(toolsOpen ? "block" : "hidden") + " lg:block space-y-3 md:space-y-4"}>
       <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <span className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">빠른 프리셋</span>
@@ -469,6 +477,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
             ))}
           </div>
         )}
+      </div>
       </div>
 
       <div className="flex gap-2 flex-wrap">
