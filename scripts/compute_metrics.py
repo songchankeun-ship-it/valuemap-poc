@@ -101,7 +101,7 @@ def safe_avg(values, default=50):
 
 def main():
     print("="*60)
-    print("  Ornscore - Phase 2 v2 (None-safe)")
+    print("  Ornscore - Metrics v2.4 (prices/json source)")
     print("="*60)
     data = load_stocks(); stocks = data["stocks"]; n = len(stocks)
     print(f"\n[1/4] Loaded: {n} stocks")
@@ -175,7 +175,7 @@ def main():
 
     data["stocks"] = stocks
     data["generatedAt"] = datetime.now().isoformat()
-    data["metricsVersion"] = "phase2-v2"
+    data["metricsVersion"] = "2.4"
     out = os.path.join(ROOT, "public", "data", "stocks.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)

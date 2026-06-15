@@ -78,7 +78,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
           <div className="lg:hidden fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10">
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">V</span>
+                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-xs font-bold">O</span>
                 <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">오른스코어</span>
               </Link>
               <button

@@ -46,7 +46,7 @@ function renderAlertEmail(alertName: string, matched: StockForMatch[]): string {
     .join("");
   return `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #18181b; line-height: 1.6;">
     <div style="display:inline-flex; align-items:center; gap:8px; margin-bottom:20px;">
-      <span style="display:inline-block; width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; text-align:center; line-height:28px; font-weight:700;">V</span>
+      <span style="display:inline-block; width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; text-align:center; line-height:28px; font-weight:700;">O</span>
       <span style="font-size:16px; font-weight:600;">오른스코어</span>
     </div>
     <h1 style="font-size:20px; font-weight:700; margin:0 0 8px;">'${alertName}' 조건에 새 종목 ${matched.length}곳</h1>

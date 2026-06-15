@@ -85,9 +85,19 @@ export default function RootLayout({
               <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
                 <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataMetadata.asOfBusinessDate} 장마감</span>
                 <span>·</span>
-                <span>산식 Metrics v2.3</span>
+                <span>산식 Metrics {dataMetadata.metricsVersion ?? "—"}</span>
                 <span>·</span>
-                <span className="text-emerald-600/80 dark:text-emerald-500/80">데이터 상태 정상</span>
+                {(() => {
+                  const d = dataMetadata.asOfBusinessDate;
+                  let stale = false;
+                  if (d && /^\d{8}$/.test(d)) {
+                    const dt = new Date(Number(d.slice(0, 4)), Number(d.slice(4, 6)) - 1, Number(d.slice(6, 8)));
+                    stale = (Date.now() - dt.getTime()) / 86400000 > 5;
+                  }
+                  return (
+                    <a href="/status" className={(stale ? "text-amber-600/90 dark:text-amber-500/90" : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"}>데이터 상태 {stale ? "갱신 지연 확인" : "정상"}</a>
+                  );
+                })()}
                 <span>·</span>
                 <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>

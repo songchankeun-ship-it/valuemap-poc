@@ -355,7 +355,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <div className="rounded-lg border border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-[11px] md:text-xs text-cyan-800 dark:text-cyan-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개 중 PER·PBR 상대 위치 (전체 풀 밸류 {Math.round(s.value)}점과 비교){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 (전체 풀 밸류 {Math.round(s.value)}점과 비교){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
           </div>
           <div className="text-right shrink-0">
             <span className="text-lg font-bold tabular-nums text-cyan-700 dark:text-cyan-400">{sectorValue.score}</span>
@@ -401,7 +401,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             </tbody>
           </table>
           </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">같은 업종 {sectorCount}곳 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">같은 업종 {sectorCount}곳(본인 포함) 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
         </section>
       ) : null}
 

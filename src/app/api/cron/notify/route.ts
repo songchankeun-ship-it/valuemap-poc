@@ -108,7 +108,7 @@ function renderEmail(signals: Signal[]): string {
   return `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #18181b; line-height: 1.6;">
   <div style="margin-bottom: 24px;">
     <div style="display: inline-flex; align-items: center; gap: 8px;">
-      <span style="display: inline-block; width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; text-align: center; line-height: 28px; font-weight: 700; font-size: 14px;">V</span>
+      <span style="display: inline-block; width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; text-align: center; line-height: 28px; font-weight: 700; font-size: 14px;">O</span>
       <span style="font-size: 16px; font-weight: 600;">오른스코어</span>
     </div>
   </div>
