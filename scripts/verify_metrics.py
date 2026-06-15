@@ -34,7 +34,9 @@ if not errors:
 # 배포 대상 src/ 에 아래 문자열이 있으면 빌드 실패 처리.
 import glob as _glob
 FORBIDDEN = ["밸류맵", "ValueMap", "valuemap.kr", "오른스코어은", "오른스코어 스톡",
-             "테마주 분석", "AI 분석 무제한 또는 크레딧", "월말 신호", "당월 첫 거래일"]
+             "테마주 분석", "AI 분석 무제한 또는 크레딧", "월말 신호", "당월 첫 거래일",
+             "안정적으로 우상향", "큰 출렁임 없이", "매수 기회", "추천 종목",
+             "저평가 확정", "호재 확정", "악재 확정", "안전한 종목", "서비스)이"]
 brand_errors = []
 src_root = os.path.join(os.path.dirname(__file__), "..", "src")
 for fp in _glob.glob(os.path.join(src_root, "**", "*.tsx"), recursive=True) + \

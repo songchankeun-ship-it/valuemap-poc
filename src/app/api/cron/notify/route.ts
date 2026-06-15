@@ -89,7 +89,7 @@ function renderEmail(signals: Signal[]): string {
         <div style="padding: 10px 0; border-bottom: 1px solid #f4f4f5;">
           <div>
             <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: ${style.bg}; color: ${style.color};">${s.signalLabel}</span>
-            <span style="font-size: 11px; color: #71717a; margin-left: 8px;">분류 신뢰도 ${s.strength}%</span>
+            <span style="font-size: 11px; color: #71717a; margin-left: 8px;">유형 자동분류</span>
           </div>
           <div style="font-size: 12px; color: #3f3f46; margin-top: 6px; line-height: 1.5;">${s.disclosure.report_nm}</div>
           <a href="${s.disclosure.url}" style="display: inline-block; margin-top: 4px; font-size: 11px; color: #3b82f6; text-decoration: none;">DART 원문 보기 →</a>

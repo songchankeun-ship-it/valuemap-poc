@@ -1,12 +1,10 @@
-// 종합점수 → 등급. 소수점 점수의 과신을 줄이고 직관적 해석 제공.
+// 종합점수 → 탐색 우선도 라벨. 투자등급 오해를 피하려 문자등급(A+) 대신 행동 우선순위로 표현.
 export interface Grade { grade: string; label: string }
 
 export function gradeOf(score: number): Grade {
-  if (score >= 85) return { grade: "A+", label: "최상위권" };
-  if (score >= 75) return { grade: "A", label: "상위권" };
-  if (score >= 65) return { grade: "B+", label: "중상위권" };
-  if (score >= 55) return { grade: "B", label: "중위권" };
-  if (score >= 45) return { grade: "C+", label: "중하위권" };
-  if (score >= 35) return { grade: "C", label: "하위권" };
-  return { grade: "D", label: "최하위권" };
+  if (score >= 85) return { grade: "최우선 확인", label: "상위" };
+  if (score >= 75) return { grade: "우선 확인", label: "상위" };
+  if (score >= 65) return { grade: "추가 관찰", label: "중상" };
+  if (score >= 50) return { grade: "일반", label: "중위" };
+  return { grade: "조건 낮음", label: "하위" };
 }
