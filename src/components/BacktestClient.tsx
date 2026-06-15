@@ -179,6 +179,11 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
             {m.avgTurnover !== undefined ? <div>월평균 회전율 <strong className="text-zinc-900 dark:text-zinc-100">{(m.avgTurnover * 100).toFixed(0)}%</strong></div> : null}
             <div>총 거래 <strong className="text-zinc-900 dark:text-zinc-100">{m.tradeCount}건</strong></div>
           </div>
+          {m.benchmarkSharpe != null && m.benchmarkMdd != null && m.totalReturn > m.benchmarkReturn && (m.maxDrawdown < m.benchmarkMdd || m.sharpe < m.benchmarkSharpe) ? (
+            <p className="mt-3 text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+              ⚠ 총수익률은 벤치마크보다 높았지만, {m.maxDrawdown < (m.benchmarkMdd ?? 0) ? "최대낙폭이 더 크고 " : ""}{m.sharpe < (m.benchmarkSharpe ?? 99) ? "위험조정 성과(Sharpe)가 더 낮습니다" : "낙폭이 더 큽니다"}. 수익률만 보지 말고 낙폭·변동성을 함께 확인하세요.
+            </p>
+          ) : null}
         </section>
       ) : null}
 

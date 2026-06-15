@@ -136,7 +136,7 @@ export function StockPriceChart({ ticker, name, points }: Props) {
         </div>
       ) : (
         <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-1">
-          (차트를 길게 터치하면 날짜·가격 표시)
+          (마우스를 올리거나 차트를 길게 터치하면 날짜·가격 표시)
         </div>
       )}
 
