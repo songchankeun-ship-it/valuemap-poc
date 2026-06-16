@@ -53,50 +53,50 @@ export default function GuidePage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
-        <Link href="/" className="text-xs text-gray-500 hover:text-gray-900">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2">지표 가이드</h1>
-        <p className="text-sm text-zinc-600 mt-2 leading-relaxed">
+        <Link href="/" className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">← 홈으로</Link>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">지표 가이드</h1>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
           오른스코어는 한 종목을 네 각도로 봅니다. 각 지표가 어떻게 계산되고 무엇을 의미하는지 모두 공개합니다.
         </p>
       </header>
 
-      <nav className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 flex gap-2 flex-wrap text-xs">
-        <span className="text-zinc-500 font-medium">바로 가기:</span>
+      <nav className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 flex gap-2 flex-wrap text-xs">
+        <span className="text-zinc-500 dark:text-zinc-400 font-medium">바로 가기:</span>
         {METRICS.map((m) => (
-          <Link key={m.id} href={"#" + m.id} className="text-blue-700 hover:underline">{m.name}</Link>
+          <Link key={m.id} href={"#" + m.id} className="text-blue-700 dark:text-blue-400 hover:underline">{m.name}</Link>
         ))}
       </nav>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-sm text-amber-900 leading-relaxed">
+      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-4">
+        <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
           <strong>이 도구는 투자 추천이 아닙니다.</strong> 자체 지표는 <strong>어떤 종목을 더 자세히 들여다볼지</strong>를 정하는 <strong>탐색 우선순위</strong>에 도움을 주는 신호이며, 매수·매도 판단의 근거가 아닙니다. 모든 투자 결정과 책임은 사용자 본인에게 있습니다.
         </p>
       </div>
 
       {METRICS.map((m, i) => (
-        <section key={m.name} id={m.id} className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5 scroll-mt-24">
+        <section key={m.name} id={m.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5 scroll-mt-24">
           <div className="flex items-center gap-3 mb-3">
             <span className={"w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold " + m.color}>
               {i + 1}
             </span>
-            <h2 className="text-lg font-semibold text-zinc-900">{m.name}</h2>
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{m.name}</h2>
           </div>
-          <p className="text-sm text-zinc-700 mb-3 leading-relaxed">{m.desc}</p>
+          <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-3 leading-relaxed">{m.desc}</p>
 
-          <details className="bg-zinc-50 rounded-md p-3 mb-3">
-            <summary className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide cursor-pointer select-none">계산 방법 펼치기 ▾</summary>
-            <p className="text-xs text-zinc-700 leading-relaxed mt-2">{m.calc}</p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed mt-1.5 pt-1.5 border-t border-zinc-200">{m.detail}</p>
+          <details className="bg-zinc-50 dark:bg-zinc-800/50 rounded-md p-3 mb-3">
+            <summary className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide cursor-pointer select-none">계산 방법 펼치기 ▾</summary>
+            <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed mt-2">{m.calc}</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1.5 pt-1.5 border-t border-zinc-200 dark:border-zinc-700">{m.detail}</p>
           </details>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="bg-emerald-50 rounded-md p-3">
-              <div className="text-[11px] font-semibold text-emerald-700 mb-1">점수가 높을 때 (70~100)</div>
-              <p className="text-xs text-emerald-900 leading-relaxed">{m.high}</p>
+            <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-md p-3">
+              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">점수가 높을 때 (70~100)</div>
+              <p className="text-xs text-emerald-900 dark:text-emerald-200 leading-relaxed">{m.high}</p>
             </div>
-            <div className="bg-rose-50 rounded-md p-3">
-              <div className="text-[11px] font-semibold text-rose-700 mb-1">점수가 낮을 때 (0~30)</div>
-              <p className="text-xs text-rose-900 leading-relaxed">{m.low}</p>
+            <div className="bg-rose-50 dark:bg-rose-950/20 rounded-md p-3">
+              <div className="text-[11px] font-semibold text-rose-700 dark:text-rose-400 mb-1">점수가 낮을 때 (0~30)</div>
+              <p className="text-xs text-rose-900 dark:text-rose-200 leading-relaxed">{m.low}</p>
             </div>
           </div>
         </section>
@@ -112,21 +112,21 @@ export default function GuidePage() {
         </p>
       </section>
 
-      <section className="bg-white border border-zinc-200 rounded-lg p-3 md:p-5">
-        <h2 className="text-lg font-semibold mb-2 text-zinc-900">계산 공통 기준</h2>
-        <ul className="list-none pl-0 space-y-1.5 text-xs text-zinc-700 leading-relaxed">
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
+        <h2 className="text-lg font-semibold mb-2 text-zinc-900 dark:text-zinc-100">계산 공통 기준</h2>
+        <ul className="list-none pl-0 space-y-1.5 text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
           <li>· 가격은 <strong>수정종가</strong>(액면분할·배당락 반영) 기준으로 계산합니다.</li>
           <li>· 결측·거래정지 구간은 가능한 데이터만 사용하고, <strong>최소 관측치 미달 시 중립(50점)</strong>으로 처리합니다.</li>
           <li>· 무위험률은 <strong>연 3.5%</strong>를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).</li>
           <li>· 종합점수의 <strong>밸류</strong>는 <strong>전체 138개 기준</strong> 분위입니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 별도 참고 지표로, <strong>종합점수에는 포함되지 않습니다.</strong></li>
-          <li>· 점수는 <strong className="text-amber-700">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
-          <li>· <strong className="text-zinc-900">산식 버전: Metrics v2.3</strong> (적용일 2026-06-14). <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
-          <li>· 계산 코드 공개(산식 검증용) — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
+          <li>· 점수는 <strong className="text-amber-700 dark:text-amber-400">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
+          <li>· <strong className="text-zinc-900 dark:text-zinc-100">산식 버전: Metrics v2.3</strong> (적용일 2026-06-14). <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
+          <li>· 계산 코드 공개(산식 검증용) — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
         </ul>
       </section>
 
-      <section className="text-xs text-zinc-500 leading-relaxed border-t border-zinc-200 pt-4">
-        <strong className="text-zinc-700">데이터 출처:</strong> KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 보조 지표. {dataMetadata.count}개 종목. 영업일 마감 후 자동 갱신.
+      <section className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+        <strong className="text-zinc-700 dark:text-zinc-300">데이터 출처:</strong> KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 보조 지표. {dataMetadata.count}개 종목. 영업일 마감 후 자동 갱신.
       </section>
     </div>
   );

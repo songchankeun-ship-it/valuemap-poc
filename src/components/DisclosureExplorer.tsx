@@ -46,12 +46,12 @@ interface GroupedSignal {
 }
 
 const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  "자기주식 취득 결의": { bg: "bg-green-50", text: "text-green-700", border: "border-green-200" },
-  "임원·주요주주 보유 변동": { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  "정정공시": { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
-  "단일판매·공급계약": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  "유상증자 발행": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
-  "전환사채 발행": { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+  "자기주식 취득 결의": { bg: "bg-green-50 dark:bg-green-950/30", text: "text-green-700 dark:text-green-400", border: "border-green-200 dark:border-green-900" },
+  "임원·주요주주 보유 변동": { bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-200 dark:border-emerald-900" },
+  "정정공시": { bg: "bg-amber-50 dark:bg-amber-950/30", text: "text-amber-700 dark:text-amber-400", border: "border-amber-200 dark:border-amber-900" },
+  "단일판매·공급계약": { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-700 dark:text-blue-400", border: "border-blue-200 dark:border-blue-900" },
+  "유상증자 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
+  "전환사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
 };
 
 // 고정 분류 체계 — 결과 0건이어도 항상 노출(어떤 종류를 검사했는지 보이게).
@@ -162,7 +162,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
   if (error || !data) {
     return (
-      <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 text-sm text-rose-700">
+      <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg p-4 text-sm text-rose-700 dark:text-rose-400">
         공시 데이터를 가져오지 못했습니다: {error || "알 수 없는 에러"}
       </div>
     );
@@ -198,8 +198,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               onClick={() => setDays(d)}
               className={"px-3 py-1 text-xs rounded-md border transition " +
                 (days === d
-                  ? "bg-zinc-900 text-white border-zinc-900"
-                  : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400")}
+                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                  : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
             >
               {d}일
             </button>
@@ -212,8 +212,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             onClick={() => setFilterType("all")}
             className={"text-[11px] px-2.5 py-1 rounded-full border transition " +
               (filterType === "all"
-                ? "bg-zinc-900 text-white border-zinc-900"
-                : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400")}
+                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
           >
             전체 {grouped.length}
           </button>
@@ -228,7 +228,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 disabled={count === 0}
                 className={"text-[11px] px-2.5 py-1 rounded-full border transition " +
                   (active
-                    ? "bg-zinc-900 text-white border-zinc-900 font-semibold"
+                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 font-semibold"
                     : count === 0
                     ? "bg-white dark:bg-zinc-900 text-zinc-300 dark:text-zinc-600 border-zinc-100 dark:border-zinc-800 cursor-default"
                     : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400")}
@@ -250,7 +250,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             const dt = g.rcept_dt_latest;
             const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
             return (
-              <div key={g.key} className={"bg-white border rounded-lg p-3 md:p-4 transition hover:border-zinc-300 " + style.border + "/50"}>
+              <div key={g.key} className={"bg-white dark:bg-zinc-900 border rounded-lg p-3 md:p-4 transition hover:border-zinc-300 dark:hover:border-zinc-700 " + style.border + "/50"}>
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">

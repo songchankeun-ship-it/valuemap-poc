@@ -91,3 +91,19 @@
 - Resend ornscore.com 도메인 Verify 확인(대기중)
 - Supabase Auth Redirect URLs / Kakao Redirect URI에 ornscore.com 추가
 - 위 🔴 항목들의 데이터소스/결정 제공
+
+## 2026-06-16 · 페이지 디자인 재구성 (모바일 우선)
+- 메인(page.tsx): 컴팩트 히어로 + '오늘의 데이터' 블록(통계3칸+Top5) 신설, /today와 역할 분리.
+- 종목탐색(StocksExplorer): 프리셋·저장조건을 모바일 접이식 '빠른 탐색·저장된 조건'으로 묶어 검색·리스트 상단 배치(데스크탑 lg는 기존대로). 기능 무변경.
+- 공시(DisclosureExplorer): 다크모드 버그 수정(카드 bg-white→dark, 기간·필터버튼·SIGNAL_STYLES 다크 변형).
+- 오늘(today): 다크모드 버그 수정(통계3칸·SIGNAL_TONE·하단 공시 섹션).
+- 종목상세: 이미 다크·모바일 완비 확인 → 무변경.
+- 검증: 4파일 파싱 0에러 / 금칙어·한글깨짐 없음. 푸시 대상: page.tsx, StocksExplorer.tsx, DisclosureExplorer.tsx, today/page.tsx.
+
+## 2026-06-16 (2) · 다크모드 전수 감사·수정
+- 레포 전체 라이트전용 컬러배경(bg-*-50/from-*-50 dark: 누락) 스캔 → 전부 수정.
+- guide/metrics: dark: 0개였음 → 페이지 전면 다크 적용(26곳).
+- StockDisclosures·WatchlistClient: 신호색 맵 다크 변형.
+- HistoryClient: 호재/리스크 패널 다크. DisclosureExplorer: 에러패널 다크.
+- NotificationToggle: 토글 두 상태 다크. StocksExplorer: 카드 인사이트칩 5종 다크.
+- 검증: 7파일 파싱 0에러 / 금칙어·한글깨짐 없음 / 최종 재스캔 잔여 0.

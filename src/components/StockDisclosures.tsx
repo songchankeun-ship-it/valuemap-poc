@@ -31,12 +31,12 @@ interface ApiResponse {
 }
 
 const SIGNAL_BG: Record<string, string> = {
-  "자기주식 취득 결의": "bg-green-50 text-green-700",
-  "임원·주요주주 보유 변동": "bg-emerald-50 text-emerald-700",
-  "정정공시": "bg-amber-50 text-amber-700",
-  "단일판매·공급계약": "bg-blue-50 text-blue-700",
-  "유상증자 발행": "bg-purple-50 text-purple-700",
-  "전환사채 발행": "bg-purple-50 text-purple-700",
+  "자기주식 취득 결의": "bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400",
+  "임원·주요주주 보유 변동": "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400",
+  "정정공시": "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400",
+  "단일판매·공급계약": "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400",
+  "유상증자 발행": "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
+  "전환사채 발행": "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
 };
 
 function getBadgeClass(label: string): string {

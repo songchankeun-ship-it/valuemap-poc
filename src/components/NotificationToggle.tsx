@@ -46,8 +46,8 @@ export function NotificationToggle() {
       disabled={saving}
       className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium border transition disabled:opacity-50 shrink-0 ${
         enabled
-          ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
-          : "bg-zinc-50 border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+          ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
+          : "bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700"
       }`}
     >
       {saving ? (

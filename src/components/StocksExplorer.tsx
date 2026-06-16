@@ -571,11 +571,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
                 </div>
                 {(() => {
                   const insights: { label: string; tone: string }[] = [];
-                  if (s.momentum >= 70) insights.push({ label: "추세 강함", tone: "bg-blue-50 text-blue-700 border-blue-200" });
-                  if (s.flow >= 70) insights.push({ label: "거래 활발", tone: "bg-green-50 text-green-700 border-green-200" });
-                  if (s.value >= 70) insights.push({ label: "저평가 가능", tone: "bg-cyan-50 text-cyan-700 border-cyan-200" });
-                  if (s.vol >= 70) insights.push({ label: "위험 대비 양호", tone: "bg-orange-50 text-orange-700 border-orange-200" });
-                  if (s.momentum < 40 && s.flow < 40) insights.push({ label: "약세 흐름", tone: "bg-zinc-50 text-zinc-600 border-zinc-200" });
+                  if (s.momentum >= 70) insights.push({ label: "추세 강함", tone: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900" });
+                  if (s.flow >= 70) insights.push({ label: "거래 활발", tone: "bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900" });
+                  if (s.value >= 70) insights.push({ label: "저평가 가능", tone: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-900" });
+                  if (s.vol >= 70) insights.push({ label: "위험 대비 양호", tone: "bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-900" });
+                  if (s.momentum < 40 && s.flow < 40) insights.push({ label: "약세 흐름", tone: "bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700" });
                   return insights.length > 0 ? (
                     <div className="flex gap-1 flex-wrap mt-2">
                       {insights.slice(0, 2).map((i) => (

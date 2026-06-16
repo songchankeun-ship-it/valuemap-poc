@@ -157,11 +157,11 @@ export function HistoryClient() {
                 ) : null}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="bg-emerald-50 border border-emerald-200 rounded p-2.5">
-                    <div className="text-[10px] font-semibold text-emerald-700 mb-1.5 uppercase tracking-wide">
+                  <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900 rounded p-2.5">
+                    <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5 uppercase tracking-wide">
                       호재 3
                     </div>
-                    <ul className="text-xs space-y-1 text-emerald-900">
+                    <ul className="text-xs space-y-1 text-emerald-900 dark:text-emerald-200">
                       {r.analysis.positives.map((p, i) => (
                         <li key={i} className="flex gap-1">
                           <span className="opacity-60">{i + 1}.</span>
@@ -170,11 +170,11 @@ export function HistoryClient() {
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-red-50 border border-red-200 rounded p-2.5">
-                    <div className="text-[10px] font-semibold text-red-700 mb-1.5 uppercase tracking-wide">
+                  <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded p-2.5">
+                    <div className="text-[10px] font-semibold text-red-700 dark:text-red-400 mb-1.5 uppercase tracking-wide">
                       리스크 3
                     </div>
-                    <ul className="text-xs space-y-1 text-red-900">
+                    <ul className="text-xs space-y-1 text-red-900 dark:text-red-200">
                       {r.analysis.risks.map((p, i) => (
                         <li key={i} className="flex gap-1">
                           <span className="opacity-60">{i + 1}.</span>
