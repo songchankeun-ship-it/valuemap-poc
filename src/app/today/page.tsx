@@ -24,11 +24,11 @@ interface Signal {
 }
 
 const SIGNAL_TONE: Record<string, string> = {
-  treasury_buy: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  insider_buy: "bg-blue-50 text-blue-700 border-blue-200",
-  correction: "bg-amber-50 text-amber-700 border-amber-200",
-  single_contract: "bg-sky-50 text-sky-700 border-sky-200",
-  capital_raise: "bg-pink-50 text-pink-700 border-pink-200",
+  treasury_buy: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900",
+  insider_buy: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900",
+  correction: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900",
+  single_contract: "bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-900",
+  capital_raise: "bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-400 border-pink-200 dark:border-pink-900",
 };
 
 function formatDateKST(): string {
@@ -218,20 +218,20 @@ export default async function TodayPage() {
       </header>
 
       <section className="grid grid-cols-3 gap-2">
-        <div className="bg-blue-50 rounded-lg p-2.5 md:p-3">
-          <div className="text-[9px] md:text-[10px] text-blue-700 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
+        <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-blue-700 dark:text-blue-400 font-semibold uppercase tracking-wider mb-1">분석 종목</div>
           <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{realStockPool.length}</div>
-          <div className="text-[9px] md:text-[10px] text-blue-700/70 mt-0.5">실데이터</div>
+          <div className="text-[9px] md:text-[10px] text-blue-700/70 dark:text-blue-400/70 mt-0.5">실데이터</div>
         </div>
-        <div className="bg-emerald-50 rounded-lg p-2.5 md:p-3">
-          <div className="text-[9px] md:text-[10px] text-emerald-700 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
+        <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold uppercase tracking-wider mb-1">PER 중앙값</div>
           <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPer.toFixed(1)}배</div>
-          <div className="text-[9px] md:text-[10px] text-emerald-700/70 mt-0.5">극단값 제외</div>
+          <div className="text-[9px] md:text-[10px] text-emerald-700/70 dark:text-emerald-400/70 mt-0.5">극단값 제외</div>
         </div>
-        <div className="bg-amber-50 rounded-lg p-2.5 md:p-3">
-          <div className="text-[9px] md:text-[10px] text-amber-700 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
+        <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-2.5 md:p-3">
+          <div className="text-[9px] md:text-[10px] text-amber-700 dark:text-amber-400 font-semibold uppercase tracking-wider mb-1">PBR 중앙값</div>
           <div className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{medianPbr.toFixed(2)}배</div>
-          <div className="text-[9px] md:text-[10px] text-amber-700/70 mt-0.5">극단값 제외</div>
+          <div className="text-[9px] md:text-[10px] text-amber-700/70 dark:text-amber-400/70 mt-0.5">극단값 제외</div>
         </div>
       </section>
 
@@ -521,10 +521,10 @@ export default async function TodayPage() {
           .slice(0, 3);
 
         return (
-          <section className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 md:p-5">
+          <section className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-3 md:p-5">
             <div className="flex items-baseline justify-between mb-3">
-              <h2 className="text-sm font-semibold text-amber-900">오늘 먼저 볼 공시 신호</h2>
-              <Link href="/disclosures" className="text-xs text-amber-700 hover:underline">전체 보기 →</Link>
+              <h2 className="text-sm font-semibold text-amber-900 dark:text-amber-300">오늘 먼저 볼 공시 신호</h2>
+              <Link href="/disclosures" className="text-xs text-amber-700 dark:text-amber-400 hover:underline">전체 보기 →</Link>
             </div>
 
             {top3.length > 0 ? (
@@ -559,7 +559,7 @@ export default async function TodayPage() {
               </ul>
             ) : null}
 
-            <p className="text-[11px] text-amber-900 leading-relaxed">
+            <p className="text-[11px] text-amber-900 dark:text-amber-300/90 leading-relaxed">
               최근 90일 DART 공시 중 <strong>자기주식 취득 · 임원·주요주주 보유 변동 · 정정공시 · 단일판매 계약 · 유상증자/CB</strong>를 분류해 오늘 확인할 신호를 선정합니다. 숫자는 '분류 신뢰도'(보고서 종류를 맞게 분류했다는 확신)이며 호재/악재 점수가 아닙니다. 임원·주요주주 보유 변동은 매수·매도·스톡옵션 등 방향을 본문에서 확인하세요.
             </p>
           </section>
