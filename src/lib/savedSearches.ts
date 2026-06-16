@@ -26,12 +26,13 @@ export interface SavedSearch {
   createdAt: string;
 }
 
-const LOCAL_KEY = "valuemap_saved_searches";
+const LOCAL_KEY = "ornscore_saved_searches";
+const LEGACY_LOCAL_KEY = "valuemap_saved_searches";
 
 function readLocal(): SavedSearch[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(LOCAL_KEY);
+    const raw = localStorage.getItem(LOCAL_KEY) ?? localStorage.getItem(LEGACY_LOCAL_KEY);
     const arr = raw ? JSON.parse(raw) : [];
     return Array.isArray(arr) ? (arr as SavedSearch[]) : [];
   } catch {
@@ -42,6 +43,7 @@ function readLocal(): SavedSearch[] {
 function writeLocal(items: SavedSearch[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
+  localStorage.removeItem(LEGACY_LOCAL_KEY);
   window.dispatchEvent(new CustomEvent("saved-searches-changed"));
 }
 

@@ -114,3 +114,9 @@
 - 모바일 320px 가로넘침 전수 스캔: 실위험 1건(theme/[slug] 6컬럼 테이블 래퍼 없음) → 가로스크롤 래퍼+min-w 추가.
 - theme/[slug]: dark:0(완전 라이트)였음 → 다크모드 전면 + 레이더 SVG currentColor화 + breadcrumb 데드링크 /themes→/stocks.
 - 참고: ThemeCard.tsx는 미사용(데드코드), /themes 페이지 없음 — 테마 클러스터 vestigial.
+
+## 2026-06-16 (4) · 라우팅 감사 + /pricing 연결
+- 내부 링크·라우팅 전수 감사: 404 데드링크 0건(정적·programmatic 모두). /themes는 이전 수정으로 해소.
+- 고아 페이지 발견: /pricing(링크0), /blog·/blog/[slug](링크0). /blog는 WIP로 보류.
+- /pricing: 전역 푸터(layout.tsx)에 '요금' 링크 조용히 추가 — 전 페이지 하단 노출.
+- node_modules: .gitignore에 정상 포함 확인.

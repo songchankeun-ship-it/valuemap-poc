@@ -17,12 +17,15 @@ type RecentView = {
   viewedAt: string;
 };
 
-const RECENT_KEY = "valuemap_recent_views";
+const RECENT_KEY = "ornscore_recent_views";
+const LEGACY_RECENT_KEY = "valuemap_recent_views";
+const VIEW_KEY = "ornscore_watchlist_view";
+const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
 
 function readRecent(): RecentView[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(RECENT_KEY);
+    const raw = localStorage.getItem(RECENT_KEY) ?? localStorage.getItem(LEGACY_RECENT_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -86,13 +89,16 @@ export function WatchlistClient({
   const [view, setView] = useState<"simple" | "analysis">("simple");
 
   useEffect(() => {
-    const v = typeof window !== "undefined" ? localStorage.getItem("valuemap_watchlist_view") : null;
+    const v = typeof window !== "undefined" ? localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY) : null;
     if (v === "analysis" || v === "simple") setView(v);
   }, []);
 
   function changeView(v: "simple" | "analysis") {
     setView(v);
-    if (typeof window !== "undefined") localStorage.setItem("valuemap_watchlist_view", v);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(VIEW_KEY, v);
+      localStorage.removeItem(LEGACY_VIEW_KEY);
+    }
   }
 
   useEffect(() => {

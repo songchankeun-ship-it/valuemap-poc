@@ -5,9 +5,11 @@ import { createClient } from "@/lib/supabase/client";
 import { FREE_COMPARE_LIMIT } from "@/lib/limits";
 export const COMPARE_MAX = FREE_COMPARE_LIMIT;
 
-const LOCAL_KEY = "valuemap_compare_basket";
-const LEGACY_KEY = "valuemap:compare"; // 옛 키 (CompareClient에서 사용했던 거)
-const MIGRATED_KEY = "valuemap_compare_migrated";
+const LOCAL_KEY = "ornscore_compare_basket";
+const LEGACY_KEY = "valuemap_compare_basket";
+const OLDEST_KEY = "valuemap:compare";
+const MIGRATED_KEY = "ornscore_compare_migrated";
+const LEGACY_MIGRATED_KEY = "valuemap_compare_migrated";
 
 // ============================================================
 // localStorage 헬퍼
@@ -19,8 +21,9 @@ function readLocal(): string[] {
     // 두 키 모두 시도 + 합치기
     const a = localStorage.getItem(LOCAL_KEY);
     const b = localStorage.getItem(LEGACY_KEY);
+    const c = localStorage.getItem(OLDEST_KEY);
     const set = new Set<string>();
-    for (const raw of [a, b]) {
+    for (const raw of [a, b, c]) {
       if (!raw) continue;
       const arr = JSON.parse(raw);
       if (Array.isArray(arr)) {
@@ -39,14 +42,17 @@ function writeLocal(tickers: string[]) {
   if (typeof window === "undefined") return;
   const payload = JSON.stringify(tickers);
   localStorage.setItem(LOCAL_KEY, payload);
-  localStorage.setItem(LEGACY_KEY, payload); // 옛 컴포넌트 호환
+  localStorage.removeItem(LEGACY_KEY);
+  localStorage.removeItem(OLDEST_KEY);
   window.dispatchEvent(new CustomEvent("compare-basket-changed"));
+  window.dispatchEvent(new CustomEvent("ornscore:compare-updated"));
   window.dispatchEvent(new CustomEvent("valuemap:compare-updated"));
 }
 
 function broadcastChange() {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent("compare-basket-changed"));
+  window.dispatchEvent(new CustomEvent("ornscore:compare-updated"));
   window.dispatchEvent(new CustomEvent("valuemap:compare-updated"));
 }
 
@@ -71,6 +77,10 @@ async function getUserId(): Promise<string | null> {
 async function ensureMigrated(): Promise<void> {
   if (typeof window === "undefined") return;
   if (localStorage.getItem(MIGRATED_KEY) === "1") return;
+  if (localStorage.getItem(LEGACY_MIGRATED_KEY) === "1") {
+    localStorage.setItem(MIGRATED_KEY, "1");
+    return;
+  }
 
   const userId = await getUserId();
   if (!userId) return;
@@ -102,7 +112,9 @@ async function ensureMigrated(): Promise<void> {
 
     localStorage.removeItem(LOCAL_KEY);
     localStorage.removeItem(LEGACY_KEY);
+    localStorage.removeItem(OLDEST_KEY);
     localStorage.setItem(MIGRATED_KEY, "1");
+    localStorage.removeItem(LEGACY_MIGRATED_KEY);
     broadcastChange();
   } catch (e) {
     console.error("Compare migration failed:", e);

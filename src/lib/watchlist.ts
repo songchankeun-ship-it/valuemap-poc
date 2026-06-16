@@ -7,8 +7,10 @@ export type WatchlistItem = {
   addedAt: string; // ISO string
 };
 
-const LOCAL_KEY = "valuemap_watchlist";
-const MIGRATED_KEY = "valuemap_watchlist_migrated";
+const LOCAL_KEY = "ornscore_watchlist";
+const LEGACY_LOCAL_KEY = "valuemap_watchlist";
+const MIGRATED_KEY = "ornscore_watchlist_migrated";
+const LEGACY_MIGRATED_KEY = "valuemap_watchlist_migrated";
 
 // ============================================================
 // localStorage 헬퍼
@@ -17,7 +19,7 @@ const MIGRATED_KEY = "valuemap_watchlist_migrated";
 function readLocal(): WatchlistItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(LOCAL_KEY);
+    const raw = localStorage.getItem(LOCAL_KEY) ?? localStorage.getItem(LEGACY_LOCAL_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -43,6 +45,7 @@ function readLocal(): WatchlistItem[] {
 function writeLocal(items: WatchlistItem[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
+  localStorage.removeItem(LEGACY_LOCAL_KEY);
   window.dispatchEvent(new CustomEvent("watchlist-changed"));
 }
 
@@ -67,6 +70,10 @@ async function getUserId(): Promise<string | null> {
 async function ensureMigrated(): Promise<void> {
   if (typeof window === "undefined") return;
   if (localStorage.getItem(MIGRATED_KEY) === "1") return;
+  if (localStorage.getItem(LEGACY_MIGRATED_KEY) === "1") {
+    localStorage.setItem(MIGRATED_KEY, "1");
+    return;
+  }
 
   const userId = await getUserId();
   if (!userId) return;
@@ -101,7 +108,9 @@ async function ensureMigrated(): Promise<void> {
 
     // 마이그레이션 완료 마크 (localStorage 비움)
     localStorage.removeItem(LOCAL_KEY);
+    localStorage.removeItem(LEGACY_LOCAL_KEY);
     localStorage.setItem(MIGRATED_KEY, "1");
+    localStorage.removeItem(LEGACY_MIGRATED_KEY);
     window.dispatchEvent(new CustomEvent("watchlist-changed"));
   } catch (e) {
     console.error("Watchlist migration failed:", e);

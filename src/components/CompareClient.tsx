@@ -107,11 +107,13 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
       reload();
     }
     window.addEventListener("compare-basket-changed", onUpdate);
+    window.addEventListener("ornscore:compare-updated", onUpdate);
     window.addEventListener("valuemap:compare-updated", onUpdate);
     window.addEventListener("storage", onUpdate);
     return () => {
       active = false;
       window.removeEventListener("compare-basket-changed", onUpdate);
+      window.removeEventListener("ornscore:compare-updated", onUpdate);
       window.removeEventListener("valuemap:compare-updated", onUpdate);
       window.removeEventListener("storage", onUpdate);
     };

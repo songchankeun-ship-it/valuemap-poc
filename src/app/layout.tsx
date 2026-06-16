@@ -101,6 +101,7 @@ export default function RootLayout({
                 <span>·</span>
                 <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>
+                <a href="/pricing" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">요금</a>
                 <a href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">이용약관</a>
                 <a href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">개인정보</a>
               </footer>
