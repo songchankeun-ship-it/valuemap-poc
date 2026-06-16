@@ -107,3 +107,10 @@
 - HistoryClient: 호재/리스크 패널 다크. DisclosureExplorer: 에러패널 다크.
 - NotificationToggle: 토글 두 상태 다크. StocksExplorer: 카드 인사이트칩 5종 다크.
 - 검증: 7파일 파싱 0에러 / 금칙어·한글깨짐 없음 / 최종 재스캔 잔여 0.
+
+## 2026-06-16 (3) · 데이터 검증 + 모바일 QA
+- 모멘텀 포화: live 데이터 max=99.3(포화 0개) → 이미 백분위 적용됨. 문제 없음, 재생성 안 함.
+- ⚠ 운영 발견: compute_metrics.py=v2.4인데 live metricsVersion=phase2-v2. 데일리 Action이 v2.4를 아직 안 돌림(=v2.4 미push 추정). push 후 Action 돌면 푸터 "Metrics 2.4"로 정리됨.
+- 모바일 320px 가로넘침 전수 스캔: 실위험 1건(theme/[slug] 6컬럼 테이블 래퍼 없음) → 가로스크롤 래퍼+min-w 추가.
+- theme/[slug]: dark:0(완전 라이트)였음 → 다크모드 전면 + 레이더 SVG currentColor화 + breadcrumb 데드링크 /themes→/stocks.
+- 참고: ThemeCard.tsx는 미사용(데드코드), /themes 페이지 없음 — 테마 클러스터 vestigial.

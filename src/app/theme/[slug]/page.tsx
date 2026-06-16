@@ -17,12 +17,12 @@ export default async function ThemeDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-4">
-      <nav className="text-xs text-gray-500 flex items-center gap-1">
+      <nav className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1">
         <Link href="/">홈</Link>
         <span>›</span>
-        <Link href="/themes">테마</Link>
+        <Link href="/stocks">테마</Link>
         <span>›</span>
-        <span className="text-gray-900">{theme.name}</span>
+        <span className="text-gray-900 dark:text-zinc-100">{theme.name}</span>
       </nav>
 
       <div className="flex items-start justify-between">
@@ -33,17 +33,17 @@ export default async function ThemeDetailPage({ params }: PageProps) {
               {theme.category}
             </span>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-zinc-400">
             {theme.stockCount}개 종목 · 자체 지표 종합 {theme.compositeScore} / 100
           </p>
         </div>
-        <button className="px-3 py-1.5 border border-gray-300 rounded-md text-sm">
+        <button className="px-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-md text-sm">
           ☆ 관심테마 추가
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
           <div className="text-sm font-medium mb-3">자체 지표 4종</div>
           <RadarChart
             momentum={theme.momentum}
@@ -51,7 +51,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
             value={theme.value}
             vol={theme.vol}
           />
-          <div className="text-[11px] text-gray-500 text-center mt-2">
+          <div className="text-[11px] text-gray-500 dark:text-zinc-400 text-center mt-2">
             4종 평균 <span className="font-medium text-brand-600">{theme.compositeScore}</span>
             {" "}/ 100
           </div>
@@ -76,14 +76,14 @@ export default async function ThemeDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium">소속 종목 {theme.stockCount}개</span>
           <span className="text-[11px] text-brand-700">소외 정렬 ▼</span>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-1 px-1"><table className="w-full text-sm min-w-[360px]">
           <thead>
-            <tr className="text-[11px] text-gray-500 border-b border-gray-200">
+            <tr className="text-[11px] text-gray-500 dark:text-zinc-400 border-b border-gray-200 dark:border-zinc-800">
               <th className="text-left py-1.5 font-normal">종목</th>
               <th className="text-right py-1.5 font-normal">현재가</th>
               <th className="text-right py-1.5 font-normal">등락률</th>
@@ -94,7 +94,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
           </thead>
           <tbody>
             {stocks.map((s) => (
-              <tr key={s.ticker} className="border-b border-gray-100">
+              <tr key={s.ticker} className="border-b border-gray-100 dark:border-zinc-800">
                 <td className="py-2">
                   <Link
                     href={`/stock/${s.ticker}`}
@@ -123,6 +123,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -131,8 +132,8 @@ export default async function ThemeDetailPage({ params }: PageProps) {
 function ReturnCell({ label, value }: { label: string; value: number }) {
   const color = value >= 0 ? "text-success" : "text-danger";
   return (
-    <div className="bg-gray-50 rounded-md p-3">
-      <div className="text-[11px] text-gray-500">{label}</div>
+    <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-md p-3">
+      <div className="text-[11px] text-gray-500 dark:text-zinc-400">{label}</div>
       <div className={`text-lg font-medium ${color}`}>
         {value >= 0 ? "+" : ""}
         {value.toFixed(1)}%
@@ -168,13 +169,14 @@ function RadarChart({
     .join(" ");
 
   return (
-    <svg viewBox="0 0 240 200" className="w-full h-[200px]">
+    <svg viewBox="0 0 240 200" className="w-full h-[200px] text-zinc-500 dark:text-zinc-400">
       {[1, 0.75, 0.5, 0.25].map((s, i) => (
         <polygon
           key={i}
           points={`${cx},${cy - r * s} ${cx + r * s},${cy} ${cx},${cy + r * s} ${cx - r * s},${cy}`}
           fill="none"
-          stroke="#e5e7eb"
+          stroke="currentColor"
+          strokeOpacity="0.25"
           strokeWidth="0.5"
         />
       ))}
@@ -185,16 +187,16 @@ function RadarChart({
         stroke="#3b82f6"
         strokeWidth="1.5"
       />
-      <text x={cx} y={cy - r - 10} textAnchor="middle" fontSize="10" fill="#374151">
+      <text x={cx} y={cy - r - 10} textAnchor="middle" fontSize="10" fill="currentColor">
         모멘텀 {momentum}
       </text>
-      <text x={cx + r + 12} y={cy + 4} fontSize="10" fill="#374151">
+      <text x={cx + r + 12} y={cy + 4} fontSize="10" fill="currentColor">
         거래활성도 {flow}
       </text>
-      <text x={cx} y={cy + r + 16} textAnchor="middle" fontSize="10" fill="#374151">
+      <text x={cx} y={cy + r + 16} textAnchor="middle" fontSize="10" fill="currentColor">
         밸류 {value}
       </text>
-      <text x={cx - r - 12} y={cy + 4} textAnchor="end" fontSize="10" fill="#374151">
+      <text x={cx - r - 12} y={cy + 4} textAnchor="end" fontSize="10" fill="currentColor">
         변동성 {vol}
       </text>
     </svg>
