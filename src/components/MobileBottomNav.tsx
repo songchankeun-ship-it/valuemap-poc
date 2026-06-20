@@ -40,7 +40,7 @@ export function MobileBottomNav() {
             {MORE.map(({ href, Icon, label }) => (
               <Link
                 key={href}
-                href={href}
+                prefetch={false} href={href}
                 onClick={() => setMoreOpen(false)}
                 className={"flex flex-col items-center gap-1 py-3 rounded-lg text-[11px] " + (active(href) ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-600 dark:text-zinc-300")}
               >
@@ -56,7 +56,7 @@ export function MobileBottomNav() {
         {PRIMARY.map(({ href, Icon, label }) => (
           <Link
             key={href}
-            href={href}
+            prefetch={false} href={href}
             className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (active(href) ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
           >
             <Icon className="w-5 h-5" />

@@ -118,9 +118,9 @@ export default function GuidePage() {
           <li>· 가격은 <strong>수정종가</strong>(액면분할·배당락 반영) 기준으로 계산합니다.</li>
           <li>· 결측·거래정지 구간은 가능한 데이터만 사용하고, <strong>최소 관측치 미달 시 중립(50점)</strong>으로 처리합니다.</li>
           <li>· 무위험률은 <strong>연 3.5%</strong>를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).</li>
-          <li>· 종합점수의 <strong>밸류</strong>는 <strong>전체 138개 기준</strong> 분위입니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 별도 참고 지표로, <strong>종합점수에는 포함되지 않습니다.</strong></li>
+          <li>· 종합점수의 <strong>밸류</strong>는 <strong>전체 {dataMetadata.count}개 기준</strong> 분위입니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 별도 참고 지표로, <strong>종합점수에는 포함되지 않습니다.</strong></li>
           <li>· 점수는 <strong className="text-amber-700 dark:text-amber-400">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
-          <li>· <strong className="text-zinc-900 dark:text-zinc-100">산식 버전: Metrics v2.3</strong> (적용일 2026-06-14). <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
+          <li>· <strong className="text-zinc-900 dark:text-zinc-100">산식 버전: Metrics v{dataMetadata.metricsVersion ?? "—"}</strong>. <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
           <li>· 계산 코드 공개(산식 검증용) — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
         </ul>
       </section>

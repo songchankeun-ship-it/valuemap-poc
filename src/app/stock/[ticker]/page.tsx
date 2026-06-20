@@ -20,7 +20,7 @@ import { MetricStrip } from "@/components/MetricStrip";
 import { StockTabs } from "@/components/StockTabs";
 import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
-import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 
 export const revalidate = 3600;
@@ -342,7 +342,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
           <div>주가 <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} 장마감</span></div>
           <div>분석 대상 <span className="text-zinc-700 dark:text-zinc-300">{poolN}종목</span></div>
-          <div>점수 계산 <span className="text-zinc-700 dark:text-zinc-300">{dataMetadata.asOfBusinessDate ?? dataMetadata.generatedAt?.slice(0, 10) ?? "—"}</span></div>
+          <div>점수 계산 <span className="text-zinc-700 dark:text-zinc-300">{formatBizDateLong(dataMetadata.asOfBusinessDate)}</span></div>
           <div>산식 버전 <span className="text-zinc-700 dark:text-zinc-300">{dataMetadata.metricsVersion ?? "—"}</span></div>
         </div>
       </div>

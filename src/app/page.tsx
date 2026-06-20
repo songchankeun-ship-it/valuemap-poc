@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dataMetadata, realStockPool } from "@/lib/realStocks";
+import { dataMetadata, realStockPool, formatBizDateShort, isDataStale } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { Search, BarChart3, Megaphone, TrendingUp, Bell } from "lucide-react";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
@@ -66,18 +66,6 @@ function quickReason(s: { momentum: number; flow: number; value: number; vol: nu
   return "네 지표 균형";
 }
 
-// 데이터 기준일 — YYYYMMDD → MM.DD (요일)
-function fmtBizDate(yyyymmdd?: string): string {
-  if (yyyymmdd && /^\d{8}$/.test(yyyymmdd)) {
-    const mo = yyyymmdd.slice(4, 6);
-    const da = yyyymmdd.slice(6, 8);
-    const d = new Date(Number(yyyymmdd.slice(0, 4)), Number(mo) - 1, Number(da));
-    const w = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
-    return mo + "." + da + " (" + w + ")";
-  }
-  return "최근 거래일";
-}
-
 export const metadata = {
   title: "오른스코어 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
   description: "코스피·코스닥 138개 종목의 모멘텀·거래활성도·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
@@ -106,7 +94,8 @@ export default async function HomePage() {
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   const top5 = pickTopStocks(5);
   const topSignals = pickTopSignals(2, (recentSig.signals as unknown as RecentSignal[]) ?? []);
-  const dataAsOf = fmtBizDate(dataMetadata.asOfBusinessDate);
+  const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
+  const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
 
   // 오늘의 데이터 요약 통계
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80).length;
@@ -124,23 +113,24 @@ export default async function HomePage() {
             오른스코어 · 베타
           </span>
           <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-amber-500" : "bg-green-500")} />
             <span className="tabular-nums">{dataAsOf} 장마감</span>
+            {dataStale ? <span className="font-medium text-amber-600 dark:text-amber-500">· 마지막 정상 데이터</span> : null}
           </span>
         </div>
         <h1 className="text-[22px] leading-tight md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-          오늘 먼저 볼 종목을{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">데이터로 좁혀</span>보세요.
+          수많은 한국 주식 중 오늘 볼 후보를{" "}
+          <span className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">10개 이하로</span> 줄이세요.
         </h1>
         <p className="text-[13px] md:text-base text-zinc-600 dark:text-zinc-300 mt-3 max-w-xl leading-relaxed">
-          가격 흐름 · 거래량 · 밸류 · 변동성을 함께 분석해 먼저 확인할 <strong>후보</strong>를 정리합니다.
+          가격 흐름, 거래량, 밸류, 위험, 공시 신호를 한 번에 보고 오늘 확인할 후보를 정리합니다.
         </p>
         <div className="flex gap-2 mt-4">
-          <Link href="/today" className="flex-1 sm:flex-none text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition shadow-sm">
-            오늘의 후보 보기 →
+          <Link prefetch={false} href="/today" className="flex-1 sm:flex-none text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition shadow-sm">
+            오늘 후보 5개 보기 →
           </Link>
-          <Link href="/guide/metrics" className="flex-1 sm:flex-none text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition">
-            지표 설명
+          <Link prefetch={false} href="/stocks" className="flex-1 sm:flex-none text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition">
+            내 조건으로 찾기
           </Link>
         </div>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-3">
@@ -160,7 +150,7 @@ export default async function HomePage() {
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate tabular-nums">{dataAsOf} 장마감 · {dataMetadata.count}종목</p>
             </div>
           </div>
-          <Link href="/today" className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium whitespace-nowrap shrink-0">
+          <Link prefetch={false} href="/today" className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium whitespace-nowrap shrink-0">
             전체 →
           </Link>
         </div>
@@ -193,7 +183,7 @@ export default async function HomePage() {
               {top5.map((s, i) => (
                 <li key={s.ticker}>
                   <Link
-                    href={"/stock/" + s.ticker}
+                    prefetch={false} href={"/stock/" + s.ticker}
                     className="flex items-center gap-2.5 py-2.5 -mx-1 px-1 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 active:bg-blue-50 dark:active:bg-blue-950/30 transition"
                   >
                     <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 w-4 text-center shrink-0">{i + 1}</span>
@@ -240,7 +230,7 @@ export default async function HomePage() {
                 <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">DART에서 자동 분류 · 클릭해서 종목 보기</p>
               </div>
             </div>
-            <Link href="/disclosures" className="text-xs text-amber-700 dark:text-amber-400 hover:underline font-medium whitespace-nowrap shrink-0">
+            <Link prefetch={false} href="/disclosures" className="text-xs text-amber-700 dark:text-amber-400 hover:underline font-medium whitespace-nowrap shrink-0">
               전체 →
             </Link>
           </div>
@@ -271,7 +261,7 @@ export default async function HomePage() {
                 </>
               );
               return inUniv ? (
-                <li key={s.disclosure.rcept_no}><Link href={"/stock/" + code} className={cardClass}>{inner}</Link></li>
+                <li key={s.disclosure.rcept_no}><Link prefetch={false} href={"/stock/" + code} className={cardClass}>{inner}</Link></li>
               ) : (
                 <li key={s.disclosure.rcept_no}><a href={dartUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>{inner}</a></li>
               );
@@ -286,21 +276,21 @@ export default async function HomePage() {
 
       {/* ── 기능 진입 3카드 ── */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Link href="/stocks" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
+        <Link prefetch={false} href="/stocks" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
           <div className="w-9 h-9 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 flex items-center justify-center mb-3">
             <Search className="w-5 h-5" strokeWidth={1.8} />
           </div>
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목 탐색</div>
           <div className="text-xs text-zinc-600 dark:text-zinc-400">{dataMetadata.count}개 종목을 자체 지표 4종으로 정렬·필터링</div>
         </Link>
-        <Link href="/compare" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
+        <Link prefetch={false} href="/compare" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
           <div className="w-9 h-9 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-3">
             <BarChart3 className="w-5 h-5" strokeWidth={1.8} />
           </div>
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목 비교</div>
           <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목 {FREE_COMPARE_LIMIT}개까지 PER·PBR·ROE 나란히</div>
         </Link>
-        <Link href="/disclosures" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
+        <Link prefetch={false} href="/disclosures" className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-700 transition">
           <div className="w-9 h-9 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center mb-3">
             <Megaphone className="w-5 h-5" strokeWidth={1.8} />
           </div>
@@ -316,7 +306,7 @@ export default async function HomePage() {
           <div className="text-base font-semibold">가격 기반 전략 5년 백테스트</div>
           <div className="text-xs text-zinc-400 mt-0.5">가격 기반 4개 전략의 수익률·위험을 5년 데이터로. 현재 종합점수 성과 검증과는 다릅니다.</div>
         </div>
-        <Link href="/backtest" className="px-4 py-2.5 min-h-[44px] inline-flex items-center bg-white text-zinc-900 rounded-lg text-sm font-semibold hover:bg-zinc-100 active:bg-zinc-200 transition shrink-0">
+        <Link prefetch={false} href="/backtest" className="px-4 py-2.5 min-h-[44px] inline-flex items-center bg-white text-zinc-900 rounded-lg text-sm font-semibold hover:bg-zinc-100 active:bg-zinc-200 transition shrink-0">
           백테스트 보기 →
         </Link>
       </section>
@@ -325,9 +315,26 @@ export default async function HomePage() {
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-6 space-y-5">
         <div>
           <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">왜 오른스코어인가</div>
-          <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            한 종목을 PER만 보고 판단하는 시대는 끝났습니다. KRX 일별 종가, Naver Finance 재무, DART 공시까지 통합해 <strong className="text-zinc-900 dark:text-zinc-100">추세 · 거래활성도 · 밸류 · 위험조정</strong> 네 지표로 종목을 입체적으로 봅니다. 점수가 어떻게 계산되는지 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">전부 공개</Link>되어 있고, 출처와 계산 근거를 확인할 수 있는 데이터만 사용합니다.
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 p-4">
+              <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목 압축</div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                추세·거래활성도·밸류·위험조정을 함께 봐서 오늘 먼저 확인할 후보를 빠르게 좁힙니다.
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 p-4">
+              <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">산식 공개</div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                점수 계산 기준과 한계를 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에 공개해 결과를 검토할 수 있게 합니다.
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 p-4">
+              <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">공시 연결</div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                DART 공시 신호를 종목 페이지와 연결해 점수만 보지 않고 원문까지 확인하게 돕습니다.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-5">

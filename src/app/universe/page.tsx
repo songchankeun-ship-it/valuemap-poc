@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 
@@ -36,7 +36,7 @@ export default function UniversePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">가격 기준일</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataMetadata.asOfBusinessDate ?? "—"} 장마감</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{formatBizDateLong(dataMetadata.asOfBusinessDate)} 장마감</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">분석 대상</div>

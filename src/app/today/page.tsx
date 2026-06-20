@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { getScoreChangesBatch, getMetricChangesBatch } from "@/lib/scoreHistory";
@@ -37,36 +37,6 @@ function formatDateKST(): string {
     timeZone: "Asia/Seoul",
     year: "numeric", month: "long", day: "numeric", weekday: "long",
   }).format(now);
-}
-
-/**
- * 헤더와 동일한 기준 사용 — asOfBusinessDate (YYYYMMDD).
- * 없으면 generatedAt(ISO)에서 추출.
- */
-function formatDataAsOf(businessDate?: string, fallbackIso?: string): string {
-  // YYYYMMDD 우선
-  if (businessDate && /^\d{8}$/.test(businessDate)) {
-    const y = businessDate.slice(0, 4);
-    const mo = businessDate.slice(4, 6);
-    const da = businessDate.slice(6, 8);
-    const d = new Date(Number(y), Number(mo) - 1, Number(da));
-    const weekday = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
-    return `${y}.${mo}.${da} (${weekday})`;
-  }
-  // fallback ISO
-  if (fallbackIso) {
-    try {
-      const d = new Date(fallbackIso);
-      if (Number.isNaN(d.getTime())) return "데이터 준비 중";
-      const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-      const y = kst.getUTCFullYear();
-      const mo = String(kst.getUTCMonth() + 1).padStart(2, "0");
-      const da = String(kst.getUTCDate()).padStart(2, "0");
-      const weekday = ["일", "월", "화", "수", "목", "금", "토"][kst.getUTCDay()];
-      return `${y}.${mo}.${da} (${weekday})`;
-    } catch {}
-  }
-  return "데이터 준비 중";
 }
 
 /** Composite Top — 4지표 중 강한 것 위주 */
@@ -121,6 +91,16 @@ function median(arr: number[]): number {
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
+/** External SSR data calls must never block render. Race each against a short
+ *  timeout and fall back to empty so /today renders fast even if Supabase/DART
+ *  is slow or unreachable (page degrades gracefully on empty data). */
+async function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p.catch(() => fallback),
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+
 export const metadata = {
   title: "오늘 — 오른스코어",
   description: "오늘 자체 알고리즘이 발견한 종목들",
@@ -132,7 +112,8 @@ export default async function TodayPage() {
   const today = formatDateKST();
   const kstDay = new Date(Date.now() + 9 * 3600 * 1000).getUTCDay(); // 0=일,6=토
   const isClosed = kstDay === 0 || kstDay === 6;
-  const dataAsOf = formatDataAsOf(dataMetadata.asOfBusinessDate, dataMetadata.generatedAt);
+  const dataAsOf = formatBizDateLong(dataMetadata.asOfBusinessDate);
+  const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
 
   const validStocks = realStockPool.filter(s => s.compositeScore !== undefined);
   const topComposite = [...validStocks].filter((s) => !isSuspect(s)).sort((a, b) => compositeOf(b) - compositeOf(a)).slice(0, 5);
@@ -153,13 +134,15 @@ export default async function TodayPage() {
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80).length;
   const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
-  const recentSig = await getRecentSignals(7);
+  // 외부 데이터(Supabase/DART)는 4초 타임아웃 + 병렬 — 느리거나 실패해도 빈 값으로 폴백
+  const tickers = realStockPool.map((s) => s.ticker);
+  const [recentSig, scoreDeltas, metricChanges, aiInsight] = await Promise.all([
+    withTimeout(getRecentSignals(7), 4000, { days: 7, totalDisclosures: 0, signalCount: 0, signals: [] } as Awaited<ReturnType<typeof getRecentSignals>>),
+    withTimeout(getScoreChangesBatch(tickers), 4000, {} as Record<string, number>),
+    withTimeout(getMetricChangesBatch(tickers), 4000, {} as Awaited<ReturnType<typeof getMetricChangesBatch>>),
+    withTimeout(getLatestStoredInsight(), 4000, null as Awaited<ReturnType<typeof getLatestStoredInsight>>),
+  ]);
   const briefingSignalCount = (recentSig.signals ?? []).length;
-
-  // 어제 대비 변화 (Supabase daily_scores) — 데이터 없으면 빈 객체
-  const scoreDeltas = await getScoreChangesBatch(realStockPool.map((s) => s.ticker));
-  const metricChanges = await getMetricChangesBatch(realStockPool.map((s) => s.ticker));
-  const aiInsight = await getLatestStoredInsight();
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   const hasDeltas = Object.keys(scoreDeltas).length > 0;
   const newEntrants = hasDeltas
@@ -206,7 +189,7 @@ export default async function TodayPage() {
         <h1 className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{today}</h1>
         <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
           <span className="inline-flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-amber-500" : "bg-green-500")} />
             <span>데이터 기준 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{dataAsOf}</strong></span>
           </span>
           <span className="text-zinc-400 dark:text-zinc-500">·</span>
@@ -214,6 +197,9 @@ export default async function TodayPage() {
         </p>
         {isClosed ? (
           <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">오늘은 휴장일입니다 — 가장 최근 거래일 <strong className="tabular-nums">{dataAsOf}</strong> 장마감 데이터를 보여드립니다.</p>
+        ) : null}
+        {dataStale ? (
+          <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">자동 갱신이 지연되어 <strong>마지막 정상 데이터</strong>를 보여드립니다 — 최신이 아닐 수 있어요.</p>
         ) : null}
       </header>
 
@@ -288,7 +274,7 @@ export default async function TodayPage() {
               <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">🆕 오늘 종합 80+ 신규 진입</div>
               <div className="flex flex-wrap gap-1.5">
                 {newEntrants.map((s) => (
-                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
+                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
                     {s.name} <span className="tabular-nums">{Math.round(compositeOf(s))} (▲{Math.round(scoreDeltas[s.ticker])})</span>
                   </Link>
                 ))}
@@ -300,7 +286,7 @@ export default async function TodayPage() {
               <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-400 mb-1.5">↘ 오늘 종합 80+ 이탈</div>
               <div className="flex flex-wrap gap-1.5">
                 {dropouts.map((s) => (
-                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:border-blue-400 transition">
+                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:border-blue-400 transition">
                     {s.name} <span className="tabular-nums">{Math.round(compositeOf(s))} (▼{Math.abs(Math.round(scoreDeltas[s.ticker]))})</span>
                   </Link>
                 ))}
@@ -312,7 +298,7 @@ export default async function TodayPage() {
               <div className="text-[11px] font-semibold text-red-700 dark:text-red-400 mb-1.5">↑ 전일 대비 순위 상승 (5단계+)</div>
               <div className="flex flex-wrap gap-1.5">
                 {rankRisers.map(({ s, change }) => (
-                  <Link key={s.ticker} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition">
+                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition">
                     {s.name} <span className="tabular-nums">▲{change}단계</span>
                   </Link>
                 ))}
@@ -330,7 +316,7 @@ export default async function TodayPage() {
                   const fmtd = (v: number) => (v >= 0 ? "+" : "") + Math.round(v);
                   const cause = mc ? `추세 ${fmtd(mc.momentum)} · 거래활성도 ${fmtd(mc.flow)} · 밸류 ${fmtd(mc.value)} · 위험조정 ${fmtd(mc.vol)}` : undefined;
                   return (
-                    <Link key={s.ticker} href={"/stock/" + s.ticker} title={cause} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
+                    <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} title={cause} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
                       {s.name} <span className="tabular-nums">{up ? "▲" : "▼"}{Math.abs(Math.round(d))}</span>
                     </Link>
                   );
@@ -361,7 +347,7 @@ export default async function TodayPage() {
           {topComposite.map((s, i) => (
             <li key={s.ticker}>
               <Link
-                href={"/stock/" + s.ticker}
+                prefetch={false} href={"/stock/" + s.ticker}
                 className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
               >
                 <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -408,7 +394,7 @@ export default async function TodayPage() {
             return (
               <li key={s.ticker}>
                 <Link
-                  href={"/stock/" + s.ticker}
+                  prefetch={false} href={"/stock/" + s.ticker}
                   className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
                 >
                   <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -461,7 +447,7 @@ export default async function TodayPage() {
             return (
               <li key={s.ticker}>
                 <Link
-                  href={"/stock/" + s.ticker}
+                  prefetch={false} href={"/stock/" + s.ticker}
                   className="flex items-start justify-between gap-3 py-2.5 px-2 -mx-2 rounded-md min-h-[56px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition active:bg-zinc-100 dark:active:bg-zinc-800"
                 >
                   <div className="flex items-start gap-3 min-w-0 flex-1">

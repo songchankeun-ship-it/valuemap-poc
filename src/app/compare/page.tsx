@@ -1,6 +1,8 @@
 // /compare — 종목 비교 페이지
 import Link from "next/link";
 import { realStockPool } from "@/lib/realStocks";
+import { compositeOf } from "@/lib/score";
+import { isSuspect } from "@/lib/dataQuality";
 import { CompareClient } from "@/components/CompareClient";
 
 export const metadata = {
@@ -36,6 +38,13 @@ export default function ComparePage() {
     ])
   );
 
+  // 오늘 Top 5 — 홈과 동일 기준(종합점수 상위 · 검증 보류 제외)
+  const top5 = [...allStocks]
+    .filter((s) => compositeOf(s) > 0 && !isSuspect(s))
+    .sort((a, b) => compositeOf(b) - compositeOf(a))
+    .slice(0, 5)
+    .map((s) => ({ ticker: s.ticker, name: s.name }));
+
   return (
     <div className="space-y-4">
       <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
@@ -52,7 +61,7 @@ export default function ComparePage() {
         </p>
       </header>
 
-      <CompareClient stockMap={stockMap} />
+      <CompareClient stockMap={stockMap} top5={top5} />
     </div>
   );
 }
