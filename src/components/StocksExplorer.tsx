@@ -301,6 +301,22 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
     { id: "KOSDAQ", label: "코스닥" },
   ];
 
+  // 현재 적용된 필터를 사람이 읽을 수 있는 칩으로 — 각 칩의 ×는 해당 필터만 해제
+  function clearPreset(fn: () => void) {
+    setActivePreset(null);
+    fn();
+  }
+  const activeChips: { key: string; label: string; onRemove: () => void }[] = [];
+  if (market !== "all") activeChips.push({ key: "market", label: "시장 " + (MARKET_OPTIONS.find((o) => o.id === market)?.label ?? market), onRemove: () => clearPreset(() => setMarket("all")) });
+  if (capBucket !== "all") activeChips.push({ key: "cap", label: "시총 " + (CAP_OPTIONS.find((o) => o.id === capBucket)?.label ?? capBucket), onRemove: () => clearPreset(() => setCapBucket("all")) });
+  if (minComposite > 0) activeChips.push({ key: "composite", label: "종합 " + minComposite + "+", onRemove: () => clearPreset(() => setMinComposite(0)) });
+  if (roeMin > 0) activeChips.push({ key: "roe", label: "ROE " + roeMin + "%+", onRemove: () => clearPreset(() => setRoeMin(0)) });
+  if (divYieldMin > 0) activeChips.push({ key: "div", label: "배당 " + divYieldMin.toFixed(1) + "%+", onRemove: () => clearPreset(() => setDivYieldMin(0)) });
+  if (perMin > 0 || perMax < 200) activeChips.push({ key: "per", label: "PER " + perMin + "~" + perMax, onRemove: () => clearPreset(() => { setPerMin(0); setPerMax(200); }) });
+  if (pbrMin > 0 || pbrMax < 30) activeChips.push({ key: "pbr", label: "PBR " + pbrMin.toFixed(1) + "~" + pbrMax.toFixed(1), onRemove: () => clearPreset(() => { setPbrMin(0); setPbrMax(30); }) });
+  if (excludeLoss) activeChips.push({ key: "loss", label: "적자 제외", onRemove: () => clearPreset(() => setExcludeLoss(false)) });
+  for (const t of selectedThemes) activeChips.push({ key: "theme-" + t, label: "테마 " + t, onRemove: () => toggleTheme(t) });
+
   function FilterPanel() {
     return (
       <div className="space-y-5">
@@ -510,9 +526,21 @@ export function StocksExplorer({ stocks, allThemes, initialThemes }: Props) {
       </div>
 
       {activeFilterCount > 0 ? (
-        <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
-          <span>필터 {activeFilterCount}개 적용 중 ·</span>
-          <button type="button" onClick={resetFilters} className="text-blue-700 hover:underline">초기화</button>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 shrink-0">적용 중 필터:</span>
+          {activeChips.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              onClick={c.onRemove}
+              aria-label={c.label + " 필터 제거"}
+              className="inline-flex items-center gap-1 text-[11px] pl-2.5 pr-1.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition tabular-nums"
+            >
+              <span className="truncate max-w-[160px]">{c.label}</span>
+              <span aria-hidden className="w-3.5 h-3.5 flex items-center justify-center rounded-full text-blue-500 dark:text-blue-400">×</span>
+            </button>
+          ))}
+          <button type="button" onClick={resetFilters} className="text-[11px] text-zinc-500 hover:text-blue-700 hover:underline ml-1 shrink-0">전체 초기화</button>
         </div>
       ) : null}
 

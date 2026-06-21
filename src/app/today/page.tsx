@@ -328,6 +328,22 @@ export default async function TodayPage() {
         </section>
       ) : null}
 
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
+        <div className="flex items-center gap-1.5 mb-2">
+          <span className="text-sm">✅</span>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">후보를 볼 때 체크리스트</h2>
+        </div>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">아래 후보는 매수 추천이 아니라 직접 확인할 우선순위입니다. 종목을 열기 전에 스스로 점검해 보세요.</p>
+        <ul className="space-y-1.5 text-[12px] text-zinc-600 dark:text-zinc-300">
+          <li className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">1.</span><span>종목 상세와 <strong className="text-zinc-800 dark:text-zinc-100">DART 원문 공시</strong>를 직접 확인했나요?</span></li>
+          <li className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">2.</span><span>최근 단기 급등 여부와 <strong className="text-zinc-800 dark:text-zinc-100">고점 추격 위험</strong>을 살펴봤나요?</span></li>
+          <li className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">3.</span><span>저평가(저PER·저PBR)라면 <strong className="text-zinc-800 dark:text-zinc-100">그럴 만한 이유</strong>가 있는지 점검했나요?</span></li>
+          <li className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">4.</span><span>종합점수는 등급이 아니라 <strong className="text-zinc-800 dark:text-zinc-100">탐색 우선순위</strong>일 뿐임을 기억했나요?</span></li>
+          <li className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">5.</span><span>분산과 비중은 <strong className="text-zinc-800 dark:text-zinc-100">스스로</strong> 결정했나요?</span></li>
+        </ul>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">이 체크리스트는 학습용 안내이며 특정 종목의 매수·매도를 권하지 않습니다.</p>
+      </section>
+
       <StockTabs
         tabs={[
           {

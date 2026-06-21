@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Heart } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { findGuideByLabel } from "@/lib/signalGuide";
+import { addToWatchlist, removeFromWatchlist, isInWatchlist } from "@/lib/watchlist";
 
 interface DisclosureItem {
   corp_name: string;
@@ -78,6 +80,52 @@ function openExternal(url: string) {
 
 function goToStock(code: string) {
   window.location.href = "/stock/" + code;
+}
+
+// 공시 카드용 컴팩트 관심 토글 — 분석 대상(유니버스) 종목에만 노출
+function WatchlistToggle({ code }: { code: string }) {
+  const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    isInWatchlist(code).then((r) => {
+      if (mounted) {
+        setAdded(r);
+        setLoading(false);
+      }
+    });
+    return () => { mounted = false; };
+  }, [code]);
+  useEffect(() => {
+    function onChange() { isInWatchlist(code).then(setAdded); }
+    window.addEventListener("watchlist-changed", onChange);
+    return () => window.removeEventListener("watchlist-changed", onChange);
+  }, [code]);
+  async function toggle() {
+    if (loading) return;
+    if (added) {
+      setAdded(false); // 낙관적 업데이트
+      await removeFromWatchlist(code);
+    } else {
+      setAdded(true); // 낙관적 업데이트
+      await addToWatchlist(code);
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      disabled={loading}
+      aria-label={added ? "관심 종목에서 제거" : "관심 종목에 추가"}
+      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium border transition disabled:opacity-50 " +
+        (added
+          ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
+          : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-300 hover:text-pink-600 dark:hover:text-pink-400")}
+    >
+      <Heart className="w-3.5 h-3.5" fill={added ? "currentColor" : "none"} strokeWidth={added ? 0 : 1.8} />
+      {added ? "관심 등록됨" : "관심"}
+    </button>
+  );
 }
 
 function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
@@ -274,10 +322,17 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                         <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
                       ) : null}
                       <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{date}</span>
+                      {g.representative.disclosure.flr_nm ? (
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[180px]">제출 {g.representative.disclosure.flr_nm}</span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3 leading-relaxed">{desc}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-1 leading-relaxed">{desc}</p>
+                {g.representative.note && g.representative.note !== desc ? (
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 leading-relaxed">{g.representative.note}</p>
+                ) : null}
+                <div className="mb-3" />
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
@@ -287,13 +342,16 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     원문 보기 ↗
                   </button>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <button
-                      type="button"
-                      onClick={() => goToStock(g.stock_code!)}
-                      className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
-                    >
-                      종목 상세 →
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => goToStock(g.stock_code!)}
+                        className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
+                      >
+                        종목 상세 →
+                      </button>
+                      <WatchlistToggle code={g.stock_code} />
+                    </>
                   ) : g.stock_code ? (
                     <span className="inline-flex items-center px-3 py-2 text-[11px] text-zinc-400 dark:text-zinc-500">분석 대상 외 · DART 원문만</span>
                   ) : null}
