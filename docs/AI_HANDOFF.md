@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-21T00:00:00.000Z
+Last updated: 2026-06-21T11:09:35.844Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -22,9 +22,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 ## Last AI Center Event
 
 - Task: 14 - OrnScore Pass 2 UI clarity pass
+- Run: 24
 - Status: completed
 - Agent: claude
-- Note: Daily-use clarity edits verified on the task branch. /stocks now has question-style presets + visible active-filter chips + "조건 충족 N / 전체 M" count; /today has a "후보를 볼 때 체크리스트" review checklist plus one-line 💡 reasons on each candidate card; disclosure cards show clearer type (유형 자동분류), stock identity, filer (제출 ...), 원문 보기 / 종목 상세 / 관심 actions. Wording kept educational/non-advisory. Gates passed: scripts/verify_metrics.py (brand/forbidden 0), npm run build (all routes prerendered), and a local 127.0.0.1:3000 browser/route smoke (/, /stocks, /today, /disclosures, /stock/005930 all 200, 0 error markers, all UI markers present).
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
