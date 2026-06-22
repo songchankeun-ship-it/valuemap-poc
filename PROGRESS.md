@@ -5,6 +5,19 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-22 · Pass 5 공시 핵심 숫자(보유 수량·비율) 노출 (Task 23, Claude)
+- 목표: 공시 카드 유용성을, 투자 로직 무변경으로 한 단계 더. 직전 패스들이 '다음 제안'으로 남긴 '공시 카드 DART 핵심 숫자 노출'을 **이미 수집 스크립트가 쓰고 있으나 앱이 읽지 않던** 임원 보유 수량·비율로 한정해 안전하게 해소.
+- 조사 결과(데이터 형태 확인): `scripts/fetch_insider_details.py`가 elestock.json에서 `ownCnt`(보유 수량)·`rate`(보유 비율)를 이미 `insider-signals.json`에 기록 중. 그러나 `src/lib/insiderDetails.ts`의 `InsiderRow`는 이 두 필드를 읽지 않아 화면에 못 떴음. **신규 파싱·본문 XML 없이** 기존 구조화 데이터를 표시만 하면 됨 → 가장 보수적인 useful step.
+- 변경 파일/내용(`src/lib/insiderDetails.ts` 단일):
+  - `InsiderRow`에 `ownCnt?: number`·`rate?: string` 추가(스크립트가 이미 쓰는 필드).
+  - `holdingClause()` 헬퍼 신설: 값이 있을 때만 `· 보유 N주 · 비율 X%` 사실 절 생성(보유수량 양수 + 비율 유한수치 가드, `%`/공백/`-` 방어). 값 없으면 빈 문자열(graceful).
+  - `enrichInsider`의 방향 텍스트(`장내매수 확인 (보고자, +N주)` 등)는 그대로 두고 끝에 보유 절만 덧붙임. `strength`·신호 로직·점수·다른 파일 무변경. import·의존성·신규 props 0건(`StockDisclosures.tsx`가 이미 `d.signal.note`를 `text-[11px]` 한 줄로 렌더 → 데이터 있으면 자동 노출).
+- 카피는 사실·비자문 유지: 새 문자열(`보유 N주`·`비율 X%`)은 verify_metrics 금칙어 18종과 무충돌, 투자 자문 표현 신규 유입 없음.
+- 검증: `python scripts/verify_metrics.py`(UTF-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(전 라우트 프리렌더, 종목 138p, 타입게이트 통과) / 빌드 산출물 `.next/server/app/api/disclosures/{[ticker],recent}/route.js`에 신규 포맷 문자열(`장내매수 확인`·`보유 `·`비율 `) 존재 확인(enrichInsider는 서버 라우트 코드라 client 청크 아닌 server 번들에 위치) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0.
+- 위험/한계: 새 보유 절은 `insider-signals.json` 생성 후에만 화면에 뜸. 로컬엔 DART 키·해당 파일이 없어 API가 sample 폴백(`source: cache/sample`) → 임원 note는 휴리스틱 문자열만 보임(런타임에서 보유 절 미노출 = 정상 graceful no-op). 실제 노출은 **송님이 `python scripts/fetch_insider_details.py`(DART 키) 실행해 `public/data/insider-signals.json` 생성 시** 활성화. 시각 검증은 server 번들 문자열 존재로 대체(데모 sample에 가짜 보유수치 주입은 사용자 노출 '예시 표본' 오인 위험이라 의도적으로 안 함).
+- 남은 블로커(정확화): 자기주식 취득/처분 수량·금액, 단일계약 계약금액·직전매출 비율, 증자·CB 규모, 정정 본문 등 **나머지 공시 핵심 숫자는 `list.json`에 없고 설계서 §18.2 DART 보고서 본문(XML) 파싱 파이프라인이 미구현이라 여전히 차단**. 임원 보유변동만 elestock 구조화 엔드포인트 덕에 본문 파싱 없이 가능했음.
+- 다음 패스(1개·구체): §18.2 본문 파싱 파이프라인 구축 **또는** 유형별 구조화 엔드포인트 추가 수집(예: 자기주식 취득 수량용 `tsstk.json`)로 treasury/contract 핵심 숫자도 동일 graceful 패턴으로 노출.
+
 ## 2026-06-22 · Pass 4 공시·데이터 신뢰도 폴리시 (Task 21, Claude)
 - 목표: 첫 사용자 관점에서 공시 카드의 팔레트 불일치·정보 부족·신선도 문구를 소폭 다듬어 신뢰감 보강. 투자 로직·산식 무변경, className/카피만. OneDrive 규칙대로 python(utf-8/LF) 편집.
 - 직전 패스(Task 18)가 남긴 1순위 항목 '`StockDisclosures` `gray-*`→`zinc-*` 팔레트 통일 + 공시 note 노출' 해소.
