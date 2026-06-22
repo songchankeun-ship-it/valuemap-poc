@@ -21,11 +21,13 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 18 - OrnScore Pass 3 daily-use clarity polish
-- Run: 28
-- Status: failed
+- Task: 21 - OrnScore Pass 4 disclosure & data-confidence polish
+- Status: done (on branch ai-center/task-21-ornscore-pass-4-disclosure-and-data-)
 - Agent: claude
-- Note: Quality gate failed after 0 repair attempt(s): Cost limit exceeded: $5.2827 used, $5.00 allowed.
+- What changed: StockDisclosures.tsx only — gray-* palette unified to app-wide zinc-* (13 tokens, 0 left) with two dark-mode fixes (badge fallback + skeleton bars); per-card signal `note` surfaced as a muted sub-line (insider direction/size + body-check guidance, no new parsing); freshness header reworded `최근 90일 · 공시 N건 · 신호 N건`. className/copy only — no logic, props, imports, or deps. Non-advisory copy preserved.
+- What passed: verify_metrics.py exit 0 (138 stocks, 0 errors, 0 forbidden); npm run build OK (all routes prerender, 138 stock pages); local prod smoke `/ /today /stocks /disclosures /stock/005930` all 200 / 0 error markers; new zinc+note strings confirmed in app/stock/[ticker] build chunk.
+- Remaining risk: disclosure card is client+fetch rendered, so verified via build-chunk strings rather than headless pixels.
+- Next task: extract DART body core numbers (acquired/disposed share count, contract amount vs prior revenue) into the disclosure card — design §18.2, blocked on body-text parsing (not yet implemented).
 
 ## Next Agent Checklist
 

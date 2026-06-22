@@ -5,6 +5,18 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-22 · Pass 4 공시·데이터 신뢰도 폴리시 (Task 21, Claude)
+- 목표: 첫 사용자 관점에서 공시 카드의 팔레트 불일치·정보 부족·신선도 문구를 소폭 다듬어 신뢰감 보강. 투자 로직·산식 무변경, className/카피만. OneDrive 규칙대로 python(utf-8/LF) 편집.
+- 직전 패스(Task 18)가 남긴 1순위 항목 '`StockDisclosures` `gray-*`→`zinc-*` 팔레트 통일 + 공시 note 노출' 해소.
+- 변경 파일/내용(`src/components/StockDisclosures.tsx` 단일):
+  - **팔레트 통일**: 잔존 `gray-*` 13곳 전부 앱 공통 `zinc-*`로 교체(border/text/hover/active/dot). 다크모드 갭 2곳 보강 — `getBadgeClass` 폴백 배지에 `dark:bg-zinc-800 dark:text-zinc-300`, 로딩 스켈레톤 4줄에 `dark:bg-zinc-800` 추가(이전엔 다크에서 흰 막대로 떴음). grep 결과 `gray-` 토큰 0건.
+  - **DART 이해도**: 각 공시 카드 배지 행 아래에 이미 계산돼 있던 `d.signal.note`(예: `장내매수 확인 (보고자, +N주)`·`계약금액·직전매출 비율은 본문 확인 권장`)를 muted 한 줄(`text-[11px] text-zinc-500 dark:text-zinc-400`)로 노출. 새 파싱·props·import·의존성 없음(기존 enrich 결과 표시만).
+  - **신선도 문구**: 헤더 `최근 90일 {count}건 신호 {signalCount}건` → `최근 90일 · 공시 {count}건 · 신호 {signalCount}건`(구분점으로 가독성만 개선). 빈 상태 중립 학습 문구는 그대로 유지.
+- 카피는 학습용·비자문 유지(매수/매도/추천 신규 유입 없음). 노출되는 note 문자열 10종이 금칙어 18종과 충돌 없음 확인(모두 '확인 권장/필요' 중립 톤).
+- 검증: `python scripts/verify_metrics.py` 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(전 라우트 프리렌더, 종목 138p) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0. 공시 카드는 client+fetch 게이트라 서버 HTML엔 없어 빌드 청크(`app/stock/[ticker]`)에서 신규 zinc 폴백 배지·note 서브라인 클래스·`유형 자동분류` 문자열 존재 확인.
+- 위험/한계: 공시 카드는 client 렌더라 헤드리스 브라우저 없이 픽셀 확인 불가(빌드 청크 문자열·클래스 존재로 검증). note 노출은 enrich 데이터(insider-signals.json) 유무에 graceful — 없으면 휴리스틱 note, 있으면 실제 방향·규모.
+- 다음 패스 제안(1개): 공시 카드 DART 본문 핵심 숫자(취득/처분 수량·금액·계약금액 비율) 추출 노출 — 설계서 §18.2, 현재 본문 파싱 미구현이라 블로킹.
+
 ## 2026-06-22 · Pass 3 daily-use clarity (Task 18, Claude)
 - 목표: 첫 사용자 관점에서 여전히 미완성으로 느껴지는 라벨·빈 상태·신선도 표현을 소폭 보강. 기존 작업(워크트리 clean·stash 0) 보존, OneDrive 규칙대로 python(utf-8/LF)로만 편집.
 - 점검 6개 화면(home/today/stocks/watchlist/compare/공시·상세): home·today·stocks·관심종목 빈상태·비교 빈상태·StocksExplorer는 이미 1~2차 패스로 명료화 완료 → 무변경. 신선도(홈 히어로 pill·/today 헤더·푸터)는 모두 `dataMetadata`+`isDataStale` 단일 출처 사용 확인. 사용자 노출 '밸류맵/ValueMap' 잔재 0건(grep).
