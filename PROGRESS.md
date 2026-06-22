@@ -5,6 +5,19 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-23 · Pass 6 공시 핵심 숫자 — 자기주식 취득 규모 노출 (Task 25, Claude)
+- 목표: Pass 5가 '다음 패스'로 남긴 treasury/contract 핵심 숫자를, 투자 로직 무변경으로 임원 보유변동과 동일한 graceful 패턴으로 한 단계 더. 자기주식 취득은 임원 소유보고(elestock)와 함께 DART가 **본문 XML 없이 구조화 엔드포인트로 규모를 노출**하는 몇 안 되는 유형이라 가장 보수적인 다음 step으로 선택.
+- 구조화 엔드포인트 근거: 단일계약(single_contract)·정정(correction)은 구조화 엔드포인트가 없어 여전히 §18.2 본문 XML 파싱이 필요하지만, 자기주식 취득(`tsstkAqDecsn.json`)·증자/CB(`piicDecsn.json`/`cvbdIsDecsn.json`)는 주요사항보고서 구조화 정보가 있음. 이번 패스는 그 중 treasury_buy 신호(`자기주식 취득`)만 한정.
+- 변경 파일/내용:
+  - ⭐ `scripts/fetch_treasury_details.py` 신설 — `fetch_insider_details.py` 미러. `load_key()`·`build_corp_map()`·`corp_code_map.json` 캐시 재사용, `tsstkAqDecsn.json`(기간 bgn_de/end_de 필수, 최근 365일) 호출 → `public/data/treasury-signals.json`(ticker → `[{rcept_no, acqCnt, acqAmount, periodBgn, periodEnd, date}]`). **로컬 실행 안 함**(키 없음·원격 호출 없음). 필드명(`aqpln_stk_ostk`·`aqpln_prc_ostk`)은 DART 문서 기준 추정 → "⚠️ operator-verify" 주석으로 운영 키 실호출 검증 요청.
+  - ⭐ `src/lib/treasuryDetails.ts` 신설 — `insiderDetails.ts` 미러. `treasury-signals.json` lazy-load(try/catch, 파일 없으면 `{}`), `enrichTreasury(stockCode, signal)`는 `signal.signalType === "treasury_buy"` + 매칭 행이 있을 때만 `treasuryClause()`로 사실 절(` · 취득예정 N주 · 취득금액 X억원`, 양수·유한수 가드, 원→억원 반올림) 덧붙임. 없으면 원본 그대로. `strength`·점수·신호 로직·다른 파일 무변경. `fs`/`path` import만(형제 lib과 동일).
+  - `src/app/api/disclosures/{[ticker],recent}/route.ts` — 기존 `enrichInsider` 호출을 `enrichTreasury(...)`로 합성(`enrichTreasury(code, enrichInsider(code, sig))`). UI 편집 0건(`StockDisclosures.tsx`가 이미 `d.signal.note` 한 줄 렌더).
+- 카피 안전: 새 문자열(`취득예정 N주`·`취득금액 X억원`)은 숫자·사실만 — verify_metrics 금칙어 18종(매수/매도/추천/호재 확정 등)과 무충돌, 투자 자문 표현 신규 유입 0.
+- 검증: `python scripts/verify_metrics.py`(PYTHONIOENCODING=utf-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(전 라우트 프리렌더, 종목 138p, 타입게이트 통과) / 빌드 산출물 공유 서버 청크 `.next/server/chunks/2140.js`에 신규 포맷(`취득예정`·`취득금액`·`억원`)이 Pass 5 임원 절(`보유 `·`비율 `·`장내매수 확인`)과 함께 존재 확인(enrich는 서버 라우트 코드라 공유 server 청크에 위치) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/recent`·`/005930` 200(source=sample 폴백).
+- 위험/한계: 새 취득 절은 `treasury-signals.json` 생성 후에만 화면에 뜸. 로컬엔 DART 키·해당 파일이 없어 런타임에서 절 미노출 = 정상 graceful no-op(시각 검증은 server 청크 문자열 존재로 대체, 데모 sample에 가짜 취득 수치 주입은 사용자 오인 위험이라 의도적으로 안 함). 필드 매핑은 operator-verify 상태 — **송님이 `python scripts/fetch_treasury_details.py`(DART 키) 실행 시** 실제 필드 확인 후 활성화.
+- 남은 블로커(정확화): 단일계약 계약금액·직전매출 비율, 정정 본문은 구조화 엔드포인트가 없어 여전히 §18.2 DART 보고서 본문(XML) 파싱 파이프라인 필요. 증자·CB는 구조화 엔드포인트(`piicDecsn.json`/`cvbdIsDecsn.json`)가 있어 이번 패턴으로 확장 가능.
+- 다음 패스(1개·구체): capital_raise 신호를 증자(`piicDecsn.json`)·CB(`cvbdIsDecsn.json`) 구조화 엔드포인트로 동일 graceful 패턴 확장(발행 규모·자금용도) **또는** single_contract/correction을 위한 §18.2 본문 XML 파서 착수.
+
 ## 2026-06-22 · Pass 5 공시 핵심 숫자(보유 수량·비율) 노출 (Task 23, Claude)
 - 목표: 공시 카드 유용성을, 투자 로직 무변경으로 한 단계 더. 직전 패스들이 '다음 제안'으로 남긴 '공시 카드 DART 핵심 숫자 노출'을 **이미 수집 스크립트가 쓰고 있으나 앱이 읽지 않던** 임원 보유 수량·비율로 한정해 안전하게 해소.
 - 조사 결과(데이터 형태 확인): `scripts/fetch_insider_details.py`가 elestock.json에서 `ownCnt`(보유 수량)·`rate`(보유 비율)를 이미 `insider-signals.json`에 기록 중. 그러나 `src/lib/insiderDetails.ts`의 `InsiderRow`는 이 두 필드를 읽지 않아 화면에 못 떴음. **신규 파싱·본문 XML 없이** 기존 구조화 데이터를 표시만 하면 됨 → 가장 보수적인 useful step.

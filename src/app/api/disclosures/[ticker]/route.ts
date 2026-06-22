@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { listDisclosuresByStock } from "@/lib/dart";
 import { detectSignals, firstSignalOf, type SignalHit } from "@/lib/disclosure-signals";
 import { enrichInsider } from "@/lib/insiderDetails";
+import { enrichTreasury } from "@/lib/treasuryDetails";
 
 // 메모리 캐시 (1시간)
 const cache = new Map<string, { data: unknown; expiresAt: number }>();
@@ -53,7 +54,7 @@ export async function GET(
     const withBadges = items.map((d) => ({
       ...d,
       url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rcept_no}`,
-      signal: enrichInsider(d.stock_code, firstSignalOf(d)),
+      signal: enrichTreasury(d.stock_code, enrichInsider(d.stock_code, firstSignalOf(d))),
     }));
 
     const payload = {

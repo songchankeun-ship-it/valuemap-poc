@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { listDisclosures } from "@/lib/dart";
 import { detectSignals } from "@/lib/disclosure-signals";
 import { enrichInsider } from "@/lib/insiderDetails";
+import { enrichTreasury } from "@/lib/treasuryDetails";
 
 const cache = new Map<string, { data: unknown; expiresAt: number }>();
 const TTL_MS = 1000 * 60 * 30; // 30분
@@ -45,7 +46,7 @@ export async function GET(req: Request) {
 
     const all = [...kospi.items, ...kosdaq.items];
     const signals = detectSignals(all).map((s) => {
-      const e = enrichInsider(s.disclosure.stock_code, s)!;
+      const e = enrichTreasury(s.disclosure.stock_code, enrichInsider(s.disclosure.stock_code, s))!;
       return {
         ...e,
         disclosure: {
