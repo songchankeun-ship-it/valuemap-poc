@@ -259,9 +259,9 @@ export function CompareClient({ stockMap, top5 = [] }: { stockMap: Record<string
                       <div key={s.ticker}>
                         <div className="flex items-baseline justify-between mb-0.5">
                           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{s.name}</span>
-                          <span className={`text-xs font-bold tabular-nums ${isMax ? "text-zinc-900" : "text-zinc-700"}`}>{Math.round(v)}</span>
+                          <span className={`text-xs font-bold tabular-nums ${isMax ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}`}>{Math.round(v)}</span>
                         </div>
-                        <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                           <div className={`h-full ${color} ${isMax ? "" : "opacity-70"}`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -298,7 +298,7 @@ export function CompareClient({ stockMap, top5 = [] }: { stockMap: Record<string
                       const v = s[key];
                       const isBest = v === best && stocks.length > 1;
                       return (
-                        <td key={s.ticker} className={`py-2.5 px-2 text-right tabular-nums whitespace-nowrap ${isBest ? "text-emerald-700 font-semibold" : "text-zinc-700"}`}>
+                        <td key={s.ticker} className={`py-2.5 px-2 text-right tabular-nums whitespace-nowrap ${isBest ? "text-emerald-700 dark:text-emerald-400 font-semibold" : "text-zinc-700 dark:text-zinc-300"}`}>
                           {v > 0 ? v.toFixed(2) : "-"}<span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-0.5">{suffix}</span>
                         </td>
                       );
@@ -309,7 +309,7 @@ export function CompareClient({ stockMap, top5 = [] }: { stockMap: Record<string
             </tbody>
           </table>
         </div>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">* PER/PBR은 낮을수록, ROE/배당은 높을수록 좋음 — 가장 좋은 값을 <span className="text-emerald-700 font-semibold">초록</span>으로 표시.</p>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">* PER/PBR은 낮을수록, ROE/배당은 높을수록 좋음 — 가장 좋은 값을 <span className="text-emerald-700 dark:text-emerald-400 font-semibold">초록</span>으로 표시.</p>
       </section>
 
       {/* 수익률 비교 */}
@@ -359,7 +359,7 @@ export function CompareClient({ stockMap, top5 = [] }: { stockMap: Record<string
               <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mb-2 truncate">{s.name}</div>
               <div className="flex flex-wrap gap-1">
                 {s.themes.map((t) => (
-                  <Link key={t} href={`/stocks?theme=${encodeURIComponent(t)}`} className="text-[10px] px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-200 transition">
+                  <Link key={t} href={`/stocks?theme=${encodeURIComponent(t)}`} className="text-[10px] px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 transition">
                     #{t}
                   </Link>
                 ))}

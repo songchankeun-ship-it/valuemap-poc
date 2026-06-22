@@ -5,6 +5,18 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-22 · Pass 3 daily-use clarity (Task 18, Claude)
+- 목표: 첫 사용자 관점에서 여전히 미완성으로 느껴지는 라벨·빈 상태·신선도 표현을 소폭 보강. 기존 작업(워크트리 clean·stash 0) 보존, OneDrive 규칙대로 python(utf-8/LF)로만 편집.
+- 점검 6개 화면(home/today/stocks/watchlist/compare/공시·상세): home·today·stocks·관심종목 빈상태·비교 빈상태·StocksExplorer는 이미 1~2차 패스로 명료화 완료 → 무변경. 신선도(홈 히어로 pill·/today 헤더·푸터)는 모두 `dataMetadata`+`isDataStale` 단일 출처 사용 확인. 사용자 노출 '밸류맵/ValueMap' 잔재 0건(grep).
+- 변경 파일/카피:
+  - `src/components/WatchlistClient.tsx` — '최근 본 종목' 빈 상태가 한 줄뿐이던 것을 가치 설명(방문 종목 자동 기록·다시 찾기 쉬움) + 최근 10개 한도 안내 + '종목 탐색하러 가기' CTA로 보강(디자인 설계서 §7 history 빈상태 🟡 해소).
+  - `src/components/StockDisclosures.tsx` — ① 종목별 공시 빈 상태 '공시가 없습니다'에 "공시 없음은 호재도 악재도 아님" 중립 학습 문구 추가(비자문). ② 소스 배지 영어 Live/Cache/Preview → 한글 실시간/저장본/예시 표본 + 의미 title 툴팁 + 다크 변형(이전 '영어라벨 한글화' 기조 일치).
+  - `src/components/CompareClient.tsx` — 비교 화면 다크모드 가독성: 지표 막대 값(text-zinc-900 → 다크 미지정으로 어두운 배경에 거의 안 보이던 것)·막대 트랙·재무 표 best/일반 셀·각주 초록 강조·테마 칩에 누락된 `dark:` 변형 추가(레이아웃·로직 무변경, className만).
+- 카피는 학습용·균형·비자문 유지(매수/매도/추천 신규 유입 없음).
+- 검증: `python scripts/verify_metrics.py` 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(전 라우트 프리렌더, 종목 138p) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /watchlist /compare /disclosures /stock/005930` 모두 200·에러 마커 0. 빈상태/배지는 client+localStorage·fetch 게이트라 서버 HTML엔 없어 빌드 청크에서 신규 문자열 존재 확인(watchlist·stock·compare 청크).
+- 위험/한계: 빈 상태·소스 배지·다크 가독성은 client 렌더라 헤드리스 브라우저 없이 픽셀 확인 불가(빌드 청크 문자열·클래스 존재로 검증). StockDisclosures는 여전히 구식 `gray-*` 팔레트(나머지는 `zinc-*`) — 이번엔 범위 한정 위해 미통일.
+- 다음 패스 제안(1개): StockDisclosures 전체 `gray-*`→`zinc-*` 팔레트 통일 + 공시 카드 DART 본문 핵심 숫자(취득/처분 수량·금액) 추출 노출.
+
 ## 2026-06-21 · AI Dev Center Pass 2 UI 명료화 (Task 14, Claude)
 - 목표: P0 패스 이후 실사용 명료화. 기존 작업분(미커밋 3파일) 보존하며 점검·소폭 보강 후 검증·커밋.
 - 종목탐색(StocksExplorer): ① 질문형 프리셋(자연어 클릭) — "싸고 거래 늘었나/돈 잘 버는 회사/배당 주는 우량주/대형주 안정형/숨은 소형 저평가" 5종, ② 적용 중 필터를 사람이 읽는 칩으로 노출(칩별 × = 해당 필터만 해제) + 전체 초기화, ③ 헤더에 "조건 충족 N개 / 전체 M개" 가시 카운트.

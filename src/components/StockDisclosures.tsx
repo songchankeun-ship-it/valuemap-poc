@@ -44,9 +44,9 @@ function getBadgeClass(label: string): string {
 }
 
 function SourceBadge({ source }: { source: string }) {
-  if (source === "live") return <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 font-medium">Live</span>;
-  if (source === "cache") return <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-medium">Cache</span>;
-  if (source.startsWith("sample")) return <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400 font-medium">Preview</span>;
+  if (source === "live") return <span title="DART에서 실시간으로 가져온 공시" className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 font-medium">실시간</span>;
+  if (source === "cache") return <span title="최근에 가져와 저장해 둔 공시" className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-medium">저장본</span>;
+  if (source.startsWith("sample")) return <span title="실데이터 연결 전 보여주는 예시 표본" className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">예시 표본</span>;
   return null;
 }
 
@@ -121,7 +121,8 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
 
       {data.count === 0 ? (
         <div className="text-sm text-gray-500 dark:text-zinc-400 py-8 text-center">
-          최근 90일간 공시가 없습니다.
+          <p>최근 90일간 접수된 DART 공시가 없습니다.</p>
+          <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-1.5 leading-relaxed">공시가 없다는 것은 호재도 악재도 아닙니다 — 단지 이 기간에 보고된 주요 공시가 없었다는 뜻이에요.</p>
         </div>
       ) : (
         <div>

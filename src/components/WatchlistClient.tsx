@@ -309,9 +309,15 @@ export function WatchlistClient({
 
         {recent.length === 0 ? (
           <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 text-center">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              종목 페이지를 둘러보면 여기 기록이 쌓여요.
+            <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-1">
+              방문한 종목이 자동으로 기록돼 다시 찾기 쉬워요.
             </p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">
+              종목 페이지를 한 번 열면 여기에 최근 10개까지 쌓입니다.
+            </p>
+            <Link href="/stocks" className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+              종목 탐색하러 가기 <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
