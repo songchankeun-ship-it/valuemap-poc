@@ -2,7 +2,7 @@
 // 공시 신호의 실제 방향·규모를 덧입힌다. 파일이 없으면 원본(추정) 그대로 반환.
 // 생성: scripts/fetch_insider_details.py (송님 DART 키로 실행)
 import type { SignalHit } from "./disclosure-signals";
-import { loadSignalFile, matchRow } from "./signalDetailsShared";
+import { loadSignalFile, matchRow, joinClause } from "./signalDetailsShared";
 
 interface InsiderRow {
   rcept_no?: string;
@@ -24,7 +24,7 @@ function holdingClause(row: InsiderRow): string {
   if (rate && rate !== "-" && Number.isFinite(Number(rate))) {
     parts.push(`비율 ${rate}%`);
   }
-  return parts.length ? ` · ${parts.join(" · ")}` : "";
+  return joinClause(parts);
 }
 
 /** 임원 보유변동 신호에 실제 방향·규모를 덧입힘. 데이터 없으면 원본 그대로. */

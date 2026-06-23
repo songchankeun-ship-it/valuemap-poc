@@ -2,7 +2,7 @@
 // 증자/CB 공시 신호에 실제 발행 규모(발행금액·자금용도)를 사실 그대로 덧입힌다.
 // 파일이 없으면 원본 그대로 반환(graceful no-op). 생성: scripts/fetch_capital_details.py
 import type { SignalHit } from "./disclosure-signals";
-import { loadSignalFile, matchRow, toEok } from "./signalDetailsShared";
+import { loadSignalFile, matchRow, toEok, joinClause } from "./signalDetailsShared";
 
 interface CapitalRow {
   rcept_no?: string;
@@ -26,7 +26,7 @@ function capitalClause(row: CapitalRow): string {
   if (use && use !== "-") {
     parts.push(`자금용도 ${use}`);
   }
-  return parts.length ? ` · ${parts.join(" · ")}` : "";
+  return joinClause(parts);
 }
 
 /** 증자·CB 신호에 실제 발행 규모를 덧입힘. 데이터 없으면 원본 그대로. */

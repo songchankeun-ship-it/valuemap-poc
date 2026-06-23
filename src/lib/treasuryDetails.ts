@@ -2,7 +2,7 @@
 // 자사주 매입 공시 신호에 실제 규모(취득예정 주식수·금액)를 사실 그대로 덧입힌다.
 // 파일이 없으면 원본 그대로 반환(graceful no-op). 생성: scripts/fetch_treasury_details.py
 import type { SignalHit } from "./disclosure-signals";
-import { loadSignalFile, matchRow, toEok } from "./signalDetailsShared";
+import { loadSignalFile, matchRow, toEok, joinClause } from "./signalDetailsShared";
 
 interface TreasuryRow {
   rcept_no?: string;
@@ -23,7 +23,7 @@ function treasuryClause(row: TreasuryRow): string {
     const eok = toEok(row.acqAmount);
     if (eok > 0) parts.push(`취득금액 ${eok.toLocaleString()}억원`);
   }
-  return parts.length ? ` · ${parts.join(" · ")}` : "";
+  return joinClause(parts);
 }
 
 /** 자기주식 취득 신호에 실제 규모를 덧입힘. 데이터 없으면 원본 그대로. */

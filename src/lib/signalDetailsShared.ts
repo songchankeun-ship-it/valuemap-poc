@@ -39,3 +39,8 @@ export function matchRow<T extends { rcept_no?: string }>(
 export function toEok(won: number): number {
   return Math.round(won / 1e8);
 }
+
+/** parts 배열을 ` · ` 구분자로 이어 선두 구분자까지 붙인 절을 만든다(비면 빈 문자열). */
+export function joinClause(parts: string[]): string {
+  return parts.length ? ` · ${parts.join(" · ")}` : "";
+}

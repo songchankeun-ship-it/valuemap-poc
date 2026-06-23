@@ -2,7 +2,7 @@
 // 단일계약 공시 신호에 실제 계약금액·직전매출 대비 비율을 사실 그대로 덧입힌다.
 // 파일이 없으면 원본 그대로 반환(graceful no-op). 생성: scripts/fetch_contract_details.py
 import type { SignalHit } from "./disclosure-signals";
-import { loadSignalFile, matchRow, toEok } from "./signalDetailsShared";
+import { loadSignalFile, matchRow, toEok, joinClause } from "./signalDetailsShared";
 
 interface ContractRow {
   rcept_no?: string;
@@ -23,7 +23,7 @@ function contractClause(row: ContractRow): string {
     const r = Math.round(row.salesRatio * 10) / 10;
     parts.push(`직전매출 대비 ${r}%`);
   }
-  return parts.length ? ` · ${parts.join(" · ")}` : "";
+  return joinClause(parts);
 }
 
 /** 단일계약 신호에 실제 계약금액·매출비율을 덧입힘. 데이터 없으면 원본 그대로. */
