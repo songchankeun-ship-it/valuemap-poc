@@ -146,3 +146,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · `npm run build` 138p 0 · 로컬 prod(3100) `/ /today /stocks /stock/005930` 200·`/settings/notifications` 307(익명 리다이렉트)·에러 0 · 홈 익명 trio 프리페치 출처 grep 0건.
 - Residual: Playwright 미구성 → ERR_ABORTED 소거는 게이트 재실행으로 최종 확인. Task 15 기능 무변경.
 - Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.
+
+
+### Repair — Task 15 Playwright 게이트 수정: 홈 stale prod chunk 400 제거 (2026-06-24, Claude)
+- Blocker: Playwright DESKTOP·MOBILE 모두 `400 .../_next/static/chunks/app/page-dfb2719986a20cdc.js — net::ERR_ABORTED`(홈 페이지 청크).
+- Root cause: 환경 staleness(코드 무결함). 3000 의 `next start`(02:55 기동)가 구 `.next` 를 로드한 채 생존 → 03:12 `npm run build` 가 `.next` 를 덮어써 홈 청크 해시 변경 → 생존 서버가 구 해시 참조 HTML 내려보냄 → 디스크에 없는 청크라 400. `curl` 로 재현·확인.
+- Fix(소스 무변경, 환경 정리): stale 서버 `taskkill /F` → `npm run clean`+`npm run build` 클린 재빌드 → 새 `next start -p 3000` 기동(서버=빌드 정합).
+- Verified: `tsc --noEmit` 0 · `npm run build` 138p 0 · `verify_metrics.py` 138종목 0오류·금칙어 0 · 새 서버 홈 HTML 이 디스크와 동일 `app/page-eb287862a9283bf0.js` 참조·200 · `/ /today /stocks /disclosures /stock/005930` 200 · `/settings/notifications` 307 · 홈·`/stock/005930` 의 모든 `/_next/static/*` 자산 전수 200.
+- Residual: prod 서버 가동 중 `.next` 재빌드 시 stale 재발 가능. 게이트 권장 = build→start 고정, 서버 중 재빌드 금지, 재실행 전 3000 잔존 `next start` 선종료. (dev 는 `.next-dev` 분리로 무관.) Playwright 미구성 → 게이트 재실행으로 최종 확인.
+- Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.

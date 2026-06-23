@@ -334,3 +334,12 @@
 - Passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0 · `npm run build` 타입게이트·138p 프리렌더 exit 0 · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /today /stocks /stock/005930` 200, `/settings/notifications` 307(익명→로그인 정상 리다이렉트)·에러 0. 홈 익명 렌더의 trio 프리페치 출처가 0건임을 grep 으로 확인(home/* + Sidebar/MobileBottomNav 전부 prefetch={false}).
 - Residual: Playwright 미구성으로 ERR_ABORTED 소거는 게이트 재실행으로 최종 확인 필요(정적 분석상 프리페치 속성 제거로 구조적 해소). Task 15 기능(결론 카드)은 무변경.
 - Next concrete OrnScore step(변동 없음): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로 추가(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
+
+
+## 2026-06-24 · Repair · Task 15 Playwright 게이트 수정: 홈 stale prod chunk 400 제거 (Claude)
+- Blocker: Playwright DESKTOP·MOBILE 둘 다 `400 http://127.0.0.1:3000/_next/static/chunks/app/page-dfb2719986a20cdc.js — net::ERR_ABORTED` 로 실패(홈 `/` 자체 페이지 청크).
+- Root cause: 환경 staleness 레이스(코드 결함 아님). 포트 3000 의 `next start` 프로세스(PID 33580, 02:55 기동)가 **구 `.next` 빌드**를 메모리에 로드한 채 살아 있었고, 그 뒤(03:12) `npm run build` 가 `.next` 를 덮어써 홈 청크 해시가 `dfb2719986a20cdc`→`eb287862a9283bf0` 로 바뀜. 살아있는 서버는 여전히 구 해시(`dfb27…`)를 참조하는 HTML 을 내려보내는데 그 청크는 디스크에서 사라져 400. (live 서버에서 `curl /` → HTML 이 `app/page-dfb2719986a20cdc.js` 참조, 해당 청크 요청 → 400 으로 재현 확인. 신 청크 `eb287…` 는 BUILD_ID 불일치로 404 → 서버 전체가 stale.)
+- Fix(환경 정리, 소스 무변경): (1) stale `next start`(PID 33580) `taskkill /F` 로 종료 → 3000 free. (2) `npm run clean`(.next 삭제) + `npm run build` 클린 재빌드로 디스크 자가정합. (3) 새 `next start -p 3000` 기동 → 서버가 신 빌드와 일치. Task 15 결론 카드 기능·WelcomeOnboarding 프리페치 수정 모두 무변경.
+- Passed: `npx tsc --noEmit` exit 0 · `npm run build` 138p 프리렌더 exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · 새 서버(3000)에서 홈 HTML 이 디스크와 동일한 `app/page-eb287862a9283bf0.js` 참조, 그 청크 200 · `/ /today /stocks /disclosures /stock/005930` 200, `/settings/notifications` 307(익명 리다이렉트) · **홈과 `/stock/005930` 의 모든 `/_next/static/*` 참조 자산 전수 200(NON-200 0건)** — 게이트가 잡던 청크 abort 소거 확인.
+- Residual / 운영 주의: 근본 원인은 게이트 워크플로가 prod 서버를 띄운 채 `.next` 를 재빌드하면 살아있는 서버의 청크 참조가 stale 해지는 것. 권장 시퀀스 = **build → start 순서 고정, 서버 가동 중 재빌드 금지, 게이트 재실행 전 3000 의 잔존 `next start` 선종료**(dev 는 이미 `.next-dev` 로 분리됨, 본 건은 prod `next start`+`build` 가 `.next` 공유 시 발생). Playwright 미구성이라 최종 소거는 게이트 재실행으로 확인.
+- Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
