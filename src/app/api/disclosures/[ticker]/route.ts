@@ -11,6 +11,7 @@ import { enrichInsider } from "@/lib/insiderDetails";
 import { enrichTreasury } from "@/lib/treasuryDetails";
 import { enrichCapital } from "@/lib/capitalDetails";
 import { enrichContract } from "@/lib/contractDetails";
+import { enrichCorrection } from "@/lib/correctionDetails";
 
 // 메모리 캐시 (1시간)
 const cache = new Map<string, { data: unknown; expiresAt: number }>();
@@ -56,7 +57,7 @@ export async function GET(
     const withBadges = items.map((d) => ({
       ...d,
       url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rcept_no}`,
-      signal: enrichContract(d.stock_code, enrichCapital(d.stock_code, enrichTreasury(d.stock_code, enrichInsider(d.stock_code, firstSignalOf(d))))),
+      signal: enrichCorrection(d.stock_code, enrichContract(d.stock_code, enrichCapital(d.stock_code, enrichTreasury(d.stock_code, enrichInsider(d.stock_code, firstSignalOf(d)))))),
     }));
 
     const payload = {

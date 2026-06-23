@@ -5,6 +5,18 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-23 · Pass 9 공시 핵심 숫자 — 정정(correction) 본문 정정 전/후 수치 (Task 31, Claude)
+- 목표: Pass 8이 '다음 패스'로 남긴 '본문 XML 스캐폴드 패턴을 correction enrich로 확장'을 해소. 단일계약(Pass 8 contractDetails)과 동일한 §18.2 document.xml 본문 파싱 + graceful 앱 경로를 정정공시에 적용. 구조화 엔드포인트가 없는 마지막 비구조화 경로(단일계약·정정) 중 정정을 메움. 투자 로직·점수·신호 강도 전부 무변경, 사실 수치만.
+- 변경 파일/내용:
+  - ⭐ `src/lib/correctionDetails.ts` 신설 — `contractDetails.ts` 미러. `correction-signals.json` lazy try/catch 로드(없으면 `{}` → graceful no-op). `CorrectionRow {rcept_no, field?, before?, after?, date?}`. `correctionClause()`는 before·after가 모두 유한 숫자이고 억원 반올림 후 서로 다를 때만 ` · {항목명 }정정 전 X억원 → 정정 후 Y억원` 사실 절 생성(원→억원 형제 enrich와 동일 단위, 손실 정정 대비 부호 보존, null/NaN/하이픈 방어, 동일값이면 생략). `enrichCorrection(stockCode, signal)`는 `signal.signalType==="correction"` + 매칭 행(`rcept_no` 일치, 폴백 `rows[0]`)일 때만 `signal.note`에 절 덧붙임. `strength`·`direction`·점수·타입·다른 파일 무변경. `fs`/`path` import만.
+  - ⭐ `scripts/fetch_correction_details.py` 신설 — `fetch_contract_details.py` 미러(운영 전용, 로컬 미실행). `load_key()`·`build_corp_map()`·`corp_code_map.json` 캐시 재사용, `RE_REPORT_NM=re.compile("정정")`, list.json으로 정정 보고서 rcept_no 수집 → `document.xml`(zip) 다운로드 → 태그 제거 평문화 → `RE_BEFORE`/`RE_AFTER`(정정 전/후 원 단위 수치, 콤마·음수 허용)·`RE_FIELD`(손익 항목명) 추출 → `public/data/correction-signals.json`(ticker → `[{rcept_no, field, before, after, date}]`). 전·후 값이 모두 있어야 행 생성(graceful skip). per-call `time.sleep(0.12)` 한도 보호. **본문 양식·정규식·zip 여부 전부 `⚠️ operator-verify`** — 정정공시는 정정사유만 서술하고 수치표가 없는 경우도 많아 실보고서 1~2건으로 확인 후 교정 필수.
+  - `src/app/api/disclosures/{[ticker],recent}/route.ts` — `enrichCorrection`을 최외곽 래퍼로 추가(`enrichCorrection(code, enrichContract(code, enrichCapital(code, enrichTreasury(code, enrichInsider(code, sig)))))`). recent 라우트 `!` non-null 단언·ticker 라우트 인자 형태 각각 보존. UI/컴포넌트 편집 0건(`StockDisclosures.tsx`가 이미 `signal.note` 렌더).
+- 카피 안전: 신규 문자열(`정정 전 X억원 → 정정 후 Y억원`·항목명)은 숫자·항목 사실만 — 매수/매도/추천/호재 판단어 없음. verify_metrics 금칙어 게이트 무충돌.
+- 검증: `python scripts/verify_metrics.py`(PYTHONIOENCODING=utf-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(타입게이트 통과·종목 138p 프리렌더, exit 0) / 공유 서버 청크 `.next/server/chunks/7381.js`에 신규 포맷(`정정 전 ${...}억원 → 정정 후`)이 형제 절(`계약금액`·`발행규모`·`취득예정`)과 함께 존재 확인 / 로컬 프로덕션 서버(127.0.0.1:3100, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/recent`(source=sample)·`/005930`(source=cache) 200·error null = graceful no-op 확인(로컬에 correction-signals.json 없음).
+- 위험/한계: 정정 절은 `correction-signals.json` 생성 후에만 화면에 뜸. 로컬엔 DART 키·해당 파일이 없어 런타임 미노출 = 정상 graceful no-op(시각 검증은 server 청크 문자열 존재로 대체). 정정 본문은 양식 편차가 커 RE_BEFORE/RE_AFTER/RE_FIELD가 추정 단계 — 운영 키 실호출 검증 전엔 활성화 보류.
+- 남은 블로커(운영자 전용): 송님이 DART 키로 `python scripts/fetch_correction_details.py` 실행 → `public/data/correction-signals.json` 생성 후, `⚠️ operator-verify` 정규식을 실제 정정보고서 1~2건 본문과 대조해 매핑만 교정. (구조화 엔드포인트 5종=임원·자기주식·유증·CB·BW는 enrich 경로 확보 완료, 비구조화 2종=단일계약·정정은 본문 스캐폴드 완료·정규식 운영 검증 대기.)
+- 다음 패스(2개·구체·로컬 검증 가능): (a) 공시 explorer 카드별 데이터 신선도(수집 기준일) 라벨 패스 — UI 전용, 빌드·렌더로 검증 가능. (b) 6개 `enrichX` lib(insider·treasury·capital·contract·correction + 공통)의 lazy-load·원→억원 헬퍼를 단일 util로 통합해 중복 축소 — 리팩터, 타입게이트로 검증 가능.
+
 ## 2026-06-23 · Pass 8(Campaign 8) 공시 데이터 신뢰도 — BW 구조화 enrich + 단일계약 본문 XML 스캐폴드 (Task 29, Claude)
 - 목표: Pass 7이 마감한 '구조화 엔드포인트 4종(임원·자기주식·유증·CB)' 위에, ① 같은 구조화 패턴으로 **신주인수권부사채(BW)** 한 종을 더 메우고(완전 구현·저위험), ② 남은 유일한 비구조화 경로인 **단일계약 본문(document.xml) 파싱**을 오프라인 스캐폴드+graceful 앱 경로로 착수. 투자 로직·점수·신호 강도 전부 무변경, 사실 숫자만.
 - PRIMARY(완전 구현):
