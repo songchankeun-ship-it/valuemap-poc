@@ -270,3 +270,11 @@
 - What passed: `npx tsc --noEmit` exit 0(타입게이트 통과). lint는 ESLint 미구성(대화형 셋업)이라 tsc를 확립된 finite check로 사용.
 - What remains: 게이트 재실행으로 Playwright DESKTOP 경고 소거 확인. Pass 11의 next-task(StockDisclosures 신선도 라벨, signalDetailsShared 단위 assertion)는 그대로 유효.
 - Next two local tasks: (a) `[ticker]` route payload에 fetchedAt 추가 + StockDisclosures 헤더 신선도 라벨(Pass 11 carry). (b) GlobalSearch SSR/CSR 속성 일치 회귀 방지용 input 속성 스냅샷 메모를 docs에 남기기.
+
+
+## Repair — Playwright 게이트 404(정적 청크) 수정: dev/prod distDir 분리 (2026-06-24, Claude)
+- Blocker: Task 33 Playwright DESKTOP+MOBILE 게이트가 `_next/static/css/app/layout.css`·`chunks/main-app.js`·`app/layout.js`·`app/not-found.js`·`app-pages-internals.js` 404/ERR_ABORTED로 실패.
+- Root cause: `npm run build`(prod, 타입게이트)와 게이트의 `next dev` 가 같은 `.next` 를 공유 → 손상. dev HTML은 unhashed 청크 경로를 참조하나 디스크엔 prod-hashed 산출물만 존재해 404. 실행 중 dev 서버에서 6개 중 5개 자산 404 재현.
+- Fix: `next.config.mjs` phase 함수화 — dev(`PHASE_DEVELOPMENT_SERVER`)만 `distDir='.next-dev'`. prod는 기본 `.next`(Vercel 무영향), URL 불변. `.gitignore`에 `.next-dev/`.
+- Passed: 재기동 dev에서 이전 404 자산 6종 전부 200 + 게이트 5라우트 200·자산 404 0건 · phase별 distDir 확인(dev=.next-dev/prod=undefined) · `tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0.
+- Next two local tasks: (a) `[ticker]` route payload에 fetchedAt 추가 + StockDisclosures 헤더 신선도 라벨(Pass 11 carry). (b) `signalDetailsShared.ts` `toEok`/`matchRow` 단위 assertion 추가.
