@@ -5,6 +5,28 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · 홈 첫 화면 개편 1차 — 탐색 대시보드 (Task 14, Claude)
+- 목표: 설계서 `ornscore_home_redesign_spec_v1.md` 1차 범위. 홈을 '서비스 소개'에서 '오늘의 투자 탐색 대시보드'로 전환. 첫 화면 3초 안에 "오늘 볼 종목을 138개에서 5개로 줄여주는 한국 주식 탐색 보드" 가치 전달. 비자문 언어 유지(추천 종목/매수 후보/상승 가능성/급등 예상/수익 기대 금지).
+- 신규 컴포넌트(전부 서버 컴포넌트, 순수 프레젠테이션, python으로 UTF-8 작성 — OneDrive 한글깨짐 회피):
+  - `src/components/home/HomeHero.tsx` — 메인/서브 카피(설계서 §15 그대로) + CTA 3종(`오늘의 후보 보기`#today-candidates 앵커 / `종목 직접 찾기`/stocks / `지표 계산 방식 보기`/guide/metrics) + 베타·기준일·정상/지연 pill + 우측 미니 대시보드(종합80+/거래활성도급증/공시신호/상승·하락).
+  - `src/components/home/MarketSnapshotCards.tsx` — 4카드(분석종목·종합80+후보·거래활성도급증·공시신호), 데스크톱 4열/모바일 2열.
+  - `src/components/home/TopCandidateSection.tsx` + `StockCandidateCard.tsx` — 상위 5 후보(순위·종목명·코드·현재가·3개월등락·종합/100·강점지표2개·주의문구·종목보기 CTA). 빈 데이터 graceful fallback.
+  - `src/components/home/DisclosureSignalSection.tsx` + `DisclosureSignalCard.tsx` — 상위 3 공시(유형태그·종목·제목·날짜·확인포인트·종목보기/DART원문). 호재/악재 숫자 미표시 + 분류 신뢰도 고지.
+  - `src/components/home/HowItWorksSection.tsx`(3단계) + `RiskNotice.tsx`(투자추천아님/과거데이터/사용자책임, 모바일에서도 항상 노출).
+  - `src/lib/homeSnapshot.ts` — `volumeSpikeCount` 파생 헬퍼.
+- `src/app/page.tsx` 재작성: 데이터 패칭·계산 전부 서버사이드 유지(단일 데이터 소스·SSR 경계). 뷰모델(candidates/signalVMs)을 서버에서 만들어 plain props로 전달. WelcomeOnboarding·metadata·`revalidate=3600`·푸터(데이터 출처/약관) 보존.
+- 설계 결정(중요):
+  1) **volumeSpikeCount는 파생 추정값**: 전용 데이터 없어 `flowStats.ratio>=1.5`(최근5일/20일 거래대금), ratio 결측 시 `flow>=75` 폴백. 상수·주석으로 교체 용이하게 격리. → Phase-2에서 실제 거래량 급증 소스로 교체.
+  2) **공시 분류 신뢰도 숫자 미표시**: `strength`는 신호 유형별 하드코딩 상수(진짜 per-공시 분류 신뢰도 아님)라 숫자 날조 대신 고지 문구만 노출. note 필드(호재/악재 표현 섞임)는 렌더 안 하고 유형별 중립 '확인 포인트'로 대체.
+  3) **콘텐츠 최대폭은 기존 셸 `max-w-5xl` 유지**(설계서 1180px는 앱 셸과 충돌 → 새 폭 강제 안 함). 기존 레이아웃 래퍼(`src/app/layout.tsx`) 그대로 사용.
+  4) **스냅샷 카드 딥링크**: `/stocks`는 `?theme=`만 지원(점수80 필터·거래활성도 정렬 URL 파라미터 없음) → 일반 `/stocks`·`/disclosures`로 연결, 딥링크는 Phase-2 후속.
+  5) strongCount는 후보 리스트와 동일한 `!isSuspect` 필터로 내부 일관(스냅샷↔후보 카운트 불일치 방지).
+- 카피 안전: 신규 파일 금칙어 0(`추천 종목|매수 후보|상승 가능성|급등 예상|수익 기대|매수 기회|호재 확정|악재 확정|안전한 종목` grep 0). '매수 추천'은 설계서 지정 부정문("매수 추천이 아니라")에서만 등장.
+- 검증: `npx tsc --noEmit` exit 0 · `python scripts/verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3000, 내 PID만 종료) `/ /today /stocks /disclosures /stock/005930` 200·에러 마커 0, 홈 SSR에 신규 카피(`오늘 볼 종목`·`오늘의 시장 스냅샷`·`오늘 추가 확인 후보`·`분류 신뢰도`·`거래활성도 급증`·CTA 3종) 렌더, 후보 카드 5개·공시 카드 3개 확인.
+- 게이트 한계: 이 저장소엔 Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl smoke + SSR HTML 콘텐츠 grep으로 대체. **AI Center 브라우저 체크(http://127.0.0.1:3000) 운영자 실행 권장** — 히어로/4스냅샷/5후보/3공시(호재악재 미표시)/CTA/고지/모바일 가로 오버플로 확인.
+- 위험/한계: (a) volumeSpikeCount는 프록시(실 거래량 급증 데이터 아님). (b) 공시 per-건 분류 신뢰도 실값 부재(고지로 대체). (c) 후보 강점지표는 4지표 상위2 단순 추출. (d) DART 원문/공시 enrich 수치는 운영자가 DART 키로 `fetch_*_details.py` 실행 시에만 노출(graceful no-op).
+- 다음 구체 태스크(Phase 2): (a) 후보 카드 hover 인터랙션. (b) `/stocks`에 score80 필터·거래활성도 정렬 URL 파라미터 추가 후 스냅샷 카드 딥링크 연결. (c) 실제 거래량 급증 데이터 소스 → homeSnapshot 교체. (d) 데이터 상태 배지 전역 통일.
+
 ## 2026-06-24 · Pass 12 · 종목별 StockDisclosures 수집 기준 신선도 라벨 (Task 36, Claude)
 - 목표: Pass 11이 /disclosures(시장 전체 explorer)에 붙인 '수집 기준 · {KST} · {출처}' 신선도 라벨을, Pass 11·Repair 패스가 '다음 로컬 태스크 (a)'로 carry해 온 대로 **종목 상세의 종목별 공시 카드(StockDisclosures)** 헤더에도 동일 적용. 사용자가 종목 상세에서 보는 공시 묶음이 언제·어디서(실시간/저장본/예시 표본) 수집됐는지 1줄로 표기. 투자 로직·점수·신호강도·분류 전부 무변경(순수 additive UI/payload).
 - 변경 파일/내용:
