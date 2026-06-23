@@ -1,9 +1,8 @@
 // 증자·전환사채 발행 결정 — DART piicDecsn/cvbdIsDecsn 수집 결과(public/data/capital-signals.json)로
 // 증자/CB 공시 신호에 실제 발행 규모(발행금액·자금용도)를 사실 그대로 덧입힌다.
 // 파일이 없으면 원본 그대로 반환(graceful no-op). 생성: scripts/fetch_capital_details.py
-import fs from "fs";
-import path from "path";
 import type { SignalHit } from "./disclosure-signals";
+import { loadSignalFile, matchRow, toEok } from "./signalDetailsShared";
 
 interface CapitalRow {
   rcept_no?: string;
@@ -15,26 +14,11 @@ interface CapitalRow {
   date?: string;
 }
 
-let cache: Record<string, CapitalRow[]> | null = null;
-let loaded = false;
-
-function load(): Record<string, CapitalRow[]> {
-  if (loaded) return cache ?? {};
-  loaded = true;
-  try {
-    const p = path.join(process.cwd(), "public", "data", "capital-signals.json");
-    if (fs.existsSync(p)) cache = JSON.parse(fs.readFileSync(p, "utf-8"));
-  } catch {
-    cache = null;
-  }
-  return cache ?? {};
-}
-
 /** 발행 규모·자금용도를 사실 그대로의 짧은 절로 만든다. 값 없으면 빈 문자열. */
 function capitalClause(row: CapitalRow): string {
   const parts: string[] = [];
   if (typeof row.amount === "number" && Number.isFinite(row.amount) && row.amount > 0) {
-    const eok = Math.round(row.amount / 1e8);
+    const eok = toEok(row.amount);
     if (eok > 0) parts.push(`발행규모 ${eok.toLocaleString()}억원`);
   }
   // 자금용도는 사실 분류 문자열일 때만(빈값·기호 방어). 투자 판단 표현 없음.
@@ -48,9 +32,10 @@ function capitalClause(row: CapitalRow): string {
 /** 증자·CB 신호에 실제 발행 규모를 덧입힘. 데이터 없으면 원본 그대로. */
 export function enrichCapital(stockCode: string | undefined, signal: SignalHit | null): SignalHit | null {
   if (!signal || signal.signalType !== "capital_raise" || !stockCode) return signal;
-  const rows = load()[stockCode];
+  const rows = loadSignalFile<CapitalRow>("capital-signals.json")[stockCode];
   if (!rows || rows.length === 0) return signal;
-  const match = rows.find((r) => r.rcept_no === signal.disclosure.rcept_no) ?? rows[0];
+  const match = matchRow(rows, signal.disclosure.rcept_no);
+  if (!match) return signal;
   const clause = capitalClause(match);
   if (!clause) return signal;
   // 기존 note(자금용도 확인 권장 안내)는 그대로 두고 사실 규모 절만 덧붙인다.

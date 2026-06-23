@@ -5,6 +5,17 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-23 · Pass 10 공시 enrich 공통 util 추출 — 중복 축소 리팩터 (Task 33, Claude)
+- 목표: Pass 9가 '다음 패스 (b)'로 남긴 "6개 enrichX lib의 lazy-load·rcept_no 매칭·원→억원 헬퍼를 단일 util로 통합해 중복 축소"를 해소. 동작·점수·신호·노출 문자열 전부 무변경(순수 내부 리팩터). 라우트 2종은 손대지 않음.
+- 변경 파일/내용:
+  - ⭐ `src/lib/signalDetailsShared.ts` 신설 — 5개 enrich lib이 각자 복붙하던 공통 3종을 한 곳으로: (a) `loadSignalFile<T>(filename)` — 모듈 단위 `Map<string, unknown>` 캐시로 같은 `public/data/*-signals.json`을 최대 1회만 `fs.existsSync`+try/catch로 읽고 없으면 graceful `{}` 반환(파일이 없는 경우도 캐시해 재시도 방지). (b) `matchRow<T extends {rcept_no?: string}>(rows, rceptNo)` = `rows.find(r=>r.rcept_no===rceptNo) ?? rows[0]`. (c) `toEok(won)` = `Math.round(won/1e8)`. enrichX 고유 로직(signalType 가드·note 문자열)은 util에 두지 않음.
+  - `src/lib/{insider,treasury,capital,contract,correction}Details.ts` 5종 리팩터 — 각자 갖던 `let cache`/`let loaded`/`function load()`(15줄)와 `rows.find(...) ?? rows[0]`, `Math.round(x/1e8)`을 shared util 호출로 위임. 각 파일의 `import fs`/`import path` 제거(이제 shared가 담당). 각 `enrichX(...)` 시그니처·signalType 가드·strength/direction 처리·생성 note 문자열(`취득예정`/`발행규모`/`계약금액`/`직전매출 대비`/`정정 전 … → 정정 후`/`보유 …주·비율 …%`/`장내매수 확인`) **전부 바이트 동일**. `matchRow`가 `T | undefined`를 반환하므로(빈 배열 honest 타입) 각 lib에 절대 발화 안 되는 `if (!match) return signal;` 가드 1줄 추가(rows 비어있지 않음이 직전에 보장되어 런타임 무영향·출력 동일).
+  - `src/app/api/disclosures/{[ticker],recent}/route.ts` — **무변경**(export된 `enrichX` 시그니처 그대로 소비).
+- 카피 안전: 신규 사용자 노출 문자열 0(util 주석만 추가, note 문자열 무변경). verify_metrics 금칙어 게이트 무충돌.
+- 검증: `python scripts/verify_metrics.py`(PYTHONIOENCODING=utf-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(타입게이트 통과·6 lib 타입 통일 확인·종목 138p 프리렌더, exit 0 — 리팩터가 컴파일·타입 정합됨을 보증하는 1차 게이트) / 공유 서버 청크 `.next/server/chunks/7381.js`에 6종 포맷(`취득예정`·`발행규모`·`계약금액`·`정정 전`·`직전매출 대비`·`장내매수 확인`) 전부 잔존 확인 / 로컬 프로덕션 서버(127.0.0.1:3100, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/recent`(source=sample·error null·signalCount 12)·`/005930`(source=cache·error null·signalCount 3) 200 = shared 로더가 graceful no-op 경로를 보존함 확인(로컬에 *-signals.json 없음).
+- 위험/한계: 순수 리팩터라 외부 동작 변화 없음. `*-signals.json` 미존재 시 enrich 미노출은 정상 graceful no-op(이전과 동일). 운영자 전용 잔여는 그대로: DART 키로 fetch 스크립트 실행해 `*-signals.json` 생성, 단일계약·정정의 `⚠️ operator-verify` 정규식 실보고서 대조.
+- 다음 패스(2개·구체·로컬 검증 가능): (a) 공시 explorer 카드별 데이터 신선도(수집 기준일) 라벨 패스 — UI 전용, 빌드·렌더로 검증 가능. (b) 각 lib의 `*Clause()` 빌더가 공유하는 "parts를 ` · `로 join" 패턴을 공통화하거나, `toEok`/`matchRow`에 단위 수준 assertion 추가.
+
 ## 2026-06-23 · Pass 9 공시 핵심 숫자 — 정정(correction) 본문 정정 전/후 수치 (Task 31, Claude)
 - 목표: Pass 8이 '다음 패스'로 남긴 '본문 XML 스캐폴드 패턴을 correction enrich로 확장'을 해소. 단일계약(Pass 8 contractDetails)과 동일한 §18.2 document.xml 본문 파싱 + graceful 앱 경로를 정정공시에 적용. 구조화 엔드포인트가 없는 마지막 비구조화 경로(단일계약·정정) 중 정정을 메움. 투자 로직·점수·신호 강도 전부 무변경, 사실 수치만.
 - 변경 파일/내용:
