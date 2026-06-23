@@ -132,6 +132,7 @@ function Step({
 }) {
   return (
     <Link
+      prefetch={false}
       href={href}
       className="flex items-start gap-2.5 p-2.5 min-h-[48px] bg-white/80 dark:bg-zinc-900/60 border border-amber-100 dark:border-amber-900/50 rounded-lg active:bg-white dark:active:bg-zinc-900 transition"
     >
@@ -170,6 +171,7 @@ function DesktopCard({
       </div>
       <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-relaxed mb-2">{children}</p>
       <Link
+        prefetch={false}
         href={href}
         className="inline-flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 font-medium hover:underline"
       >

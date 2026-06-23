@@ -137,3 +137,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Verified: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /today /stocks /disclosures /stock/005930` 200·에러 0, 종목상세 SSR HTML에 탐색 우선도/현재 결론/강점/주의/4개 다음확인 버튼/2줄 고지 렌더(차트보다 먼저). 신규/변경 파일 금칙어 13종 grep 0.
 - Gate note: Playwright 미구성 → AI Center 브라우저 게이트 로컬 미가용. curl+SSR grep+build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 실행 권장 — 종목 상세 라우트(`/stock/005930`) 포함**.
 - Next concrete OrnScore step (Phase 2, 설계서 §17 2차 개발): (a) 레벨드 RiskAlertCard 완전 분리(변동성·낙폭 단계 포함), (b) 4지표 미니바를 히어로에 추가(요약 탭 MetricStrip 중복 없이 단일 소스), (c) 업종 비교 전용 탭 신설 + 다음확인 버튼 스무스 스크롤/탭 전환 인터랙션.
+
+
+### Repair — Task 15 Playwright DESKTOP 게이트 수정: WelcomeOnboarding 프리페치 abort 제거 (2026-06-24, Claude)
+- Blocker: Task 15 Playwright DESKTOP 게이트가 `/stocks?_rsc=…`·`/today?_rsc=…`·`/settings/notifications?_rsc=…` 3건 `net::ERR_ABORTED`.
+- Root cause: `_rsc=`(공유 토큰)는 한 페이지 렌더의 RSC 뷰포트 프리페치 배치. 홈 익명·신규 브라우저에서 `WelcomeOnboarding` 의 두 `<Link>`(Step·DesktopCard)가 trio 를 동시 프리페치 → `next dev` 최초 온디맨드 컴파일(~21s)이 끝나기 전 게이트가 진행해 in-flight 프리페치 취소 → ERR_ABORTED. Sidebar·MobileBottomNav·home/* 는 이미 `prefetch={false}` 라 무관, WelcomeOnboarding 만 누락(`/settings/notifications` 의 유일한 익명 홈 출처).
+- Fix: `src/components/WelcomeOnboarding.tsx` 의 `Step`·`DesktopCard` 두 `<Link>` 에 `prefetch={false}` 추가(기존 nav 컨벤션 동일, additive 2줄). prod 프리빌드 무영향, dev 게이트의 abort 가능 프리페치 제거.
+- Passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · `npm run build` 138p 0 · 로컬 prod(3100) `/ /today /stocks /stock/005930` 200·`/settings/notifications` 307(익명 리다이렉트)·에러 0 · 홈 익명 trio 프리페치 출처 grep 0건.
+- Residual: Playwright 미구성 → ERR_ABORTED 소거는 게이트 재실행으로 최종 확인. Task 15 기능 무변경.
+- Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.

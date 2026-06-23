@@ -325,3 +325,12 @@
 - Fix: `next.config.mjs` phase 함수화 — dev(`PHASE_DEVELOPMENT_SERVER`)만 `distDir='.next-dev'`. prod는 기본 `.next`(Vercel 무영향), URL 불변. `.gitignore`에 `.next-dev/`.
 - Passed: 재기동 dev에서 이전 404 자산 6종 전부 200 + 게이트 5라우트 200·자산 404 0건 · phase별 distDir 확인(dev=.next-dev/prod=undefined) · `tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0.
 - Next two local tasks: (a) `[ticker]` route payload에 fetchedAt 추가 + StockDisclosures 헤더 신선도 라벨(Pass 11 carry). (b) `signalDetailsShared.ts` `toEok`/`matchRow` 단위 assertion 추가.
+
+
+## 2026-06-24 · Repair · Task 15 Playwright DESKTOP 게이트 수정: WelcomeOnboarding 프리페치 abort 제거 (Claude)
+- Blocker: Task 15 Playwright DESKTOP 게이트가 `/stocks?_rsc=…`·`/today?_rsc=…`·`/settings/notifications?_rsc=…` 3건 모두 `net::ERR_ABORTED` 로 실패.
+- Root cause: `_rsc=` 는 Next App Router 의 RSC 뷰포트 프리페치 요청(공유 토큰 1개 = 한 페이지 렌더의 프리페치 배치). 홈(`/`) 익명·신규 브라우저(게이트 조건)에서 `WelcomeOnboarding` 의 두 `<Link>`(Step·DesktopCard)가 `/today`·`/stocks`·`/settings/notifications` 를 동시에 뷰포트 프리페치 → `next dev` 온디맨드 컴파일(로그상 최초 ~21s)이 끝나기 전에 게이트가 다음 단계로 넘어가며 in-flight 프리페치가 취소 → ERR_ABORTED. (Sidebar·MobileBottomNav·home/* Link 들은 이미 `prefetch={false}` 라 무관 — WelcomeOnboarding 만 누락된 단일 출처, 특히 `/settings/notifications` 의 유일한 익명 홈 출처.)
+- Fix: `src/components/WelcomeOnboarding.tsx` 의 `Step`·`DesktopCard` 두 `<Link>` 에 `prefetch={false}` 추가(저장소 기존 nav 컨벤션과 동일). 순수 additive 2줄 — 레이아웃·로직·문구 무변경. prod(Vercel 프리빌드)는 프리페치가 즉시 200이라 영향 없고, dev 게이트에서 abort 가능한 프리페치 자체가 사라짐.
+- Passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0 · `npm run build` 타입게이트·138p 프리렌더 exit 0 · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /today /stocks /stock/005930` 200, `/settings/notifications` 307(익명→로그인 정상 리다이렉트)·에러 0. 홈 익명 렌더의 trio 프리페치 출처가 0건임을 grep 으로 확인(home/* + Sidebar/MobileBottomNav 전부 prefetch={false}).
+- Residual: Playwright 미구성으로 ERR_ABORTED 소거는 게이트 재실행으로 최종 확인 필요(정적 분석상 프리페치 속성 제거로 구조적 해소). Task 15 기능(결론 카드)은 무변경.
+- Next concrete OrnScore step(변동 없음): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로 추가(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
