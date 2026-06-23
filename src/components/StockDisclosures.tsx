@@ -27,6 +27,7 @@ interface ApiResponse {
   signalCount: number;
   signalsByType: Record<string, number>;
   source: string;
+  fetchedAt?: string;
   note?: string;
 }
 
@@ -49,6 +50,31 @@ function SourceBadge({ source }: { source: string }) {
   if (source === "cache") return <span title="최근에 가져와 저장해 둔 공시" className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-medium">저장본</span>;
   if (source.startsWith("sample")) return <span title="실데이터 연결 전 보여주는 예시 표본" className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">예시 표본</span>;
   return null;
+}
+
+// 수집 출처 한글 라벨 — SourceBadge와 동일 매핑(실시간/저장본/예시 표본)
+function sourceKo(source?: string): string | null {
+  if (!source) return null;
+  if (source.startsWith("sample")) return "예시 표본";
+  if (source === "live") return "실시간";
+  if (source === "cache") return "저장본";
+  return null;
+}
+
+// ISO → KST(서울) 표기. 명시적 timeZone으로 SSR/CSR 일관.
+function fmtKST(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  try {
+    return new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).format(d);
+  } catch {
+    return null;
+  }
 }
 
 function openExternal(url: string) {
@@ -119,6 +145,17 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           최근 90일 · 공시 {data.count}건 · 신호 {data.signalCount}건
         </span>
       </div>
+      {(() => {
+        const when = fmtKST(data.fetchedAt);
+        const src = sourceKo(data.source);
+        if (!when && !src) return null;
+        const parts = ["수집 기준"];
+        parts.push(when ?? "수집 시각 미상");
+        if (src) parts.push(src);
+        return (
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-3 tabular-nums">{parts.join(" · ")}</p>
+        );
+      })()}
 
       {data.count === 0 ? (
         <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center">

@@ -5,6 +5,17 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · Pass 12 · 종목별 StockDisclosures 수집 기준 신선도 라벨 (Task 36, Claude)
+- 목표: Pass 11이 /disclosures(시장 전체 explorer)에 붙인 '수집 기준 · {KST} · {출처}' 신선도 라벨을, Pass 11·Repair 패스가 '다음 로컬 태스크 (a)'로 carry해 온 대로 **종목 상세의 종목별 공시 카드(StockDisclosures)** 헤더에도 동일 적용. 사용자가 종목 상세에서 보는 공시 묶음이 언제·어디서(실시간/저장본/예시 표본) 수집됐는지 1줄로 표기. 투자 로직·점수·신호강도·분류 전부 무변경(순수 additive UI/payload).
+- 변경 파일/내용:
+  - `src/app/api/disclosures/[ticker]/route.ts`: live payload(`source:"live"`)에 `fetchedAt: new Date().toISOString()` 추가, catch의 sample 폴백 `NextResponse.json` 반환에도 `fetchedAt` 추가. cache 분기는 저장된 payload를 `...spread` 하므로 fetchedAt를 자동 carry(원수집 시각 보존). `detectSignals`·`enrichCorrection→…→enrichInsider` 합성 체인·scoring·count 전부 무변경. recent/route.ts(Pass 11에서 처리)와 동일 패턴.
+  - `src/components/StockDisclosures.tsx`: `ApiResponse`에 `fetchedAt?: string` 추가, `sourceKo`(SourceBadge와 동일 매핑: 실시간/저장본/예시 표본)·`fmtKST`(명시 timeZone=Asia/Seoul, NaN/undefined 가드, SSR/CSR 일관) 헬퍼를 DisclosureExplorer와 바이트 동일하게 추가, 헤더 flex 바로 아래 `text-[11px] text-zinc-500 dark:text-zinc-400` muted 라벨 1줄(`-mt-2 mb-3 tabular-nums`). 시각·출처 둘 다 없으면 null 반환(graceful), 시각만 없으면 '수집 시각 미상'. 기존 SourceBadge는 그대로 유지(라벨과 배지 출처 키 일관).
+- 카피 안전: 신규 사용자 노출 문자열은 `수집 기준` + 포맷된 숫자(KST 시각)뿐 — 매수/매도/추천/호재 판단어 없음. verify_metrics 금칙어 게이트 무충돌(0건 확인).
+- 검증: `python scripts/verify_metrics.py`(PYTHONUTF8=1·PYTHONIOENCODING=utf-8) 통과(138종목 0오류 · compositeScore/모멘텀 백분위 정합 · 브랜드/금칙어 0, exit 0) / `npx tsc --noEmit` exit 0 / `npm run build` 성공(타입게이트 통과·종목 138p 프리렌더, exit 0) · 빌드 청크 grep: `수집 기준` 문자열이 신규로 `.next/static/chunks/app/stock/[ticker]/page-*.js`에 컴파일됨(기존 `app/disclosures/page-*.js`와 함께 2곳) / 로컬 prod 서버(127.0.0.1:3100, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단) `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/005930?days=90&limit=20` 200·error null·source=sample·**fetchedAt 존재**(신규 폴백 경로 확인)·count 4, `/api/disclosures/recent` 200·error null·source=sample·fetchedAt 존재·signalCount 12. StockDisclosures 라벨은 클라 useEffect fetch라 SSR HTML엔 미존재 → 청크 문자열 존재로 컴파일 확인.
+- 게이트 한계: 이 저장소엔 Playwright config/스크립트가 없어(`playwright.config.*`·tests/·e2e/ 부재, package.json에 playwright 스크립트 없음) AI Center DESKTOP/MOBILE 브라우저 게이트는 로컬 미가용 — curl smoke로 /stock/[ticker] 200·에러 마커 0(하이드레이션/404 회귀 없음)으로 대체.
+- Operator-only blocker(변동 없음): DART 키 필요 fetch 스크립트(`fetch_*_details.py` → `public/data/*-signals.json`)는 로컬 미실행 → enrich 수치·실제 source=live는 키 주입 후에만 노출(현재 graceful no-op·source=sample/cache). single_contract/correction의 `⚠️ operator-verify` 정규식(`RE_AMOUNT`/`RE_RATIO`/`RE_BEFORE`/`RE_AFTER`/`RE_FIELD`)은 실보고서 본문 대조 필요.
+- Next two local tasks: (a) `src/lib/signalDetailsShared.ts`의 `toEok`/`matchRow`에 단위 수준 assertion(원→억원 반올림·빈 배열·rcept_no 매칭/폴백 경계) 추가 — Node/tsx 로컬 실행 또는 타입게이트로 검증. (b) 6개 `*Clause()` enrich 빌더가 공유하는 "parts 배열을 ` · `로 join" 패턴을 공통 빌더로 추출해 중복 축소 — 순수 리팩터, tsc/build로 검증.
+
 ## 2026-06-23 · Pass 10 공시 enrich 공통 util 추출 — 중복 축소 리팩터 (Task 33, Claude)
 - 목표: Pass 9가 '다음 패스 (b)'로 남긴 "6개 enrichX lib의 lazy-load·rcept_no 매칭·원→억원 헬퍼를 단일 util로 통합해 중복 축소"를 해소. 동작·점수·신호·노출 문자열 전부 무변경(순수 내부 리팩터). 라우트 2종은 손대지 않음.
 - 변경 파일/내용:
