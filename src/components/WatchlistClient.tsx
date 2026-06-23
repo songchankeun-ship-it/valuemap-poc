@@ -17,12 +17,15 @@ type RecentView = {
   viewedAt: string;
 };
 
-const RECENT_KEY = "valuemap_recent_views";
+const RECENT_KEY = "ornscore_recent_views";
+const LEGACY_RECENT_KEY = "valuemap_recent_views";
+const VIEW_KEY = "ornscore_watchlist_view";
+const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
 
 function readRecent(): RecentView[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(RECENT_KEY);
+    const raw = localStorage.getItem(RECENT_KEY) ?? localStorage.getItem(LEGACY_RECENT_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -74,10 +77,12 @@ export function WatchlistClient({
   allStocks,
   tickerToSignal = {},
   tickerToDelta = {},
+  isLoggedIn = false,
 }: {
   allStocks: StockInfo[];
   tickerToSignal?: Record<string, SignalInfo>;
   tickerToDelta?: Record<string, number>;
+  isLoggedIn?: boolean;
 }) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
@@ -86,13 +91,16 @@ export function WatchlistClient({
   const [view, setView] = useState<"simple" | "analysis">("simple");
 
   useEffect(() => {
-    const v = typeof window !== "undefined" ? localStorage.getItem("valuemap_watchlist_view") : null;
+    const v = typeof window !== "undefined" ? localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY) : null;
     if (v === "analysis" || v === "simple") setView(v);
   }, []);
 
   function changeView(v: "simple" | "analysis") {
     setView(v);
-    if (typeof window !== "undefined") localStorage.setItem("valuemap_watchlist_view", v);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(VIEW_KEY, v);
+      localStorage.removeItem(LEGACY_VIEW_KEY);
+    }
   }
 
   useEffect(() => {
@@ -188,21 +196,28 @@ export function WatchlistClient({
         </div>
 
         {watchlist.length === 0 ? (
-          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-8 text-center">
+          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
             <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">관심 종목이 없어요</p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
-              추가하면 점수 변화·신규 공시·시장경보·거래량 급증을 한눈에 확인할 수 있어요. ♥ 버튼이나 아래 검색으로 추가하세요.
+            <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5">아직 관심 종목이 없습니다</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed">
+              종목을 저장하면 매일 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화</strong>와 <strong className="text-zinc-700 dark:text-zinc-300">공시 신호</strong>를 한곳에서 추적할 수 있어요. ♥ 버튼이나 아래 검색으로 추가하세요.
             </p>
             <div className="mb-4">
               <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
             </div>
-            <Link
-              href="/stocks"
-              className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
-            >
-              종목 둘러보기 <ArrowRight className="w-3 h-3" />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
+              <Link href="/stocks" className="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition">
+                종목 탐색하러 가기 <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition">
+                오늘의 후보 보기
+              </Link>
+            </div>
+            {!isLoggedIn ? (
+              <Link href="/login" className="mt-3 inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+                로그인하고 여러 기기에서 동기화하기 <ArrowRight className="w-3 h-3" />
+              </Link>
+            ) : null}
             <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">
               <span className="text-[11px] text-zinc-400 dark:text-zinc-500">많이 보는 종목:</span>
               {[["005930", "삼성전자"], ["000660", "SK하이닉스"], ["005380", "현대차"]].map(([t, n]) => (
@@ -294,9 +309,15 @@ export function WatchlistClient({
 
         {recent.length === 0 ? (
           <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 text-center">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              종목 페이지를 둘러보면 여기 기록이 쌓여요.
+            <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-1">
+              방문한 종목이 자동으로 기록돼 다시 찾기 쉬워요.
             </p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">
+              종목 페이지를 한 번 열면 여기에 최근 10개까지 쌓입니다.
+            </p>
+            <Link href="/stocks" className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+              종목 탐색하러 가기 <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">

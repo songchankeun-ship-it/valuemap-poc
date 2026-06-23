@@ -31,10 +31,10 @@ export async function getRecentSignals(days = 7): Promise<ApiResponse> {
       const e = enrichInsider(s.disclosure.stock_code, s)!;
       return { ...e, disclosure: { ...e.disclosure, url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${e.disclosure.rcept_no}` } };
     });
-    return { days: d, totalDisclosures: all.length, signalCount: signals.length, signals: signals.slice(0, 50) as ApiResponse["signals"] };
+    return { days: d, totalDisclosures: all.length, signalCount: signals.length, signals: signals.slice(0, 50) as ApiResponse["signals"], source: "live", fetchedAt: new Date().toISOString() };
   } catch {
     const sample = await loadSample();
-    if (sample) return sample;
+    if (sample) return { ...sample, source: sample.source ?? "sample", fetchedAt: sample.fetchedAt ?? new Date().toISOString() };
     return { days: d, totalDisclosures: 0, signalCount: 0, signals: [] };
   }
 }

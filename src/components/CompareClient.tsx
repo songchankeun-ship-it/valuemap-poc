@@ -76,7 +76,7 @@ function ScrollX({
   );
 }
 
-export function CompareClient({ stockMap }: { stockMap: Record<string, CompareStock> }) {
+export function CompareClient({ stockMap, top5 = [] }: { stockMap: Record<string, CompareStock>; top5?: Array<{ ticker: string; name: string }> }) {
   const [tickers, setTickers] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -107,11 +107,13 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
       reload();
     }
     window.addEventListener("compare-basket-changed", onUpdate);
+    window.addEventListener("ornscore:compare-updated", onUpdate);
     window.addEventListener("valuemap:compare-updated", onUpdate);
     window.addEventListener("storage", onUpdate);
     return () => {
       active = false;
       window.removeEventListener("compare-basket-changed", onUpdate);
+      window.removeEventListener("ornscore:compare-updated", onUpdate);
       window.removeEventListener("valuemap:compare-updated", onUpdate);
       window.removeEventListener("storage", onUpdate);
     };
@@ -145,23 +147,48 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
 
   if (stocks.length === 0) {
     return (
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-8 md:p-10 text-center">
-        <div className="text-3xl md:text-4xl mb-3">📊</div>
-        <h2 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">비교할 종목이 없어요</h2>
-        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-3 max-w-md mx-auto leading-relaxed">
-          종목 페이지의 <strong>"비교에 추가"</strong> 버튼을 쓰거나, 아래에서 바로 검색해 담으세요. (최대 4개)
-        </p>
-        <div className="mb-5 md:mb-6">
-          <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="비교할 종목 검색" />
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-10">
+        <div className="text-center">
+          <div className="text-3xl md:text-4xl mb-3">📊</div>
+          <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">비교할 종목을 선택하세요</h2>
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-5 max-w-md mx-auto leading-relaxed">
+            <strong className="text-zinc-700 dark:text-zinc-300">최대 4개</strong>까지 골라 종합 점수 · PER/PBR/ROE · 수익률 · 위험을 나란히 비교할 수 있어요. 아래에서 바로 시작하세요.
+          </p>
         </div>
-        <Link href="/stocks" className="inline-block px-4 md:px-5 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 transition">
-          종목 둘러보기 →
-        </Link>
-        <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">
-          <span className="text-[11px] text-zinc-400 dark:text-zinc-500">예시로 보기:</span>
-          {[["005930", "삼성전자"], ["000660", "SK하이닉스"], ["005380", "현대차"]].map(([t, n]) => (
-            <Link key={t} href={"/stock/" + t} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 dark:hover:border-blue-600 transition">{n}</Link>
-          ))}
+
+        <div className="max-w-md mx-auto space-y-5">
+          {/* 1) 오늘 Top 5에서 고르기 */}
+          {top5.length > 0 ? (
+            <div>
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">오늘 Top 5에서 고르기</div>
+              <div className="flex flex-wrap gap-1.5">
+                {top5.map((s) => (
+                  <button
+                    key={s.ticker}
+                    type="button"
+                    onClick={() => { void addToCompare(s.ticker); }}
+                    className="text-xs px-2.5 py-1.5 min-h-[36px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                  >
+                    + {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {/* 2) 직접 검색하기 */}
+          <div>
+            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">직접 검색하기</div>
+            <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="비교할 종목 검색" />
+          </div>
+
+          {/* 3) 같은 업종에서 고르기 */}
+          <div>
+            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">같은 업종에서 고르기</div>
+            <Link href="/stocks" className="inline-flex items-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition">
+              업종·테마로 종목 탐색 →
+            </Link>
+          </div>
         </div>
       </section>
     );
@@ -232,9 +259,9 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
                       <div key={s.ticker}>
                         <div className="flex items-baseline justify-between mb-0.5">
                           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{s.name}</span>
-                          <span className={`text-xs font-bold tabular-nums ${isMax ? "text-zinc-900" : "text-zinc-700"}`}>{Math.round(v)}</span>
+                          <span className={`text-xs font-bold tabular-nums ${isMax ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}`}>{Math.round(v)}</span>
                         </div>
-                        <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                           <div className={`h-full ${color} ${isMax ? "" : "opacity-70"}`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -271,7 +298,7 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
                       const v = s[key];
                       const isBest = v === best && stocks.length > 1;
                       return (
-                        <td key={s.ticker} className={`py-2.5 px-2 text-right tabular-nums whitespace-nowrap ${isBest ? "text-emerald-700 font-semibold" : "text-zinc-700"}`}>
+                        <td key={s.ticker} className={`py-2.5 px-2 text-right tabular-nums whitespace-nowrap ${isBest ? "text-emerald-700 dark:text-emerald-400 font-semibold" : "text-zinc-700 dark:text-zinc-300"}`}>
                           {v > 0 ? v.toFixed(2) : "-"}<span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-0.5">{suffix}</span>
                         </td>
                       );
@@ -282,7 +309,7 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
             </tbody>
           </table>
         </div>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">* PER/PBR은 낮을수록, ROE/배당은 높을수록 좋음 — 가장 좋은 값을 <span className="text-emerald-700 font-semibold">초록</span>으로 표시.</p>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">* PER/PBR은 낮을수록, ROE/배당은 높을수록 좋음 — 가장 좋은 값을 <span className="text-emerald-700 dark:text-emerald-400 font-semibold">초록</span>으로 표시.</p>
       </section>
 
       {/* 수익률 비교 */}
@@ -332,7 +359,7 @@ export function CompareClient({ stockMap }: { stockMap: Record<string, CompareSt
               <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mb-2 truncate">{s.name}</div>
               <div className="flex flex-wrap gap-1">
                 {s.themes.map((t) => (
-                  <Link key={t} href={`/stocks?theme=${encodeURIComponent(t)}`} className="text-[10px] px-1.5 py-0.5 bg-zinc-100 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-200 transition">
+                  <Link key={t} href={`/stocks?theme=${encodeURIComponent(t)}`} className="text-[10px] px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 transition">
                     #{t}
                   </Link>
                 ))}

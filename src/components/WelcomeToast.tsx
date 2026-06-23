@@ -1,12 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { CheckCircle2, X } from "lucide-react";
 
 function WelcomeToastInner() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
   const [show, setShow] = useState(false);
 
@@ -19,11 +18,12 @@ function WelcomeToastInner() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("welcome");
     const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname);
+    // 같은 라우트 쿼리 정리는 RSC 재요청(?_rsc=) 없이 — history API로 교체해 abort 방지
+    window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
 
     const timer = setTimeout(() => setShow(false), 5000);
     return () => clearTimeout(timer);
-  }, [searchParams, pathname, router]);
+  }, [searchParams, pathname]);
 
   if (!show) return null;
 

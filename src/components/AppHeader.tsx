@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dataMetadata, allThemes } from "@/lib/realStocks";
+import { dataMetadata, allThemes, formatBizDateLong, formatBizDateMobile, businessDaysSince, isDataStale } from "@/lib/realStocks";
 import { getAllStocks } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNav } from "./MobileNav";
@@ -9,27 +9,6 @@ import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 import { ThemeToggle } from "./ThemeToggle";
-
-function formatBusinessDate(dateStr?: string): string {
-  if (!dateStr) return "-";
-  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
-  if (!m) return dateStr;
-  const [, y, mo, da] = m;
-  const date = new Date(Number(y), Number(mo) - 1, Number(da));
-  const weekday = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
-  return `${y}.${mo}.${da} (${weekday})`;
-}
-
-/** 모바일용 짧은 형태: "06.11(목)" */
-function formatBusinessDateShort(dateStr?: string): string {
-  if (!dateStr) return "-";
-  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
-  if (!m) return dateStr;
-  const [, , mo, da] = m;
-  const date = new Date(Number(m[1]), Number(mo) - 1, Number(da));
-  const weekday = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
-  return `${mo}.${da}(${weekday})`;
-}
 
 function formatGeneratedAt(iso?: string): string {
   if (!iso) return "";
@@ -55,24 +34,6 @@ function formatGeneratedAt(iso?: string): string {
   }
 }
 
-function businessDaysSince(dateStr?: string): number | null {
-  if (!dateStr) return null;
-  const m = /^(\d{4})(\d{2})(\d{2})$/.exec(dateStr);
-  if (!m) return null;
-  const [, y, mo, da] = m;
-  const dataDate = new Date(Number(y), Number(mo) - 1, Number(da));
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let days = 0;
-  const cursor = new Date(dataDate);
-  while (cursor < today) {
-    cursor.setDate(cursor.getDate() + 1);
-    const wd = cursor.getDay();
-    if (wd !== 0 && wd !== 6) days += 1;
-  }
-  return days;
-}
-
 async function getUserEmail(): Promise<string | null> {
   try {
     const supabase = await createClient();
@@ -84,10 +45,10 @@ async function getUserEmail(): Promise<string | null> {
 }
 
 export async function AppHeader() {
-  const businessDate = formatBusinessDate(dataMetadata.asOfBusinessDate);
-  const businessDateShort = formatBusinessDateShort(dataMetadata.asOfBusinessDate);
+  const businessDate = formatBizDateLong(dataMetadata.asOfBusinessDate);
+  const businessDateShort = formatBizDateMobile(dataMetadata.asOfBusinessDate);
   const bizDaysSince = businessDaysSince(dataMetadata.asOfBusinessDate);
-  const isStale = bizDaysSince !== null && bizDaysSince >= 2;
+  const isStale = isDataStale(dataMetadata.asOfBusinessDate);
 
   const stocks = getAllStocks().map((s) => ({
     ticker: s.ticker,
@@ -130,7 +91,7 @@ export async function AppHeader() {
           <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-400")}>
             <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
             <span className="truncate">
-              {businessDate !== "-" ? (
+              {businessDate !== "데이터 준비 중" ? (
                 <>
                   {/* 모바일: 짧고 명확한 형태 */}
                   <span className="sm:hidden">

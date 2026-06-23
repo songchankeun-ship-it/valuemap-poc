@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Heart } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { findGuideByLabel } from "@/lib/signalGuide";
+import { addToWatchlist, removeFromWatchlist, isInWatchlist } from "@/lib/watchlist";
 
 interface DisclosureItem {
   corp_name: string;
@@ -30,6 +32,8 @@ export interface ApiResponse {
   totalDisclosures: number;
   signalCount: number;
   signals: DisclosureSignal[];
+  source?: string;
+  fetchedAt?: string;
 }
 
 interface GroupedSignal {
@@ -52,6 +56,7 @@ const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }
   "단일판매·공급계약": { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-700 dark:text-blue-400", border: "border-blue-200 dark:border-blue-900" },
   "유상증자 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
   "전환사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
+  "신주인수권부사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
 };
 
 // 고정 분류 체계 — 결과 0건이어도 항상 노출(어떤 종류를 검사했는지 보이게).
@@ -70,6 +75,7 @@ const SIGNAL_DESCRIPTIONS: Record<string, string> = {
   "단일판매·공급계약": "계약 규모와 직전 매출 비율은 본문 확인 권장.",
   "유상증자 발행": "자금 사용 목적(시설 vs 운영)에 따라 영향 다름.",
   "전환사채 발행": "전환가/만기/규모는 본문 확인 필요.",
+  "신주인수권부사채 발행": "신주인수권 행사가/만기/규모는 본문 확인 필요.",
 };
 
 function openExternal(url: string) {
@@ -78,6 +84,52 @@ function openExternal(url: string) {
 
 function goToStock(code: string) {
   window.location.href = "/stock/" + code;
+}
+
+// 공시 카드용 컴팩트 관심 토글 — 분석 대상(유니버스) 종목에만 노출
+function WatchlistToggle({ code }: { code: string }) {
+  const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    isInWatchlist(code).then((r) => {
+      if (mounted) {
+        setAdded(r);
+        setLoading(false);
+      }
+    });
+    return () => { mounted = false; };
+  }, [code]);
+  useEffect(() => {
+    function onChange() { isInWatchlist(code).then(setAdded); }
+    window.addEventListener("watchlist-changed", onChange);
+    return () => window.removeEventListener("watchlist-changed", onChange);
+  }, [code]);
+  async function toggle() {
+    if (loading) return;
+    if (added) {
+      setAdded(false); // 낙관적 업데이트
+      await removeFromWatchlist(code);
+    } else {
+      setAdded(true); // 낙관적 업데이트
+      await addToWatchlist(code);
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      disabled={loading}
+      aria-label={added ? "관심 종목에서 제거" : "관심 종목에 추가"}
+      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium border transition disabled:opacity-50 " +
+        (added
+          ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
+          : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-300 hover:text-pink-600 dark:hover:text-pink-400")}
+    >
+      <Heart className="w-3.5 h-3.5" fill={added ? "currentColor" : "none"} strokeWidth={added ? 0 : 1.8} />
+      {added ? "관심 등록됨" : "관심"}
+    </button>
+  );
 }
 
 function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
@@ -109,6 +161,31 @@ function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
     }
   }
   return Array.from(groups.values()).sort((a, b) => b.rcept_dt_latest.localeCompare(a.rcept_dt_latest));
+}
+
+// 수집 출처 한글 라벨 — StockDisclosures의 SourceBadge와 동일 매핑(실시간/저장본/예시 표본)
+function sourceKo(source?: string): string | null {
+  if (!source) return null;
+  if (source.startsWith("sample")) return "예시 표본";
+  if (source === "live") return "실시간";
+  if (source === "cache") return "저장본";
+  return null;
+}
+
+// ISO → KST(서울) 표기. 명시적 timeZone으로 SSR/CSR 일관.
+function fmtKST(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  try {
+    return new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).format(d);
+  } catch {
+    return null;
+  }
 }
 
 export function DisclosureExplorer({ initialData, universe = [] }: { initialData?: ApiResponse; universe?: string[] }) {
@@ -184,6 +261,17 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
         </div>
+        {(() => {
+          const when = fmtKST(data.fetchedAt);
+          const src = sourceKo(data.source);
+          if (!when && !src) return null;
+          const parts = ["수집 기준"];
+          parts.push(when ?? "수집 시각 미상");
+          if (src) parts.push(src);
+          return (
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 tabular-nums">{parts.join(" · ")}</p>
+          );
+        })()}
         {data.totalDisclosures >= 200 ? (
           <p className="text-[10px] text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1">
             ℹ 현재 오른스코어는 성능·비용을 위해 최신 공시 200건까지만 분석합니다. 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.
@@ -274,10 +362,17 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                         <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
                       ) : null}
                       <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{date}</span>
+                      {g.representative.disclosure.flr_nm ? (
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[180px]">제출 {g.representative.disclosure.flr_nm}</span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3 leading-relaxed">{desc}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-1 leading-relaxed">{desc}</p>
+                {g.representative.note && g.representative.note !== desc ? (
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 leading-relaxed">{g.representative.note}</p>
+                ) : null}
+                <div className="mb-3" />
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
@@ -287,13 +382,16 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     원문 보기 ↗
                   </button>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <button
-                      type="button"
-                      onClick={() => goToStock(g.stock_code!)}
-                      className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
-                    >
-                      종목 상세 →
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => goToStock(g.stock_code!)}
+                        className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
+                      >
+                        종목 상세 →
+                      </button>
+                      <WatchlistToggle code={g.stock_code} />
+                    </>
                   ) : g.stock_code ? (
                     <span className="inline-flex items-center px-3 py-2 text-[11px] text-zinc-400 dark:text-zinc-500">분석 대상 외 · DART 원문만</span>
                   ) : null}

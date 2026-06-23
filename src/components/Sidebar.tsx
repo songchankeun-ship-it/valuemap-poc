@@ -44,7 +44,7 @@ export function Sidebar() {
                   <div className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider px-3 pt-3 pb-1">{item.group}</div>
                 ) : null}
                 <Link
-                  href={item.href}
+                  prefetch={false} href={item.href}
                   className={
                     "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition " +
                     (active

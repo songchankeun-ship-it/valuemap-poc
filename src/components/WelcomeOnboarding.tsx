@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { X, Search, TrendingUp, Bell, ChevronDown } from "lucide-react";
 
-const STORAGE_KEY = "valuemap_welcome_dismissed_v1";
+const STORAGE_KEY = "ornscore_welcome_dismissed_v1";
+const LEGACY_STORAGE_KEY = "valuemap_welcome_dismissed_v1";
 
 /**
  * 첫 방문자 환영 박스.
@@ -18,7 +19,7 @@ export function WelcomeOnboarding() {
 
   useEffect(() => {
     try {
-      const dismissed = localStorage.getItem(STORAGE_KEY);
+      const dismissed = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
       if (!dismissed) setShow(true);
     } catch {
       // localStorage 차단된 경우 — 그냥 표시 안 함
@@ -28,6 +29,7 @@ export function WelcomeOnboarding() {
   function dismiss() {
     try {
       localStorage.setItem(STORAGE_KEY, "1");
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
     } catch {}
     setShow(false);
   }

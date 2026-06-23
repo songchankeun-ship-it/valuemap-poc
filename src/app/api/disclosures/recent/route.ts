@@ -8,6 +8,10 @@ import { join } from "node:path";
 import { listDisclosures } from "@/lib/dart";
 import { detectSignals } from "@/lib/disclosure-signals";
 import { enrichInsider } from "@/lib/insiderDetails";
+import { enrichTreasury } from "@/lib/treasuryDetails";
+import { enrichCapital } from "@/lib/capitalDetails";
+import { enrichContract } from "@/lib/contractDetails";
+import { enrichCorrection } from "@/lib/correctionDetails";
 
 const cache = new Map<string, { data: unknown; expiresAt: number }>();
 const TTL_MS = 1000 * 60 * 30; // 30분
@@ -45,7 +49,7 @@ export async function GET(req: Request) {
 
     const all = [...kospi.items, ...kosdaq.items];
     const signals = detectSignals(all).map((s) => {
-      const e = enrichInsider(s.disclosure.stock_code, s)!;
+      const e = enrichCorrection(s.disclosure.stock_code, enrichContract(s.disclosure.stock_code, enrichCapital(s.disclosure.stock_code, enrichTreasury(s.disclosure.stock_code, enrichInsider(s.disclosure.stock_code, s)))))!;
       return {
         ...e,
         disclosure: {
@@ -61,6 +65,7 @@ export async function GET(req: Request) {
       signalCount: signals.length,
       signals: signals.slice(0, 50),
       source: "live" as const,
+      fetchedAt: new Date().toISOString(),
     };
     cache.set(cacheKey, { data: payload, expiresAt: Date.now() + TTL_MS });
     return NextResponse.json(payload);
@@ -70,6 +75,7 @@ export async function GET(req: Request) {
       return NextResponse.json({
         ...sample,
         source: "sample",
+        fetchedAt: new Date().toISOString(),
         note: "DART 키 없음 또는 호출 실패 — 사전 생성 샘플로 응답.",
       });
     }

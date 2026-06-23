@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { getAlertedTickers } from "@/lib/marketAlert";
 
 export const metadata = {
@@ -32,8 +32,8 @@ function Dot({ tone }: { tone: "ok" | "warn" | "off" }) {
 
 export default async function StatusPage() {
   const priceAge = daysSince(dataMetadata.asOfBusinessDate);
-  // 주말 포함 5일 넘게 안 바뀌면 지연 경고(평일 자동갱신 기준)
-  const priceStale = priceAge !== null && priceAge > 5;
+  // 헤더·푸터와 동일한 기준(2영업일 이상 경과)으로 지연 판정 — 화면 간 신선도 표기 일치.
+  const priceStale = isDataStale(dataMetadata.asOfBusinessDate);
   const alertedCount = (await getAlertedTickers()).size;
 
   const sources: { name: string; detail: string; tone: "ok" | "warn" | "off" }[] = [
@@ -63,7 +63,7 @@ export default async function StatusPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">가격 기준일</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataMetadata.asOfBusinessDate ?? "—"}{priceAge !== null ? ` (${priceAge}일 전)` : ""}</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{formatBizDateLong(dataMetadata.asOfBusinessDate)}{priceAge !== null ? ` (${priceAge}일 전)` : ""}</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">점수 계산</div>

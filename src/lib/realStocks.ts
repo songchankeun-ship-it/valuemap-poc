@@ -79,3 +79,66 @@ export const dataMetadata = {
     raw.generatedAt as string | undefined,
   ),
 };
+
+// ── 데이터 기준일 표기·신선도 공용 헬퍼 (전 화면 동일 포맷·동일 판정 보장) ──
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+/** YYYYMMDD → "MM.DD (요일)" — 홈 히어로 등 컴팩트 표기. */
+export function formatBizDateShort(yyyymmdd?: string): string {
+  if (yyyymmdd && /^\d{8}$/.test(yyyymmdd)) {
+    const mo = yyyymmdd.slice(4, 6);
+    const da = yyyymmdd.slice(6, 8);
+    const d = new Date(Number(yyyymmdd.slice(0, 4)), Number(mo) - 1, Number(da));
+    return `${mo}.${da} (${WEEKDAYS[d.getDay()]})`;
+  }
+  return "최근 거래일";
+}
+
+/** YYYYMMDD → "YYYY.MM.DD (요일)" — 헤더·오늘·푸터 등 정식 표기. */
+export function formatBizDateLong(yyyymmdd?: string): string {
+  if (yyyymmdd && /^\d{8}$/.test(yyyymmdd)) {
+    const y = yyyymmdd.slice(0, 4);
+    const mo = yyyymmdd.slice(4, 6);
+    const da = yyyymmdd.slice(6, 8);
+    const d = new Date(Number(y), Number(mo) - 1, Number(da));
+    return `${y}.${mo}.${da} (${WEEKDAYS[d.getDay()]})`;
+  }
+  return "데이터 준비 중";
+}
+
+/** YYYYMMDD → "MM.DD(요일)" — 모바일 헤더용 초압축. */
+export function formatBizDateMobile(yyyymmdd?: string): string {
+  if (yyyymmdd && /^\d{8}$/.test(yyyymmdd)) {
+    const mo = yyyymmdd.slice(4, 6);
+    const da = yyyymmdd.slice(6, 8);
+    const d = new Date(Number(yyyymmdd.slice(0, 4)), Number(mo) - 1, Number(da));
+    return `${mo}.${da}(${WEEKDAYS[d.getDay()]})`;
+  }
+  return "-";
+}
+
+/** 데이터 기준일로부터 경과 영업일 수(월~금). 형식 불명 시 null. */
+export function businessDaysSince(yyyymmdd?: string): number | null {
+  if (!yyyymmdd || !/^\d{8}$/.test(yyyymmdd)) return null;
+  const y = Number(yyyymmdd.slice(0, 4));
+  const mo = Number(yyyymmdd.slice(4, 6));
+  const da = Number(yyyymmdd.slice(6, 8));
+  const dataDate = new Date(y, mo - 1, da);
+  if (Number.isNaN(dataDate.getTime())) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let days = 0;
+  const cursor = new Date(dataDate);
+  while (cursor < today) {
+    cursor.setDate(cursor.getDate() + 1);
+    const wd = cursor.getDay();
+    if (wd !== 0 && wd !== 6) days += 1;
+  }
+  return days;
+}
+
+/** 데이터가 2영업일 이상 지났으면 stale로 간주 — 자동 갱신 지연·실패 경고용. */
+export function isDataStale(yyyymmdd?: string): boolean {
+  const d = businessDaysSince(yyyymmdd);
+  return d !== null && d >= 2;
+}

@@ -84,3 +84,9 @@ Claude가 python/bash 편집 + tsc 검증 → 변경파일 마커로 추출 → 
 
 ---
 마지막 업데이트: 2026-06-13 (리뷰 4건 반영: 데이터2+디자인1+UX1. 가격동기화·검증보류·헤더그룹화까지. 브랜드 밸류맵 스톡)
+
+<!-- AI-DEV-CENTER:HANDOFF-POINTER:v1:BEGIN -->
+## AI Dev Center Handoff
+
+This project participates in the home/work PC AI handoff workflow. Claude Code Rules should read `docs/AI_HANDOFF.md` before changing code and update it before ending a meaningful work session.
+<!-- AI-DEV-CENTER:HANDOFF-POINTER:v1:END -->

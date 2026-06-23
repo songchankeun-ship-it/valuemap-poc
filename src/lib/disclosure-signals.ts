@@ -29,6 +29,7 @@ const RE_PNL_KEYWORDS = /(매출액?|영업[손익이익]+|순?이익|손익|실
 const RE_SINGLE_CONTRACT = /단일판매[ㆍ·, ]*공급계약체결/;
 const RE_RIGHTS_ISSUE = /유상증자/;
 const RE_CB = /전환사채[권]?\s*발행/;
+const RE_BW = /신주인수권부사채[권]?\s*발행/;
 
 // ---------- 디텍터들 ----------
 
@@ -95,8 +96,9 @@ function detectSingleContract(d: Disclosure): SignalHit | null {
 function detectCapitalRaise(d: Disclosure): SignalHit | null {
   const isRights = RE_RIGHTS_ISSUE.test(d.report_nm);
   const isCb = RE_CB.test(d.report_nm);
-  if (!isRights && !isCb) return null;
-  const kind = isRights ? "유상증자" : "전환사채";
+  const isBw = RE_BW.test(d.report_nm);
+  if (!isRights && !isCb && !isBw) return null;
+  const kind = isRights ? "유상증자" : isCb ? "전환사채" : "신주인수권부사채";
   return {
     signalType: "capital_raise",
     signalLabel: `${kind} 발행`,

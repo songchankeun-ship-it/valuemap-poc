@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { dataMetadata } from "@/lib/realStocks";
+import { dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ornscore.com"),
@@ -83,17 +83,12 @@ export default function RootLayout({
             <main className="flex-1 min-w-0 pb-16 lg:pb-0">
               <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
               <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataMetadata.asOfBusinessDate} 장마감</span>
+                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {formatBizDateLong(dataMetadata.asOfBusinessDate)} 장마감</span>
                 <span>·</span>
                 <span>산식 Metrics {dataMetadata.metricsVersion ?? "—"}</span>
                 <span>·</span>
                 {(() => {
-                  const d = dataMetadata.asOfBusinessDate;
-                  let stale = false;
-                  if (d && /^\d{8}$/.test(d)) {
-                    const dt = new Date(Number(d.slice(0, 4)), Number(d.slice(4, 6)) - 1, Number(d.slice(6, 8)));
-                    stale = (Date.now() - dt.getTime()) / 86400000 > 5;
-                  }
+                  const stale = isDataStale(dataMetadata.asOfBusinessDate);
                   return (
                     <a href="/status" className={(stale ? "text-amber-600/90 dark:text-amber-500/90" : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"}>데이터 상태 {stale ? "갱신 지연 확인" : "정상"}</a>
                   );
@@ -101,14 +96,19 @@ export default function RootLayout({
                 <span>·</span>
                 <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>
+                <a href="/pricing" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">요금</a>
                 <a href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">이용약관</a>
                 <a href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">개인정보</a>
               </footer>
             </main>
           </div>
           <MobileBottomNav />
-          <Analytics />
-          <SpeedInsights />
+          {process.env.VERCEL ? (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          ) : null}
         </ThemeProvider>
       </body>
     </html>

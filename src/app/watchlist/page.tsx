@@ -61,7 +61,7 @@ export default async function WatchlistPage() {
             : "현재는 이 브라우저에만 저장됩니다. 로그인하면 여러 기기에서 이어볼 수 있어요."}
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} />
+      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />
     </div>
   );
 }

@@ -22,10 +22,12 @@ export function CompareBadge() {
     }
 
     window.addEventListener("compare-basket-changed", onCustom);
+    window.addEventListener("ornscore:compare-updated", onCustom);
     window.addEventListener("valuemap:compare-updated", onCustom);
     return () => {
       mounted = false;
       window.removeEventListener("compare-basket-changed", onCustom);
+      window.removeEventListener("ornscore:compare-updated", onCustom);
       window.removeEventListener("valuemap:compare-updated", onCustom);
     };
   }, []);
