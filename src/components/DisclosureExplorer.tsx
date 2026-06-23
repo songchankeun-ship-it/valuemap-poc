@@ -54,6 +54,7 @@ const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }
   "단일판매·공급계약": { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-700 dark:text-blue-400", border: "border-blue-200 dark:border-blue-900" },
   "유상증자 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
   "전환사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
+  "신주인수권부사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
 };
 
 // 고정 분류 체계 — 결과 0건이어도 항상 노출(어떤 종류를 검사했는지 보이게).
@@ -72,6 +73,7 @@ const SIGNAL_DESCRIPTIONS: Record<string, string> = {
   "단일판매·공급계약": "계약 규모와 직전 매출 비율은 본문 확인 권장.",
   "유상증자 발행": "자금 사용 목적(시설 vs 운영)에 따라 영향 다름.",
   "전환사채 발행": "전환가/만기/규모는 본문 확인 필요.",
+  "신주인수권부사채 발행": "신주인수권 행사가/만기/규모는 본문 확인 필요.",
 };
 
 function openExternal(url: string) {

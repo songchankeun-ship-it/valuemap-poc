@@ -5,12 +5,13 @@ fetch_capital_details.py — 증자·전환사채 발행 결정 공시의 실제
 핵심: DART OpenAPI의 구조화 엔드포인트
   - piicDecsn.json   ('유상증자결정')   → 신주 수·자금조달 목적별 금액을 구조화 필드로 제공
   - cvbdIsDecsn.json ('전환사채권발행결정') → 사채 권면총액·자금조달 목적별 금액 제공
+  - bwbdIsDecsn.json ('신주인수권부사채권발행결정') → 사채 권면총액·자금조달 목적별 금액 제공
   → 본문 XML을 직접 파싱하지 않고도 발행 규모를 사실 그대로 알 수 있다.
   (자기주식취득 tsstkAqDecsn / 임원 소유보고 elestock 과 함께 DART가 구조화로 노출하는 유형)
 
 출력: public/data/capital-signals.json
   { "005930": [ {rcept_no, kind, amount, fundsUse, periodBgn, periodEnd, date} ... ] }
-    kind   ∈ "유상증자" | "전환사채"
+    kind   ∈ "유상증자" | "전환사채" | "신주인수권부사채"
     amount = 발행/조달 규모(원).  유상증자=자금조달목적 합계, 전환사채=권면총액(bd_fta)
     fundsUse = 자금용도 카테고리 문자열(예 "시설", "운영", "시설·운영")  — 사실 분류만
 
@@ -150,6 +151,32 @@ def fetch_cb(key: str, corp_code: str, bgn: str, end: str):
     return out
 
 
+def fetch_bw(key: str, corp_code: str, bgn: str, end: str):
+    # 주요사항보고서 '신주인수권부사채권 발행 결정' 구조화 정보. 기간(bgn_de/end_de) 필수.
+    # cvbdIsDecsn(전환사채)의 미러 — 권면총액·자금조달 목적 필드 구조가 동일.
+    url = (f"https://opendart.fss.or.kr/api/bwbdIsDecsn.json"
+           f"?crtfc_key={key}&corp_code={corp_code}&bgn_de={bgn}&end_de={end}")
+    try:
+        data = json.loads(get(url))
+    except Exception:
+        return []
+    if data.get("status") != "000":
+        return []
+    out = []
+    for it in data.get("list", []):
+        # ⚠️ operator-verify: 신주인수권부사채 발행규모 = 권면(전자등록)총액 bd_fta(원).
+        out.append({
+            "rcept_no": it.get("rcept_no"),
+            "kind": "신주인수권부사채",
+            "amount": to_int(it.get("bd_fta")),
+            "fundsUse": funds_use(it),
+            "periodBgn": it.get("ex_pd_bgd"),  # ⚠️ operator-verify: 신주인수권 행사기간 시작
+            "periodEnd": it.get("ex_pd_edd"),  # ⚠️ operator-verify: 신주인수권 행사기간 종료
+            "date": it.get("rcept_dt"),
+        })
+    return out
+
+
 def main():
     key = load_key()
     stocks = json.load(open(os.path.join(ROOT, "public", "data", "stocks.json"), encoding="utf-8-sig"))
@@ -167,13 +194,15 @@ def main():
         if not cc:
             miss += 1
             continue
-        rows = fetch_rights(key, cc, bgn_s, end_s) + fetch_cb(key, cc, bgn_s, end_s)
+        rows = (fetch_rights(key, cc, bgn_s, end_s)
+                + fetch_cb(key, cc, bgn_s, end_s)
+                + fetch_bw(key, cc, bgn_s, end_s))
         if rows:
             result[tk] = rows
             ok += 1
         if (i + 1) % 20 == 0:
             print(f"   {i+1}/{len(tickers)}  수집 {ok}  매핑실패 {miss}")
-        time.sleep(0.12)  # DART 한도 보호 (종목당 2회 호출)
+        time.sleep(0.12)  # DART 한도 보호 (종목당 3회 호출: 유증·CB·BW)
 
     json.dump(result, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     print(f"\n저장: {OUT}  (종목 {ok}개에 증자·CB 발행 내역)")

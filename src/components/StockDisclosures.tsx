@@ -37,6 +37,7 @@ const SIGNAL_BG: Record<string, string> = {
   "단일판매·공급계약": "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400",
   "유상증자 발행": "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
   "전환사채 발행": "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
+  "신주인수권부사채 발행": "bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400",
 };
 
 function getBadgeClass(label: string): string {

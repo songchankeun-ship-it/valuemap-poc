@@ -5,6 +5,23 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-23 · Pass 8(Campaign 8) 공시 데이터 신뢰도 — BW 구조화 enrich + 단일계약 본문 XML 스캐폴드 (Task 29, Claude)
+- 목표: Pass 7이 마감한 '구조화 엔드포인트 4종(임원·자기주식·유증·CB)' 위에, ① 같은 구조화 패턴으로 **신주인수권부사채(BW)** 한 종을 더 메우고(완전 구현·저위험), ② 남은 유일한 비구조화 경로인 **단일계약 본문(document.xml) 파싱**을 오프라인 스캐폴드+graceful 앱 경로로 착수. 투자 로직·점수·신호 강도 전부 무변경, 사실 숫자만.
+- PRIMARY(완전 구현):
+  - `src/lib/disclosure-signals.ts` — `RE_BW = /신주인수권부사채[권]?\s*발행/` 추가, `detectCapitalRaise`가 `isBw`도 수용(`kind = isRights ? "유상증자" : isCb ? "전환사채" : "신주인수권부사채"`). signalLabel은 `${kind} 발행`, strength 65 유지(다른 디텍터 무변경). RE_CB(`전환사채…`)와 RE_BW(`신주인수권부사채…`)는 서로 매칭 안 됨.
+  - `scripts/fetch_capital_details.py` — `fetch_bw(key,corp,bgn,end)` 신설(`bwbdIsDecsn.json` 미러, 권면총액 `bd_fta`·자금목적 `fdpp_*` 동일 구조), 종목당 rows = 유증+CB+BW(호출 3회). `bd_fta`·행사기간(`ex_pd_bgd/edd`) 필드는 `⚠️ operator-verify` 주석. **로컬 실행 안 함**(키·원격호출 없음).
+  - `src/lib/capitalDetails.ts` — 무변경. kind/amount/fundsUse에 대해 이미 일반적이라 BW 행(kind="신주인수권부사채")이 그대로 통과(재확인 완료).
+  - UI 보라 배지: `StockDisclosures.tsx`(SIGNAL_BG)·`DisclosureExplorer.tsx`(SIGNAL_STYLES+SIGNAL_DESCRIPTIONS)에 `"신주인수권부사채 발행"` 보라 항목 추가(유증/CB와 동일 팔레트). 누락 시에도 zinc 폴백이라 graceful.
+- SECONDARY(오프라인 스캐폴드 + 문서화된 블로커용 graceful 앱 경로):
+  - ⭐ `scripts/fetch_contract_details.py` 신설 — 설계서 §18.2 본문 파싱 스캐폴드. list.json으로 '단일판매·공급계약' 보고서 rcept_no 수집 → `document.xml`(zip) 다운로드 → 태그 제거 평문화 → 정규식으로 계약금액(원)·직전매출 대비 비율(%) 추출 → `public/data/contract-signals.json`(ticker → `[{rcept_no, amount, salesRatio, date}]`). `load_key()`·`build_corp_map()`·`corp_code_map.json` 캐시 재사용. **본문 양식·정규식(RE_AMOUNT/RE_RATIO)·zip 여부는 전부 `⚠️ operator-verify`** — 실보고서로 확인 후 교정. **로컬 실행 안 함.**
+  - ⭐ `src/lib/contractDetails.ts` 신설 — `capitalDetails.ts` 미러. `contract-signals.json` lazy try/catch 로드(없으면 `{}` → graceful no-op), `enrichContract(stockCode, signal)`는 `signalType==="single_contract"` + 매칭 행이 있을 때만 `· 계약금액 X억원 · 직전매출 대비 Y%` 사실 절 덧붙임(원→억원 반올림, salesRatio 유한 양수 가드, null/빈값 방어). 다른 파일·SignalHit 타입 무변경.
+  - `src/app/api/disclosures/{[ticker],recent}/route.ts` — `enrichContract`를 최외곽 래퍼로 추가(`enrichContract(code, enrichCapital(code, enrichTreasury(code, enrichInsider(code, sig))))`). recent 라우트의 `!` non-null 단언 보존. UI 렌더 변경 0(note 한 줄 기존 렌더).
+- 카피 안전: 신규 문자열(`신주인수권부사채 발행`·`계약금액 X억원`·`직전매출 대비 Y%`)은 숫자·기관/계약 사실만 — 매수/매도/추천/호재 판단어 없음. verify_metrics 금칙어 게이트 무충돌.
+- 검증: `python scripts/verify_metrics.py`(PYTHONIOENCODING=utf-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(타입게이트 통과·종목 138p 프리렌더) / 공유 서버 청크 `.next/server/chunks/5337.js`에 신규 포맷(`신주인수권부사채`·`계약금액`·`직전매출 대비`)이 Pass 7 `발행규모` 절과 함께 존재 확인(enrich는 서버 라우트 코드) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/recent`(source=sample)·`/005930`(source=cache) 200·error null = graceful no-op 확인(로컬에 capital/contract-signals.json 없음).
+- 위험/한계: BW 절·계약 절은 각각 `capital-signals.json`(BW 포함)·`contract-signals.json` 생성 후에만 화면에 뜸. 로컬엔 DART 키·해당 파일이 없어 런타임 미노출 = 정상 graceful no-op(시각 검증은 server 청크 문자열 존재로 대체, sample에 가짜 수치 주입은 오인 위험이라 의도적으로 안 함). 단일계약 본문 파싱은 보고서 양식 편차가 커 정규식이 추정 단계 — 운영 키 실호출 검증 전엔 활성화 보류.
+- 남은 블로커(정확화): 구조화 엔드포인트 5종(임원·자기주식·유증·CB·BW) enrich 경로 확보 완료. 단일계약은 본문 스캐폴드까지 깔렸고, 정정(correction) 본문(정정 전후 수치)은 아직 미착수.
+- 다음 패스(2개·구체·로컬 검증 가능): (a) 본문 XML 스캐폴드 패턴을 correction(정정) enrich로 확장 — 정정 전후 수치 추출, contractDetails와 동일 graceful 패턴. (b) 공시 explorer 명료화 / 카드별 데이터 신선도(수집 기준일) 라벨 패스 — UI 전용, 로컬에서 빌드·렌더로 검증 가능.
+
 ## 2026-06-23 · Pass 7 공시 핵심 숫자 — 증자·전환사채 발행 규모 노출 (Task 27, Claude)
 - 목표: Pass 6(treasury_buy)가 '다음 패스'로 남긴 capital_raise(증자·CB)를, 투자 로직 무변경으로 동일한 graceful 패턴으로 한 단계 더. 유상증자/전환사채는 자기주식취득·임원 소유보고와 함께 DART가 **본문 XML 없이 구조화 엔드포인트로 규모를 노출**하는 유형이라 가장 보수적인 다음 step.
 - 구조화 엔드포인트 근거: 유상증자(`piicDecsn.json`)·전환사채(`cvbdIsDecsn.json`)는 주요사항보고서 구조화 정보(발행금액·자금조달 목적)를 제공. 단일계약(single_contract)·정정(correction)은 여전히 구조화 엔드포인트가 없어 §18.2 본문 XML 파싱 필요 — 이번 패스는 capital_raise만 한정.
