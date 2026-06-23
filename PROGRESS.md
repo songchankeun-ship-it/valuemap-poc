@@ -5,6 +5,19 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-23 · Pass 7 공시 핵심 숫자 — 증자·전환사채 발행 규모 노출 (Task 27, Claude)
+- 목표: Pass 6(treasury_buy)가 '다음 패스'로 남긴 capital_raise(증자·CB)를, 투자 로직 무변경으로 동일한 graceful 패턴으로 한 단계 더. 유상증자/전환사채는 자기주식취득·임원 소유보고와 함께 DART가 **본문 XML 없이 구조화 엔드포인트로 규모를 노출**하는 유형이라 가장 보수적인 다음 step.
+- 구조화 엔드포인트 근거: 유상증자(`piicDecsn.json`)·전환사채(`cvbdIsDecsn.json`)는 주요사항보고서 구조화 정보(발행금액·자금조달 목적)를 제공. 단일계약(single_contract)·정정(correction)은 여전히 구조화 엔드포인트가 없어 §18.2 본문 XML 파싱 필요 — 이번 패스는 capital_raise만 한정.
+- 변경 파일/내용:
+  - ⭐ `scripts/fetch_capital_details.py` 신설 — `fetch_treasury_details.py` 미러. `load_key()`·`build_corp_map()`·`corp_code_map.json` 캐시 재사용, 종목당 `piicDecsn.json`+`cvbdIsDecsn.json` 2회 호출(기간 bgn_de/end_de 필수, 최근 365일) → `public/data/capital-signals.json`(ticker → `[{rcept_no, kind, amount, fundsUse, periodBgn, periodEnd, date}]`, kind∈유상증자/전환사채). **로컬 실행 안 함**(키 없음·원격 호출 없음). 필드명(CB 권면총액 `bd_fta`, 유상증자 자금목적 `fdpp_fclt`/`fdpp_op` 등)은 DART 문서 기준 추정 → "⚠️ operator-verify" 주석으로 운영 키 실호출 검증 요청.
+  - ⭐ `src/lib/capitalDetails.ts` 신설 — `treasuryDetails.ts` 미러. `capital-signals.json` lazy-load(try/catch, 파일 없으면 `{}`), `enrichCapital(stockCode, signal)`는 `signal.signalType === "capital_raise"` + 매칭 행이 있을 때만 `capitalClause()`로 사실 절(` · 발행규모 X억원 · 자금용도 시설/운영`, 양수·유한수 가드, 원→억원 반올림, fundsUse는 빈값·`-` 방어한 사실 분류 문자열일 때만) 덧붙임. 없으면 원본 그대로. `strength`·`direction`·점수·신호 로직·다른 파일 무변경. `fs`/`path` import만(형제 lib과 동일).
+  - `src/app/api/disclosures/{[ticker],recent}/route.ts` — 기존 합성에 `enrichCapital`을 최외곽으로 추가(`enrichCapital(code, enrichTreasury(code, enrichInsider(code, sig)))`). UI 편집 0건(`StockDisclosures.tsx`가 이미 `d.signal.note` 한 줄 렌더).
+- 카피 안전: 새 문자열(`발행규모 X억원`·`자금용도 …`)은 숫자·사실 분류만 — 증자는 희석 요인이라 호재/악재 판단어를 일절 넣지 않고 규모·용도만 기술. verify_metrics 금칙어 18종(매수/매도/추천/호재 확정 등)과 무충돌, 투자 자문 표현 신규 유입 0.
+- 검증: `python scripts/verify_metrics.py`(PYTHONIOENCODING=utf-8) 통과(138종목 오류 0 · 브랜드/금칙어 0, exit 0) / `npm run build` 성공(전 라우트 프리렌더, 종목 138p, 타입게이트 통과) / 빌드 산출물 공유 서버 청크 `.next/server/chunks/3162.js`에 신규 포맷(`발행규모`·`자금용도`)이 Pass 6 treasury 절(`취득예정`·`취득금액`)과 함께 존재 확인(enrich는 서버 라우트 코드라 공유 server 청크에 위치) / 로컬 프로덕션 서버(127.0.0.1:3000, 내가 띄운 PID만 종료, 4310 AI Dev Center 무중단)에서 `/ /today /stocks /disclosures /stock/005930` 모두 200·에러 마커 0, `/api/disclosures/recent`(source=sample)·`/005930`(source=cache) 200·error null = graceful no-op 확인.
+- 위험/한계: 새 발행규모 절은 `capital-signals.json` 생성 후에만 화면에 뜸. 로컬엔 DART 키·해당 파일이 없어 런타임에서 절 미노출 = 정상 graceful no-op(시각 검증은 server 청크 문자열 존재로 대체, 데모 sample에 가짜 발행 수치 주입은 사용자 오인 위험이라 의도적으로 안 함). 필드 매핑(`bd_fta`·`fdpp_*`)은 operator-verify 상태 — **송님이 `python scripts/fetch_capital_details.py`(DART 키) 실행** 시 `piicDecsn`/`cvbdIsDecsn` 실응답으로 확인 후 필요 시 매핑만 교정.
+- 남은 블로커(정확화): 이제 구조화 엔드포인트가 있는 공시 4종(임원 보유변동·자기주식취득·유상증자·전환사채)은 모두 graceful enrich 경로 확보. 남은 단일계약(계약금액·직전매출 비율)·정정 본문은 구조화 엔드포인트가 없어 여전히 §18.2 DART 보고서 본문(XML) 파싱 파이프라인 필요.
+- 다음 패스(1개·구체): single_contract/correction을 위한 §18.2 본문 XML 파서 착수(현재 미구현·유일하게 남은 비구조화 공시 경로). DART `document.xml` 다운로드 → 계약금액·직전매출 비율 추출 스캐폴드부터.
+
 ## 2026-06-23 · Pass 6 공시 핵심 숫자 — 자기주식 취득 규모 노출 (Task 25, Claude)
 - 목표: Pass 5가 '다음 패스'로 남긴 treasury/contract 핵심 숫자를, 투자 로직 무변경으로 임원 보유변동과 동일한 graceful 패턴으로 한 단계 더. 자기주식 취득은 임원 소유보고(elestock)와 함께 DART가 **본문 XML 없이 구조화 엔드포인트로 규모를 노출**하는 몇 안 되는 유형이라 가장 보수적인 다음 step으로 선택.
 - 구조화 엔드포인트 근거: 단일계약(single_contract)·정정(correction)은 구조화 엔드포인트가 없어 여전히 §18.2 본문 XML 파싱이 필요하지만, 자기주식 취득(`tsstkAqDecsn.json`)·증자/CB(`piicDecsn.json`/`cvbdIsDecsn.json`)는 주요사항보고서 구조화 정보가 있음. 이번 패스는 그 중 treasury_buy 신호(`자기주식 취득`)만 한정.
