@@ -5,6 +5,20 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · 종목 상세 결론 카드 1차 (Task 15, Claude)
+- 목표: 설계서 `ornscore_stock_detail_conclusion_card_spec_v1.md` 1차 범위. 종목 상세 상단을 '정보 나열'에서 '결론 카드'로 개편 — 첫 화면 10초 안에 ①이 종목은 어떤 성격의 후보인가 ②왜 우선 확인 후보인가 ③다음에 무엇을 확인할까 에 답. 비자문 언어 유지(추천/미래가격 금지, 확인/우선/급등 사유 확인 톤).
+- 신규 컴포넌트(전부 서버·순수 프레젠테이션, Write로 UTF-8/noBOM/LF 작성):
+  - `src/components/stock/StockConclusionHero.tsx` — 상단 결론 카드 컴포저. 모바일 순서: 종목명/현재가 → 탐색 우선도 → 현재 결론 → 강점/주의 → 다음 확인 → 고지. 위험 경고(급등/과열)는 점수 카드와 분리된 별도 바.
+  - `StockHeader.tsx`(업종 태그·종목명 최대·코드 + LivePrice/관심·비교·공유 슬롯 + 기준일 장마감 라벨), `PriorityScoreCard.tsx`(라벨 '탐색 우선도'·`N / 100`·전체/업종 순위·필수데이터%·이상값 점검·산식 버전·'매수·매도 추천이 아닌 탐색 우선순위' 고지·인디고+중립 팔레트), `ConclusionSummaryCard.tsx`(제목 '현재 결론'·유형+요약+주의점), `StrengthWarningPanel.tsx`(강점 emerald / 주의 amber, md 2열·모바일 스택, '확인 필요' 톤), `NextActionButtons.tsx`(공시로 이유 확인 #disclosures / 재무로 실적 확인 #financials / 점수 계산 근거 #basis / 업종 내 위치 보기 #summary, min-h-44px).
+  - `src/lib/conclusion.ts` — `classifyConclusion({momentum,flow,value,vol,surge3m})` 순수 함수. 설계서 §6.3 표를 보수적 우선순위로 매핑(균형형/저평가+추세/시장 관심 급증/과열 주의/저평가 대기/단기 이슈 확인/변동성 주의). summary는 강점·약점만 기술(방향 예측 금지), riskNote는 확인 톤. 강점>=70·주의<50으로 페이지 기존 convention과 일치.
+- `src/app/stock/[ticker]/page.tsx`: 기존 `<header>`+'결론 헤드라인' 섹션을 `<StockConclusionHero .../>`로 교체. 이미 계산된 값(composite·reason·ranks·completeness·surge3m·dataWarnings·mySector·priceAsOf·metricsVersion) 재사용. 강화 고지 2줄('매수·매도 추천이 아닌 탐색 우선순위'+'향후 수익률을 의미하지 않습니다') 노출. 죽은 코드 정리(scoreTone/tone/grade/gradeOf 제거 — 구 헤드라인 전용). RecentViewTracker·breadcrumb·JSON-LD·StockTabs(요약/재무/공시/점수 근거)·generateStaticParams·revalidate 전부 보존. isSuspect(dataWarnings) 임시 점수 회색+고지·Top제외 의미 보존.
+- 설계 결정/잔여: (1) 업종 비교 전용 탭 부재 → '업종 내 위치 보기'는 같은 업종 비교 섹션이 든 요약 탭(#summary) 연결, 2차에서 전용 탭+스무스 스크롤. (2) Nice-to-have(레벨드 RiskAlertCard 완전분리·4지표 미니바·초보자 체크리스트 상단)는 광범위 리팩터 회피 위해 보류 — 단, 급등≥80/과열≥50 위험 바 + 강점/주의 패널로 '점수-위험 분리·강점/주의 시각 분리' 완료 기준은 충족, 초보자 체크리스트는 기존 BeginnerReading(요약 탭)에 존재.
+- 카피 안전: 신규/변경 파일 금칙어 13종(지금 살 만한·상승 가능성·매수 적기·저점 기회·목표가·수익 예상·추천 종목·매수 후보·투자 매력도·급등 예상·수익 기대 등) grep 0.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 taskkill, 4310 AI Dev Center 무중단) `/ /today /stocks /disclosures /stock/005930` 200·에러 마커 0. 종목상세 SSR HTML에 탐색 우선도/현재 결론/강점/주의/4개 다음확인 버튼 라벨/2줄 고지 렌더, 히어로가 '자체 지표 4종' 차트보다 먼저(offset 20557 < 41128).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl smoke + SSR grep + build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, 종목 상세 라우트 포함) 실행 권장**.
+- 위험/한계: 다음확인 앵커(#disclosures 등)는 StockTabs의 클라 hashchange로 탭 전환 — SSR엔 요약 탭만, 앵커 라벨은 빌드 청크/DOM에 존재. 업종 비교 전용 탭은 미구현(요약 탭 대체).
+- 다음 구체 태스크(Phase 2, 설계서 §17 2차 개발): (a) 레벨드 RiskAlertCard 완전 분리(변동성·낙폭 단계), (b) 4지표 미니바 히어로 추가(요약 탭 MetricStrip 중복 없이 단일 소스), (c) 업종 비교 전용 탭 신설 + 다음확인 버튼 스무스 스크롤/탭 전환 인터랙션.
+
 ## 2026-06-24 · 홈 첫 화면 개편 1차 — 탐색 대시보드 (Task 14, Claude)
 - 목표: 설계서 `ornscore_home_redesign_spec_v1.md` 1차 범위. 홈을 '서비스 소개'에서 '오늘의 투자 탐색 대시보드'로 전환. 첫 화면 3초 안에 "오늘 볼 종목을 138개에서 5개로 줄여주는 한국 주식 탐색 보드" 가치 전달. 비자문 언어 유지(추천 종목/매수 후보/상승 가능성/급등 예상/수익 기대 금지).
 - 신규 컴포넌트(전부 서버 컴포넌트, 순수 프레젠테이션, python으로 UTF-8 작성 — OneDrive 한글깨짐 회피):

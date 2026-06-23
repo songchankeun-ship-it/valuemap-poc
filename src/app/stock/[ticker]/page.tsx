@@ -18,10 +18,11 @@ import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
 import { MetricStrip } from "@/components/MetricStrip";
 import { StockTabs } from "@/components/StockTabs";
-import { gradeOf } from "@/lib/grade";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
+import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
+import { classifyConclusion } from "@/lib/conclusion";
 
 export const revalidate = 3600;
 
@@ -92,41 +93,12 @@ function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 
   return { strengths, cautions, interpretation };
 }
 
-function scoreTone(score: number): { text: string; bg: string; border: string; ring: string } {
-  // 종합점수는 상승빨강/하락파랑과 혼동되지 않게 브랜드 인디고+중립 단계색 사용 (디자인 설계서 §3)
-  if (score >= 80) return {
-    text: "text-indigo-700 dark:text-indigo-300",
-    bg: "bg-indigo-50 dark:bg-indigo-950/30",
-    border: "border-indigo-200 dark:border-indigo-900",
-    ring: "ring-indigo-300 dark:ring-indigo-800",
-  };
-  if (score >= 60) return {
-    text: "text-indigo-600 dark:text-indigo-400",
-    bg: "bg-indigo-50/60 dark:bg-indigo-950/20",
-    border: "border-indigo-100 dark:border-indigo-900/60",
-    ring: "ring-indigo-200 dark:ring-indigo-900",
-  };
-  if (score >= 40) return {
-    text: "text-zinc-700 dark:text-zinc-300",
-    bg: "bg-zinc-50 dark:bg-zinc-900/50",
-    border: "border-zinc-200 dark:border-zinc-800",
-    ring: "ring-zinc-300 dark:ring-zinc-700",
-  };
-  return {
-    text: "text-zinc-500 dark:text-zinc-400",
-    bg: "bg-zinc-50 dark:bg-zinc-900",
-    border: "border-zinc-200 dark:border-zinc-800",
-    ring: "ring-zinc-200 dark:ring-zinc-800",
-  };
-}
-
 export default async function StockDetailPage({ params }: PageProps) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
   if (!s) notFound();
   const composite = Math.round(compositeOf(s));
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
-  const tone = scoreTone(composite);
   const [scoreHistory, priceHistory] = await Promise.all([
     getScoreHistory(ticker, 30),
     getPriceHistory(ticker),
@@ -152,8 +124,6 @@ export default async function StockDetailPage({ params }: PageProps) {
       if (lastC && pastC && pastC > 0) surge3m = ((lastC - pastC) / pastC) * 100;
     }
   }
-  const surgeRisk = surge3m !== null && surge3m >= 80;
-  const grade = gradeOf(composite);
   const completeness = dataCompleteness(s, priceHistory);
   const sectorValue = sectorValueScore(s, realStockPool);
   const poolN = realStockPool.length;
@@ -172,6 +142,20 @@ export default async function StockDetailPage({ params }: PageProps) {
   };
   const rankOf = (val: number, key: "momentum" | "flow" | "value" | "vol") =>
     realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length + 1;
+
+  // ── 상단 결론 카드(StockConclusionHero) 입력값 ──────────────────────
+  const suspect = dataWarnings.length > 0;
+  const conclusion = classifyConclusion({ momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol, surge3m });
+  const heroStrengths = reason.strengths.map((x) => x.metric);
+  const heroWarnings: string[] = reason.cautions.map((x) => x.metric + " 약함");
+  if (surge3m !== null && surge3m >= 80) heroWarnings.push("최근 3개월 급등 — 급등 사유 확인 필요");
+  else if (surge3m !== null && surge3m >= 50) heroWarnings.push("최근 상승폭 큼 — 급등 사유 확인");
+  const riskAlert: HeroRiskAlert | null =
+    surge3m !== null && surge3m >= 80
+      ? { level: "high", label: "급등 위험", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.` }
+      : surge3m !== null && surge3m >= 50
+      ? { level: "warn", label: "과열 주의", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 추격매수보다 급등 사유 확인이 먼저입니다.` }
+      : null;
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const jsonLd = {
@@ -224,66 +208,32 @@ export default async function StockDetailPage({ params }: PageProps) {
         <span className="text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
       </nav>
 
-      <header className="space-y-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h1 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">{s.name}</h1>
-          <span className="text-[11px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-md tabular-nums font-mono">{s.ticker}</span>
-        </div>
-        <LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={priceAsOf} />
-        <div className="flex items-center gap-2 flex-wrap">
-          <AddToWatchlistButton ticker={s.ticker} name={s.name} />
-          <AddToCompareButton ticker={s.ticker} name={s.name} />
-          <ShareButton name={s.name} ticker={s.ticker} />
-        </div>
-      </header>
-
-      {/* 결론 헤드라인 — 등급·순위·강점/위험 먼저 (디자인 리뷰 P0) */}
-      <section className={"rounded-lg border-2 " + (dataWarnings.length > 0 ? "border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20" : tone.border + " " + tone.bg) + " p-3 md:p-4"}>
-        {surgeRisk ? (
-          <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1.5 rounded-md border border-rose-200 dark:border-rose-900">
-            <span aria-hidden="true">🔺</span>
-            <span>급등 위험 — 최근 63거래일(약 3개월) +{Math.round(surge3m as number)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.</span>
-          </div>
-        ) : null}
-        {dataWarnings.length > 0 ? (
-          <div className="mb-2.5 flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300">
-            <span aria-hidden="true">⚠</span>
-            <span>가격 데이터 검증 중 — 아래 점수는 임시 계산값이며, 공식 후보·순위에서 제외됩니다.</span>
-          </div>
-        ) : null}
-        <div className="flex items-start gap-3">
-          <div className={"shrink-0 flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl ring-2 " + (dataWarnings.length > 0 ? "ring-zinc-300 dark:ring-zinc-700" : tone.ring) + " bg-white dark:bg-zinc-900"}>
-            <div className={"text-xl md:text-2xl font-bold leading-none " + (dataWarnings.length > 0 ? "text-zinc-400 dark:text-zinc-500" : tone.text)}>{composite}{dataWarnings.length > 0 ? <span className="text-amber-600 dark:text-amber-400"> ⚠</span> : null}</div>
-            <div className="text-[8px] text-zinc-400 dark:text-zinc-500 mt-0.5 tabular-nums">/ 100</div>
-            <div className="text-[7px] text-zinc-400 dark:text-zinc-500 leading-none uppercase tracking-wide">탐색 우선도</div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5">{dataWarnings.length > 0 ? "데이터 검증 중 · 임시 점수 — " : ""}{reason.interpretation}</div>
-            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-              <span className="font-semibold text-blue-700 dark:text-blue-400">{grade.grade}</span>
-              <span>분석 대상 {poolN}종목 중 <strong className="text-zinc-700 dark:text-zinc-300">{overallRank}</strong>위</span>
-              <span>업종({mySector}) <strong className="text-zinc-700 dark:text-zinc-300">{sectorRank}</strong>/{sectorCount}위</span>
-              <span>필수 데이터 항목 <strong className="text-zinc-700 dark:text-zinc-300">{completeness}%</strong> 충족</span>
-              {s.per <= 0 ? <span className="text-rose-600 dark:text-rose-400 font-medium">적자·밸류 점수 제한</span> : null}
-              {dataWarnings.length > 0 ? (
-                <>
-                  <span className="text-amber-600 dark:text-amber-400 font-medium">이상값 점검 중</span>
-                  <span className="text-amber-600 dark:text-amber-400 font-medium">임시 점수 · 순위 참고용</span>
-                </>
-              ) : (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">이상값 점검 통과</span>
-              )}
-            </div>
-            {(reason.strengths.length > 0 || reason.cautions.length > 0) ? (
-              <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-[11px]">
-                {reason.strengths.length > 0 ? <span className="text-emerald-700 dark:text-emerald-400 font-medium">✓ 강점 {reason.strengths.map((x) => x.metric).join("·")}</span> : null}
-                {reason.cautions.length > 0 ? <span className="text-amber-700 dark:text-amber-400 font-medium">⚠ 주의 {reason.cautions.map((x) => x.metric).join("·")}</span> : null}
-              </div>
-            ) : null}
-          </div>
-        </div>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">실험 지표 · 매수·매도 추천이 아닌 탐색 우선순위입니다.</p>
-      </section>
+      <StockConclusionHero
+        sector={mySector}
+        name={s.name}
+        ticker={s.ticker}
+        asOfLabel={priceAsOf}
+        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={priceAsOf} />}
+        actionsSlot={
+          <>
+            <AddToWatchlistButton ticker={s.ticker} name={s.name} />
+            <AddToCompareButton ticker={s.ticker} name={s.name} />
+            <ShareButton name={s.name} ticker={s.ticker} />
+          </>
+        }
+        score={composite}
+        overallRank={overallRank}
+        poolN={poolN}
+        sectorRank={sectorRank}
+        sectorCount={sectorCount}
+        completeness={completeness}
+        metricsVersion={dataMetadata.metricsVersion}
+        suspect={suspect}
+        conclusion={conclusion}
+        strengths={heroStrengths}
+        warnings={heroWarnings}
+        riskAlert={riskAlert}
+      />
 
       <StockTabs
         tabs={[
