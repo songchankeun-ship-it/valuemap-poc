@@ -253,3 +253,20 @@
 - 고아 페이지 발견: /pricing(링크0), /blog·/blog/[slug](링크0). /blog는 WIP로 보류.
 - /pricing: 전역 푸터(layout.tsx)에 '요금' 링크 조용히 추가 — 전 페이지 하단 노출.
 - node_modules: .gitignore에 정상 포함 확인.
+
+
+## 2026-06-24 · Pass 11 · 공시 explorer 수집 기준 신선도 라벨 (Task 33, Claude)
+- What changed: 공시 신호 페이지(/disclosures)에 '수집 기준 · {KST 시각} · {출처}' 신선도 라벨 추가. 사용자가 보고 있는 공시 묶음이 언제·어디서(실시간/저장본/예시 표본) 수집됐는지 1줄로 표기.
+  - `src/app/api/disclosures/recent/route.ts`: live payload에 `fetchedAt`(ISO) 추가, sample 분기에도 `fetchedAt` 추가. cache 분기는 저장된 payload의 fetchedAt를 그대로 carry(원수집 시각 보존). detectSignals·enrich 래퍼·점수·신호강도 무변경(순수 additive).
+  - `src/lib/recentSignals.ts`(SSR twin): live·sample 반환에 `source`/`fetchedAt` 추가 → 초기 SSR 렌더에서도 라벨 즉시 노출.
+  - `src/components/DisclosureExplorer.tsx`: `ApiResponse`에 `source?`/`fetchedAt?` 추가, `sourceKo`(StockDisclosures SourceBadge와 동일 매핑: 실시간/저장본/예시 표본)·`fmtKST`(명시 timeZone=Asia/Seoul, SSR/CSR 일관) 헬퍼, 헤더 count 줄 아래 `text-[11px] text-zinc-500` muted 라벨. 필드 없으면 graceful(둘 다 없으면 미출력, 시각만 없으면 '수집 시각 미상'). 라이트+다크 동일.
+- What passed: `verify_metrics.py`(138종목 0오류·브랜드/금칙어 0, exit 0) · `npm run build`(타입게이트 통과·138p 프리렌더, exit 0, 신선도 라벨 문자열이 `app/disclosures/page` 클라이언트 청크에 컴파일됨) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /today /stocks /disclosures /stock/005930` 200·에러 0, `/disclosures` SSR HTML에 `수집 기준 · 2026. 06. 24. 00:07 · 예시 표본`(UTC 15:07→KST 정확 변환) 렌더, `/api/disclosures/recent` 200·error null·source=sample·fetchedAt 존재.
+- Operator-only blocker(변동 없음): DART 키 필요 fetch 스크립트(`fetch_*_details.py` → `public/data/*-signals.json`)는 로컬 미실행. single_contract/correction의 `⚠️ operator-verify` 정규식(`RE_AMOUNT`/`RE_RATIO`/`RE_BEFORE`/`RE_AFTER`/`RE_FIELD`)은 실보고서 본문 대조 필요.
+- Next two local tasks: (a) 동일 신선도 라벨을 종목별 `StockDisclosures` 헤더에도 적용 — `[ticker]` 라우트의 `fetchedAt`를 payload에 추가하고 컴포넌트 헤더에 동일 muted 라벨. (b) Pass 10 잔여 후보: `signalDetailsShared.ts`의 `toEok`/`matchRow` 단위 assertion 추가 또는 6개 lib의 `*Clause()` ` · `-join 빌더 공통화.
+
+## 2026-06-24 · Repair · GlobalSearch hydration warning 제거 (Task 33 gate fix, Claude)
+- Blocker: Playwright DESKTOP 품질게이트가 React hydration 경고로 실패 — "Extra attributes from the server: style" at input(GlobalSearch). AppHeader(Server)→GlobalSearch(client)의 검색 input이 SSR HTML과 클라 vdom 사이 style 속성 불일치(검색 input은 브라우저/확장 후처리로 hydration 전 속성이 주입되는 대표 케이스).
+- What changed: `src/components/GlobalSearch.tsx` 검색 input에 `suppressHydrationWarning` 추가(Next.js 권장 처리). 순수 additive 1줄, 로직/스타일 무변경. 동일 컴포넌트를 재사용하는 MobileSearchButton 인스턴스도 동시 커버.
+- What passed: `npx tsc --noEmit` exit 0(타입게이트 통과). lint는 ESLint 미구성(대화형 셋업)이라 tsc를 확립된 finite check로 사용.
+- What remains: 게이트 재실행으로 Playwright DESKTOP 경고 소거 확인. Pass 11의 next-task(StockDisclosures 신선도 라벨, signalDetailsShared 단위 assertion)는 그대로 유효.
+- Next two local tasks: (a) `[ticker]` route payload에 fetchedAt 추가 + StockDisclosures 헤더 신선도 라벨(Pass 11 carry). (b) GlobalSearch SSR/CSR 속성 일치 회귀 방지용 input 속성 스냅샷 메모를 docs에 남기기.

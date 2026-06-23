@@ -32,6 +32,8 @@ export interface ApiResponse {
   totalDisclosures: number;
   signalCount: number;
   signals: DisclosureSignal[];
+  source?: string;
+  fetchedAt?: string;
 }
 
 interface GroupedSignal {
@@ -161,6 +163,31 @@ function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
   return Array.from(groups.values()).sort((a, b) => b.rcept_dt_latest.localeCompare(a.rcept_dt_latest));
 }
 
+// 수집 출처 한글 라벨 — StockDisclosures의 SourceBadge와 동일 매핑(실시간/저장본/예시 표본)
+function sourceKo(source?: string): string | null {
+  if (!source) return null;
+  if (source.startsWith("sample")) return "예시 표본";
+  if (source === "live") return "실시간";
+  if (source === "cache") return "저장본";
+  return null;
+}
+
+// ISO → KST(서울) 표기. 명시적 timeZone으로 SSR/CSR 일관.
+function fmtKST(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  try {
+    return new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    }).format(d);
+  } catch {
+    return null;
+  }
+}
+
 export function DisclosureExplorer({ initialData, universe = [] }: { initialData?: ApiResponse; universe?: string[] }) {
   const universeSet = new Set(universe);
   const [data, setData] = useState<ApiResponse | null>(initialData ?? null);
@@ -234,6 +261,17 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
         </div>
+        {(() => {
+          const when = fmtKST(data.fetchedAt);
+          const src = sourceKo(data.source);
+          if (!when && !src) return null;
+          const parts = ["수집 기준"];
+          parts.push(when ?? "수집 시각 미상");
+          if (src) parts.push(src);
+          return (
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 tabular-nums">{parts.join(" · ")}</p>
+          );
+        })()}
         {data.totalDisclosures >= 200 ? (
           <p className="text-[10px] text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1">
             ℹ 현재 오른스코어는 성능·비용을 위해 최신 공시 200건까지만 분석합니다. 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.

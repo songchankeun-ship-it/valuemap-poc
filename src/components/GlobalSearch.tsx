@@ -136,6 +136,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
         onFocus={() => setOpen(true)}
         onKeyDown={handleKeyDown}
         autoComplete="off"
+        suppressHydrationWarning
         className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-md text-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-500 focus:bg-white dark:focus:bg-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 transition"
       />
       <svg

@@ -65,6 +65,7 @@ export async function GET(req: Request) {
       signalCount: signals.length,
       signals: signals.slice(0, 50),
       source: "live" as const,
+      fetchedAt: new Date().toISOString(),
     };
     cache.set(cacheKey, { data: payload, expiresAt: Date.now() + TTL_MS });
     return NextResponse.json(payload);
@@ -74,6 +75,7 @@ export async function GET(req: Request) {
       return NextResponse.json({
         ...sample,
         source: "sample",
+        fetchedAt: new Date().toISOString(),
         note: "DART 키 없음 또는 호출 실패 — 사전 생성 샘플로 응답.",
       });
     }
