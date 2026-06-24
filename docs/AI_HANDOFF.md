@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-24T13:13:55.786Z
+Last updated: 2026-06-24T14:53:43.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 21 - OrnScore 비주얼 리뉴얼 1차 — 홈 Hero와 점수 UI
-- Run: 26
+- Task: 22 - OrnScore 비주얼 리뉴얼 1.5 — 홈 첫인상과 점수 대시보드 임팩트 강화
+- Run: 27
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development completed. Automatic tester failed from external Claude 529 overload followed by local Codex spawn EPERM; manual verification passed and AI Center status was reconciled.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 22 — OrnScore 홈 비주얼 임팩트 강화 (1.5차) (2026-06-24, Claude)
+- Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-22-ornscore-1.5`**(시작 `a70d4b3` = Task 21, 클린). 외부 공개 주소 갱신·릴리스는 **이번 범위 아님**. 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 회피).
+- 목표: Task 21 기반(ScoreGauge/ScoreBadge/MetricChip/MetricBar/scoreColor) 위에서 홈 첫 화면의 시각 임팩트·대시보드감을 **확실히** 강화. 설계서 §2.1·§2.2·§6·§23. 점수 계산식·데이터 생성·공시 분류 **무변경**, 비자문 톤 유지, 신규 npm 패키지 0, `layout.tsx` `max-w-5xl` 셸 무변경.
+- What changed (3 files):
+  - `home/HomeHero.tsx`: 배경을 차분한 slate/blue 그라데이션 → **딥블루 패널**(`from-blue-800 via-blue-900 to-slate-900`, 다크 `from-blue-950 …`)로 전환해 대비를 키움. 좌측 카피는 화이트 텍스트(강조어 `text-sky-300`로 bg-clip 장식 제거). 우측 미리보기는 딥블루 위 **흰 카드 '화면'**(shadow-xl·ring·상단 구분선)로 분리해 "실제 서비스 화면 축소" 느낌. 1순위 **ScoreGauge 80→104px**(showLabel+showOutOf, 주변 여백↑)로 주인공화, 2~3순위 컴팩트 랭킹 행(업종 보조표기 추가), 하단 **KPI strip**을 아이콘+큰 숫자로 재구성(설계서 순서 공시 신호/거래활성도 급증/종합 80↑). primary CTA = 흰 solid(`bg-white text-blue-800`, 딥블루 위 최대 대비·dominant), secondary = 흰 outline(`border-white/30`), 둘 다 `min-h-[44px]`+`focus-visible` 링. 짧은 1줄 고지 유지.
+  - `home/StockCandidateCard.tsx`: 위계 재정렬(종목명↑ 16px bold → 업종·코드 → 가격 → **ScoreGauge 72→84px showLabel** → 4지표 막대(연한 패널로 묶음) → 강점/주의 → CTA). 강점=초록 ✓ 마커+칩, 주의=주황 ! 마커+박스로 **스캔 용이하게 분리**. CTA `font-semibold`+`focus-visible`. 모바일 1열 스택·44px 유지, riskNote/강점 텍스트는 page.tsx 비자문 그대로.
+  - `lib/scoreColor.ts`: `good`(60~79) 밴드가 라이트모드에서 가장 약해 `fill`/`barFill`의 sky-500 → **sky-600**으로 대비만 소폭 강화(4밴드 임계·라벨·다크변형 불변). 모든 색 클래스 정적 리터럴 유지(런타임 합성 0).
+- 카피 안전: 신규 문자열 비자문만(탐색 후보·검증 보류 제외·강점·주의 등). 변경 3파일+ui/ 금칙어 grep 0(`투자 추천이 아닌` 고지 부정문 제외).
+- What passed: `npx tsc --noEmit` exit 0(전후 2회) · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 2.4 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 빌드 CSS(`81f0b0e5135674d6.css`)에 4밴드 `bg-*/text-*` 라이트+다크(`bg-sky-600`·`bg-sky-400`·`bg-blue-600/400`·`amber-500`·`zinc-400/500`)+딥블루 프레임(`from-blue-800`·`from-blue-950`·`via-slate-950`) 전수 존재 → **task-21 런타임 클래스 누락 회귀 없음**. 로컬 prod(127.0.0.1:**3200** 신규 — 3100은 직전 세션 stale `next start` 점유 중이라 회피, 운영자 3000 무중단) `/ /stocks /stock/005930 /guide/metrics` 200·에러 0. 홈 SSR: 104px·84px 게이지, `from-blue-800` 프레임, `bg-white text-blue-800` primary CTA, KPI 3종, aria 게이지 6, 강점/주의 5/5 렌더. `/stocks`·`/stock/005930` 에러 0(상세는 자체 PriorityScoreCard라 새 게이지 미사용 — 무회귀).
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+CSS grep+build로 대체. **운영자: 재빌드→3000 재기동 후 AI Center 브라우저 체크 권장** — 360~390px에서 Hero 세로 스택·104px 리드 게이지 가독성·후보 카드 비빽빽·KPI strip 줄바꿈·CTA 44px·밴드 색(blue/sky/amber/zinc).
+- Residual / next: (1) 직전 세션 leftover `next start`가 3100 점유(PID 21332) — 운영자 정리 가능. (2) 새 점수 컴포넌트·딥블루 Hero는 여전히 **홈 한정** — `/today` KPI/Top3, `/stocks` 히트맵, `/stock` 상세 게이지 확장은 다음 작업(설계서 §7·§8.5·§9.3). (3) 전역 라이트 토큰(#F6F8FB) 미도입(범위 외). (4) 외부 공개 주소 미갱신(범위 외).
 
 ### Task 21 — OrnScore 비주얼 리뉴얼 1차 (홈 Hero + 점수 UI 기초) (2026-06-24, Claude)
 - Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-21-ornscore-1-hero-ui`**(시작 `3e7b13e` 클린). 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**. 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 회피).

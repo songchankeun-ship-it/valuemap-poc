@@ -59,9 +59,9 @@ const BANDS: Record<ScoreBand, ScoreColor> = {
     bg: "bg-sky-50 dark:bg-sky-950/40",
     border: "border-sky-200 dark:border-sky-900",
     badge: "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-900",
-    fill: "text-sky-500 dark:text-sky-400",
+    fill: "text-sky-600 dark:text-sky-400",
     track: TRACK,
-    barFill: "bg-sky-500 dark:bg-sky-400",
+    barFill: "bg-sky-600 dark:bg-sky-400",
     barTrack: BAR_TRACK,
   },
   neutral: {

@@ -6,6 +6,16 @@
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 > ※ 검증 메모(Task 20): 이 세션에서 Edit 도구가 한글/UTF-8/LF를 보존함을 확인(편집 후 `xxd` 바이트 검사, `git diff --stat`이 변경 줄만 표기·전체 reflow 없음). surgical Edit는 안전, 다만 신규 파일 대량 작성은 기존 python 방식 권장.
 
+## 2026-06-24 · 홈 비주얼 임팩트 강화 1.5차 — 딥블루 Hero + 점수 주인공화 (Task 22, Claude)
+- 목표: Task 21(`a70d4b3`, 클린) 위에서 홈 첫 화면이 "확실히 달라졌다"고 느낄 만큼 시각 임팩트·금융 대시보드감을 강화. 설계서 `ornscore_design_improvement_spec.md` §2.1·§2.2·§6·§23. 기존 ScoreGauge/ScoreBadge/MetricChip/MetricBar/scoreColor 기반 **유지·개선**. 점수 계산식·데이터 생성·공시 분류 **무변경**, 비자문 톤, 신규 패키지 0, `layout.tsx` `max-w-5xl` 셸 무변경. branch `ai-center/task-22-ornscore-1.5`.
+- 변경 3파일:
+  - `home/HomeHero.tsx`: 배경을 **딥블루 패널**(`from-blue-800 via-blue-900 to-slate-900`, 다크 `from-blue-950 …`)로 전환 — 마케팅 그라데이션/`bg-clip-text` 장식 제거하고 차분한 금융 SaaS 톤. 좌측 화이트 카피(강조어 `text-sky-300`), 우측은 딥블루 위 **흰 카드 '미리보기 화면'**(`shadow-xl`·`ring`·상단 구분선)로 시각 무게를 또렷이 분리. 1순위 **ScoreGauge 80→104px**(showLabel+showOutOf, 여백↑) 주인공화, 2~3순위 컴팩트 랭킹 행(업종 보조). 하단 **KPI strip**을 아이콘+큰 숫자로 재구성(설계서 §6.4 순서: 공시 신호/거래활성도 급증/종합 80↑). primary CTA = 흰 solid(`bg-white text-blue-800` dominant), secondary = 흰 outline, 둘 다 `min-h-[44px]`+`focus-visible`. 짧은 1줄 고지 유지(상세는 하단 RiskNotice).
+  - `home/StockCandidateCard.tsx`: 위계 재정렬(종목명 16px bold → 업종·코드 → 가격 → **ScoreGauge 72→84px showLabel** 핵심화 → 4지표 막대(연한 패널로 묶음) → 강점/주의 → CTA). 강점=초록 ✓ 마커+칩, 주의=주황 ! 마커+박스로 스캔 용이하게 분리. 모바일 1열·44px 유지, page.tsx 비자문 텍스트 그대로.
+  - `lib/scoreColor.ts`: `good`(60~79) 밴드가 라이트모드에서 가장 약해 `fill`/`barFill` sky-500 → **sky-600** 대비만 소폭 강화(4밴드 임계·라벨·다크변형 불변). 전 클래스 정적 리터럴 유지(런타임 합성 0 — task-21 회귀 가드).
+- 검증: `npx tsc --noEmit` exit 0(전후) · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 2.4, exit 0) · `npm run build`(타입게이트·138p, exit 0) · 빌드 CSS에 4밴드 라이트+다크 bg/text + 딥블루 프레임(`from-blue-800`·`from-blue-950`·`via-slate-950`·`bg-sky-600`·`bg-sky-400`) 전수 존재(task-21 클래스 누락 회귀 0) · 로컬 prod(127.0.0.1:**3200** — 3100은 직전 세션 stale 서버 점유 회피, 운영자 3000 무중단) `/ /stocks /stock/005930 /guide/metrics` 200·에러 0. 홈 SSR: 104px·84px 게이지·딥블루 프레임·흰 primary CTA·KPI 3종·aria 게이지 6·강점/주의 5/5 렌더. 변경 3파일+ui/ 금칙어 grep 0.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR/CSS grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장**(360~390px Hero 스택·104px 리드 게이지·후보 카드 비빽빽·KPI 줄바꿈·CTA 44px·밴드 색).
+- 잔여 리스크/다음: (1) 직전 세션 leftover `next start`가 3100 점유(PID 21332) — 운영자 정리 가능. (2) 딥블루 Hero·새 게이지는 홈 한정 — `/today` KPI/Top3·`/stocks` 히트맵·`/stock` 상세 게이지 확장이 다음(설계서 §7·§8.5·§9.3). (3) 전역 라이트 토큰(#F6F8FB)·외부 공개 주소 미갱신(범위 외).
+
 ## 2026-06-24 · 비주얼 리뉴얼 1차 — 홈 Hero + 점수 UI 기초 (Task 21, Claude)
 - 목표: 설계서 `ornscore_design_improvement_spec.md` Phase 1(디자인 시스템 기초) + Phase 2(홈 리뉴얼) 일부 적용. 첫 화면에서 "점수 기반 한국 주식 탐색 대시보드"라는 인상을 강화하고, 점수를 서비스 주인공으로 만든다. 점수 계산식·데이터 생성·공시 분류 로직 **무변경**, 비자문 톤 유지. branch `ai-center/task-21-ornscore-1-hero-ui` @ `3e7b13e`(클린)에서 시작. 미리보기는 **http://127.0.0.1:3000**, 외부 공개 주소 갱신은 이번 범위 아님.
 - 신규 디자인 시스템(재사용 기반):
