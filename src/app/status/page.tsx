@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
+import { dataStatus } from "@/lib/dataStatus";
 import { getAlertedTickers } from "@/lib/marketAlert";
 
 export const metadata = {
@@ -71,7 +72,7 @@ export default async function StatusPage() {
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">산식 버전</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataMetadata.metricsVersion ?? "—"}</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataStatus.metricsVersionLabel}</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">분석 대상</div>

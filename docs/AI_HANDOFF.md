@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 16 - OrnScore 종목 탐색 필터 UI 1차
-- Run: 22
+- Task: 17 - OrnScore 데이터 신뢰 레이어 1차 (DataStatus + 신뢰 배지/모달)
+- Run: 23
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Phase 1 complete. Global dataStatus single source + trust badges/modal; metrics version unified to "Metrics 2.4" across header/footer/guide/status/stock detail (guide stray `v` fixed). tsc/verify_metrics/build all exit 0; local prod smoke 5 routes 200.
 
 ## Next Agent Checklist
 
@@ -156,6 +156,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Residual: prod 서버 가동 중 `.next` 재빌드 시 stale 재발 가능. 게이트 권장 = build→start 고정, 서버 중 재빌드 금지, 재실행 전 3000 잔존 `next start` 선종료. (dev 는 `.next-dev` 분리로 무관.) Playwright 미구성 → 게이트 재실행으로 최종 확인.
 - Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.
 
+
+### Task 17 — OrnScore 데이터 신뢰 레이어 1차 (전역 DataStatus + 신뢰 배지/모달) (2026-06-24, Claude)
+- What changed: 설계서 `ornscore_data_trust_badge_spec_v1.md` 1차 범위(§23 1차). 데이터 기준일·산식 버전·상태·출처·제한·투자 고지를 **단일 `dataStatus` 소스 + 재사용 신뢰 배지**로 통합. Task 14/15/16 완료본 위에서 시작(branch `ai-center/task-17-ornscore-1` @ `5112c14`, 클린).
+  - 신규: `src/lib/dataStatus.ts`(전역 단일 소스, dataMetadata 파생 — asOf 20260616·metricsVersionLabel "Metrics 2.4"·count 138·sources·notices·limits·status normal/delayed). `src/components/trust/badges.tsx`(DataStatusBadge/AsOfDateBadge/MetricsVersionBadge, 5색 톤·색상 외 단어 항상 노출). `src/components/trust/TrustLayer.tsx`(client: DataSourceBadges 클릭/포커스 툴팁·DataTrustModal ESC/닫기/포커스 관리·DataTrustBar 데스크톱/모바일).
+  - 통합: `AppHeader.tsx`(기존 서브바에 MetricsVersionBadge + "데이터 기준 보기" 모달 트리거, 둘째 바 신설 안 함)·`layout.tsx` 푸터·`guide/metrics/page.tsx`(**stray `Metrics v` → "Metrics 2.4"**)·`status/page.tsx`·`PriorityScoreCard.tsx`+`stock/[ticker]/page.tsx` 전부 `dataStatus` 참조. `/stocks`는 이미 일치(무변경).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /stock/005930 /guide/metrics /status` 200·에러 0, 5라우트 모두 "Metrics 2.4"·"Metrics v" 0건·as-of 2026.06.16 일치, 헤더 트리거·출처 사용목적 SSR 렌더. 신규/변경 파일 금칙어 grep 0.
+- Note: 실데이터가 기준일로부터 6영업일 경과 → status="delayed"("갱신 지연")가 헤더/푸터/모달/`/status`에 일관 정직 표기됨(스펙의 "정상" 예시는 당일 데이터 가정). 단일 소스 상태 시스템이 의도대로 동작.
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 모달 클릭/ESC·닫기, 출처 배지 클릭 툴팁, 모바일 압축 1줄·오버플로 없음.
+- Residual risks: (1) status Phase-1은 normal/delayed만 실계산(partial/limited/error 타입·메타 예약, 정적). (2) metricsEffectiveDate는 전용 필드 부재로 generatedAt 파생. (3) Nice-to-have(공시 제한 배지·백테스트 한계 배지·/status 확장·changelog·빌드 타임 버전 단언) 미착수.
+- Next concrete OrnScore step (Phase 2): (a) `/disclosures` `제한 수집` 배지 + 기간 필터 툴팁, (b) `/backtest` 상단 한계 배지 4종, (c) `/status` 분리 상태 섹션 + `/guide/metrics/changelog` 스켈레톤, (d) 빌드 타임 산식 버전 일치 단언(§17.1) + partial/limited/error 실판정.
 
 ### Task 16 — OrnScore 종목 탐색 필터 UI 1차 (질문형 탐색 보드) (2026-06-24, Claude)
 - What changed: 설계서 `ornscore_stock_filter_ui_spec_v1.md` 1차 범위로 `/stocks`를 '단순 필터/정렬'에서 '질문형 주식 탐색 보드'로 개편. Task 14(홈)·Task 15(종목 상세) 완료본 위에서 시작(branch `ai-center/task-16-ornscore-ui-1` @ `15a82c3`, 클린).

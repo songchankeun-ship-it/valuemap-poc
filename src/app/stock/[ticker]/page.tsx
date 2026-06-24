@@ -20,6 +20,7 @@ import { MetricStrip } from "@/components/MetricStrip";
 import { StockTabs } from "@/components/StockTabs";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
+import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
 import { classifyConclusion } from "@/lib/conclusion";
@@ -227,7 +228,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         sectorRank={sectorRank}
         sectorCount={sectorCount}
         completeness={completeness}
-        metricsVersion={dataMetadata.metricsVersion}
+        metricsVersion={dataStatus.metricsVersionLabel}
         suspect={suspect}
         conclusion={conclusion}
         strengths={heroStrengths}
@@ -293,7 +294,7 @@ export default async function StockDetailPage({ params }: PageProps) {
           <div>주가 <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} 장마감</span></div>
           <div>분석 대상 <span className="text-zinc-700 dark:text-zinc-300">{poolN}종목</span></div>
           <div>점수 계산 <span className="text-zinc-700 dark:text-zinc-300">{formatBizDateLong(dataMetadata.asOfBusinessDate)}</span></div>
-          <div>산식 버전 <span className="text-zinc-700 dark:text-zinc-300">{dataMetadata.metricsVersion ?? "—"}</span></div>
+          <div>산식 버전 <span className="text-zinc-700 dark:text-zinc-300">{dataStatus.metricsVersionLabel}</span></div>
         </div>
       </div>
 

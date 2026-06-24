@@ -44,7 +44,7 @@ export function PriorityScoreCard({
         ) : (
           <span className="text-emerald-600 dark:text-emerald-400 font-medium">이상값 점검 통과</span>
         )}
-        {metricsVersion ? <span>산식 {metricsVersion}</span> : null}
+        {metricsVersion ? <span>{metricsVersion}</span> : null}
       </div>
       <p className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug">매수·매도 추천이 아닌 탐색 우선순위입니다.</p>
     </div>

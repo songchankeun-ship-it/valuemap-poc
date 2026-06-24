@@ -5,6 +5,26 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · 데이터 신뢰 레이어 1차 — 전역 DataStatus + 신뢰 배지/모달 (Task 17, Claude · 4단계/Phase 1)
+- 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 1차 범위(§23 1차 개발). 전 페이지에 흩어진 데이터 기준일·산식 버전·데이터 상태·출처·제한·투자 고지를 **단일 `dataStatus` 소스 + 재사용 신뢰 배지**로 통합. Task 14(홈)·15(종목 상세)·16(/stocks) 완료본 위에서 시작(branch `ai-center/task-17-ornscore-1` @ `5112c14`, 클린 확인).
+- 신규 파일:
+  - ⭐ `src/lib/dataStatus.ts` — 전역 신뢰 단일 소스. `dataMetadata`(stocks.json)에서 파생: `globalAsOfDate`(20260616)·`globalAsOfLabel`(formatBizDateLong)·`marketDateLabel`(모바일 압축)·`status`(isDataStale→normal/delayed, partial/limited/error는 타입·메타 예약)·`statusLabel`/`statusMeaning`/`statusTone`·`universeCount`(138)·`metricsVersion`(2.4)·`metricsVersionLabel`(**단일 표기 "Metrics 2.4"**)·`metricsEffectiveDate`(전용 필드 부재 → generatedAt 날짜 파생 "2026.06.16")·`sources`(KRX/Naver Finance/yfinance/DART 사용목적 §9)·`notices`(투자/점수 비자문 고지)·`limits`(공시 200건·백테스트). 스펙 예시 날짜 하드코딩 안 함(실값만).
+  - ⭐ `src/components/trust/badges.tsx` — 순수 프레젠테이션 프리미티브: `DataStatusBadge`(● + 상태 단어, 색상 외 단어 항상 노출 §20)·`AsOfDateBadge`·`MetricsVersionBadge`. 상태 톤 5색(normal emerald / partial yellow / delayed orange / limited slate / error red).
+  - ⭐ `src/components/trust/TrustLayer.tsx`("use client") — `DataSourceBadges`(출처 배지: 클릭/포커스 토글 상세, hover 의존 금지, aria-expanded/describedby)·`DataTrustModal`(트리거 버튼 "데이터 기준 보기" → 다이얼로그: 기준일·출처·산식·상태·제한·투자 고지, ESC/닫기/백드롭, 열릴 때 닫기 버튼 포커스·닫힐 때 트리거 복귀)·`DataTrustBar`(데스크톱 전체 / 모바일 압축 1줄 + 트리거). 서버가 `dataStatus`를 직렬화 props로 주입(클라이언트가 stocks.json 미번들).
+- 통합(전 화면 단일 소스 참조):
+  - `src/components/AppHeader.tsx`: 기존 서브바(둘째 줄) 우측에 `MetricsVersionBadge`(sm+) + `DataTrustModal` 트리거 추가. 기존 날짜/신선도 표시·KRX·Naver 텍스트·WelcomeToast 보존, 둘째 바 신설 안 함(`sm:hidden`/`hidden sm:inline` 반응형 유지).
+  - `src/app/layout.tsx` 푸터: 날짜·산식·상태를 전부 `dataStatus`로 교체("데이터 {globalAsOfLabel} 장마감 · 산식 Metrics 2.4 · 데이터 상태 …"). realStocks 직접 import 제거.
+  - `src/app/guide/metrics/page.tsx`: **`Metrics v{ver}` → `metricsVersionLabel`("Metrics 2.4")로 stray `v` 제거** + 적용일 표기. (스펙 §3.2/이슈1 P0 해소.)
+  - `src/app/status/page.tsx` 스냅샷 산식 버전: `metricsVersionLabel`.
+  - `src/components/stock/PriorityScoreCard.tsx` + `src/app/stock/[ticker]/page.tsx`: 점수 카드 칩·데이터 기준 블록 산식 버전을 `metricsVersionLabel`로 통일(칩의 "산식 " 중복 접두 제거 → "Metrics 2.4").
+  - `/stocks`(StocksExplorer)는 이미 "Metrics {ver}" = "Metrics 2.4" 렌더 → 무변경(일치 확인).
+- 카피 안전: 신규/변경 파일 비자문(기준일·출처·산식·상태·제한·non-advice)만. 금칙어 grep 0(추천 종목/매수 후보/상승 가능성/급등 예상 등). 투자 고지는 설계서 §21 지정 부정문만.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /stock/005930 /guide/metrics /status` 전부 200·에러 마커 0, **5라우트 모두 "Metrics 2.4" 노출·"Metrics v" 0건·as-of 2026.06.16 일치**, 헤더 "데이터 기준 보기" 트리거·출처 사용목적(PER·PBR·ROE·배당) SSR 렌더, 푸터 "산식 Metrics 2.4" 렌더.
+- 중요 관찰: 실데이터가 기준일(20260616)로부터 6영업일 경과 → `dataStatus.status = "delayed"`("갱신 지연"). 따라서 헤더(amber)·푸터("갱신 지연 확인")·모달·`/status`("갱신 지연 가능")가 **모두 동일하게 지연 상태 정직 표기**(스펙 예시의 "정상"은 당일 데이터 가정). 상태 시스템이 의도대로 단일 소스에서 일관 동작함을 입증.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 모달 클릭 열기/ESC·닫기, 출처 배지 클릭 툴팁, 모바일 압축 1줄·오버플로 없음(`/ /stocks /stock/005930 /guide/metrics /status`).
+- 잔여 리스크: (1) status는 Phase-1에서 normal/delayed만 계산(partial/limited/error는 타입·메타만 예약, 정적). (2) metricsEffectiveDate는 전용 필드 부재로 generatedAt 날짜 파생(스펙 §8의 전용 적용일 필드 없음). (3) Nice-to-have 미착수(아래 다음 태스크).
+- 다음 구체 OrnScore 태스크(설계서 §23 2차/3차 · Phase 2): (a) `/disclosures` 헤더 `제한 수집` 배지 + 기간 필터 툴팁, (b) `/backtest` 상단 한계 배지 4종(아이디어 검증용·현재 종합점수 검증 아님·생존편향 가능·슬리피지 단순화), (c) `/status` 섹션 확장(가격/재무/공시/산식 분리 상태) + `/guide/metrics/changelog` 스켈레톤, (d) 빌드 타임 산식 버전 일치 단언(§17.1) 및 partial/limited/error 상태 실판정(재무 결측률·공시 200건 도달).
+
 ## 2026-06-24 · 종목 탐색 필터 UI 1차 — 질문형 탐색 보드 (Task 16, Claude)
 - 목표: 설계서 `ornscore_stock_filter_ui_spec_v1.md` 1차 범위(§24). `/stocks`를 '단순 필터/정렬 화면'에서 '질문형 주식 탐색 보드'로 개편 — 첫 화면 3초 안에 "질문을 누르면 오늘 확인할 종목이 자동으로 좁혀지는 화면" 가치 전달. 비자문 톤 유지(확인 후보/먼저 볼 종목/급등 사유 확인 톤, 추천·매수 언어 금지).
 - 변경 파일:

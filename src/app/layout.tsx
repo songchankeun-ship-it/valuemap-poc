@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
+import { dataStatus } from "@/lib/dataStatus";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ornscore.com"),
@@ -83,16 +83,11 @@ export default function RootLayout({
             <main className="flex-1 min-w-0 pb-16 lg:pb-0">
               <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
               <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {formatBizDateLong(dataMetadata.asOfBusinessDate)} 장마감</span>
+                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataStatus.globalAsOfLabel} 장마감</span>
                 <span>·</span>
-                <span>산식 Metrics {dataMetadata.metricsVersion ?? "—"}</span>
+                <span>산식 {dataStatus.metricsVersionLabel}</span>
                 <span>·</span>
-                {(() => {
-                  const stale = isDataStale(dataMetadata.asOfBusinessDate);
-                  return (
-                    <a href="/status" className={(stale ? "text-amber-600/90 dark:text-amber-500/90" : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"}>데이터 상태 {stale ? "갱신 지연 확인" : "정상"}</a>
-                  );
-                })()}
+                <a href="/status" className={(dataStatus.dataStale ? "text-amber-600/90 dark:text-amber-500/90" : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"}>데이터 상태 {dataStatus.dataStale ? "갱신 지연 확인" : "정상"}</a>
                 <span>·</span>
                 <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
                 <span>·</span>
