@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-24T05:50:53.744Z
+Last updated: 2026-06-24T13:13:55.786Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 20 - OrnScore 세부 다듬기 — 디자인 QA와 모바일 미리보기 정리
-- Run: 25
+- Task: 21 - OrnScore 비주얼 리뉴얼 1차 — 홈 Hero와 점수 UI
+- Run: 26
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 21 — OrnScore 비주얼 리뉴얼 1차 (홈 Hero + 점수 UI 기초) (2026-06-24, Claude)
+- Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-21-ornscore-1-hero-ui`**(시작 `3e7b13e` 클린). 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**. 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 회피).
+- 범위: 설계서 `ornscore_design_improvement_spec.md` Phase 1(디자인 시스템 기초) + Phase 2(홈 리뉴얼) 일부. 점수 계산식·데이터 생성·공시 분류 로직 **무변경**, 비자문 톤 유지.
+- What changed:
+  - 신규 디자인 시스템: ⭐`src/lib/scoreColor.ts`(점수→색/라벨 단일 소스, 4구간 §5.4, 색+한글라벨 동반, 다크 변형). ⭐`src/components/ui/` 4종 — `ScoreGauge`(순수 SVG 원형 게이지·`aria-label`)·`ScoreBadge`·`MetricChip`·`MetricBar`. 전부 서버 컴포넌트(클라 훅 0).
+  - 홈: `home/HomeHero.tsx`(메인 카피 `오늘 볼 한국 주식, 점수로 먼저 좁혀보세요.`·CTA `오늘 후보 보기`/`지표 이해하기`·우측 **대시보드 미리보기 카드**=ScoreGauge+ScoreBadge+3스탯 요약·금융 톤 배경). `home/StockCandidateCard.tsx`(점수 게이지 주인공화·4지표 MetricBar·강점/주의 분리·업종 추가). ⭐`home/FeatureCards.tsx`(핵심 기능 3카드 오늘후보/공시신호/**백테스트 진입점 신규**). `app/page.tsx`(후보 VM에 sector+4지표 추가·Hero top3 전달·FeatureCards 연결, 기존 카운트/필터 무변경).
+  - 고지: above-the-fold는 Hero 1줄 차분 고지만, 상세 `RiskNotice`는 하단 신뢰 레이어 유지(§17).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치) · `npm run build`(타입게이트·138p 프리렌더 exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 3000·4310 무중단) `/ /stocks /stock/005930 /guide/metrics /backtest /disclosures` 전부 200·에러 0. SSR grep으로 신규 Hero 카피·미리보기·게이지(aria 6)·강점 5블록·band 라벨 렌더 확인.
+- Browser check: Playwright 미구성 → DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자 AI Center 브라우저 체크 권장**(재빌드→3000 재기동 후) — 360~390px ScoreGauge 가독성·후보 카드 세로 스택·터치 44px·band 색(blue/sky/amber/zinc).
+- Residual / next: (1) 신규 점수 컴포넌트는 **홈에만** 적용 — `/stocks`·`/stock` 상세 재사용 확장은 다음 작업. (2) 밝은 금융 톤·기존 다크 모드 공존(전역 라이트 토큰 #F6F8FB 미적용, 범위 외). (3) MetricBar의 `text-*`→`bg-*` 치환은 scoreColor 토큰 네이밍 규약 의존. (4) 외부 공개 주소 미갱신(범위 외). 다음: 점수 컴포넌트 /stocks 히트맵·/stock 상세 게이지 확장(§8.5·§9.3) → Phase 3 오늘 페이지.
 
 ### Task 20 — OrnScore 세부 디자인·UX 다듬기 (모바일/배지/문구 일관화) (2026-06-24, Claude)
 - Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-20-ornscore-qa`**. 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**(다음 작업으로 명시 보류). 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 400 회피).
@@ -206,3 +217,9 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, `/stocks` 포함) 권장** — 질문 카드 그리드/선택/요약 바/강점·주의 분리/정렬 그룹/모바일 1열 스택/터치 타겟.
 - Residual: (1) /stocks 클라 컴포넌트(초기 SSR·인터랙션 CSR). (2) presetCounts = 그 프리셋만 적용 시 N개(현재 활성 필터와 무관, '예상 결과'로 표기). (3) 빠른 칩 단일 선택(다중 AND 다음 태스크). (4) 변동성·낙폭 정렬 보류(필드 미전달).
 - Next concrete OrnScore step: 설계서 §24 2차 — (a) 탐색 모드 탭(질문/지표/직접)+보기 방식(카드/표/압축), (b) 빠른 칩 다중 선택 AND + 칩 변경 시 실시간 예상 결과 수, (c) 결과 없음 자동 완화 제안, (d) 변동성·낙폭 정렬용 volStats(annualStd·maxDrawdown)를 page.tsx에서 전달.
+
+### Task 21 — Repair: MetricBar 막대 색 누락 수정(런타임 Tailwind 클래스 합성 제거) (2026-06-24, Claude)
+- Blocker(TESTER FAIL): 정식 게이트 전부 통과했으나 `MetricBar`가 `text-*` 토큰을 런타임 `.replace(/text-/g,"bg-")`로 막대색을 합성 → Tailwind 정적 스캔이 `bg-*` 리터럴을 못 잡아 빌드 CSS에서 누락. 라이트모드 60~79(sky) 무색(홈 후보 카드)·다크모드 대부분 구간 무색.
+- Fix: `src/lib/scoreColor.ts` `ScoreColor`에 `barFill`·`barTrack`(bg-* 리터럴) 추가(4구간×라이트/다크 명시). `src/components/ui/MetricBar.tsx`는 런타임 치환 제거 → `c.barFill`/`c.barTrack` 직접 사용. 단일 색 소스 유지, 점수식/데이터/공시 로직 무변경.
+- Passed: `tsc --noEmit` 0 · `npm run build` 138p 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·산식 2.4 · 빌드 CSS에 8개 구간 bg 클래스 전수 존재(다크 `:is(.dark *)` 변형 포함) · 로컬 prod(3100) `/ /stocks /stock/005930 /guide/metrics` 200 · 렌더 홈 HTML에 60~79 막대 `bg-sky-500`/`bg-sky-400` 실제 출력.
+- Residual: 없음(스타일 한정). 향후 점수 시각화는 scoreColor 리터럴 토큰 사용, 런타임 클래스 합성 금지.

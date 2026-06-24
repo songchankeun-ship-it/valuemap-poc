@@ -6,6 +6,23 @@
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 > ※ 검증 메모(Task 20): 이 세션에서 Edit 도구가 한글/UTF-8/LF를 보존함을 확인(편집 후 `xxd` 바이트 검사, `git diff --stat`이 변경 줄만 표기·전체 reflow 없음). surgical Edit는 안전, 다만 신규 파일 대량 작성은 기존 python 방식 권장.
 
+## 2026-06-24 · 비주얼 리뉴얼 1차 — 홈 Hero + 점수 UI 기초 (Task 21, Claude)
+- 목표: 설계서 `ornscore_design_improvement_spec.md` Phase 1(디자인 시스템 기초) + Phase 2(홈 리뉴얼) 일부 적용. 첫 화면에서 "점수 기반 한국 주식 탐색 대시보드"라는 인상을 강화하고, 점수를 서비스 주인공으로 만든다. 점수 계산식·데이터 생성·공시 분류 로직 **무변경**, 비자문 톤 유지. branch `ai-center/task-21-ornscore-1-hero-ui` @ `3e7b13e`(클린)에서 시작. 미리보기는 **http://127.0.0.1:3000**, 외부 공개 주소 갱신은 이번 범위 아님.
+- 신규 디자인 시스템(재사용 기반):
+  - ⭐ `src/lib/scoreColor.ts`: 점수→색/라벨 단일 소스(설계서 §5.4). 4구간 `{band,label,text,bg,border,badge,fill,track}` — 80↑ `강한 탐색 우선순위`(blue)·60~79 `확인 가치 있음`(sky)·40~59 `중립`(amber)·40↓ `우선순위 낮음`(zinc). 색만으로 전달 안 하게 모든 구간 한글 라벨 동반, 라이트/다크 변형 유지. `score.ts`·`grade.ts` 무변경.
+  - ⭐ `src/components/ui/` 신규 4종(전부 서버 컴포넌트, 클라 훅 없음): `ScoreGauge`(순수 SVG 원형 게이지, stroke=currentColor로 다크 대응, 큰 tabular-nums 점수+구간 라벨+`aria-label`), `ScoreBadge`(점수+라벨 pill), `MetricChip`(지표명+값 칩, neutral/strong/muted 톤), `MetricBar`(0~100 가로 막대, 구간색 `text-*`→`bg-*` /g 치환, 점수 숫자 동반).
+- 홈 리뉴얼:
+  - `home/HomeHero.tsx`: 메인 카피 `오늘 볼 한국 주식, 점수로 먼저 좁혀보세요.`(§6.3), CTA `오늘 후보 보기`(#today-candidates)·`지표 이해하기`(/guide/metrics). 우측을 ad-hoc 4-스탯 dl → **대시보드 미리보기 카드**로 교체: 1순위 큰 `ScoreGauge`+강점 칩, 2~3순위 `ScoreBadge` 컴팩트 행, 80↑/거래급증/공시 3-스탯 요약. 배경 톤 blue/cyan 그라데이션 → 차분한 slate/blue 금융 톤(다크 변형 보존). props에서 미사용 upCount/downCount 제거, `previewCandidates`(top3) 추가.
+  - `home/StockCandidateCard.tsx`: 종합점수를 `ScoreGauge`(size 72)로 주인공화, 4지표를 `MetricBar` 4줄로 시각화, **강점**(emerald `MetricChip`) vs **주의**(amber 박스) 명확 분리. 종목 메타에 업종(`sectorOf`) 추가. 모바일 grid-cols-1 세로 스택·CTA `min-h-[44px]` 유지.
+  - ⭐ `home/FeatureCards.tsx`: 핵심 기능 3개 카드(§6.5) — 오늘의 후보(종합 80↑ N개)·공시 신호(최근 N건)·백테스트(위험 지표 포함). **홈에 없던 백테스트 진입점** 추가. `page.tsx`에서 DisclosureSignalSection 다음에 배치.
+  - `app/page.tsx`: 후보 뷰모델에 `sector`+`m{momentum,flow,value,vol}` 추가(기존 `compositeOf`/`isSuspect`/`pickTopStocks`·카운트 무변경), Hero에 top3 전달, FeatureCards 연결.
+- 고지 완화: 첫 화면(above-the-fold)은 Hero 하단 1줄 차분한 고지(`투자 추천이 아닌 데이터 기반 탐색 도구`)만, 상세 고지 박스(`RiskNotice`)는 하단 신뢰 레이어로 유지(§17).
+- 카피 안전: 신규 문자열 전부 비자문(탐색 우선순위·확인 가치·강점·주의·확인 필요). 추천/매수/매도/수익 보장 톤 0 — 새/수정 파일 grep 시 `투자 추천이 아닌`(고지 부정문) 1건만.
+- 검증: `npx tsc --noEmit` exit 0(전후 2회) · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID(20584)만 taskkill, 3000·4310 무중단) `/ /stocks /stock/005930 /guide/metrics /backtest /disclosures` 전부 200·에러 마커 0. SSR grep: 메인 카피·미리보기 헤더·게이지 `aria-label="종합 점수"` 6개·강점 5블록·`위험조정` 막대 26개·`<svg` 35개·핵심기능/백테스트 카드·band 라벨 24개 렌더 확인.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 AI Center 브라우저 체크 권장**(stale 청크 회피) — 360~390px에서 ScoreGauge 가독성·후보 카드 세로 스택·터치 44px·band 색(blue/sky/amber/zinc) 확인.
+- 잔여 리스크/결정: (1) 신규 점수 컴포넌트는 **홈에만** 적용 — `/stocks` 테이블·`/stock` 상세는 기존 UI 유지(다음 작업으로 재사용 확장 보류). (2) 밝은 금융 톤과 기존 다크 모드 공존 — 새 컴포넌트는 다크 변형 유지하나 전역 라이트 토큰 전환(#F6F8FB)은 미적용(범위 외). (3) `MetricBar`의 `text-*`→`bg-*` /g 치환은 토큰 네이밍 규약 의존(scoreColor가 `text-` 접두사 보장). (4) 외부 공개 주소 미갱신(범위 외).
+- 다음 추천 작업: (a) 점수 컴포넌트를 `/stocks` 테이블 히트맵·`/stock/[ticker]` 상세 게이지로 확장(설계서 §8.5·§9.3, Phase 4·5). (b) Phase 3 오늘 페이지(`/today`) KPI/Top3 카드 리뉴얼. (c) 전역 라이트 금융 토큰(#F6F8FB) 도입 검토. (d) Playwright 모바일 게이트 자동화.
+
 ## 2026-06-24 · 세부 디자인·UX 다듬기 — 모바일/배지/문구 일관화 (Task 20, Claude)
 - 목표: 원본 요청대로 큰 개편 없이 OrnScore 최근 작업(Task 14~18)의 거칠음을 정리. 8개 점검 화면(`/ /stocks /stock/005930 /disclosures /backtest /status /guide/metrics /guide/metrics/changelog`)에서 모바일 터치/넘침·배지 톤·문구(데이터 기준/산식/제한) 드리프트·다음 단계 링크·중복 카피를 손봄. 점수/데이터 생성 로직·레이아웃 구조 무변경, 비자문 톤 유지. branch `ai-center/task-20-ornscore-qa` @ `980758c`(클린)에서 시작.
 - **미리보기 기준**: 사용자 확인 화면은 **http://127.0.0.1:3000**, 리뷰 기준은 **이 브랜치(`ai-center/task-20-ornscore-qa`)**. 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**(다음 작업으로 남김). 로컬에서 `npm run build`로 `.next`를 재생성했으므로, 운영자가 3000 미리보기를 `next start`로 돌리고 있었다면 **재기동 권장**(stale 청크 400 회피, PROGRESS 하단 Repair 노트 참고).
@@ -424,3 +441,11 @@
 - Passed: `npx tsc --noEmit` exit 0 · `npm run build` 138p 프리렌더 exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · 새 서버(3000)에서 홈 HTML 이 디스크와 동일한 `app/page-eb287862a9283bf0.js` 참조, 그 청크 200 · `/ /today /stocks /disclosures /stock/005930` 200, `/settings/notifications` 307(익명 리다이렉트) · **홈과 `/stock/005930` 의 모든 `/_next/static/*` 참조 자산 전수 200(NON-200 0건)** — 게이트가 잡던 청크 abort 소거 확인.
 - Residual / 운영 주의: 근본 원인은 게이트 워크플로가 prod 서버를 띄운 채 `.next` 를 재빌드하면 살아있는 서버의 청크 참조가 stale 해지는 것. 권장 시퀀스 = **build → start 순서 고정, 서버 가동 중 재빌드 금지, 게이트 재실행 전 3000 의 잔존 `next start` 선종료**(dev 는 이미 `.next-dev` 로 분리됨, 본 건은 prod `next start`+`build` 가 `.next` 공유 시 발생). Playwright 미구성이라 최종 소거는 게이트 재실행으로 확인.
 - Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
+
+
+## 2026-06-24 · Repair · Task 21 MetricBar 막대색 누락 수정: 런타임 클래스 합성 제거 (Claude)
+- Blocker(TESTER FAIL): 정식 게이트(tsc·verify_metrics·build·HTTP 200)는 통과하나, `MetricBar` 가 `c.track`/`c.fill` 의 `text-*` 토큰을 런타임 `.replace(/text-/g,"bg-")` 로 막대 배경색을 합성 → Tailwind 정적 스캐너가 `bg-*` 리터럴을 못 잡아 빌드 CSS 에서 누락. 라이트모드 60~79(sky) 구간이 무색(홈 후보 카드), 다크모드는 대부분 구간 무색 → 점수 색 통일 목표 깨짐.
+- Root cause: Tailwind v4 는 소스에 리터럴로 존재하는 클래스명만 생성한다. 게이지는 `text-*`(scoreColor.ts 에 리터럴 존재)에 SVG `currentColor` 라 정상이었으나, 막대 `bg-*` 변형은 소스 어디에도 리터럴이 없어 누락.
+- Fix: `src/lib/scoreColor.ts` 의 `ScoreColor` 에 `barFill`·`barTrack`(bg-* 리터럴) 필드 추가 — 4구간 전부 라이트+다크 bg 리터럴 명시(high `bg-blue-600/400`, good `bg-sky-500/400`, neutral `bg-amber-500`, low `bg-zinc-400/500`, track `bg-zinc-200/800`). `MetricBar.tsx` 는 런타임 치환을 버리고 `c.barFill`/`c.barTrack` 를 그대로 사용. 단일 색 소스 원칙 유지, 점수 계산식/데이터/공시 로직 무변경.
+- Passed: `npx tsc --noEmit` exit 0 · `npm run build` 138p 프리렌더 exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·산식 2.4 일치 · 빌드 CSS 에 8개 구간 bg 클래스 전수 존재(`bg-sky-500`/`bg-sky-400:is(.dark *)`/`bg-zinc-500:is(.dark *)` 등 다크변형 포함) · 로컬 prod(3100) `/ /stocks /stock/005930 /guide/metrics` 200 · 렌더된 홈 HTML 에 `bg-sky-500`/`bg-sky-400`(60~79 구간 막대) 실제 출력 확인.
+- Residual: 없음(스타일 한정 수정). 향후 새 점수 시각화는 동일하게 scoreColor 의 리터럴 토큰을 쓰고 런타임 클래스 합성은 금지.

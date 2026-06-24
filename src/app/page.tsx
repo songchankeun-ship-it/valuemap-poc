@@ -5,6 +5,7 @@ import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { fmtWon } from "@/lib/format";
 import { compositeOf } from "@/lib/score";
+import { sectorOf } from "@/lib/sector";
 import { volumeSpikeCount } from "@/lib/homeSnapshot";
 import { HomeHero } from "@/components/home/HomeHero";
 import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
@@ -12,6 +13,7 @@ import { TopCandidateSection } from "@/components/home/TopCandidateSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
 import { DisclosureSignalSection } from "@/components/home/DisclosureSignalSection";
 import type { DisclosureSignalVM } from "@/components/home/DisclosureSignalCard";
+import { FeatureCards } from "@/components/home/FeatureCards";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { RiskNotice } from "@/components/home/RiskNotice";
 
@@ -116,8 +118,6 @@ export default async function HomePage() {
   // ── 오늘의 데이터 요약 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80 && !isSuspect(s)).length;
   const spikeCount = volumeSpikeCount(realStockPool);
-  const upCount = realStockPool.filter((s) => s.changePct > 0).length;
-  const downCount = realStockPool.filter((s) => s.changePct < 0).length;
   const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
 
   // ── 후보 카드 뷰모델 ──
@@ -127,11 +127,18 @@ export default async function HomePage() {
       rank: i + 1,
       name: s.name,
       ticker: s.ticker,
+      sector: sectorOf(s.themes),
       priceLabel: fmtWon(s.currentPrice),
       changePct: s.changePct,
       r3m,
       score: Math.round(compositeOf(s)),
       metrics: strongMetrics(s),
+      m: {
+        momentum: Math.round(s.momentum),
+        flow: Math.round(s.flow),
+        value: Math.round(s.value),
+        vol: Math.round(s.vol),
+      },
       riskNote: riskNote(s, r3m),
       highReturn: r3m !== null && r3m >= 80,
     };
@@ -167,8 +174,7 @@ export default async function HomePage() {
         strongCount={strongCount}
         volumeSpikeCount={spikeCount}
         signalCount={signalCount}
-        upCount={upCount}
-        downCount={downCount}
+        previewCandidates={candidates.slice(0, 3)}
       />
 
       <MarketSnapshotCards
@@ -181,6 +187,8 @@ export default async function HomePage() {
       <TopCandidateSection candidates={candidates} />
 
       <DisclosureSignalSection signals={signalVMs} />
+
+      <FeatureCards strongCount={strongCount} signalCount={signalCount} />
 
       <HowItWorksSection />
 
