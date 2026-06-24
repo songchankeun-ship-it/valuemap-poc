@@ -157,6 +157,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.
 
 
+### Task 17 Repair — 신뢰 모달 포커스 가로채기 수정 (WCAG 포커스 순서) (2026-06-24, Claude)
+- Blocker(리뷰 FAIL): `DataTrustModal`의 포커스 복귀 effect가 초기 마운트에서도 실행되어 모든 페이지 로드 시 헤더 트리거("데이터 기준 보기")로 키보드 포커스를 가로챔. `open` 초기값 `false` → `useEffect(()=>{ if(!open) triggerRef.current?.focus() },[open])`가 마운트 시 발화. DataTrustBar가 헤더에 전역 배치돼 앱 전체 영향(WCAG 2.4.3).
+- Fix(`src/components/trust/TrustLayer.tsx`): 별도 복귀 effect 제거, 복귀 로직을 open effect의 cleanup으로 이동(true→false 전환·언마운트에서만 실행, 초기 마운트 미발화). 열림 시 닫기 버튼 포커스/닫힘 시 트리거 복귀 동작 보존. effect 2개→1개.
+- Passed: `npx tsc --noEmit` exit 0. 마운트(open=false)→early-return으로 포커스 미탈취 확인. 기능·문구·레이아웃 무변경.
+- Gate note: Playwright 미구성 → 운영자 AI Center 브라우저 체크 권장(모달 열기/ESC, 출처 배지 클릭, 페이지 로드 시 헤더로 포커스 안 튀는지).
+
 ### Task 17 — OrnScore 데이터 신뢰 레이어 1차 (전역 DataStatus + 신뢰 배지/모달) (2026-06-24, Claude)
 - What changed: 설계서 `ornscore_data_trust_badge_spec_v1.md` 1차 범위(§23 1차). 데이터 기준일·산식 버전·상태·출처·제한·투자 고지를 **단일 `dataStatus` 소스 + 재사용 신뢰 배지**로 통합. Task 14/15/16 완료본 위에서 시작(branch `ai-center/task-17-ornscore-1` @ `5112c14`, 클린).
   - 신규: `src/lib/dataStatus.ts`(전역 단일 소스, dataMetadata 파생 — asOf 20260616·metricsVersionLabel "Metrics 2.4"·count 138·sources·notices·limits·status normal/delayed). `src/components/trust/badges.tsx`(DataStatusBadge/AsOfDateBadge/MetricsVersionBadge, 5색 톤·색상 외 단어 항상 노출). `src/components/trust/TrustLayer.tsx`(client: DataSourceBadges 클릭/포커스 툴팁·DataTrustModal ESC/닫기/포커스 관리·DataTrustBar 데스크톱/모바일).

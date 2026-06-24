@@ -97,13 +97,12 @@ export function DataTrustModal({
       if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  // 닫힐 때 트리거로 포커스 복귀(키보드 접근 §20).
-  useEffect(() => {
-    if (!open) triggerRef.current?.focus?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // 닫힐 때(open: true→false) 또는 언마운트 시에만 트리거로 포커스 복귀.
+    // 초기 마운트에서 실행되지 않으므로 페이지 로드 시 포커스를 가로채지 않음(키보드 접근 §20).
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      triggerRef.current?.focus?.();
+    };
   }, [open]);
 
   return (

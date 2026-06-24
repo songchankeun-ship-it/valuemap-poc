@@ -5,6 +5,13 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · Repair · Task 17 신뢰 모달 포커스 가로채기 수정 (WCAG 포커스 순서, Claude)
+- Blocker(리뷰 FAIL): `DataTrustModal`의 포커스 복귀 effect가 **초기 마운트에서도 실행**되어 모든 페이지 로드 때마다 헤더 트리거("데이터 기준 보기")로 키보드 포커스를 가로챔. `open` 초기값이 `false`이므로 `useEffect(() => { if (!open) triggerRef.current?.focus?.() }, [open])`가 마운트 시 `!open === true`로 즉시 발화 → DataTrustBar가 헤더/레이아웃에 전역 배치돼 앱 전체 영향(WCAG 2.4.3 포커스 순서 위반).
+- Fix(`src/components/trust/TrustLayer.tsx`): 별도 포커스-복귀 effect 제거하고 복귀 로직을 **open effect의 cleanup으로 이동**. cleanup은 open이 true→false로 바뀔 때(또는 언마운트 시)에만 실행되므로 초기 마운트에서는 절대 발화하지 않음. 열릴 때 닫기 버튼 포커스 / 닫힐 때 트리거 복귀 동작은 동일 보존. 제거된 `eslint-disable react-hooks/exhaustive-deps`도 불필요(통합 effect deps `[open]` 완전 — 나머지는 stable ref/setState).
+- Passed: `npx tsc --noEmit` exit 0. 동작 분석: 마운트(open=false)→effect early-return, cleanup 미등록 → 포커스 미탈취 / open false→true→닫기버튼 포커스 / true→false→cleanup이 트리거 복귀. 기능·문구·레이아웃 무변경(effect 2개→1개 통합, 순수 동작 수정).
+- 잔여: lint는 프로젝트 ESLint 비대화식 미구성(next lint 설정 프롬프트)로 미실행 — tsc가 유효 게이트. Playwright 미구성으로 AI Center 브라우저 게이트는 운영자 확인 권장(모달 열기/ESC, 출처 배지 클릭).
+- 다음 구체 OrnScore 태스크(불변): Phase 2 — (a) `/disclosures` `제한 수집` 배지, (b) `/backtest` 한계 배지 4종, (c) `/status` 섹션 확장 + `/guide/metrics/changelog` 스켈레톤, (d) 빌드 타임 산식 버전 일치 단언 + partial/limited/error 상태 실판정.
+
 ## 2026-06-24 · 데이터 신뢰 레이어 1차 — 전역 DataStatus + 신뢰 배지/모달 (Task 17, Claude · 4단계/Phase 1)
 - 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 1차 범위(§23 1차 개발). 전 페이지에 흩어진 데이터 기준일·산식 버전·데이터 상태·출처·제한·투자 고지를 **단일 `dataStatus` 소스 + 재사용 신뢰 배지**로 통합. Task 14(홈)·15(종목 상세)·16(/stocks) 완료본 위에서 시작(branch `ai-center/task-17-ornscore-1` @ `5112c14`, 클린 확인).
 - 신규 파일:
