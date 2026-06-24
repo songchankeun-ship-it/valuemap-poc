@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
+import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 
@@ -27,6 +28,8 @@ export default function BacktestPage() {
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
         <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">백테스트 엔진</h1>
       </header>
+
+      <BacktestLimitBadges />
 
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-6">
         <div className="flex items-start gap-3">

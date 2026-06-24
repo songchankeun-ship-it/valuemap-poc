@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 18 — OrnScore 데이터 신뢰 레이어 Phase 2 (공시/백테스트/상태/산식 이력) (2026-06-24, Claude)
+- What changed: Task 17의 전역 `dataStatus` 단일 소스를 설계서 `ornscore_data_trust_badge_spec_v1.md` 2차/3차 범위로 확장(§10.4·§10.5·§12·§13·§17.1). 투자 추천/매수 유도 카피 0.
+  - `src/lib/dataStatus.ts`: `domainStatuses`(가격/재무/공시/산식) + `EXPECTED_METRICS_VERSION="2.4"` + `metricsChangelogPath`. 재무는 `realStockPool` PER/PBR 결측률>3% 시 `partial`(현재 0.7%→normal), 가격=전역 delayed 재사용, 공시=limited, 산식=메타 유무로 normal/error.
+  - `/disclosures`: `제한 수집` 배지 + 필터 근처 `<details>` 보조설명(최신 200건·누락 가능성).
+  - `/backtest`: 신규 `BacktestLimitBadges`(아이디어 검증용·현재 종합점수 검증 아님·생존편향 가능·슬리피지 단순화) 4종을 준비중·실데이터 두 분기 모두에 배치, 모바일 2×2 wrap.
+  - `/status`: `데이터 종류별 상태` 섹션(가격/재무/공시/산식 4행, `DataStatusBadge`) + `/guide/metrics/changelog` 링크. 가격 `갱신 지연` 정직 유지.
+  - 신규 `/guide/metrics/changelog`: 산식 변경 이력 스켈레톤(현재 Metrics 2.4·적용일·변경 요약). `/guide/metrics`에 상호 링크.
+  - `scripts/verify_metrics.py`: §17.1 산식 버전 일치 단언 — stocks.json metricsVersion=="2.4" + src/ 하드코딩 `Metrics x.y` 드리프트 검출. **1차 실행에서 `metrics.ts` 주석 `Metrics v2.3` 2건 드리프트 검출 → 2.4로 교정**(가이드가 GitHub로 링크하는 참조 구현이라 공개 불일치였음, 스펙 이슈1 P0).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더·`/guide/metrics/changelog` 신규 라우트, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /disclosures /backtest /status /guide/metrics /guide/metrics/changelog /stock/005930` 200, 신규 카피 전수 SSR 렌더(제한 수집·4배지·도메인 4상태·changelog Metrics 2.4·상호 링크).
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. 운영자 AI Center 브라우저 체크 권장(제한 배지·details 펼침·백테스트 2×2 wrap·status 1열 스택·changelog 라우트).
+- Next concrete OrnScore step (설계서 §23 3차): (a) 데이터 상태 자동 검증 강화(공시 200건 도달 limited 실판정·오류 로그 요약), (b) 산식 버전 단언을 CI(GitHub Actions)에도 연결, (c) 결측률/지연 공개 범위 + 관리자 경고, (d) 백테스트 생존편향 실해결.
+
 ### Task 25 (Pass 6) — 공시 핵심 숫자: 자기주식 취득 규모 (2026-06-23, Claude)
 - What changed: 자사주 매입(`treasury_buy`) 공시 신호에 취득예정 주식수·금액(억원)을 사실 절로 덧붙이는 graceful enrich를 추가. Pass 5(임원 보유변동)와 동일 패턴.
   - 신설 `src/lib/treasuryDetails.ts`(`enrichTreasury`) + 신설 스캐폴드 `scripts/fetch_treasury_details.py`(DART `tsstkAqDecsn.json` → `public/data/treasury-signals.json`).

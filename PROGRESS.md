@@ -5,6 +5,23 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · 데이터 신뢰 레이어 Phase 2 — 공시/백테스트/상태/산식 이력 확장 (Task 18, Claude)
+- 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 2차/3차 범위(§10.4·§10.5·§12·§13·§17.1). Task 17의 전역 `dataStatus` 단일 소스를 공시 제한 배지·백테스트 한계 배지·`/status` 분리 상태·산식 변경 이력·빌드 타임 버전 단언까지 확장. 투자 추천/매수 유도 카피 0(비자문 톤 유지). branch `ai-center/task-18-ornscore-phase-2` @ `87b606c`(클린)에서 시작.
+- 변경/신규 파일:
+  - `src/lib/dataStatus.ts`: ⭐ `domainStatuses`(가격/재무/공시/산식 4종, 각 `{key,label,status,statusLabel,meaning,detail}`) 추가 + `dataStatus.domainStatuses`로 노출. **실판정**: 재무는 `realStockPool`에서 PER/PBR 결측(0/비숫자) 종목 비율 > 3%면 `partial` 아니면 `normal`(현재 결측 1/138=0.7% → `normal`, detail에 결측 종목수 표기), 가격은 전역 `status`(stale→`delayed`) 재사용, 공시는 항상 `limited`(최신 200건), 산식은 `metricsVersion` 메타 유무로 `normal`/`error`. `EXPECTED_METRICS_VERSION="2.4"`·`metricsChangelogPath="/guide/metrics/changelog"` 상수 export(스펙 예시 날짜 하드코딩 안 함).
+  - `src/app/disclosures/page.tsx`: 헤더에 `제한 수집` `DataStatusBadge`(limited 톤) + 필터 근처 `<details>` 접근 가능 보조설명(`dataStatus.limits.disclosure` + 누락 가능성). 서버 렌더 유지, 모바일 wrap.
+  - ⭐ `src/components/BacktestLimitBadges.tsx`: 한계 배지 4종(`아이디어 검증용·현재 종합점수 검증 아님·생존편향 가능·슬리피지 단순화`) 차분한 slate pill, flex-wrap(모바일 2×2). 성과/수익/추천 표현 없음. `/backtest`(준비중 분기)·`BacktestClient`(실데이터 분기 헤더) **양쪽**에 배치(기존 긴 주의 문구 보존).
+  - `src/app/status/page.tsx`: 기존 스냅샷 그리드 아래 `데이터 종류별 상태` 섹션 신설 — `dataStatus.domainStatuses`를 4행으로 매핑(`DataStatusBadge` 색+단어, 모바일 1열 스택). 기존 데이터 소스 리스트 보존, 가격은 `갱신 지연` 정직 유지(2026.06.16 staleness 미은폐), `/guide/metrics/changelog` 링크 추가. 신선도 재계산 안 함(단일 소스).
+  - ⭐ `src/app/guide/metrics/changelog/page.tsx`: 산식 변경 이력 스켈레톤(서버, metadata, `← 지표 가이드로`). 현재 `Metrics 2.4`·적용일(`dataStatus.metricsEffectiveDate`)·변경 요약·`현재 운영` 배지·향후 변경 기록 위치 안내. 버전/적용일 전부 `dataStatus`에서 파생(하드코딩 0).
+  - `src/app/guide/metrics/page.tsx`: 산식 버전 줄에 `산식 변경 이력 보기` 상호 링크 추가.
+  - `src/lib/metrics.ts`: **드리프트 수정** — 주석의 `Metrics v2.3`(2곳)을 `Metrics 2.4`로 교정. 가이드가 GitHub `metrics.ts`(참조 구현)를 링크하는데 데이터/푸터는 2.4·주석은 v2.3로 어긋나던 공개 불일치(스펙 이슈1 P0). 빌드 단언이 실제로 잡아냄.
+  - `scripts/verify_metrics.py`: §17.1 산식 버전 일치 단언 추가 — (a) `stocks.json metricsVersion == "2.4"`(EXPECTED_METRICS_VERSION) 단언, (b) `src/` 전체에서 하드코딩 `Metrics x.y` 토큰이 2.4와 다르면 검출(`RE_METRICS_TOKEN`). 둘 다 exit-1 경로에 합류. 기존 composite/momentum/브랜드 게이트 무변경.
+- 카피 안전: 신규/변경 사용자 노출 문자열 비자문만(제한 수집·최신 200건·아이디어 검증용·생존편향 가능·산식 변경 이력 등). verify_metrics 금칙어 게이트 0건.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·**산식 버전 일치 0건 불일치**, exit 0 — 단, 1차 실행에서 metrics.ts v2.3 드리프트 2건 검출→교정 후 통과) · `npm run build`(타입게이트·138p 프리렌더, `/guide/metrics/changelog` 신규 라우트 추가, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /disclosures /backtest /status /guide/metrics /guide/metrics/changelog /stock/005930` 전부 200. SSR grep: /disclosures `제한 수집`+`수집 범위 안내`, /backtest 4배지 전수, /status `데이터 종류별 상태`+가격(갱신 지연)·재무(데이터 정상·결측 detail)·공시(제한 수집)·산식(데이터 정상)·`산식 변경 이력` 링크, /guide/metrics/changelog `Metrics 2.4`·`현재 운영`, /guide/metrics `산식 변경 이력 보기` 링크 모두 렌더.
+- 잔여 리스크: (1) 백테스트 배지는 두 분기 모두 코드/타입 통과하나 런타임은 활성 분기(현재 실데이터 ready)만 렌더. (2) `metricsEffectiveDate`는 전용 필드 부재로 generatedAt 파생(Task 17부터 동일). (3) financial partial 임계 3% 고정값(현재 결측 0.7%라 normal) — 결측 급증 시 partial로 자동 전환. (4) 산식 버전 단언은 데이터 메타+소스 리터럴만 검사(동적 `metricsVersionLabel` 표기는 항상 일치).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — /disclosures 제한 배지·필터 details 펼침, /backtest 4배지 모바일 2×2 wrap, /status 도메인 행 모바일 1열 스택·가로 오버플로 없음, changelog 라우트.
+- 다음 구체 OrnScore 태스크(설계서 §23 3차): (a) 데이터 상태 자동 검증 로직 강화(공시 200건 도달 시 limited 실판정·최근 오류 로그 요약), (b) 산식 버전 불일치 배포 차단을 CI(GitHub Actions)에도 연결, (c) 결측률/지연 상태 사용자 공개 범위 조정 + 관리자용 경고, (d) 백테스트 생존편향 실해결(시점별 유니버스 재구성).
+
 ## 2026-06-24 · Repair · Task 17 신뢰 모달 포커스 가로채기 수정 (WCAG 포커스 순서, Claude)
 - Blocker(리뷰 FAIL): `DataTrustModal`의 포커스 복귀 effect가 **초기 마운트에서도 실행**되어 모든 페이지 로드 때마다 헤더 트리거("데이터 기준 보기")로 키보드 포커스를 가로챔. `open` 초기값이 `false`이므로 `useEffect(() => { if (!open) triggerRef.current?.focus?.() }, [open])`가 마운트 시 `!open === true`로 즉시 발화 → DataTrustBar가 헤더/레이아웃에 전역 배치돼 앱 전체 영향(WCAG 2.4.3 포커스 순서 위반).
 - Fix(`src/components/trust/TrustLayer.tsx`): 별도 포커스-복귀 effect 제거하고 복귀 로직을 **open effect의 cleanup으로 이동**. cleanup은 open이 true→false로 바뀔 때(또는 언마운트 시)에만 실행되므로 초기 마운트에서는 절대 발화하지 않음. 열릴 때 닫기 버튼 포커스 / 닫힐 때 트리거 복귀 동작은 동일 보존. 제거된 `eslint-disable react-hooks/exhaustive-deps`도 불필요(통합 effect deps `[open]` 완전 — 나머지는 stable ref/setState).

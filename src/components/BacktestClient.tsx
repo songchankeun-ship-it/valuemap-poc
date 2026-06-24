@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 
 interface StratMetrics {
   totalReturn: number;
@@ -117,6 +118,9 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
           실데이터 검증 · {data.period.from} ~ {data.period.to} ({data.period.years}년) · 유니버스 {data.universe}종목
         </p>
+        <div className="mt-3">
+          <BacktestLimitBadges />
+        </div>
       </header>
 
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-lg p-3 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
