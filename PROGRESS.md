@@ -1,5 +1,28 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 - 비주얼 리뉴얼 #21/#22 공개 반영 마무리 (Codex)
+
+### 완료한 작업
+- 최신 `origin/main`의 daily refresh 데이터 위에 Task #21/#22 홈 비주얼 리뉴얼 커밋만 cherry-pick해 배포 후보 브랜치 `codex/ornscore-visual-renewal-finish` 구성
+- 데이터 파일 되돌림 없이 홈 Hero, ScoreGauge/ScoreBadge/MetricBar/MetricChip, 후보 카드 비주얼 개선을 main에 반영
+- `origin/main`에 `0a621d7`, `a1f2a4e` 푸시 완료
+- 로컬 3000 preview를 새 빌드 기준으로 재시작해 사용자가 바로 확인 가능하게 열어둠
+
+### 테스트 결과
+- `npx tsc --noEmit`: 성공
+- `python scripts/verify_metrics.py`: 성공, 138종목 오류 0건, 금칙어 0건, Metrics 2.4 일치
+- `npm run build`: 성공, 172 static pages 생성
+- 로컬 smoke: `/`, `/stocks`, `/stock/005930`, `/guide/metrics` 모두 HTTP 200
+- 브라우저 확인: desktop/mobile에서 deep-blue Hero, white CTA, 점수 게이지 6개 렌더링, 390px 모바일 가로 넘침 없음
+
+### 현재 상태
+- 로컬 preview: `http://127.0.0.1:3000/`, PID 9372
+- 공개 배포: GitHub `main` 푸시 완료, Vercel/도메인 반영 대기 또는 확인 단계
+
+### 다음에 바로 실행할 작업
+- `https://ornscore.com/` 반영 여부 확인
+- 남은 디자인 확장은 `/today`, `/stocks`, `/stock/[ticker]`로 점수 UI를 확장하는 별도 작업으로 진행
+
 > 최종 설계서(33섹션) 기준 진행 추적. 세션이 끊겨도 이 파일로 이어간다.
 > 규칙: 작은 단위 plan→실행→검증(구문/compile)→기록. 위험한 것만 사용자 확인.
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-24T14:53:43.000Z
+Last updated: 2026-06-25T00:30:00.000+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -25,7 +25,7 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 - Run: 27
 - Status: completed
 - Agent: claude
-- Note: Development completed. Automatic tester failed from external Claude 529 overload followed by local Codex spawn EPERM; manual verification passed and AI Center status was reconciled.
+- Note: Codex finished the visual/design renewal release path on 2026-06-25. Starting from latest `origin/main` (`bf01df1`, daily refresh), cherry-picked Task #21/#22 visual commits only, preserving data refresh files, then pushed `0a621d7` and `a1f2a4e` to `origin/main`. Local preview is running at `http://127.0.0.1:3000/` on PID 9372. Checks passed: `npx tsc --noEmit`, `python scripts/verify_metrics.py`, `npm run build`, local route smoke, and browser desktop/mobile visual checks.
 
 ## Next Agent Checklist
 
