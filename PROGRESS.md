@@ -1,5 +1,40 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (Task 23, Claude)
+
+### 목표
+- 설계서 `ornscore_design_improvement_spec.md` **Phase 3(오늘 페이지 리뉴얼, §7·§15.2·§16.4)**. `/today`를 정보 나열형에서 홈 리뉴얼과 같은 금융 대시보드 첫인상으로 끌어올림. 점수 계산식·데이터 생성·공시 분류 **무변경**, 비자문 톤, 신규 npm 패키지 0. branch `ai-center/task-23-ornscore-phase-3`(시작 `387f6b4`, 클린). 이미 끝난 홈(#21/#22)·필터(#16)·상세(#15)·신뢰 배지(#17/#18)는 **재사용**(중복 구현 안 함).
+
+### 완료한 작업
+- 신규 4파일 `src/components/today/`:
+  - `TodayStatusBar.tsx` — 페이지 최상단 데이터 상태 바. 전역 `dataStatus` 단일 소스만 읽어 데이터 상태·주가 기준일·공시 기준·산식 버전을 한 줄로(데스크톱 가로 / ≤390px 줄바꿈). 신뢰 배지(DataStatusBadge·AsOfDateBadge·MetricsVersionBadge) 재사용.
+  - `TodayTopSection.tsx` — 오늘의 Top 3 큰 카드. 홈 `StockCandidateCard` 재사용(게이지+4지표 막대+강점/주의+CTA), grid 1→sm:2→lg:3.
+  - `SignalSection.tsx` — 신호별 섹션 컨테이너(제목·캡션·반응형 그리드·footnote·EmptyState). 데이터 없으면 억지로 채우지 않고 빈 상태 안내.
+  - `SignalStockCard.tsx` — 컴팩트 종목 카드(ScoreGauge 56 + 이름/코드/업종/가격/등락 + 한 줄 신호 + 카드 전체 링크). 과열 주의는 caution amber 톤.
+- 변경 `src/app/today/page.tsx`:
+  - 추가: 최상단 상태 바, 시장 KPI 4카드(홈 `MarketSnapshotCards` 재사용 — 분석 종목/종합 80+/거래활성도 급증/공시 신호), Top3, 신호별 6섹션(종합 점수 상위·거래활성도 급증·밸류 매력·추세 강함·과열 주의·최근 공시 있음).
+  - 대체(중복 제거): 기존 3 KPI(분석 종목/PER·PBR 중앙값) → 시장 KPI 4카드. `StockTabs`(종합/저평가/추세) → 신호별 6섹션. 하단 amber 공시 블록 → "최근 공시 있음" 섹션 흡수.
+  - 보존: 오늘의 브리핑+AI 인사이트, 최근 장마감 변화, 체크리스트, 푸터 고지.
+
+### 결정 / 잔여
+- 이중 CTA(자세히 보기+비교 추가) → **단일 CTA**로 축소: `/compare`는 `?add=` 파라미터 미지원(localStorage 기반)이라 동작 안 하는 링크를 날조하지 않고 `자세히 보기`(/stock)만.
+- KPI '거래활성도 급증'은 `homeSnapshot.volumeSpikeCount`(거래대금 5d/20d ratio≥1.5, 폴백 flow≥75) **파생 추정** — 캡션·footnote에 명시. 실 데이터 생기면 헬퍼만 교체.
+- 모바일은 테이블 축소 대신 **카드 세로 스택**(grid-cols-1)으로 390px 오버플로우 구조적 회피(§7.5 가로 스냅 스크롤은 후속 옵션).
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·172 pages, `/today` 854 B, exit 0
+- 로컬 prod(127.0.0.1:3250, 운영자 3000/4310 무중단): `/today / /stocks /stock/005380` 모두 HTTP 200. `/today` SSR에 데이터 상태 바·KPI 4·Top3/신호 카드 게이지 34개(aria "종합 점수")·6섹션 제목 전수 렌더, 에러 마커 0. 금칙어 grep = 고지 부정문만.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — `/today` 360~390px 가로 오버플로우 0·상태 바 줄바꿈·KPI 2열·Top3 1열 스택·신호 카드 게이지·CTA 44px·콘솔 오류 0.
+
+### 다음에 바로 실행할 작업
+- Phase 4(`/stocks` 점수 히트맵 테이블), Phase 5(`/stock` 상세 게이지 확장), Phase 6(공시 카드 피드), Phase 7(백테스트 차트). 실 거래량 급증 데이터 소스로 `volumeSpikeCount` 교체.
+
+---
+
 ## 2026-06-25 - 비주얼 리뉴얼 #21/#22 공개 반영 마무리 (Codex)
 
 ### 완료한 작업

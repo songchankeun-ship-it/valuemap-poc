@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-25T00:30:00.000+09:00
+Last updated: 2026-06-25T03:30:00.000+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 22 - OrnScore 비주얼 리뉴얼 1.5 — 홈 첫인상과 점수 대시보드 임팩트 강화
-- Run: 27
+- Task: 23 - OrnScore 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (데이터 상태 바·시장 KPI 4·Top3 큰 카드·신호별 6섹션)
+- Run: 28
 - Status: completed
 - Agent: claude
-- Note: Codex finished the visual/design renewal release path on 2026-06-25. Starting from latest `origin/main` (`bf01df1`, daily refresh), cherry-picked Task #21/#22 visual commits only, preserving data refresh files, then pushed `0a621d7` and `a1f2a4e` to `origin/main`. Local preview is running at `http://127.0.0.1:3000/` on PID 9372. Checks passed: `npx tsc --noEmit`, `python scripts/verify_metrics.py`, `npm run build`, local route smoke, and browser desktop/mobile visual checks.
+- Note: 설계서 Phase 3(오늘 페이지 리뉴얼)을 branch `ai-center/task-23-ornscore-phase-3`에서 구현. `/today`를 홈 리뉴얼과 같은 금융 대시보드 첫인상으로 끌어올림 — 페이지 최상단 데이터 상태 바(전역 dataStatus 재사용), 시장 요약 KPI 4카드(홈 MarketSnapshotCards 재사용), 오늘의 Top 3 큰 카드(홈 StockCandidateCard 재사용), 신호별 6섹션(종합 상위/거래활성도 급증/밸류 매력/추세 강함/과열 주의/최근 공시 있음, 빈 상태 처리). 기존 3개 KPI 카드(PER/PBR 중앙값)와 StockTabs(종합/저평가/추세)는 새 KPI·신호 섹션으로 대체. 점수 계산식·데이터 생성·공시 분류 무변경, 비자문 톤. 신규 npm 패키지 0. 검증 통과: `npx tsc --noEmit`(exit 0), `python scripts/verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4), `npm run build`(exit 0), 로컬 prod(127.0.0.1:3250) `/today /  /stocks /stock/005380` 200·SSR 전 섹션 렌더(게이지 34·에러 0). 운영자 푸시/배포 대기.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,23 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 23 — OrnScore 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-23-ornscore-phase-3`**(시작 `387f6b4`, 클린). 로컬 검증은 prod `127.0.0.1:**3250**`(운영자 3000/4310 무중단, 내 PID만 종료). 외부 공개 주소 갱신·main 머지는 범위 외(운영자).
+- 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 3(§7·§15.2·§16.4)**. `/today`를 정보 나열형에서 홈 리뉴얼과 같은 수준의 금융 대시보드 첫인상으로. 점수 계산식·데이터 생성·공시 분류 **무변경**, 비자문 톤, 신규 npm 패키지 0, `layout.tsx max-w-5xl` 셸 무변경. 이미 끝난 홈 Hero/점수 UI(#21/#22)·필터(#16)·상세 결론(#15)·신뢰 배지(#17/#18) **중복 구현 안 함** — 전부 재사용.
+- 신규 4파일 (`src/components/today/`):
+  - `TodayStatusBar.tsx`(서버): 페이지 최상단 데이터 상태 바. 전역 `dataStatus` 단일 소스만 읽어 **데이터 상태(DataStatusBadge tone=statusTone)·주가 기준일(AsOfDateBadge globalAsOfLabel+장마감)·공시 기준(최근 업데이트)·산식 버전(MetricsVersionBadge metricsVersionLabel)**을 한 줄로. 데스크톱 가로 한 줄, ≤390px 자연 줄바꿈(divider는 `hidden sm:inline`). 두 번째 진실 소스 도입 안 함.
+  - `TodayTopSection.tsx`(서버): 오늘의 Top 3 큰 카드. 홈 `StockCandidateCard` 재사용(게이지+4지표 MetricBar+강점/주의+CTA). grid `1→sm:2→lg:3`. "탐색 우선순위" 톤 카피.
+  - `SignalSection.tsx`(서버): 신호별 섹션 컨테이너(제목·캡션·반응형 카드 그리드·footnote). 데이터 없으면 **EmptyState**("아직 해당하는 종목이 없습니다…") — 억지로 채우지 않음.
+  - `SignalStockCard.tsx`(서버): 컴팩트 종목 카드(ScoreGauge size 56 + 이름/코드/업종/가격/등락 + 한 줄 신호 + 카드 전체 링크). 과열 주의는 `caution` amber 톤.
+- 변경 1파일: `src/app/today/page.tsx`
+  - **추가**: 최상단 `TodayStatusBar`, 시장 KPI 4카드(**홈 `MarketSnapshotCards` 재사용** — 분석 종목/종합 80+/거래활성도 급증/공시 신호), `TodayTopSection`(Top3), 신호별 6섹션(종합 점수 상위=compositeRest slice(3,9) / 거래활성도 급증=flowStats.ratio≥1.5 ∥ flow≥75 / 밸류 매력=topValue / 추세 강함=topMomentum / 과열 주의=r3m≥80 caution / 최근 공시 있음=recentSig를 universe 종목에 매핑).
+  - **대체(중복 제거)**: 기존 3개 KPI 카드(분석 종목/PER 중앙값/PBR 중앙값) → 시장 KPI 4카드. `StockTabs`(종합/저평가/추세 리스트) → 신호별 6섹션. 하단 amber "오늘 먼저 볼 공시 신호" 블록 → "최근 공시 있음" 신호 섹션으로 흡수.
+  - **보존**: 오늘의 브리핑+AI 인사이트, 최근 장마감 변화, 체크리스트, 푸터 고지(하위 신뢰 레이어). `compositeReason`/`valueReason`/`momentumReason`/`strongMetrics`/`riskNote`는 신호 문구·Top3 VM에 재사용.
+- 결정/잔여: (1) **이중 CTA(자세히 보기+비교 추가)는 단일 CTA로 축소** — `/compare`는 `?add=` 파라미터를 받지 않고 localStorage("비교에 추가")로만 동작 → 동작 안 하는 링크를 날조하지 않고 `자세히 보기`(/stock) 단일 CTA만(설계 지침의 "없으면 생략" 따름). (2) KPI '거래활성도 급증'은 실 거래량 급증 데이터 부재로 `homeSnapshot.volumeSpikeCount`(거래대금 5d/20d ratio≥1.5, 폴백 flow≥75) **파생 추정** — 캡션·footnote에 명시. (3) 모바일은 테이블식 축소 대신 **카드 스택**(grid-cols-1) — 가로 스크롤 행 대신 세로 스택으로 390px 오버플로우 구조적 회피. (4) Top3 = compositeOf 상위 3(!isSuspect), 종합 상위 섹션은 4위 이후로 중복 최소화.
+- 검증: `npx tsc --noEmit` exit 0 · `PYTHONUTF8=1 verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4 일치, exit 0) · `npm run build`(타입게이트·172p, `/today` 854 B, exit 0) · 로컬 prod(127.0.0.1:3250) `/today / /stocks /stock/005380` 200 · `/today` SSR에 상태 바(데이터 상태/주가 기준/산식 버전)·KPI 4·Top3+신호 카드 게이지 34개(aria "종합 점수")·6섹션 제목 전수 렌더·에러 마커 0. 변경/신규 파일 금칙어 grep = 비자문 부정문("매수 추천이 아니라"·"매수 신호가 아니며")만(고지 허용).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build로 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — `/today` 360~390px 가로 오버플로우 0·상태 바 줄바꿈·KPI 2열·Top3 1열 스택·신호 카드 게이지 가독성·CTA 44px·콘솔 오류 0.
+- Residual / next: (1) `/today`·`/stocks`·`/stock` 외 전역 라이트 토큰(#F6F8FB) 미도입(범위 외). (2) 실 거래량 급증 데이터 소스 생기면 `homeSnapshot.volumeSpikeCount`만 교체. (3) 신호 섹션 모바일 가로 스냅 스크롤(§7.5 대안)은 현재 세로 스택 — 필요 시 후속. (4) Phase 4(종목 탐색 히트맵 테이블)·Phase 5(상세 게이지 확장)·Phase 6(공시 카드 피드)·Phase 7(백테스트 차트)가 남은 설계서 단계.
 
 ### Task 22 — OrnScore 홈 비주얼 임팩트 강화 (1.5차) (2026-06-24, Claude)
 - Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-22-ornscore-1.5`**(시작 `a70d4b3` = Task 21, 클린). 외부 공개 주소 갱신·릴리스는 **이번 범위 아님**. 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 회피).
