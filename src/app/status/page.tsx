@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
+import { dataStatus, metricsChangelogPath } from "@/lib/dataStatus";
+import { DataStatusBadge } from "@/components/trust/badges";
 import { getAlertedTickers } from "@/lib/marketAlert";
 
 export const metadata = {
@@ -71,13 +73,34 @@ export default async function StatusPage() {
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">산식 버전</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataMetadata.metricsVersion ?? "—"}</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataStatus.metricsVersionLabel}</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">분석 대상</div>
             <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{realStockPool.length}종목</div>
           </div>
         </div>
+      </section>
+
+      {/* 데이터 종류별 상태 — 가격/재무/공시/산식 분리 (전역 dataStatus 단일 소스 재사용) */}
+      <section>
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">데이터 종류별 상태</div>
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800">
+          {dataStatus.domainStatuses.map((dm) => (
+            <div key={dm.key} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 px-4 py-3">
+              <div className="sm:w-24 shrink-0 text-sm font-medium text-zinc-800 dark:text-zinc-200">{dm.label}</div>
+              <div className="flex-1 min-w-0">
+                <DataStatusBadge tone={dm.status} label={dm.statusLabel} className="text-xs" />
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{dm.detail} · {dm.meaning}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">
+          산식이 바뀌면{" "}
+          <Link href={metricsChangelogPath} className="text-blue-700 dark:text-blue-400 hover:underline">산식 변경 이력</Link>
+          에 기록합니다.
+        </p>
       </section>
 
       {/* 데이터 소스 상태 */}
@@ -99,6 +122,11 @@ export default async function StatusPage() {
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
         데이터는 매주 평일 장 마감 후 클라우드(GitHub Actions)에서 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.
       </p>
+
+      <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-zinc-200 dark:border-zinc-800 pt-4">
+        <Link href="/guide/metrics" className="hover:underline">지표 계산 방식 보기 →</Link>
+        <Link href={metricsChangelogPath} className="hover:underline">산식 변경 이력 →</Link>
+      </nav>
     </div>
   );
 }

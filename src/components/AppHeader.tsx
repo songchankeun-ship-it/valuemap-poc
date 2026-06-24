@@ -9,6 +9,9 @@ import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 import { ThemeToggle } from "./ThemeToggle";
+import { dataStatus } from "@/lib/dataStatus";
+import { MetricsVersionBadge } from "./trust/badges";
+import { DataTrustModal } from "./trust/TrustLayer";
 
 function formatGeneratedAt(iso?: string): string {
   if (!iso) return "";
@@ -111,7 +114,11 @@ export async function AppHeader() {
               )}
             </span>
           </div>
-          <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
+            <span className="hidden sm:inline-flex"><MetricsVersionBadge label={dataStatus.metricsVersionLabel} /></span>
+            <DataTrustModal status={dataStatus} />
+          </div>
         </div>
       </div>
 

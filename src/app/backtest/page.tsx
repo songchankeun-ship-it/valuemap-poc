@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
+import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 
@@ -27,6 +28,8 @@ export default function BacktestPage() {
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
         <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">백테스트 엔진</h1>
       </header>
+
+      <BacktestLimitBadges />
 
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-6">
         <div className="flex items-start gap-3">
@@ -60,9 +63,14 @@ export default function BacktestPage() {
       </section>
 
       <section className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-        <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 일별 종가 (FDR 경유). 138개 종목.
-        벤치마크는 분석 유니버스 138종목 동일가중 매수후보유 전략입니다 (KOSPI·KOSDAQ 같은 실제 시장지수가 아닙니다).
+        <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 일별 종가 (FDR 경유). {realStockPool.length}개 종목.
+        벤치마크는 분석 유니버스 {realStockPool.length}종목 동일가중 매수후보유 전략입니다 (KOSPI·KOSDAQ 같은 실제 시장지수가 아닙니다).
       </section>
+
+      <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-gray-200 dark:border-zinc-800 pt-4">
+        <Link href="/guide/metrics" className="hover:underline">지표 계산 방식 보기 →</Link>
+        <Link href="/status" className="hover:underline">데이터 상태 확인 →</Link>
+      </nav>
     </div>
   );
 }

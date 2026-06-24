@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
+import { dataStatus } from "@/lib/dataStatus";
 
 export const metadata = {
   title: "지표 가이드 — 오른스코어",
@@ -33,7 +34,7 @@ const METRICS = [
     color: "bg-cyan-500",
     desc: "전체 풀 안에서의 상대적 저평가 정도 (PER·PBR 분위).",
     calc: "PER 분위(낮을수록 점수↑) + PBR 분위 평균. 100 = 풀에서 가장 저PER·저PBR.",
-    detail: "분위 기준: 전체 138개 종목 풀 · 한계: 업종 차이 미보정(금융·지주사가 구조적으로 상위에 몰릴 수 있음) — 업종 분위 보정 개발 중.",
+    detail: `분위 기준: 전체 ${dataMetadata.count}개 종목 풀 · 한계: 업종 차이 미보정(금융·지주사가 구조적으로 상위에 몰릴 수 있음) — 업종 분위 보정 개발 중.`,
     high: "전체 풀에서 상대적으로 저평가된 위치. 단, 이유 있는 저평가일 수 있습니다.",
     low: "전체 풀에서 상대적으로 고평가. 성장 기대치가 가격에 이미 반영됐을 수 있습니다.",
   },
@@ -120,7 +121,7 @@ export default function GuidePage() {
           <li>· 무위험률은 <strong>연 3.5%</strong>를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).</li>
           <li>· 종합점수의 <strong>밸류</strong>는 <strong>전체 {dataMetadata.count}개 기준</strong> 분위입니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 별도 참고 지표로, <strong>종합점수에는 포함되지 않습니다.</strong></li>
           <li>· 점수는 <strong className="text-amber-700 dark:text-amber-400">실험 지표</strong>입니다 — 백테스트 검증이 진행 중이라 참고용입니다.</li>
-          <li>· <strong className="text-zinc-900 dark:text-zinc-100">산식 버전: Metrics v{dataMetadata.metricsVersion ?? "—"}</strong>. <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong></li>
+          <li>· <strong className="text-zinc-900 dark:text-zinc-100">산식 버전: {dataStatus.metricsVersionLabel}</strong>{dataStatus.metricsEffectiveDate ? <span className="text-zinc-500 dark:text-zinc-400"> · 적용 {dataStatus.metricsEffectiveDate}</span> : null}. <strong>이 페이지의 설명은 실제 운영 계산식과 동일합니다.</strong> <Link href="/guide/metrics/changelog" className="text-blue-700 dark:text-blue-400 hover:underline">산식 변경 이력 보기</Link></li>
           <li>· 계산 코드 공개(산식 검증용) — <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a> (실제 데이터 생성기) · <a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a> (참조 구현). 점수는 <strong>탐색 우선순위</strong>이며 매수·매도 신호가 아닙니다.</li>
         </ul>
       </section>

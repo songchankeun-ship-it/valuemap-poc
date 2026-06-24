@@ -4,6 +4,101 @@
 > 규칙: 작은 단위 plan→실행→검증(구문/compile)→기록. 위험한 것만 사용자 확인.
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
+> ※ 검증 메모(Task 20): 이 세션에서 Edit 도구가 한글/UTF-8/LF를 보존함을 확인(편집 후 `xxd` 바이트 검사, `git diff --stat`이 변경 줄만 표기·전체 reflow 없음). surgical Edit는 안전, 다만 신규 파일 대량 작성은 기존 python 방식 권장.
+
+## 2026-06-24 · 세부 디자인·UX 다듬기 — 모바일/배지/문구 일관화 (Task 20, Claude)
+- 목표: 원본 요청대로 큰 개편 없이 OrnScore 최근 작업(Task 14~18)의 거칠음을 정리. 8개 점검 화면(`/ /stocks /stock/005930 /disclosures /backtest /status /guide/metrics /guide/metrics/changelog`)에서 모바일 터치/넘침·배지 톤·문구(데이터 기준/산식/제한) 드리프트·다음 단계 링크·중복 카피를 손봄. 점수/데이터 생성 로직·레이아웃 구조 무변경, 비자문 톤 유지. branch `ai-center/task-20-ornscore-qa` @ `980758c`(클린)에서 시작.
+- **미리보기 기준**: 사용자 확인 화면은 **http://127.0.0.1:3000**, 리뷰 기준은 **이 브랜치(`ai-center/task-20-ornscore-qa`)**. 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**(다음 작업으로 남김). 로컬에서 `npm run build`로 `.next`를 재생성했으므로, 운영자가 3000 미리보기를 `next start`로 돌리고 있었다면 **재기동 권장**(stale 청크 400 회피, PROGRESS 하단 Repair 노트 참고).
+- 변경 파일(10개, surgical Tailwind/문구만):
+  - 데이터 드리프트(단일 소스화): `guide/metrics/page.tsx`(밸류 한계 설명 `전체 138개 종목 풀` → `${dataMetadata.count}`), `backtest/page.tsx`(사용 데이터/벤치마크 `138개 종목`·`138종목` 2곳 → `${realStockPool.length}`). 산식 버전/기준일 표기는 이미 전부 `dataStatus` 파생이라 무변경(verify_metrics 버전 게이트 0불일치 재확인).
+  - 배지 톤 일관화: `StocksExplorer.tsx` 헤더 ad-hoc 상태 pill(amber/emerald 수동) → 공유 `DataStatusBadge`(`@/components/trust/badges`, 라벨도 앱 공통 `갱신 지연`/`데이터 정상`·delayed=orange). `DisclosureExplorer.tsx`의 ad-hoc amber `일부 결과 · 최신 200건` 배지·안내문 → **limited=slate**(차분, 경고색 아님)로 통일해 `/disclosures` 헤더 `제한 수집`(slate)과 톤 맞춤. `home/HomeHero.tsx` 상태 점/텍스트 amber·green → 앱 공통 orange(지연)·emerald(정상)로 색 통일.
+  - 모바일 터치 타깃: `home/StockCandidateCard.tsx`(종목 보기 `min-h-[40px]`→`44px`), `home/DisclosureSignalCard.tsx`(종목 보기/DART 버튼 `min-h-[44px] inline-flex items-center` 추가), `DisclosureExplorer.tsx`(기간 칩 `py-1`→`py-1.5`), `StocksExplorer.tsx`(조건 저장/알림 칩 `py-1`→`py-1.5`). 조밀한 필터 칩 군집은 44px 강제 시 레이아웃 왜곡이라 중간값으로 개선.
+  - 다음 단계 CTA: 막다른 사이드 화면에 1줄 nav 추가 — `/backtest`(준비중·실데이터 두 분기)·`/status`에 `지표 계산 방식 보기 → (/guide/metrics)` + (백테스트)`데이터 상태 확인 →`·(상태)`산식 변경 이력 →`. 메인 흐름(홈→/stocks→상세→가이드)은 이미 연결돼 무변경.
+  - 중복 카피 정리: `stock/PriorityScoreCard.tsx`의 `매수·매도 추천이 아닌 탐색 우선순위입니다.` 1줄 제거 — 바로 아래 `StockConclusionHero` 하단 고지 박스가 동일 문구를 표기(같은 화면 100px 내 중복). 필수 고지 라인은 보존(히어로 박스에 유지).
+- 카피 안전: 신규/변경 사용자 노출 문자열 비자문만(갱신 지연·데이터 정상·일부 결과·지표 계산 방식 보기·데이터 상태 확인 등). 추천/매수/매도/수익 보장 톤 0. verify_metrics 금칙어 게이트 0건.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0, `/stocks` 12.2 kB·`/disclosures` 9.54 kB) · 로컬 prod(127.0.0.1:3100, 내 PID(10808)만 taskkill, 4310 AI Dev Center·3000 미리보기 무중단) 8개 점검 라우트 전부 200·에러 마커 0. SSR grep 확인: /backtest `138개 종목`+신규 nav, /status 신규 nav, /guide/metrics `전체 138개 종목 풀`, /stocks `갱신 지연`(현재 지연 상태)·`데이터 정상` 공유 배지, /disclosures `제한 수집` 렌더.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl+SSR grep+build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 360~390px에서 후보/공시 카드 버튼 44px·기간 칩 탭, /stocks·홈 상태 배지 색(주황/에메랄드)·/disclosures 제한 배지 slate, /backtest·/status 하단 nav 줄바꿈, 종목 상세 고지 1줄(중복 제거) 확인.
+- 잔여 리스크/결정: (1) 조밀 필터 칩은 44px 미만(py-1.5≈30px) — 칩 군집 시각 보존 위해 의도적 중간값. (2) `/backtest`의 두 긴 주의 문단(상단 요약 + 하단 방법론)은 역할이 달라 보존, 일부 어구(편도 0.3%·슬리피지) 중복은 잔존 — 필수 고지 삭제 리스크 회피 우선. (3) 클라이언트 컴포넌트(StocksExplorer/DisclosureExplorer)는 번들 비대화 회피 위해 `dataStatus` 직접 import 대신 props/리터럴 유지(제한 문구 `최신 200건`은 의미 동일). (4) 외부 공개 주소(valuemap.kr) 미갱신 — 의도된 범위 외.
+- 다음 추천 작업: (a) **외부 공개 주소 갱신/릴리스 절차**(이번 보류분) — main 머지·Vercel 배포 후 valuemap.kr 확인. (b) DisclosureExplorer/StocksExplorer 제한 문구를 서버 props로 주입해 완전 단일 소스화. (c) Playwright 도입 시 360/390px 모바일 게이트 자동화. (d) 설계서 §23 3차 OrnScore 본작업(데이터 상태 자동검증 강화·CI 산식 버전 단언·백테스트 생존편향 실해결) 재개.
+
+## 2026-06-24 · 데이터 신뢰 레이어 Phase 2 — 공시/백테스트/상태/산식 이력 확장 (Task 18, Claude)
+- 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 2차/3차 범위(§10.4·§10.5·§12·§13·§17.1). Task 17의 전역 `dataStatus` 단일 소스를 공시 제한 배지·백테스트 한계 배지·`/status` 분리 상태·산식 변경 이력·빌드 타임 버전 단언까지 확장. 투자 추천/매수 유도 카피 0(비자문 톤 유지). branch `ai-center/task-18-ornscore-phase-2` @ `87b606c`(클린)에서 시작.
+- 변경/신규 파일:
+  - `src/lib/dataStatus.ts`: ⭐ `domainStatuses`(가격/재무/공시/산식 4종, 각 `{key,label,status,statusLabel,meaning,detail}`) 추가 + `dataStatus.domainStatuses`로 노출. **실판정**: 재무는 `realStockPool`에서 PER/PBR 결측(0/비숫자) 종목 비율 > 3%면 `partial` 아니면 `normal`(현재 결측 1/138=0.7% → `normal`, detail에 결측 종목수 표기), 가격은 전역 `status`(stale→`delayed`) 재사용, 공시는 항상 `limited`(최신 200건), 산식은 `metricsVersion` 메타 유무로 `normal`/`error`. `EXPECTED_METRICS_VERSION="2.4"`·`metricsChangelogPath="/guide/metrics/changelog"` 상수 export(스펙 예시 날짜 하드코딩 안 함).
+  - `src/app/disclosures/page.tsx`: 헤더에 `제한 수집` `DataStatusBadge`(limited 톤) + 필터 근처 `<details>` 접근 가능 보조설명(`dataStatus.limits.disclosure` + 누락 가능성). 서버 렌더 유지, 모바일 wrap.
+  - ⭐ `src/components/BacktestLimitBadges.tsx`: 한계 배지 4종(`아이디어 검증용·현재 종합점수 검증 아님·생존편향 가능·슬리피지 단순화`) 차분한 slate pill, flex-wrap(모바일 2×2). 성과/수익/추천 표현 없음. `/backtest`(준비중 분기)·`BacktestClient`(실데이터 분기 헤더) **양쪽**에 배치(기존 긴 주의 문구 보존).
+  - `src/app/status/page.tsx`: 기존 스냅샷 그리드 아래 `데이터 종류별 상태` 섹션 신설 — `dataStatus.domainStatuses`를 4행으로 매핑(`DataStatusBadge` 색+단어, 모바일 1열 스택). 기존 데이터 소스 리스트 보존, 가격은 `갱신 지연` 정직 유지(2026.06.16 staleness 미은폐), `/guide/metrics/changelog` 링크 추가. 신선도 재계산 안 함(단일 소스).
+  - ⭐ `src/app/guide/metrics/changelog/page.tsx`: 산식 변경 이력 스켈레톤(서버, metadata, `← 지표 가이드로`). 현재 `Metrics 2.4`·적용일(`dataStatus.metricsEffectiveDate`)·변경 요약·`현재 운영` 배지·향후 변경 기록 위치 안내. 버전/적용일 전부 `dataStatus`에서 파생(하드코딩 0).
+  - `src/app/guide/metrics/page.tsx`: 산식 버전 줄에 `산식 변경 이력 보기` 상호 링크 추가.
+  - `src/lib/metrics.ts`: **드리프트 수정** — 주석의 `Metrics v2.3`(2곳)을 `Metrics 2.4`로 교정. 가이드가 GitHub `metrics.ts`(참조 구현)를 링크하는데 데이터/푸터는 2.4·주석은 v2.3로 어긋나던 공개 불일치(스펙 이슈1 P0). 빌드 단언이 실제로 잡아냄.
+  - `scripts/verify_metrics.py`: §17.1 산식 버전 일치 단언 추가 — (a) `stocks.json metricsVersion == "2.4"`(EXPECTED_METRICS_VERSION) 단언, (b) `src/` 전체에서 하드코딩 `Metrics x.y` 토큰이 2.4와 다르면 검출(`RE_METRICS_TOKEN`). 둘 다 exit-1 경로에 합류. 기존 composite/momentum/브랜드 게이트 무변경.
+- 카피 안전: 신규/변경 사용자 노출 문자열 비자문만(제한 수집·최신 200건·아이디어 검증용·생존편향 가능·산식 변경 이력 등). verify_metrics 금칙어 게이트 0건.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·**산식 버전 일치 0건 불일치**, exit 0 — 단, 1차 실행에서 metrics.ts v2.3 드리프트 2건 검출→교정 후 통과) · `npm run build`(타입게이트·138p 프리렌더, `/guide/metrics/changelog` 신규 라우트 추가, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /disclosures /backtest /status /guide/metrics /guide/metrics/changelog /stock/005930` 전부 200. SSR grep: /disclosures `제한 수집`+`수집 범위 안내`, /backtest 4배지 전수, /status `데이터 종류별 상태`+가격(갱신 지연)·재무(데이터 정상·결측 detail)·공시(제한 수집)·산식(데이터 정상)·`산식 변경 이력` 링크, /guide/metrics/changelog `Metrics 2.4`·`현재 운영`, /guide/metrics `산식 변경 이력 보기` 링크 모두 렌더.
+- 잔여 리스크: (1) 백테스트 배지는 두 분기 모두 코드/타입 통과하나 런타임은 활성 분기(현재 실데이터 ready)만 렌더. (2) `metricsEffectiveDate`는 전용 필드 부재로 generatedAt 파생(Task 17부터 동일). (3) financial partial 임계 3% 고정값(현재 결측 0.7%라 normal) — 결측 급증 시 partial로 자동 전환. (4) 산식 버전 단언은 데이터 메타+소스 리터럴만 검사(동적 `metricsVersionLabel` 표기는 항상 일치).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — /disclosures 제한 배지·필터 details 펼침, /backtest 4배지 모바일 2×2 wrap, /status 도메인 행 모바일 1열 스택·가로 오버플로 없음, changelog 라우트.
+- 다음 구체 OrnScore 태스크(설계서 §23 3차): (a) 데이터 상태 자동 검증 로직 강화(공시 200건 도달 시 limited 실판정·최근 오류 로그 요약), (b) 산식 버전 불일치 배포 차단을 CI(GitHub Actions)에도 연결, (c) 결측률/지연 상태 사용자 공개 범위 조정 + 관리자용 경고, (d) 백테스트 생존편향 실해결(시점별 유니버스 재구성).
+
+## 2026-06-24 · Repair · Task 17 신뢰 모달 포커스 가로채기 수정 (WCAG 포커스 순서, Claude)
+- Blocker(리뷰 FAIL): `DataTrustModal`의 포커스 복귀 effect가 **초기 마운트에서도 실행**되어 모든 페이지 로드 때마다 헤더 트리거("데이터 기준 보기")로 키보드 포커스를 가로챔. `open` 초기값이 `false`이므로 `useEffect(() => { if (!open) triggerRef.current?.focus?.() }, [open])`가 마운트 시 `!open === true`로 즉시 발화 → DataTrustBar가 헤더/레이아웃에 전역 배치돼 앱 전체 영향(WCAG 2.4.3 포커스 순서 위반).
+- Fix(`src/components/trust/TrustLayer.tsx`): 별도 포커스-복귀 effect 제거하고 복귀 로직을 **open effect의 cleanup으로 이동**. cleanup은 open이 true→false로 바뀔 때(또는 언마운트 시)에만 실행되므로 초기 마운트에서는 절대 발화하지 않음. 열릴 때 닫기 버튼 포커스 / 닫힐 때 트리거 복귀 동작은 동일 보존. 제거된 `eslint-disable react-hooks/exhaustive-deps`도 불필요(통합 effect deps `[open]` 완전 — 나머지는 stable ref/setState).
+- Passed: `npx tsc --noEmit` exit 0. 동작 분석: 마운트(open=false)→effect early-return, cleanup 미등록 → 포커스 미탈취 / open false→true→닫기버튼 포커스 / true→false→cleanup이 트리거 복귀. 기능·문구·레이아웃 무변경(effect 2개→1개 통합, 순수 동작 수정).
+- 잔여: lint는 프로젝트 ESLint 비대화식 미구성(next lint 설정 프롬프트)로 미실행 — tsc가 유효 게이트. Playwright 미구성으로 AI Center 브라우저 게이트는 운영자 확인 권장(모달 열기/ESC, 출처 배지 클릭).
+- 다음 구체 OrnScore 태스크(불변): Phase 2 — (a) `/disclosures` `제한 수집` 배지, (b) `/backtest` 한계 배지 4종, (c) `/status` 섹션 확장 + `/guide/metrics/changelog` 스켈레톤, (d) 빌드 타임 산식 버전 일치 단언 + partial/limited/error 상태 실판정.
+
+## 2026-06-24 · 데이터 신뢰 레이어 1차 — 전역 DataStatus + 신뢰 배지/모달 (Task 17, Claude · 4단계/Phase 1)
+- 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 1차 범위(§23 1차 개발). 전 페이지에 흩어진 데이터 기준일·산식 버전·데이터 상태·출처·제한·투자 고지를 **단일 `dataStatus` 소스 + 재사용 신뢰 배지**로 통합. Task 14(홈)·15(종목 상세)·16(/stocks) 완료본 위에서 시작(branch `ai-center/task-17-ornscore-1` @ `5112c14`, 클린 확인).
+- 신규 파일:
+  - ⭐ `src/lib/dataStatus.ts` — 전역 신뢰 단일 소스. `dataMetadata`(stocks.json)에서 파생: `globalAsOfDate`(20260616)·`globalAsOfLabel`(formatBizDateLong)·`marketDateLabel`(모바일 압축)·`status`(isDataStale→normal/delayed, partial/limited/error는 타입·메타 예약)·`statusLabel`/`statusMeaning`/`statusTone`·`universeCount`(138)·`metricsVersion`(2.4)·`metricsVersionLabel`(**단일 표기 "Metrics 2.4"**)·`metricsEffectiveDate`(전용 필드 부재 → generatedAt 날짜 파생 "2026.06.16")·`sources`(KRX/Naver Finance/yfinance/DART 사용목적 §9)·`notices`(투자/점수 비자문 고지)·`limits`(공시 200건·백테스트). 스펙 예시 날짜 하드코딩 안 함(실값만).
+  - ⭐ `src/components/trust/badges.tsx` — 순수 프레젠테이션 프리미티브: `DataStatusBadge`(● + 상태 단어, 색상 외 단어 항상 노출 §20)·`AsOfDateBadge`·`MetricsVersionBadge`. 상태 톤 5색(normal emerald / partial yellow / delayed orange / limited slate / error red).
+  - ⭐ `src/components/trust/TrustLayer.tsx`("use client") — `DataSourceBadges`(출처 배지: 클릭/포커스 토글 상세, hover 의존 금지, aria-expanded/describedby)·`DataTrustModal`(트리거 버튼 "데이터 기준 보기" → 다이얼로그: 기준일·출처·산식·상태·제한·투자 고지, ESC/닫기/백드롭, 열릴 때 닫기 버튼 포커스·닫힐 때 트리거 복귀)·`DataTrustBar`(데스크톱 전체 / 모바일 압축 1줄 + 트리거). 서버가 `dataStatus`를 직렬화 props로 주입(클라이언트가 stocks.json 미번들).
+- 통합(전 화면 단일 소스 참조):
+  - `src/components/AppHeader.tsx`: 기존 서브바(둘째 줄) 우측에 `MetricsVersionBadge`(sm+) + `DataTrustModal` 트리거 추가. 기존 날짜/신선도 표시·KRX·Naver 텍스트·WelcomeToast 보존, 둘째 바 신설 안 함(`sm:hidden`/`hidden sm:inline` 반응형 유지).
+  - `src/app/layout.tsx` 푸터: 날짜·산식·상태를 전부 `dataStatus`로 교체("데이터 {globalAsOfLabel} 장마감 · 산식 Metrics 2.4 · 데이터 상태 …"). realStocks 직접 import 제거.
+  - `src/app/guide/metrics/page.tsx`: **`Metrics v{ver}` → `metricsVersionLabel`("Metrics 2.4")로 stray `v` 제거** + 적용일 표기. (스펙 §3.2/이슈1 P0 해소.)
+  - `src/app/status/page.tsx` 스냅샷 산식 버전: `metricsVersionLabel`.
+  - `src/components/stock/PriorityScoreCard.tsx` + `src/app/stock/[ticker]/page.tsx`: 점수 카드 칩·데이터 기준 블록 산식 버전을 `metricsVersionLabel`로 통일(칩의 "산식 " 중복 접두 제거 → "Metrics 2.4").
+  - `/stocks`(StocksExplorer)는 이미 "Metrics {ver}" = "Metrics 2.4" 렌더 → 무변경(일치 확인).
+- 카피 안전: 신규/변경 파일 비자문(기준일·출처·산식·상태·제한·non-advice)만. 금칙어 grep 0(추천 종목/매수 후보/상승 가능성/급등 예상 등). 투자 고지는 설계서 §21 지정 부정문만.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /stock/005930 /guide/metrics /status` 전부 200·에러 마커 0, **5라우트 모두 "Metrics 2.4" 노출·"Metrics v" 0건·as-of 2026.06.16 일치**, 헤더 "데이터 기준 보기" 트리거·출처 사용목적(PER·PBR·ROE·배당) SSR 렌더, 푸터 "산식 Metrics 2.4" 렌더.
+- 중요 관찰: 실데이터가 기준일(20260616)로부터 6영업일 경과 → `dataStatus.status = "delayed"`("갱신 지연"). 따라서 헤더(amber)·푸터("갱신 지연 확인")·모달·`/status`("갱신 지연 가능")가 **모두 동일하게 지연 상태 정직 표기**(스펙 예시의 "정상"은 당일 데이터 가정). 상태 시스템이 의도대로 단일 소스에서 일관 동작함을 입증.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 모달 클릭 열기/ESC·닫기, 출처 배지 클릭 툴팁, 모바일 압축 1줄·오버플로 없음(`/ /stocks /stock/005930 /guide/metrics /status`).
+- 잔여 리스크: (1) status는 Phase-1에서 normal/delayed만 계산(partial/limited/error는 타입·메타만 예약, 정적). (2) metricsEffectiveDate는 전용 필드 부재로 generatedAt 날짜 파생(스펙 §8의 전용 적용일 필드 없음). (3) Nice-to-have 미착수(아래 다음 태스크).
+- 다음 구체 OrnScore 태스크(설계서 §23 2차/3차 · Phase 2): (a) `/disclosures` 헤더 `제한 수집` 배지 + 기간 필터 툴팁, (b) `/backtest` 상단 한계 배지 4종(아이디어 검증용·현재 종합점수 검증 아님·생존편향 가능·슬리피지 단순화), (c) `/status` 섹션 확장(가격/재무/공시/산식 분리 상태) + `/guide/metrics/changelog` 스켈레톤, (d) 빌드 타임 산식 버전 일치 단언(§17.1) 및 partial/limited/error 상태 실판정(재무 결측률·공시 200건 도달).
+
+## 2026-06-24 · 종목 탐색 필터 UI 1차 — 질문형 탐색 보드 (Task 16, Claude)
+- 목표: 설계서 `ornscore_stock_filter_ui_spec_v1.md` 1차 범위(§24). `/stocks`를 '단순 필터/정렬 화면'에서 '질문형 주식 탐색 보드'로 개편 — 첫 화면 3초 안에 "질문을 누르면 오늘 확인할 종목이 자동으로 좁혀지는 화면" 가치 전달. 비자문 톤 유지(확인 후보/먼저 볼 종목/급등 사유 확인 톤, 추천·매수 언어 금지).
+- 변경 파일:
+  - `src/app/stocks/page.tsx`: `dataMetadata·formatBizDateLong·isDataStale` import, 종목별 `r3m`(returns.r3m) 추가, `StocksExplorer`에 `totalCount·asOf·metricsVersion·dataStale` props 전달. 계산은 전부 서버사이드 유지, plain props. `?theme=` 딥링크·`revalidate=3600`·`generateMetadata` 보존.
+  - `src/lib/savedSearches.ts`: `SavedSearchConfig`에 `momentumMin/flowMin/valueMin/volMin?` 추가(저장/알림 config가 새 점수-min 필드 보존, jsonb 저장이라 마이그레이션 불필요).
+  - `src/components/StocksExplorer.tsx`(대규모 개편, 전부 보존+추가):
+    1) 헤더: 제목 `오늘 확인할 종목 찾기`·본문·`조건 충족 N / 전체 {total}`·`{asOf} 장마감 · Metrics {ver} · 데이터 정상/지연` 배지·상시 `투자 추천 아님 · 탐색 도구` 고지.
+    2) 질문형 프리셋 8종을 **카드 UI**로 격상(섹션 `어떤 종목을 찾고 있나요?` + 보조문구, 데스크톱 3열/모바일 1열 스택). 카드 = 심볼·제목·설명·조건 배지(config에서 도출)·예상 결과 수(전체 풀 독립 계산)·선택 상태(`aria-pressed`·✓·블루). 기존 5종 config 보존 + 신규 3종(밸류+추세 동시 value70·momentum70·vol50 / 최근 흐름 강한 momentum80+주의 / 급등했지만 위험한 r3m desc+주의). 클릭=적용, 재클릭=해제(toggle).
+    3) 빠른 프리셋 칩(보조)을 설계서 11종으로 확장(저평가/추세 강세/저PBR/밸류+추세/균형 종목/ROE 우수/배당 있음/대형주/소형주/급등 위험/거래 급증), 단일 선택·선택 강조(✓). 질문 카드와 시각 구분(칩 vs 카드).
+    4) **현재 적용 조건 요약 바**(결과 바로 위, 상시): 조건 태그(activeChips 재사용)·`조건 충족 N / 전체 M`·자연어 설명(`describeConditions()` — 필터없음/테마/질문형/상세 4상태)·`조건 저장`/`이 조건 알림`/`초기화`(초기화는 §16대로 confirm). 기존 별도 칩 행은 요약 바로 통합(중복 제거).
+    5) 정렬 `<optgroup>` 3그룹화(ORNSCORE 점수 5종+거래활성도 / 재무 5종 / 움직임·위험 r3m). 변동성·낙폭 정렬은 필드 미전달이라 다음 태스크로 명시.
+    6) 결과 카드 = '탐색 후보 카드': insights 혼합 블록을 `✓ 강점`(emerald, 점수≥70)·`⚠ 주의`(amber, 점수<40·가격 하락 중·r3m≥50 급등 주의) 두 그룹으로 분리(색+아이콘+텍스트). 종목명/코드/시장/가격/등락/시총/종합·4지표/핵심 재무/테마·`/stock/{ticker}` Link prefetch=false 보존.
+    7) 결과 없음 강화: 제목 `조건에 맞는 종목이 없습니다.`+본문+`조건 완화하기`/`전체 종목 보기`(둘 다 resetFilters).
+    8) 상세 필터: 기본 접힘 유지(데스크톱 아코디언/모바일 바텀시트), ORNSCORE 지표 슬라이더(종합+추세/거래활성도/밸류/위험조정) 추가로 새 min 조정 가능. 기존 컨트롤 0 제거.
+- 순수 로직 분리: `matchesConfig(stock, FilterConfig)`(기존 filtered와 동일 의미, 새 min은 0이면 비제약)·`presetToConfig`·`presetCounts`(전체 풀 독립 카운트, count-vs-full-pool 주석). 기본 `/stocks` 결과셋은 default config(PER 200·PBR 30 상한, 나머지 0)에서 기존과 동일.
+- 카피 안전: 신규/변경 파일 금칙어 13종 grep 0(급등할 종목/사야 할 종목/추천 종목/매수 후보/상승 가능성/급등 예상/수익 기대/매수 적기/투자 매력도 등). 위험 질문(최근 흐름·급등 위험)은 `급등 사유 확인 필요` 톤만.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0, `/stocks` 11.8 kB) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /today /disclosures /stock/005930` 200·에러 마커 0, `/stocks` SSR에 신규 카피(제목·`어떤 종목을 찾고 있나요`·`현재 조건`·`투자 추천 아님`·`급등했지만 위험한 종목`·`밸류 + 추세 동시`·`강점`·`주의`·`ORNSCORE 점수` optgroup) 렌더. `?theme=2차전지`(URL 인코딩) 200·테마칩·테마 describe 문장 렌더(딥링크 보존).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl smoke + SSR grep + build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, `/stocks` 포함) 실행 권장** — 질문 카드 그리드·선택 상태·요약 바·강점/주의 분리·정렬 그룹·모바일 1열 스택·터치 타겟 확인.
+- 잔여 리스크/결정: (1) `/stocks`는 클라 컴포넌트라 초기 상태는 SSR, 인터랙션은 CSR. (2) presetCounts는 '그 프리셋만 적용 시 N개'(현재 활성 필터와 무관) — 의미를 카드에 '예상 결과'로 표기. (3) 빠른 칩은 이번 패스 단일 선택(설계서 §9 다중 AND는 다음 태스크). (4) 변동성·낙폭 정렬은 필드 미전달로 보류.
+- 다음 구체 OrnScore 태스크(설계서 §24 2차): (a) 탐색 모드 탭(질문/지표/직접) + 보기 방식(카드/표/압축) 추가, (b) 빠른 칩 다중 선택 AND + 칩 변경 시 실시간 예상 결과 수, (c) 결과 없음 자동 완화 제안(예: 밸류 80+→70+로 N개 추가), (d) 변동성·낙폭 정렬용 volStats 필드(annualStd·maxDrawdown)를 page.tsx에서 전달.
+
+## 2026-06-24 · 종목 상세 결론 카드 1차 (Task 15, Claude)
+- 목표: 설계서 `ornscore_stock_detail_conclusion_card_spec_v1.md` 1차 범위. 종목 상세 상단을 '정보 나열'에서 '결론 카드'로 개편 — 첫 화면 10초 안에 ①이 종목은 어떤 성격의 후보인가 ②왜 우선 확인 후보인가 ③다음에 무엇을 확인할까 에 답. 비자문 언어 유지(추천/미래가격 금지, 확인/우선/급등 사유 확인 톤).
+- 신규 컴포넌트(전부 서버·순수 프레젠테이션, Write로 UTF-8/noBOM/LF 작성):
+  - `src/components/stock/StockConclusionHero.tsx` — 상단 결론 카드 컴포저. 모바일 순서: 종목명/현재가 → 탐색 우선도 → 현재 결론 → 강점/주의 → 다음 확인 → 고지. 위험 경고(급등/과열)는 점수 카드와 분리된 별도 바.
+  - `StockHeader.tsx`(업종 태그·종목명 최대·코드 + LivePrice/관심·비교·공유 슬롯 + 기준일 장마감 라벨), `PriorityScoreCard.tsx`(라벨 '탐색 우선도'·`N / 100`·전체/업종 순위·필수데이터%·이상값 점검·산식 버전·'매수·매도 추천이 아닌 탐색 우선순위' 고지·인디고+중립 팔레트), `ConclusionSummaryCard.tsx`(제목 '현재 결론'·유형+요약+주의점), `StrengthWarningPanel.tsx`(강점 emerald / 주의 amber, md 2열·모바일 스택, '확인 필요' 톤), `NextActionButtons.tsx`(공시로 이유 확인 #disclosures / 재무로 실적 확인 #financials / 점수 계산 근거 #basis / 업종 내 위치 보기 #summary, min-h-44px).
+  - `src/lib/conclusion.ts` — `classifyConclusion({momentum,flow,value,vol,surge3m})` 순수 함수. 설계서 §6.3 표를 보수적 우선순위로 매핑(균형형/저평가+추세/시장 관심 급증/과열 주의/저평가 대기/단기 이슈 확인/변동성 주의). summary는 강점·약점만 기술(방향 예측 금지), riskNote는 확인 톤. 강점>=70·주의<50으로 페이지 기존 convention과 일치.
+- `src/app/stock/[ticker]/page.tsx`: 기존 `<header>`+'결론 헤드라인' 섹션을 `<StockConclusionHero .../>`로 교체. 이미 계산된 값(composite·reason·ranks·completeness·surge3m·dataWarnings·mySector·priceAsOf·metricsVersion) 재사용. 강화 고지 2줄('매수·매도 추천이 아닌 탐색 우선순위'+'향후 수익률을 의미하지 않습니다') 노출. 죽은 코드 정리(scoreTone/tone/grade/gradeOf 제거 — 구 헤드라인 전용). RecentViewTracker·breadcrumb·JSON-LD·StockTabs(요약/재무/공시/점수 근거)·generateStaticParams·revalidate 전부 보존. isSuspect(dataWarnings) 임시 점수 회색+고지·Top제외 의미 보존.
+- 설계 결정/잔여: (1) 업종 비교 전용 탭 부재 → '업종 내 위치 보기'는 같은 업종 비교 섹션이 든 요약 탭(#summary) 연결, 2차에서 전용 탭+스무스 스크롤. (2) Nice-to-have(레벨드 RiskAlertCard 완전분리·4지표 미니바·초보자 체크리스트 상단)는 광범위 리팩터 회피 위해 보류 — 단, 급등≥80/과열≥50 위험 바 + 강점/주의 패널로 '점수-위험 분리·강점/주의 시각 분리' 완료 기준은 충족, 초보자 체크리스트는 기존 BeginnerReading(요약 탭)에 존재.
+- 카피 안전: 신규/변경 파일 금칙어 13종(지금 살 만한·상승 가능성·매수 적기·저점 기회·목표가·수익 예상·추천 종목·매수 후보·투자 매력도·급등 예상·수익 기대 등) grep 0.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 taskkill, 4310 AI Dev Center 무중단) `/ /today /stocks /disclosures /stock/005930` 200·에러 마커 0. 종목상세 SSR HTML에 탐색 우선도/현재 결론/강점/주의/4개 다음확인 버튼 라벨/2줄 고지 렌더, 히어로가 '자체 지표 4종' 차트보다 먼저(offset 20557 < 41128).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl smoke + SSR grep + build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, 종목 상세 라우트 포함) 실행 권장**.
+- 위험/한계: 다음확인 앵커(#disclosures 등)는 StockTabs의 클라 hashchange로 탭 전환 — SSR엔 요약 탭만, 앵커 라벨은 빌드 청크/DOM에 존재. 업종 비교 전용 탭은 미구현(요약 탭 대체).
+- 다음 구체 태스크(Phase 2, 설계서 §17 2차 개발): (a) 레벨드 RiskAlertCard 완전 분리(변동성·낙폭 단계), (b) 4지표 미니바 히어로 추가(요약 탭 MetricStrip 중복 없이 단일 소스), (c) 업종 비교 전용 탭 신설 + 다음확인 버튼 스무스 스크롤/탭 전환 인터랙션.
 
 ## 2026-06-24 · 홈 첫 화면 개편 1차 — 탐색 대시보드 (Task 14, Claude)
 - 목표: 설계서 `ornscore_home_redesign_spec_v1.md` 1차 범위. 홈을 '서비스 소개'에서 '오늘의 투자 탐색 대시보드'로 전환. 첫 화면 3초 안에 "오늘 볼 종목을 138개에서 5개로 줄여주는 한국 주식 탐색 보드" 가치 전달. 비자문 언어 유지(추천 종목/매수 후보/상승 가능성/급등 예상/수익 기대 금지).
@@ -311,3 +406,21 @@
 - Fix: `next.config.mjs` phase 함수화 — dev(`PHASE_DEVELOPMENT_SERVER`)만 `distDir='.next-dev'`. prod는 기본 `.next`(Vercel 무영향), URL 불변. `.gitignore`에 `.next-dev/`.
 - Passed: 재기동 dev에서 이전 404 자산 6종 전부 200 + 게이트 5라우트 200·자산 404 0건 · phase별 distDir 확인(dev=.next-dev/prod=undefined) · `tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0.
 - Next two local tasks: (a) `[ticker]` route payload에 fetchedAt 추가 + StockDisclosures 헤더 신선도 라벨(Pass 11 carry). (b) `signalDetailsShared.ts` `toEok`/`matchRow` 단위 assertion 추가.
+
+
+## 2026-06-24 · Repair · Task 15 Playwright DESKTOP 게이트 수정: WelcomeOnboarding 프리페치 abort 제거 (Claude)
+- Blocker: Task 15 Playwright DESKTOP 게이트가 `/stocks?_rsc=…`·`/today?_rsc=…`·`/settings/notifications?_rsc=…` 3건 모두 `net::ERR_ABORTED` 로 실패.
+- Root cause: `_rsc=` 는 Next App Router 의 RSC 뷰포트 프리페치 요청(공유 토큰 1개 = 한 페이지 렌더의 프리페치 배치). 홈(`/`) 익명·신규 브라우저(게이트 조건)에서 `WelcomeOnboarding` 의 두 `<Link>`(Step·DesktopCard)가 `/today`·`/stocks`·`/settings/notifications` 를 동시에 뷰포트 프리페치 → `next dev` 온디맨드 컴파일(로그상 최초 ~21s)이 끝나기 전에 게이트가 다음 단계로 넘어가며 in-flight 프리페치가 취소 → ERR_ABORTED. (Sidebar·MobileBottomNav·home/* Link 들은 이미 `prefetch={false}` 라 무관 — WelcomeOnboarding 만 누락된 단일 출처, 특히 `/settings/notifications` 의 유일한 익명 홈 출처.)
+- Fix: `src/components/WelcomeOnboarding.tsx` 의 `Step`·`DesktopCard` 두 `<Link>` 에 `prefetch={false}` 추가(저장소 기존 nav 컨벤션과 동일). 순수 additive 2줄 — 레이아웃·로직·문구 무변경. prod(Vercel 프리빌드)는 프리페치가 즉시 200이라 영향 없고, dev 게이트에서 abort 가능한 프리페치 자체가 사라짐.
+- Passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 exit 0 · `npm run build` 타입게이트·138p 프리렌더 exit 0 · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /today /stocks /stock/005930` 200, `/settings/notifications` 307(익명→로그인 정상 리다이렉트)·에러 0. 홈 익명 렌더의 trio 프리페치 출처가 0건임을 grep 으로 확인(home/* + Sidebar/MobileBottomNav 전부 prefetch={false}).
+- Residual: Playwright 미구성으로 ERR_ABORTED 소거는 게이트 재실행으로 최종 확인 필요(정적 분석상 프리페치 속성 제거로 구조적 해소). Task 15 기능(결론 카드)은 무변경.
+- Next concrete OrnScore step(변동 없음): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로 추가(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
+
+
+## 2026-06-24 · Repair · Task 15 Playwright 게이트 수정: 홈 stale prod chunk 400 제거 (Claude)
+- Blocker: Playwright DESKTOP·MOBILE 둘 다 `400 http://127.0.0.1:3000/_next/static/chunks/app/page-dfb2719986a20cdc.js — net::ERR_ABORTED` 로 실패(홈 `/` 자체 페이지 청크).
+- Root cause: 환경 staleness 레이스(코드 결함 아님). 포트 3000 의 `next start` 프로세스(PID 33580, 02:55 기동)가 **구 `.next` 빌드**를 메모리에 로드한 채 살아 있었고, 그 뒤(03:12) `npm run build` 가 `.next` 를 덮어써 홈 청크 해시가 `dfb2719986a20cdc`→`eb287862a9283bf0` 로 바뀜. 살아있는 서버는 여전히 구 해시(`dfb27…`)를 참조하는 HTML 을 내려보내는데 그 청크는 디스크에서 사라져 400. (live 서버에서 `curl /` → HTML 이 `app/page-dfb2719986a20cdc.js` 참조, 해당 청크 요청 → 400 으로 재현 확인. 신 청크 `eb287…` 는 BUILD_ID 불일치로 404 → 서버 전체가 stale.)
+- Fix(환경 정리, 소스 무변경): (1) stale `next start`(PID 33580) `taskkill /F` 로 종료 → 3000 free. (2) `npm run clean`(.next 삭제) + `npm run build` 클린 재빌드로 디스크 자가정합. (3) 새 `next start -p 3000` 기동 → 서버가 신 빌드와 일치. Task 15 결론 카드 기능·WelcomeOnboarding 프리페치 수정 모두 무변경.
+- Passed: `npx tsc --noEmit` exit 0 · `npm run build` 138p 프리렌더 exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · 새 서버(3000)에서 홈 HTML 이 디스크와 동일한 `app/page-eb287862a9283bf0.js` 참조, 그 청크 200 · `/ /today /stocks /disclosures /stock/005930` 200, `/settings/notifications` 307(익명 리다이렉트) · **홈과 `/stock/005930` 의 모든 `/_next/static/*` 참조 자산 전수 200(NON-200 0건)** — 게이트가 잡던 청크 abort 소거 확인.
+- Residual / 운영 주의: 근본 원인은 게이트 워크플로가 prod 서버를 띄운 채 `.next` 를 재빌드하면 살아있는 서버의 청크 참조가 stale 해지는 것. 권장 시퀀스 = **build → start 순서 고정, 서버 가동 중 재빌드 금지, 게이트 재실행 전 3000 의 잔존 `next start` 선종료**(dev 는 이미 `.next-dev` 로 분리됨, 본 건은 prod `next start`+`build` 가 `.next` 공유 시 발생). Playwright 미구성이라 최종 소거는 게이트 재실행으로 확인.
+- Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 버튼 스무스 스크롤.
