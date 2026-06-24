@@ -21,11 +21,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 14 - OrnScore 홈 첫 화면 개편 1차
-- Run: 20
-- Status: completed
+- Task: 16 - OrnScore 종목 탐색 필터 UI 1차 (질문형 탐색 보드)
+- Status: completed (local gates) — operator browser check on http://127.0.0.1:3000 recommended
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: /stocks redesigned into question-driven exploration board (Phase 1). tsc/verify_metrics/build all exit 0, local prod smoke 200 across routes, theme deep-link preserved. Built on Task 14 + Task 15.
 
 ## Next Agent Checklist
 
@@ -155,3 +154,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Verified: `tsc --noEmit` 0 · `npm run build` 138p 0 · `verify_metrics.py` 138종목 0오류·금칙어 0 · 새 서버 홈 HTML 이 디스크와 동일 `app/page-eb287862a9283bf0.js` 참조·200 · `/ /today /stocks /disclosures /stock/005930` 200 · `/settings/notifications` 307 · 홈·`/stock/005930` 의 모든 `/_next/static/*` 자산 전수 200.
 - Residual: prod 서버 가동 중 `.next` 재빌드 시 stale 재발 가능. 게이트 권장 = build→start 고정, 서버 중 재빌드 금지, 재실행 전 3000 잔존 `next start` 선종료. (dev 는 `.next-dev` 분리로 무관.) Playwright 미구성 → 게이트 재실행으로 최종 확인.
 - Next concrete OrnScore step(불변): Phase 2 — (a) 레벨드 RiskAlertCard 완전 분리, (b) 4지표 미니바 히어로(단일 소스), (c) 업종 비교 전용 탭 + 다음확인 스무스 스크롤.
+
+
+### Task 16 — OrnScore 종목 탐색 필터 UI 1차 (질문형 탐색 보드) (2026-06-24, Claude)
+- What changed: 설계서 `ornscore_stock_filter_ui_spec_v1.md` 1차 범위로 `/stocks`를 '단순 필터/정렬'에서 '질문형 주식 탐색 보드'로 개편. Task 14(홈)·Task 15(종목 상세) 완료본 위에서 시작(branch `ai-center/task-16-ornscore-ui-1` @ `15a82c3`, 클린).
+  - `src/app/stocks/page.tsx`: `dataMetadata·formatBizDateLong·isDataStale` import + 종목별 `r3m` + `totalCount·asOf·metricsVersion·dataStale` props. 서버사이드 계산·`?theme=`·`revalidate`·`generateMetadata` 보존.
+  - `src/lib/savedSearches.ts`: `SavedSearchConfig`에 `momentumMin/flowMin/valueMin/volMin?` 추가(저장/알림 config가 새 점수-min 보존).
+  - `src/components/StocksExplorer.tsx`: 헤더 카피·상시 고지·질문형 프리셋 8종 카드화(예상 결과 수·선택 상태·aria-pressed)·빠른 칩 11종(단일 선택)·현재 조건 요약 바(자연어 설명+조건 저장/알림/초기화)·정렬 optgroup 3그룹·결과 카드 강점/주의 분리(아이콘+텍스트)·결과 없음 강화·상세 필터 ORNSCORE 지표 슬라이더. 순수 `matchesConfig`/`presetCounts`(전체 풀 독립) 분리. 기존 기능(저장검색·알림·테마 딥링크·바텀시트·상세 필터) 전부 보존, 기본 결과셋 동일.
+- Verified: `npx tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0 · `npm run build` 138p 0(`/stocks` 11.8 kB) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /today /disclosures /stock/005930` 200·에러 0, `/stocks` SSR 신규 카피 전수 렌더, `?theme=2차전지`(인코딩) 200·테마칩·테마 describe 문장. 신규/변경 파일 금칙어 13종 grep 0.
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, `/stocks` 포함) 권장** — 질문 카드 그리드/선택/요약 바/강점·주의 분리/정렬 그룹/모바일 1열 스택/터치 타겟.
+- Residual: (1) /stocks 클라 컴포넌트(초기 SSR·인터랙션 CSR). (2) presetCounts = 그 프리셋만 적용 시 N개(현재 활성 필터와 무관, '예상 결과'로 표기). (3) 빠른 칩 단일 선택(다중 AND 다음 태스크). (4) 변동성·낙폭 정렬 보류(필드 미전달).
+- Next concrete OrnScore step: 설계서 §24 2차 — (a) 탐색 모드 탭(질문/지표/직접)+보기 방식(카드/표/압축), (b) 빠른 칩 다중 선택 AND + 칩 변경 시 실시간 예상 결과 수, (c) 결과 없음 자동 완화 제안, (d) 변동성·낙폭 정렬용 volStats(annualStd·maxDrawdown)를 page.tsx에서 전달.

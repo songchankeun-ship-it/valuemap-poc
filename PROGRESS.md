@@ -5,6 +5,27 @@
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
 
+## 2026-06-24 · 종목 탐색 필터 UI 1차 — 질문형 탐색 보드 (Task 16, Claude)
+- 목표: 설계서 `ornscore_stock_filter_ui_spec_v1.md` 1차 범위(§24). `/stocks`를 '단순 필터/정렬 화면'에서 '질문형 주식 탐색 보드'로 개편 — 첫 화면 3초 안에 "질문을 누르면 오늘 확인할 종목이 자동으로 좁혀지는 화면" 가치 전달. 비자문 톤 유지(확인 후보/먼저 볼 종목/급등 사유 확인 톤, 추천·매수 언어 금지).
+- 변경 파일:
+  - `src/app/stocks/page.tsx`: `dataMetadata·formatBizDateLong·isDataStale` import, 종목별 `r3m`(returns.r3m) 추가, `StocksExplorer`에 `totalCount·asOf·metricsVersion·dataStale` props 전달. 계산은 전부 서버사이드 유지, plain props. `?theme=` 딥링크·`revalidate=3600`·`generateMetadata` 보존.
+  - `src/lib/savedSearches.ts`: `SavedSearchConfig`에 `momentumMin/flowMin/valueMin/volMin?` 추가(저장/알림 config가 새 점수-min 필드 보존, jsonb 저장이라 마이그레이션 불필요).
+  - `src/components/StocksExplorer.tsx`(대규모 개편, 전부 보존+추가):
+    1) 헤더: 제목 `오늘 확인할 종목 찾기`·본문·`조건 충족 N / 전체 {total}`·`{asOf} 장마감 · Metrics {ver} · 데이터 정상/지연` 배지·상시 `투자 추천 아님 · 탐색 도구` 고지.
+    2) 질문형 프리셋 8종을 **카드 UI**로 격상(섹션 `어떤 종목을 찾고 있나요?` + 보조문구, 데스크톱 3열/모바일 1열 스택). 카드 = 심볼·제목·설명·조건 배지(config에서 도출)·예상 결과 수(전체 풀 독립 계산)·선택 상태(`aria-pressed`·✓·블루). 기존 5종 config 보존 + 신규 3종(밸류+추세 동시 value70·momentum70·vol50 / 최근 흐름 강한 momentum80+주의 / 급등했지만 위험한 r3m desc+주의). 클릭=적용, 재클릭=해제(toggle).
+    3) 빠른 프리셋 칩(보조)을 설계서 11종으로 확장(저평가/추세 강세/저PBR/밸류+추세/균형 종목/ROE 우수/배당 있음/대형주/소형주/급등 위험/거래 급증), 단일 선택·선택 강조(✓). 질문 카드와 시각 구분(칩 vs 카드).
+    4) **현재 적용 조건 요약 바**(결과 바로 위, 상시): 조건 태그(activeChips 재사용)·`조건 충족 N / 전체 M`·자연어 설명(`describeConditions()` — 필터없음/테마/질문형/상세 4상태)·`조건 저장`/`이 조건 알림`/`초기화`(초기화는 §16대로 confirm). 기존 별도 칩 행은 요약 바로 통합(중복 제거).
+    5) 정렬 `<optgroup>` 3그룹화(ORNSCORE 점수 5종+거래활성도 / 재무 5종 / 움직임·위험 r3m). 변동성·낙폭 정렬은 필드 미전달이라 다음 태스크로 명시.
+    6) 결과 카드 = '탐색 후보 카드': insights 혼합 블록을 `✓ 강점`(emerald, 점수≥70)·`⚠ 주의`(amber, 점수<40·가격 하락 중·r3m≥50 급등 주의) 두 그룹으로 분리(색+아이콘+텍스트). 종목명/코드/시장/가격/등락/시총/종합·4지표/핵심 재무/테마·`/stock/{ticker}` Link prefetch=false 보존.
+    7) 결과 없음 강화: 제목 `조건에 맞는 종목이 없습니다.`+본문+`조건 완화하기`/`전체 종목 보기`(둘 다 resetFilters).
+    8) 상세 필터: 기본 접힘 유지(데스크톱 아코디언/모바일 바텀시트), ORNSCORE 지표 슬라이더(종합+추세/거래활성도/밸류/위험조정) 추가로 새 min 조정 가능. 기존 컨트롤 0 제거.
+- 순수 로직 분리: `matchesConfig(stock, FilterConfig)`(기존 filtered와 동일 의미, 새 min은 0이면 비제약)·`presetToConfig`·`presetCounts`(전체 풀 독립 카운트, count-vs-full-pool 주석). 기본 `/stocks` 결과셋은 default config(PER 200·PBR 30 상한, 나머지 0)에서 기존과 동일.
+- 카피 안전: 신규/변경 파일 금칙어 13종 grep 0(급등할 종목/사야 할 종목/추천 종목/매수 후보/상승 가능성/급등 예상/수익 기대/매수 적기/투자 매력도 등). 위험 질문(최근 흐름·급등 위험)은 `급등 사유 확인 필요` 톤만.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0, `/stocks` 11.8 kB) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310 무중단) `/ /stocks /today /disclosures /stock/005930` 200·에러 마커 0, `/stocks` SSR에 신규 카피(제목·`어떤 종목을 찾고 있나요`·`현재 조건`·`투자 추천 아님`·`급등했지만 위험한 종목`·`밸류 + 추세 동시`·`강점`·`주의`·`ORNSCORE 점수` optgroup) 렌더. `?theme=2차전지`(URL 인코딩) 200·테마칩·테마 describe 문장 렌더(딥링크 보존).
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl smoke + SSR grep + build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000, `/stocks` 포함) 실행 권장** — 질문 카드 그리드·선택 상태·요약 바·강점/주의 분리·정렬 그룹·모바일 1열 스택·터치 타겟 확인.
+- 잔여 리스크/결정: (1) `/stocks`는 클라 컴포넌트라 초기 상태는 SSR, 인터랙션은 CSR. (2) presetCounts는 '그 프리셋만 적용 시 N개'(현재 활성 필터와 무관) — 의미를 카드에 '예상 결과'로 표기. (3) 빠른 칩은 이번 패스 단일 선택(설계서 §9 다중 AND는 다음 태스크). (4) 변동성·낙폭 정렬은 필드 미전달로 보류.
+- 다음 구체 OrnScore 태스크(설계서 §24 2차): (a) 탐색 모드 탭(질문/지표/직접) + 보기 방식(카드/표/압축) 추가, (b) 빠른 칩 다중 선택 AND + 칩 변경 시 실시간 예상 결과 수, (c) 결과 없음 자동 완화 제안(예: 밸류 80+→70+로 N개 추가), (d) 변동성·낙폭 정렬용 volStats 필드(annualStd·maxDrawdown)를 page.tsx에서 전달.
+
 ## 2026-06-24 · 종목 상세 결론 카드 1차 (Task 15, Claude)
 - 목표: 설계서 `ornscore_stock_detail_conclusion_card_spec_v1.md` 1차 범위. 종목 상세 상단을 '정보 나열'에서 '결론 카드'로 개편 — 첫 화면 10초 안에 ①이 종목은 어떤 성격의 후보인가 ②왜 우선 확인 후보인가 ③다음에 무엇을 확인할까 에 답. 비자문 언어 유지(추천/미래가격 금지, 확인/우선/급등 사유 확인 톤).
 - 신규 컴포넌트(전부 서버·순수 프레젠테이션, Write로 UTF-8/noBOM/LF 작성):

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { realStockPool, allThemes } from "@/lib/realStocks";
+import { realStockPool, allThemes, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { StocksExplorer } from "@/components/StocksExplorer";
 
 export const revalidate = 3600;
@@ -42,8 +42,19 @@ export default async function StocksPage({ searchParams }: PageProps) {
     vol: s.vol,
     compositeScore: s.compositeScore,
     themes: s.themes,
+    r3m: typeof s.returns?.r3m === "number" ? s.returns.r3m : null,
   }));
   const themes = allThemes();
   const initialThemes = theme && themes.includes(theme) ? [theme] : [];
-  return <StocksExplorer stocks={stocks} allThemes={themes} initialThemes={initialThemes} />;
+  return (
+    <StocksExplorer
+      stocks={stocks}
+      allThemes={themes}
+      initialThemes={initialThemes}
+      totalCount={stocks.length}
+      asOf={formatBizDateLong(dataMetadata.asOfBusinessDate)}
+      metricsVersion={dataMetadata.metricsVersion}
+      dataStale={isDataStale(dataMetadata.asOfBusinessDate)}
+    />
+  );
 }

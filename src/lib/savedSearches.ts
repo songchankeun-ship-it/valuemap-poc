@@ -16,6 +16,10 @@ export interface SavedSearchConfig {
   capBucket?: string;
   market?: string;
   excludeLoss?: boolean;
+  momentumMin?: number;
+  flowMin?: number;
+  valueMin?: number;
+  volMin?: number;
   themes?: string[];
 }
 
