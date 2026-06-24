@@ -42,6 +42,23 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 24 — OrnScore 비주얼 리뉴얼 Phase 4 — /stocks 점수 히트맵 표/카드 보기모드 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-24-ornscore-phase-4`**(시작 `4f5b277`, 클린). 로컬 검증은 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 시작 PID만 종료). 외부 공개 주소 갱신·main 머지는 범위 외(운영자).
+- 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 4(§8.5 데스크톱 점수 히트맵 테이블·§8.6 모바일 카드·§15.5 모바일 필터·§20.5 빈 상태)**. 이미 끝난 **Task #16 질문형 프리셋/필터 위에 2차 고도화** — 되돌리거나 중복 구현 안 함. 점수 계산식·데이터 생성·필터 파라미터·저장검색/알림/`?theme=` 딥링크 **무변경**, 비자문 톤, 신규 npm 패키지 0.
+- 신규 1파일 `src/components/stocks/StockResultsTable.tsx`(presentational, 훅 0):
+  - 데스크톱 점수 히트맵 테이블. **11컬럼**: 종목명·업종·현재가·등락률·종합점수·추세·거래활성도·밸류·위험조정·신호·액션. 점수 5컬럼은 `ScoreHeatCell`(내부)로 `scoreColorOf` 밴드(80↑ blue/60~79 sky/40~59 amber/<40 zinc) 배지 — `c.badge` 정적 리터럴만 사용해 Tailwind 스캔 누락 회피(런타임 합성 0). `<table>`을 `overflow-x-auto`로 감싸고, 종목명/액션은 `/stock/{ticker}` `prefetch={false}` 링크, 등락률 색 카드와 동일(상승 red·하락 blue), 숫자 tabular-nums.
+  - `deriveSignals()` export — 점수 파생 강점/주의 칩(추세 강함/거래 활발/저평가 가능/위험 대비 양호 + 추세 약함/거래 부진/밸류 부담/변동성 큼/가격 하락 중/급등 주의). 카드와 표가 동일 로직 공유.
+- 변경 `src/components/StocksExplorer.tsx`:
+  - `viewMode`("card"|"table") state + `localStorage("stocks-view-mode")` 보존(useEffect 복원, 기본 카드형, try/catch graceful). 검색·정렬 행에 **데스크톱 전용(`hidden lg:inline-flex`)** 카드형/표형 세그먼트 컨트롤.
+  - 결과 영역: `viewMode==="table"`이면 데스크톱(`hidden lg:block`)은 `StockResultsTable rows={sorted.slice(0,100)}`, 모바일(`lg:hidden`)은 카드형 강제. 카드/표 공통 "상위 100개" footnote.
+  - 카드 인라인 신호 도출을 `deriveSignals`로 통일(중복 제거), 카드 map을 `renderCards()`로 추출(카드형/표형-모바일 공용). 카드 헤더에 `· {sector}` 보조표기.
+  - 빈 상태(§20.5): `strongestConstraint()`가 활성 조건 중 가장 강한 1개(점수 min·PER/PBR 상한·ROE/배당·테마·시총·적자제외·시장)를 휴리스틱 strength로 골라 "○○ 조건이 강해 결과가 없습니다" 명시. 버튼 2개 — **가장 강한 조건 완화**(그 조건만 해제+activePreset 클리어) / **전체 종목 보기**(resetFilters). 비자문 톤.
+- 변경 `src/app/stocks/page.tsx`: 뷰모델에 `sector: sectorOf(s.themes)` 추가(`@/lib/sector`, 홈 `StockCandidateCard`/`/today` 후보와 동일 소스). `Stock` 인터페이스에 `sector?: string`.
+- 결정/잔여: (1) **공시/신호 컬럼은 "신호"로 라벨** — 클라 컴포넌트에서 종목별 공시 실데이터 동기 접근 불가라 "공시 있음" 플래그를 날조하지 않고 점수 파생 칩만 노출(설계 지침: 가짜 데이터 금지). 실 per-stock 공시 데이터셋 연결 시 "공시"로 교체. (2) 모바일은 테이블 미사용 — 표형 토글 자체가 `hidden lg:inline-flex`라 도달 불가, <lg는 항상 카드. (3) `strongestConstraint` strength는 표시·랭킹 휴리스틱(점수 계산 무관). (4) 저장검색/알림/`?theme=`/필터 파라미터 핸들러(`handleSaveSearch`/`handleCreateAlert`/`applySavedConfig`/`togglePreset`/`SavedSearchConfig`)는 전부 무변경.
+- 검증: `npx tsc --noEmit` exit 0 · `PYTHONUTF8=1 verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4 일치, exit 0) · `npm run build`(타입게이트·`/stocks` 13.9 kB, exit 0) · 로컬 prod(127.0.0.1:3251, 내 PID만 종료) `/stocks`·`/stocks?theme=반도체`(인코딩)·`/today`·`/stock/005930` 200 · `/stocks` SSR에 카드형/표형 토글·정렬/컬럼 라벨 렌더·에러 마커 0 · 신규/변경 파일 금칙어(추천/매수후보/수익기대/급등예상/상승가능성/매도) grep 0.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱(≥1024px) 카드형↔표형 토글 동작·표 점수 히트맵 색 밴드(blue/sky/amber/zinc)·가로 오버플로우 0, 390px 모바일은 표형 토글 미노출·카드형 유지·가로 오버플로우 0·콘솔 오류 0, localStorage 보기모드 새로고침 유지.
+- Residual / next: (1) 실 per-stock 공시 데이터셋 연결 시 표 "신호" 컬럼 → "공시" 교체. (2) Phase 5(`/stock` 상세 게이지·업종 비교 시각화)·Phase 6(공시 카드 피드·해석 모달)·Phase 7(백테스트 차트)가 남은 설계서 단계. (3) 전역 라이트 토큰(#F6F8FB) 미도입(범위 외).
+
 ### Task 23 — OrnScore 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-23-ornscore-phase-3`**(시작 `387f6b4`, 클린). 로컬 검증은 prod `127.0.0.1:**3250**`(운영자 3000/4310 무중단, 내 PID만 종료). 외부 공개 주소 갱신·main 머지는 범위 외(운영자).
 - 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 3(§7·§15.2·§16.4)**. `/today`를 정보 나열형에서 홈 리뉴얼과 같은 수준의 금융 대시보드 첫인상으로. 점수 계산식·데이터 생성·공시 분류 **무변경**, 비자문 톤, 신규 npm 패키지 0, `layout.tsx max-w-5xl` 셸 무변경. 이미 끝난 홈 Hero/점수 UI(#21/#22)·필터(#16)·상세 결론(#15)·신뢰 배지(#17/#18) **중복 구현 안 함** — 전부 재사용.

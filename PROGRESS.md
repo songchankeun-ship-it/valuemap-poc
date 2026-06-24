@@ -1,5 +1,38 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 비주얼 리뉴얼 Phase 4 — /stocks 점수 히트맵 표/카드 보기모드 (Task 24, Claude)
+
+### 목표
+- 설계서 `ornscore_design_improvement_spec.md` **Phase 4(종목 탐색 페이지, §8.5·§8.6·§15.5·§20.5)**. 이미 끝난 Task #16 질문형 프리셋/필터 위에 **2차 고도화** — 되돌리거나 중복 구현 안 함. branch `ai-center/task-24-ornscore-phase-4`(시작 `4f5b277`, 클린). 점수 계산식·데이터·필터 파라미터·저장검색/알림/테마 딥링크 **무변경**, 비자문 톤, 신규 npm 패키지 0.
+
+### 완료한 작업
+- 신규 `src/components/stocks/StockResultsTable.tsx`(presentational): 데스크톱 점수 히트맵 테이블. 11컬럼(종목명·업종·현재가·등락률·종합점수·추세·거래활성도·밸류·위험조정·신호·액션). 점수 5컬럼은 `scoreColorOf` 밴드(80↑ blue/60~79 sky/40~59 amber/<40 zinc) 그대로 칠한 `ScoreHeatCell` 배지(정적 Tailwind 리터럴, 런타임 합성 0). `overflow-x-auto`로 감쌈, 행/액션은 `/stock/{ticker}` `prefetch={false}` 링크, 등락률 색 카드와 동일(상승 red·하락 blue). `deriveSignals`(점수 파생 강점/주의) export.
+- 변경 `src/components/StocksExplorer.tsx`:
+  - 보기 방식 전환(카드형/표형) 세그먼트 컨트롤 추가 — **데스크톱 전용(`hidden lg:inline-flex`)**, 선택은 `localStorage("stocks-view-mode")`에 보존(기본 카드형, useEffect 복원).
+  - 표형 선택 시 데스크톱은 `StockResultsTable`, 모바일(<lg)은 카드형 강제 유지(`lg:hidden`). 카드형/표형 모두 "상위 100개" footnote 공통.
+  - 카드 신호 칩 인라인 도출을 표와 공유하는 `deriveSignals`로 통일(중복 제거). 카드 헤더에 업종 보조표기 추가.
+  - 빈 상태(§20.5) 개선: `strongestConstraint()`로 가장 강한 단일 조건을 골라 "○○ 조건이 강해 결과가 없습니다" 명시 + **"가장 강한 조건 완화"**(그 조건만 해제·activePreset 클리어) / **"전체 종목 보기"**(초기화) 2버튼.
+- 변경 `src/app/stocks/page.tsx`: 뷰모델에 `sector: sectorOf(s.themes)` 추가(홈/오늘 후보 카드와 동일 소스). `StocksExplorer` Stock 인터페이스에 `sector?: string`.
+
+### 결정 / 잔여
+- **공시/신호 컬럼**: 클라이언트 컴포넌트에서 종목별 공시 실데이터를 동기 접근할 수 없어 **"신호"로 라벨**하고 점수 파생 칩(추세 강함/거래 활발/과열·급등 주의 등)을 노출 — "공시 있음" 플래그 **날조 안 함**. 실 per-stock 공시 데이터셋이 페이지에 연결되면 그때 교체.
+- 모바일은 테이블 미사용(설계서 §8.6·§15.1) — 표형을 골라도 <lg에서는 카드형. 토글 자체가 `hidden lg:inline-flex`라 모바일에서 표형 도달 불가. 모바일 약어 범례(추/거/저/위)·하단 바텀시트 필터 보존.
+- `strongestConstraint` strength는 표시·랭킹용 휴리스틱(점수 계산 무관).
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트 통과, `/stocks` 13.9 kB, exit 0
+- 로컬 prod(127.0.0.1:3251, 시작 PID만 종료·운영자 3000/4310 무중단): `/stocks`·`/stocks?theme=반도체`(인코딩)·`/today`·`/stock/005930` 모두 HTTP 200. `/stocks` SSR에 카드형/표형 토글·정렬/컬럼 라벨 렌더, 에러 마커 0. 신규/변경 파일 금칙어(추천/매수후보/수익기대/급등예상/상승가능성/매도) grep 0.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱(≥1024px) 카드형↔표형 토글·표 점수 히트맵 색 밴드·가로 오버플로우 0, 390px 모바일은 표형 토글 미노출·카드형 유지·가로 오버플로우 0·콘솔 오류 0.
+
+### 다음에 바로 실행할 작업
+- Phase 5(`/stock` 상세 게이지 확장·업종 비교 시각화), Phase 6(공시 카드 피드·해석 모달), Phase 7(백테스트 차트). 실 per-stock 공시 데이터셋 연결 시 표 "신호" 컬럼 → "공시" 교체.
+
+---
+
 ## 2026-06-25 · 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (Task 23, Claude)
 
 ### 목표

@@ -6,6 +6,7 @@ import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { addConditionAlert } from "@/lib/conditionAlerts";
 import { DataStatusBadge } from "@/components/trust/badges";
+import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResultsTable";
 
 interface Stock {
   ticker: string;
@@ -25,8 +26,11 @@ interface Stock {
   vol: number;
   compositeScore?: number;
   themes: string[];
+  sector?: string;
   r3m?: number | null; // 최근 3개월 등락률 %
 }
+
+type ViewMode = "card" | "table";
 
 interface Props {
   stocks: Stock[];
@@ -256,6 +260,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>("card");
 
   useEffect(() => {
     let alive = true;
@@ -264,6 +269,18 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     window.addEventListener("saved-searches-changed", load);
     return () => { alive = false; window.removeEventListener("saved-searches-changed", load); };
   }, []);
+
+  // 보기 방식(카드형/표형)을 localStorage에 보존 — 새로고침해도 유지. 기본은 카드형.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("stocks-view-mode");
+      if (saved === "card" || saved === "table") setViewMode(saved);
+    } catch { /* localStorage 비가용 시 기본 카드형 */ }
+  }, []);
+  function changeViewMode(m: ViewMode) {
+    setViewMode(m);
+    try { window.localStorage.setItem("stocks-view-mode", m); } catch { /* no-op */ }
+  }
 
   function buildCurrentConfig(): SavedSearchConfig {
     return { query, sortKey, sortDir, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, capBucket, market, excludeLoss, themes: [...selectedThemes] };
@@ -469,6 +486,100 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       return "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.";
     }
     return `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`;
+  }
+
+  // 결과 0건일 때 가장 강한(=binding) 단일 조건을 골라 그 조건만 완화할 수 있게 한다(설계서 §20.5).
+  // strength는 표시·랭킹용 휴리스틱일 뿐 점수 계산과 무관하다.
+  function strongestConstraint(): { label: string; relax: () => void } | null {
+    const cons: { label: string; strength: number; relax: () => void }[] = [];
+    if (minComposite > 0) cons.push({ label: `종합점수 ${minComposite}+ 조건`, strength: minComposite, relax: () => clearPreset(() => setMinComposite(0)) });
+    if (momentumMin > 0) cons.push({ label: `추세 ${momentumMin}+ 조건`, strength: momentumMin, relax: () => clearPreset(() => setMomentumMin(0)) });
+    if (flowMin > 0) cons.push({ label: `거래활성도 ${flowMin}+ 조건`, strength: flowMin, relax: () => clearPreset(() => setFlowMin(0)) });
+    if (valueMin > 0) cons.push({ label: `밸류 ${valueMin}+ 조건`, strength: valueMin, relax: () => clearPreset(() => setValueMin(0)) });
+    if (volMin > 0) cons.push({ label: `위험조정 ${volMin}+ 조건`, strength: volMin, relax: () => clearPreset(() => setVolMin(0)) });
+    if (perMax < 200) cons.push({ label: `PER ${perMax}↓ 조건`, strength: 100 - Math.min(100, perMax), relax: () => clearPreset(() => setPerMax(200)) });
+    if (pbrMax < 30) cons.push({ label: `PBR ${pbrMax.toFixed(1)}↓ 조건`, strength: 100 - Math.min(100, pbrMax * 3), relax: () => clearPreset(() => setPbrMax(30)) });
+    if (roeMin > 0) cons.push({ label: `ROE ${roeMin}%+ 조건`, strength: roeMin * 3, relax: () => clearPreset(() => setRoeMin(0)) });
+    if (divYieldMin > 0) cons.push({ label: `배당 ${divYieldMin.toFixed(1)}%+ 조건`, strength: divYieldMin * 15, relax: () => clearPreset(() => setDivYieldMin(0)) });
+    if (selectedThemes.size > 0) cons.push({ label: `선택한 테마(${selectedThemes.size}개) 조건`, strength: 55, relax: () => clearPreset(() => setSelectedThemes(new Set())) });
+    if (capBucket !== "all") cons.push({ label: "시가총액 구간 조건", strength: 45, relax: () => clearPreset(() => setCapBucket("all")) });
+    if (excludeLoss) cons.push({ label: "적자 제외 조건", strength: 30, relax: () => clearPreset(() => setExcludeLoss(false)) });
+    if (market !== "all") cons.push({ label: "시장 조건", strength: 25, relax: () => clearPreset(() => setMarket("all")) });
+    if (cons.length === 0) return null;
+    cons.sort((a, b) => b.strength - a.strength);
+    return { label: cons[0].label, relax: cons[0].relax };
+  }
+
+  // 카드형 결과 목록 — 모바일/데스크톱 공용. 신호 칩은 표형과 동일한 deriveSignals 사용.
+  function renderCards() {
+    return sorted.slice(0, 100).map((s) => {
+      const { strengths, warnings } = deriveSignals(s);
+      return (
+        <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+                <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
+                {s.sector ? <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">· {s.sector}</span> : null}
+              </div>
+              <div className="flex items-baseline gap-2 mb-2 flex-wrap">
+                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</span>
+                <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
+                  {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
+                <span>시총 {fmtMarketCap(s.marketCap)}</span>
+                <span>PER {s.per > 0 ? s.per.toFixed(1) + "배" : "—"}</span>
+                <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—"}</span>
+                <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</span>
+                {s.dividendYield > 0 ? <span>배당 {s.dividendYield.toFixed(1)}%</span> : null}
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="flex items-baseline gap-1 justify-end mb-2">
+                <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore || 0}</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
+              </div>
+              <div className="flex gap-1 justify-end text-[10px] flex-wrap">
+                <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">추 {s.momentum}</span>
+                <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">거 {s.flow}</span>
+                <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">저 {s.value}</span>
+                <span title="변동성조정(위험조정)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
+              </div>
+            </div>
+          </div>
+          {strengths.length > 0 || warnings.length > 0 ? (
+            <div className="flex flex-col gap-1 mt-2">
+              {strengths.length > 0 ? (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">✓ 강점</span>
+                  {strengths.slice(0, 3).map((label) => (
+                    <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900">{label}</span>
+                  ))}
+                </div>
+              ) : null}
+              {warnings.length > 0 ? (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0">⚠ 주의</span>
+                  {warnings.slice(0, 3).map((label) => (
+                    <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">{label}</span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {s.themes.length > 0 ? (
+            <div className="flex gap-1 flex-wrap mt-2">
+              {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">{t}</span>))}
+              {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400 dark:text-zinc-500">+{s.themes.length - 3}</span>) : null}
+            </div>
+          ) : null}
+        </Link>
+      );
+    });
   }
 
   const CAP_OPTIONS: { id: CapBucket; label: string }[] = [
@@ -765,6 +876,23 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>
           ) : null}
         </button>
+        {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
+        <div role="group" aria-label="보기 방식" className="hidden lg:inline-flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
+          {([
+            { id: "card", label: "카드형" },
+            { id: "table", label: "표형" },
+          ] as { id: ViewMode; label: string }[]).map((o) => (
+            <button
+              key={o.id}
+              type="button"
+              aria-pressed={viewMode === o.id}
+              onClick={() => changeViewMode(o.id)}
+              className={"px-3 py-2 text-sm transition " + (viewMode === o.id ? "bg-blue-600 text-white" : "text-zinc-600 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400")}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── 현재 적용 조건 요약 바(결과 바로 위, 항상 노출) ── */}
@@ -817,94 +945,32 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         ) : null}
 
         <div className="space-y-2">
-          {sorted.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4">
-              <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">조건에 맞는 종목이 없습니다.</div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">조건을 조금 완화하면 더 많은 후보를 확인할 수 있습니다.</p>
-              <div className="flex gap-2 justify-center mt-4 flex-wrap">
-                <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">조건 완화하기</button>
-                <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">전체 종목 보기</button>
+          {sorted.length === 0 ? (() => {
+            const sc = strongestConstraint();
+            return (
+              <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4">
+                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">조건에 맞는 종목이 없습니다.</div>
+                {sc ? (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed"><strong className="text-zinc-700 dark:text-zinc-200">{sc.label}</strong>이 강해 지금 범위에 드는 종목이 없습니다.<br className="hidden sm:block" />이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요.</p>
+                ) : (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">조건을 조금 완화하면 더 많은 후보를 확인할 수 있습니다.</p>
+                )}
+                <div className="flex gap-2 justify-center mt-4 flex-wrap">
+                  {sc ? (
+                    <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">가장 강한 조건 완화</button>
+                  ) : null}
+                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">전체 종목 보기</button>
+                </div>
               </div>
-            </div>
+            );
+          })() : viewMode === "table" ? (
+            <>
+              {/* 표형: 데스크톱은 점수 히트맵 테이블, 모바일(<lg)은 카드형 유지 */}
+              <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, 100)} /></div>
+              <div className="lg:hidden space-y-2">{renderCards()}</div>
+            </>
           ) : (
-            sorted.slice(0, 100).map((s) => {
-              const strengths: string[] = [];
-              if (s.momentum >= 70) strengths.push("추세 강함");
-              if (s.flow >= 70) strengths.push("거래 활발");
-              if (s.value >= 70) strengths.push("저평가 가능");
-              if (s.vol >= 70) strengths.push("위험 대비 양호");
-              const warnings: string[] = [];
-              if (s.momentum < 40) warnings.push("추세 약함");
-              if (s.flow < 40) warnings.push("거래 부진");
-              if (s.value < 40) warnings.push("밸류 부담");
-              if (s.vol < 40) warnings.push("변동성 큼");
-              if (s.changePct < 0) warnings.push("가격 하락 중");
-              if (s.r3m != null && s.r3m >= 50) warnings.push("급등 주의");
-              return (
-                <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                        <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
-                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
-                      </div>
-                      <div className="flex items-baseline gap-2 mb-2 flex-wrap">
-                        <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</span>
-                        <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
-                          {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
-                        <span>시총 {fmtMarketCap(s.marketCap)}</span>
-                        <span>PER {s.per > 0 ? s.per.toFixed(1) + "배" : "—"}</span>
-                        <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—"}</span>
-                        <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</span>
-                        {s.dividendYield > 0 ? <span>배당 {s.dividendYield.toFixed(1)}%</span> : null}
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="flex items-baseline gap-1 justify-end mb-2">
-                        <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore || 0}</span>
-                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
-                      </div>
-                      <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                        <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">추 {s.momentum}</span>
-                        <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">거 {s.flow}</span>
-                        <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">저 {s.value}</span>
-                        <span title="변동성조정(위험조정)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {strengths.length > 0 || warnings.length > 0 ? (
-                    <div className="flex flex-col gap-1 mt-2">
-                      {strengths.length > 0 ? (
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">✓ 강점</span>
-                          {strengths.slice(0, 3).map((label) => (
-                            <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900">{label}</span>
-                          ))}
-                        </div>
-                      ) : null}
-                      {warnings.length > 0 ? (
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0">⚠ 주의</span>
-                          {warnings.slice(0, 3).map((label) => (
-                            <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">{label}</span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
-                  {s.themes.length > 0 ? (
-                    <div className="flex gap-1 flex-wrap mt-2">
-                      {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">{t}</span>))}
-                      {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400 dark:text-zinc-500">+{s.themes.length - 3}</span>) : null}
-                    </div>
-                  ) : null}
-                </Link>
-              );
-            })
+            renderCards()
           )}
           {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">조건 충족 {sorted.length}개 중 상위 100개 표시 · 조건을 좁히면 비교하기 쉬워요.</div>) : null}
         </div>

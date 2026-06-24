@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { realStockPool, allThemes, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
+import { sectorOf } from "@/lib/sector";
 import { StocksExplorer } from "@/components/StocksExplorer";
 
 export const revalidate = 3600;
@@ -42,6 +43,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
     vol: s.vol,
     compositeScore: s.compositeScore,
     themes: s.themes,
+    sector: sectorOf(s.themes),
     r3m: typeof s.returns?.r3m === "number" ? s.returns.r3m : null,
   }));
   const themes = allThemes();
