@@ -4,6 +4,22 @@
 > 규칙: 작은 단위 plan→실행→검증(구문/compile)→기록. 위험한 것만 사용자 확인.
 > 검증 도구: `node /tmp/syntaxcheck.js`(TS 구문) · `python3 scripts/verify_metrics.py`(데이터+브랜드 게이트) · Vercel 빌드(최종 타입게이트).
 > 제약: OneDrive 폴더 → python/bash로만 편집(Edit 도구 한글 깨짐). 대괄호 경로 git add는 `--literal-pathspecs`. push 전 `git pull`(봇이 매일 커밋).
+> ※ 검증 메모(Task 20): 이 세션에서 Edit 도구가 한글/UTF-8/LF를 보존함을 확인(편집 후 `xxd` 바이트 검사, `git diff --stat`이 변경 줄만 표기·전체 reflow 없음). surgical Edit는 안전, 다만 신규 파일 대량 작성은 기존 python 방식 권장.
+
+## 2026-06-24 · 세부 디자인·UX 다듬기 — 모바일/배지/문구 일관화 (Task 20, Claude)
+- 목표: 원본 요청대로 큰 개편 없이 OrnScore 최근 작업(Task 14~18)의 거칠음을 정리. 8개 점검 화면(`/ /stocks /stock/005930 /disclosures /backtest /status /guide/metrics /guide/metrics/changelog`)에서 모바일 터치/넘침·배지 톤·문구(데이터 기준/산식/제한) 드리프트·다음 단계 링크·중복 카피를 손봄. 점수/데이터 생성 로직·레이아웃 구조 무변경, 비자문 톤 유지. branch `ai-center/task-20-ornscore-qa` @ `980758c`(클린)에서 시작.
+- **미리보기 기준**: 사용자 확인 화면은 **http://127.0.0.1:3000**, 리뷰 기준은 **이 브랜치(`ai-center/task-20-ornscore-qa`)**. 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**(다음 작업으로 남김). 로컬에서 `npm run build`로 `.next`를 재생성했으므로, 운영자가 3000 미리보기를 `next start`로 돌리고 있었다면 **재기동 권장**(stale 청크 400 회피, PROGRESS 하단 Repair 노트 참고).
+- 변경 파일(10개, surgical Tailwind/문구만):
+  - 데이터 드리프트(단일 소스화): `guide/metrics/page.tsx`(밸류 한계 설명 `전체 138개 종목 풀` → `${dataMetadata.count}`), `backtest/page.tsx`(사용 데이터/벤치마크 `138개 종목`·`138종목` 2곳 → `${realStockPool.length}`). 산식 버전/기준일 표기는 이미 전부 `dataStatus` 파생이라 무변경(verify_metrics 버전 게이트 0불일치 재확인).
+  - 배지 톤 일관화: `StocksExplorer.tsx` 헤더 ad-hoc 상태 pill(amber/emerald 수동) → 공유 `DataStatusBadge`(`@/components/trust/badges`, 라벨도 앱 공통 `갱신 지연`/`데이터 정상`·delayed=orange). `DisclosureExplorer.tsx`의 ad-hoc amber `일부 결과 · 최신 200건` 배지·안내문 → **limited=slate**(차분, 경고색 아님)로 통일해 `/disclosures` 헤더 `제한 수집`(slate)과 톤 맞춤. `home/HomeHero.tsx` 상태 점/텍스트 amber·green → 앱 공통 orange(지연)·emerald(정상)로 색 통일.
+  - 모바일 터치 타깃: `home/StockCandidateCard.tsx`(종목 보기 `min-h-[40px]`→`44px`), `home/DisclosureSignalCard.tsx`(종목 보기/DART 버튼 `min-h-[44px] inline-flex items-center` 추가), `DisclosureExplorer.tsx`(기간 칩 `py-1`→`py-1.5`), `StocksExplorer.tsx`(조건 저장/알림 칩 `py-1`→`py-1.5`). 조밀한 필터 칩 군집은 44px 강제 시 레이아웃 왜곡이라 중간값으로 개선.
+  - 다음 단계 CTA: 막다른 사이드 화면에 1줄 nav 추가 — `/backtest`(준비중·실데이터 두 분기)·`/status`에 `지표 계산 방식 보기 → (/guide/metrics)` + (백테스트)`데이터 상태 확인 →`·(상태)`산식 변경 이력 →`. 메인 흐름(홈→/stocks→상세→가이드)은 이미 연결돼 무변경.
+  - 중복 카피 정리: `stock/PriorityScoreCard.tsx`의 `매수·매도 추천이 아닌 탐색 우선순위입니다.` 1줄 제거 — 바로 아래 `StockConclusionHero` 하단 고지 박스가 동일 문구를 표기(같은 화면 100px 내 중복). 필수 고지 라인은 보존(히어로 박스에 유지).
+- 카피 안전: 신규/변경 사용자 노출 문자열 비자문만(갱신 지연·데이터 정상·일부 결과·지표 계산 방식 보기·데이터 상태 확인 등). 추천/매수/매도/수익 보장 톤 0. verify_metrics 금칙어 게이트 0건.
+- 검증: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0, `/stocks` 12.2 kB·`/disclosures` 9.54 kB) · 로컬 prod(127.0.0.1:3100, 내 PID(10808)만 taskkill, 4310 AI Dev Center·3000 미리보기 무중단) 8개 점검 라우트 전부 200·에러 마커 0. SSR grep 확인: /backtest `138개 종목`+신규 nav, /status 신규 nav, /guide/metrics `전체 138개 종목 풀`, /stocks `갱신 지연`(현재 지연 상태)·`데이터 정상` 공유 배지, /disclosures `제한 수집` 렌더.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 브라우저 게이트 로컬 미가용. curl+SSR grep+build로 대체. **운영자: AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 360~390px에서 후보/공시 카드 버튼 44px·기간 칩 탭, /stocks·홈 상태 배지 색(주황/에메랄드)·/disclosures 제한 배지 slate, /backtest·/status 하단 nav 줄바꿈, 종목 상세 고지 1줄(중복 제거) 확인.
+- 잔여 리스크/결정: (1) 조밀 필터 칩은 44px 미만(py-1.5≈30px) — 칩 군집 시각 보존 위해 의도적 중간값. (2) `/backtest`의 두 긴 주의 문단(상단 요약 + 하단 방법론)은 역할이 달라 보존, 일부 어구(편도 0.3%·슬리피지) 중복은 잔존 — 필수 고지 삭제 리스크 회피 우선. (3) 클라이언트 컴포넌트(StocksExplorer/DisclosureExplorer)는 번들 비대화 회피 위해 `dataStatus` 직접 import 대신 props/리터럴 유지(제한 문구 `최신 200건`은 의미 동일). (4) 외부 공개 주소(valuemap.kr) 미갱신 — 의도된 범위 외.
+- 다음 추천 작업: (a) **외부 공개 주소 갱신/릴리스 절차**(이번 보류분) — main 머지·Vercel 배포 후 valuemap.kr 확인. (b) DisclosureExplorer/StocksExplorer 제한 문구를 서버 props로 주입해 완전 단일 소스화. (c) Playwright 도입 시 360/390px 모바일 게이트 자동화. (d) 설계서 §23 3차 OrnScore 본작업(데이터 상태 자동검증 강화·CI 산식 버전 단언·백테스트 생존편향 실해결) 재개.
 
 ## 2026-06-24 · 데이터 신뢰 레이어 Phase 2 — 공시/백테스트/상태/산식 이력 확장 (Task 18, Claude)
 - 목표: 설계서 `ornscore_data_trust_badge_spec_v1.md` 2차/3차 범위(§10.4·§10.5·§12·§13·§17.1). Task 17의 전역 `dataStatus` 단일 소스를 공시 제한 배지·백테스트 한계 배지·`/status` 분리 상태·산식 변경 이력·빌드 타임 버전 단언까지 확장. 투자 추천/매수 유도 카피 0(비자문 톤 유지). branch `ai-center/task-18-ornscore-phase-2` @ `87b606c`(클린)에서 시작.

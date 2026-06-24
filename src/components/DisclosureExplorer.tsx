@@ -256,7 +256,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
     <div className="space-y-4">
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호{data.totalDisclosures >= 200 ? <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400">일부 결과 · 최신 200건</span> : null}</h2>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호{data.totalDisclosures >= 200 ? <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />일부 결과 · 최신 200건</span> : null}</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
             최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
@@ -273,7 +273,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           );
         })()}
         {data.totalDisclosures >= 200 ? (
-          <p className="text-[10px] text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1">
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1">
             ℹ 현재 오른스코어는 성능·비용을 위해 최신 공시 200건까지만 분석합니다. 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.
           </p>
         ) : null}
@@ -284,7 +284,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               key={d}
               type="button"
               onClick={() => setDays(d)}
-              className={"px-3 py-1 text-xs rounded-md border transition " +
+              className={"px-3 py-1.5 text-xs rounded-md border transition " +
                 (days === d
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                   : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}

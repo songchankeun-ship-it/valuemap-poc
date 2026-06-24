@@ -226,6 +226,11 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
         생성: {new Date(data.generatedAt).toLocaleString("ko-KR")} · 데이터: KRX 일별 종가(FDR)
       </p>
+
+      <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-zinc-200 dark:border-zinc-800 pt-4">
+        <Link href="/guide/metrics" className="hover:underline">지표 계산 방식 보기 →</Link>
+        <Link href="/status" className="hover:underline">데이터 상태 확인 →</Link>
+      </nav>
     </div>
   );
 }

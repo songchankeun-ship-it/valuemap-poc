@@ -42,11 +42,11 @@ export function DisclosureSignalCard({ s }: { s: DisclosureSignalVM }) {
 
       <div className="flex items-center gap-2 mt-3">
         {s.inUniv ? (
-          <Link prefetch={false} href={"/stock/" + s.code} className="flex-1 text-center px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[12px] font-medium text-zinc-900 dark:text-zinc-100 hover:border-blue-400 dark:hover:border-blue-700 transition">
+          <Link prefetch={false} href={"/stock/" + s.code} className="flex-1 min-h-[44px] inline-flex items-center justify-center text-center px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[12px] font-medium text-zinc-900 dark:text-zinc-100 hover:border-blue-400 dark:hover:border-blue-700 transition">
             종목 보기
           </Link>
         ) : null}
-        <a href={s.dartUrl} target="_blank" rel="noopener noreferrer" className="flex-1 text-center px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[12px] font-medium text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-500 transition">
+        <a href={s.dartUrl} target="_blank" rel="noopener noreferrer" className="flex-1 min-h-[44px] inline-flex items-center justify-center text-center px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-[12px] font-medium text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-500 transition">
           DART 원문 ↗
         </a>
       </div>

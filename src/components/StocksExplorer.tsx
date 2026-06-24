@@ -5,6 +5,7 @@ import Link from "next/link";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { addConditionAlert } from "@/lib/conditionAlerts";
+import { DataStatusBadge } from "@/components/trust/badges";
 
 interface Stock {
   ticker: string;
@@ -623,9 +624,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           {asOf ? <span className="tabular-nums">{asOf} 장마감</span> : null}
           {metricsVersion ? <><span aria-hidden>·</span><span>Metrics {metricsVersion}</span></> : null}
           <span aria-hidden>·</span>
-          <span className={"inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border " + (dataStale ? "border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30" : "border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30")}>
-            데이터 {dataStale ? "지연" : "정상"}
-          </span>
+          <DataStatusBadge tone={dataStale ? "delayed" : "normal"} label={dataStale ? "갱신 지연" : "데이터 정상"} />
           <span aria-hidden>·</span>
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">투자 추천 아님 · 탐색 도구</span>
         </div>
@@ -712,8 +711,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">내 검색 조건</span>
           <div className="flex gap-1.5">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">+ 현재 조건 저장</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">🔔 이 조건 알림</button>
+            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">+ 현재 조건 저장</button>
+            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">🔔 이 조건 알림</button>
           </div>
         </div>
         {savedSearches.length === 0 ? (

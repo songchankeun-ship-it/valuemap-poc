@@ -46,7 +46,6 @@ export function PriorityScoreCard({
         )}
         {metricsVersion ? <span>{metricsVersion}</span> : null}
       </div>
-      <p className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug">매수·매도 추천이 아닌 탐색 우선순위입니다.</p>
     </div>
   );
 }

@@ -38,9 +38,9 @@ export function HomeHero({
               오른스코어 · 베타
             </span>
             <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-400">
-              <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-amber-500" : "bg-green-500")} />
+              <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-orange-500" : "bg-emerald-500")} />
               <span className="tabular-nums">데이터 기준 {dataAsOf} 장마감</span>
-              {dataStale ? <span className="font-medium text-amber-600 dark:text-amber-500">· 갱신 지연</span> : <span className="text-green-600 dark:text-green-500">· 정상</span>}
+              {dataStale ? <span className="font-medium text-orange-600 dark:text-orange-400">· 갱신 지연</span> : <span className="text-emerald-600 dark:text-emerald-400">· 정상</span>}
             </span>
           </div>
           <h1 className="text-[23px] leading-tight md:text-[34px] md:leading-[1.15] font-bold tracking-tight text-zinc-900 dark:text-zinc-100">

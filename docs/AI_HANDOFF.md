@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 20 — OrnScore 세부 디자인·UX 다듬기 (모바일/배지/문구 일관화) (2026-06-24, Claude)
+- Preview/branch: 사용자 확인 화면 **http://127.0.0.1:3000**, 리뷰 기준 **branch `ai-center/task-20-ornscore-qa`**. 외부 공개 주소(valuemap.kr) 갱신·릴리스는 **이번 범위 아님**(다음 작업으로 명시 보류). 로컬 `npm run build`로 `.next` 재생성 — 운영자가 3000을 `next start`로 띄워뒀다면 **재기동 권장**(stale 청크 400 회피).
+- What changed (10 files, surgical Tailwind/문구만, 점수·데이터 로직·레이아웃 구조 무변경):
+  - 데이터 드리프트 제거: `guide/metrics/page.tsx`·`backtest/page.tsx`의 하드코딩 `138(개) 종목`을 `dataMetadata.count`/`realStockPool.length`로 단일 소스화(산식 버전/기준일은 이미 `dataStatus` 파생).
+  - 배지 톤 통일: `StocksExplorer` 헤더 상태 pill → 공유 `DataStatusBadge`(라벨 `갱신 지연`/`데이터 정상`, delayed=orange). `DisclosureExplorer`의 ad-hoc amber `최신 200건` 배지/안내문 → **limited=slate**(경고색 아님)로 `/disclosures` `제한 수집`과 맞춤. `HomeHero` 상태 색 amber/green → 앱 공통 orange/emerald.
+  - 모바일 터치 타깃: 홈 후보·공시 카드 주요 버튼 `min-h-[44px]`, 기간/저장·알림 칩 `py-1`→`py-1.5`(조밀 칩 군집은 왜곡 회피 위해 중간값).
+  - 다음 단계 CTA: `/backtest`·`/status` 막다른 화면에 `지표 계산 방식 보기 →`/`데이터 상태 확인 →`/`산식 변경 이력 →` 1줄 nav.
+  - 중복 카피 정리: 종목 상세 `PriorityScoreCard`의 `매수·매도 추천이 아닌 탐색 우선순위입니다.` 1줄 제거(바로 아래 히어로 고지 박스가 동일 문구 표기). 필수 고지 보존.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·산식 버전 0불일치, exit 0) · `npm run build`(타입게이트·138p 프리렌더, exit 0) · 로컬 prod(127.0.0.1:3100, 내 PID만 종료, 4310·3000 무중단) 8개 점검 라우트 전부 200·에러 마커 0, SSR grep으로 변경 전수 렌더 확인.
+- Browser check: Playwright 미구성 → DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자 AI Center 브라우저 체크(http://127.0.0.1:3000) 권장** — 360~390px 터치/넘침, 상태 배지 색(주황/에메랄드), /disclosures 제한 배지 slate, /backtest·/status 하단 nav, 종목 상세 고지 1줄.
+- Residual / next: (1) 외부 공개 주소(valuemap.kr) 갱신·릴리스 절차 **보류 → 다음 작업**(main 머지·Vercel 배포). (2) 클라 컴포넌트 제한 문구는 번들 회피로 props/리터럴 유지(서버 props 주입 시 완전 단일 소스화 가능). (3) `/backtest` 두 주의 문단 중복 일부 잔존(필수 고지 삭제 리스크 회피). (4) Playwright 도입 시 모바일 게이트 자동화.
+
 ### Task 18 — OrnScore 데이터 신뢰 레이어 Phase 2 (공시/백테스트/상태/산식 이력) (2026-06-24, Claude)
 - What changed: Task 17의 전역 `dataStatus` 단일 소스를 설계서 `ornscore_data_trust_badge_spec_v1.md` 2차/3차 범위로 확장(§10.4·§10.5·§12·§13·§17.1). 투자 추천/매수 유도 카피 0.
   - `src/lib/dataStatus.ts`: `domainStatuses`(가격/재무/공시/산식) + `EXPECTED_METRICS_VERSION="2.4"` + `metricsChangelogPath`. 재무는 `realStockPool` PER/PBR 결측률>3% 시 `partial`(현재 0.7%→normal), 가격=전역 delayed 재사용, 공시=limited, 산식=메타 유무로 normal/error.

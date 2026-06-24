@@ -122,6 +122,11 @@ export default async function StatusPage() {
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
         데이터는 매주 평일 장 마감 후 클라우드(GitHub Actions)에서 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.
       </p>
+
+      <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-zinc-200 dark:border-zinc-800 pt-4">
+        <Link href="/guide/metrics" className="hover:underline">지표 계산 방식 보기 →</Link>
+        <Link href={metricsChangelogPath} className="hover:underline">산식 변경 이력 →</Link>
+      </nav>
     </div>
   );
 }
