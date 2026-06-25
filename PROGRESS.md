@@ -1,5 +1,38 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 비주얼 리뉴얼 Phase 6 — /disclosures 공시 신호 카드 피드·타입 색/아이콘·이해하기 UX (Task 26, Claude)
+
+### 목표
+- 설계서 `ornscore_design_improvement_spec.md` **Phase 6(공시 신호 페이지, §10.2~§10.6·§15·§20.7)**. `/disclosures`를 테이블식 나열에서 **상단 카드형 요약 대시보드 + 이벤트 피드 카드**로 리뉴얼. 공시 분류 로직·API fallback·점수/데이터 생성 **무변경**, 비자문 톤(호재/악재 단정 금지), 신규 npm 패키지 0. branch `ai-center/task-26-ornscore-phase-6-ux`(시작 `8b2ac57`, 클린, `4f5b277` 라인 위).
+
+### 완료한 작업
+- **신규 단일 소스 `src/lib/disclosureType.ts`**: `signalType` → `{label, shortLabel, Icon(lucide), badgeBg/Text/Border, dot, cardBorder}` 매핑 + `DISCLOSURE_TYPE_ORDER`(자사주·보유변동·대형계약·손익정정·유증/CB) + `typeMetaOf()`. **설계서 §10.4 색**: 자사주=초록, 보유변동=보라, 대형계약=청록(teal), 손익정정=주황(amber), 유증/CB=빨강. 전부 **정적 Tailwind 리터럴**(런타임 색 합성 0 — purge 누락 회피). 색은 항상 텍스트 라벨·아이콘·도트와 함께(§20.7). 미분류는 중립 회색 폴백.
+- **신규 `src/components/disclosures/DisclosureSummaryCards.tsx`**(presentational): 타입별 요약 카드 **항상 5개** 노출(`grid-cols-2`→`sm:3`→`lg:5`). 아이콘+타입 라벨(텍스트 배지)+묶음 수+캡션("최근 N일 · M건" / "이벤트 없음"). 0건은 muted 상태. 호재/악재 표현 없음.
+- **`src/components/DisclosureExplorer.tsx` 리팩터**:
+  - 타입별 묶음 수(`signalCounts`)·기간을 `<DisclosureSummaryCards>`로 전달, 필터 칩 위에 렌더.
+  - 하드코딩 `SIGNAL_STYLES`(signalLabel 키)·`CANON_TYPES` 제거 → 필터 칩·카드 배지/테두리를 **`typeMetaOf(g.signalType)`**에서 읽음. 칩에 타입 도트 추가. 방향 배지(긍정 가능=red/부정 가능=blue/확인 필요=amber)·건수 배지 로직 보존.
+  - 각 묶음을 **이벤트 카드**로 재구성: 좌측 4px 타입색 테두리 + 상단(타입 아이콘+텍스트 배지 "{label}·자동분류" / 방향 / N건) → 종목명·코드·제출일 → 한 줄 의미(`SIGNAL_DESCRIPTIONS`/note) → **구분된 "확인할 것" 라인**(가이드 checkPoints[0]) → 액션 행(원문 보기 ↗ / 종목 보기 → / 관심 / 이 공시 이해하기). 모든 터치 타깃 `min-h-[44px]`, `flex-wrap`·`min-w-0`·`break-words`로 390px 넘침 회피. 로딩 스켈레톤·에러 블록·빈 상태·SSR `initialData` fallback 보존.
+- **`src/components/SignalGuideExpand.tsx`**: `url` prop 추가 → 펼침 내부에 **DART 원문 보기 링크**(§10.6 모달 구성요소: 공시 타입·일반적 의미(oneLine/whyMatters)·확인 항목(checkPoints)·원문 링크). 헤더 이모지를 `disclosureType` **타입 아이콘+색**으로 교체해 카드와 일관화. 트리거 버튼 `min-h-[44px]`로. 기존 중립 문구·고지 보존.
+
+### 결정 / 잔여
+- **"이 공시 이해하기" 결정**: 설계서 §10.6은 "긍정적/부정적으로 볼 수 있는 경우" 섹션을 예시하나, **자문 톤("좋은 신호"/매수/호재) 없이 깔끔히 분리하기 어려워 기존 인라인 펼침을 유지**(이미 일반적 의미·확인 항목·과거 패턴·주의·원문을 모두 노출). 호재/악재 단정 금지 지침 우선. 모달 대신 코드베이스에 이미 있는 **인라인 펼침** 방식 채택.
+- 색 충돌: capital_raise(빨강)와 방향 배지 "긍정 가능"(빨강)은 별개 배지+다른 텍스트라 혼동 낮음(지침대로 방향 매핑 보존).
+- `StockDisclosures.tsx`(종목 상세)의 `SIGNAL_BG`는 무변경 — 이번 retone은 `/disclosures` 한정(상세 회귀 0).
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트 통과, `/disclosures` 11.1 kB, exit 0
+- 로컬 prod(127.0.0.1:3253, 내 리스너 PID 2412만 종료·운영자 3000/4310 무중단): `/disclosures`·`/today`·`/stock/005380` 모두 HTTP 200. `/disclosures` SSR에 5개 요약 카드 라벨(자사주/보유 변동/대형 계약/손익 정정/유증/CB)·5색 토큰(green/purple/teal/amber/red 전수)·이벤트 마커(자동분류 9·이 공시 이해하기 10·원문 보기 9·확인할 것 5)·요약 캡션 렌더, 에러 마커 0. 신규/변경 4파일 금칙어 grep = 비자문 부정문("호재/악재 단정 없이"·"매수로 단정 금지")만.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱/390px에서 요약 카드 2열↔5열·타입 색 밴드·이벤트 카드 가로 넘침 0·"이 공시 이해하기" 펼침·터치 44px·콘솔 오류 0.
+
+### 다음에 바로 실행할 작업
+- Phase 7(백테스트 차트·손실 기여 막대). 전역 라이트 토큰(#F6F8FB) 미도입(범위 외).
+
+---
+
 ## 2026-06-25 · 비주얼 리뉴얼 Phase 5 — /stock 상세 게이지·지표 카드·업종 비교 시각화 (Task 25, Claude)
 
 ### 목표

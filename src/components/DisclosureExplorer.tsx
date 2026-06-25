@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Heart } from "lucide-react";
+import { Heart, ExternalLink, ArrowRight } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
+import { DisclosureSummaryCards } from "./disclosures/DisclosureSummaryCards";
 import { findGuideByLabel } from "@/lib/signalGuide";
+import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
 import { addToWatchlist, removeFromWatchlist, isInWatchlist } from "@/lib/watchlist";
 
 interface DisclosureItem {
@@ -48,25 +50,6 @@ interface GroupedSignal {
   hasRevision: boolean;
   rcept_dt_latest: string;
 }
-
-const SIGNAL_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  "자기주식 취득 결의": { bg: "bg-green-50 dark:bg-green-950/30", text: "text-green-700 dark:text-green-400", border: "border-green-200 dark:border-green-900" },
-  "임원·주요주주 보유 변동": { bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-200 dark:border-emerald-900" },
-  "정정공시": { bg: "bg-amber-50 dark:bg-amber-950/30", text: "text-amber-700 dark:text-amber-400", border: "border-amber-200 dark:border-amber-900" },
-  "단일판매·공급계약": { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-700 dark:text-blue-400", border: "border-blue-200 dark:border-blue-900" },
-  "유상증자 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
-  "전환사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
-  "신주인수권부사채 발행": { bg: "bg-purple-50 dark:bg-purple-950/30", text: "text-purple-700 dark:text-purple-400", border: "border-purple-200 dark:border-purple-900" },
-};
-
-// 고정 분류 체계 — 결과 0건이어도 항상 노출(어떤 종류를 검사했는지 보이게).
-const CANON_TYPES: { type: string; label: string }[] = [
-  { type: "treasury_buy", label: "자기주식" },
-  { type: "insider_buy", label: "보유 변동" },
-  { type: "single_contract", label: "단일계약" },
-  { type: "correction", label: "정정" },
-  { type: "capital_raise", label: "유증/CB" },
-];
 
 const SIGNAL_DESCRIPTIONS: Record<string, string> = {
   "자기주식 취득 결의": "주주환원 관련 이벤트로 분류됨. 원문과 시세 반응 확인 권장.",
@@ -121,7 +104,7 @@ function WatchlistToggle({ code }: { code: string }) {
       onClick={toggle}
       disabled={loading}
       aria-label={added ? "관심 종목에서 제거" : "관심 종목에 추가"}
-      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium border transition disabled:opacity-50 " +
+      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium border transition disabled:opacity-50 " +
         (added
           ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
           : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-300 hover:text-pink-600 dark:hover:text-pink-400")}
@@ -305,7 +288,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           >
             전체 {grouped.length}
           </button>
-          {CANON_TYPES.map(({ type, label }) => {
+          {DISCLOSURE_TYPE_ORDER.map((type) => {
+            const meta = typeMetaOf(type);
             const count = signalCounts[type] ?? 0;
             const active = filterType === type;
             return (
@@ -314,81 +298,98 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 type="button"
                 onClick={() => setFilterType(type)}
                 disabled={count === 0}
-                className={"text-[11px] px-2.5 py-1 rounded-full border transition " +
+                className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " +
                   (active
-                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 font-semibold"
+                    ? meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder + " font-semibold"
                     : count === 0
                     ? "bg-white dark:bg-zinc-900 text-zinc-300 dark:text-zinc-600 border-zinc-100 dark:border-zinc-800 cursor-default"
                     : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400")}
               >
-                {label} {count}
+                <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (count === 0 ? "bg-zinc-300 dark:bg-zinc-600" : meta.dot)} aria-hidden="true" />
+                {meta.shortLabel} {count}
               </button>
             );
           })}
         </div>
       </header>
 
+      <DisclosureSummaryCards counts={signalCounts} days={days} total={grouped.length} />
+
       <div className="space-y-2">
         {filtered.length === 0 ? (
           <div className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-12">해당 신호가 없습니다.</div>
         ) : (
           filtered.map((g) => {
-            const style = SIGNAL_STYLES[g.signalLabel] || { bg: "bg-zinc-100", text: "text-zinc-700", border: "border-zinc-300" };
+            const meta = typeMetaOf(g.signalType);
+            const Icon = meta.Icon;
             const desc = SIGNAL_DESCRIPTIONS[g.signalLabel] || "원문과 시세 반응 함께 확인 권장.";
+            const guide = findGuideByLabel(g.signalLabel);
+            const checkLine = guide?.checkPoints?.[0] ?? null;
             const dt = g.rcept_dt_latest;
             const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
             return (
-              <div key={g.key} className={"bg-white dark:bg-zinc-900 border rounded-lg p-3 md:p-4 transition hover:border-zinc-300 dark:hover:border-zinc-700 " + style.border + "/50"}>
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className={"text-[10px] px-2 py-0.5 rounded font-medium " + style.bg + " " + style.text}>
-                        {g.signalLabel} · 유형 자동분류
-                      </span>
-                      {g.representative.direction ? (
-                        <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + (g.representative.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400" : g.representative.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400" : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400")}>
-                          방향 {g.representative.direction}
-                        </span>
-                      ) : null}
-                      {g.count > 1 ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:text-zinc-400">
-                          {g.hasRevision ? "정정 포함 " : ""}{g.count}건
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{g.corp_name}</span>
-                      {g.stock_code ? (
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
-                      ) : null}
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{date}</span>
-                      {g.representative.disclosure.flr_nm ? (
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[180px]">제출 {g.representative.disclosure.flr_nm}</span>
-                      ) : null}
-                    </div>
-                  </div>
+              <div key={g.key} className={"bg-white dark:bg-zinc-900 border-l-4 border-y border-r rounded-lg p-3 md:p-4 transition hover:shadow-sm " + meta.cardBorder}>
+                {/* 상단: 타입 아이콘 + 텍스트 배지 + 방향/건수 */}
+                <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                  <span className={"inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded font-medium border " + meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder}>
+                    <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+                    {meta.label} · 자동분류
+                  </span>
+                  {g.representative.direction ? (
+                    <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + (g.representative.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400" : g.representative.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400" : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400")}>
+                      방향 {g.representative.direction}
+                    </span>
+                  ) : null}
+                  {g.count > 1 ? (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                      {g.hasRevision ? "정정 포함 " : ""}{g.count}건
+                    </span>
+                  ) : null}
                 </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-1 leading-relaxed">{desc}</p>
+
+                {/* 종목명 · 코드 · 제출일 */}
+                <div className="flex items-baseline gap-2 flex-wrap mb-1.5 min-w-0">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
+                  {g.stock_code ? (
+                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
+                  ) : null}
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{date} 제출</span>
+                  {g.representative.disclosure.flr_nm ? (
+                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {g.representative.disclosure.flr_nm}</span>
+                  ) : null}
+                </div>
+
+                {/* 한 줄 의미 */}
+                <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-1.5 leading-relaxed break-words">{desc}</p>
                 {g.representative.note && g.representative.note !== desc ? (
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 leading-relaxed">{g.representative.note}</p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1.5 leading-relaxed break-words">{g.representative.note}</p>
                 ) : null}
-                <div className="mb-3" />
+
+                {/* 확인할 것 — 구분된 주의 라인 */}
+                {checkLine ? (
+                  <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+                    <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">확인할 것</span>
+                    <span className="break-words">{checkLine}</span>
+                  </div>
+                ) : <div className="mb-3" />}
+
+                {/* 액션 행 */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={() => openExternal(g.representative.disclosure.url)}
-                    className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition"
+                    className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition"
                   >
-                    원문 보기 ↗
+                    원문 보기 <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                   </button>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
                     <>
                       <button
                         type="button"
                         onClick={() => goToStock(g.stock_code!)}
-                        className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[36px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
+                        className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
                       >
-                        종목 상세 →
+                        종목 보기 <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                       </button>
                       <WatchlistToggle code={g.stock_code} />
                     </>
@@ -397,10 +398,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   ) : null}
                 </div>
                 {/* 이 공시 이해하기 — 차별점 */}
-                {(() => {
-                  const guide = findGuideByLabel(g.signalLabel);
-                  return guide ? <SignalGuideExpand guide={guide} /> : null;
-                })()}
+                {guide ? <SignalGuideExpand guide={guide} url={g.representative.disclosure.url} /> : null}
               </div>
             );
           })

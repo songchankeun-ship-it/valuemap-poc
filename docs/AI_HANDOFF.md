@@ -42,6 +42,21 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 26 — OrnScore 비주얼 리뉴얼 Phase 6 — /disclosures 공시 신호 카드 피드·타입 색/아이콘·이해하기 UX (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-26-ornscore-phase-6-ux`**(시작 `8b2ac57`, 클린, `4f5b277` 라인 유지·되돌림 없음). 로컬 검증은 prod `127.0.0.1:**3253**`(운영자 3000/4310 무중단, 내 리스너 PID 2412만 종료). main 머지·배포는 운영자 범위.
+- 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 6(§10.2~§10.6·§15·§20.7)**. `/disclosures`를 테이블식 → **상단 카드형 요약 대시보드 + 이벤트 피드 카드**. 공시 분류 로직·API fallback·점수/데이터 생성 무변경, 비자문 톤(호재/악재 단정 금지), 신규 npm 0.
+- 신규 2파일:
+  - `src/lib/disclosureType.ts`: `signalType` → `{label, shortLabel, Icon(lucide), badgeBg/Text/Border, dot, cardBorder}` 단일 소스 + `DISCLOSURE_TYPE_ORDER` + `typeMetaOf()`. **색 매핑(§10.4)**: 자사주=green · 보유변동=purple · 대형계약=teal(청록) · 손익정정=amber(주황) · 유증/CB=red. 전부 정적 Tailwind 리터럴(런타임 합성 0). 색은 항상 텍스트 라벨/아이콘/도트 동반(§20.7). 미분류=중립 회색 폴백.
+  - `src/components/disclosures/DisclosureSummaryCards.tsx`(presentational): 타입별 요약 카드 항상 5개(`grid-cols-2`→sm:3→lg:5), 아이콘+라벨+묶음 수+캡션, 0건 muted.
+- 변경 2파일:
+  - `DisclosureExplorer.tsx`: `SIGNAL_STYLES`/`CANON_TYPES` 제거 → 필터 칩·카드 배지/테두리를 `typeMetaOf(g.signalType)`로. 요약 카드 렌더(`signalCounts` 전달). 각 묶음을 이벤트 카드(좌측 타입색 테두리·아이콘 배지·종목/코드/제출일·한 줄 의미·구분된 "확인할 것" 라인·액션 행)로 재구성. 터치 44px·`flex-wrap`·`break-words`로 390px 넘침 회피. 로딩/에러/빈 상태/SSR initialData 보존.
+  - `SignalGuideExpand.tsx`: `url` prop로 펼침 내부 DART 원문 링크 추가(§10.6), 헤더를 `disclosureType` 타입 아이콘/색으로 일관화, 트리거 44px.
+- **색-토큰 결정**: capital_raise(빨강) vs 방향 배지 "긍정 가능"(빨강)은 별개 배지·다른 텍스트라 혼동 낮아 방향 매핑 보존. `StockDisclosures.tsx`(상세 `SIGNAL_BG`) 무변경 — retone은 `/disclosures` 한정(상세 회귀 0).
+- **"이 공시 이해하기" 결정**: §10.6의 "긍정/부정적으로 볼 수 있는 경우" 섹션은 자문 톤("좋은 신호"/매수/호재) 없이 깔끔히 분리하기 어려워 **기존 인라인 펼침 유지**(이미 일반적 의미·확인 항목·과거 패턴·주의·원문 노출). 모달 대신 코드베이스 기존 인라인 펼침 채택.
+- 통과: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(타입게이트·`/disclosures` 11.1 kB, exit 0) · 로컬 prod(3253) `/disclosures`·`/today`·`/stock/005380` 200, `/disclosures` SSR에 5 요약 카드 라벨·5색 토큰(green/purple/teal/amber/red)·이벤트 마커(자동분류·이 공시 이해하기·원문 보기·확인할 것)·캡션 렌더, 에러 마커 0, 신규/변경 파일 금칙어 grep = 비자문 부정문만.
+- 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장**(요약 카드 2열↔5열·타입 색 밴드·이벤트 카드 가로 넘침 0·이해하기 펼침·터치 44px·콘솔 오류 0).
+- Residual / next: Phase 7(백테스트 차트·손실 기여 막대). 전역 라이트 토큰(#F6F8FB) 미도입(범위 외).
+
 ### Task 25 — OrnScore 비주얼 리뉴얼 Phase 5 — /stock 상세 게이지·지표 카드·업종 비교 시각화 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-25-ornscore-phase-5`**(시작 `5381720`, 클린). 로컬 검증은 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 시작 PID 15780만 종료). 외부 공개 주소·main 머지는 범위 외(운영자).
 - 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 5(§9.2~§9.7·§14·§15)**. Task #15 결론 카드(`StockConclusionHero`)·#23 톤 위에서 그 아래/주변 점수 해석·비교 시각화 강화 — 결론 카드는 갈아엎지 않음. 점수 계산식·데이터 생성·JSON-LD·breadcrumb·`generateMetadata`/`generateStaticParams`·`StockTabs` 탭 id/순서·가격 동기화·`surge3m`/`riskAlert`·관심/비교/공유 슬롯 **무변경**, 비자문 톤, 신규 npm 패키지 0.
