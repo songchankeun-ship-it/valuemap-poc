@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 36 — OrnScore 1차 상용화 안정화 P1-B — 비교 시작 화면·상단/모바일 메뉴 단순화·종목 탐색 검색 우선·요금제 경계 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-36-ornscore-1-p1-b`**. 시작 HEAD `b3070dd`(= Task 33~35가 기준 `533c6d2` 위) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 리스너 PID 15804만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 설계서 메모: 외부 PDF PART F/G/H/K 원문 레포에 없음 → 지어내지 않고 **작업지시 2~5 + `docs/ornscore-improvement-brief.md`** 기준으로만 구현.
+- What changed (코드 8파일, 표시·문구·서버 파생 데이터만, 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경):
+  - **(2) 비교 시작 화면** `compare/page.tsx`+`CompareClient.tsx`: 서버 `sectorOf` 그룹핑 **추천 비교 세트**(검증 보류 제외·`compositeOf>0`·업종 ≥2종목·상위 2~4·상위 3세트, `recommendedSets` prop). 클라 게이트 `===0`→**`<2`**(1개 선택 시 제거 칩+"1개 더 선택" 안내). 추가 경로 5종(추천 세트 순차 add로 4상한·오늘 Top5 ✓비활성·관심 종목에서 추가[`getWatchlist`]·검색·같은 업종). 최근 본 종목은 저장소 부재로 후속 과제(가짜 금지).
+  - **(3) 메뉴 단순화** `Sidebar`+`MobileNav`+`MobileBottomNav`: 데스크톱 1차=오늘·종목 찾기·공시 신호·백테스트·요금제, 나머지 "더보기". 모바일 하단 4셀(오늘·종목 찾기·공시 신호+더보기), 관심을 MORE 시트로. 라우트/href·active·`aria-label`·Esc/닫기 보존.
+  - **(4) 탐색 검색 우선** `StocksExplorer`: 검색창(헤더 아래·돋보기·큰 입력) 먼저 → 질문형 프리셋 → 빠른 프리셋 `<details>` 접힘 → 상세 필터. 정렬/필터 행 중복 검색 input 제거. 칩 바·초기화 보존, `matchesConfig`/정렬/저장검색/localStorage 무변경.
+  - **(5) 요금제 경계** `pricing/page.tsx`: 무료 "탐색·기본 지표·오늘 후보 무료로 충분", Pro "왜 Pro인가 — 시간 절약·변화 알림·기록 관리"(수익률/조언 비제공). 한도 `limits.ts` 단일 출처. **Premium 미정의로 2티어 유지**. `AddToCompareButton` 4초과 토스트 친절 문구화.
+- What passed: `tsc` exit 0 · `verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/stocks` 14.1 kB, exit 0) · 금지표현 grep 0 · 로컬 prod(3251) `/ /today /stocks /compare /pricing` 200, SSR 마커(1차 메뉴+더보기·검색 우선·요금제 경계·`/compare` flight `recommendedSets` 반도체·IT부품 4종목) 확인.
+- Gate note: Playwright 미구성 → 자동 게이트 미가용. `/compare` 시작 화면 본문은 클라(`mounted`) 렌더라 SSR HTML 미노출(데이터만 flight 확인). **운영자: 3000 재빌드·재기동 후 데스크톱/390px 체크 권장** — 비교 시작 화면·메뉴 5+더보기·모바일 4셀·검색 우선·요금제 경계, 오버플로우 0·터치 44px·콘솔 0.
+- Residual / next: 최근 본 종목 저장소 부재(후속). Premium 미정의(2티어 유지). PART F/G/H/K 원문 미확보. 다음: 운영자 모바일 게이트, 외부 릴리스(범위 외).
+
 ### Task 35 — OrnScore 1차 상용화 안정화 P1-A — 공시 확인포인트 문구·카드 주의 라인·기간 고지·백테스트 오해 방지 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-35-ornscore-1-p1-a`**. 시작 HEAD는 기준 `533c6d2`가 아니라 `8966e63`(= Task 33 P0-A·Task 34 P0-B가 위에 쌓인 상태) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3252**`(운영자 4310 무중단, 내 리스너 PID만 taskkill). main 머지·외부 릴리스는 범위 외(운영자).
 - 설계서 메모: 외부 PDF PART D/E 원문 레포에 없음 → 지어내지 않고 **작업지시 2~6 + `docs/ornscore-improvement-brief.md`** 기준으로만 구현.

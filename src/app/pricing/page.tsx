@@ -38,10 +38,13 @@ export default function PricingPage() {
 
       <div className="grid md:grid-cols-2 gap-3">
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
-          <div className="flex items-baseline justify-between mb-3">
+          <div className="flex items-baseline justify-between mb-1">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">무료</h2>
             <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">₩0</span>
           </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
+            <strong className="text-emerald-700 dark:text-emerald-400">탐색 · 기본 지표 · 오늘 후보</strong>까지 무료로 충분히 써볼 수 있어요. 결제 없이 핵심 가치를 먼저 경험하세요.
+          </p>
           <ul className="space-y-2">
             {FREE.map((f) => (
               <li key={f} className="text-sm text-zinc-700 dark:text-zinc-300 flex gap-2">
@@ -56,10 +59,13 @@ export default function PricingPage() {
 
         <section className="bg-white dark:bg-zinc-900 border-2 border-blue-300 dark:border-blue-800 rounded-xl p-5 relative">
           <span className="absolute -top-2.5 left-5 text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-600 text-white">출시 예정</span>
-          <div className="flex items-baseline justify-between mb-3">
+          <div className="flex items-baseline justify-between mb-1">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Pro</h2>
             <span className="text-sm font-bold text-blue-700 dark:text-blue-400">곧 공개</span>
           </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
+            <strong className="text-blue-700 dark:text-blue-400">왜 Pro인가</strong> — 매번 직접 찾아보는 <strong>시간을 아끼고</strong>, 관심 종목의 <strong>변화를 놓치지 않으며</strong>, 분석을 <strong>기록·관리</strong>하고 싶을 때를 위한 도구예요. (수익률 향상이나 매수·매도 조언은 제공하지 않습니다.)
+          </p>
           <ul className="space-y-2">
             {PRO.map((f) => (
               <li key={f} className="text-sm text-zinc-700 dark:text-zinc-300 flex gap-2">

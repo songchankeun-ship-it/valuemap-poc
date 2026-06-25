@@ -744,6 +744,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         ) : null}
       </header>
 
+      {/* ── 검색 먼저(첫 화면 단순화: 검색창 → 질문형 프리셋 → 상세 필터 순) ── */}
+      <div className="relative">
+        <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none">
+          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          type="search"
+          placeholder="종목명 · 코드로 바로 검색"
+          value={query}
+          onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
+          className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
+        />
+      </div>
+
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       <section>
         <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">어떤 종목을 찾고 있나요?</h2>
@@ -788,13 +802,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         </div>
       </section>
 
-      {/* ── 빠른 프리셋 칩(보조 필터) ── */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
-        <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">빠른 프리셋</span>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">한 번에 하나씩 적용</span>
-        </div>
-        <div className="flex gap-1.5 flex-wrap">
+      {/* ── 빠른 프리셋 칩(보조 필터) — 기본 접힘, 필요할 때만 펼치는 보조 도구 ── */}
+      <details className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 group">
+        <summary className="flex items-center justify-between gap-2 flex-wrap cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">빠른 프리셋 <span className="font-normal normal-case text-zinc-400 dark:text-zinc-500">— 지표로 바로 좁히기</span></span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 group-open:hidden">펼치기 ▾</span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 hidden group-open:inline">접기 ▴</span>
+        </summary>
+        <div className="flex gap-1.5 flex-wrap mt-2.5">
           {PRESETS.map((p) => {
             const selected = activePreset === p.id;
             return (
@@ -815,7 +830,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             );
           })}
         </div>
-      </section>
+      </details>
 
       {/* ── 내 검색 조건(저장/알림) ── */}
       <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
@@ -840,9 +855,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         )}
       </section>
 
-      {/* ── 검색 · 정렬 · 필터 열기 ── */}
+      {/* ── 정렬 · 필터 열기(검색창은 첫 화면 상단으로 이동) ── */}
       <div className="flex gap-2 flex-wrap">
-        <input type="search" placeholder="종목명 · 티커" value={query} onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }} className="flex-1 min-w-[200px] px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
         <select aria-label="정렬 기준" value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900">
           <optgroup label="ORNSCORE 점수">
             <option value="compositeScore-desc">종합점수 높은순</option>

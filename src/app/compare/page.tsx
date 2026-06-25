@@ -3,6 +3,7 @@ import Link from "next/link";
 import { realStockPool } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { isSuspect } from "@/lib/dataQuality";
+import { sectorOf } from "@/lib/sector";
 import { CompareClient } from "@/components/CompareClient";
 
 export const metadata = {
@@ -45,6 +46,33 @@ export default function ComparePage() {
     .slice(0, 5)
     .map((s) => ({ ticker: s.ticker, name: s.name }));
 
+  // 추천 비교 세트 — 실데이터만 사용. 같은 업종(sector) 내 종합점수 상위 종목을
+  // 묶어 "같은 업종끼리 나란히 보기" 시작점을 제공한다(가짜 세트 생성 안 함).
+  const bySector = new Map<string, typeof allStocks>();
+  for (const s of allStocks) {
+    if (!(compositeOf(s) > 0) || isSuspect(s)) continue;
+    const sector = sectorOf(s.themes);
+    if (!sector || sector === "기타") continue;
+    const arr = bySector.get(sector) ?? [];
+    arr.push(s);
+    bySector.set(sector, arr);
+  }
+  const recommendedSets = Array.from(bySector.entries())
+    .filter(([, arr]) => arr.length >= 2)
+    .map(([sector, arr]) => {
+      const picks = [...arr]
+        .sort((a, b) => compositeOf(b) - compositeOf(a))
+        .slice(0, 4);
+      return {
+        label: sector,
+        tickers: picks.map((s) => s.ticker),
+        names: picks.map((s) => s.name),
+      };
+    })
+    // 피어가 가장 많이 모이는(=비교 의미가 큰) 업종 우선, 상위 3세트만 노출
+    .sort((a, b) => b.tickers.length - a.tickers.length)
+    .slice(0, 3);
+
   return (
     <div className="space-y-4">
       <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
@@ -61,7 +89,7 @@ export default function ComparePage() {
         </p>
       </header>
 
-      <CompareClient stockMap={stockMap} top5={top5} />
+      <CompareClient stockMap={stockMap} top5={top5} recommendedSets={recommendedSets} />
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function AddToCompareButton({ ticker, name }: Props) {
         setInBasket(true);
         showToast(name + "을(를) 비교함에 추가했습니다");
       } else if (result.reason === "max") {
-        showToast(`비교는 최대 ${COMPARE_MAX}개까지 가능합니다`);
+        showToast(`비교는 최대 ${COMPARE_MAX}개까지 가능해요 — 하나를 빼고 추가하세요`);
       } else {
         showToast("추가에 실패했습니다. 다시 시도해주세요.");
       }

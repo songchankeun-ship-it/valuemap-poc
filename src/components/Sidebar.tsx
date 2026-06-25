@@ -5,16 +5,18 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, GitCompare, Bot, Info, CreditCard } from "lucide-react";
 
 const ITEMS = [
+  // 1차 메뉴 — 핵심 기능
   { href: "/today", Icon: CalendarDays, label: "오늘", group: "" },
   { href: "/stocks", Icon: Search, label: "종목 찾기", group: "" },
-  { href: "/watchlist", Icon: Heart, label: "관심 종목", group: "" },
-  { href: "/compare", Icon: GitCompare, label: "비교", group: "분석 도구" },
-  { href: "/disclosures", Icon: Megaphone, label: "공시 신호", group: "분석 도구" },
-  { href: "/backtest", Icon: FlaskConical, label: "백테스트", group: "분석 도구" },
-  { href: "/history", Icon: Bot, label: "분석 기록", group: "분석 도구" },
-  { href: "/pricing", Icon: CreditCard, label: "요금제", group: "도움말" },
-  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", group: "도움말" },
-  { href: "/about", Icon: Info, label: "서비스 소개", group: "도움말" },
+  { href: "/disclosures", Icon: Megaphone, label: "공시 신호", group: "" },
+  { href: "/backtest", Icon: FlaskConical, label: "백테스트", group: "" },
+  { href: "/pricing", Icon: CreditCard, label: "요금제", group: "" },
+  // 더보기 — 보조 기능
+  { href: "/watchlist", Icon: Heart, label: "관심 종목", group: "더보기" },
+  { href: "/compare", Icon: GitCompare, label: "비교", group: "더보기" },
+  { href: "/history", Icon: Bot, label: "분석 기록", group: "더보기" },
+  { href: "/guide/metrics", Icon: BookOpen, label: "지표 가이드", group: "더보기" },
+  { href: "/about", Icon: Info, label: "서비스 소개", group: "더보기" },
 ];
 
 function isActive(pathname: string, href: string) {

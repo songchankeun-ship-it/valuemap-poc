@@ -8,12 +8,12 @@ import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConic
 const PRIMARY = [
   { href: "/today", Icon: CalendarDays, label: "오늘" },
   { href: "/stocks", Icon: Search, label: "종목 찾기" },
-  { href: "/watchlist", Icon: Heart, label: "관심" },
+  { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
 ];
 
 const MORE = [
+  { href: "/watchlist", Icon: Heart, label: "관심 종목" },
   { href: "/compare", Icon: GitCompare, label: "비교" },
-  { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트" },
   { href: "/history", Icon: Bot, label: "분석 기록" },
   { href: "/pricing", Icon: CreditCard, label: "요금제" },
