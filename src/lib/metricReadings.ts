@@ -34,7 +34,7 @@ export function readMomentum(score: number): Reading {
   };
   if (score >= 80) {
     r.meaning = "최근 많이 올랐습니다";
-    r.action = "따라 사기 전, 급등 이유 (실적·뉴스·테마) 확인이 우선";
+    r.action = "급등 이유 (실적·뉴스·테마)부터 확인하는 것이 우선";
     r.tone = "caution";
   } else if (score >= 60) {
     r.meaning = "최근 흐름이 양호합니다";
@@ -184,7 +184,7 @@ export function getChecklistByPattern(s: StockShape): { headline: string; items:
       items: [
         "왜 이 종목을 보는지 본인 이유 정리",
         "촉매 (실적·공시·테마)가 있는지 점검",
-        "지금이 진입 시점인지 다음 분기 기다릴지",
+        "지금 살펴볼 시점인지 다음 분기를 기다릴지",
       ],
     };
   }

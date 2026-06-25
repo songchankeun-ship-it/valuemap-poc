@@ -70,8 +70,8 @@ function strongMetrics(s: { momentum: number; flow: number; value: number; vol: 
 
 // 탐색 언어 기반 주의 문구 — '추천'이 아니라 '확인 필요'를 안내.
 function riskNote(s: { value: number; vol: number }, r3m: number | null): string {
-  if (r3m !== null && r3m >= 80) return "최근 상승폭이 커서 진입 전 급등 사유 확인 필요";
-  if (s.vol < 45) return "변동성이 큰 편이라 진입 시점과 비중 분할 검토 필요";
+  if (r3m !== null && r3m >= 80) return "최근 상승폭이 커서 급등 사유 확인 필요";
+  if (s.vol < 45) return "변동성이 큰 편이라 비중·시점 분할 검토 필요";
   if (s.value < 40) return "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요";
   return "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요";
 }

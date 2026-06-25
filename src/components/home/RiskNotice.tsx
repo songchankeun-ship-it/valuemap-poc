@@ -1,21 +1,14 @@
 import { ShieldAlert } from "lucide-react";
+import { dataStatus } from "@/lib/dataStatus";
 
 // 투자 추천 아님 · 탐색 도구 고지 — 모바일에서도 접히지 않고 항상 노출.
+// 본문 3줄은 전역 dataStatus.notices.disclaimer 단일 소스에서 읽는다.
 export function RiskNotice() {
-  const items = [
-    {
-      title: "투자 추천이 아닙니다",
-      body: "오른스코어는 특정 종목의 매수·매도를 권하지 않습니다. 오늘 먼저 살펴볼 탐색 후보를 데이터로 정리할 뿐입니다.",
-    },
-    {
-      title: "과거 데이터 기반입니다",
-      body: "모든 점수와 신호는 과거 가격·재무·공시 데이터에서 계산됩니다. 점수가 높다고 미래 수익을 보장하지 않습니다.",
-    },
-    {
-      title: "최종 판단은 사용자 책임입니다",
-      body: "원문 공시, 재무, 차트를 직접 확인한 뒤 투자 여부는 본인이 결정해야 합니다.",
-    },
-  ];
+  const titles = ["투자 추천이 아닙니다", "점수·신호는 참고 정보입니다", "최종 판단은 사용자 책임입니다"];
+  const items = dataStatus.notices.disclaimer.map((body, i) => ({
+    title: titles[i] ?? "",
+    body,
+  }));
   return (
     <section className="rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/20 p-4 md:p-5">
       <div className="flex items-center gap-2 mb-3">

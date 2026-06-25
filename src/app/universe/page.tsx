@@ -2,6 +2,7 @@ import Link from "next/link";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
+import { dataStatus } from "@/lib/dataStatus";
 
 export const metadata = {
   title: "분석 대상 종목 — 오른스코어",
@@ -44,7 +45,7 @@ export default function UniversePage() {
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">산식 버전</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataMetadata.metricsVersion ?? "—"}</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{dataStatus.metricsVersionLabel}</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">마지막 계산</div>

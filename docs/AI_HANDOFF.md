@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 33 — OrnScore 1차 상용화 안정화 P0-A — 금지표현 교체·공통 고지 3줄·Metrics 2.4 단일출처 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-33-ornscore-1-p0-a-metrics`**(시작 `533c6d2`, 클린·예상 일치). 로컬 검증은 prod `127.0.0.1:**3257**`(운영자 3000/4310 무중단, 내 리스너 PID 21788만 종료). main 머지·외부 릴리스는 범위 외(운영자).
+- 목표: 1차 상용화 안정화(신뢰도·문구 리스크·UI 기본기·검증). 점수 계산식·데이터 생성 무변경, 신규 npm 0·빌드 단계 추가 0.
+- What changed:
+  - **금지 표현 교체**(부정문 고지는 보존): `page.tsx`/`today/page.tsx` riskNote의 "진입 전/진입 시점"→"급등 사유 확인"·"비중·시점 분할", today 과열 caption·"신규 진입"→"신규 편입", `ScoreTooltip.tsx` "저평가 진입"→"저평가 국면", `metricReadings.ts` "따라 사기"·"진입 시점" 문구 교체. `terms/page.tsx`("수익 보장"은 "제공하지 않습니다" 법적 고지)·`metrics.ts`(코드 주석) 보존.
+  - **공통 고지 3줄** 홈 `RiskNotice`에 정확 노출(투자 추천 아님 / 점수·신호는 참고 정보·매수·매도 추천 아님 / 최종 판단·책임은 사용자). 문구는 `dataStatus.notices.disclaimer` 배열 **단일 소스**에서 읽음. 과잉 반복 회피(푸터 1줄 고지가 전역 커버).
+  - **Metrics 버전 단일 표기**: `universe/page.tsx` 산식 버전 셀 → `dataStatus.metricsVersionLabel`("Metrics 2.4"). 전 화면 포맷 통일.
+  - **게이트 강화**: `verify_metrics.py` FORBIDDEN에 다어절 금지 토큰 12종 추가(급등 예상·강력 매수·목표가·손절가·단기 급등주·무료 급등주·매수 후보·AI 픽·AI 추천·오늘 살 종목·따라 사기·진입 시점). 단독 "진입"/"매수 추천"은 오탐 회피로 제외.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(172라우트, exit 0) · 로컬 prod(3257) 검증 9라우트+`/compare`·`/universe` 200·서버 로그 에러 0. SSR: `/` 고지 3줄 정확, Metrics 2.4 6라우트 전수(2.3·"Metrics v" 0), 기준일 2026.06.24 일치, 11라우트 HTML 금지 토큰 grep 0("매수 추천"은 전부 부정문).
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. **운영자: 3000 재빌드·재기동 후 데스크톱/390px 브라우저 체크 권장**(가로 오버플로우·콘솔 오류·홈 고지 3줄).
+- Residual / next: 가격 기준일 delayed 상태는 의도된 정직 표시(유지). 게이트는 단독 "진입"/"매수 추천" 미검사(오탐 회피) — 신규 문자열 수기 주의. 다음: P0-B(설계서 잔여), 운영자 모바일 게이트, 외부 릴리스(범위 외).
+
 ### Task 27 — OrnScore 비주얼 리뉴얼 Phase 7 — /backtest KPI 수익/위험 분리·위험 안내 강화·월별 히트맵·MDD 차트·기여 Top/Bottom (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-27-ornscore-phase-7-kpi`**(시작 `1ae9486`, 클린, `4f5b277` 라인 유지·되돌림 없음). 로컬 검증은 prod `127.0.0.1:**3255**`(운영자 3000/4310 무중단, 내 리스너 PID 15684만 종료). main 머지·배포는 운영자 범위.
 - 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 7(§11.2~§11.5·§15·§20.7)**. `/backtest`를 평면 6카드 → **수익/위험 분리 KPI + 강화된 위험 안내 + 월별 히트맵 + 낙폭(언더워터) 차트 + 기여 Top/Bottom 막대**. 점수 계산식·데이터 생성·`backtest-result.json` **무변경**, 비자문 톤(수익률만 강조 금지·`수익 보장`/`추천 전략`/`매수 신호` 금지), **신규 npm 0**(순수 CSS/SVG/HTML).

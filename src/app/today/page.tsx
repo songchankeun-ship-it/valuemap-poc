@@ -99,8 +99,8 @@ function strongMetrics(s: { momentum: number; flow: number; value: number; vol: 
 
 // 탐색 언어 기반 주의 문구 — '추천'이 아니라 '확인 필요'를 안내(홈과 동일).
 function riskNote(s: { value: number; vol: number }, r3m: number | null): string {
-  if (r3m !== null && r3m >= 80) return "최근 상승폭이 커서 진입 전 급등 사유 확인 필요";
-  if (s.vol < 45) return "변동성이 큰 편이라 진입 시점과 비중 분할 검토 필요";
+  if (r3m !== null && r3m >= 80) return "최근 상승폭이 커서 급등 사유 확인 필요";
+  if (s.vol < 45) return "변동성이 큰 편이라 비중·시점 분할 검토 필요";
   if (s.value < 40) return "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요";
   return "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요";
 }
@@ -348,7 +348,7 @@ export default async function TodayPage() {
         />
         <SignalSection
           title="과열 주의"
-          caption="최근 단기 상승폭이 큰 종목 — 진입 전 급등 사유 확인 필요"
+          caption="최근 단기 상승폭이 큰 종목 — 급등 사유 확인 필요"
           items={overheatedVMs}
           footnote="상승폭이 크다고 매수 신호가 아니며, 급등 사유와 차익실현 위험을 살펴보세요."
         />
@@ -411,7 +411,7 @@ export default async function TodayPage() {
           </div>
           {newEntrants.length > 0 ? (
             <div className="mb-3">
-              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">🆕 오늘 종합 80+ 신규 진입</div>
+              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">🆕 오늘 종합 80+ 신규 편입</div>
               <div className="flex flex-wrap gap-1.5">
                 {newEntrants.map((s) => (
                   <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
