@@ -14,6 +14,7 @@ import {
   isDataStale,
   realStockPool,
 } from "@/lib/realStocks";
+import { isSuspect } from "@/lib/dataQuality";
 
 export type DataStatusKind = "normal" | "partial" | "delayed" | "limited" | "error";
 
@@ -101,6 +102,15 @@ const financialStatus: DataStatusKind =
 // 산식: 버전 메타가 없으면 점검 필요(error), 있으면 정상.
 const metricsStatus: DataStatusKind = metricsVersion ? "normal" : "error";
 
+// ── 앱 내부 자동 점검 파생값 (설계서 §45 / §46) ──────────────────────────
+// 운영자가 /status에서 바로 보는 "최근 자동 점검" 요약. 런타임 데이터를 지어내지 않고
+// 빌드에 포함된 stocks.json 풀에서 실제 계산한 값만 노출한다.
+// - 검증 보류(suspect): PER·PBR·ROE 극단값으로 Top·오늘 후보에서 제외되는 종목 수.
+// - 결측: PER·PBR가 비어 밸류 해석 신뢰도가 낮은 종목 수(missingFinancials 재사용).
+// - 산식 일치: stocks.json 메타 버전이 기대 버전(EXPECTED_METRICS_VERSION)과 같은지.
+const suspectCount = realStockPool.filter((s) => isSuspect(s)).length;
+const metricsVersionMatch = metricsVersion === EXPECTED_METRICS_VERSION;
+
 export interface DomainStatus {
   key: "price" | "financial" | "disclosure" | "metrics";
   label: string;
@@ -156,6 +166,89 @@ export const domainStatuses: DomainStatus[] = [
   },
 ];
 
+// ── 페이지별 제한 문구 단일 소스 (limits·knownLimits가 같은 문자열을 공유) ──
+const LIMIT_DISCLOSURE = "공시는 성능·비용을 위해 최신 200건까지만 분석합니다.";
+const LIMIT_BACKTEST =
+  "백테스트는 아이디어 검증용 시뮬레이션이며 현재 종합점수의 성과 검증 결과가 아닙니다.";
+
+/** 운영자·사용자가 한눈에 보는 "알려진 제한" 항목 (이미 문서화된 사실만 모음). */
+export interface KnownLimit {
+  title: string;
+  detail: string;
+}
+
+/**
+ * 알려진 제한 — /status·신뢰 모달이 같은 정의를 읽는 단일 소스.
+ * 새 제약을 만들지 않고, 이미 코드/문서에 있는 사실(공시 200건·백테스트 한계·밸류 표본·업종 휴리스틱·검증 보류)만 정리한다.
+ */
+export const knownLimits: KnownLimit[] = [
+  {
+    title: "공시 분석 범위",
+    detail: `${LIMIT_DISCLOSURE} 선택한 기간 전체 공시가 아니라 코스피·코스닥 각 최신 100건(합 200건) 안에서 추출합니다.`,
+  },
+  {
+    title: "백테스트 한계",
+    detail: `${LIMIT_BACKTEST} 생존편향(시점별 유니버스 미반영)은 후속 과제입니다.`,
+  },
+  {
+    title: "밸류 업종 기준",
+    detail:
+      "업종 내 밸류는 동일 업종 PER·PBR 피어가 4종목 이상일 때만 제공하며, 표본이 부족하면 전체 풀 기준 점수만 표시합니다.",
+  },
+  {
+    title: "업종 분류 방식",
+    detail:
+      "업종 구분은 KRX 공식 업종코드가 아니라 테마 기반 휴리스틱이며, 공식 코드 연동은 후속 과제입니다.",
+  },
+  {
+    title: "검증 보류 종목",
+    detail:
+      "PER·PBR·ROE가 극단값인 종목은 검증 보류로 표시하고 오늘 후보·Top 목록에서 제외합니다.",
+  },
+];
+
+/** 앱 내부 자동 점검 요약 — /status "최근 자동 점검"이 읽는 실측 값(런타임 날조 없음). */
+export interface SelfCheck {
+  /** 검증 보류(suspect) 종목 수 — Top·오늘 후보에서 제외. */
+  suspectCount: number;
+  /** PER·PBR 결측 종목 수(밸류 해석 신뢰도 낮음). */
+  missingFinancialsCount: number;
+  /** 분석 대상 전체 종목 수. */
+  universeCount: number;
+  /** stocks.json 산식 버전이 기대 버전과 일치하는지. */
+  metricsVersionMatch: boolean;
+  /** 기대 산식 버전(코드 단일 기준). */
+  expectedMetricsVersion: string;
+  /** stocks.json에 기록된 실제 산식 버전(없으면 undefined). */
+  actualMetricsVersion: string | undefined;
+}
+
+const selfCheck: SelfCheck = {
+  suspectCount,
+  missingFinancialsCount: missingFinancials,
+  universeCount: universeSize,
+  metricsVersionMatch,
+  expectedMetricsVersion: EXPECTED_METRICS_VERSION,
+  actualMetricsVersion: metricsVersion,
+};
+
+/** 데이터 오류 신고 접수 메일 주소(단일 소스). */
+export const reportEmail = "songchankeun@gmail.com";
+
+/** 오류 신고 시 포함하면 확인이 빨라지는 항목 — 화면 체크리스트와 메일 본문이 같은 정의를 쓴다. */
+export interface DataIssueField {
+  label: string;
+  hint: string;
+}
+
+export const dataIssueReportFields: DataIssueField[] = [
+  { label: "종목명 · 코드", hint: "예: 삼성전자 005930" },
+  { label: "항목(가격·재무·공시·점수)", hint: "어떤 데이터가 이상한지" },
+  { label: "이상한 값과 기대값", hint: "보이는 값 / 맞다고 생각하는 값" },
+  { label: "발견 화면 URL", hint: "문제를 본 페이지 주소" },
+  { label: "연락 방법", hint: "회신받을 이메일(선택)" },
+];
+
 /**
  * 전역 데이터 신뢰 객체. 모든 신뢰 배지/모달/푸터가 이 객체를 읽는다.
  * 백테스트·공시 등 페이지별 기준이 다른 데이터는 별도 표기하며 여기서 전역 기준일을 덮지 않는다.
@@ -202,9 +295,42 @@ export const dataStatus = {
 
   /** 페이지별 제한 요약 (설계서 §10.4 / §10.5). */
   limits: {
-    disclosure: "공시는 성능·비용을 위해 최신 200건까지만 분석합니다.",
-    backtest: "백테스트는 아이디어 검증용 시뮬레이션이며 현재 종합점수의 성과 검증 결과가 아닙니다.",
+    disclosure: LIMIT_DISCLOSURE,
+    backtest: LIMIT_BACKTEST,
   },
+
+  /** 알려진 제한 목록 (설계서 §3.3 / §10) — /status·신뢰 모달 공용. */
+  knownLimits,
+
+  /** 앱 내부 자동 점검 요약 (설계서 §45) — /status "최근 자동 점검"이 읽는 실측 값. */
+  selfCheck,
+
+  /** 데이터 오류 신고 접수 메일 (설계서 §46). */
+  reportEmail,
 } as const;
+
+/**
+ * 데이터 오류 신고 mailto: 링크 — /status·/about·푸터가 같은 본문/기준일을 공유한다.
+ * prefill에는 해당 화면에서 자동 채운 컨텍스트(종목·URL 등)를 넘긴다. 본문은 실제 줄바꿈(\n)을 쓴다.
+ */
+export function buildDataIssueMailto(opts?: { subject?: string; prefill?: string }): string {
+  const subject = opts?.subject ?? "[오른스코어] 데이터 오류 신고";
+  const bodyLines = [
+    "종목명/코드:",
+    "항목(가격/재무/공시/점수):",
+    "이상한 값과 기대값:",
+    "발견 화면(URL):",
+    "연락 방법(선택):",
+  ];
+  if (opts?.prefill) {
+    bodyLines.push("", opts.prefill);
+  }
+  bodyLines.push(
+    "",
+    `— 데이터 기준일: ${dataStatus.globalAsOfLabel} · 산식 ${dataStatus.metricsVersionLabel}`,
+  );
+  const body = bodyLines.join("\n");
+  return `mailto:${reportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 export type DataStatus = typeof dataStatus;

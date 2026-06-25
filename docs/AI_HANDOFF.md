@@ -42,6 +42,19 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 40 — OrnScore 1차 안정화 후속 C — /status 운영 상태판 보강(알려진 제한·자동 점검·오류 신고 단일화) (2026-06-25, Claude)
+- Preview/branch: branch `ai-center/task-40-ornscore-1-c-mvp`. 시작 HEAD `a561e45`(= Task 33~39 머지 상태) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310[PID 6008]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3262**`(내 리스너 node PID 26360만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 작업범위 C — 운영자가 `/status`만 봐도 현재 데이터/산식/제한/오류 신고 흐름을 이해하게 보강, 사용자 오류 신고 진입점 명확화. 신규 기능·데이터 구조 변경 아님. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성/거짓 확정 표현 신규 생성 0.
+- What changed (코드 5파일, 표시·문구·파생 데이터만):
+  - **`src/lib/dataStatus.ts`(단일 소스 확장)**: `knownLimits`(공시 200건·백테스트 시뮬/생존편향·밸류 표본 부족→전체 풀·업종 휴리스틱·검증 보류 Top 제외 — 기존 `limits.disclosure`/`limits.backtest` 문자열 모듈 상수로 재사용), `selfCheck`(realStockPool 실측: 검증 보류 수=`isSuspect`·결측 수=`missingFinancials`·산식 일치=vs `EXPECTED_METRICS_VERSION`), `reportEmail`·`dataIssueReportFields`·`buildDataIssueMailto({subject?,prefill})`(본문 실제 `\n`, 기준일·산식 자동 prefill).
+  - **`src/app/status/page.tsx`**: 스냅샷에 점수 계산 시각·공시 라이브 조회·산식 일치 라인 추가, "알려진 제한"·"최근 자동 점검 요약" 섹션 신설(점검 이력 보관/관리자 대시보드/수동 재수집 후속 캡션), 상단 인페이지 목차(앵커 칩)·`scroll-mt-20`·`break-words`로 모바일 가독성. 기존 도메인 상태·데이터 소스 보존. 인라인 mailto → `ReportDataIssue`로 대체.
+  - **신규 `src/components/status/ReportDataIssue.tsx`(서버)**: 44px mailto 버튼 + 화면에 보이는 "신고 시 포함할 정보" 체크리스트(`dataIssueReportFields`). `id="report"`로 `/status#report` canonical 앵커.
+  - **`src/app/about/page.tsx`**: "데이터 오류" 문의를 `/status#report`로 안내(기능 제안·협업은 메일 유지).
+  - **`src/app/layout.tsx`**: 푸터에 "오류 신고"(`/status#report`) 링크 추가.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/status` 프리렌더, exit 0) · 변경 5파일 금지표현 grep 0 · 로컬 prod(3262) `/status`·`/about` 200·에러 마커 0, SSR "알려진 제한"·"최근 자동 점검 요약"·체크리스트·`id="report"`·검증 보류 종목·산식 일치 렌더·mailto %0A 줄바꿈·`/about` 신고 링크 확인.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+build 대체). **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/status` 확인 권장** — 목차 칩 줄바꿈·알려진 제한/자동 점검 카드 2↔3열·신고 체크리스트·44px 버튼·오버플로우 0·콘솔 0.
+- Residual / next: 오류 신고 **메일 전용**(영속 저장 미추가). **후속 분리**: 오류 신고 저장소 + 관리자 대시보드 + 수동 재수집 트리거(설계서 §3.3-6/7·§45/46, `docs/legal-ai-commercial-readiness.md`). `selfCheck`는 배포 시점 스냅샷(점검 이력 시계열 보관 없음 — 후속). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 39 — OrnScore 1차 안정화 후속 B — 데이터 소스 리스크 체크리스트(법무/개발 분리·갱신 경로 정리) (2026-06-25, Claude)
 - Preview/branch: branch `ai-center/task-39-ornscore-1-b`. 시작 HEAD `a561e45`(= Task 33~38 머지 상태) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310·미리보기 3000 무중단(이번 작업은 보조 포트 서버 미기동 — 화면 변경 0).
 - 목표: 작업범위 B — 데이터 출처 관련 잔여 리스크를 **한 문서에서 추적 가능**하게, **법무 최종 판단 항목과 개발자 처리 항목을 분리**. 신규 기능·데이터 구조 변경 아님, 신규 npm 0, 사실과 다른 확정 표현 신규 생성 0.

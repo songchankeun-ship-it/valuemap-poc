@@ -1,5 +1,36 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 1차 상용화 안정화 후속 C — /status 운영 상태판 보강(알려진 제한·자동 점검·오류 신고 단일화) (Task 40, Claude)
+
+### 목표
+- ORNSCORE 1차 안정화 잔여 후속(작업범위 C). 신규 기능 추가가 아니라 **상용화 전 운영자가 /status만 봐도 현재 데이터·산식·제한·오류 신고 흐름을 이해**할 수 있게 보강하고, **사용자 오류 신고 진입점을 더 명확히**. branch `ai-center/task-40-ornscore-1-c-mvp`. 공개 기준 HEAD `a561e45`(= Task 33~39 머지 상태) 위에 쌓음 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310·미리보기 3000 무중단. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` **무변경**, 신규 npm 0, 사실과 다른 확정 표현·투자 조언성 표현 신규 생성 0.
+
+### 완료한 작업 (작업범위 C 1~5)
+- **(단일 소스 확장) `src/lib/dataStatus.ts`**: 사실만 추가, 새 자문 문구 0.
+  - `knownLimits: {title, detail}[]` — 이미 문서화된 제한 5종 정리(공시 최신 200건·백테스트 시뮬레이션/생존편향 미해결·밸류 업종 표본 부족 시 전체 풀 기준·업종 분류 KRX 공식코드 아닌 휴리스틱·검증 보류(suspect) Top 제외). 공시·백테스트 문구는 기존 `limits.disclosure`/`limits.backtest`를 모듈 상수(`LIMIT_DISCLOSURE`/`LIMIT_BACKTEST`)로 빼 **재사용**(중복 0).
+  - `selfCheck` — `realStockPool`에서 **실측**(런타임 날조 없음): 검증 보류 종목 수(`isSuspect`), PER·PBR 결측 종목 수(`missingFinancials` 재사용), 산식 버전 일치 여부(`metricsVersion === EXPECTED_METRICS_VERSION`). "최근 자동 점검"이 앱 내부 실제 값을 반영.
+  - `reportEmail`·`dataIssueReportFields`(종목·코드 / 항목 / 이상한 값·기대값 / 화면 URL / 연락 방법)·`buildDataIssueMailto({subject?, prefill})` 헬퍼 — 모든 신고 진입점이 같은 메일 주소·본문·기준일/산식 prefill을 공유. 본문은 실제 `\n` 줄바꿈.
+- **(2) `src/app/status/page.tsx` 재구성**: 스냅샷에 "점수 계산 시각"·공시=라이브 조회 설명·**산식 버전 일치 여부 라인**(selfCheck) 추가. **알려진 제한** 섹션(knownLimits 렌더)·**최근 자동 점검 요약** 섹션(검증 보류 N·결측 N·산식 일치, 점검 이력 보관/관리자 대시보드/수동 재수집은 후속 과제 캡션) 신설. 기존 도메인별 상태·데이터 소스 보존.
+- **(4) 오류 신고 흐름·진입점** 새 재사용 서버 컴포넌트 `src/components/status/ReportDataIssue.tsx`: 44px mailto 버튼 + **화면에 보이는 "신고 시 포함할 정보" 체크리스트**(메일 클라이언트 안 열어도 무엇을 적을지 보임). `/status#report` 단일 canonical 목적지. `/about` "데이터 오류" 문의를 `/status#report`로 안내, 푸터(`layout.tsx`)에 "오류 신고" 링크 추가.
+- **(5) 모바일 가독성**: 길어진 /status 상단에 인페이지 목차(앵커 칩, JS 없음) 추가, 각 섹션 `scroll-mt-20`·`break-words`로 줄바꿈/넘침 가드. 기존 반응형 그리드(`grid-cols-2 md:grid-cols-*`)·44px 터치 유지.
+- **(3) 후속 분리**: 별도 영속 저장 구조(오류 신고 DB·관리자 대시보드·수동 재수집 트리거)는 이번에 만들지 않고 화면 캡션 + PROGRESS·AI_HANDOFF에 후속 과제로 명시(설계서 §3.3-6/7·§45/46, `docs/legal-ai-commercial-readiness.md` 교차링크).
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p·`/status` 프리렌더, exit 0
+- 변경 5파일 금지표현(매수 추천/강력 매수/급등 예상/목표가/손절가/진입 시점/따라 사기/AI 픽/AI 추천/매수 후보/수익 보장 등) grep = 0.
+- 로컬 prod(127.0.0.1:**3262**, 내 리스너 node PID 26360만 taskkill·AI Center 4310[PID 6008] 무중단·3000 운영자 미기동 상태 그대로): `/status`·`/about` HTTP 200·에러 마커(Application error/Hydration/TypeError/ReferenceError/cannot read) 0. SSR: `/status`에 "알려진 제한"·"최근 자동 점검 요약"·체크리스트(종목명·코드/이상한 값과 기대값/발견 화면 URL/연락 방법)·`id="report"`·검증 보류 종목·산식 버전 일치 렌더, mailto 본문 인코딩 줄바꿈(%0A) 확인. `/about`에 "데이터 상태 페이지의 오류 신고" 링크 렌더.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → 실제 브라우저 자동 DESKTOP/390px 게이트 로컬 미가용(curl+SSR grep+build 대체, 픽셀 단위 미보장). **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px로 `/status` 확인 권장** — 인페이지 목차 칩 줄바꿈·알려진 제한/자동 점검 카드 2열↔3열·오류 신고 체크리스트·44px 버튼·가로 오버플로우 0·콘솔 0.
+
+### 결정 / 잔여 리스크 / 다음
+- **오류 신고는 현재 메일 전용**(영속 저장 추가 안 함). **후속 분리**: 오류 신고 저장소 + 관리자 대시보드 + 수동 재수집 트리거(설계서 §3.3-6/7·§45/46). `selfCheck`는 배포 시점 스냅샷(점검 이력 보관 없음) — 시계열 보관도 후속.
+- 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-25 · 1차 상용화 안정화 후속 B — 데이터 소스 리스크 체크리스트(법무/개발 분리·갱신 경로 정리) (Task 39, Claude)
 
 ### 목표

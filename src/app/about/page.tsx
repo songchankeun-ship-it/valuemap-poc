@@ -104,7 +104,12 @@ export default function AboutPage() {
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">문의 & 오류 제보</h2>
         </div>
         <div className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
-          <p>데이터 오류, 기능 제안, 협업 문의는 아래로 연락해주세요:</p>
+          <p>
+            <strong className="text-zinc-900 dark:text-zinc-100">데이터 오류</strong>는{" "}
+            <Link href="/status#report" className="text-blue-600 dark:text-blue-400 underline">데이터 상태 페이지의 오류 신고</Link>
+            에서 포함할 정보를 보고 보내주시면 확인이 빠릅니다.
+          </p>
+          <p>기능 제안·협업 문의는 아래로 연락해주세요:</p>
           <p className="font-mono text-zinc-900 dark:text-zinc-100">
             <a href="mailto:songchankeun@gmail.com" className="text-blue-600 dark:text-blue-400 underline">songchankeun@gmail.com</a>
           </p>
