@@ -49,6 +49,22 @@ function pct(x: number, digits = 1) {
   return (x >= 0 ? "+" : "") + (x * 100).toFixed(digits) + "%";
 }
 
+// 서버/클라이언트 locale 차이(예: "PM" vs "오후")로 인한 hydration mismatch를 피하기 위해
+// toLocaleString 대신 결정적(deterministic) 한국어 포맷을 직접 만든다.
+function formatGeneratedAt(iso: string) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const yyyy = d.getFullYear();
+  const mm = d.getMonth() + 1;
+  const dd = d.getDate();
+  const h24 = d.getHours();
+  const ampm = h24 < 12 ? "오전" : "오후";
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  const min = String(d.getMinutes()).padStart(2, "0");
+  const sec = String(d.getSeconds()).padStart(2, "0");
+  return `${yyyy}. ${mm}. ${dd}. ${ampm} ${h12}:${min}:${sec}`;
+}
+
 // 등락 의미색(상승=빨강·하락=파랑). 수익 그룹 KPI에 사용.
 function upDownTone(x: number) {
   return x >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
@@ -277,7 +293,7 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
       ) : null}
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
-        생성: {new Date(data.generatedAt).toLocaleString("ko-KR")} · 데이터: KRX 일별 종가(FDR)
+        생성: {formatGeneratedAt(data.generatedAt)} · 데이터: KRX 일별 종가(FDR)
       </p>
 
       <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-zinc-200 dark:border-zinc-800 pt-4">
