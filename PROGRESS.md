@@ -1,5 +1,34 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 1차 상용화 안정화 후속 D — 비교 최근 본 종목·공시 범위 고지·업종 밸류 한계 표시 (Task 41, Claude)
+
+### 목표
+- ORNSCORE 1차 안정화 잔여 후속(작업범위 D). 신규 기능을 크게 늘리지 않고 **상용화 전 눈에 보이는 불안 요소·확인 공백**을 줄임 — (2) 비교 시작 화면 빈 느낌 보강, (3) 공시 안내가 전체 기간처럼 오해되지 않게 수집 범위·한계 명확화, (4) 업종 밸류는 동종 비교 충분할 때만 강하게, 부족하면 제한 안내. branch `ai-center/task-41-ornscore-1-d-ux`. 시작 HEAD `a18dad1`(= Task 33~40 위에 쌓인 상태), 작업트리 클린 확인 후 **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 6008]·미리보기 3000 무중단. 점수 계산식(`sectorValueScore` 등)·`stocks.json`·`backtest-result.json`·`direction` **무변경**, 신규 npm 0, 투자 조언성 표현 신규 생성 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
+
+### 완료한 작업 (작업범위 D 2~5)
+- **(2) 비교 시작 화면 — 실제 "최근 본 종목" 노출(가짜 데이터 없음)**: 신규 `src/lib/recentViews.ts` — `RecentViewTracker`가 기록한 `ornscore_recent_views`(레거시 `valuemap_recent_views` 폴백)를 SSR-safe하게 읽는 `getRecentViews()` 단일 소스 추출. `WatchlistClient.tsx`의 인라인 `readRecent()`를 이 리더로 교체(동작 바이트 동일, `RecentView` 타입도 공유). `CompareClient.tsx` 시작 화면(`stocks.length < 2`)에 **"최근 본 종목에서 추가"** 섹션을 첫 추가 경로로 신설 — `getRecentViews()` 로드→`stockMap`으로 이름 매핑(풀에 없는 종목 제외)→이미 담은 종목 제외→실제 기록이 1개 이상일 때만 렌더(가짜/플레이스홀더 칩 없음). `recent-views-changed`·`storage` 이벤트 구독으로 갱신. 칩은 기존 패턴(44px 터치, `+ {name}` → `addToCompare`). 섹션 순서: 최근 본 → 추천 세트 → 오늘 Top5 → 관심 → 검색 → 업종. `compare.ts`·관심 목록·점수 계산 무변경.
+- **(3) 종목 상세 공시 수집 범위 고지** `src/components/StockDisclosures.tsx`: `?days=90&limit=20`으로 가져와 `slice(0,10)` 표시하면서 헤더는 "최근 90일 · 공시 N건 · 신호 N건"만 보였음 → **상시 노출 캡션** 추가("최근 90일 내 최신 공시 일부입니다(최대 20건 수집 · 10건 표시) · 전체 공시 이력이 아닙니다."). 중립·비-valence 톤, 빈 상태 안내 보존. API 라우트·`direction`·카운트 무변경.
+- **(4) 업종 밸류 한계 가시화** `src/app/stock/[ticker]/page.tsx`(`sectorValue.score >= 0` 분기): 동종 비교 표본이 **10개 미만이면 강조(큰 cyan 숫자) 대신 중립 zinc 톤**으로 낮추고 **"표본 작음 · 참고만"** 캡션 노출 — 얇은 표본이 강해 보이지 않게. 표본 충분(peers ≥ 10)이면 기존 cyan 강조 유지. 임계/문구는 `dataStatus.knownLimits`("밸류 업종 기준")와 정렬. `sectorValueScore` 산식·`peers<4` "표본 부족" 분기(else, 미제공) 로직 무변경 — 표시/문구만.
+- **(5) 큰 데이터 작업은 후속으로 분리**: 데이터 파이프라인 확장·새 수집 범위 시도 0. 아래 "결정/잔여 리스크"에 명시.
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p(`/stock/[ticker]` 14.1 kB), exit 0
+- 변경 5파일(recentViews.ts·CompareClient·WatchlistClient·StockDisclosures·stock/[ticker]/page) 금지표현(매수 추천/강력 매수/급등 예상/목표가/손절가/진입 시점/따라 사기/AI 픽/AI 추천/매수 후보/수익 보장 등) grep = 0.
+- 로컬 prod(127.0.0.1:**3277**, 내 리스너 node PID 30636만 taskkill·AI Center 4310[PID 6008] 무중단·3000 운영자 미기동 상태 그대로): `/compare`·`/disclosures`·`/stock/005380`·`/stock/032830`·`/watchlist` HTTP 200·에러 마커(Application error/Hydration/TypeError/ReferenceError/cannot read/Unhandled) 0. SSR: **`/stock/005380`(자동차, 피어<10)에 "표본 작음 · 참고만" 중립 톤 렌더**, **`/stock/032830`(보험, 피어≥10)은 cyan 강조 유지**(두 분기 모두 확인). `/compare` 최근 본 종목·`/disclosures` 캡션은 클라이언트 렌더라 SSR HTML 대신 빌드 청크(`app/compare/page-*.js`·`app/stock/[ticker]/page-*.js`)에 신규 문자열 포함 확인.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → 실제 브라우저 자동 DESKTOP/390px 게이트 로컬 미가용(curl+SSR grep+빌드 청크 grep+build 대체, 픽셀 단위 미보장). `/compare` 시작 화면 본문·최근 본 종목 칩과 `/disclosures`·종목 상세 공시 캡션은 클라 렌더라 SSR HTML에 안 보임(소스+빌드 청크로 확인). **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px로 확인 권장** — `/compare` 시작 화면 최근 본 종목 칩(줄바꿈·44px·실제 기록 있을 때만 노출)·`/stock` 공시 범위 캡션·업종 밸류 저표본 중립 톤, 가로 오버플로우 0·콘솔 0.
+
+### 결정 / 잔여 리스크 / 다음(후속 큰 데이터 작업 — 이번 작업 범위 밖, 미시도)
+- **KRX 공식 업종코드 매핑**: 업종 밸류 피어 표본 확대(현재 테마 기반 휴리스틱이라 자동차 등 일부 업종은 피어<10으로 "참고만"). 공식 코드 연동 시 강조 표시 가능 종목이 늘어남.
+- **공시 전체 기간 수집**: 현재 종목 상세는 최근 90일·최대 20건 수집/10건 표시, /disclosures는 최신 200건 상한. 전체 기간 DART 수집·저장은 별도 파이프라인 필요(후속).
+- **최근 본 종목 기기 간 동기화**: 현재 localStorage 기반(기기/브라우저 로컬). 로그인 계정 기준 크로스 디바이스 동기화는 후속.
+- 이번 작업에서 데이터 파이프라인 확장은 **시도하지 않음**(설계서 작업범위 D 5항 지침). 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-25 · 1차 상용화 안정화 후속 C — /status 운영 상태판 보강(알려진 제한·자동 점검·오류 신고 단일화) (Task 40, Claude)
 
 ### 목표

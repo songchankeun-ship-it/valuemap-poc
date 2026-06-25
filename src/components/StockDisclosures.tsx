@@ -145,6 +145,10 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           최근 90일 · 공시 {data.count}건 · 신호 {data.signalCount}건
         </span>
       </div>
+      {/* 수집 범위 고지 — 전체 공시 이력처럼 오해되지 않게 상시 노출 */}
+      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-2 leading-relaxed">
+        최근 90일 내 최신 공시 일부입니다(최대 20건 수집 · 10건 표시) · 전체 공시 이력이 아닙니다.
+      </p>
       {(() => {
         const when = fmtKST(data.fetchedAt);
         const src = sourceKo(data.source);

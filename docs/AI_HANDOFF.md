@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 41 — OrnScore 1차 안정화 후속 D — 비교 최근 본 종목·공시 범위 고지·업종 밸류 한계 표시 (2026-06-25, Claude)
+- Preview/branch: branch `ai-center/task-41-ornscore-1-d-ux`. 시작 HEAD `a18dad1`(= Task 33~40 위) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310[PID 6008]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3277**`(내 리스너 node PID 30636만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 작업범위 D — 상용화 전 눈에 보이는 불안 요소·확인 공백 축소(신규 기능 최소). 점수 계산식(`sectorValueScore`)·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성 표현 신규 생성 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
+- What changed (코드 5파일, 표시·문구·공유 리더만):
+  - **(2) 신규 `src/lib/recentViews.ts`**: `RecentViewTracker`가 쓰는 `ornscore_recent_views`(레거시 폴백) 읽는 `getRecentViews()` 단일 소스. `WatchlistClient.tsx` 인라인 `readRecent()` → 이 리더로 교체(바이트 동일). `CompareClient.tsx` 시작 화면(`stocks.length<2`)에 **"최근 본 종목에서 추가"** 첫 추가 경로 신설 — 실제 방문 기록만(`stockMap` 매핑·담은 종목 제외·기록 1개+ 일 때만, 가짜 칩 없음), `recent-views-changed`·`storage` 구독, 44px 칩. 순서: 최근 본→추천 세트→오늘 Top5→관심→검색→업종.
+  - **(3) `StockDisclosures.tsx`**: `?days=90&limit=20`→`slice(0,10)` 표시인데 헤더는 "최근 90일"만 보였음 → **상시 캡션** "최근 90일 내 최신 공시 일부입니다(최대 20건 수집 · 10건 표시) · 전체 공시 이력이 아닙니다." 추가(중립 톤). API·`direction`·카운트 무변경.
+  - **(4) `src/app/stock/[ticker]/page.tsx`(`sectorValue.score>=0`)**: 동종 피어<10이면 cyan 강조 대신 **중립 zinc 톤 + "표본 작음 · 참고만"** 캡션, 피어≥10이면 기존 cyan 강조 유지. 임계/문구 `dataStatus.knownLimits`("밸류 업종 기준") 정렬. `sectorValueScore` 산식·`peers<4` 미제공 분기 무변경(표시만).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p, exit 0) · 변경 5파일 금지표현 grep 0 · 로컬 prod(3277) `/compare`·`/disclosures`·`/stock/005380`·`/stock/032830`·`/watchlist` 200·에러 마커 0. SSR: **005380(자동차·피어<10) "표본 작음 · 참고만" 중립 톤**, **032830(보험·피어≥10) cyan 강조 유지**(두 분기 확인). 클라 렌더 문자열(최근 본 종목·공시 캡션)은 빌드 청크(`app/compare/page-*.js`·`app/stock/[ticker]/page-*.js`)에 포함 확인.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+빌드 청크 grep+build 대체). `/compare` 시작 화면·최근 본 종목 칩과 공시 캡션은 클라 렌더라 SSR HTML 미노출. **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 확인 권장** — `/compare` 최근 본 종목 칩(줄바꿈·44px·실제 기록 있을 때만)·`/stock` 공시 범위 캡션·업종 밸류 저표본 중립 톤·오버플로우 0·콘솔 0.
+- Residual / next(후속 큰 데이터 작업 — 이번 미시도): **KRX 공식 업종코드 매핑**(업종 밸류 피어 표본 확대 → 강조 표시 종목 증가), **공시 전체 기간 수집**(현재 종목 상세 90일·20건 수집/10건 표시·/disclosures 200건 상한 → 전체 기간 DART 파이프라인 필요), **최근 본 종목 기기 간 동기화**(현재 localStorage 로컬 → 계정 기준 크로스 디바이스). 데이터 파이프라인 확장은 시도하지 않음(설계서 작업범위 D 5항). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 40 — OrnScore 1차 안정화 후속 C — /status 운영 상태판 보강(알려진 제한·자동 점검·오류 신고 단일화) (2026-06-25, Claude)
 - Preview/branch: branch `ai-center/task-40-ornscore-1-c-mvp`. 시작 HEAD `a561e45`(= Task 33~39 머지 상태) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310[PID 6008]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3262**`(내 리스너 node PID 26360만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 작업범위 C — 운영자가 `/status`만 봐도 현재 데이터/산식/제한/오류 신고 흐름을 이해하게 보강, 사용자 오류 신고 진입점 명확화. 신규 기능·데이터 구조 변경 아님. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성/거짓 확정 표현 신규 생성 0.

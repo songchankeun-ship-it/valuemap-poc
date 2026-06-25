@@ -10,30 +10,11 @@ import {
   removeFromWatchlist,
   type WatchlistItem,
 } from "@/lib/watchlist";
-
-type RecentView = {
-  ticker: string;
-  name: string;
-  viewedAt: string;
-};
+import { getRecentViews, type RecentView } from "@/lib/recentViews";
 
 const RECENT_KEY = "ornscore_recent_views";
-const LEGACY_RECENT_KEY = "valuemap_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
 const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
-
-function readRecent(): RecentView[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(RECENT_KEY) ?? localStorage.getItem(LEGACY_RECENT_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.slice(0, 10);
-  } catch {
-    return [];
-  }
-}
 
 function formatTime(iso: string): string {
   const date = new Date(iso);
@@ -111,7 +92,7 @@ export function WatchlistClient({
         const wl = await getWatchlist();
         if (mounted) {
           setWatchlist(wl);
-          setRecent(readRecent());
+          setRecent(getRecentViews());
         }
       } catch {
         if (mounted) setLoadError(true);
@@ -129,7 +110,7 @@ export function WatchlistClient({
       });
     }
     function onRecentChange() {
-      if (mounted) setRecent(readRecent());
+      if (mounted) setRecent(getRecentViews());
     }
 
     window.addEventListener("watchlist-changed", onWatchlistChange);

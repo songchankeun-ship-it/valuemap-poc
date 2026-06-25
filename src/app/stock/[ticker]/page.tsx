@@ -320,18 +320,26 @@ export default async function StockDetailPage({ params }: PageProps) {
         roe: s.roe,
       }} />
 
-      {sectorValue.score >= 0 ? (
-        <div className="rounded-lg border border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
+      {sectorValue.score >= 0 ? (() => {
+        // 동종 비교 표본이 10개 미만이면 강한 강조(큰 cyan 숫자) 대신 중립 톤으로 낮춰 "참고만"임을 보인다.
+        // 점수 산식(sectorValueScore)은 무변경 — 표시/문구만 분기. (표본 부족 peers<4는 아래 else 분기에서 미제공)
+        const lowSample = sectorValue.peers < 10;
+        return (
+        <div className={"rounded-lg border p-3 flex items-center justify-between gap-3 " + (lowSample ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40" : "border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20")}>
           <div className="min-w-0">
-            <div className="text-[11px] md:text-xs text-cyan-800 dark:text-cyan-300 font-semibold">업종 대비 밸류 · {sectorValue.sector} <span className="font-normal text-cyan-700/70 dark:text-cyan-400/70">(위 밸류 점수와 기준 다름)</span></div>
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체 {poolN}종목 풀 기준({Math.round(s.value)}점){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
+            <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>업종 대비 밸류 · {sectorValue.sector} <span className={"font-normal " + (lowSample ? "text-zinc-400 dark:text-zinc-500" : "text-cyan-700/70 dark:text-cyan-400/70")}>(위 밸류 점수와 기준 다름)</span></div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체 {poolN}종목 풀 기준({Math.round(s.value)}점)</div>
+            {lowSample ? (
+              <div className="text-[10px] font-medium text-amber-600 dark:text-amber-400 mt-1">표본 작음 · 참고만 — 동종 비교 종목이 10개 미만이라 업종 내 위치는 참고용입니다. 충분한 표본이 모이면 강조 표시됩니다.</div>
+            ) : null}
           </div>
           <div className="text-right shrink-0">
-            <span className="text-lg font-bold tabular-nums text-cyan-700 dark:text-cyan-400">{sectorValue.score}</span>
+            <span className={"font-bold tabular-nums " + (lowSample ? "text-base text-zinc-500 dark:text-zinc-400" : "text-lg text-cyan-700 dark:text-cyan-400")}>{sectorValue.score}</span>
             <span className="text-[10px] text-zinc-400">/100</span>
           </div>
         </div>
-      ) : (
+        );
+      })() : (
         <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
           <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
           <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">같은 업종 비교 표본(PER·PBR 보유 종목 {sectorValue.peers}개)이 부족해 업종 내 상대 밸류는 아직 제공하지 않습니다. 위 4지표 밸류는 전체 {poolN}종목 풀 기준이며, 업종 기준 보정은 후속 과제로 남겨둡니다.</div>
