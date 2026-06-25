@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-25T12:57:16.000+09:00
+Last updated: 2026-06-25T04:19:59.839Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 25 - OrnScore 디자인 리뉴얼 Phase 5 — 종목 상세 게이지/지표/업종 비교 확장
-- Run: 30
-- Status: completed after Codex stale-preview recovery
-- Agent: claude + codex recovery
-- Note: Task 25 source work was committed as `b697386` on branch `ai-center/task-25-ornscore-phase-5` and implements the stock detail gauge, 4 metric insight cards, strengthened beginner reading card, sector comparison visualization, and next-action button cleanup. Claude finite gates and tester review passed (`tsc`, `verify_metrics.py`, `npm run build`, route checks). The AI Center failure was an environment-only stale port 3000 `next start`: it served old CSS `d1665e0e41509995.css` after `.next` was rebuilt to the Task 25 build. Codex stopped only stale port 3000 PID `23992`, restarted port 3000 as PID `13444`, verified `/stock/005380` markers (`탐색 우선도`, `자체 지표 4종`, `초보자는 이렇게 보세요`, `같은 업종 비교`), confirmed 12 referenced static assets with 0 bad assets, and rechecked `/ /stocks /stock/005380 /stock/005930 /disclosures /backtest` as HTTP 200. AI Center DB is being reconciled so the queue can continue with Task #26.
+- Task: 26 - OrnScore 디자인 리뉴얼 Phase 6 — 공시 신호 카드 피드/해석 UX
+- Run: 31
+- Status: completed
+- Agent: claude
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
