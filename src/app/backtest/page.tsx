@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
 import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
+import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
 import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 
@@ -30,6 +31,8 @@ export default function BacktestPage() {
       </header>
 
       <BacktestLimitBadges />
+
+      <BacktestRiskNotice />
 
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-6">
         <div className="flex items-start gap-3">

@@ -42,6 +42,22 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 27 — OrnScore 비주얼 리뉴얼 Phase 7 — /backtest KPI 수익/위험 분리·위험 안내 강화·월별 히트맵·MDD 차트·기여 Top/Bottom (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-27-ornscore-phase-7-kpi`**(시작 `1ae9486`, 클린, `4f5b277` 라인 유지·되돌림 없음). 로컬 검증은 prod `127.0.0.1:**3255**`(운영자 3000/4310 무중단, 내 리스너 PID 15684만 종료). main 머지·배포는 운영자 범위.
+- 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 7(§11.2~§11.5·§15·§20.7)**. `/backtest`를 평면 6카드 → **수익/위험 분리 KPI + 강화된 위험 안내 + 월별 히트맵 + 낙폭(언더워터) 차트 + 기여 Top/Bottom 막대**. 점수 계산식·데이터 생성·`backtest-result.json` **무변경**, 비자문 톤(수익률만 강조 금지·`수익 보장`/`추천 전략`/`매수 신호` 금지), **신규 npm 0**(순수 CSS/SVG/HTML).
+- 신규 4파일 `src/components/backtest/`:
+  - `BacktestRiskNotice.tsx`(서버): 위험·한계 안내 단일 소스. 과거 데이터 기반 시뮬레이션·**미래 수익 비보장**·**수수료·슬리피지·체결 지연·유동성 한계**·생존편향·미래참조 제거·지표범위 한계를 항목으로 명시 + (옵션) 벤치마크/가정 줄. `/backtest` 실데이터·준비중 양쪽 재사용(기존 상·하단 amber 문단 2개 흡수해 중복 제거).
+  - `MonthlyHeatmap.tsx`: 연도(행)×월(01~12 열) 순수 CSS 그리드 히트맵. `monthlyReturns`(미사용) 표면화. 셀 색은 정적 Tailwind 리터럴 9버킷(상승=red·하락=blue·0/미보유=zinc). `overflow-x-auto`+`min-w-[560px]`로 390px 가로 넘침 회피, `title`/`aria-label`에 연·월·% 노출.
+  - `DrawdownChart.tsx`: `equityCurveMonthly.equity` 직전 고점 대비 낙폭(언더워터) 순수 SVG 면적 차트. 최저점(최대낙폭) 월 표시·`maxDrawdown` 주석. EquityChart와 동일 viewBox+`w-full h-auto`, `role="img"`+`aria-label`. 하락=파랑.
+  - `ContributionBars.tsx`(서버): `contributors`를 pnl 부호로 **수익 기여 상위/손실 기여 상위** 2그룹 가로 막대. 그룹 내 max |pct| 기준 길이, 수익=red·손실=blue, 각 행 `/stock/{ticker}` `prefetch={false}` 링크(`names`). 데이터 없으면 렌더 안 함(날조 금지).
+- 변경 2파일:
+  - `BacktestClient.tsx`: 평면 6카드 metricCards 제거 → **수익 그룹**(CAGR·총수익률 vs 벤치·누적 초과수익) / **위험 그룹**(MDD vs 벤치·Sharpe vs 벤치·승률) 2박스(`KpiCell`). 위험 그룹은 rose 테두리/배경+`ShieldAlert`+"위험" 라벨로 색만으로 전달 않게(§20.7). 인라인 amber 문단 → `BacktestRiskNotice`. EquityChart 아래 `DrawdownChart`→`MonthlyHeatmap`→연도별 막대→`ContributionBars`+보유 칩. 전략 탭·composite 기본 보존.
+  - `src/app/backtest/page.tsx`: 준비중 fallback에 `BacktestRiskNotice` 추가(badges 아래).
+- 결정: (1) MDD를 등락 색(상승=red) 혼동 없이 보이려고 **위험 그룹은 rose 톤+아이콘+라벨** 분리(값도 rose). 수익 그룹은 기존 등락 색 유지. (2) 상·하단 amber 중복 문단을 단일 `BacktestRiskNotice`로 통합. (3) 히트맵 색은 전부 정적 리터럴(런타임 합성 0).
+- 통과: `npx tsc --noEmit` exit 0(전후) · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(타입게이트·`/backtest` 7.24 kB, exit 0) · 로컬 prod(3255) `/backtest`·`/today`·`/stocks`·`/stock/005380` 200, 에러 마커 0. `/backtest` SSR에 수익/위험 그룹·위험 안내(수수료·슬리피지·체결 지연·유동성·미래 수익 비보장)·월별 히트맵·낙폭(언더워터)·수익/손실 기여 상위·인라인 벤치(총수익률 +290.5%/MDD −28.0%/Sharpe 0.98) 렌더. 신규/변경 파일 금칙어 grep = 0.
+- 게이트 한계: Playwright 미구성 → 자동 게이트 로컬 미가용. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱/390px에서 KPI 수익·위험 2박스(1열↔2열)·히트맵 `overflow-x-auto` 가로 넘침 0·낙폭 차트 반응형·기여 막대 1열↔2열·콘솔 오류 0.
+- Residual / next: 백테스트 생존편향 실해결(시점별 유니버스 재구성) 열림(현재 안내 문구). 전역 라이트 토큰(#F6F8FB) 미도입(범위 외). 성과 기여는 전략별 9종목 누적만 — 시점별 기여 시계열은 데이터 없어 후속 과제.
+
 ### Task 26 — OrnScore 비주얼 리뉴얼 Phase 6 — /disclosures 공시 신호 카드 피드·타입 색/아이콘·이해하기 UX (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-26-ornscore-phase-6-ux`**(시작 `8b2ac57`, 클린, `4f5b277` 라인 유지·되돌림 없음). 로컬 검증은 prod `127.0.0.1:**3253**`(운영자 3000/4310 무중단, 내 리스너 PID 2412만 종료). main 머지·배포는 운영자 범위.
 - 목표: 설계서 `ornscore_design_improvement_spec.md` **Phase 6(§10.2~§10.6·§15·§20.7)**. `/disclosures`를 테이블식 → **상단 카드형 요약 대시보드 + 이벤트 피드 카드**. 공시 분류 로직·API fallback·점수/데이터 생성 무변경, 비자문 톤(호재/악재 단정 금지), 신규 npm 0.

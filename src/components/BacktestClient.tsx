@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { TrendingUp, ShieldAlert } from "lucide-react";
 import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
+import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
+import { MonthlyHeatmap } from "@/components/backtest/MonthlyHeatmap";
+import { DrawdownChart } from "@/components/backtest/DrawdownChart";
+import { ContributionBars } from "@/components/backtest/ContributionBars";
 
 interface StratMetrics {
   totalReturn: number;
@@ -42,6 +47,11 @@ export interface BacktestData {
 
 function pct(x: number, digits = 1) {
   return (x >= 0 ? "+" : "") + (x * 100).toFixed(digits) + "%";
+}
+
+// 등락 의미색(상승=빨강·하락=파랑). 수익 그룹 KPI에 사용.
+function upDownTone(x: number) {
+  return x >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
 }
 
 function EquityChart({ data }: { data: EquityPoint[] }) {
@@ -94,21 +104,35 @@ function EquityChart({ data }: { data: EquityPoint[] }) {
   );
 }
 
+// KPI 셀: 주값 + (선택) 벤치마크 대비 보조줄.
+function KpiCell({
+  label,
+  value,
+  valueTone,
+  benchLabel,
+}: {
+  label: string;
+  value: string;
+  valueTone?: string;
+  benchLabel?: string;
+}) {
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
+      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{label}</div>
+      <div className={"text-lg font-bold tabular-nums " + (valueTone || "text-zinc-900 dark:text-zinc-100")}>{value}</div>
+      {benchLabel ? (
+        <div className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums mt-0.5">{benchLabel}</div>
+      ) : null}
+    </div>
+  );
+}
+
 export function BacktestClient({ data, names = {} }: { data: BacktestData; names?: Record<string, string> }) {
   const [activeId, setActiveId] = useState(
     data.strategies.find((s) => s.id === "composite")?.id || data.strategies[0]?.id
   );
   const active = data.strategies.find((s) => s.id === activeId) || data.strategies[0];
   const m = active.metrics;
-
-  const metricCards: { label: string; value: string; tone?: string }[] = [
-    { label: "CAGR (연복리)", value: pct(m.cagr), tone: m.cagr >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
-    { label: "MDD (최대낙폭)", value: pct(m.maxDrawdown), tone: "text-blue-600 dark:text-blue-400" },
-    { label: "Sharpe", value: m.sharpe.toFixed(2) },
-    { label: "누적 초과수익 (vs 벤치)", value: pct(m.alpha) + "p", tone: m.alpha >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
-    { label: "총수익률", value: pct(m.totalReturn), tone: m.totalReturn >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400" },
-    { label: "승률(월)", value: (m.winRate * 100).toFixed(0) + "%" },
-  ];
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-8">
@@ -123,9 +147,7 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
         </div>
       </header>
 
-      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-lg p-3 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-        <strong>이 결과는 가격 기반 전략의 시뮬레이션</strong>이며, 현재 제공되는 4개 지표 종합점수의 성과를 검증한 결과가 아닙니다. 현재 유니버스를 과거에 소급 적용해 <strong>생존편향</strong>이 있을 수 있습니다. <strong>편도 0.3% 거래비용</strong>을 반영했으나 슬리피지·체결오차는 단순화했습니다. 아이디어 검증용으로만 참고하세요.
-      </div>
+      <BacktestRiskNotice assumptions={data.assumptions} benchmarkLabel={data.benchmarkLabel} />
 
       <div className="flex gap-1.5 flex-wrap">
         {data.strategies.map((s) => (
@@ -143,14 +165,50 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
         ))}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {metricCards.map((c) => (
-          <div key={c.label} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
-            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">{c.label}</div>
-            <div className={"text-lg font-bold tabular-nums " + (c.tone || "text-zinc-900 dark:text-zinc-100")}>{c.value}</div>
+      {/* KPI: 수익 그룹 / 위험 그룹을 시각적으로 분리 (설계서 §11.2·§20.7) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <TrendingUp className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" aria-hidden="true" />
+            <h2 className="text-xs font-semibold text-zinc-700 dark:text-zinc-200">수익</h2>
           </div>
-        ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <KpiCell label="CAGR (연복리)" value={pct(m.cagr)} valueTone={upDownTone(m.cagr)} />
+            <KpiCell
+              label="총수익률"
+              value={pct(m.totalReturn)}
+              valueTone={upDownTone(m.totalReturn)}
+              benchLabel={`벤치 ${pct(m.benchmarkReturn)}`}
+            />
+            <KpiCell label="누적 초과수익 (vs 벤치)" value={pct(m.alpha) + "p"} valueTone={upDownTone(m.alpha)} />
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 p-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <ShieldAlert className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" aria-hidden="true" />
+            <h2 className="text-xs font-semibold text-rose-700 dark:text-rose-300">위험</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <KpiCell
+              label="MDD (최대낙폭)"
+              value={pct(m.maxDrawdown)}
+              valueTone="text-rose-600 dark:text-rose-400"
+              benchLabel={m.benchmarkMdd !== undefined ? `벤치 ${pct(m.benchmarkMdd)}` : undefined}
+            />
+            <KpiCell
+              label="Sharpe (위험조정)"
+              value={m.sharpe.toFixed(2)}
+              benchLabel={m.benchmarkSharpe !== undefined ? `벤치 ${m.benchmarkSharpe.toFixed(2)}` : undefined}
+            />
+            <KpiCell label="승률 (월)" value={(m.winRate * 100).toFixed(0) + "%"} />
+          </div>
+        </div>
       </div>
+
+      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 leading-relaxed">
+        수익(왼쪽)과 위험(오른쪽)을 함께 보세요. 수익률이 높아도 낙폭·변동성이 크면 체감 위험은 커집니다.
+      </p>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
@@ -162,6 +220,17 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
         </div>
         <EquityChart data={active.equityCurveMonthly} />
       </section>
+
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+        <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">낙폭(언더워터)</h3>
+          <span className="text-[11px] text-rose-600 dark:text-rose-400 tabular-nums">최대낙폭 {pct(m.maxDrawdown)}</span>
+        </div>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">직전 고점 대비 하락폭. 0 아래로 깊을수록 손실 구간이 크고 길었습니다.</p>
+        <DrawdownChart data={active.equityCurveMonthly} maxDrawdown={m.maxDrawdown} />
+      </section>
+
+      <MonthlyHeatmap monthlyReturns={active.monthlyReturns} />
 
       {m.yearly && Object.keys(m.yearly).length > 0 ? (
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
@@ -192,36 +261,20 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
       ) : null}
 
       {active.contributors && active.contributors.length > 0 ? (
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-1">성과 기여 종목</h3>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">전체 기간 누적 손익에 크게 기여(±)한 종목. % = 전략 총손익 대비 비중.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-            {active.contributors.map((c) => (
-              <Link key={c.ticker} href={"/stock/" + c.ticker} className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition">
-                <span className="text-xs text-zinc-800 dark:text-zinc-200 truncate">{names[c.ticker] ?? c.ticker}</span>
-                <span className={"text-xs font-semibold tabular-nums shrink-0 " + (c.pnl >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{c.pct >= 0 ? "+" : ""}{c.pct}%</span>
-              </Link>
-            ))}
-          </div>
+        <div className="space-y-3">
+          <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
-            <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+            <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
               <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">마지막 리밸런싱 보유 {active.latestHoldings.length}종목</div>
               <div className="flex flex-wrap gap-1.5">
                 {active.latestHoldings.map((tk) => (
-                  <Link key={tk} href={"/stock/" + tk} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>
+                  <Link key={tk} href={"/stock/" + tk} prefetch={false} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>
                 ))}
               </div>
-            </div>
+            </section>
           ) : null}
-        </section>
+        </div>
       ) : null}
-
-      <section className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-4 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-        <strong className="block mb-1">⚠️ 읽을 때 주의</strong>
-        가정: {data.assumptions}. 벤치마크는 <strong>{data.benchmarkLabel}</strong>. 과거 펀더멘털·수급 데이터가 없어
-        밸류·거래활성도 전략은 백테스트에서 제외했고, 가격으로 복원 가능한 신호만 검증했습니다.
-        신호는 전월 마지막 거래일 종가까지만 사용해 다음 거래일에 체결(미래참조 제거)하고 편도 0.3% 거래비용을 반영하지만, 실제 체결가·슬리피지와는 차이가 있을 수 있습니다. '알파'는 회귀분석이 아닌 벤치마크 대비 누적 초과수익(%p)입니다. 과거 성과가 미래 수익을 보장하지 않습니다.
-      </section>
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
         생성: {new Date(data.generatedAt).toLocaleString("ko-KR")} · 데이터: KRX 일별 종가(FDR)
