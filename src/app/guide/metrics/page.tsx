@@ -74,6 +74,14 @@ export default function GuidePage() {
         </p>
       </div>
 
+      <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg p-4 space-y-2">
+        <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-200">읽기 전 검토 포인트</h2>
+        <ul className="list-none pl-0 space-y-1.5 text-xs text-blue-900/90 dark:text-blue-200/90 leading-relaxed">
+          <li>· <strong>점수와 순위는 다릅니다.</strong> 점수는 0~100 절대값이고, 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 <strong>점수</strong>와 <strong>상대순위</strong>를 분리해 표시합니다.</li>
+          <li>· <strong>밸류 점수의 기준에 주의하세요.</strong> 밸류는 <strong>전체 {dataMetadata.count}개 풀</strong> 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 <strong>업종 대비 밸류</strong>는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합점수에는 포함되지 않습니다.</li>
+        </ul>
+      </div>
+
       {METRICS.map((m, i) => (
         <section key={m.name} id={m.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5 scroll-mt-24">
           <div className="flex items-center gap-3 mb-3">

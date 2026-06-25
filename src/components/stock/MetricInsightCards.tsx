@@ -59,22 +59,33 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
                 {m.label}
                 <ScoreTooltip kind={m.kind} />
               </span>
-              <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0">{m.total}중 {m.rank}위</span>
+              <span className={"text-[10px] font-medium shrink-0 " + c.text}>{c.label}</span>
             </div>
 
-            <div className="flex items-baseline gap-2">
+            {/* 점수(0~100) — 순위와 다른 줄·다른 라벨로 분리해 같은 숫자로 보이지 않게 */}
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[10px] text-zinc-400 dark:text-zinc-500">점수</span>
               <span className={"text-2xl font-bold leading-none tabular-nums " + c.text}>{v}</span>
-              <span className={"text-[11px] font-medium tabular-nums " + (isTop ? "text-zinc-700 dark:text-zinc-300" : "text-zinc-500 dark:text-zinc-400")}>
-                {isTop ? `상위 ${m.topPct}%` : `하위 ${100 - m.topPct}%`}
-              </span>
-              <span className={"ml-auto text-[10px] font-medium " + c.text}>{c.label}</span>
+              <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">/ 100</span>
             </div>
 
             <div className={"relative h-1.5 w-full rounded-full overflow-hidden " + c.barTrack} aria-hidden="true">
               <div className={"absolute inset-y-0 left-0 rounded-full " + c.barFill} style={{ width: `${v}%` }} />
             </div>
 
-            <p className="text-[11px] text-zinc-700 dark:text-zinc-300 leading-snug">{r.meaning}</p>
+            {/* 상대순위 — 점수와 별개 지표 */}
+            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
+              전체 상대순위 <strong className="text-zinc-700 dark:text-zinc-300">{m.rank}</strong> / {m.total}위
+              <span className="text-zinc-400 dark:text-zinc-500"> · {isTop ? `상위 ${m.topPct}%` : `하위 ${100 - m.topPct}%`}</span>
+            </div>
+
+            {m.kind === "value" ? (
+              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 leading-snug">전체 풀 기준 점수 · 업종 내 상대 위치는 아래 ‘업종 대비 밸류’ 참고</div>
+            ) : null}
+
+            <p className="text-[11px] text-zinc-700 dark:text-zinc-300 leading-snug">
+              <span className="font-semibold text-zinc-500 dark:text-zinc-400">해석:</span> {r.meaning}
+            </p>
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug flex gap-1">
               <span className={"shrink-0 font-semibold " + (cautionTag ? "text-amber-600 dark:text-amber-400" : "text-blue-600 dark:text-blue-400")}>
                 {cautionTag ? "주의" : "확인"}

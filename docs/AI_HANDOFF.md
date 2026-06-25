@@ -42,6 +42,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 34 — OrnScore 1차 상용화 안정화 P0-B/P1 — 종목 상세 번호 중복·CTA 버튼 그룹·데이터 배지·점수/순위 분리·밸류 기준 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-34-ornscore-1-p0-b-ui`**. 시작 HEAD는 기준 `533c6d2`가 아니라 `b3b4f6f`(= Task 33 P0-A 2커밋이 533c6d2 위) — P0-B는 P0-A 위에 쌓으므로 **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 리스너 PID 2140만 종료). main 머지·외부 릴리스는 범위 외(운영자).
+- 설계서 메모: 기준 PDF/`ornscore_design_improvement_spec.md` 레포에 없음(외부). PART C/I/J 원문 미확보 → 지어내지 않고 **작업지시 2~7 + `docs/ornscore-improvement-brief.md`** 기준으로만 구현.
+- What changed (6 files, 표시·문구·컨테이너만, 점수 계산식·데이터·버튼 로직 무변경):
+  - **(2) 번호 중복** `BeginnerReading.tsx`: 하단 중복 앵커 칩(공시/재무/점수 근거) 제거 — 위 번호형 "먼저 확인할 것" ol·상단 "다음으로 확인할 것" 버튼과 3중 반복이었음. 번호 STEP 목록 1개만 캐논 유지, 칩 자리에 안내 1줄. 상세 `<ol>` 1개.
+  - **(3) CTA 버튼 그룹** `stock/StockHeader.tsx`: actionsSlot(관심/비교/공유) 컨테이너 → 데스크톱 가로+`gap-2`, 모바일 `w-full`+`[&>*]:flex-1` 균등 폭 줄바꿈(텍스트처럼 안 붙게). 버튼 로직/라벨 무변경, 44px 유지.
+  - **(4) 데이터 배지 분리** `stock/PriorityScoreCard.tsx`: 붙은 평문 3 span → 독립 pill `[필수 데이터 %]` `[이상값 점검 통과/중]` `[Metrics 2.4]`(`rounded-full`+테두리+`gap-1.5 flex-wrap`, 정적 리터럴).
+  - **(5) 점수≠순위** `stock/MetricInsightCards.tsx`+`PriorityScoreCard.tsx`: 값 "점수 v / 100" 명시, 순위 별도 줄 "전체 상대순위 rank / total위 · 상위 X%", 해석 줄 "해석:" 라벨. 계산 무변경·표시 전용.
+  - **(6) 밸류 기준** `stock/MetricInsightCards.tsx`+`app/stock/[ticker]/page.tsx`: 밸류 카드 "전체 풀 기준" 라벨, cyan 박스 "(위 밸류 점수와 기준 다름)". 업종 표본 부족(peers<4=-1) 시 박스 숨김 → **가짜 숫자 없이 안내 박스**(미제공·전체 풀 기준·업종 보정 후속 과제). peers<10 경고 보존.
+  - **(7) 가이드 보강** `app/guide/metrics/page.tsx`: "읽기 전 검토 포인트" 박스 — 점수 vs 상대순위 차이 + 밸류 전체풀 분위 업종 편향(금융·지주 쏠림)·업종 대비 밸류 별도·종합점수 미포함. 비자문.
+- What passed: `npx tsc --noEmit` exit 0(전후) · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/stock/[ticker]` 14 kB, exit 0) · 변경 6파일 금지표현 grep 0(부정문 "매수·매도 추천이 아닌"만) · 로컬 prod(3251) `/stock/005380 /stock/005930 /stocks /guide/metrics /status` 200·에러 0. SSR: 상세 `<ol>` 1개·구 칩 "관련 공시 확인" 0·배지 pill·"전체 상대순위"·"해석:"·"전체 풀 기준"·가이드 "읽기 전 검토 포인트" 전수 렌더.
+- Gate note: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. **운영자: 3000 재빌드·재기동 후 데스크톱/390px 브라우저 체크 권장** — CTA 버튼 그룹(데스크톱 가로·390px 균등 줄바꿈)·배지 3개 안 붙음·점수↔순위 가독성·가로 오버플로우·콘솔 오류.
+- Residual / next: (6) 업종 대비 밸류는 동일업종 PER·PBR 피어 4+ 일 때만 산출 — KRX 공식 업종코드 연동 시 표본 확대(후속). 설계서 PART C/I/J 원문 미확보(외부 PDF) — 추출본 레포 반영 시 잔여 재대조. 다음: 운영자 모바일 게이트, 외부 릴리스(범위 외).
+
 ### Task 33 — OrnScore 1차 상용화 안정화 P0-A — 금지표현 교체·공통 고지 3줄·Metrics 2.4 단일출처 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-33-ornscore-1-p0-a-metrics`**(시작 `533c6d2`, 클린·예상 일치). 로컬 검증은 prod `127.0.0.1:**3257**`(운영자 3000/4310 무중단, 내 리스너 PID 21788만 종료). main 머지·외부 릴리스는 범위 외(운영자).
 - 목표: 1차 상용화 안정화(신뢰도·문구 리스크·UI 기본기·검증). 점수 계산식·데이터 생성 무변경, 신규 npm 0·빌드 단계 추가 0.

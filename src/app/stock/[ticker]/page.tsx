@@ -323,15 +323,20 @@ export default async function StockDetailPage({ params }: PageProps) {
       {sectorValue.score >= 0 ? (
         <div className="rounded-lg border border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[11px] md:text-xs text-cyan-800 dark:text-cyan-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 (전체 풀 밸류 {Math.round(s.value)}점과 비교){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
+            <div className="text-[11px] md:text-xs text-cyan-800 dark:text-cyan-300 font-semibold">업종 대비 밸류 · {sectorValue.sector} <span className="font-normal text-cyan-700/70 dark:text-cyan-400/70">(위 밸류 점수와 기준 다름)</span></div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체 {poolN}종목 풀 기준({Math.round(s.value)}점){sectorValue.peers < 10 ? " · ⚠ 표본 작아 신뢰도 낮음" : ""}</div>
           </div>
           <div className="text-right shrink-0">
             <span className="text-lg font-bold tabular-nums text-cyan-700 dark:text-cyan-400">{sectorValue.score}</span>
             <span className="text-[10px] text-zinc-400">/100</span>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
+          <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
+          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">같은 업종 비교 표본(PER·PBR 보유 종목 {sectorValue.peers}개)이 부족해 업종 내 상대 밸류는 아직 제공하지 않습니다. 위 4지표 밸류는 전체 {poolN}종목 풀 기준이며, 업종 기준 보정은 후속 과제로 남겨둡니다.</div>
+        </div>
+      )}
 
       <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
 

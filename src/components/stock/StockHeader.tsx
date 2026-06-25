@@ -34,7 +34,8 @@ export function StockHeader({
             <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{asOfLabel} 장마감 기준</div>
           ) : null}
         </div>
-        <div className="flex items-center gap-2 flex-wrap shrink-0">{actionsSlot}</div>
+        {/* CTA 버튼 그룹 — 데스크톱은 우측 가로 배치(명확한 간격), 모바일은 한 줄로 내려 균등 폭으로 줄바꿈(텍스트처럼 붙지 않게). */}
+        <div className="flex flex-wrap items-stretch gap-2 shrink-0 w-full sm:w-auto [&>*]:flex-1 [&>*]:justify-center sm:[&>*]:flex-none">{actionsSlot}</div>
       </div>
     </div>
   );

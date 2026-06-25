@@ -42,19 +42,23 @@ export function PriorityScoreCard({
         )}
 
         <div className="min-w-0 space-y-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
+          <div className="text-[10px] text-zinc-400 dark:text-zinc-500">상대순위 <span className="font-normal">(점수와 별개)</span></div>
           <div>전체 <strong className="text-zinc-900 dark:text-zinc-100">{overallRank}</strong> / {poolN}위</div>
           <div className="truncate">업종({sector}) <strong className="text-zinc-900 dark:text-zinc-100">{sectorRank}</strong> / {sectorCount}위</div>
         </div>
       </div>
 
-      <div className="mt-2.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-        <span>필수 데이터 {completeness}%</span>
+      {/* 데이터 상태 배지 — 각각 독립 pill로 분리(텍스트처럼 붙지 않게). */}
+      <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[10px] tabular-nums">
+        <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 px-2 py-0.5 text-zinc-600 dark:text-zinc-300">필수 데이터 {completeness}%</span>
         {suspect ? (
-          <span className="text-amber-600 dark:text-amber-400 font-medium">이상값 점검 중 · 임시 점수</span>
+          <span className="inline-flex items-center rounded-full border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-300">이상값 점검 중 · 임시 점수</span>
         ) : (
-          <span className="text-emerald-600 dark:text-emerald-400 font-medium">이상값 점검 통과</span>
+          <span className="inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 font-medium text-emerald-700 dark:text-emerald-300">이상값 점검 통과</span>
         )}
-        {metricsVersion ? <span>{metricsVersion}</span> : null}
+        {metricsVersion ? (
+          <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 px-2 py-0.5 text-zinc-600 dark:text-zinc-300">{metricsVersion}</span>
+        ) : null}
       </div>
     </div>
   );
