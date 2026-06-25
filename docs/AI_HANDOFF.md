@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-25T10:16:11.080Z
+Last updated: 2026-06-25T10:46:35.868Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 33 - OrnScore 상용화 안정화 1차 P0-A — 데이터 기준일·Metrics·추천 문구 리스크 제거
-- Run: 33
+- Task: 34 - OrnScore 상용화 안정화 1차 P0-B — 종목 상세 UI 버그·점수/순위·밸류 표현 정리
+- Run: 34
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
