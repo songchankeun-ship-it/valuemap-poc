@@ -41,7 +41,7 @@ function detectTreasuryBuy(d: Disclosure): SignalHit | null {
     signalLabel: "자기주식 취득 결의",
     disclosure: d,
     strength: 80,
-    note: "회사 본인 매수 → 통상 단기·중기 호재 신호",
+    note: "자기주식 취득 결의 — 취득 규모·소각 여부는 원문 확인 필요",
   };
 }
 

@@ -14,7 +14,7 @@ export function MarketSnapshotCards({ totalCount, strongCount, volumeSpikeCount,
     { icon: Database, tone: "text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800", title: "분석 종목", value: `${totalCount}개`, sub: "실데이터 기반", href: "/stocks" },
     { icon: Award, tone: "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40", title: "종합 80+ 후보", value: `${strongCount}개`, sub: "여러 지표에서 강점 확인", href: "/stocks" },
     { icon: Activity, tone: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40", title: "거래활성도 급증", value: `${volumeSpikeCount}개`, sub: "평소보다 거래 관심 증가", href: "/stocks" },
-    { icon: FileText, tone: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40", title: "공시 신호", value: `${signalCount}건`, sub: "DART 자동 분류", href: "/disclosures" },
+    { icon: FileText, tone: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40", title: "공시 신호", value: `${signalCount}건`, sub: "DART · 최신 200건 내", href: "/disclosures" },
   ];
   return (
     <section>

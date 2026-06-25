@@ -179,12 +179,12 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           <ol className="relative ml-1 border-l border-zinc-200 dark:border-zinc-800">
             {items.map((d) => {
               const dir = d.signal?.direction;
+              // 방향은 긍정/부정 valence(호재/악재) 대신 사실(장내매수/매도 단서) 또는 '방향 확인 필요'로만 표기.
+              const dirLabel = dir === "긍정 가능" ? "장내매수 단서" : dir === "부정 가능" ? "장내매도·처분 단서" : "방향 확인 필요";
               const dotColor = !d.signal
                 ? "bg-zinc-300 dark:bg-zinc-600"
-                : dir === "긍정 가능"
-                ? "bg-red-500"
-                : dir === "부정 가능"
-                ? "bg-blue-500"
+                : dir && dir !== "확인 필요"
+                ? "bg-slate-400 dark:bg-slate-500"
                 : "bg-amber-500";
               return (
                 <li key={d.rcept_no} className="ml-4 pb-4 last:pb-0">
@@ -208,8 +208,8 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                             {d.signal.signalLabel} · 유형 자동분류
                           </span>
                           {d.signal.direction ? (
-                            <span className={"text-[10px] px-1.5 py-0.5 rounded " + (d.signal.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300" : d.signal.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300" : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300")}>
-                              방향 {d.signal.direction}
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                              {dirLabel}
                             </span>
                           ) : null}
                         </div>

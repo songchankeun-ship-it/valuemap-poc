@@ -51,15 +51,39 @@ interface GroupedSignal {
   rcept_dt_latest: string;
 }
 
+// 호재/악재 단정 없이 '무엇을 확인해야 하는지'(확인 포인트)만 제시한다.
 const SIGNAL_DESCRIPTIONS: Record<string, string> = {
-  "자기주식 취득 결의": "주주환원 관련 이벤트로 분류됨. 원문과 시세 반응 확인 권장.",
-  "임원·주요주주 보유 변동": "소유상황보고서. 매수·매도·스톡옵션 등 방향은 본문 확인 필요(매수로 단정 금지).",
-  "정정공시": "기존 공시 정정. 변경 사유와 내용은 원문 확인 권장.",
-  "단일판매·공급계약": "계약 규모와 직전 매출 비율은 본문 확인 권장.",
-  "유상증자 발행": "자금 사용 목적(시설 vs 운영)에 따라 영향 다름.",
-  "전환사채 발행": "전환가/만기/규모는 본문 확인 필요.",
-  "신주인수권부사채 발행": "신주인수권 행사가/만기/규모는 본문 확인 필요.",
+  "자기주식 취득 결의": "주주환원·주가 안정 관련 이벤트. 취득 규모·소각 여부 확인 필요.",
+  "임원·주요주주 보유 변동": "주요 주주·임원 지분 변화. 매수·매도 방향 원문 확인 필요.",
+  "정정공시": "기존 공시 내용 변경 확인 필요.",
+  "단일판매·공급계약": "계약 규모의 매출 영향 확인 필요.",
+  "유상증자 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
+  "전환사채 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
+  "신주인수권부사채 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
 };
+
+// 카드 '주의' 라인 — signalGuide.cautionNote의 첫 문장(트림). 가이드 없으면 타입별 폴백.
+const CAUTION_FALLBACK: Record<string, string> = {
+  treasury_buy: "취득 결의일 뿐 실제 매입은 천천히 진행되며, 소각 여부에 따라 의미가 달라집니다.",
+  insider_buy: "신호 강도는 호재 점수가 아니라 보고서를 맞게 분류했다는 '분류 신뢰도'입니다.",
+  correction: "정정이 잦은 회사는 공시 신뢰도가 떨어질 수 있어 종목 자체 신뢰도 점검이 필요합니다.",
+  single_contract: "'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.",
+  capital_raise: "CB·신주인수권은 향후 주식 전환 시 잠재 매물이 될 수 있습니다.",
+};
+
+// 첫 문장만 추출(마침표 기준) — 길면 잘라 카드가 길어지지 않게.
+function firstSentence(s: string): string {
+  const trimmed = s.trim();
+  const m = trimmed.match(/^[^.。!?]*[.。!?]/);
+  return (m ? m[0] : trimmed).trim();
+}
+
+// 방향 표기 — 긍정/부정 valence(호재/악재) 대신 사실(장내매수/매도 단서) 또는 '방향 확인 필요'만.
+function directionLabel(dir?: string): string {
+  if (dir === "긍정 가능") return "장내매수 단서";
+  if (dir === "부정 가능") return "장내매도·처분 단서";
+  return "방향 확인 필요";
+}
 
 function openExternal(url: string) {
   window.open(url, "_blank", "noopener,noreferrer");
@@ -239,9 +263,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
     <div className="space-y-4">
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호{data.totalDisclosures >= 200 ? <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />일부 결과 · 최신 200건</span> : null}</h2>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호<span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />최신 200건 내</span></h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-            최근 {days}일 · 조회 원본 {data.totalDisclosures}건 · 신호 추출 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
+            최근 {days}일 · 최신 200건 내 신호 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
           </div>
         </div>
         {(() => {
@@ -255,11 +279,10 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 tabular-nums">{parts.join(" · ")}</p>
           );
         })()}
-        {data.totalDisclosures >= 200 ? (
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1">
-            ℹ 현재 오른스코어는 성능·비용을 위해 최신 공시 200건까지만 분석합니다. 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.
-          </p>
-        ) : null}
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+          ℹ 선택한 {days}일 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다.
+          표시는 최대 50건이며, 선택한 기간의 전체 공시가 포함되지 않을 수 있습니다.
+        </p>
 
         <div className="flex gap-2 flex-wrap mb-3">
           {[3, 7, 14, 30].map((d) => (
@@ -325,6 +348,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             const desc = SIGNAL_DESCRIPTIONS[g.signalLabel] || "원문과 시세 반응 함께 확인 권장.";
             const guide = findGuideByLabel(g.signalLabel);
             const checkLine = guide?.checkPoints?.[0] ?? null;
+            const cautionLine = firstSentence(
+              guide?.cautionNote ?? CAUTION_FALLBACK[g.signalType] ?? "원문에서 세부 수치·맥락 확인 필요.",
+            );
             const dt = g.rcept_dt_latest;
             const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
             return (
@@ -336,8 +362,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     {meta.label} · 자동분류
                   </span>
                   {g.representative.direction ? (
-                    <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + (g.representative.direction === "긍정 가능" ? "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400" : g.representative.direction === "부정 가능" ? "bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400" : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400")}>
-                      방향 {g.representative.direction}
+                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />
+                      {directionLabel(g.representative.direction)}
                     </span>
                   ) : null}
                   {g.count > 1 ? (
@@ -365,13 +392,19 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1.5 leading-relaxed break-words">{g.representative.note}</p>
                 ) : null}
 
-                {/* 확인할 것 — 구분된 주의 라인 */}
+                {/* 확인할 것 — 중립 확인 포인트 */}
                 {checkLine ? (
-                  <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+                  <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-2 leading-relaxed">
                     <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">확인할 것</span>
                     <span className="break-words">{checkLine}</span>
                   </div>
-                ) : <div className="mb-3" />}
+                ) : null}
+
+                {/* 주의 — 호재/악재 단정이 아닌 한계·유의점 (확인할 것과 시각적으로 분리) */}
+                <div className="flex gap-1.5 text-[11px] text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+                  <span className="font-semibold text-amber-700 dark:text-amber-400 shrink-0">주의</span>
+                  <span className="break-words">{cautionLine}</span>
+                </div>
 
                 {/* 액션 행 */}
                 <div className="flex items-center gap-2 flex-wrap">

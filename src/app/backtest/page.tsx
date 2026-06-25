@@ -4,6 +4,7 @@ import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
 import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
+import { dataStatus } from "@/lib/dataStatus";
 
 export const metadata = {
   title: "백테스트 — 오른스코어",
@@ -20,14 +21,14 @@ export default function BacktestPage() {
   if (ready) {
     const names: Record<string, string> = {};
     for (const st of realStockPool) names[st.ticker] = st.name;
-    return <BacktestClient data={result as BacktestData} names={names} />;
+    return <BacktestClient data={result as BacktestData} names={names} siteDataAsOf={dataStatus.globalAsOfLabel} />;
   }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">백테스트 엔진</h1>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
       </header>
 
       <BacktestLimitBadges />

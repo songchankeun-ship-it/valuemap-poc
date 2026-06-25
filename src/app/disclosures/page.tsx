@@ -2,7 +2,6 @@ import Link from "next/link";
 import { DisclosureExplorer } from "@/components/DisclosureExplorer";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { realStockPool } from "@/lib/realStocks";
-import { dataStatus } from "@/lib/dataStatus";
 import { DataStatusBadge } from "@/components/trust/badges";
 
 export const metadata = {
@@ -41,11 +40,11 @@ export default async function DisclosuresPage() {
       {/* 기간/공시 필터 근처 — 수집 제한 보조 설명 (접근 가능한 visible note) */}
       <details className="text-xs text-gray-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-md px-3 py-2">
         <summary className="cursor-pointer select-none font-medium text-gray-700 dark:text-zinc-200">
-          수집 범위 안내 — 최신 200건 분석
+          수집 범위 안내 — 최신 200건 내 분석
         </summary>
         <p className="mt-2 leading-relaxed text-gray-600 dark:text-zinc-400">
-          {dataStatus.limits.disclosure} 선택한 기간의 전체 공시가 포함되지 않아 일부 공시가
-          누락될 수 있습니다.
+          선택한 기간 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다.
+          표시는 최대 50건이며, 선택한 기간의 전체 공시가 포함되지 않아 일부 공시가 누락될 수 있습니다.
         </p>
       </details>
 

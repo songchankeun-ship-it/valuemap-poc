@@ -59,11 +59,13 @@ export async function GET(req: Request) {
       };
     });
 
+    // signalCount는 '표시 가능한 신호 수'와 일치시킨다(홈 KPI와 /disclosures 표시가 모순되지 않게).
+    const shown = signals.slice(0, 50);
     const payload = {
       days,
       totalDisclosures: all.length,
-      signalCount: signals.length,
-      signals: signals.slice(0, 50),
+      signalCount: shown.length,
+      signals: shown,
       source: "live" as const,
       fetchedAt: new Date().toISOString(),
     };

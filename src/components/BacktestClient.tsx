@@ -143,7 +143,7 @@ function KpiCell({
   );
 }
 
-export function BacktestClient({ data, names = {} }: { data: BacktestData; names?: Record<string, string> }) {
+export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: BacktestData; names?: Record<string, string>; siteDataAsOf?: string }) {
   const [activeId, setActiveId] = useState(
     data.strategies.find((s) => s.id === "composite")?.id || data.strategies[0]?.id
   );
@@ -154,9 +154,9 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
         <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">백테스트</h1>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          실데이터 검증 · {data.period.from} ~ {data.period.to} ({data.period.years}년) · 유니버스 {data.universe}종목
+          과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과입니다 · 현재 종합점수 검증 결과는 아닙니다.
         </p>
         <div className="mt-3">
           <BacktestLimitBadges />
@@ -281,7 +281,8 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
           <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
             <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">마지막 리밸런싱 보유 {active.latestHoldings.length}종목</div>
+              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5">마지막 리밸런싱 보유 {active.latestHoldings.length}종목</div>
+              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 시뮬레이션의 마지막 리밸런싱 구성입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
               <div className="flex flex-wrap gap-1.5">
                 {active.latestHoldings.map((tk) => (
                   <Link key={tk} href={"/stock/" + tk} prefetch={false} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>
@@ -292,9 +293,14 @@ export function BacktestClient({ data, names = {} }: { data: BacktestData; names
         </div>
       ) : null}
 
-      <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
-        생성: {formatGeneratedAt(data.generatedAt)} · 데이터: KRX 일별 종가(FDR)
-      </p>
+      {/* 세 가지 날짜를 분리 표기 — 백테스트 생성일 / 데이터 기간 / 사이트 현재 데이터 기준 (서로 다름) */}
+      <section className="text-[11px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800 pt-4 space-y-1 leading-relaxed">
+        <div>데이터 기간 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{data.period.from} ~ {data.period.to}</strong> ({data.period.years}년) · 유니버스 {data.universe}종목</div>
+        <div>백테스트 생성일 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{formatGeneratedAt(data.generatedAt)}</strong> · KRX 일별 종가(FDR)</div>
+        {siteDataAsOf ? (
+          <div>사이트 현재 데이터 기준 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{siteDataAsOf}</strong> 장마감 · 위 백테스트 기간과 다릅니다</div>
+        ) : null}
+      </section>
 
       <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-700 dark:text-blue-400 border-t border-zinc-200 dark:border-zinc-800 pt-4">
         <Link href="/guide/metrics" className="hover:underline">지표 계산 방식 보기 →</Link>

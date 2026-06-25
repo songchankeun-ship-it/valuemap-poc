@@ -42,6 +42,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 35 — OrnScore 1차 상용화 안정화 P1-A — 공시 확인포인트 문구·카드 주의 라인·기간 고지·백테스트 오해 방지 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-35-ornscore-1-p1-a`**. 시작 HEAD는 기준 `533c6d2`가 아니라 `8966e63`(= Task 33 P0-A·Task 34 P0-B가 위에 쌓인 상태) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3252**`(운영자 4310 무중단, 내 리스너 PID만 taskkill). main 머지·외부 릴리스는 범위 외(운영자).
+- 설계서 메모: 외부 PDF PART D/E 원문 레포에 없음 → 지어내지 않고 **작업지시 2~6 + `docs/ornscore-improvement-brief.md`** 기준으로만 구현.
+- What changed (코드 10파일 + 샘플 3파일, 표시·문구·고지·데이터샘플 교정만, 점수 계산식·`backtest-result.json`·`direction` 데이터값 무변경):
+  - **(2) 확인포인트 문구** `DisclosureExplorer.tsx`(SIGNAL_DESCRIPTIONS)·`disclosure-signals.ts`(treasury note "호재 신호"→중립): 자사주/보유변동/대형계약/유증·CB/정정 전부 "…확인 필요" 확인포인트로. detector treasury note 호재 단정 제거(/disclosures·/stock 양쪽 노출).
+  - **(3) 방향 valence 제거** `DisclosureExplorer.tsx`+`StockDisclosures.tsx`: "방향 긍정 가능(red)/부정 가능(blue)" → "장내매수 단서/장내매도·처분 단서/방향 확인 필요" 중립 slate. data값 무변경.
+  - **(4) 카드 구조 통일 + 주의** `DisclosureExplorer.tsx`: 타입배지→종목명→제출일→한줄요약→확인할 것(zinc)→**주의(amber 신규, cautionNote 첫 문장/폴백)**→액션행. 44px·flex-wrap 보존.
+  - **(5) 수집 범위 상시 고지** `DisclosureExplorer.tsx`+`disclosures/page.tsx`: 조건부였던 "최신 200건" 안내를 무조건 노출("선택한 N일 전체 공시가 아니라 … 최신 100건씩(합 200건) … 표시 최대 50건"), 페이지 `<details>` 미러링. 미사용 dataStatus import 제거.
+  - **(6) 홈↔공시 숫자 일치** `recentSignals.ts`+`api/disclosures/recent/route.ts`: signalCount=표시수(slice 50)로 클램프. **샘플 폴백 교정** `public/disclosure-samples/recent-signals.json`(signalCount 12→9·호재 note 2)·`005930.json`·`373220.json`(호재 note 1). `MarketSnapshotCards` 보조문구 "DART · 최신 200건 내".
+  - **(백테스트)** `BacktestClient.tsx`+`backtest/page.tsx`+`BacktestRiskNotice.tsx`: h1 "실험 전략 백테스트", RiskNotice 단일 리드 "…현재 ORNSCORE 종합점수 검증 결과는 아닙니다."(dataStatus.limits.backtest 재사용), 마지막 리밸런싱 "현재 확인 후보나 추천 아님" 캡션, 세 날짜 분리(데이터 기간/생성일/사이트 현재 기준=siteDataAsOf prop).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/disclosures` 11.3 kB, exit 0) · added 라인 금지표현 grep 0(잔존 "호재"는 부정 캐비엇 "호재/악재 점수가 아님"만) · 로컬 prod(3252) 5라우트 200·에러 0. SSR: 공시 카드 7요소 전수·"최신 200건 내/전체 공시가 아니라/표시 최대 50건" 상시·valence 배지 0·백테스트 실험/검증아님/3날짜·홈 9건=disclosures 9건.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/MOBILE 게이트 로컬 미가용. **운영자: 3000 재빌드·재기동 후 데스크톱/390px 체크 권장** — 공시 카드 주의 라인·액션행 44px·오버플로우 0, 백테스트 3날짜 푸터·기간 고지 줄바꿈, 콘솔 0.
+- Residual / next: direction 데이터값 무변경(표시만 중립) — enrichment가 방향 확정 시 사실 라벨 승격 가능. `signalGuide.pastPattern`의 방향성 % 범위는 '이 공시 이해하기' 펼침 내부에만 노출(추가 완화 후속). 공시 표시 50/수집 200 상한은 성능 제약(상시 고지). PART D/E 원문 미확보. 다음: 운영자 모바일 게이트, 외부 릴리스(범위 외).
+
 ### Task 34 — OrnScore 1차 상용화 안정화 P0-B/P1 — 종목 상세 번호 중복·CTA 버튼 그룹·데이터 배지·점수/순위 분리·밸류 기준 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-34-ornscore-1-p0-b-ui`**. 시작 HEAD는 기준 `533c6d2`가 아니라 `b3b4f6f`(= Task 33 P0-A 2커밋이 533c6d2 위) — P0-B는 P0-A 위에 쌓으므로 **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 리스너 PID 2140만 종료). main 머지·외부 릴리스는 범위 외(운영자).
 - 설계서 메모: 기준 PDF/`ornscore_design_improvement_spec.md` 레포에 없음(외부). PART C/I/J 원문 미확보 → 지어내지 않고 **작업지시 2~7 + `docs/ornscore-improvement-brief.md`** 기준으로만 구현.

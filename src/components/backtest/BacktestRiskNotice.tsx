@@ -1,8 +1,10 @@
 import { AlertTriangle } from "lucide-react";
+import { dataStatus } from "@/lib/dataStatus";
 
 /**
  * 백테스트 위험·한계 안내 박스 (설계서 §11.4).
- * 서버 컴포넌트. 과거 데이터 기반 시뮬레이션 / 미래 수익 비보장 /
+ * 서버 컴포넌트. '실험 전략 시뮬레이션 · 현재 종합점수 검증 아님' 단일 고지 +
+ * 과거 데이터 기반 시뮬레이션 / 미래 수익 비보장 /
  * 수수료·슬리피지·체결 지연·유동성 한계 / 생존편향·미래참조 제거를 명시한다.
  * 수익률을 강조하지 않고 한계를 또렷이 나열한다. 준비 중·실데이터 양쪽에서 재사용.
  */
@@ -44,9 +46,12 @@ export function BacktestRiskNotice({
       <div className="flex items-center gap-2 mb-2.5">
         <AlertTriangle className="w-4 h-4 text-amber-700 dark:text-amber-300 shrink-0" aria-hidden="true" />
         <h3 className="font-semibold text-sm text-amber-900 dark:text-amber-200">
-          읽기 전에 — 시뮬레이션의 한계
+          읽기 전에 — 실험 전략 시뮬레이션의 한계
         </h3>
       </div>
+      <p className="text-xs md:text-sm font-medium text-amber-900 dark:text-amber-100 mb-2.5 leading-relaxed">
+        {dataStatus.limits.backtest} 현재 ORNSCORE 종합점수 검증 결과는 아닙니다.
+      </p>
       <ul className="space-y-2 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
         {items.map((it) => (
           <li key={it.head} className="flex gap-2">

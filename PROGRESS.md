@@ -1,5 +1,38 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 1차 상용화 안정화 P1-A — 공시 확인포인트 문구·카드 주의 라인·기간 고지·백테스트 오해 방지 (Task 35, Claude)
+
+### 목표
+- ORNSCORE 1차 상용화 안정화 P1-A. 신규 기능이 아니라 **공시 신호 문구 리스크 제거·카드 구조 통일·수집 범위 고지·백테스트 오해 방지**. branch `ai-center/task-35-ornscore-1-p1-a`. 점수 계산식·데이터 생성·`backtest-result.json`·`direction` 데이터값 **무변경**, 신규 npm 0·빌드 단계 추가 0.
+- **시작 상태 메모**: HEAD는 기준커밋 `533c6d2`가 아니라 `8966e63`(= Task 33 P0-A·Task 34 P0-B 4커밋이 533c6d2 위). P1-A는 그 위에 쌓으므로 **리셋하지 않고 그대로 이어서** 작업(작업트리 클린 확인).
+- **설계서 메모**: PART D/E 원문(외부 PDF)은 레포에 없음 → 지어내지 않고 **작업지시 2~6 + `docs/ornscore-improvement-brief.md`(Disclosure Signals·Terminology 절)** 기준으로만 구현.
+
+### 완료한 작업 (작업지시 2~6)
+- **(2) 공시 문구 확인포인트화** `DisclosureExplorer.tsx`(`SIGNAL_DESCRIPTIONS`)·`disclosure-signals.ts`(treasury note): 자사주→"주주환원·주가 안정 관련 이벤트. 취득 규모·소각 여부 확인 필요." / 보유변동→"주요 주주·임원 지분 변화. 매수·매도 방향 원문 확인 필요." / 대형계약→"계약 규모의 매출 영향 확인 필요." / 유증·CB(3종)→"희석·자금조달 구조(용도·규모·가격) 확인 필요." / 정정→"기존 공시 내용 변경 확인 필요." **detector note의 "통상 단기·중기 호재 신호" → "자기주식 취득 결의 — 취득 규모·소각 여부는 원문 확인 필요"**(호재 단정 제거, /disclosures·/stock 양쪽 카드에 노출되는 소스).
+- **(3) 방향 배지 valence 제거** `DisclosureExplorer.tsx`+`StockDisclosures.tsx`: "방향 긍정 가능(red)/부정 가능(blue)" → 사실 라벨 **"장내매수 단서"/"장내매도·처분 단서"/"방향 확인 필요"** + 중립 slate 배지(긍정/부정 valence·등락색 제거, §20.7 텍스트 동반). `direction` 데이터값 무변경, 표시만.
+- **(4) 카드 구조 통일 + 주의 라인** `DisclosureExplorer.tsx`: 타입 배지→종목명→제출일→한 줄 요약→**확인할 것**(zinc)→**주의**(amber, 신규)→액션행(원문/종목/이 공시 이해하기). 주의 라인은 `signalGuide.cautionNote` 첫 문장(트림) 또는 타입별 폴백. 44px 터치·`flex-wrap`/`break-words`/`min-w-0` 보존.
+- **(5) 수집 범위 고지 상시화·일치** `DisclosureExplorer.tsx`+`disclosures/page.tsx`: `totalDisclosures>=200` 조건부였던 "최신 200건" 배지·안내문을 **무조건 노출**로 변경 — "선택한 N일 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다. 표시는 최대 50건." 페이지 `<details>` 요약도 같은 단일 문구로 미러링(헤더↔리스트 일치). `dataStatus` 미사용 import 제거.
+- **(6) 홈↔공시 숫자 모순 제거** `recentSignals.ts`+`api/disclosures/recent/route.ts`: `signalCount`를 전체 탐지수가 아니라 **표시 가능한 신호수(slice 50)** 와 일치시킴 → 홈 KPI와 /disclosures가 같은 수를 보이고 항상 ≥ 이벤트 묶음. **샘플 폴백 데이터도 교정**: `public/disclosure-samples/recent-signals.json`(signalCount 12→9·호재 note 2건)·`005930.json`·`373220.json`(호재 note 1건) — DART 키 부재 시 폴백되는 정적 샘플에 잔존하던 구 호재 문구·과대 카운트 제거. `MarketSnapshotCards` 공시 카드 보조문구 "DART 자동 분류"→"DART · 최신 200건 내"(홈·today 공통).
+- **(작업지시 6/백테스트) 오해 방지** `BacktestClient.tsx`+`backtest/page.tsx`+`BacktestRiskNotice.tsx`: h1 "백테스트"→**"실험 전략 백테스트"**, `BacktestRiskNotice`에 단일 소스 리드 고지 **"…현재 ORNSCORE 종합점수 검증 결과는 아닙니다."**(`dataStatus.limits.backtest` 재사용). 마지막 리밸런싱 보유 블록에 **"과거 시뮬레이션의 마지막 리밸런싱 구성 · 현재 확인 후보나 추천이 아닙니다."** 캡션. 세 날짜 분리 표기 — **데이터 기간(period) / 백테스트 생성일(generatedAt) / 사이트 현재 데이터 기준(dataStatus.globalAsOfLabel, 서버 prop `siteDataAsOf`)**. 준비중 fallback h1도 통일. 데이터·metrics 무변경.
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p, `/disclosures` 11.3 kB, exit 0
+- 변경 added 라인 금지표현(매수 추천/강력 매수/급등 예상/목표가/손절가/진입/따라 사기/AI 픽/매수 후보/호재 확정/악재 확정) grep = 0. 잔존 "호재"는 전부 **부정 캐비엇**("호재/악재 점수가 아니라/아닌" — brief 권장 표현 "호재/악재 점수가 아님")만.
+- 로컬 prod(127.0.0.1:**3252**, 내 리스너 PID만 taskkill·운영자 4310 무중단): 검증 5라우트 `/disclosures /backtest / /today /stock/005380` 전부 HTTP 200·에러 마커 0. SSR: 공시 카드 타입배지/종목명/제출일/한줄요약/확인할 것/주의/이 공시 이해하기 전수 렌더, "최신 200건 내"·"전체 공시가 아니라"·"표시는 최대 50건" 상시 노출, **긍정/부정 valence 배지 0**(장내매수 단서·방향 중립), 백테스트 "실험 전략 백테스트"+"종합점수 검증 결과는 아닙니다"+3날짜 분리+리밸런싱 caveat, 홈 "공시 신호 9건"=/disclosures "신호 9건·이벤트 9개"(모순 해소), /stock/005930·373220 호재 0.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build로 대체. **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px 브라우저 체크 권장** — 공시 카드 주의 라인·액션행 44px·가로 오버플로우 0, 백테스트 KPI 수익/위험 2박스·3날짜 푸터·기간 고지 줄바꿈, 콘솔 오류 0.
+
+### 결정 / 잔여 리스크 / 다음
+- `direction` 데이터값(긍정 가능/부정 가능/확인 필요)은 무변경 — 표시 라벨만 사실(장내매수/매도 단서) 또는 "방향 확인 필요"로 중립화. 추후 enrichment가 실제 방향을 확정하면 그대로 사실 라벨로 승격 가능.
+- `signalGuide.ts` `pastPattern`은 여전히 방향성 % 범위("+2~5%" 등)를 "(절대값 X)" 캡션과 함께 보유 — 카드 본문이 아니라 '이 공시 이해하기' 펼침 안에만 노출. 추가 완화는 후속 검토.
+- 공시 신호 표시 상한 50건·수집 200건은 성능·비용 제약(상시 고지로 정직 표시). 시점별 전체 수집은 후속 과제.
+- 외부 PDF PART D/E 원문 미확보 — 추출본 레포 반영 시 잔여 재대조. 다음: 운영자 모바일 게이트, 외부 릴리스(범위 외).
+
+---
+
 ## 2026-06-25 · 1차 상용화 안정화 P0-B/P1 — 종목 상세 번호 중복·CTA 버튼 그룹·데이터 배지·점수/순위 분리·밸류 기준 (Task 34, Claude)
 
 ### 목표

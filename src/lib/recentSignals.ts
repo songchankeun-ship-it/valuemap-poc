@@ -31,7 +31,9 @@ export async function getRecentSignals(days = 7): Promise<ApiResponse> {
       const e = enrichInsider(s.disclosure.stock_code, s)!;
       return { ...e, disclosure: { ...e.disclosure, url: `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${e.disclosure.rcept_no}` } };
     });
-    return { days: d, totalDisclosures: all.length, signalCount: signals.length, signals: signals.slice(0, 50) as ApiResponse["signals"], source: "live", fetchedAt: new Date().toISOString() };
+    // signalCount는 '표시 가능한 신호 수'와 일치시킨다(홈 KPI와 /disclosures 표시가 모순되지 않게).
+    const shown = signals.slice(0, 50);
+    return { days: d, totalDisclosures: all.length, signalCount: shown.length, signals: shown as ApiResponse["signals"], source: "live", fetchedAt: new Date().toISOString() };
   } catch {
     const sample = await loadSample();
     if (sample) return { ...sample, source: sample.source ?? "sample", fetchedAt: sample.fetchedAt ?? new Date().toISOString() };
