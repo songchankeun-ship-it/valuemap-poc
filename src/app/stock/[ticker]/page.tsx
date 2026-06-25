@@ -16,7 +16,8 @@ import { getPriceHistory } from "@/lib/priceHistory";
 import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
-import { MetricStrip } from "@/components/MetricStrip";
+import { MetricInsightCards } from "@/components/stock/MetricInsightCards";
+import { SectorComparison } from "@/components/stock/SectorComparison";
 import { StockTabs } from "@/components/StockTabs";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
@@ -137,6 +138,16 @@ export default async function StockDetailPage({ params }: PageProps) {
   const meInTop = sectorSorted.slice(0, 6).some((p) => p.ticker === s.ticker);
   const meRow = sectorPeers.find((p) => p.ticker === s.ticker);
   const sectorTop = meInTop || !meRow ? sectorSorted.slice(0, 6) : [...sectorSorted.slice(0, 5), meRow];
+  // 업종 비교 시각화 행 — 종합점수는 여기서 1회 계산해 넘긴다(컴포넌트는 표시만).
+  const sectorRows = sectorTop.map((p) => ({
+    ticker: p.ticker,
+    name: p.name,
+    composite: Math.round(compositeOf(p)),
+    per: p.per,
+    changePct: p.changePct,
+    rank: sectorSorted.findIndex((x) => x.ticker === p.ticker) + 1,
+    isMe: p.ticker === s.ticker,
+  }));
   const topPctOf = (val: number, key: "momentum" | "flow" | "value" | "vol") => {
     const better = realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length;
     return Math.max(1, Math.round(((better + 1) / poolN) * 100));
@@ -248,17 +259,17 @@ export default async function StockDetailPage({ params }: PageProps) {
         <StockPriceChart ticker={s.ticker} name={s.name} points={priceHistory.points} />
       ) : null}
 
-      {/* 자체 지표 4종 (시각 차트) */}
+      {/* 자체 지표 4종 (점수 카드) */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-3">
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">자체 지표 4종 <span className="text-[10px] font-normal text-zinc-400">전체 {poolN}종목 대비</span></div>
           <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline">지표 가이드 →</Link>
         </div>
-        <MetricStrip axes={[
-          { label: "추세", kind: "momentum", topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN, raw: s.momentum },
-          { label: "거래활성도", kind: "flow", topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN, raw: s.flow },
-          { label: "밸류", kind: "value", topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, raw: s.value },
-          { label: "위험조정", kind: "vol", topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN, raw: s.vol },
+        <MetricInsightCards metrics={[
+          { label: "추세", kind: "momentum", score: s.momentum, topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN },
+          { label: "거래활성도", kind: "flow", score: s.flow, topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN },
+          { label: "밸류", kind: "value", score: s.value, topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, per: s.per, pbr: s.pbr },
+          { label: "위험조정", kind: "vol", score: s.vol, topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN },
         ]} />
       </section>
 
@@ -322,46 +333,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
       ) : null}
 
-      {sectorCount >= 2 ? (
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">같은 업종 비교 · {mySector}</div>
-            <Link href={"/stocks?theme=" + encodeURIComponent(mySector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline">업종 전체 →</Link>
-          </div>
-          <div className="overflow-x-auto -mx-1 px-1">
-          <table className="w-full text-xs min-w-[280px]">
-            <thead>
-              <tr className="text-[10px] text-zinc-400 dark:text-zinc-500 text-left">
-                <th className="font-normal py-1">종목</th>
-                <th className="font-normal py-1 text-right">종합</th>
-                <th className="font-normal py-1 text-right">PER</th>
-                <th className="font-normal py-1 text-right">등락</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sectorTop.map((p) => {
-                const isMe = p.ticker === s.ticker;
-                return (
-                  <tr key={p.ticker} className={"border-t border-zinc-100 dark:border-zinc-800 " + (isMe ? "bg-blue-50/60 dark:bg-blue-950/20" : "")}>
-                    <td className="py-1.5 truncate max-w-[140px]">
-                      {isMe ? (
-                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{p.name} <span className="text-[9px] text-blue-600 dark:text-blue-400">현재</span></span>
-                      ) : (
-                        <Link href={"/stock/" + p.ticker} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400">{p.name}</Link>
-                      )}
-                    </td>
-                    <td className="py-1.5 text-right tabular-nums font-semibold text-zinc-900 dark:text-zinc-100">{Math.round(compositeOf(p))}</td>
-                    <td className="py-1.5 text-right tabular-nums text-zinc-600 dark:text-zinc-400">{p.per > 0 ? p.per.toFixed(1) : "—"}</td>
-                    <td className={"py-1.5 text-right tabular-nums " + (p.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{p.changePct >= 0 ? "+" : ""}{p.changePct.toFixed(1)}%</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">같은 업종 {sectorCount}곳(본인 포함) 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
-        </section>
-      ) : null}
+      <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
 
               </>
             ),

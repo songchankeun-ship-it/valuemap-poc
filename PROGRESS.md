@@ -1,5 +1,38 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 비주얼 리뉴얼 Phase 5 — /stock 상세 게이지·지표 카드·업종 비교 시각화 (Task 25, Claude)
+
+### 목표
+- 설계서 `ornscore_design_improvement_spec.md` **Phase 5(종목 상세 페이지, §9.2~§9.7·§14·§15)**. 이미 끝난 Task #15 결론 카드(`StockConclusionHero`)와 Task #23 디자인 톤 위에서 그 아래/주변 점수 해석·비교 시각화를 **강화**(결론 카드는 갈아엎지 않음). branch `ai-center/task-25-ornscore-phase-5`(시작 `5381720`, 클린). 점수 계산식·데이터 생성·JSON-LD·breadcrumb·`generateMetadata`/`generateStaticParams`·`StockTabs` 탭 id/순서·가격 동기화(`displayPrice`/`displayChangePct`)·`surge3m`/`riskAlert`·관심/비교/공유 슬롯 **무변경**, 비자문 톤, 신규 npm 패키지 0.
+
+### 완료한 작업
+- **Goal 1 · 탐색 우선도 게이지**: `src/components/stock/PriorityScoreCard.tsx`를 기존 `@/components/ui/ScoreGauge`(size 88·showLabel·showOutOf)로 점수를 주인공화. 전체/업종 순위·필수 데이터 %·이상값 점검·산식 버전 행 전부 보존. **suspect(이상값 점검 중)에는 게이지 대신 회색 숫자만** 노출(매수 게이지처럼 보이지 않게). props 시그니처 무변경 → `StockConclusionHero` 호출부 그대로.
+- **Goal 2 · 4지표 카드**: 신규 `src/components/stock/MetricInsightCards.tsx`(서버, 훅 0). 카드마다 지표명+`ScoreTooltip`, 원점수·상위/하위 백분위, `scoreColorOf` 밴드 막대, 한 줄 해석, **확인/주의 태그**(tone=caution면 주황 "주의", 아니면 파랑 "확인"). 1열(모바일)→2열(sm↑). `MetricStrip` 섹션을 대체.
+- **해석 문구 단일화**: `BeginnerReading.tsx`의 `readMomentum/readFlow/readValue/readVol`+`getChecklistByPattern`을 **신규 `src/lib/metricReadings.ts`로 추출**(문구 바이트 동일·순수 함수). 초보자 카드와 지표 카드가 같은 소스 사용. 점수 계산 무관, 표시 문구 출처만 이동.
+- **Goal 3 · 초보자 카드 강화**: `BeginnerReading.tsx` 제목을 설계서대로 **"초보자는 이렇게 보세요"**로, 헤드라인(패턴) 아래 **순서형 "먼저 확인할 것"(점수→공시→재무, §9.5)** ol 추가(각 단계 `#basis`/`#disclosures`/`#financials` 앵커). 기존 패턴별 항목은 "이 종목에서 특히 볼 것"으로 유지, 매수·매도 추천 아님 고지·앵커 칩 보존.
+- **Goal 4 · 업종 비교 시각화**: 신규 `src/components/stock/SectorComparison.tsx`(서버). 행마다 순위 배지·종목명(`/stock/{ticker}` `prefetch={false}`)·**가로 종합점수 막대(scoreColorOf 밴드색)**·PER/등락 보조·현재 종목 ring+bg+"현재" 태그. `overflow-x-auto`(min-w-280)로 390px 가로 넘침 회피. **표본 부족(sectorCount<2) 시 안내 빈 상태**. page.tsx의 기존 `<table>` 블록을 대체(점수는 page에서 1회 계산해 `sectorRows`로 전달, 재계산 없음). 업종 밸류 칩·"업종 전체 →" 링크 유지.
+- **Goal 5 · 다음 액션 버튼**: `src/components/stock/NextActionButtons.tsx` 4개 앵커(공시 확인/재무 보기/점수 근거/업종 비교 → `#disclosures`/`#financials`/`#basis`/`#summary`) 라벨·아이콘 정돈, 44px 터치·2열(모바일)/4열(lg) 유지. 관심/비교 추가는 상단 헤더 실제 버튼이 담당 → 죽은 링크 날조 안 함.
+- **page.tsx 와이어링**: `MetricStrip` import 제거(미사용)→`MetricInsightCards`/`SectorComparison` 추가, 지표 섹션·업종 `<table>` 대체. "지표 가이드 →" 링크·"전체 N종목 대비" 캡션 보존.
+
+### 결정 / 잔여
+- **suspect 게이지 회피**: 이상값 점검 중인 종목은 밴드색 게이지가 매수 신호처럼 보일 수 있어 회색 숫자(`/100`+⚠)로 유지 — Task #15 suspect 톤과 일관.
+- **밸류 카드 해석**: `readValue`가 PER·PBR 문구를 쓰므로 `MetricInsightCards`의 밸류 항목에만 `per`/`pbr`을 넘김(다른 지표는 점수만). 계산 무관·표시 전용.
+- `MetricStrip.tsx`는 더 이상 상세에서 쓰이지 않으나 컴포넌트 파일은 잔존(다른 화면 영향 없음, 삭제는 범위 외).
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0 (전후 2회)
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트 통과, `/stock/[ticker]` 13.9 kB·138p SSG 프리렌더, exit 0
+- 로컬 prod(127.0.0.1:3251, 시작 PID 15780만 종료·운영자 3000/4310 무중단): `/stock/005380`·`/stock/005930`·`/stocks`·`/today` 모두 HTTP 200. `/stock/005380` SSR에 탐색 우선도 게이지(aria "종합 점수")·자체 지표 4종(확인×2/주의×2)·"초보자는 이렇게 보세요"+"먼저 확인할 것"·"같은 업종 비교"+막대 범례 전수 렌더, 에러 마커 0. 신규/변경 파일 금칙어(추천/매수/매도/수익기대/급등예상/상승가능성) grep = 비자문 부정문("추천이 아닙니다")·기존 보존 문구만.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱/390px에서 게이지 가독성·지표 카드 1열↔2열·업종 비교 막대 `overflow-x-auto` 내 가로 넘침 0·다음 액션 44px 터치·콘솔 오류 0.
+
+### 다음에 바로 실행할 작업
+- Phase 6(공시 카드 피드·타입별 색/아이콘·해석 모달), Phase 7(백테스트 차트). 전역 라이트 토큰(#F6F8FB) 미도입(범위 외).
+
+---
+
 ## 2026-06-25 · 비주얼 리뉴얼 Phase 4 — /stocks 점수 히트맵 표/카드 보기모드 (Task 24, Claude)
 
 ### 목표
