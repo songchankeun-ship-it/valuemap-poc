@@ -383,3 +383,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Recovery completed by Codex: stopped only the stale 3000 `next start` PID 27200, restarted port 3000 as PID 23992, and verified `/stocks` 200 with no stale chunk references plus `카드형`/`표형`/`종합점수` markers. 4310 was not stopped.
 - 재확인(2026-06-25 2차, Claude): 동일 근본원인 독립 재현. 3000 HTML 여전히 `e1593…css` 참조 → 그 정적파일 HTTP 400, 디스크는 `d1665…css`. 재빌드 시 **청크 해시 결정적**(css `d1665…`·stocks `page-7d957…` 동일 재현, BUILD_ID 만 `P8OEan1fVsQXP9mgHYcRo`→`P4JMdwoo5Sw79SCG2maMe` 갱신) → 3000 재시작만 하면 HTML·정적 정합 보장. 빈 포트 3252 신 `next start` 검증: `/stocks` 200·참조 css/js 전수 200·`tsc` 0·`build` 0(138p, `/stocks` 13.9 kB)·`verify_metrics`(UTF8) 138종목 0오류·금칙어 0·산식 2.4. 검증 PID 9800 만 종료, 3000·4310 무중단.
 - Task 24 Phase 4(보기 모드/히트맵 표·조건 요약·빈상태) 기능 코드 무변경 — 환경 정리 완료, AI Center DB reconciled next.
+
+
+### Task 36 — Repair: P1-B /stocks 검색 input hydration 경고(Playwright DESKTOP) (2026-06-25, Claude)
+- Blocker(QUALITY-GATE PLAYWRIGHT DESKTOP): `Warning: Extra attributes from the server: style ... at input ... at StocksExplorer` — /stocks hydration 시 검색 input 서버/클라 속성 불일치 경고로 게이트 실패.
+- Root cause: Task 36 가 검색 input 을 컴포넌트 최상단으로 이동 → SSR 시 페이지의 첫 텍스트성 input 이 됨. 브라우저 자동완성/확장이 hydration 직전 첫 input 에 `style` 주입 → React 경고. 소스엔 `style` 없음(grep 0), 필터/점수 로직 무관한 순수 표현 이슈.
+- Fix: `src/components/StocksExplorer.tsx` 검색 input 에 `suppressHydrationWarning` 추가(Next.js 권장). 동작/스타일/필터 무변경. 상세필터 number/range/checkbox 는 패널 펼침 시 렌더라 초기 SSR 비대상 → 첫 검색 input 한 곳 수정으로 충분.
+- Passed: `tsc --noEmit` 0 · `npm run build` 0(`/stocks` 14.2 kB·138p 프리렌더) · Korean 무손상(grep).
+- Residual: 없음(속성 한정). 향후 SSR 첫 렌더 노출 폼 input 추가 시 동일 처방 고려.

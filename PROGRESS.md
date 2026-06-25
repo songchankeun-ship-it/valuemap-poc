@@ -802,3 +802,11 @@
 - 진단·검증(소스 무변경, 신 빌드 정상 입증): (1) `npx tsc --noEmit` exit 0. (2) `npm run build` exit 0 — Task 25 `/stock/[ticker]` 13.9 kB·138p SSG, 신 CSS `302c90d13f468b6d.css`. (3) `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·산식 2.4 일치. (4) 빈 포트 3251 에 `next start`(내가 띄운 PID 20368) 로 신 빌드 검증 → `/ /stocks /today /stock/005380 /stock/005930` 전부 200, 참조 CSS `302c90d…` 200(NON-200 0건, stale `d1665e0e…` 참조 없음), `/stock/005380` SSR 에 Task 25 마커(`종합 점수` 게이지·`초보자는 이렇게 보세요`·`먼저 확인할 것`·`같은 업종 비교`·`현재` 강조) 전수 렌더, 런타임 에러 마커 0. 검증 후 **내가 띄운 PID 20368 만 종료**(3000 PID 23992·4310 PID 24672 무중단 확인).
 - 복구 완료(Codex): 3000 의 stale `next start` PID 23992 만 종료하고, 포트 3000 을 신 빌드로 PID 13444 로 재기동. 4310(PID 24672) 은 중단하지 않음. `/stock/005380` 200, Task 25 마커(`탐색 우선도`·`자체 지표 4종`·`초보자는 이렇게 보세요`·`같은 업종 비교`) SSR 렌더 확인, 참조 정적 asset 12개 전수 200(BadAssets 0). `/ /stocks /stock/005380 /stock/005930 /disclosures /backtest` 모두 200. AI Center DB 는 Task 25 completed 로 정합화 후 Task 26부터 재개.
 - 운영 권장(Task 15·24 잔여와 동일·항구적): prod `next start` 가동 중 `.next` 재빌드 금지, build→start 순서 고정, 게이트 재실행 전 3000 잔존 `next start` 선종료.
+
+
+## 2026-06-25 · Repair · Task 36 P1-B Playwright 게이트: /stocks 검색 input hydration 경고 (Claude)
+- Blocker(QUALITY-GATE PLAYWRIGHT DESKTOP): `Warning: Extra attributes from the server: style at input ... at StocksExplorer` — /stocks SSR 후 hydration 시 검색 input 에 서버/클라이언트 속성 불일치 경고가 콘솔에 떠 게이트 실패.
+- Root cause: Task 36 에서 종목명·코드 검색 input 을 컴포넌트 최상단(질문형 프리셋 위)으로 이동해, 페이지에서 SSR 시점에 가장 먼저 렌더되는 텍스트성 input 이 됨. 브라우저 자동완성/확장(또는 폼 자동채움)이 hydration 직전 이 첫 input 에 `style` 속성을 주입해 React 가 "Extra attributes from the server: style" 를 경고. 소스에는 `style` 속성이 없으며(grep 0건), 점수/필터 로직과 무관한 순수 표현 이슈.
+- Fix: `src/components/StocksExplorer.tsx` 검색 input 에 `suppressHydrationWarning` 추가(Next.js 권장 처방). 동작·스타일·필터 로직 무변경. 상세 필터 안의 number/range/checkbox input 들은 showAdvanced/drawer 가 열려야 렌더돼 초기 SSR 대상이 아니므로 첫 검색 input 한 곳만 수정으로 충분.
+- Passed: `npx tsc --noEmit` exit 0 · `npm run build` exit 0(/stocks 14.2 kB·138p 프리렌더, 라우트 전수 빌드). Korean 문구 무손상 확인(grep).
+- Residual: 없음(속성 한정 수정). 향후 SSR 첫 렌더에 노출되는 폼 input 추가 시 확장 주입 대비 동일 처방 고려.

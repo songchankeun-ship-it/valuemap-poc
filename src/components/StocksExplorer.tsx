@@ -754,6 +754,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           placeholder="종목명 · 코드로 바로 검색"
           value={query}
           onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
+          suppressHydrationWarning
           className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
         />
       </div>
