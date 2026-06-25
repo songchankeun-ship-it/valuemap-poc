@@ -57,17 +57,24 @@ export default function PrivacyPage() {
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5. 위탁 처리 (Processors)</h2>
           <p>서비스 제공을 위해 다음 외부 서비스를 이용합니다. 각 서비스는 자체 개인정보처리방침을 따릅니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-            <li><strong>Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심종목·분석기록 / 목적: 인증·데이터 저장</li>
-            <li><strong>Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계</li>
-            <li><strong>Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송</li>
-            <li><strong>Anthropic Claude</strong> (미국) — 항목: AI 분석 시 전달되는 종목 데이터·질의 / 목적: AI 분석. <strong className="text-zinc-900 dark:text-zinc-100">Anthropic은 API 입력을 모델 학습에 사용하지 않으며</strong>, 분석 결과는 본인 계정에만 저장됩니다.</li>
-            <li><strong>Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시)</li>
+            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심종목·분석기록 / 목적: 인증·데이터 저장</li>
+            <li><strong>호스팅 제공자 — Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계</li>
+            <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송</li>
+            <li><strong>AI 처리 제공자 — Anthropic Claude</strong> (미국) — 항목: AI 분석 시 전달되는 종목 데이터·질의 / 목적: AI 분석. <strong className="text-zinc-900 dark:text-zinc-100">Anthropic은 API 입력을 모델 학습에 사용하지 않으며</strong>, 분석 결과는 본인 계정에만 저장됩니다.</li>
+            <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시)</li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5-1. 개인정보의 국외 이전</h2>
-          <p>위 위탁사 중 Supabase(일본), Vercel·Resend·Anthropic(미국)은 국외에 서버를 두고 있어, 5항의 항목·목적에 따라 개인정보가 국경을 넘어 이전·보관·처리될 수 있습니다. 이용자는 국외 이전을 원치 않을 경우 해당 기능(AI 분석·알림 등) 사용을 중단하거나 회원 탈퇴로 거부할 수 있습니다.</p>
+          <p>아래 제공자는 국외에 서버를 두고 있어, 5항의 항목·목적에 따라 개인정보가 국경을 넘어 이전·보관·처리될 수 있습니다. 이용자는 국외 이전을 원치 않을 경우 해당 기능(AI 분석·알림 등) 사용을 중단하거나 회원 탈퇴로 거부할 수 있습니다.</p>
+          <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
+            <li><strong>인증·저장 제공자</strong> — Supabase / 일본 / 이메일·계정 식별자·관심종목·분석기록 / 인증·데이터 저장</li>
+            <li><strong>호스팅 제공자</strong> — Vercel / 미국 / IP·접속정보 / 호스팅·익명 통계</li>
+            <li><strong>메일 발송 제공자</strong> — Resend / 미국 / 이메일 주소 / 알림 메일 발송</li>
+            <li><strong>AI 처리 제공자</strong> — Anthropic / 미국 / AI 분석 시 전달되는 종목 데이터·질의 / AI 분석</li>
+          </ul>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인(Kakao)은 국내 처리됩니다. 위탁사 변경·추가 시 본 항목을 갱신합니다.</p>
         </section>
 
         <section>

@@ -83,6 +83,10 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
             {error}
           </div>
         )}
+        <div className="mb-2 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 leading-relaxed flex items-start gap-2">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" strokeWidth={2} />
+          <span>AI 분석은 입력 데이터를 <strong>Anthropic(미국)</strong>에 전달해 생성하는 참고 정보이며, 매수·매도 추천이 아닙니다.</span>
+        </div>
         <button
           onClick={runAnalysis}
           disabled={loading}

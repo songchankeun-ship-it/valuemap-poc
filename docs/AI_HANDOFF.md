@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 36 - OrnScore 상용화 안정화 1차 P1-B — 비교 빈 상태·상단 메뉴·종목 탐색 첫 화면·요금제 경계
-- Run: 36
+- Task: 37 - OrnScore 상용화 안정화 1차 P2 — 데이터 소스 리스크표·약관/개인정보/AI 고지 보강·관리자 QA 정리
+- Run: 37
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development and all quality gates completed (tsc/verify_metrics/build pass; routes 200).
 
 ## Next Agent Checklist
 
@@ -41,6 +41,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 37 — OrnScore 1차 상용화 안정화 P2 — 데이터 소스 상용 리스크표·약관/개인정보/AI 고지 보강·관리자 QA 정리 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-37-ornscore-1-p2-ai-qa`**. 시작 HEAD `67defec`(= Task 33~36이 기준 `533c6d2` 위) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3253**`(운영자 4310 무중단·3000 미기동 상태 그대로, 내 리스너 PID 7420만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 설계서 메모: 외부 PDF PART L/M/N/O/P 원문 레포에 없음 → 지어내지 않고 **작업지시 + `docs/ornscore-improvement-brief.md`** 기준으로만 작성, 법적 결론 미확정("검토 필요" 표기).
+- What changed (신규 문서 2 + 코드 4파일, 문서·표시·고지 문구만 / 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경):
+  - **(2) 신규 `docs/data-source-commercial-risk.md`**: KRX·DART·Naver·yfinance·FinanceDataReader 6열 리스크 표(소스/사용 위치 코드 경로/상용 리스크/공식 인터페이스/대체·fallback/조치 상태). 전 항목 "검토 필요"·법적 결론 미확정. Naver(공식 API 부재 추정·대체 우선)·yfinance(비공식·fallback) 강조.
+  - **(3) 신규 `docs/legal-ai-commercial-readiness.md`**: (A) 약관 9항목(결제일·자동갱신·해지·환불·청약철회·결제 실패·요금제 변경·장애 보상·유료 기능 변경) 현재 상태/보강 방향/확정 필요 표(결제 미라이브). (B) 개인정보 국외 이전 역할별 표(인증·저장=Supabase 일본/호스팅=Vercel 미국/메일=Resend 미국/AI=Anthropic 미국/소셜=Kakao 국내). (C) AI 고지 실행 전+결과 하단 문구안. 각 절 "초안 · 상용화 전 검토 필요" 리드.
+  - **(4) 화면 반영(초안)**: `AiAnalysisCard.tsx` 실행 전 고지 1줄(버튼 위, Anthropic 미국 전달·비추천). `privacy/page.tsx` §5·§5-1 역할 라벨(인증·저장/호스팅/메일/AI/소셜 제공자)+§5-1 역할별 이전 표. `terms/page.tsx` "유료 서비스 이용 (출시 예정 · 초안)" 섹션(`/pricing` 링크·결제/환불/청약철회 출시 전 확정 고지, amber 초안 박스, 구속력 있는 수치 없음).
+  - **(5) `status/page.tsx`**: 기존 도메인 품질(가격/재무/공시/산식)은 노출 중 → "데이터 오류 신고" 섹션 추가(종목·항목·기대값·URL·기준일/산식 prefill mailto, 44px 버튼). 전체 관리자 대시보드는 후속 과제로 명시(문서 링크).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p, exit 0) · 변경 4파일+문서 2 금지표현 grep 0(terms 기존 §2 "수익 보장"은 부정문 고지, 이번 변경 아님) · 로컬 prod(3253) `/ /status /pricing /guide/metrics /disclosures /backtest /terms /privacy` 200·에러 마커 0, SSR "데이터 오류 신고하기"·"유료 서비스 이용 (출시 예정 · 초안)"·"AI 처리 제공자" 렌더 확인.
+- Gate note: Playwright 미구성 → 자동 게이트 미가용(curl+SSR grep+build 대체). 시작 시 포트 3000 미기동(운영자 미실행) — 변경 안 함. **운영자: 3000 재빌드·재기동 후 데스크톱/390px 체크 권장** — `/status` 오류 신고 버튼 44px·`/terms` 초안 박스·`/privacy` 역할 표, 오버플로우 0·콘솔 0.
+- Residual / next: PART L/M/N/O/P 원문 미확보. 결제 약관 미확정(결제 미라이브, 출시 전 법무 확정). 데이터 소스 약관 원문 대조·Naver 대체·KRX 상용 라이선스 미해결. 전체 관리자 상태판/오류 신고 관리 시스템 후속 과제. 다음: 운영자 모바일 게이트, 결제 도입 시 약관 확정, 외부 릴리스(범위 외).
 
 ### Task 36 — OrnScore 1차 상용화 안정화 P1-B — 비교 시작 화면·상단/모바일 메뉴 단순화·종목 탐색 검색 우선·요금제 경계 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-36-ornscore-1-p1-b`**. 시작 HEAD `b3070dd`(= Task 33~35가 기준 `533c6d2` 위) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 리스너 PID 15804만 taskkill). main 머지·외부 릴리스 범위 외(운영자).

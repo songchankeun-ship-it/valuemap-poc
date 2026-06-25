@@ -119,6 +119,26 @@ export default async function StatusPage() {
         </div>
       </section>
 
+      {/* 데이터 오류 신고 */}
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4">
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">데이터 오류 신고</div>
+        <p className="text-[12px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          가격·재무·공시·점수에서 잘못된 값이나 분류 오류를 발견하면 알려주세요. 종목명·코드와 어떤 값이 이상한지 함께 적어주시면 확인이 빠릅니다.
+        </p>
+        <a
+          href={`mailto:songchankeun@gmail.com?subject=${encodeURIComponent("[오른스코어] 데이터 오류 신고")}&body=${encodeURIComponent(
+            `종목명/코드:\n항목(가격/재무/공시/점수):\n이상한 값과 기대값:\n발견 화면(URL):\n\n— 데이터 기준일: ${formatBizDateLong(dataMetadata.asOfBusinessDate)} · 산식 ${dataStatus.metricsVersionLabel}`,
+          )}`}
+          className="inline-flex items-center mt-3 min-h-[44px] px-4 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+        >
+          데이터 오류 신고하기
+        </a>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2">
+          관리자용 데이터 상태판·오류 신고 관리 시스템은 후속 과제입니다(현재는 메일 접수). 자세한 범위는{" "}
+          <code className="text-[10px]">docs/legal-ai-commercial-readiness.md</code> 참고.
+        </p>
+      </section>
+
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
         데이터는 매주 평일 장 마감 후 클라우드(GitHub Actions)에서 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.
       </p>

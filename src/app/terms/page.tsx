@@ -46,6 +46,18 @@ export default function TermsPage() {
           </ul>
         </section>
 
+        <section className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/60 dark:bg-amber-950/20 p-4 not-prose">
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">유료 서비스 이용 (출시 예정 · 초안)</h2>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">현재 유료 결제는 제공되지 않으며, 요금제는 <Link href="/pricing" className="underline">요금제 안내</Link> 페이지에서 출시 예정(대기 신청) 단계로 안내합니다. 아래는 유료 구독 도입 시 적용될 사항의 <strong>초안</strong>이며, 구속력 있는 금액·날짜를 확정하지 않습니다. 정식 약관은 상용화 전 확정·공지됩니다.</p>
+          <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <li>결제일·자동갱신: 구독은 결제주기마다 자동 갱신되며, 결제일·갱신 사전 고지 방식은 출시 전 확정합니다.</li>
+            <li>해지·요금제 변경: 해지 효력 시점, 상위/하위 요금제 전환 적용 시점은 출시 전 확정합니다.</li>
+            <li>환불·청약철회: 전자상거래법상 청약철회 기준과 디지털 콘텐츠 환불 기준을 출시 전 확정합니다.</li>
+            <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 출시 전 확정합니다.</li>
+            <li>유료 기능 변경 가능성: 유료 기능 구성은 사전 고지 후 변경될 수 있습니다.</li>
+          </ul>
+        </section>
+
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제5조 (지적재산권)</h2>
           <p>본 서비스가 자체 개발한 점수 산식, UI 디자인, 코드는 운영자의 지적재산입니다. 무단 복제·배포·상업적 활용을 금지합니다.</p>
