@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 37 - OrnScore 상용화 안정화 1차 P2 — 데이터 소스·약관/개인정보/AI 고지·관리자 QA 설계 정리
-- Run: 37
+- Task: 38 - OrnScore 상용화 안정화 1차 후속 A — 데스크톱/390px 시각 QA 스윕
+- Run: 38
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: QA sweep of 12 routes (desktop + 390px source inspection). No critical display errors found; no code changes warranted (Task 33–37 already settled the UI). All gates green. Operator browser eyeball still requested (Playwright gate absent).
 
 ## Next Agent Checklist
 
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 38 — OrnScore 1차 상용화 안정화 후속 A — 데스크톱/390px 시각 QA 스윕 (2026-06-25, Claude)
+- Preview/branch: 리뷰 기준 **branch `ai-center/task-38-ornscore-1-a-qa-ui`**. 시작 HEAD `a561e45`(= Task 33~37이 위에 쌓인 머지 상태) — **리셋/pull/머지/push 없이** 로컬 QA만(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3258**`(AI Center 4310[PID 6008] 무중단·3000 운영자 미기동 상태 그대로, 내 리스너 node PID 28512만 taskkill). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 작업범위 A — 1차 안정화(#33~#37) 이후 주요 화면을 실제 사용자 눈높이로 재확인, 가로 넘침·버튼/배지 붙음·카드 붕괴·텍스트 겹침·콘솔/hydration 오류·죽은 링크·새 투자 추천 오해 문구를 찾아 **작은 표시 수정만** 적용. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0.
+- QA 범위: 검증 12경로 `/ /today /stocks /stock/005380 /stock/032830 /disclosures /backtest /compare /pricing /status /privacy /terms`(005380 현대차·032830 삼성생명, 둘 다 비-suspect 정상 경로).
+- What changed: **코드 변경 0**. 12경로 전수 점검 결과 데스크톱/390px에서 치명적 표시 오류·붙음·붕괴·겹침·콘솔/hydration·죽은 링크·새 추천 오해 문구가 발견되지 않음. Task #33~#37이 해당 화면 UI 기본기(번호 중복·CTA 그룹·배지 분리·점수≠순위·공시 카드 구조·메뉴 단순화·요금제 경계·법무 고지)를 이미 정리해 작은 수정으로 고칠 잔여 항목이 없어 **없는 문제를 만들지 않기 위해 임의 수정 안 함**. 이번 커밋은 QA 결과 문서화(PROGRESS.md·이 노트)만.
+- 점검 근거: `<table>` 전부 `overflow-x-auto` 동반(미래퍼 0)·반응형 prefix 없는 밀집 고정 그리드(≥5열) 0·위험 `whitespace-nowrap` 0(잔존 3건 desktop-only/짧은 링크/배지로 안전)·CTA/배지/칩 행 `flex-wrap`+`gap`+`break-words`+`min-w-0`·가로 스크롤 영역 `overflow-x-auto md:overflow-visible`+`min-w-[…]` 가드 확인(StockHeader·PriorityScoreCard·SectorComparison·DisclosureExplorer·today 변화 칩·status·pricing·CompareClient ScrollX·home).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p, exit 0) · 로컬 prod(3258) 12경로 200·SSR 에러 마커(Application error/Unhandled/Hydration/cannot read/TypeError/ReferenceError) 0·공통 마커 정상.
+- Gate note: Playwright 미구성 → 실제 브라우저 자동 DESKTOP/390px 게이트 로컬 미가용(curl+SSR grep+소스 인스펙션+build 대체, 픽셀 단위 렌더 미보장). **운영자: 3000 재빌드·재기동 후 데스크톱/390px 브라우저로 12경로 육안 확인 권장** — `/today` 최근 변화 칩 줄바꿈·`/stock` 업종 비교 막대·`/stocks` 표형↔카드형 토글·`/disclosures` 공시 카드 액션행·`/compare` 시작 화면(클라 렌더)·요금제 2카드, 오버플로우 0·콘솔 0.
+- Residual / next(큰 항목 후속): 실 브라우저 모바일 게이트 부재(소스 인스펙션은 클래스 가드만 확인, 폰트 메트릭·줄바꿈은 운영자 육안 필요). `/stocks` 11컬럼 표는 데스크톱 전용이라 태블릿 폭(768~1024px) 가로 스크롤 의존(중간 폭 카드 전환 후속 검토). `SectorComparison` 행은 ≤360px에서 의도된 가로 스크롤(초협폭 2줄 레이아웃은 데이터/구조 변경 필요로 범위 밖). 다음: 운영자 모바일 게이트, 외부 릴리스(범위 외).
 
 ### Task 37 — OrnScore 1차 상용화 안정화 P2 — 데이터 소스 상용 리스크표·약관/개인정보/AI 고지 보강·관리자 QA 정리 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-37-ornscore-1-p2-ai-qa`**. 시작 HEAD `67defec`(= Task 33~36이 기준 `533c6d2` 위) — **리셋 없이 이어서** 작업(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3253**`(운영자 4310 무중단·3000 미기동 상태 그대로, 내 리스너 PID 7420만 taskkill). main 머지·외부 릴리스 범위 외(운영자).

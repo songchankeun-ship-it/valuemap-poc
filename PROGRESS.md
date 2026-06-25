@@ -1,5 +1,37 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 1차 상용화 안정화 후속 A — 데스크톱/390px 시각 QA 스윕 (Task 38, Claude)
+
+### 목표
+- ORNSCORE 1차 상용화 안정화 잔여 후속(작업범위 A). 신규 기능·데이터 구조 변경이 아니라 **1차 안정화(#33~#37) 이후 주요 화면을 실제 사용자 눈높이로 재확인**하고, 가로 넘침·버튼/배지 붙음·카드 붕괴·텍스트 겹침·콘솔/hydration 오류·링크 불가·투자 추천 오해 문구를 찾아 **작은 표시 수정으로 해결 가능한 것만** 고치는 것. branch `ai-center/task-38-ornscore-1-a-qa-ui`. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 데이터 **무변경**, 신규 npm 0·빌드 단계 추가 0.
+- **시작 상태 메모**: HEAD는 공개 기준 `a561e45`(= Task 33~37이 위에 쌓인 머지 상태), 작업트리 클린 확인 후 **리셋/pull/머지/push 없이** 로컬 QA만. 원격 갱신·공개 절차·브랜치 합치기는 범위 밖.
+
+### 수행한 QA (작업범위 A 1~4)
+- **검증 경로 12개 전수**: `/ /today /stocks /stock/005380 /stock/032830 /disclosures /backtest /compare /pricing /status /privacy /terms`. 두 상세 종목은 005380(현대차, composite 74.2)·032830(삼성생명, 82.8) — 둘 다 비-suspect 정상 경로.
+- **렌더/콘솔 패스(curl+SSR grep)**: 12경로 전부 HTTP 200. SSR HTML에서 에러 마커(`Application error`/`Unhandled`/`Hydration failed`/`cannot read`/`TypeError`/`ReferenceError`) **0건**. 공통 마커(오른스코어·종합점수·백테스트·요금제·데이터 상태) 정상 노출. `/compare`는 `mounted` 게이트 클라 렌더라 본문은 flight 페이로드로 확인.
+- **소스 인스펙션 패스(390px/데스크톱 레이아웃)**: Playwright 미구성이라 라우트별 page+핵심 컴포넌트를 읽어 알려진 390px 넘침·붙음 위험 지점을 점검 — `stock/StockHeader`(CTA 그룹), `PriorityScoreCard`(배지 pill), `stock/SectorComparison`(가로 막대 행), `DisclosureExplorer`(공시 카드 헤더/액션행), `today/page`(최근 변화 칩 4묶음), `status/page`(스냅샷·오류 신고), `pricing/page`(2티어 카드), `CompareClient`(ScrollX), 홈 `page`.
+- **레이아웃 가드 전수 확인**: `<table>`은 전부 `overflow-x-auto` 래퍼 동반(미래퍼 0), 반응형 prefix 없는 밀집 고정 그리드(grid-cols ≥5) 0, 위험한 `whitespace-nowrap`(긴 한글 본문) 0(잔존 3건은 desktop-only AppHeader 출처표기·짧은 링크·ScoreBadge로 안전). CTA/배지/칩 행은 `flex-wrap`+`gap`+`break-words`+`min-w-0`로, 가로 스크롤 영역은 `overflow-x-auto md:overflow-visible`+`min-w-[…]`로 이미 가드됨.
+
+### 결론 — 치명적 표시 오류 0, 코드 수정 없음
+- 12경로 핵심 화면은 데스크톱/390px에서 가로 넘침·버튼/배지 붙음·카드 붕괴·텍스트 겹침·콘솔/hydration 오류·죽은 링크·새 투자 추천 오해 문구가 **발견되지 않음**. Task #33~#37에서 해당 화면들의 UI 기본기(번호 중복·CTA 그룹·배지 분리·점수≠순위·공시 카드 구조·메뉴 단순화·요금제 경계·법무 고지)를 이미 정리한 결과로, **작은 표시 수정으로 고칠 항목이 남아 있지 않아 코드 변경 0**. 없는 문제를 만들지 않기 위해 임의 수정은 하지 않음 — 이번 커밋은 QA 결과 문서화(이 항목·AI_HANDOFF).
+
+### 테스트 결과 (전후 동일, 코드 무변경)
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p(`/stock/[ticker]` 14 kB·`/stocks` 14.2 kB), exit 0
+- 로컬 prod(127.0.0.1:**3258**, 내 리스너 node PID 28512만 taskkill·AI Center 4310[PID 6008] 무중단·3000 운영자 미기동 상태 그대로): 검증 12경로 200·에러 마커 0.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → 실제 브라우저 자동 DESKTOP/390px MOBILE 게이트 로컬 미가용. curl+SSR grep+소스 인스펙션+build로 대체(소스 패스는 픽셀 단위 렌더를 보장하지 못함). **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px 브라우저로 12경로 육안 확인 권장** — 특히 `/today` 최근 변화 칩 줄바꿈·`/stock` 업종 비교 막대 가독성·`/stocks` 표형(데스크톱)↔카드형(모바일) 토글·`/disclosures` 공시 카드 액션행·`/compare` 시작 화면(클라 렌더)·요금제 2카드, 가로 오버플로우 0·콘솔 0 최종 확인.
+
+### 잔여 리스크 / 다음(후속 과제로 남김 — 큰 항목)
+- **실 브라우저 모바일 게이트 부재**: 소스 인스펙션은 클래스 가드만 확인 — 실제 폰트 메트릭·줄바꿈은 운영자 육안 게이트 필요(전 태스크 공통 한계).
+- `/stocks` 11컬럼 점수 히트맵 표는 데스크톱 전용(`lg:block`)이라 태블릿 폭(768~1024px)에서 가로 스크롤 의존 — 의도된 동작이나 중간 폭 카드형 전환은 후속 검토 대상.
+- `stock/SectorComparison` 행은 ≤360px(예: iPhone SE)에서 의도된 `overflow-x-auto` 가로 스크롤로 떨어짐 — 390px 이상은 무스크롤. 초협폭 2줄 레이아웃은 후속(현재 데이터/구조 변경 없이 불가, 범위 밖).
+- 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-25 · 1차 상용화 안정화 P2 — 데이터 소스 상용 리스크표·약관/개인정보/AI 고지 보강·관리자 QA 정리 (Task 37, Claude)
 
 ### 목표
