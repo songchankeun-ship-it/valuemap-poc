@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-25T04:25:00.000+09:00
+Last updated: 2026-06-25T12:57:16.000+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 24 - OrnScore 디자인 리뉴얼 Phase 4 — 종목 탐색 히트맵/보기모드 고도화
-- Run: 29
+- Task: 25 - OrnScore 디자인 리뉴얼 Phase 5 — 종목 상세 게이지/지표/업종 비교 확장
+- Run: 30
 - Status: completed after Codex stale-preview recovery
 - Agent: claude + codex recovery
-- Note: Task 24 source work was committed on branch `ai-center/task-24-ornscore-phase-4` as `6923f02` and implements the `/stocks` card/table view mode, desktop score heatmap table, condition summary, and stronger empty state. The earlier AI Center failure was an environment-only stale `next start` problem on port 3000: the server was still serving old chunk references (`e1593…css`, `page-60397…js`) after `.next` was rebuilt. Codex stopped only the stale 3000 PID `27200`, restarted `next start` on port 3000 as PID `23992`, and rechecked `/ /stocks /today /stock/005380 /compare /backtest` with HTTP 200. `/stocks` now renders the expected markers (`카드형`, `표형`, `종합점수`) and no longer references the stale chunk names. AI Center DB is being reconciled so the queue can continue with Task #25.
+- Note: Task 25 source work was committed as `b697386` on branch `ai-center/task-25-ornscore-phase-5` and implements the stock detail gauge, 4 metric insight cards, strengthened beginner reading card, sector comparison visualization, and next-action button cleanup. Claude finite gates and tester review passed (`tsc`, `verify_metrics.py`, `npm run build`, route checks). The AI Center failure was an environment-only stale port 3000 `next start`: it served old CSS `d1665e0e41509995.css` after `.next` was rebuilt to the Task 25 build. Codex stopped only stale port 3000 PID `23992`, restarted port 3000 as PID `13444`, verified `/stock/005380` markers (`탐색 우선도`, `자체 지표 4종`, `초보자는 이렇게 보세요`, `같은 업종 비교`), confirmed 12 referenced static assets with 0 bad assets, and rechecked `/ /stocks /stock/005380 /stock/005930 /disclosures /backtest` as HTTP 200. AI Center DB is being reconciled so the queue can continue with Task #26.
 
 ## Next Agent Checklist
 
@@ -58,6 +58,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - 검증: `npx tsc --noEmit` exit 0(전후) · `PYTHONUTF8=1 verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4 일치, exit 0) · `npm run build`(타입게이트·138p SSG, `/stock/[ticker]` 13.9 kB, exit 0) · 로컬 prod(127.0.0.1:3251) `/stock/005380`·`/stock/005930`·`/stocks`·`/today` 200 · `/stock/005380` SSR에 탐색 우선도 게이지(aria "종합 점수")·자체 지표 4종(확인×2/주의×2)·"초보자는 이렇게 보세요"+"먼저 확인할 것"·"같은 업종 비교"+막대 범례 렌더, 에러 마커 0 · 신규/변경 파일 금칙어 grep = 비자문 부정문·기존 보존 문구만.
 - 게이트 한계: Playwright 미구성 → AI Center DESKTOP/MOBILE 자동 게이트 로컬 미가용. curl+SSR grep+build 대체. **운영자: 재빌드→3000 재기동 후 브라우저 체크 권장** — 데스크톱/390px 게이지 가독성·지표 카드 1열↔2열·업종 비교 막대 `overflow-x-auto` 가로 넘침 0·다음 액션 44px·콘솔 오류 0.
 - Residual / next: Phase 6(공시 카드 피드·타입별 색/아이콘·해석 모달)·Phase 7(백테스트 차트)·전역 라이트 토큰(#F6F8FB, 범위 외).
+
+### Task 25 (Gate Repair) — Playwright stale 3000 CSS 400 복구 (2026-06-25, Claude)
+- 증상: AI Center 게이트 DESKTOP·MOBILE 둘 다 `400 .../_next/static/css/d1665e0e41509995.css`(+ `/`·`/stocks` `_rsc` ERR_ABORTED).
+- 원인: 코드 결함 아님. 포트 3000 `next start`(PID 23992, Task 24 복구 때 Codex 가 `d1665e0e…` 빌드로 띄운 것)가 살아있는 채 Task 25(`b697386`) 재빌드로 CSS 해시가 `d1665e0e…`→`302c90d13f468b6d` 로 바뀌어 stale 400. Task 15·24 와 동일 staleness 레이스.
+- 조치(소스 무변경): `.next` 클린 재빌드(`302c90d…`) → tsc 0·build 0·verify_metrics 0 → 빈 포트 3251(내 PID 20368)로 신 빌드 검증: `/ /stocks /today /stock/005380 /stock/005930` 200, 신 CSS 200(stale 참조 0), Task 25 마커 전수 SSR, 에러 0. 내 PID 20368 만 종료(3000/4310 무중단).
+- 복구 완료(Codex): stale 3000 PID 23992만 종료하고 포트 3000을 PID 13444로 재기동. 4310(PID 24672)은 무중단. `/stock/005380` Phase 5 마커 4종 렌더, 정적 asset 12개 전수 200(BadAssets 0), `/ /stocks /stock/005380 /stock/005930 /disclosures /backtest` HTTP 200 확인. 상세는 PROGRESS.md 2026-06-25 Task 25 Repair 항목.
 
 ### Task 24 — OrnScore 비주얼 리뉴얼 Phase 4 — /stocks 점수 히트맵 표/카드 보기모드 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-24-ornscore-phase-4`**(시작 `4f5b277`, 클린). 로컬 검증은 prod `127.0.0.1:**3251**`(운영자 3000/4310 무중단, 내 시작 PID만 종료). 외부 공개 주소 갱신·main 머지는 범위 외(운영자).
