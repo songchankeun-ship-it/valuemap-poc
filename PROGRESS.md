@@ -1,5 +1,37 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-25 · 1차 상용화 안정화 후속 B — 데이터 소스 리스크 체크리스트(법무/개발 분리·갱신 경로 정리) (Task 39, Claude)
+
+### 목표
+- ORNSCORE 1차 안정화 잔여 후속(작업범위 B). 데이터 출처 관련 남은 리스크를 **한 문서에서 추적 가능**하게 정리하고, **최종 법무 판단 항목과 개발자 처리 항목을 분리**. 신규 기능·데이터 구조 변경 아님. branch `ai-center/task-39-ornscore-1-b`. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` **무변경**, 신규 npm 0, 사실과 다른 확정 표현 신규 생성 0.
+- **시작 상태 메모**: HEAD는 공개 기준 `a561e45`(= Task 33~38 위에 쌓인 상태), 작업트리 클린 확인 후 **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단.
+
+### 완료한 작업 (작업범위 B 1~5) — 문서 1파일만 수정
+- **`docs/data-source-commercial-risk.md` 재구성**(코드/데이터 동작 무변경, 문서 편집만): 리드를 "초안 · 법적 결론 미확정"으로 유지하고 마지막 정리를 `2026-06-25 (AI Center task 39, 후속 B)`로 갱신. 설계서 작업범위 4항의 4개 절을 명시 라벨로 추가/재구성:
+  - **(A) 현재 표시 데이터의 출처와 갱신 경로**: 사용자에게 보이는 데이터별로 (i) 표시 위치(`/status` `sources[]`·`DATA_SOURCES`·`domainStatuses`), (ii) 실제 생성·갱신 경로, (iii) 표기 정합성 확인 필요를 표로. 가격·지표 = FinanceDataReader(`daily-data.yml`→`fetch_prices.py`→`sync_prices_to_stocks.py`→`compute_metrics.py`→`verify_metrics.py` 게이트→봇 commit→Vercel), GitHub Actions cron `0 8 * * 1-5`(17:00 KST 평일)+수동 `workflow_dispatch`; 현재가 = 네이버 지연 시세 라이브; 공시 = DART Open API 라이브(샘플 폴백); 점수 변화 = Supabase cron.
+  - **(B) 사람(법무) 검토 약관/라이선스**: KRX·DART·Naver·yfinance·FinanceDataReader별 법적 질문·공식 문서 위치를 적고 결론은 **확인 필요**, 소유자 **[법무] 판단**.
+  - **(C) 대체 출처 후보와 전환 작업**: Naver·yfinance 우선으로 대체 후보·구체적 개발 작업(어느 스크립트·`DATA_SOURCES`·`domainStatuses` 수정·fallback·출처 표기), 소유자 **[개발]**.
+  - **(D) 결제 전 고지/약관 확정 문구**: `legal-ai-commercial-readiness.md` 교차링크, 중복 없이 데이터 출처 한정 고지 후보만 **초안**(지연·참고용·제3자 출처·재배포 제한 가능), 출시 전 법무 확정.
+- **추적 가능 체크리스트(설계서 §41 필수 조치)**: 출처별 약관 확인/상용 가능 여부/비공식 수집 의존도/fallback 구조/직전 정상 데이터 유지/관리자 수동 재수집/수집 실패 알림/소스 교체 가능 구조 — 각 항목에 **[법무]/[개발]** 소유자 + 상태(미착수/진행/확인 필요). 기존 "공통 조치 항목/미해결" 느슨한 절을 이 체크리스트로 대체.
+- **코드↔표기 정합성 부록(후속 B 발견)**: 직전 표가 인용한 `scripts/run_real.py`는 **현재 저장소에 없음**; yfinance는 `fetch_prices.py`가 아니라 `fetch_stock_data.py`에 import; Naver 스크래핑은 `run_real.py`가 아니라 `fetch_stock_data.py`의 `fetch_naver()`(정규식 HTML 파싱, 일일 워크플로 미포함); `/status`("FinanceDataReader") vs `DATA_SOURCES`/`domainStatuses`("KRX") 명칭 불일치. **사실 오류 수준은 아니라 코드 미변경·확인 필요로 추적**.
+
+### 화면 문구 (작업범위 B 5)
+- **코드 변경 0**. `DATA_SOURCES`(KRX 등)·`/status`(FinanceDataReader)의 출처 명칭 차이는 *라벨 스타일* 불일치이며 *사실과 다른 진술*이 아님(FDR가 내부적으로 KRX 등을 끌어옴). 설계서 5항 지침대로 **코드 수정 대신 문서에 확인 필요로 기록**. 사실과 다른 확정 표현 신규 생성 0.
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 통과, exit 0
+- 변경 문서 금지표현 grep = 0(투자 조언성 표현 신규 생성 없음).
+- **로컬 서버 렌더 체크 생략**: 화면 문구 변경이 없어(문서 1파일만 수정) 보조 포트 기동 불필요 — 시작하지 않음(AI Center 4310·미리보기 3000 무중단).
+
+### 결정 / 잔여 리스크 / 다음
+- **[법무 후속]** 출처별 약관 원문 대조(§B 결론 채우기)·Naver 비공식 수집 대체 결정·KRX 상용 시세 라이선스 비용/범위 — 최종 법무 판단 대기.
+- **[개발 후속]** 앱 내 관리자 수동 재수집 트리거(현재 GitHub Actions `workflow_dispatch` 수동 버튼만)·워크플로 수집 실패 알림(현재 비-blocking)·출처 명칭 일원화(`/status`↔`DATA_SOURCES`).
+- 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-25 · 1차 상용화 안정화 후속 A — 데스크톱/390px 시각 QA 스윕 (Task 38, Claude)
 
 ### 목표

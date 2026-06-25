@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 39 — OrnScore 1차 안정화 후속 B — 데이터 소스 리스크 체크리스트(법무/개발 분리·갱신 경로 정리) (2026-06-25, Claude)
+- Preview/branch: branch `ai-center/task-39-ornscore-1-b`. 시작 HEAD `a561e45`(= Task 33~38 머지 상태) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310·미리보기 3000 무중단(이번 작업은 보조 포트 서버 미기동 — 화면 변경 0).
+- 목표: 작업범위 B — 데이터 출처 관련 잔여 리스크를 **한 문서에서 추적 가능**하게, **법무 최종 판단 항목과 개발자 처리 항목을 분리**. 신규 기능·데이터 구조 변경 아님, 신규 npm 0, 사실과 다른 확정 표현 신규 생성 0.
+- What changed: **문서 1파일만** — `docs/data-source-commercial-risk.md` 재구성(코드/데이터 동작 무변경). (A) 표시 데이터별 출처·갱신 경로 표(`/status`·`DATA_SOURCES`·`domainStatuses` ↔ 실제 파이프라인) / (B) 출처별 법무 검토 약관·라이선스 질문(소유자 **[법무]**, 결론 확인 필요) / (C) 대체 출처 후보·전환 작업(소유자 **[개발]**) / (D) 결제 전 데이터 출처 한정 고지 초안(`legal-ai-commercial-readiness.md` 교차링크) / 추적 체크리스트(설계서 §41, **[법무]/[개발]**+상태) / 코드↔표기 정합성 부록.
+- 핵심 발견(KRX↔FinanceDataReader 정합성): 실제 일일 자동 갱신은 **FinanceDataReader 기반 `fetch_prices.py`**(`daily-data.yml` cron `0 8 * * 1-5`+`workflow_dispatch`)인데 직전 표가 인용한 **`scripts/run_real.py`는 현재 저장소에 없음**. yfinance·Naver 스크래핑은 `fetch_prices.py`가 아니라 **`fetch_stock_data.py`(시드/수동)**에 있음. `/status`("FinanceDataReader")와 `DATA_SOURCES`/`domainStatuses`("KRX") 명칭 불일치 = **사실 오류 아님(FDR가 KRX 등을 내부 사용) → 코드 미변경, 문서에 확인 필요로 기록**.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG, exit 0) · 변경 문서 금지표현 grep 0. 화면 문구 변경 0 → 로컬 서버 렌더 체크 생략(보조 포트 미기동).
+- Residual / next: **[법무]** 출처별 약관 원문 대조·Naver 비공식 수집 대체 결정·KRX 상용 시세 라이선스. **[개발]** 앱 내 관리자 수동 재수집 트리거(현재 GitHub Actions 수동 버튼만)·워크플로 수집 실패 알림(현재 비-blocking)·출처 명칭 일원화. 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
 ### Task 38 — OrnScore 1차 상용화 안정화 후속 A — 데스크톱/390px 시각 QA 스윕 (2026-06-25, Claude)
 - Preview/branch: 리뷰 기준 **branch `ai-center/task-38-ornscore-1-a-qa-ui`**. 시작 HEAD `a561e45`(= Task 33~37이 위에 쌓인 머지 상태) — **리셋/pull/머지/push 없이** 로컬 QA만(작업트리 클린). 로컬 검증 prod `127.0.0.1:**3258**`(AI Center 4310[PID 6008] 무중단·3000 운영자 미기동 상태 그대로, 내 리스너 node PID 28512만 taskkill). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 작업범위 A — 1차 안정화(#33~#37) 이후 주요 화면을 실제 사용자 눈높이로 재확인, 가로 넘침·버튼/배지 붙음·카드 붕괴·텍스트 겹침·콘솔/hydration 오류·죽은 링크·새 투자 추천 오해 문구를 찾아 **작은 표시 수정만** 적용. 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0.
