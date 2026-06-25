@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-25T03:30:00.000+09:00
+Last updated: 2026-06-25T04:25:00.000+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 23 - OrnScore 비주얼 리뉴얼 Phase 3 — /today 대시보드화 (데이터 상태 바·시장 KPI 4·Top3 큰 카드·신호별 6섹션)
-- Run: 28
-- Status: completed
-- Agent: claude
-- Note: 설계서 Phase 3(오늘 페이지 리뉴얼)을 branch `ai-center/task-23-ornscore-phase-3`에서 구현. `/today`를 홈 리뉴얼과 같은 금융 대시보드 첫인상으로 끌어올림 — 페이지 최상단 데이터 상태 바(전역 dataStatus 재사용), 시장 요약 KPI 4카드(홈 MarketSnapshotCards 재사용), 오늘의 Top 3 큰 카드(홈 StockCandidateCard 재사용), 신호별 6섹션(종합 상위/거래활성도 급증/밸류 매력/추세 강함/과열 주의/최근 공시 있음, 빈 상태 처리). 기존 3개 KPI 카드(PER/PBR 중앙값)와 StockTabs(종합/저평가/추세)는 새 KPI·신호 섹션으로 대체. 점수 계산식·데이터 생성·공시 분류 무변경, 비자문 톤. 신규 npm 패키지 0. 검증 통과: `npx tsc --noEmit`(exit 0), `python scripts/verify_metrics.py`(138종목 0오류·금칙어 0·Metrics 2.4), `npm run build`(exit 0), 로컬 prod(127.0.0.1:3250) `/today /  /stocks /stock/005380` 200·SSR 전 섹션 렌더(게이지 34·에러 0). 운영자 푸시/배포 대기.
+- Task: 24 - OrnScore 디자인 리뉴얼 Phase 4 — 종목 탐색 히트맵/보기모드 고도화
+- Run: 29
+- Status: completed after Codex stale-preview recovery
+- Agent: claude + codex recovery
+- Note: Task 24 source work was committed on branch `ai-center/task-24-ornscore-phase-4` as `6923f02` and implements the `/stocks` card/table view mode, desktop score heatmap table, condition summary, and stronger empty state. The earlier AI Center failure was an environment-only stale `next start` problem on port 3000: the server was still serving old chunk references (`e1593…css`, `page-60397…js`) after `.next` was rebuilt. Codex stopped only the stale 3000 PID `27200`, restarted `next start` on port 3000 as PID `23992`, and rechecked `/ /stocks /today /stock/005380 /compare /backtest` with HTTP 200. `/stocks` now renders the expected markers (`카드형`, `표형`, `종합점수`) and no longer references the stale chunk names. AI Center DB is being reconciled so the queue can continue with Task #25.
 
 ## Next Agent Checklist
 
@@ -269,3 +269,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Fix: `src/lib/scoreColor.ts` `ScoreColor`에 `barFill`·`barTrack`(bg-* 리터럴) 추가(4구간×라이트/다크 명시). `src/components/ui/MetricBar.tsx`는 런타임 치환 제거 → `c.barFill`/`c.barTrack` 직접 사용. 단일 색 소스 유지, 점수식/데이터/공시 로직 무변경.
 - Passed: `tsc --noEmit` 0 · `npm run build` 138p 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·산식 2.4 · 빌드 CSS에 8개 구간 bg 클래스 전수 존재(다크 `:is(.dark *)` 변형 포함) · 로컬 prod(3100) `/ /stocks /stock/005930 /guide/metrics` 200 · 렌더 홈 HTML에 60~79 막대 `bg-sky-500`/`bg-sky-400` 실제 출력.
 - Residual: 없음(스타일 한정). 향후 점수 시각화는 scoreColor 리터럴 토큰 사용, 런타임 클래스 합성 금지.
+
+### Task 24 — Repair: /stocks Playwright 게이트 stale prod chunk 400 (2026-06-25, Claude)
+- Blocker(게이트 FAIL): DESKTOP·MOBILE 둘 다 `400 .../static/css/e1593cd0a575ab11.css`·`400 .../chunks/app/stocks/page-60397daaa5cf26e3.js — ERR_ABORTED`.
+- Root cause: 코드 결함 아님(Task 15 와 동일 환경 staleness). 3000 의 고아 `next start`(PID 27200, 부모 종료됨)가 구 `.next` 를 메모리 보유, 디스크 `.next` 는 재빌드로 청크 해시 변경(css `e1593→d1665`, stocks `page-60397→page-7d957`) → 서버가 내려주는 HTML 의 청크가 디스크에 없어 400.
+- 검증(소스 무변경): `tsc` 0 · `npm run build` 0(`/stocks` 13.9 kB·138p) · `verify_metrics.py`(UTF8) 138종목 0오류·금칙어 0·산식 2.4 · 빈 포트 3255 신 빌드 검증 → `/stocks` 200·참조 css `d1665…`·js `page-7d957…` 전수 200·보기모드 마커(카드형/표형/종합점수) SSR 렌더·`/ /today /stock/005930` 200·에러 0(검증 PID 19724 만 종료, 3000·4310 무중단).
+- Recovery completed by Codex: stopped only the stale 3000 `next start` PID 27200, restarted port 3000 as PID 23992, and verified `/stocks` 200 with no stale chunk references plus `카드형`/`표형`/`종합점수` markers. 4310 was not stopped.
+- 재확인(2026-06-25 2차, Claude): 동일 근본원인 독립 재현. 3000 HTML 여전히 `e1593…css` 참조 → 그 정적파일 HTTP 400, 디스크는 `d1665…css`. 재빌드 시 **청크 해시 결정적**(css `d1665…`·stocks `page-7d957…` 동일 재현, BUILD_ID 만 `P8OEan1fVsQXP9mgHYcRo`→`P4JMdwoo5Sw79SCG2maMe` 갱신) → 3000 재시작만 하면 HTML·정적 정합 보장. 빈 포트 3252 신 `next start` 검증: `/stocks` 200·참조 css/js 전수 200·`tsc` 0·`build` 0(138p, `/stocks` 13.9 kB)·`verify_metrics`(UTF8) 138종목 0오류·금칙어 0·산식 2.4. 검증 PID 9800 만 종료, 3000·4310 무중단.
+- Task 24 Phase 4(보기 모드/히트맵 표·조건 요약·빈상태) 기능 코드 무변경 — 환경 정리 완료, AI Center DB reconciled next.
