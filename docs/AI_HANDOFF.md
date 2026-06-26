@@ -42,6 +42,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 44 리뷰 수정 — 저장 필터 충족 수 4지표 하위점수 누락 (2026-06-26, Claude)
+- 리뷰 FAIL: /watchlist "저장한 필터"의 "현재 조건 충족 N개"가 `matchConfig.matchesConfig`로 계산되는데 이 함수·`StockForMatch`가 저장 필터에 흔한 `momentumMin/flowMin/valueMin/volMin`(추세·거래활성도·밸류·위험조정 하한)을 무시 → 충족 수 과대(최대 ~10배)·옆 `describeConfig` 조건 문구와 모순.
+- 수정(4파일): `src/lib/matchConfig.ts` — `StockForMatch`에 `momentum/flow/value/vol:number` 추가 + `matchesConfig`에 4분기(`(c.xxxMin ?? 0) > 0 && s.xxx < ...`, StocksExplorer와 동일·0이면 비제약). `src/app/watchlist/page.tsx`·`src/app/api/cron/evaluate-alerts/route.ts` — `realStockPool→StockForMatch` 매핑에 4필드 추가(두 곳 동일). cron 조건 알림도 같은 하한을 정확히 평가.
+- 검증: `npx tsc --noEmit` 0 · `verify_metrics.py` 138/0오류 · `npm run build` 0(`/watchlist` 8.4 kB). 신규 npm 0, 점수식·데이터 무변경, 투자 조언성 표현 신규 0.
+
 ### Task 44 — OrnScore 상용화 고도화 2-B §8 개인화 대시보드·저장 필터·관심종목 UX (2026-06-26, Claude)
 - Preview/branch: branch `ai-center/task-44-ornscore-2-b-ux`. 시작 HEAD `45131a4`(작업트리 클린) 위 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3391**`(내 리스너 node PID 22016만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 설계서 2 §8 개인화 대시보드(8.1 위젯·8.2 관심·8.3 저장 필터)·§12 리텐션을 기존 로컬 저장 구조 안에서 **재방문 개인 출발점**으로. 큰 계정/서버 위젯은 빈 상태+후속 범위로 분리. §8.3 저장 필터·조건 알림은 #36 기구현 → 재구축 안 함(가치 노출만). 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0.

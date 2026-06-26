@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] Task 44 리뷰 수정 — 저장 필터 충족 수 4지표 하위점수 누락 버그
+- **증상(리뷰 FAIL)**: /watchlist "저장한 필터"의 "현재 조건 충족 N개"가 `matchConfig.ts`의 `matchesConfig`로 계산되는데, 이 함수와 `StockForMatch`가 저장 필터에 흔한 `momentumMin/flowMin/valueMin/volMin`(추세·거래활성도·밸류·위험조정 하위점수 하한)을 **무시** → 해당 조건이 걸린 필터는 충족 수가 최대 ~10배 과대 집계되고 옆에 표시되는 `describeConfig` 조건 문구("추세 70+" 등)와 모순.
+- **원인**: `StockForMatch`에 4지표 하위점수 필드가 없었고 `matchesConfig`에 4개 분기가 빠짐. `SavedSearchConfig`·`StocksExplorer`의 `matchesConfig`(클라)에는 이미 존재.
+- **수정(4파일, 표시/로직 정합만)**:
+  - `src/lib/matchConfig.ts`: `StockForMatch`에 `momentum/flow/value/vol: number` 추가, `matchesConfig`에 `(c.xxxMin ?? 0) > 0 && s.xxx < (c.xxxMin ?? 0)` 4분기 추가(StocksExplorer 규칙과 동일, 0이면 비제약).
+  - `src/app/watchlist/page.tsx`·`src/app/api/cron/evaluate-alerts/route.ts`: `realStockPool` → `StockForMatch` 매핑에 `momentum/flow/value/vol` 4필드 추가(두 곳 동일 매핑 유지). cron 조건 알림도 이제 같은 하위점수 하한을 정확히 평가.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py` 138종목 0오류/금칙어 0/Metrics 2.4 · `npm run build` exit 0(`/watchlist` 8.4 kB). 신규 npm 0, 점수 계산식·데이터 무변경, 투자 조언성 표현 신규 0.
+
 ## 2026-06-26 · 상용화 고도화 2-B §8 개인화 대시보드·저장 필터·관심종목 UX (Task 44, Claude)
 
 ### 목표

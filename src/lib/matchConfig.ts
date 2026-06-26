@@ -10,6 +10,10 @@ export interface StockForMatch {
   dividendYield: number;
   eps: number;
   score: number; // compositeOf 반올림값 (화면 표시 점수와 동일)
+  momentum: number; // 4지표 하위 점수 (추세)
+  flow: number; // 거래활성도
+  value: number; // 밸류
+  vol: number; // 위험조정
   marketCap: number;
   market: string;
   themes: string[];
@@ -33,6 +37,10 @@ export function matchesConfig(s: StockForMatch, c: SavedSearchConfig): boolean {
   if (s.pbr > 0 && (s.pbr < (c.pbrMin ?? 0) || s.pbr > (c.pbrMax ?? 30))) return false;
   if ((c.roeMin ?? 0) > 0 && s.roe < (c.roeMin ?? 0)) return false;
   if ((c.divYieldMin ?? 0) > 0 && s.dividendYield < (c.divYieldMin ?? 0)) return false;
+  if ((c.momentumMin ?? 0) > 0 && s.momentum < (c.momentumMin ?? 0)) return false;
+  if ((c.flowMin ?? 0) > 0 && s.flow < (c.flowMin ?? 0)) return false;
+  if ((c.valueMin ?? 0) > 0 && s.value < (c.valueMin ?? 0)) return false;
+  if ((c.volMin ?? 0) > 0 && s.vol < (c.volMin ?? 0)) return false;
   if (c.excludeLoss && !(s.eps > 0)) return false;
   if (c.themes && c.themes.length > 0) {
     if (!s.themes.some((t) => c.themes!.includes(t))) return false;
