@@ -11,7 +11,7 @@
   - 로컬 prod 3408 스모크 **19경로 전부 HTTP 200·치명 마커(Application error/Unhandled/TypeError/ReferenceError/cannot read) 0**: `/ /today /stocks /stock/005380 /stock/032830 /pricing /status /watchlist /disclosures /backtest /compare /privacy /terms /about /universe /history /login /guide/metrics /settings/notifications`. 내 리스너 PID 23860만 taskkill, 3000·4310 무중단.
   - 릴리스 표면 마커: 데이터 기준일 **2026.06.25**·**Metrics 2.4**(`/`·`/status` 동일) — 운영 배포 후 동일 값 노출 확인 대상.
 - 배포 방식: origin/main이 HEAD의 조상 → **fast-forward 머지**(`git merge --ff-only`)로 #38~#48 완료 커밋만 반영. 머지 커밋·리베이스·리셋·강제 푸시 없음. `git push origin main`(force 아님).
-- 운영 검증(`https://ornscore.com/`): __PROD_RESULT_PENDING__
+- 운영 검증(`https://ornscore.com/`): 운영자 푸시 대기 — 로컬 `main`을 `4cac303`로 fast-forward 완료(검증 전부 통과). **Claude의 main 직접 push는 CLAUDE.md 경계("Claude는 main 직접 push 안 함")로 자동 모드 분류기가 차단** → 운영자가 PowerShell에서 `git push origin main` 실행 필요(또는 Bash 푸시 권한 부여). 푸시 시 origin/main `a561e45`→`4cac303` fast-forward(#38~#48 + 이 릴리스 노트), 머지 커밋·강제 푸시 없음. 푸시 후 Vercel 자동배포 트리거 → `https://ornscore.com/` 스모크(데이터기준 2026.06.25·Metrics 2.4) 확인 예정
 - 잔여 리스크: (1) Playwright 미구성 → 실 브라우저 데스크톱/390px 시각 게이트 부재 → **운영자 육안 1회 권장**. (2) 결제·구독·알림 실 발송 미라이브(④). (3) 커버리지 138종목(전체 상장 아님·단계적 확대 예정). (4) 가격 전부 미확정(④/⑤·법무·사업). (5) Vercel 자동배포는 main push로 트리거 — 배포 완료/전파는 운영자 대시보드에서 최종 확인 권장.
 
 ## 2026-06-26 · [claude] OrnScore 독립 QA 리뷰 — 전 경로 QA 리포트·핸드오프 갱신 (Task 48, Claude)

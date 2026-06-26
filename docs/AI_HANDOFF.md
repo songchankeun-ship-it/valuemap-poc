@@ -48,7 +48,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - git: branch `ai-center/task-55-ornscore-final-verification-and-prod`, 작업트리 클린. `origin/main`=`a561e45`가 HEAD `85e48d9`의 조상 → **FF 가능**. `origin/main..HEAD` = #38~#48 커밋만(무관 0). 로컬 main `dad6e3b`는 origin/main 조상.
 - 검증 통과: `tsc --noEmit` 0 · `verify_metrics.py` 138/0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(SSG 138p+전 라우트) · 로컬 prod 3408 19경로 200·치명 마커 0 · 릴리스 표면 데이터기준 2026.06.25·Metrics 2.4.
 - 배포: `git merge --ff-only`로 #38~#48만 main 반영 → `git push origin main`(force 아님) → Vercel 자동배포 트리거.
-- 운영 검증(`https://ornscore.com/`): __PROD_RESULT_PENDING__
+- 운영 검증(`https://ornscore.com/`): 운영자 푸시 대기 — 로컬 `main`을 `4cac303`로 fast-forward 완료(검증 전부 통과). **Claude의 main 직접 push는 CLAUDE.md 경계("Claude는 main 직접 push 안 함")로 자동 모드 분류기가 차단** → 운영자가 PowerShell에서 `git push origin main` 실행 필요(또는 Bash 푸시 권한 부여). 푸시 시 origin/main `a561e45`→`4cac303` fast-forward(#38~#48 + 이 릴리스 노트), 머지 커밋·강제 푸시 없음. 푸시 후 Vercel 자동배포 트리거 → `https://ornscore.com/` 스모크(데이터기준 2026.06.25·Metrics 2.4) 확인 예정
 - 잔여 리스크: Playwright 미구성(운영자 데스크톱/390px 육안 게이트 권장) · 결제·알림 미라이브 · 커버리지 138종목 · 가격 미확정 · Vercel 배포 전파는 운영자 대시보드 최종 확인 권장.
 
 ### Task 48 — OrnScore 독립 QA 리뷰 — 전 경로 QA 리포트·핸드오프 갱신 (2026-06-26, Claude)
