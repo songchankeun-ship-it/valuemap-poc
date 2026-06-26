@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 - [codex] Task 66 P1 follow-up main push/public smoke complete
+- **Scope**: User asked to push Task 66 before collecting new expert feedback.
+- **Push**: Fast-forwarded `main` from `1ff744f` to `51a7875` and pushed `origin/main`.
+- **Public smoke**: Confirmed Task 66 markers on `https://ornscore.com`: home display-policy/analyzed-universe wording, disclosure all-market/analyzed-only filters, pricing beta-free-to-Pro notice, terms current-policy/unfinalized billing copy, and privacy overseas-transfer mobile affordance wording.
+- **Code changes**: No additional product code changes were made in this release step.
+- **Next**: Wait for the user's next expert feedback/spec, then register or implement the next improvement batch.
+
 ## 2026-06-26 · [claude] OrnScore P1 follow-up (task 66) — 홈 공시 표시 정책·공시 범위 버튼·베타→Pro 안내·약관·개인정보 표 모바일 (Task 66, Claude)
 - **범위**: codex P0(1~6) 완료 이후 사용자 리뷰의 **P1 후속 5종**을 작은 단위로 반영. branch `ai-center/task-66-ornscore-p1-follow-up-disclosures-pr`, 시작 HEAD `1ff744f`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3267`, 내 리스너 PID 36376만 taskkill). 투자 조언성·압박성 표현 신규 0.
 - **반영(코드 5파일 + 문서 4)**:
