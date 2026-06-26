@@ -68,13 +68,60 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5-1. 개인정보의 국외 이전</h2>
           <p>아래 제공자는 국외에 서버를 두고 있어, 5항의 항목·목적에 따라 개인정보가 국경을 넘어 이전·보관·처리될 수 있습니다. 이용자는 국외 이전을 원치 않을 경우 해당 기능(AI 분석·알림 등) 사용을 중단하거나 회원 탈퇴로 거부할 수 있습니다.</p>
-          <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-            <li><strong>인증·저장 제공자</strong> — Supabase / 일본 / 이메일·계정 식별자·관심종목·분석기록 / 인증·데이터 저장</li>
-            <li><strong>호스팅 제공자</strong> — Vercel / 미국 / IP·접속정보 / 호스팅·익명 통계</li>
-            <li><strong>메일 발송 제공자</strong> — Resend / 미국 / 이메일 주소 / 알림 메일 발송</li>
-            <li><strong>AI 처리 제공자</strong> — Anthropic / 미국 / AI 분석 시 전달되는 종목 데이터·질의 / AI 분석</li>
-          </ul>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인(Kakao)은 국내 처리됩니다. 위탁사 변경·추가 시 본 항목을 갱신합니다.</p>
+          <div className="mt-3 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
+            <table className="min-w-[480px] w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">
+                  <th className="py-2 pr-3 font-medium whitespace-nowrap">이전받는 자</th>
+                  <th className="py-2 pr-3 font-medium whitespace-nowrap">국가</th>
+                  <th className="py-2 pr-3 font-medium">이전 항목</th>
+                  <th className="py-2 pr-3 font-medium">이전 목적</th>
+                  <th className="py-2 pr-3 font-medium whitespace-nowrap">이전 시점</th>
+                  <th className="py-2 pr-3 font-medium whitespace-nowrap">보유기간</th>
+                  <th className="py-2 pr-0 font-medium whitespace-nowrap">거부 방법</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-700 dark:text-zinc-300 align-top">
+                <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                  <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Supabase</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">일본</td>
+                  <td className="py-2 pr-3">이메일·계정 식별자·관심종목·분석기록</td>
+                  <td className="py-2 pr-3">인증·데이터 저장</td>
+                  <td className="py-2 pr-3">회원가입·서비스 이용 시</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">탈퇴 시까지</td>
+                  <td className="py-2 pr-0 whitespace-nowrap">회원탈퇴</td>
+                </tr>
+                <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                  <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Vercel</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">미국</td>
+                  <td className="py-2 pr-3">IP·접속정보</td>
+                  <td className="py-2 pr-3">호스팅·익명 통계</td>
+                  <td className="py-2 pr-3">접속 시</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">정책 기준</td>
+                  <td className="py-2 pr-0 whitespace-nowrap">접속 제한</td>
+                </tr>
+                <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                  <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Resend</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">미국</td>
+                  <td className="py-2 pr-3">이메일 주소</td>
+                  <td className="py-2 pr-3">알림 메일 발송</td>
+                  <td className="py-2 pr-3">알림 발송 시</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">발송 로그 기준</td>
+                  <td className="py-2 pr-0 whitespace-nowrap">알림 해제</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Anthropic</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">미국</td>
+                  <td className="py-2 pr-3">AI 분석 시 전달되는 종목 데이터·질의</td>
+                  <td className="py-2 pr-3">AI 분석</td>
+                  <td className="py-2 pr-3">AI 분석 실행 시</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">정책 기준</td>
+                  <td className="py-2 pr-0 whitespace-nowrap">AI 기능 미사용</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인(Kakao)은 국내 처리됩니다. Anthropic은 API 입력을 모델 학습에 사용하지 않습니다(5항 참조). 위탁사 변경·추가 시 본 표를 갱신합니다.</p>
         </section>
 
         <section>

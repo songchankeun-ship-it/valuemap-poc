@@ -56,6 +56,23 @@ export default function TermsPage() {
             <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 출시 전 확정합니다.</li>
             <li>유료 기능 변경 가능성: 유료 기능 구성은 사전 고지 후 변경될 수 있습니다.</li>
           </ul>
+
+          <div className="mt-4 rounded-md border border-amber-300/70 dark:border-amber-800 bg-white/60 dark:bg-zinc-900/40 p-3">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">유료 서비스 — 출시 전 확정 필요 항목 (초안 · 미확정)</div>
+            <p className="text-[11px] text-amber-800 dark:text-amber-300 mb-2">아래 항목은 유료 결제 오픈 전 실제 정책으로 확정·공지될 예정이며, 현재는 미확정 상태입니다. 확정 시 본 약관과 결제 화면에 동일하게 반영합니다.</p>
+            <ul className="list-disc list-inside space-y-1 ml-2 text-[13px] text-zinc-700 dark:text-zinc-300">
+              <li>결제 수단</li>
+              <li>결제 주기</li>
+              <li>자동 갱신 시점</li>
+              <li>해지 효력 시점 — 즉시 종료인지, 결제 기간 만료 후 종료인지</li>
+              <li>환불 기준</li>
+              <li>7일 청약철회 적용 여부</li>
+              <li>디지털 콘텐츠 사용 개시 후 환불 제한 여부</li>
+              <li>장애 보상 기준</li>
+              <li>요금제 변경 시 정산 방식</li>
+            </ul>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격은 현재 미확정입니다(<Link href="/pricing" className="underline">요금제 안내</Link>). 위 항목 추적: <code className="text-[10px]">docs/legal-ai-commercial-readiness.md</code>.</p>
+          </div>
         </section>
 
         <section>

@@ -31,6 +31,7 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AnalysisResponse | null>(null);
+  const [consented, setConsented] = useState(false);
 
   async function runAnalysis() {
     setLoading(true);
@@ -85,14 +86,23 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         )}
         <div className="mb-2 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 leading-relaxed flex items-start gap-2">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" strokeWidth={2} />
-          <span>AI 분석은 입력 데이터를 <strong>Anthropic(미국)</strong>에 전달해 생성하는 참고 정보이며, 매수·매도 추천이 아닙니다.</span>
+          <span>AI 분석을 실행하면 선택한 종목 데이터와 입력 항목이 <strong>AI 처리업체 Anthropic(미국)</strong>으로 전송됩니다. 개인 메모·민감한 개인정보는 입력하지 마세요. AI 분석은 투자 추천이 아닌 참고용 요약입니다.</span>
         </div>
+        <label className="mb-2 flex items-start gap-2 min-h-[44px] py-1.5 cursor-pointer select-none text-[11px] text-zinc-700 dark:text-zinc-300 leading-relaxed">
+          <input
+            type="checkbox"
+            checked={consented}
+            onChange={(e) => setConsented(e.target.checked)}
+            className="mt-0.5 w-4 h-4 shrink-0 accent-zinc-900 dark:accent-zinc-100"
+          />
+          <span>위 내용을 확인했으며, 데이터가 <strong>Anthropic(미국)</strong>으로 전송되는 것에 동의합니다.</span>
+        </label>
         <button
           onClick={runAnalysis}
-          disabled={loading}
-          className="w-full py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 transition"
+          disabled={loading || !consented}
+          className="w-full py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 disabled:cursor-not-allowed transition"
         >
-          {loading ? "분석 생성 중…" : "AI 분석 실행"}
+          {loading ? "분석 생성 중…" : !consented ? "동의 후 실행할 수 있어요" : "AI 분석 실행"}
         </button>
       </div>
     );
