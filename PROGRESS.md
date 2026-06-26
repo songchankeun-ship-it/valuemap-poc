@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 - [codex] OrnScore production push and public verification complete
+
+- Follow-up to Task 55: Claude completed all local verification but stopped at direct `git push origin main` because the project boundary blocks Claude main pushes.
+- Codex completed the user-approved release push: `origin/main` advanced from `a561e45` to `6b3fa96`.
+- Vercel auto-deploy completed; public checks passed for `/`, `/today`, `/stocks`, `/stock/005380`, `/stock/032830`, `/pricing`, `/status`, and `/watchlist`.
+- `/pricing` now exposes the new Premium tier; checked pages returned HTTP 200, Metrics 2.4, and no fatal markers.
+- Remaining follow-up: expert feedback review, optional Playwright desktop/390px visual QA, and later cleanup of legacy mojibake notes in old handoff/progress sections.
+
 ## 2026-06-26 · [claude] OrnScore 최종 검증·배포 — #38~#48 main 반영 (Task 55, Claude)
 - 작업: AI Dev Center 승인(2026-06-26 KST 메인 스레드 — "작업 종료 후 배포까지")에 따라 #42~#48(및 동일 선형 체인의 #38~#41) 완료 큐를 **origin/main에 반영하고 운영 배포**. 이 태스크 한정으로 원격 변경·운영 배포 승인. DB·env/키/시크릿·결제/인증 설정·히스토리 재작성·강제 푸시·일괄 삭제는 비승인.
 - 완료 게이트 확인: AI_HANDOFF "Last AI Center Event = Task 48 completed" + #42~#48 각각 PROGRESS 엔트리·태스크 브랜치가 선형 체인 내 커밋을 가리킴 → 전부 completed·커밋됨. 실패/실행중/일시정지/미커밋 0.
