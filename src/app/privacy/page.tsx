@@ -17,7 +17,7 @@ export default function PrivacyPage() {
           <p>오른스코어는 서비스 제공을 위해 다음 정보를 수집합니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>이메일 주소</strong> — 로그인, 알림 발송, 계정 식별</li>
-            <li><strong>카카오 로그인 사용 시</strong> — 카카오 계정 식별자, 닉네임, 프로필 사진 (선택)</li>
+            <li><strong>소셜 로그인(카카오·구글) 사용 시</strong> — 제공자 계정 식별자, 닉네임·이름, 이메일, 프로필 사진 (선택)</li>
             <li><strong>이용 기록</strong> — 관심 종목, 비교 목록, AI 분석 기록, 알림 설정</li>
             <li><strong>접속 정보</strong> — IP 주소, 브라우저 정보 (Vercel Analytics 기반)</li>
           </ul>
@@ -62,6 +62,7 @@ export default function PrivacyPage() {
             <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송</li>
             <li><strong>AI 처리 제공자 — Anthropic Claude</strong> (미국) — 항목: AI 분석 시 전달되는 종목 데이터·질의 / 목적: AI 분석. <strong className="text-zinc-900 dark:text-zinc-100">Anthropic은 API 입력을 모델 학습에 사용하지 않으며</strong>, 분석 결과는 본인 계정에만 저장됩니다.</li>
             <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시)</li>
+            <li><strong>소셜 로그인 제공자 — Google</strong> (미국) — 항목: 구글 계정 식별자·이메일·이름·프로필 사진 / 목적: 소셜 로그인(선택 시)</li>
           </ul>
         </section>
 
@@ -110,7 +111,7 @@ export default function PrivacyPage() {
                   <td className="py-2 pr-3 whitespace-nowrap">발송 로그 기준</td>
                   <td className="py-2 pr-0 whitespace-nowrap">알림 해제</td>
                 </tr>
-                <tr>
+                <tr className="border-b border-zinc-100 dark:border-zinc-800">
                   <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Anthropic</td>
                   <td className="py-2 pr-3 whitespace-nowrap">미국</td>
                   <td className="py-2 pr-3">AI 분석 시 전달되는 종목 데이터·질의</td>
@@ -119,10 +120,19 @@ export default function PrivacyPage() {
                   <td className="py-2 pr-3 whitespace-nowrap">정책 기준</td>
                   <td className="py-2 pr-0 whitespace-nowrap">AI 기능 미사용</td>
                 </tr>
+                <tr>
+                  <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Google</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">미국</td>
+                  <td className="py-2 pr-3">구글 계정 식별자·이메일·이름·프로필 사진</td>
+                  <td className="py-2 pr-3">소셜 로그인</td>
+                  <td className="py-2 pr-3">구글 로그인 선택 시</td>
+                  <td className="py-2 pr-3 whitespace-nowrap">탈퇴 시까지</td>
+                  <td className="py-2 pr-0 whitespace-nowrap">구글 로그인 미사용</td>
+                </tr>
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인(Kakao)은 국내 처리됩니다. Anthropic은 API 입력을 모델 학습에 사용하지 않습니다(5항 참조). 위탁사 변경·추가 시 본 표를 갱신합니다.</p>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인 중 Kakao는 국내 처리되며, Google은 미국에서 처리되어 위 표에 포함됩니다. Anthropic은 API 입력을 모델 학습에 사용하지 않습니다(5항 참조). 위탁사 변경·추가 시 본 표를 갱신합니다.</p>
         </section>
 
         <section>
@@ -139,7 +149,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">7. 보안 조치</h2>
-          <p>이용자의 비밀번호는 저장하지 않습니다 (매직링크/카카오 OAuth 방식). 데이터는 Supabase의 Row Level Security로 본인만 접근 가능하도록 보호됩니다.</p>
+          <p>이용자의 비밀번호는 저장하지 않습니다 (매직링크/소셜 OAuth 방식 — 카카오·구글). 데이터는 Supabase의 Row Level Security로 본인만 접근 가능하도록 보호됩니다.</p>
         </section>
 
         <section>

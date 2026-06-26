@@ -42,6 +42,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 70 — OrnScore 로그인 제공자 확장 (구글 추가·제공자 config화·friendly 오류·약관/개인정보 동기화) (2026-06-27, Claude)
+- What: 상용화 대비 인증 확장. **카카오 OAuth + 이메일 매직링크 + 로그인 후 `next` 복귀 전부 보존**. branch `ai-center/task-70-ornscore-auth-provider-expansion-and`, 시작 HEAD `bbc5876`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction`·계정 테이블 무변경. AI Center 4310 무중단(검증 prod 3321, 내가 띄운 PID 36724만 taskkill). 미리보기 3000 미기동 유지.
+- 제공자 가용성(설치 `@supabase/auth-js` 2.107.0 `Provider` 유니온): **google ✅·apple ✅(타입)·kakao ✅(운영 중)·naver ❌**. naver는 커스텀 OIDC/SAML(Pro/Enterprise) 또는 직접 OAuth 라우트 필요 → 신규 의존성·유료 금지 범위상 보류(가짜 구현 안 함). SMS/Phone도 외부 게이트웨이·비용 → 보류.
+- Changed (코드 4 + 신규 2 + 문서 2):
+  - 신규 `src/lib/auth/providers.ts` — OAuth 제공자 단일 출처(`OAUTH_PROVIDERS`/`enabledOAuthProviders()`). kakao·google `enabled:true`, **apple `enabled:false`(의사결정 주석: $99/년 Developer Program·iOS/macOS 중심 → 보류, config는 완비 → 한 줄로 활성화)**. naver 미추가(블로커 주석).
+  - 리팩터 `src/app/login/page.tsx` — 제네릭 `handleOAuthLogin(provider)` 1개로 통합(복붙 제거), config map으로 버튼 렌더(카카오 첫 순서·구글 SVG), `oauth_redirecting`+`redirectingProvider` 일반화, `redirectTo=.../auth/callback?next=` 보존, `friendlyAuthError()`로 콜백 실패/`provider is not enabled`/rate-limit 등 한국어 변환(원문 영어 미노출), 리드 카피 enabled 목록 파생("카카오·구글로...").
+  - `src/components/WatchlistClient.tsx:302` — 동기화 CTA `/login` → `/login?next=/watchlist`(유일한 bare `/login`이었음; 나머지 게이트 진입점은 이미 next 보존 재확인).
+  - `src/app/privacy/page.tsx`·`src/app/terms/page.tsx` — 소셜 로그인 표기를 실제 UI(카카오·구글)와 일치. privacy 위탁사·국외이전 표에 **Google(미국) 행** 추가, 캡션 정정. **Apple은 버튼 미노출이라 약관·개인정보에도 미기재**. naver 미기재.
+  - 신규 `docs/auth-providers-setup.md` — 운영자 콘솔 설정 체크리스트(자리표시자만, 시크릿 0): Supabase Providers 토글·redirect URL·Google Cloud OAuth 절차·Apple 보류·Naver/SMS 블로커.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0 · 6파일 U+FFFD 0 · 로컬 prod 3321 9경로 200·`/auth/callback`(no code) 307(→ `/login?error=...`) · SSR: `/login` 카카오·구글 버튼+이메일(Apple 미노출)·"카카오·구글로 1초"·`?error=` friendly 한국어, `/privacy`·`/terms` "소셜 로그인(카카오·구글)"·"제공자 — Google" · 클라 번들에 `/auth/callback?next=` 컴파일 확인.
+- 남은 외부 설정(운영자): (1) Supabase → Auth → Providers **Google 토글 ON + Client ID/Secret** → `/login` 구글 실동작(그 전 클릭은 friendly 안내로 graceful). (2) Apple 필요 시 Developer Program 가입 후 `providers.ts` `enabled:true` + 약관/개인정보 Apple 추가. (3) Naver 수요 시 커스텀 OIDC/SAML or 직접 라우트(별도 작업). `docs/auth-providers-setup.md` 참조.
+- Gate note: Playwright 미구성 → 운영자 데스크톱/390px로 `/login`(카카오 노랑·구글 흰 버튼·이메일 폼)·`/privacy`(국외이전 표 Google 행) 1회 확인 권장. OAuth 실제 redirect는 콘솔 설정 후 확인.
+- Next: 운영자 Supabase Google 토글 설정 → `/login` 구글 로그인 실동작 검증 → (선택) main 머지·외부 릴리스. 큰 축은 ④ 결제·⑤ 법무.
+
 ### Task 69 — OrnScore 4차 QA 컴포넌트 마감 (공시 주의 구두점 + 홈 주의 문구 다양화 + CTA/STEP/배지/비교 재검증) (2026-06-27, Claude)
 - What: 사용자 4차 QA 리포트 기준 P0-1~4·P1-1~3 마감. branch `ai-center/task-69-ornscore-4th-qa-component-polish-and`, 시작 HEAD `d70f3de`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310 무중단(검증 prod 3319, 내가 띄운 PID 10484만 taskkill). 미리보기 3000은 세션 미기동 상태 유지. main 머지·외부 릴리스 범위 외(운영자).
 - 시작 전 재검증(중복 구현 방지): P0-1~4는 직전 배포 `743873a`에서 이미 컴포넌트로 마감 → 소스+SSR 재확인, 재구축 0.

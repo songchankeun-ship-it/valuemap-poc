@@ -299,7 +299,7 @@ export function WatchlistClient({
               </Link>
             </div>
             {!isLoggedIn ? (
-              <Link href="/login" className="mt-3 inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+              <Link href="/login?next=/watchlist" className="mt-3 inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
                 로그인하고 여러 기기에서 동기화하기 <ArrowRight className="w-3 h-3" />
               </Link>
             ) : null}
