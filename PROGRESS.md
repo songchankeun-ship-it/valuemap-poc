@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 - [codex] Task 69 4th QA main push/public smoke complete
+- **Scope**: User approved release of Task 69 after the 4th QA automation run completed.
+- **Push**: Fast-forwarded `main` from `d70f3de` to `83191b4` and pushed `origin/main`.
+- **Public smoke**: Confirmed `https://ornscore.com/disclosures` renders `주의:` and the normalized contract caution copy containing `'계약 금액 = 이익'으로 단순 환산하지 마세요`. Confirmed `https://ornscore.com/` and `/today` render varied surge-caution wording such as `최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요` and `단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요`.
+- **Stock detail smoke**: Confirmed `https://ornscore.com/stock/005380` renders the CTA labels, `STEP 1`, data badges including `필수 데이터 100 %`, `이상값 점검 통과`, and `Metrics 2.4`, with the glued strings absent from SSR checks.
+- **Route smoke**: `/compare` and `/stocks` returned HTTP 200; `/stocks` did not expose the duplicate `펼치기 ▾접기 ▴` string.
+- **Next**: Wait for the user's next visual review or continue the next QA/business-readiness batch.
+
 ## 2026-06-27 · [claude] OrnScore 4차 QA 컴포넌트 마감 — 공시 주의 구두점·홈 주의 문구 다양화·CTA/STEP/배지/비교 재검증 (Task 69, Claude)
 - **범위**: 사용자 4차 QA 리포트(공개 사이트 재점검) 기준 P0-1~4·P1-1~3 마감. branch `ai-center/task-69-ornscore-4th-qa-component-polish-and`, 시작 HEAD `d70f3de`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310 무중단(검증 prod `127.0.0.1:3319`, 내가 띄운 PID 10484만 taskkill). 미리보기 3000은 이번 세션 미기동 상태 그대로. 투자 조언성·압박성 표현 신규 0.
 - **시작 전 재검증(중복 구현 방지)**: 설계서·`docs/ornscore-spec-coverage.md`·Task 68 핸드오프상 P0-1~4는 직전 배포(`743873a`)에서 **이미 컴포넌트로 마감** → 소스+SSR로 재확인, 재구축 0.

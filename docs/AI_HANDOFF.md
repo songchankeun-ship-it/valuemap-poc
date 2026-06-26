@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T16:57:31.614Z
+Last updated: 2026-06-27T02:16:21+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 69 - OrnScore 4th QA component polish and empty states
-- Run: 59
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: Task 69 4th QA main push and public smoke
+- Run: manual codex release after Task 69 / run 59
+- Status: completed and public-smoked
+- Agent: codex
+- Note: User approved release. Codex fast-forwarded main to 83191b4, pushed origin/main, and confirmed public markers on /disclosures, /, /today, /stock/005380, /compare, and /stocks. Release-record commit follows this handoff update.
 
 ## Next Agent Checklist
 
