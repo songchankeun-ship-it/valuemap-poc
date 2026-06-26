@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] Task 73 — 네이버 로그인 준비중 노출 + 운영자 설정 문서화 (네이티브 미지원)
+- **범위/결정**: 네이버 로그인을 안전한 경로로만 진행. 설치된 `@supabase/auth-js` 2.107.0 `Provider` 유니온 재확인 = `apple|azure|...|google|kakao|...` → **`naver` 없음**(네이티브 OAuth 타입·런타임 불가). 진짜 세션을 안전하게 만들려면 운영자 측 설정(네이버 콘솔 자격증명 및/또는 Supabase Pro 플랜)이 선행돼야 함 → **가짜 로그인 성공 경로를 만들지 않고**, `/login`에 **"네이버 (준비 중)" 비활성 항목만 노출** + 운영자 설정 절차 문서화. branch `ai-center/task-73-ornscore-naver-login-safe-auth-follo`, 시작 HEAD `6954fb3`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가·env/시크릿 0**. 카카오·구글·이메일·`/auth/callback`·`signInWithOAuth`·`src/lib/supabase/*` 무변경. AI Center 4310·미리보기 3000 무중단(검증 prod 3331, 내가 띄운 PID 22092만 taskkill).
+- **반영(코드 2 + 문서 3)**:
+  - **`src/lib/auth/providers.ts`** — `OAuthProviderId`(=`kakao|google|apple`)·`OAUTH_PROVIDERS`·`enabledOAuthProviders()` **무변경**(네이버를 유니온에 넣지 않음). 신규 **`PLANNED_PROVIDERS`(`PlannedProviderConfig`, id=`"naver"`·label `네이버 (준비 중)`·note `준비 중`)** + `plannedProviders()` 추가. **`id`를 의도적으로 평범한 `string`(≠`OAuthProviderId`)으로 둬서** `signInWithOAuth({provider})`에 넘기면 tsc가 막음 → 가짜 세션 경로가 컴파일 단계에서 원천 차단. 기존 naver 블로커 주석에 PLANNED_PROVIDERS 렌더 안내 추가.
+  - **`src/app/login/page.tsx`** — `plannedProviders()` import. 활성 버튼 아래에 `planned.map`으로 **비활성 `<div>`**(`aria-disabled`·`cursor-not-allowed`·`select-none`·네이버 SVG·"준비 중" 배지) 렌더 — **onClick·인증 호출 없음**. `handleOAuthLogin`/`handleSubmit`/`next` 보존/`friendlyAuthError`/카카오·구글 버튼·이메일 폼·`leadCopy`(enabled만 파생) **전부 무변경**.
+  - **`docs/auth-providers-setup.md`** — 상태표 Naver 행 `⏳ "준비 중"(비활성 노출)`로 갱신 + Naver 섹션을 (A) 앱 자체 OAuth 라우트(운영자 전용 env `NAVER_CLIENT_ID`/`NAVER_CLIENT_SECRET`은 Supabase/Vercel env에만·소스 금지, 네이버 Developers 앱+콜백 등록, `state`+nonce CSRF·`next` 보존 start/callback 라우트, **세션 발급 설계 선결**)·(B) Supabase 커스텀 OIDC/SAML(Pro/Enterprise + 콘솔)로 확장. 결론: 한 경로의 운영자 설정 완료 전까지 "준비 중" 유지·가짜 세션 0. 점검 항목에 네이버 비활성 확인 추가.
+  - **`PROGRESS.md`·`docs/AI_HANDOFF.md`** — 이 엔트리.
+- **약관/개인정보**: 네이버는 실제 데이터를 받지 않으므로 **활성 데이터 처리자 목록(카카오·구글)에 추가하지 않음**. 가짜 "네이버 로그인 가능" 주장 0(SSR grep 확인).
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(`/login` 포함 전 라우트) · 변경 3파일 U+FFFD 0. 로컬 prod 3331 스모크: `/login`·`/login?next=/watchlist`·`/privacy`·`/terms` **200**, `/auth/callback`(code 없음) **307**(불변). `/login` SSR: 카카오·구글·이메일 + **"네이버 (준비 중)" 1건·`aria-disabled` 1건·naver 인증 URL 0건**. `/privacy`·`/terms` 네이버 활성 주장 0.
+- **남은 운영자 설정(네이버 실동작 시)**: `docs/auth-providers-setup.md` Naver (A) 또는 (B) — (A) 네이버 Developers 앱+콜백 URL 등록·`NAVER_CLIENT_ID/SECRET`을 Supabase/Vercel env에만 입력·`state`/nonce CSRF + `next` 보존 라우트 + **service-role 세션 발급 설계**, 또는 (B) Supabase Pro/Enterprise 업그레이드 + 커스텀 OIDC 콘솔 구성. 둘 다 본 작업 범위 밖(신규 의존성·유료 금지) → 별도 작업.
+- **다음**: 운영자가 (A)/(B) 중 결정·콘솔 설정 → 네이버 실 로그인 라우트 별도 작업. 그 전까지 "준비 중" 유지. Task 72는 앱 readiness 후속 계속.
+
 ## 2026-06-27 · [claude] Task 70 게이트 수리 — /login 이메일 input hydration 경고 제거
 - **블로커(Playwright MOBILE FAIL)**: `Extra attributes from the server: ... style`가 `src/app/login/page.tsx`의 `LoginForm` 이메일 `<input>`에서 발생. 일부 브라우저/비밀번호 관리자 확장이 input 에 `style` 등을 주입 → SSR↔클라 hydration 불일치 경고(모바일 프로필·이메일 필드에서 특히 빈발). 소스에는 input style 없음.
 - **수리(포커스 1파일)**: `src/app/login/page.tsx` 이메일 input 에 **`suppressHydrationWarning`** 추가(+ `autoComplete="email"`). 저장소 기존 관행과 동일 — `GlobalSearch.tsx:139`·`StocksExplorer.tsx:758` input 도 같은 처리. 로직·문구·next 보존·friendly 오류·제공자 config 모두 무변경.

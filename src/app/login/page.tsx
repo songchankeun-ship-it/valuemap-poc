@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   enabledOAuthProviders,
+  plannedProviders,
   type OAuthProviderId,
 } from "@/lib/auth/providers";
 import Link from "next/link";
@@ -51,7 +52,9 @@ function LoginForm() {
   const contextMsg = CONTEXT_MSG[next];
 
   const providers = enabledOAuthProviders();
-  // 노출 문구는 활성화된 제공자 목록에서 파생 → 화면에 없는 방식을 절대 광고하지 않음
+  // "준비 중"으로만 노출하는 제공자(네이버 등) — 실제 로그인 경로 없음, 클릭 불가.
+  const planned = plannedProviders();
+  // 노출 문구(leadCopy)는 활성화된 제공자만으로 파생 → 화면에 없는/준비 중인 방식을 절대 광고하지 않음
   const providerNames = providers.map((p) => p.shortName).join("·");
   const leadCopy =
     providers.length > 0
@@ -187,6 +190,29 @@ function LoginForm() {
                     </button>
                   );
                 })}
+
+                {/* 준비 중 제공자(네이버 등) — 의도적으로 비활성. onClick·인증 호출 없음.
+                    실제 로그인 경로는 운영자 콘솔 설정 후 별도 작업으로 활성화된다
+                    (docs/auth-providers-setup.md 네이버 섹션 참조). 가짜 성공 경로를 만들지 않는다. */}
+                {planned.map((p) => (
+                  <div
+                    key={p.id}
+                    aria-disabled="true"
+                    title="준비 중인 로그인 방식이에요"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-700 opacity-70 cursor-not-allowed select-none"
+                  >
+                    {p.id === "naver" ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                        <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
+                      </svg>
+                    ) : null}
+                    <span>{p.label}</span>
+                    <span className="ml-1 rounded-full bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 text-[9px] font-medium text-zinc-500 dark:text-zinc-400">
+                      {p.note}
+                    </span>
+                  </div>
+                ))}
+
                 <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center leading-relaxed">
                   계속하면 <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">이용약관</Link>과 <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>에 동의하게 됩니다.
                 </p>

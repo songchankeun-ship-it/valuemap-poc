@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 73 — 네이버 로그인 준비중 노출 + 운영자 설정 문서화 (네이티브 미지원) (2026-06-27, Claude)
+- **결정(가짜 세션 안 만듦)**: 설치 `@supabase/auth-js` 2.107.0 `Provider` 유니온에 **`naver` 없음** 재확인 → 네이티브 OAuth 불가. 안전한 두 경로((A) 앱 자체 OAuth 라우트 + service-role 세션 발급, (B) Supabase Pro 커스텀 OIDC) **모두 운영자 측 설정 선행 필요** → 본 작업(신규 npm·유료·env 금지) 범위 밖. 따라서 **실 라우트 미구현**, `/login`에 **"네이버 (준비 중)" 비활성 항목만 노출** + 운영자 설정 절차 문서화.
+- **Changed (코드 2 + 문서 3)**: `src/lib/auth/providers.ts`(신규 `PLANNED_PROVIDERS`/`plannedProviders()`, id=`"naver"`를 **의도적으로 `OAuthProviderId`가 아니게** 둬서 `signInWithOAuth`에 못 넘김=가짜 경로 tsc 차단; `OAUTH_PROVIDERS`/`enabledOAuthProviders` 무변경)·`src/app/login/page.tsx`(활성 버튼 아래 비활성 `<div aria-disabled cursor-not-allowed>` + "준비 중" 배지, **onClick·인증 호출 0**; 카카오·구글·이메일·`next`·`friendlyAuthError`·`leadCopy` 무변경)·`docs/auth-providers-setup.md`(Naver 섹션 (A)/(B) 운영자 절차 상세)·`PROGRESS.md`·이 노트.
+- **불변(회귀 0)**: 카카오·구글·이메일 매직링크·`/auth/callback`(307 불변)·`signInWithOAuth`·`src/lib/supabase/*`. 약관/개인정보 활성 처리자 목록(카카오·구글)에 네이버 미추가(실데이터 0).
+- **What passed**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(`/login` 포함) · 변경 3파일 U+FFFD 0. 로컬 prod 3331: `/login`·`/login?next=/watchlist`·`/privacy`·`/terms` 200 · `/auth/callback`(no code) 307 · `/login` SSR 카카오·구글·이메일+**"네이버 (준비 중)" 1·`aria-disabled` 1·naver 인증 URL 0** · privacy/terms 네이버 활성 주장 0. AI Center 4310·미리보기 3000 무중단(내 PID 22092만 taskkill).
+- **남은 운영자 설정(네이버 실동작 시)**: (A) 네이버 Developers 앱+콜백 URL 등록 → `NAVER_CLIENT_ID`/`NAVER_CLIENT_SECRET`을 **Supabase/Vercel env에만**(소스 금지) → `state`+nonce CSRF·`next` 보존 start/callback 서버 라우트 → **service-role 세션 발급 설계**(핵심 선결), 또는 (B) **Supabase Pro/Enterprise 업그레이드** + 커스텀 OIDC 콘솔 구성. `docs/auth-providers-setup.md` Naver 섹션 참조. 둘 중 하나 완료 전까지 "준비 중" 유지.
+- **Next**: 운영자가 (A)/(B) 결정·설정 → 네이버 실 로그인 별도 작업. Task 72(앱 readiness) 후속 계속.
+
 ### Task 70 (게이트 수리) — /login 이메일 input hydration 경고 제거 (2026-06-27, Claude)
 - 블로커(Playwright MOBILE FAIL): `Extra attributes from the server: ... style`가 `src/app/login/page.tsx` `LoginForm` 이메일 `<input>`에서 발생. 일부 브라우저/비밀번호 관리자 확장이 input 에 `style` 주입 → SSR↔클라 hydration 경고(모바일·이메일 필드 빈발). 소스에는 input style 없음.
 - 수리(포커스 1파일): 이메일 input 에 `suppressHydrationWarning`(+`autoComplete="email"`) 추가. 저장소 기존 관행과 동일(`GlobalSearch.tsx:139`·`StocksExplorer.tsx:758`). 로직·문구·`next` 보존·friendly 오류·제공자 config 무변경.
