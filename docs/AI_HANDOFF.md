@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 48 — OrnScore 독립 QA 리뷰 — 전 경로 QA 리포트·핸드오프 갱신 (2026-06-26, Claude)
+- What: #38~#47 자동화가 끝난 베타 직전 상태를 **QA 전문가 관점**으로 점검(만든 사람 관점 아님). 산출물은 QA 리포트 + 진행/핸드오프 기록 — **앱 소스 무수정**. branch `ai-center/task-48-ornscore-qa`, 시작 HEAD `d3d92f6`(클린). 리셋/pull/머지/push·신규 npm 0.
+- Changed/new: **신규 `docs/ornscore-qa-feedback.md`**(주 산출물) — Severity 분포(P0=0·P1=1·P2=2·P3=3·확인 완료 12), 각 이슈 경로/재현/기대/실제/제안, 운영자 육안 체크리스트(19경로·데스크톱+390px), 열린 질문 6, 잔여 리스크. `PROGRESS.md`·이 노트 갱신.
+- 점검 경로(데스크톱 SSR): `/ /today /stocks /stock/005380 /stock/032830 /disclosures /backtest /compare /pricing /status /privacy /terms /watchlist /settings/notifications /about /universe /history /login /guide/metrics` → 19/19 HTTP 200·치명 마커 0. 뷰포트: 데스크톱 SSR+빌드 청크+소스. 390px = 클래스 가드 점검만(픽셀 미보장).
+- 발견 요약: **P0 없음**. 데이터 기준 2026.06.25·Metrics 2.4 전 화면 동일(불일치 0). 금칙어 0·고지 8경로 전면·요금제 확정가 0·`<table>` 전부 overflow-x-auto·≥5열 고정 그리드 0. **P1**: Playwright 미구성 → 실 브라우저 시각 게이트 부재(운영자 육안 필요). **P2**: 공시 범위 표기 표면별 상이(7일 vs 90일, 다른 쿼리·문구 통합 제안) · `/today` 방문일 vs 데이터 기준일 위계. **P3**: `CLAUDE.md` 구 브랜드 "밸류맵 스톡" 잔존(앱은 "오른스코어" 일관) · 설계서 ③ 부분 항목(백로그 추적됨) · 공시 라이브 종료일 ≠ 가격 기준일(정상).
+- What passed: `tsc --noEmit` 0 · `npm run build` 0(172p) · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · 로컬 prod 3403 19경로 200 · 신규 문서 Korean·링크 5개 전부 존재. `git diff`는 신규 문서·PROGRESS·이 노트만(앱 소스 0). 검증 prod node PID 14648만 정리, 4310·3000 무중단.
+- Gate note: **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 QA 리포트 §7 체크리스트 19경로 육안 1회 권장**(특히 `/today` 날짜 위계·`/disclosures` 공시 범위 문구·`/stocks` 표형 가로 스크롤). 
+- Residual / next: P1 운영자 육안 게이트 → P2-1 공시 범위 문구 통합·P2-2 today 날짜 위계·P3-1 CLAUDE.md 브랜드 정정(표시/문서 수정, 산식·데이터 무변경). 원격 갱신·main 머지·외부 릴리스·결제 연동 범위 외(운영자).
+
 ### Task 47 — OrnScore 상용화 고도화 2-E §10·§14·§15·§16·§18 베타 출시 체크리스트·커버리지 제한 노출·최종 QA (2026-06-26, Claude)
 - What: 설계서 2 §10(커버리지)·§14(관리자)·§15(기술 고도화)·§16(로드맵)·§18(MVP 범위)를 기준으로 **베타 노출 가능 vs 준비 중** 상태를 구분하고 남은 의사결정/개발 항목을 추적 가능하게 정리. 앱에 바로 넣을 작은 상태 개선(커버리지 제한 1줄)은 반영, 큰 제품/기술 결정은 체크리스트로 분리. branch `ai-center/task-47-ornscore-2-e-qa`, 시작 HEAD `eb2123c`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
 - Changed/new:
