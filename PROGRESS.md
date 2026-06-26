@@ -5,7 +5,8 @@
 - **Changed**: Added `StockDetailActionButtons` as the shared stock-detail CTA component, converted beginner reading steps into three `StepCard` cards, separated data-status pills, rewrote the surge-risk copy to mention volatility and sustainability checks, upgraded `/compare` empty state with search/recommended/recent/watchlist entry points, and replaced the quick-preset/details filter duplicated labels with controlled single-state labels.
 - **Verification**: `npx tsc --noEmit` passed, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` passed for 138 stocks with 0 errors and Metrics 2.4, and `npm run build` passed.
 - **Browser smoke**: Local `127.0.0.1:3000`/`localhost:3000` checks confirmed `/stock/005380` has separated CTA buttons, 3 STEP cards, 3 data-status pills, and no forbidden "추격매수" text; `/compare` empty state shows search, recommended sets, recent-view, and watchlist UI; `/stocks` shows only one expand/collapse label and no duplicated detail-filter text.
-- **Next**: Commit, push/merge to `main`, then let Vercel deploy and public-smoke the same markers on `https://ornscore.com`.
+- **Deploy/public smoke**: Pushed `origin/main` to `743873a`; Vercel production updated. Public browser smoke on `https://ornscore.com/stock/005380`, `/compare`, and `/stocks` confirmed the same P0 markers and no duplicate/glued text.
+- **Next**: Continue with the P1 follow-up list from the user review: home disclosure prioritization, clearer disclosure market filters, stronger beta-free-to-Pro pricing messaging, final legal terms copy, and privacy table mobile QA.
 
 ## 2026-06-26 · [codex] 2차 QA main 반영·운영 배포 완료
 - **배포 승인/범위**: 사용자 요청 "응 배포해줘"에 따라 Task 60~63의 ORNSCORE 2차 QA 개선 결과를 `main`에 반영하고 `origin/main`에 push했다.

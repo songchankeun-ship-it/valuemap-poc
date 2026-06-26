@@ -23,9 +23,9 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 - Task: Post-deploy 2nd QA P0 polish
 - Run: manual codex fix after user QA review
-- Status: local verified; commit/push pending at this checkpoint
+- Status: completed and public-smoked
 - Agent: codex
-- Note: Fixed the remaining P0 UX issues: separated stock-detail CTA buttons via shared StockDetailActionButtons, converted beginner STEP guidance into 3 cards, split data-status badges, removed chase-buy wording, improved compare empty state with search/recommended/recent/watchlist entry points, and removed duplicate expand/filter text in stocks explorer. Checks passed: tsc, verify_metrics for 138 stocks, npm run build, and local browser smoke on /stock/005380, /compare, /stocks.
+- Note: Fixed the remaining P0 UX issues: separated stock-detail CTA buttons via shared StockDetailActionButtons, converted beginner STEP guidance into 3 cards, split data-status badges, removed chase-buy wording, improved compare empty state with search/recommended/recent/watchlist entry points, and removed duplicate expand/filter text in stocks explorer. Checks passed: tsc, verify_metrics for 138 stocks, npm run build, local browser smoke on /stock/005380, /compare, /stocks, and public browser smoke on ornscore.com after pushing origin/main to 743873a.
 
 ## Next Agent Checklist
 
