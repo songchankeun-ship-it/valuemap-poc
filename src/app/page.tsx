@@ -71,7 +71,13 @@ function strongMetrics(s: { momentum: number; flow: number; value: number; vol: 
 
 // 탐색 언어 기반 주의 문구 — '추천'이 아니라 '확인 필요'를 안내.
 function riskNote(s: { value: number; vol: number }, r3m: number | null): string {
-  if (r3m !== null && r3m >= 80) return "최근 상승폭이 커서 급등 사유 확인 필요";
+  if (r3m !== null && r3m >= 80) {
+    // 급등 정도·변동성에 따라 문구를 나눠 같은 주의 문장이 반복되지 않게 한다(모두 확인·검토 톤).
+    if (r3m >= 150) return "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요";
+    if (r3m >= 120) return "단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요";
+    if (s.vol < 45) return "상승폭이 커진 데다 변동성도 높아 사유·시점 함께 검토 필요";
+    return "최근 상승폭이 커서 급등 사유 확인 필요";
+  }
   if (s.vol < 45) return "변동성이 큰 편이라 비중·시점 분할 검토 필요";
   if (s.value < 40) return "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요";
   return "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요";

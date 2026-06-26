@@ -42,6 +42,21 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 69 — OrnScore 4차 QA 컴포넌트 마감 (공시 주의 구두점 + 홈 주의 문구 다양화 + CTA/STEP/배지/비교 재검증) (2026-06-27, Claude)
+- What: 사용자 4차 QA 리포트 기준 P0-1~4·P1-1~3 마감. branch `ai-center/task-69-ornscore-4th-qa-component-polish-and`, 시작 HEAD `d70f3de`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310 무중단(검증 prod 3319, 내가 띄운 PID 10484만 taskkill). 미리보기 3000은 세션 미기동 상태 유지. main 머지·외부 릴리스 범위 외(운영자).
+- 시작 전 재검증(중복 구현 방지): P0-1~4는 직전 배포 `743873a`에서 이미 컴포넌트로 마감 → 소스+SSR 재확인, 재구축 0.
+  - P0-1 CTA: `src/components/stock/StockDetailActionButtons.tsx`(grid 1/2/4열·gap-2·min-h-44px·테두리/아이콘). 글루 `공시 확인재무 보기점수 근거업종 비교` SSR 0건.
+  - P0-2 STEP: `src/components/BeginnerReading.tsx` `StepCard` 3카드 그리드. SSR STEP 1/2/3 렌더, 글루 0.
+  - P0-3 배지: `src/components/stock/PriorityScoreCard.tsx` 독립 `DataStatusPill` 3종(flex-wrap gap-2). 정상/검증보류(suspect) 양쪽 상태 분기(69~76행) — suspect fixture가 SSR에 안 떠도 컴포넌트가 두 상태 지원함을 소스로 확인. 글루 `필수 데이터 100%이상값 점검 통과 Metrics 2.4` SSR 0건.
+  - P0-4 비교 빈 상태: `src/components/CompareClient.tsx` 검색·추천 세트·최근 본·관심 종목 UI 존재. `/compare` 200.
+- Changed (코드 4파일, 문구·구두점만):
+  - [P1-2] `src/components/DisclosureExplorer.tsx:452` 주의 라벨 `주의`→`주의:`(라벨/본문은 이미 별도 span flex gap-1.5 → SSR 추출 글루 `주의'계약 금액 = 이익'` 해소). `src/lib/signalGuide.ts:88` `single_contract.cautionNote`를 캐논 `'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.`로 정규화(`으로` 앞 공백·`단순 환산 금지` 변형 제거 → `CAUTION_FALLBACK`과 동일 단일 문구). `SignalGuideExpand`도 같은 캐논 일관.
+  - [P1-3] `src/app/page.tsx`·`src/app/today/page.tsx` `riskNote`의 `r3m>=80` 단일 상수를 급등 정도·변동성 조건별 분기(>=150/>=120/vol<45/else)로 교체. 모두 확인·검토 톤(매수/매도/목표가/긴급성 0), 두 파일 로직 동일.
+- [P1-1] `src/components/StocksExplorer.tsx:816` 단일 삼항으로 한 번에 한 라벨만 출력(레포 전체 펼치기/접기 grep = 전부 단일 조건 렌더). **이미 충족 — 편집 0**.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0 · 변경 4파일 U+FFFD 0 · 로컬 prod 3319 8경로 200 · SSR 글루 `공시 확인재무…`/`STEP 1점수`/`필수 데이터 100%이상값…`/`펼치기 ▾접기 ▴` 각 0건·STEP 1/2/3 렌더·`/disclosures` `주의:` 9회·구 `주의'계약…`/`단순 환산 금지` 0·홈 후보 주의 문구 3종(6/2/2)·오늘 3종(2/2/2)로 반복 해소.
+- Gate note: Playwright 미구성 → **운영자: 데스크톱/390px로 `/stock/005380`(CTA 4버튼·STEP 3카드·배지 3개)·`/compare`(빈 상태)·`/stocks` 1회 확인 권장.** P0 글루는 SSR 텍스트 추출 아티팩트(노드·시각 분리됨).
+- Residual / next: 운영자 390px 육안 게이트 → main 머지·외부 릴리스(별도 단계). 큰 축은 ④ 결제 연동·⑤ 데이터/약관 법무(coverage 문서).
+
 ### Task 68 — OrnScore 3차 QA P0 마감 (CTA/STEP/배지/비교 재검증 + 행동성 문구 중립화) (2026-06-27, Claude)
 - What: 사용자 제공 `ORNSCORE_3rd_QA_improvement_spec.md` PART A(P0-1~5)·PART F 기준 3차 QA P0 마감. branch `ai-center/task-68-ornscore-3rd-qa-p0-polish-detail-ui-`, 시작 HEAD `d63149c`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod 3317, 내가 띄운 PID 37232만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
 - 시작 전 재검증(중복 구현 방지): **P0-1~4는 직전 codex 배포 `743873a`(post-deploy 2nd QA P0)에서 이미 컴포넌트로 마감** — 소스+SSR 재확인으로 재구축 0.

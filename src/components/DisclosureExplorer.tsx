@@ -449,7 +449,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
                 {/* 주의 — 호재/악재 단정이 아닌 한계·유의점 (확인할 것과 시각적으로 분리) */}
                 <div className="flex gap-1.5 text-[11px] text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
-                  <span className="font-semibold text-amber-700 dark:text-amber-400 shrink-0">주의</span>
+                  <span className="font-semibold text-amber-700 dark:text-amber-400 shrink-0">주의:</span>
                   <span className="break-words">{cautionLine}</span>
                 </div>
 

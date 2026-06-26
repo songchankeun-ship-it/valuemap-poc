@@ -1,5 +1,21 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] OrnScore 4차 QA 컴포넌트 마감 — 공시 주의 구두점·홈 주의 문구 다양화·CTA/STEP/배지/비교 재검증 (Task 69, Claude)
+- **범위**: 사용자 4차 QA 리포트(공개 사이트 재점검) 기준 P0-1~4·P1-1~3 마감. branch `ai-center/task-69-ornscore-4th-qa-component-polish-and`, 시작 HEAD `d70f3de`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310 무중단(검증 prod `127.0.0.1:3319`, 내가 띄운 PID 10484만 taskkill). 미리보기 3000은 이번 세션 미기동 상태 그대로. 투자 조언성·압박성 표현 신규 0.
+- **시작 전 재검증(중복 구현 방지)**: 설계서·`docs/ornscore-spec-coverage.md`·Task 68 핸드오프상 P0-1~4는 직전 배포(`743873a`)에서 **이미 컴포넌트로 마감** → 소스+SSR로 재확인, 재구축 0.
+  - **[P0-1] CTA 버튼** — `src/components/stock/StockDetailActionButtons.tsx` 공통 컴포넌트(grid 1/2/4열·`gap-2`·`min-h-[44px]`·테두리/배경/아이콘+라벨). 글루 `공시 확인재무 보기점수 근거업종 비교` SSR **0건**.
+  - **[P0-2] STEP 가이드** — `src/components/BeginnerReading.tsx` `StepCard` 3카드 그리드(`grid-cols-1 md:grid-cols-3`·STEP n 단일 배지·제목/본문 분리). SSR에 `STEP 1`/`STEP 2`/`STEP 3` 카드 렌더, 글루 `STEP 1점수` 0.
+  - **[P0-3] 데이터 품질 배지** — `src/components/stock/PriorityScoreCard.tsx` 독립 `DataStatusPill` 3종(`flex flex-wrap gap-2`). 정상=필수 데이터 N%/이상값 점검 통과/Metrics, 검증보류(suspect)=필수 데이터 N%/`이상값 점검 중 · 임시 점수`/`/100 ⚠`/Metrics 분기(69~76행). 글루 `필수 데이터 100%이상값 점검 통과 Metrics 2.4` SSR **0건**. suspect fixture가 SSR에 안 떠도 컴포넌트가 양쪽 상태를 분기 지원함을 소스로 확인.
+  - **[P0-4] 비교 빈 상태** — `src/components/CompareClient.tsx` 검색·추천 비교 세트·최근 본·관심 종목 추가 UI 존재. `/compare` HTTP 200.
+- **반영(코드 4파일, 문구·구두점만)**:
+  - **[P1-2] 공시 카드 주의 구두점** — `src/components/DisclosureExplorer.tsx:452` 주의 라벨 `주의` → **`주의:`**(콜론). 라벨과 본문은 이미 별도 `<span>`(flex `gap-1.5`)라 시각적으로 분리 — 콜론 추가로 SSR 추출 글루 `주의'계약 금액 = 이익'`이 `주의: '계약 금액 = 이익'`으로 해소. `src/lib/signalGuide.ts:88` `single_contract.cautionNote`를 캐논 형태 **`'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.`**로 정규화(`으로` 앞 공백·`단순 환산 금지` 변형 제거 → `DisclosureExplorer`의 `CAUTION_FALLBACK[single_contract]`와 동일 단일 문구). `SignalGuideExpand`(전체 cautionNote 표시)도 같은 캐논 문구로 일관.
+  - **[P1-3] 홈/오늘 주의 문구 다양화** — `src/app/page.tsx`·`src/app/today/page.tsx` `riskNote`의 `r3m>=80` 단일 상수를 급등 정도·변동성 조건별 분기(>=150 "매우 커서 급등 사유와 과열 여부 함께 확인" / >=120 "단기 상승폭이 큰 편…급등 사유와 변동성 확인" / vol<45 "상승폭이 커진 데다 변동성도 높아 사유·시점 함께 검토" / else 기존 문구)로 교체. 모두 확인·검토 톤(매수/매도/목표가/긴급성 0). 두 파일 로직 동일(홈·오늘 일관). 점수·`direction` 무변경.
+- **[P1-1] 펼치기/접기 중복** — `src/components/StocksExplorer.tsx:816` 단일 삼항(`showQuickPresets ? "접기 ▴" : "펼치기 ▾"`)으로 한 번에 한 라벨만 DOM 출력. 레포 전체 `펼치기`/`접기` grep = 전부 단일 라벨 조건 렌더(`group-open` 양쪽 노출 패턴 없음). **이미 충족 — 편집 0**.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트) · 변경 4파일 U+FFFD 0(한글 무손상). 로컬 prod 3319 8경로(`/ /today /stock/005380 /stock/032830 /stock/096770 /compare /stocks /disclosures`) **HTTP 200**. SSR 마커: 글루 `공시 확인재무 보기…`·`STEP 1점수`·`필수 데이터 100%이상값…`·`펼치기 ▾접기 ▴` **각 0건**, STEP 1/2/3 카드 렌더, `/disclosures` `주의:` 9회·구 `주의'계약…`/`단순 환산 금지` 0, 홈 후보 주의 문구 3종 분포(`6/2/2`)·오늘 3종(`2/2/2`)로 동일 문구 반복 해소.
+- **상태**: [P0-1~4] 이미 마감·재검증 완료 · [P1-1] 이미 충족 · [P1-2][P1-3] 구현 완료.
+- **게이트 한계 / 잔여 리스크**: Playwright 미구성 → **390px 실 브라우저 육안은 운영자 게이트**(SSR 마크업의 `flex-wrap`/`grid-cols-1`/`min-h-[44px]` 클래스 가드로 대체 점검, 픽셀 미보장). 운영자: 데스크톱/390px로 `/stock/005380`(CTA 4버튼·STEP 3카드·배지 3개)·`/compare`(빈 상태)·`/stocks` 1회 확인 권장. P0 글루는 본질적으로 SSR 텍스트 추출 아티팩트(노드는 분리·시각 분리됨) — 공개 배포는 운영자 최신화 후 동일 확인.
+- **다음**: 운영자 390px 육안 게이트 → main 머지·외부 릴리스(별도 단계, 운영자). 이후 큰 축은 ④ 결제 연동·⑤ 데이터/약관 법무(coverage 문서 추적).
+
 ## 2026-06-27 - [codex] Task 68 3rd QA P0 main push/public smoke complete
 - **Scope**: User approved release of Task 68 after the 3rd QA P0 automation run completed.
 - **Push**: Fast-forwarded `main` from `d63149c` to `81c7922` and pushed `origin/main`.

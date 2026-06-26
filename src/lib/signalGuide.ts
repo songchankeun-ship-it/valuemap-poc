@@ -85,7 +85,7 @@ export const SIGNAL_GUIDES: Record<SignalType, SignalGuide> = {
       "거래처 신용도와 마진율 추정 (저마진 양산 계약은 매출 ↑ ≠ 이익 ↑)",
     ],
     pastPattern: "발표일 +5~15% 반응이 흔하지만, 마진 정보가 부족하면 며칠 후 반락하는 경우도 잦음. 분기 실적 발표까지 기다리는 게 안전.",
-    cautionNote: "기업 보안 사유로 거래처가 비공개인 경우 많아 마진 추정이 어려움. '계약 금액 = 이익' 으로 단순 환산 금지.",
+    cautionNote: "'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.",
     emoji: "🤝",
     tone: "info",
   },
