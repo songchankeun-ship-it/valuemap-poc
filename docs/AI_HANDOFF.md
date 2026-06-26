@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T16:36:20+09:00
+Last updated: 2026-06-26T08:38:30.081Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 55 - OrnScore final verification and production deploy - apply tasks 42-48 to main
-- Run: 52
+- Task: 60 - OrnScore 2차 QA P0 — 상세 번호·비교 빈상태·백테스트/공시 오해 방지
+- Run: 53
 - Status: completed
-- Agent: claude + codex
-- Note: Claude completed final verification but was blocked from direct main push by the existing project boundary. Codex pushed local main `6b3fa96` to `origin/main` (`a561e45..6b3fa96`), waited for Vercel auto-deploy, and confirmed production. Public smoke checks passed for `/`, `/today`, `/stocks`, `/stock/005380`, `/stock/032830`, `/pricing`, `/status`, and `/watchlist`; `/pricing` now exposes the new Premium tier, and checked pages return HTTP 200 with Metrics 2.4 and no fatal markers.
+- Agent: claude
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
