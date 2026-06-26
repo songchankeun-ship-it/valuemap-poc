@@ -8,6 +8,7 @@ import {
   dataIssueReportFields,
   dataStatus,
 } from "@/lib/dataStatus";
+import { ReportDataIssueForm } from "./ReportDataIssueForm";
 
 export function ReportDataIssue({
   prefill,
@@ -44,17 +45,23 @@ export function ReportDataIssue({
         ))}
       </ul>
 
-      <a
-        href={mailto}
-        className="inline-flex items-center mt-3 min-h-[44px] px-4 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
-      >
-        데이터 오류 신고하기
-      </a>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <a
+          href={mailto}
+          className="inline-flex items-center min-h-[44px] px-4 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+        >
+          메일로 신고하기
+        </a>
+        <ReportDataIssueForm
+          asOfDate={dataStatus.globalAsOfLabel}
+          metricsVersion={dataStatus.metricsVersionLabel}
+        />
+      </div>
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
         메일 본문에 현재 데이터 기준일({dataStatus.globalAsOfLabel})·산식({dataStatus.metricsVersionLabel})이 자동으로 채워집니다.
-        오류 신고 저장소·관리자 대시보드·수동 재수집은 후속 과제이며, 현재는 메일로 접수합니다. 자세한 범위는{" "}
-        <code className="text-[10px]">docs/legal-ai-commercial-readiness.md</code> 참고.
+        인앱 신고는 저장({" "}<code className="text-[10px]">data_reports</code>{" "})를 시도하고, 저장이 안 되면 위 메일로 안내합니다.
+        접수된 신고 확인은 내부 관리자 화면(<code className="text-[10px]">/admin/status</code>)에서 처리합니다.
       </p>
     </section>
   );
