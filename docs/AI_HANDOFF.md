@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 45 — OrnScore 상용화 고도화 2-C §7 알림 설정 UX·무해한 알림 MVP (2026-06-26, Claude)
+- What: 설계서 2 §7(알림 종류/채널/설정/예시)·§5.4(점수 급변)·§6.5(공시 알림)을 **실 발송·외부 채널 없이** 사용자가 알림 종류·설정 개념을 이해하는 안전한 MVP로 구현. branch `ai-center/task-45-ornscore-2-c-ux-mvp`, 시작 HEAD `d110be6`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
+- Changed/new:
+  - 신규 `src/lib/alertCatalog.ts`(순수, §7.1 알림 9종 단일 소스: 라이브 2종+미리보기 7종), `src/lib/alertPrefs.ts`(미리보기 토글 **localStorage 전용·무발송**, `ornscore_alert_prefs`+CustomEvent), `src/components/notifications/{AlertTypeCatalog(client),AlertExampleCards(순수),NotificationChannels(순수)}.tsx`.
+  - 변경 `src/app/settings/notifications/page.tsx`: `redirect('/login')` 제거(비로그인도 개념 열람) → 실 발송 설정만 로그인 CTA 뒤로. 상단 MVP 상태 배너, 예시 데이터 서버사이드(공시=recent-signals 실신호·점수 급변=`getScoreChangesBatch` 실변화/폴백·거래활성도=`flowStats.ratio` 실값). 순서: 상태 고지→실 발송/로그인 CTA→종류 카탈로그→채널→예시→"알림 받으려면".
+  - 변경 `src/components/WatchlistClient.tsx`: 내 현황에 `/settings/notifications` 중립 CTA 1줄(압박 문구 없음).
+  - **라이브 cron 2종(`api/cron/notify`·`api/cron/evaluate-alerts`) 무변경**(git diff 0) — 기존 발송 파이프라인 보존.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(`/settings/notifications` 6.48 kB·138p) · 로컬 prod 3399 `/settings/notifications`(비로그인)·`/watchlist` 200·치명오류 0(`Hydration`은 Next 공통 런타임 문자열·양 페이지 동일·실오류 아님)·SSR 알림 종류/채널/예시 카피 렌더(준비 중 24·예시 12)·CTA·카탈로그 라벨 빌드 청크 존재·변경파일 금칙어 grep 0(부정 고지 제외). 검증 prod node PID 9152만 taskkill, 3000·4310 무중단.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+청크 grep+build 대체). **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/settings/notifications`(비로그인/로그인)·`/watchlist` 확인 권장** — 상태 배너·라이브/준비 중 배지·미리보기 토글·채널 카드·예시 카드·CTA·오버플로 0·콘솔 0.
+- Residual / next(④ 후속): (1) 미리보기 토글은 localStorage 한정·의도적 무발송 → 실 발송 시 종류별 Supabase 스키마+cron+임계 튜닝 필요. (2) 웹/텔레그램/카카오/앱푸시 채널 미연결. (3) 점수 급변 예시는 daily_scores 미축적 시 형식 예시 폴백(예시 태그·고지 명시). `docs/ornscore-spec-coverage.md` §7·§5.4·§6.5 교차참조. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 44 리뷰 수정 — 저장 필터 충족 수 4지표 하위점수 누락 (2026-06-26, Claude)
 - 리뷰 FAIL: /watchlist "저장한 필터"의 "현재 조건 충족 N개"가 `matchConfig.matchesConfig`로 계산되는데 이 함수·`StockForMatch`가 저장 필터에 흔한 `momentumMin/flowMin/valueMin/volMin`(추세·거래활성도·밸류·위험조정 하한)을 무시 → 충족 수 과대(최대 ~10배)·옆 `describeConfig` 조건 문구와 모순.
 - 수정(4파일): `src/lib/matchConfig.ts` — `StockForMatch`에 `momentum/flow/value/vol:number` 추가 + `matchesConfig`에 4분기(`(c.xxxMin ?? 0) > 0 && s.xxx < ...`, StocksExplorer와 동일·0이면 비제약). `src/app/watchlist/page.tsx`·`src/app/api/cron/evaluate-alerts/route.ts` — `realStockPool→StockForMatch` 매핑에 4필드 추가(두 곳 동일). cron 조건 알림도 같은 하한을 정확히 평가.

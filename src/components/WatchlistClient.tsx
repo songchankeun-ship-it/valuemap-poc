@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -247,6 +247,19 @@ export function WatchlistClient({
             ) : null}
           </div>
         )}
+        {/* 알림 설정 연결 — 관심 종목·저장 필터 변화를 알림으로 (중립 안내, 압박 문구 없음) */}
+        <Link
+          href="/settings/notifications"
+          className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/40 px-3 py-2.5 min-h-[44px] hover:border-blue-300 dark:hover:border-blue-800 transition group"
+        >
+          <span className="flex items-center gap-2 min-w-0 text-xs text-zinc-600 dark:text-zinc-300">
+            <Bell className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+            <span className="break-words">관심 종목·저장 필터 변화를 알림으로 받기</span>
+          </span>
+          <span className="shrink-0 inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">
+            설정 보기 <ArrowRight className="w-3.5 h-3.5" />
+          </span>
+        </Link>
       </section>
 
       {/* 관심 종목 */}

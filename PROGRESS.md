@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] 상용화 고도화 2-C §7 알림 설정 UX·무해한 알림 MVP (Task 45, Claude)
+- 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§7 알림 시스템(7.1 종류·7.2 채널·7.3 설정·7.4 예시)·§5.4 점수 급변·§6.5 공시 알림**을 **실제 발송/외부 채널 없이** 사용자가 "알림 종류와 설정 개념"을 이해하는 안전한 MVP로 구현. branch `ai-center/task-45-ornscore-2-c-ux-mvp`, 시작 HEAD `d110be6`(클린) 위. **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3399`, 내 node PID 9152만 taskkill). 점수식·`stocks.json`·`direction` 무변경, 신규 npm 0, 투자 조언성·압박성 표현 신규 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
+- **신규 파일**:
+  - `src/lib/alertCatalog.ts` — §7.1 필수 알림 9종 단일 소스(순수). 라이브 2종(관심종목 공시→`cron/notify`+`NotificationToggle`, 저장 필터 충족→`cron/evaluate-alerts`+조건 알림) + 미리보기 7종(점수 급변·거래활성도 급증·과열 주의·80점 진입·공시 중요도 80+·업종 순위·백테스트). 중립 설명·카테고리·연결점.
+  - `src/lib/alertPrefs.ts` — 미리보기 종류 ON/OFF **localStorage 전용**(`ornscore_alert_prefs` + `alert-prefs-changed` CustomEvent). **의도적으로 어떤 발송도 트리거하지 않음**(실 파이프라인 출시 전까지 설정 체험만). savedSearches/recentViews 패턴 미러.
+  - `src/components/notifications/AlertTypeCatalog.tsx`(client) — 카테고리별 묶음. 라이브=사용 중 배지+상단 실설정 링크, 미리보기=로컬 토글+"준비 중·아직 실제 발송 전" 안내. 390px 가드(flex-wrap·min-w-0·break-words·44px).
+  - `src/components/notifications/AlertExampleCards.tsx`(순수) — §7.4 형식 예시 3종(공시=recent-signals.json 실신호 최강도, 점수 급변=`getScoreChangesBatch` 전일대비 실변화/없으면 형식 예시, 거래활성도=`flowStats.ratio` 실 최댓값). 각 카드 '예시' 태그 + "본 알림은 투자 추천이 아닌 데이터 기반 참고 정보입니다" 고지.
+  - `src/components/notifications/NotificationChannels.tsx`(순수) — §7.2 채널 정직 표시(이메일=사용 중, 웹·텔레그램·카카오·앱푸시=준비 중·비활성, 가짜 ON 없음).
+- **변경**: `src/app/settings/notifications/page.tsx` — `redirect('/login')` 제거 → 비로그인도 개념(카탈로그·예시·채널·고지) 열람, 실 발송 설정(이메일 토글·발송 주소)만 로그인 CTA 뒤로. 상단 MVP 상태 배너(이메일 2종만 발송, 나머지 준비 중). 순서: 상태 고지 → 실 발송 설정/로그인 CTA → 알림 종류 카탈로그 → 채널 → 예시 → "알림 받으려면". 예시 데이터는 서버사이드 계산. `src/components/WatchlistClient.tsx` — 내 현황에 `/settings/notifications` 중립 CTA(압박 문구 없음) 1줄 추가.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(`/settings/notifications` 6.48 kB·138p) · 로컬 prod 3399 `/settings/notifications`(비로그인)·`/watchlist` 200·치명 오류 0(`Hydration`은 Next 런타임 공통 문자열, 양 페이지 동일·실오류 아님)·SSR에 알림 종류/채널/예시 카피 렌더(준비 중 24·예시 12)·라이브 cron 2종(`notify`·`evaluate-alerts`) **byte 무변경**(git diff 0)·CTA·카탈로그 라벨 빌드 청크에 존재·금칙어 grep 0(부정문 고지 제외).
+- **잔여 리스크**: (1) 미리보기 토글은 localStorage 한정·의도적 무발송 — 실 발송 시 종류별 Supabase 스키마+cron 신규 필요(④). (2) 웹/텔레그램/카카오/앱푸시 채널 미연결(④). (3) 점수 급변 예시는 daily_scores 미축적 환경에서 형식 예시로 폴백(예시 태그·고지 명시). (4) Playwright 미구성 → 운영자 데스크톱/390px 육안 게이트 권장(`/settings/notifications`·`/watchlist`).
+- **다음**: §7 실 발송 라이브화(종류별 임계·스키마·cron) + 채널 확장은 운영/데이터 결정 후 분리 착수(④, 설계서 2 §10번 큐).
+
 ## 2026-06-26 · [claude] Task 44 리뷰 수정 — 저장 필터 충족 수 4지표 하위점수 누락 버그
 - **증상(리뷰 FAIL)**: /watchlist "저장한 필터"의 "현재 조건 충족 N개"가 `matchConfig.ts`의 `matchesConfig`로 계산되는데, 이 함수와 `StockForMatch`가 저장 필터에 흔한 `momentumMin/flowMin/valueMin/volMin`(추세·거래활성도·밸류·위험조정 하위점수 하한)을 **무시** → 해당 조건이 걸린 필터는 충족 수가 최대 ~10배 과대 집계되고 옆에 표시되는 `describeConfig` 조건 문구("추세 70+" 등)와 모순.
 - **원인**: `StockForMatch`에 4지표 하위점수 필드가 없었고 `matchesConfig`에 4개 분기가 빠짐. `SavedSearchConfig`·`StocksExplorer`의 `matchesConfig`(클라)에는 이미 존재.
