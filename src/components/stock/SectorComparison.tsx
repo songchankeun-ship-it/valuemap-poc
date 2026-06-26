@@ -73,6 +73,7 @@ export function SectorComparison({
             <span className="shrink-0">막대 = 종합점수 · 배지 = 업종 순위 · PER/등락 보조</span>
           </div>
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">같은 업종 {sectorCount}곳(본인 포함) 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">업종 분류는 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.</p>
         </>
       )}
     </section>

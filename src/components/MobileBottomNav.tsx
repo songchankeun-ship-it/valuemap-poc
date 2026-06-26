@@ -9,10 +9,10 @@ const PRIMARY = [
   { href: "/today", Icon: CalendarDays, label: "오늘" },
   { href: "/stocks", Icon: Search, label: "종목 찾기" },
   { href: "/disclosures", Icon: Megaphone, label: "공시 신호" },
+  { href: "/watchlist", Icon: Heart, label: "관심" },
 ];
 
 const MORE = [
-  { href: "/watchlist", Icon: Heart, label: "관심 종목" },
   { href: "/compare", Icon: GitCompare, label: "비교" },
   { href: "/backtest", Icon: FlaskConical, label: "백테스트" },
   { href: "/history", Icon: Bot, label: "분석 기록" },
@@ -52,7 +52,7 @@ export function MobileBottomNav() {
         </div>
       ) : null}
 
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-4 h-14 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-14 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
         {PRIMARY.map(({ href, Icon, label }) => (
           <Link
             key={href}
