@@ -1,5 +1,27 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] 2차 QA 최종 검증 — 게이트 전수 통과·공개 전 릴리스 체크리스트 (Task 63, Claude)
+- **목적**: 방금 등록된 ORNSCORE 2차 QA 작업(Task 60 P0 · Task 61 P1 · Task 62 P2)이 모두 완료·정리됐는지 최종 검증하고, **공개 주소(`https://ornscore.com/`) 최신화 전에 운영자가 확인할 마커**를 명확히 남긴다. branch `ai-center/task-63-ornscore-2-qa`, 시작·종료 HEAD `01df662`(Task 62 tip, 클린). **앱 소스 무수정** — 산출물은 검증 결과 + 이 릴리스 체크리스트(PROGRESS·AI_HANDOFF). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3256`, 내 리스너 node PID 23936만 taskkill).
+- **완료 확인(읽기 전용 감사)**: `git log` 선형 히스토리에 2차 QA 3개 묶음 전부 존재 — Task 60(`e8e5a34`←`c3b6765`, PART A·I P0 5종), Task 61(`d6bf701`←`071f759`/`c321f2a`/`9908805`/`3f75d23`, PART B~E·I P1), Task 62(`01df662`←`56e1ee7`/`9f92756`/`3086863`/`09380a6`/`ea5ef24`, PART F~I P2). 시작 기준 `b2fad41`(codex 운영 배포 기록) 위에 P0→P1→P2가 선형으로 쌓임. `git status` 클린(미커밋/미추적 0). `docs/ornscore-spec-coverage.md` §8(2차 QA 설계서 표) PART A~I 전 행 ①(또는 ①/④/⑤ — 미연결 결제·가격 미확정·SW 스텁·법무 결론은 명시 백로그 사유 동반). 예상과 다른 미커밋 변경·누락 항목 0.
+- **게이트 전수 통과**:
+  - **Gate 1 `npx tsc --noEmit`** → exit 0.
+  - **Gate 2 `verify_metrics.py`(PYTHONUTF8=1 PYTHONIOENCODING=utf-8)** → 검사 138종목·오류 0건·금칙어 0건·산식 버전 **Metrics 2.4** 일치, exit 0. 데이터 기준일 `stocks.json.asOfBusinessDate=20260625` → 표기 **2026.06.25**.
+  - **Gate 3 `npm run build`** → exit 0. SSG `/stock/[ticker]` 138 페이지(`/stock/005930` 외 +135) + `/manifest.webmanifest`(○)·`/offline`(ƒ)·`/admin/status`(ƒ)·`/pricing`·`/status`·`/api/report-data-issue` 포함 전 라우트 정상 emit. 빌드 단계·청크 구조 변경 0.
+  - **Gate 4 로컬 prod 3256 13경로 스모크** → `/ /today /stocks /compare /stock/005380 /stock/032830 /disclosures /backtest /status /pricing /terms /privacy /watchlist` 전부 **HTTP 200**, 치명 마커(Application error/TypeError/ReferenceError/cannot read/Unhandled) **0건**. SSR 마커 확인: `/`·`/status` "Metrics 2.4"+"2026.06.25", `/status` "종목 커버리지", `/pricing` 3티어("출시 예정"·"미확정"·"기능 비교"·"베타 무료"), `/privacy` 국외이전 `<table>` 1개("이전받는 자"·"거부 방법"), `/terms` "출시 전 확정 필요"·"청약철회", `/stock/005380` 업종 휴리스틱 캡션("내부 분류 기준"·"공식 KRX 업종과 다를"), 홈 하단 nav `grid-cols-5`, `/manifest.webmanifest`·`/offline` 200.
+- **게이트 한계(운영자 수동 게이트)**: Playwright 미구성 → **데스크톱/390px 모바일 실 브라우저 가로 오버플로·콘솔 오류 자동 게이트는 부재**. 신규 npm/Playwright 추가는 범위 외 → **운영자 육안 1회 권장**(하단 5탭 오버플로 0·`/privacy` 표 가로 스크롤·AI 동의 체크박스 줄바꿈·`/stock/*` 업종 캡션·`/offline` 설치 힌트). **AI 분석 동의 체크박스는 `StockTabs` 비기본 탭 안 클라 렌더라 초기 SSR HTML 미노출**(tsc/build로 검증) → 운영자 탭 열어 확인.
+- **공개 주소 최신화 전 준비 상태 / 운영자 확인 마커**(배포 후 `https://ornscore.com/`에서 동일 노출 확인):
+  1. `/`·`/status`: 데이터 기준 **2026.06.25** · **Metrics 2.4** 동일 노출.
+  2. `/pricing`: Free/Pro/Premium **3티어** + 가격 **"미확정"**(확정 단일 금액 0) + 알림=Pro 경계("베타 무료") + 기능 비교표 가로 스크롤.
+  3. `/privacy`: 개인정보 **국외 이전 `<table>`**(Supabase 일본·Vercel/Resend/Anthropic 미국) 가로 스크롤.
+  4. 모바일 하단 탭 **5탭**(오늘·종목 찾기·공시 신호·관심·더보기) + `/watchlist` 관심 승격.
+  5. `/offline` + `/manifest.webmanifest` 응답(PWA 최소).
+  6. `/stock/*` "요약" 외 탭(점수 근거 등)에서 **AI 분석 실행 전 동의 체크박스**(미동의 시 실행 disabled).
+  7. `/stock/*` 업종 대비 밸류 캡션("오른스코어 내부 분류 기준 · 공식 KRX 업종과 다를 수 있습니다").
+  8. `/terms` "출시 전 확정 필요 항목" 블록 + `/backtest` 단일 고지·KPI 위험 비교 줄.
+- **실패/보류 항목**: 없음(4개 게이트 전부 통과). 보류는 전부 의도된 ④/⑤ 백로그(아래 잔여 리스크).
+- **잔여 리스크(Task 62에서 이월, 공개 자체의 블로커 아님)**: ① 결제·구독 권한 게이트 미연결(④) — Pro/Premium은 정보구조·대기 신청만. ② 가격 전부 미확정(④/⑤) — 출시 전 법무·사업 확정·공지. ③ service worker 미등록(스텁)·512px 마스커블 PNG 아이콘 미보강(④). ④ 관리자 인증·배치 이력·수집 실패 로그·신고 워크플로 백로그(④). ⑤ 데이터 소스 상용 적법성 결론 [법무] 확인 필요(⑤). ⑥ Playwright 미구성 → 운영자 육안 모바일 게이트(⑤).
+- **다음(범위 외·운영자)**: 운영자 데스크톱/390px 육안 게이트 → **`git push origin main`(FF) → Vercel 자동배포 → 위 8개 마커 공개 주소 확인**. Claude는 main 직접 push 안 함(CLAUDE.md 경계). 이후 ④ 결제 연동·SW/아이콘·관리자 인증/로그·⑤ 데이터 소스 법무 확정.
+
 ## 2026-06-26 · [claude] 2차 QA 설계서 PART F·G·H·I P2 마감 — 데이터 리스크·법무 고지·관리자 MVP·모바일/PWA (Task 62, Claude)
 - 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART F(§18~19)·G(§20~22)·H(§23~24)·I [P2-1~P2-7]을 작은 단위로 반영. branch `ai-center/task-62-ornscore-2-qa-p2-ai-pwa`, 시작 HEAD `d6bf701`(Task 61 위, 클린) — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction`·`api/cron/notify`·`api/cron/evaluate-alerts` 무변경. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3255`, 내 리스너 PID 6104만 taskkill). 투자 조언성 표현 신규 0(부정 고지만).
 - **시작 전 상태 확인**: 플래너 라인번호 base `b2fad41` 기준 → Task 60/61 변경분과 어긋나 실제 코드 grep으로 현재 위치 재확인 후 반영. legal 문서 결제 체크리스트(A절)는 기구현 → 중복 작성 0(terms 블록에서 참조). 아이콘은 `src/app/icon.svg`(벡터) 하나뿐 → manifest는 SVG 재사용·512px PNG는 운영자 보강 권장으로 문서화.

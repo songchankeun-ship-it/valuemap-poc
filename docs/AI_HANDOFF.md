@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 62 - OrnScore 2차 QA P2 — 데이터 소스·법무/AI 고지·관리자 상태판·모바일/PWA 백로그
-- Run: 55
+- Task: 63 - OrnScore 2차 QA 최종 검증 — 게이트 전수 통과·공개 전 릴리스 체크리스트
+- Run: 63
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Final verification only (no app source changes). tsc/verify_metrics/build/13-route smoke all passed; pre-public release checklist recorded in PROGRESS.md and Manual Notes.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 63 — OrnScore 2차 QA 최종 검증 — 게이트 전수 통과·공개 전 릴리스 체크리스트 (2026-06-26, Claude)
+- What: 방금 등록된 2차 QA 작업(Task 60 P0·Task 61 P1·Task 62 P2)이 모두 완료·정리됐는지 최종 검증하고 **공개 주소 최신화 전 운영자 확인 마커**를 문서화. **앱 소스 무수정**(산출물=PROGRESS·이 노트). branch `ai-center/task-63-ornscore-2-qa`, 시작·종료 HEAD `01df662`(Task 62 tip, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. AI Center 4310·미리보기 3000 무중단(검증 prod 3256, 내 node PID 23936만 taskkill).
+- 완료 감사(읽기 전용): `git log` 선형 — Task 60(`c3b6765`→`e8e5a34`)·Task 61(`071f759`/`c321f2a`/`9908805`/`3f75d23`→`d6bf701`)·Task 62(`56e1ee7`/`9f92756`/`3086863`/`09380a6`/`ea5ef24`→`01df662`)가 `b2fad41` 위에 P0→P1→P2로 선형 적층. `git status` 클린. `docs/ornscore-spec-coverage.md` §8 PART A~I 전 행 ①(미연결 결제·미확정 가격·SW 스텁·법무 결론은 명시 ④/⑤ 백로그). 예상 외 미커밋/누락 0.
+- What passed(4 게이트 전수): **Gate1** `tsc --noEmit` 0 · **Gate2** `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4**(데이터 기준 `asOfBusinessDate=20260625`=**2026.06.25**) · **Gate3** `npm run build` 0(SSG 138 종목 + `/manifest.webmanifest`·`/offline`·`/admin/status`·`/api/report-data-issue` 포함 전 라우트) · **Gate4** 로컬 prod 3256 **13경로**(`/ /today /stocks /compare /stock/005380 /stock/032830 /disclosures /backtest /status /pricing /terms /privacy /watchlist`) **HTTP 200·치명 마커 0**. SSR 마커: `/`·`/status` Metrics 2.4+2026.06.25, `/pricing` 3티어·미확정·기능 비교·베타 무료, `/privacy` 국외이전 `<table>`, `/terms` 출시 전 확정 필요·청약철회, `/stock/*` 업종 휴리스틱 캡션, 하단 nav `grid-cols-5`, `/manifest.webmanifest`·`/offline` 200.
+- Gate note(운영자 수동): Playwright 미구성 → 데스크톱/390px 실 브라우저 오버플로·콘솔 자동 게이트 부재(신규 npm/Playwright 범위 외) → **운영자 육안 1회 권장**. **AI 분석 동의 체크박스는 `StockTabs` 비기본 탭 클라 렌더라 초기 SSR 미노출** → 탭 열어 확인.
+- 공개 전 운영자 확인 마커(배포 후 `https://ornscore.com/` 동일 노출): (1) `/`·`/status` 2026.06.25+Metrics 2.4 (2) `/pricing` 3티어·미확정 가격·알림 Pro 경계·비교표 (3) `/privacy` 국외이전 표 (4) 모바일 하단 5탭+관심 승격 (5) `/offline`+`/manifest.webmanifest` (6) `/stock/*` AI 동의 체크박스(요약 외 탭) (7) `/stock/*` 업종 캡션 (8) `/terms` 확정 필요 블록+`/backtest` 단일 고지·KPI 위험 줄.
+- 실패/보류: 없음(전 게이트 통과). 보류는 의도된 ④/⑤ 백로그.
+- Residual / next(범위 외·운영자): 결제·구독 게이트 미연결·가격 미확정(④/⑤)·SW 미등록(스텁)·512px 아이콘 미보강(④)·관리자 인증/배치 이력/수집 로그/신고 워크플로(④)·데이터 소스 법무 결론(⑤)·Playwright 모바일 게이트(⑤). **운영자: 육안 게이트 → `git push origin main`(FF) → Vercel 자동배포 → 8개 마커 공개 주소 확인.** Claude는 main 직접 push 안 함(CLAUDE.md 경계).
 
 ### Task 62 — OrnScore 2차 QA 설계서 PART F·G·H·I P2 마감 (2026-06-26, Claude)
 - What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART F(§18~19)·G(§20~22)·H(§23~24)·I [P2-1~P2-7] 반영. branch `ai-center/task-62-ornscore-2-qa-p2-ai-pwa`, 시작 HEAD `d6bf701`(Task 61 위, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction`·크론 2종 무변경. AI Center 4310·미리보기 3000 무중단(검증 prod 3255, 내 PID 6104만 taskkill).
