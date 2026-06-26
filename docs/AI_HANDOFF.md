@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T22:32:55+09:00
+Last updated: 2026-06-26T23:30:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Post-deploy 2nd QA P0 polish
-- Run: manual codex fix after user QA review
-- Status: completed and public-smoked
-- Agent: codex
-- Note: Fixed the remaining P0 UX issues: separated stock-detail CTA buttons via shared StockDetailActionButtons, converted beginner STEP guidance into 3 cards, split data-status badges, removed chase-buy wording, improved compare empty state with search/recommended/recent/watchlist entry points, and removed duplicate expand/filter text in stocks explorer. Checks passed: tsc, verify_metrics for 138 stocks, npm run build, local browser smoke on /stock/005380, /compare, /stocks, and public browser smoke on ornscore.com after pushing origin/main to 743873a.
+- Task: P1 follow-up (task 66) — home disclosure policy label, disclosure scope buttons, beta→Pro pricing notice, terms copy, privacy mobile table
+- Run: claude implementation after P0 items 1-6 completed
+- Status: implemented, verified, local-smoked, committed locally (no main push)
+- Agent: claude
+- Note: Implemented 4 of 5 P1 items and partially handled item 4 (terms). [1] Home DisclosureSignalSection now shows an explicit "표시 정책" line (analyzed 138-stock universe only; full market on /disclosures), count passed from dataMetadata.count. [2] /disclosures scope pills converted to a segmented button group (role=group, min-h-[38px], filled+ring selected state, aria-pressed kept, contrast count badges) plus a helper caption; default scope="all" and all filter/count logic unchanged. [3] /pricing gained a visible sky-toned callout (between cards and compare table) stating notification features are beta-free and planned to move to Pro at launch, timing/price still 미확정. [4] /terms added a stable "현재 적용되는 정책 (상용화 전)" box (no paid billing, magic-link/Kakao auth, no password storage, public data sources) while keeping unfinalized billing/refund clauses flagged as 미확정; recorded residual legal-confirmation risk in docs/legal-ai-commercial-readiness.md §F (not marked resolved). [5] /privacy §5-1 overseas-transfer table kept its 7-column structure (already overflow-x-auto min-w-[480px]); added a mobile-only horizontal-scroll affordance hint. Checks passed: tsc 0, verify_metrics 138 stocks/0 errors/0 forbidden/Metrics 2.4, npm run build 0, local prod smoke on 127.0.0.1:3267 for / /disclosures /pricing /terms /privacy /stocks (all 200, 0 fatal markers, new SSR copy confirmed). Playwright not configured → 390px visual confirmation is an operator gate. No main push (project boundary); ports 4310/3000 untouched.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 66 — OrnScore P1 후속 5종 (홈 표시 정책·공시 범위 버튼·베타→Pro·약관·개인정보 표 모바일) (2026-06-26, Claude)
+- What: codex P0(1~6) 이후 사용자 리뷰 P1 후속을 반영. branch `ai-center/task-66-ornscore-p1-follow-up-disclosures-pr`, 시작 HEAD `1ff744f`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod 3267, 내 PID 36376만 taskkill). 외부 릴리스·main push 범위 외(운영자).
+- Changed (코드 5 + 문서 4): `src/components/home/DisclosureSignalSection.tsx`(+`universeCount` prop·표시 정책 박스)·`src/app/page.tsx`(count 전달)·`src/components/DisclosureExplorer.tsx`(세그먼트 범위 버튼+캡션)·`src/app/pricing/page.tsx`(베타→Pro sky 콜아웃)·`src/app/terms/page.tsx`(현재 확정 정책 박스). 문서: `PROGRESS.md`·`docs/AI_HANDOFF.md`·`docs/legal-ai-commercial-readiness.md`(F항)·`docs/ornscore-spec-coverage.md`. `src/app/privacy/page.tsx`(모바일 스크롤 힌트).
+- 5종 상태: [1][2][3][5] 구현 완료 · [4] 부분(현재 사실만 firm, 결제·환불 등은 법무 확정 필요로 미확정 유지). 자세한 검증/마커는 PROGRESS.md task 66 엔트리.
+- Gate note: Playwright 미구성 → **운영자: 데스크톱/390px로 `/disclosures` 세그먼트 선택 상태·`/pricing` 콜아웃·`/privacy` 표 가로 스크롤+힌트·`/terms` 정책 박스 1회 확인 권장.**
+- Residual / next: 약관 결제 조항 법무 확정·결제 게이트 미연결·가격 미확정(④/⑤). 운영자 390px 육안 게이트 → 외부 릴리스(별도 단계).
 
 ### Codex deploy — 2차 QA main 반영·운영 배포 완료 (2026-06-26)
 - What: 사용자 "응 배포해줘" 승인에 따라 Task 60~63의 ORNSCORE 2차 QA 결과를 `main`에 반영하고 `origin/main`에 push. 시작 시 `origin/main`은 자동 데이터 갱신 `e8222f1 chore(data): daily refresh 2026-06-26T10:44Z`가 먼저 올라와 있었으므로, 해당 데이터 갱신을 보존해 작업 브랜치에 병합한 뒤 `main`을 fast-forward. 강제 push·히스토리 재작성 없음.

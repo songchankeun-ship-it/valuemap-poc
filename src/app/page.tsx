@@ -187,7 +187,7 @@ export default async function HomePage() {
 
       <TopCandidateSection candidates={candidates} />
 
-      <DisclosureSignalSection signals={signalVMs} />
+      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
 
       <FeatureCards strongCount={strongCount} signalCount={signalCount} />
 

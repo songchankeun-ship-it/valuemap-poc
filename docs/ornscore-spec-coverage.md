@@ -206,6 +206,16 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | H §24 [P2-7] PWA 기본 적용 | ①(최소)/④ | **Task 62**: `manifest.ts`(Next-native, 오른스코어·standalone·다크 테마·icon.svg 재사용) + `/offline` 안내 페이지(네트워크 필요·홈 화면 추가 힌트). **service worker는 캐싱/배포 충돌 회피로 미등록(문서 스텁)**, 512px PNG 마스커블 아이콘은 운영자 보강 권장(④) |
 | I P1/P2 티켓 | ③/④/⑤ | 위 PART B~H 매핑 참조 |
 
+## P1 follow-up (Task 66 — codex P0 1~6 이후 사용자 리뷰)
+
+| 항목 | 상태 | 근거 / 비고 |
+|---|---|---|
+| 66-1 홈 공시 표시 정책 명시 | ① | **Task 66**: `home/DisclosureSignalSection.tsx` `universeCount` prop + "표시 정책" 박스(홈=분석 대상 {count}종목 공시만 우선, 전체 시장은 `/disclosures` 범위 전환). `page.tsx`에서 `dataMetadata.count` 전달. 홈 공시는 이미 universe 필터(§15/Task 61) → 정책을 명시 노출. 호재/악재 프레이밍 0, 신뢰도=분류 신뢰도 유지 |
+| 66-2 공시 범위 버튼 명확화 | ① | **Task 66**: `DisclosureExplorer.tsx` 범위 알약→세그먼트 버튼 그룹(role=group·min-h-[38px]·선택 filled+shadow+ring·카운트 배지 대비·`aria-pressed` 유지) + 도움말 캡션. 기본 `scope="all"`·필터/카운트 로직 무변경·flex-wrap 390px 가드 |
+| 66-3 베타→Pro 전환 안내 노출 | ①/④ | **Task 66**: `pricing/page.tsx` 카드↔비교표 사이 sky 톤 전용 콜아웃(알림은 베타 무료·정식 출시 시 Pro 전환 예정·시점/가격 미확정·사전 공지). `pricing.ts` 단일 출처 유지. **가격 확정·결제 게이트는 ④/⑤** |
+| 66-4 약관 카피 정리 | ①/⑤ | **Task 66**: `terms/page.tsx` 상단 "현재 적용되는 정책(상용화 전)" 박스로 **확정 사실만 firm**(유료 미제공·전 기능 무료/매직링크·카카오·비밀번호 미저장/공개 데이터 출처·비자문). 결제·환불·청약철회는 기존 "출시 전 확정 필요(초안·미확정)" 블록 유지(**해결 표시 안 함**). `legal-ai-commercial-readiness.md` §F에 잔여 법무 확정 리스크 기록 — **법무 검토 완료 아님(⑤)** |
+| 66-5 개인정보 표 모바일 QA | ① | **Task 66**: `privacy/page.tsx` §5-1 국외 이전 표(7열, 이미 overflow-x-auto·min-w-[480px]) 구조 무변경 + 모바일 전용 스크롤 어포던스 1줄(`md:hidden`). 표 콘텐츠·열 수 무변경. 390px 픽셀 육안은 운영자 게이트(Playwright 미구성) |
+
 ---
 
 # 다음 큐 제안 (남은 ③/④/⑤만 — 이미 완료된 홈·상세·필터·데이터신뢰·Phase 7은 중복 구현 금지)

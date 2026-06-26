@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { DisclosureSignalCard, type DisclosureSignalVM } from "./DisclosureSignalCard";
 
-// 오늘 먼저 볼 공시 신호 섹션 — 분류 신뢰도 고지 포함.
-export function DisclosureSignalSection({ signals }: { signals: DisclosureSignalVM[] }) {
+// 오늘 먼저 볼 공시 신호 섹션 — 표시 정책·분류 신뢰도 고지 포함.
+export function DisclosureSignalSection({ signals, universeCount }: { signals: DisclosureSignalVM[]; universeCount?: number }) {
   if (signals.length === 0) return null;
   return (
     <section>
@@ -12,8 +12,12 @@ export function DisclosureSignalSection({ signals }: { signals: DisclosureSignal
           전체 보기 →
         </Link>
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed">
         자기주식, 보유 변동, 정정공시, 계약, 자금조달 관련 공시를 <strong className="font-medium text-zinc-600 dark:text-zinc-300">DART 최신 200건 내</strong>에서 자동 분류해 확인할 신호를 정리합니다.
+      </p>
+      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed inline-flex items-start gap-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 px-2 py-1">
+        <span className="font-medium text-zinc-600 dark:text-zinc-300 shrink-0">표시 정책</span>
+        <span className="break-words">홈에는 <strong className="font-medium text-zinc-600 dark:text-zinc-300">분석 대상 {universeCount ?? 138}종목</strong>에 해당하는 공시만 우선 표시합니다. 전체 시장 공시는 <Link prefetch={false} href="/disclosures" className="text-blue-700 dark:text-blue-400 hover:underline">공시 신호 페이지</Link>에서 범위를 바꿔 볼 수 있습니다.</span>
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

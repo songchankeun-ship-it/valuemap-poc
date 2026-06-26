@@ -8,7 +8,18 @@ export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-10">
       <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">이용약관</h1>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026년 6월</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">최종 갱신: 2026년 6월</p>
+
+      {/* 현재(상용화 전) 확정 정책 — 안정적 사실. 미확정 항목은 아래 유료 서비스 섹션에서 별도 표기 */}
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4 mb-6 not-prose text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">현재 적용되는 정책 (상용화 전)</div>
+        <ul className="list-disc list-inside space-y-1 ml-1 text-[13px]">
+          <li>본 서비스는 현재 <strong className="text-zinc-900 dark:text-zinc-100">유료 결제를 제공하지 않으며</strong>, 모든 기능을 무료로 이용할 수 있습니다.</li>
+          <li>로그인은 <strong className="text-zinc-900 dark:text-zinc-100">이메일 매직링크 또는 카카오 OAuth</strong>로만 처리하며, <strong className="text-zinc-900 dark:text-zinc-100">비밀번호를 저장하지 않습니다.</strong></li>
+          <li>제공 데이터의 출처는 <strong className="text-zinc-900 dark:text-zinc-100">KRX·DART·Naver Finance·yfinance</strong> 등 공개 데이터이며, 본 서비스는 데이터 분석 도구로서 투자자문·매수·매도 추천을 제공하지 않습니다.</li>
+        </ul>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">유료 구독 도입 시 적용될 결제·환불·청약철회 등 세부 조건은 아래 「유료 서비스 이용」 섹션에 별도로 표기하며, 현재는 미확정 상태입니다.</p>
+      </section>
 
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
 

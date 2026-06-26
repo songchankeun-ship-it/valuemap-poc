@@ -129,6 +129,16 @@ export default function PricingPage() {
         ))}
       </div>
 
+      {/* 베타 무료 → 정식 출시 시 Pro 전환 안내 — 눈에 띄게 (Item 3) */}
+      <section className="flex items-start gap-2.5 rounded-xl border border-sky-200 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/30 p-4">
+        <span className="shrink-0 mt-0.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-600 text-white">베타 무료</span>
+        <div className="text-xs text-sky-900 dark:text-sky-200 leading-relaxed break-words">
+          <strong className="font-semibold">관심 종목 공시 알림 · 저장 조건 알림</strong>은 지금은 베타 기간 동안 무료로 쓸 수 있어요.
+          이 알림 기능은 <strong className="font-semibold">정식 출시 시 Pro 기능으로 전환될 예정</strong>입니다.
+          전환 시점과 가격은 아직 <strong className="font-semibold text-amber-700 dark:text-amber-400">미확정</strong>이며, 변경 전 미리 공지합니다.
+        </div>
+      </section>
+
       {/* 기능 비교표 — 390px에서 가로 스크롤로 안전하게 */}
       <section className="space-y-2">
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">기능 비교</h2>

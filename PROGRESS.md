@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] OrnScore P1 follow-up (task 66) — 홈 공시 표시 정책·공시 범위 버튼·베타→Pro 안내·약관·개인정보 표 모바일 (Task 66, Claude)
+- **범위**: codex P0(1~6) 완료 이후 사용자 리뷰의 **P1 후속 5종**을 작은 단위로 반영. branch `ai-center/task-66-ornscore-p1-follow-up-disclosures-pr`, 시작 HEAD `1ff744f`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3267`, 내 리스너 PID 36376만 taskkill). 투자 조언성·압박성 표현 신규 0.
+- **반영(코드 5파일 + 문서 4)**:
+  - **[1] 홈 공시 표시 정책 명시** — `src/components/home/DisclosureSignalSection.tsx`에 `universeCount` prop + "표시 정책" 한 줄 박스(홈은 분석 대상 {count}종목 공시만 우선 표시, 전체 시장은 공시 신호 페이지에서 범위 전환). `src/app/page.tsx`에서 `dataMetadata.count` 전달(홈 공시는 이미 universe 필터됨 — 정책을 명시적으로 노출). 호재/악재 프레이밍 0, 신뢰도는 분류 신뢰도만 유지.
+  - **[2] 공시 범위 버튼 명확화** — `src/components/DisclosureExplorer.tsx` "전체 시장/분석 대상만" 알약→**세그먼트 버튼 그룹**(role=group·`min-h-[38px]`·선택 시 filled bg+shadow+ring·카운트 배지 대비 강화·`aria-pressed` 유지) + 하단 도움말 캡션("분석 대상만 = 점수 산출 대상 공시 · 전체 시장 = 분석 대상 외 포함 DART 전체"). 기본 `scope="all"` 보존, 필터·카운트 로직 무변경, flex-wrap로 390px 오버플로 가드.
+  - **[3] 베타→Pro 전환 안내 노출** — `src/app/pricing/page.tsx` 카드 그리드와 비교표 사이에 **sky 톤 전용 콜아웃**(관심 종목 공시·저장 조건 알림은 베타 무료, 정식 출시 시 Pro 전환 예정, 시점·가격 미확정·사전 공지). `pricing.ts` 문구는 단일 출처 유지(신규 가격 확정 0).
+  - **[4] 약관 정리** — `src/app/terms/page.tsx` 상단에 **현재(상용화 전) 확정 정책 박스**(유료 결제 미제공·전 기능 무료 / 매직링크·카카오 인증·비밀번호 미저장 / 공개 데이터 출처·비자문)만 안정 문구로 firm. 미확정 결제·환불·청약철회는 기존 "출시 전 확정 필요 항목(초안·미확정)" 블록 그대로 유지(해결 표시 안 함). `docs/legal-ai-commercial-readiness.md`에 F항 task-66 메모 추가(법무 검토 완료 아님·잔여 리스크 명시).
+  - **[5] 개인정보 표 모바일 QA** — `src/app/privacy/page.tsx` §5-1 국외 이전 표는 이미 `overflow-x-auto min-w-[480px]`(7열) → 구조 무변경, **모바일 전용 스크롤 어포던스 1줄**("좌우로 밀어 전체 열…", `md:hidden`) 추가. 표 콘텐츠·열 수 무변경.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` exit 0(SSG 138p+전 라우트) · 변경 5파일 advisory/urgency grep 0. 로컬 prod 3267 6경로(`/ /disclosures /pricing /terms /privacy /stocks`) **HTTP 200·치명 마커 0**. SSR 마커 확인: `/` "표시 정책"·"분석 대상 138종목"·"공시 신호 페이지", `/disclosures` "표시 범위"·세그먼트 라벨·"점수를 산출하는 분석 대상" 캡션, `/pricing` "정식 출시 시 Pro 기능으로 전환될 예정"·"베타 무료", `/terms` "현재 적용되는 정책 (상용화 전)"·"비밀번호를 저장하지 않습니다"·"출시 전 확정 필요 항목", `/privacy` "좌우로 밀어 전체 열"·국외 이전 표.
+- **5종 상태**: [1][2][3][5] **구현 완료**. [4] **부분** — 현재 사실(확정)만 안정화, 결제·환불 등은 **법무/사업 확정 필요로 계속 미확정 표기**(legal-ai-commercial-readiness.md F항에 잔여 리스크 문서화).
+- **게이트 한계 / 잔여 리스크**: Playwright 미구성 → **390px 실 브라우저 육안은 운영자 게이트**(curl+SSR grep+build로 대체). 운영자: `/disclosures` 세그먼트 버튼 선택 상태(데스크톱/390px)·`/pricing` 콜아웃 줄바꿈·`/privacy` 표 가로 스크롤+힌트·`/terms` 정책 박스 1회 확인 권장. 약관 결제 조항 법무 확정·결제 게이트 미연결·가격 미확정은 그대로(④/⑤). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+- **다음**: 운영자 390px 육안 게이트 → 외부 릴리스(별도 단계). 이후 ④ 결제 연동·⑤ 데이터/약관 법무 확정.
+
 ## 2026-06-26 - [codex] Post-deploy 2nd QA P0 polish complete
 - **Scope**: Closed the user-reported post-deploy P0 items after the 2nd QA release: stock detail CTA spacing, beginner STEP cards, data status badge separation, removal of "chase-buy" wording, compare empty-state guidance, and stocks explorer duplicate toggle/filter text.
 - **Changed**: Added `StockDetailActionButtons` as the shared stock-detail CTA component, converted beginner reading steps into three `StepCard` cards, separated data-status pills, rewrote the surge-risk copy to mention volatility and sustainability checks, upgraded `/compare` empty state with search/recommended/recent/watchlist entry points, and replaced the quick-preset/details filter duplicated labels with controlled single-state labels.

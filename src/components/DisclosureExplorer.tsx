@@ -306,25 +306,45 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         </div>
 
         {/* 분석 대상만 / 전체 시장 (설계서 §15) — 홈은 분석 대상 중심, 공시 페이지는 전체 시장 탐색까지 */}
-        <div className="flex items-center gap-1.5 flex-wrap mb-3">
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mr-0.5">범위</span>
-          {([
-            { key: "all", label: "전체 시장", count: grouped.length },
-            { key: "universe", label: "분석 대상만", count: universeCount },
-          ] as const).map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={() => setScope(opt.key)}
-              aria-pressed={scope === opt.key}
-              className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " +
-                (scope === opt.key
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400")}
+        <div className="mb-3">
+          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+            <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">표시 범위</span>
+            <div
+              role="group"
+              aria-label="공시 표시 범위"
+              className="inline-flex rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 p-0.5"
             >
-              {opt.label} <span className="tabular-nums opacity-80">{opt.count}</span>
-            </button>
-          ))}
+              {([
+                { key: "all", label: "전체 시장", count: grouped.length },
+                { key: "universe", label: "분석 대상만", count: universeCount },
+              ] as const).map((opt) => {
+                const active = scope === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setScope(opt.key)}
+                    aria-pressed={active}
+                    className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " +
+                      (active
+                        ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600"
+                        : "bg-transparent text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100")}
+                  >
+                    {opt.label}
+                    <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
+                      (active
+                        ? "bg-white/20 text-white"
+                        : "bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300")}>
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed break-words">
+            <strong className="font-medium text-zinc-600 dark:text-zinc-300">분석 대상만</strong> = 오른스코어가 점수를 산출하는 분석 대상 종목의 공시 · <strong className="font-medium text-zinc-600 dark:text-zinc-300">전체 시장</strong> = 분석 대상 외 종목까지 포함한 DART 전체 공시
+          </p>
         </div>
 
         <div className="flex gap-1.5 flex-wrap">

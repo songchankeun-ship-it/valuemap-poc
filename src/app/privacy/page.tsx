@@ -68,7 +68,8 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5-1. 개인정보의 국외 이전</h2>
           <p>아래 제공자는 국외에 서버를 두고 있어, 5항의 항목·목적에 따라 개인정보가 국경을 넘어 이전·보관·처리될 수 있습니다. 이용자는 국외 이전을 원치 않을 경우 해당 기능(AI 분석·알림 등) 사용을 중단하거나 회원 탈퇴로 거부할 수 있습니다.</p>
-          <div className="mt-3 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
+          <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 md:hidden">표가 화면보다 넓으면 좌우로 밀어 전체 열(이전 항목·목적·거부 방법 등)을 볼 수 있습니다.</p>
+          <div className="mt-2 overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
             <table className="min-w-[480px] w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">
