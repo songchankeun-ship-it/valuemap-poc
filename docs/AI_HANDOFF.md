@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T11:10:00+09:00
+Last updated: 2026-06-26T22:32:55+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 2차 QA main 반영 및 운영 배포
-- Run: manual codex deploy after Task 63
-- Status: completed
+- Task: Post-deploy 2nd QA P0 polish
+- Run: manual codex fix after user QA review
+- Status: local verified; commit/push pending at this checkpoint
 - Agent: codex
-- Note: User approved deployment. Codex preserved the latest origin/main daily data refresh, merged the completed Task 60~63 QA branch, verified tsc/metrics/build, pushed origin/main to 2efe523, and confirmed ornscore.com public markers on /pricing, /privacy, /offline, /backtest, /stock/005380, /status plus manifest HTTP 200.
+- Note: Fixed the remaining P0 UX issues: separated stock-detail CTA buttons via shared StockDetailActionButtons, converted beginner STEP guidance into 3 cards, split data-status badges, removed chase-buy wording, improved compare empty state with search/recommended/recent/watchlist entry points, and removed duplicate expand/filter text in stocks explorer. Checks passed: tsc, verify_metrics for 138 stocks, npm run build, and local browser smoke on /stock/005380, /compare, /stocks.
 
 ## Next Agent Checklist
 

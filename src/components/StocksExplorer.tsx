@@ -258,6 +258,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showQuickPresets, setShowQuickPresets] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("card");
@@ -804,34 +805,40 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       </section>
 
       {/* ── 빠른 프리셋 칩(보조 필터) — 기본 접힘, 필요할 때만 펼치는 보조 도구 ── */}
-      <details className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 group">
-        <summary className="flex items-center justify-between gap-2 flex-wrap cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+      <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
+        <button
+          type="button"
+          onClick={() => setShowQuickPresets((v) => !v)}
+          aria-expanded={showQuickPresets}
+          className="w-full flex items-center justify-between gap-2 text-left"
+        >
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">빠른 프리셋 <span className="font-normal normal-case text-zinc-400 dark:text-zinc-500">— 지표로 바로 좁히기</span></span>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 group-open:hidden">펼치기 ▾</span>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 hidden group-open:inline">접기 ▴</span>
-        </summary>
-        <div className="flex gap-1.5 flex-wrap mt-2.5">
-          {PRESETS.map((p) => {
-            const selected = activePreset === p.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => togglePreset(p)}
-                title={p.desc + " · 예상 " + (presetCounts[p.id] ?? 0) + "개"}
-                className={"text-xs px-3 py-1.5 rounded-full border transition " +
-                  (selected
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
-              >
-                {p.label}
-                {selected ? <span aria-hidden className="ml-1">✓</span> : null}
-              </button>
-            );
-          })}
-        </div>
-      </details>
+          <span className="shrink-0 text-[10px] text-zinc-400 dark:text-zinc-500">{showQuickPresets ? "접기 ▴" : "펼치기 ▾"}</span>
+        </button>
+        {showQuickPresets ? (
+          <div className="flex gap-1.5 flex-wrap mt-2.5">
+            {PRESETS.map((p) => {
+              const selected = activePreset === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => togglePreset(p)}
+                  title={p.desc + " · 예상 " + (presetCounts[p.id] ?? 0) + "개"}
+                  className={"text-xs px-3 py-1.5 rounded-full border transition " +
+                    (selected
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
+                >
+                  {p.label}
+                  {selected ? <span aria-hidden className="ml-1">✓</span> : null}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+      </section>
 
       {/* ── 내 검색 조건(저장/알림) ── */}
       <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
@@ -877,16 +884,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <option value="r3m-desc">3개월 상승률 높은순</option>
           </optgroup>
         </select>
-        <button type="button" onClick={() => setDrawerOpen(true)} className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
+        <button type="button" onClick={() => setDrawerOpen(true)} aria-label="상세 필터 열기" className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>상세 필터</span>
+          <span>필터</span>
           {nonThemeFilterCount + themeFilterCount > 0 ? (
             <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
           ) : null}
         </button>
         <button type="button" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced} className="hidden lg:inline-flex px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>{showAdvanced ? "상세 필터 닫기 ▴" : "상세 필터 열기 ▾"}</span>
+          <span>{showAdvanced ? "필터 닫기 ▴" : "필터 열기 ▾"}</span>
           {activeFilterCount > 0 ? (
             <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
           ) : null}

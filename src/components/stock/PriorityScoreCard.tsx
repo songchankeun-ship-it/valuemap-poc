@@ -1,4 +1,19 @@
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
+import type { ReactNode } from "react";
+
+function DataStatusPill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "good" | "warn" }) {
+  const toneClass =
+    tone === "good"
+      ? "border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300"
+      : tone === "warn"
+      ? "border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300"
+      : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-300";
+  return (
+    <span role="listitem" className={"inline-flex items-center rounded-md border px-2.5 py-1 font-medium whitespace-nowrap " + toneClass}>
+      {children}
+    </span>
+  );
+}
 
 /**
  * 탐색 우선도 카드 — 점수 게이지 + 전체/업종 순위 + 데이터 완성도·이상값·산식 버전.
@@ -49,15 +64,15 @@ export function PriorityScoreCard({
       </div>
 
       {/* 데이터 상태 배지 — 각각 독립 pill로 분리(텍스트처럼 붙지 않게). */}
-      <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[10px] tabular-nums">
-        <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 px-2 py-0.5 text-zinc-600 dark:text-zinc-300">필수 데이터 {completeness}%</span>
+      <div role="list" aria-label="데이터 상태 배지" className="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] tabular-nums">
+        <DataStatusPill>필수 데이터 {completeness}%</DataStatusPill>
         {suspect ? (
-          <span className="inline-flex items-center rounded-full border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-300">이상값 점검 중 · 임시 점수</span>
+          <DataStatusPill tone="warn">이상값 점검 중 · 임시 점수</DataStatusPill>
         ) : (
-          <span className="inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 font-medium text-emerald-700 dark:text-emerald-300">이상값 점검 통과</span>
+          <DataStatusPill tone="good">이상값 점검 통과</DataStatusPill>
         )}
         {metricsVersion ? (
-          <span className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/60 px-2 py-0.5 text-zinc-600 dark:text-zinc-300">{metricsVersion}</span>
+          <DataStatusPill>{metricsVersion}</DataStatusPill>
         ) : null}
       </div>
     </div>

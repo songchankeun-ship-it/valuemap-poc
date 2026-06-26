@@ -204,7 +204,14 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
           </p>
         </div>
 
-        <div className="max-w-md mx-auto space-y-5">
+        <div className="max-w-2xl mx-auto space-y-5">
+          {/* 1) 직접 검색하기 — 빈 상태의 첫 행동 */}
+          <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-4">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목명 또는 코드 검색</div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 4개까지 담아 비교할 수 있어요.</p>
+            <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="예: 삼성전자, 005930" />
+          </div>
+
           {/* 선택 칩 + 최소 2개 안내 — 1개 선택 시 */}
           {selected ? (
             <div className="rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 p-3">
@@ -226,31 +233,12 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             </div>
           ) : null}
 
-          {/* 1) 최근 본 종목에서 추가 — 실제 방문 기록이 있을 때만 */}
-          {recentAddable.length > 0 ? (
-            <div>
-              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">최근 본 종목에서 추가</div>
-              <div className="flex flex-wrap gap-1.5">
-                {recentAddable.map((r) => (
-                  <button
-                    key={r.ticker}
-                    type="button"
-                    onClick={() => { void addToCompare(r.ticker); }}
-                    className="text-xs px-2.5 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
-                  >
-                    + {r.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
           {/* 2) 추천 비교 세트 — 같은 업종끼리 한 번에 담기 */}
           {recommendedSets.length > 0 ? (
             <div>
               <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">추천 비교 세트</div>
               <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-2">같은 업종 종목을 한 번에 담아 바로 비교를 시작할 수 있어요.</p>
-              <div className="space-y-1.5">
+              <div className="grid gap-1.5 sm:grid-cols-2">
                 {recommendedSets.map((set) => (
                   <button
                     key={set.label}
@@ -265,6 +253,27 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
               </div>
             </div>
           ) : null}
+
+          {/* 3) 최근 본 종목에서 추가 */}
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-3">
+            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">최근 본 종목에서 추가</div>
+            {recentAddable.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {recentAddable.map((r) => (
+                  <button
+                    key={r.ticker}
+                    type="button"
+                    onClick={() => { void addToCompare(r.ticker); }}
+                    className="text-xs px-2.5 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                  >
+                    + {r.name}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">종목 상세를 열어본 뒤 다시 오면 최근 본 종목에서 바로 추가할 수 있어요.</p>
+            )}
+          </div>
 
           {/* 3) 오늘 Top 5에서 고르기 */}
           {top5.length > 0 ? (
@@ -286,10 +295,10 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             </div>
           ) : null}
 
-          {/* 4) 관심 종목에서 추가 — 관심 종목이 있을 때만 */}
-          {watchlistAddable.length > 0 ? (
-            <div>
-              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">관심 종목에서 추가</div>
+          {/* 5) 관심 종목에서 추가 */}
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-3">
+            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">관심 종목에서 추가</div>
+            {watchlistAddable.length > 0 ? (
               <div className="flex flex-wrap gap-1.5">
                 {watchlistAddable.map((w) => (
                   <button
@@ -302,13 +311,12 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                   </button>
                 ))}
               </div>
-            </div>
-          ) : null}
-
-          {/* 5) 직접 검색하기 */}
-          <div>
-            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">직접 검색하기</div>
-            <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="종목명·코드로 검색" />
+            ) : (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">관심 종목을 담아두면 여기서 바로 비교에 추가할 수 있어요.</p>
+                <Link href="/watchlist" prefetch={false} className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">관심 종목 보기</Link>
+              </div>
+            )}
           </div>
 
           {/* 6) 같은 업종에서 고르기 */}

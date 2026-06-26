@@ -5,7 +5,7 @@ import {
   type Reading,
   type StockShape,
 } from "@/lib/metricReadings";
-import { NextActionButtons } from "@/components/stock/NextActionButtons";
+import { StockDetailActionButtons } from "@/components/stock/StockDetailActionButtons";
 
 /**
  * 점수를 초보자가 이해할 수 있는 한 줄 행동 가이드로 번역.
@@ -34,6 +34,27 @@ const CONFIRM_ORDER: { step: string; detail: string; href: string; anchorLabel: 
     anchorLabel: "재무",
   },
 ];
+
+function StepCard({ item, index }: { item: (typeof CONFIRM_ORDER)[number]; index: number }) {
+  return (
+    <a
+      href={item.href}
+      className="block h-full rounded-lg border border-blue-100 dark:border-blue-950 bg-white dark:bg-zinc-900 p-3 shadow-sm hover:border-blue-400 dark:hover:border-blue-700 hover:bg-blue-50/60 dark:hover:bg-blue-950/20 transition group"
+    >
+      <div className="mb-2">
+        <span className="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-[10px] font-bold tracking-wide text-white tabular-nums">
+          STEP {index + 1}
+        </span>
+      </div>
+      <div className="text-sm font-semibold leading-snug text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition">
+        {item.step}
+      </div>
+      <p className="mt-1 text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+        {item.detail}
+      </p>
+    </a>
+  );
+}
 
 export function BeginnerReading({ s }: { s: StockShape }) {
   const readings: Reading[] = readingsOf(s);
@@ -72,19 +93,9 @@ export function BeginnerReading({ s }: { s: StockShape }) {
       {/* 먼저 확인할 것 — 점수 → 공시 → 재무 STEP 카드(설계서 §9.5·§3 번호 중복 제거). ol 자동 번호 대신 STEP n 단일 표기 */}
       <div className="rounded-md border border-blue-100 dark:border-blue-950 bg-blue-50/40 dark:bg-blue-950/20 p-3 mb-3">
         <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">먼저 확인할 것 <span className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">— 순서대로</span></div>
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
           {CONFIRM_ORDER.map((c, i) => (
-            <a
-              key={c.href}
-              href={c.href}
-              className="flex gap-2.5 items-start rounded-md border border-blue-100 dark:border-blue-950 bg-white/70 dark:bg-zinc-900/50 p-2.5 hover:border-blue-400 dark:hover:border-blue-700 transition group"
-            >
-              <span className="shrink-0 inline-flex items-center h-5 px-1.5 rounded bg-blue-600 text-white text-[10px] font-bold tracking-wide tabular-nums">STEP {i + 1}</span>
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition break-keep">{c.step} <span aria-hidden>→</span></div>
-                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-snug mt-0.5">{c.detail}</p>
-              </div>
-            </a>
+            <StepCard key={c.href} item={c} index={i} />
           ))}
         </div>
       </div>
@@ -105,7 +116,7 @@ export function BeginnerReading({ s }: { s: StockShape }) {
       {/* 다음으로 확인하기 — 초보자 해석 카드 안 직접 CTA (설계서 §9 / [P1-3]) */}
       <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3 mb-3">
         <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">다음으로 확인하기</div>
-        <NextActionButtons />
+        <StockDetailActionButtons />
       </div>
 
       {/* 지표별 한 줄 해석 — 기본 접힘 */}

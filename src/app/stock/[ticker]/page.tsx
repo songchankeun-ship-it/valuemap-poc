@@ -187,9 +187,9 @@ export default async function StockDetailPage({ params }: PageProps) {
   else if (surge3m !== null && surge3m >= 50) heroWarnings.push("최근 상승폭 큼 — 급등 사유 확인");
   const riskAlert: HeroRiskAlert | null =
     surge3m !== null && surge3m >= 80
-      ? { level: "high", label: "급등 위험", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 단기 과열·추격매수 주의, 급등 사유부터 확인하세요.` }
+      ? { level: "high", label: "변동성 확대", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 최근 상승폭이 커 변동성이 확대될 수 있습니다. 급등 원인과 지속 가능성을 확인하세요.` }
       : surge3m !== null && surge3m >= 50
-      ? { level: "warn", label: "과열 주의", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 추격매수보다 급등 사유 확인이 먼저입니다.` }
+      ? { level: "warn", label: "상승폭 확대", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 최근 상승폭이 커 변동성이 확대될 수 있습니다. 급등 원인과 지속 가능성을 확인하세요.` }
       : null;
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시

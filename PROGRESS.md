@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 - [codex] Post-deploy 2nd QA P0 polish complete
+- **Scope**: Closed the user-reported post-deploy P0 items after the 2nd QA release: stock detail CTA spacing, beginner STEP cards, data status badge separation, removal of "chase-buy" wording, compare empty-state guidance, and stocks explorer duplicate toggle/filter text.
+- **Changed**: Added `StockDetailActionButtons` as the shared stock-detail CTA component, converted beginner reading steps into three `StepCard` cards, separated data-status pills, rewrote the surge-risk copy to mention volatility and sustainability checks, upgraded `/compare` empty state with search/recommended/recent/watchlist entry points, and replaced the quick-preset/details filter duplicated labels with controlled single-state labels.
+- **Verification**: `npx tsc --noEmit` passed, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` passed for 138 stocks with 0 errors and Metrics 2.4, and `npm run build` passed.
+- **Browser smoke**: Local `127.0.0.1:3000`/`localhost:3000` checks confirmed `/stock/005380` has separated CTA buttons, 3 STEP cards, 3 data-status pills, and no forbidden "추격매수" text; `/compare` empty state shows search, recommended sets, recent-view, and watchlist UI; `/stocks` shows only one expand/collapse label and no duplicated detail-filter text.
+- **Next**: Commit, push/merge to `main`, then let Vercel deploy and public-smoke the same markers on `https://ornscore.com`.
+
 ## 2026-06-26 · [codex] 2차 QA main 반영·운영 배포 완료
 - **배포 승인/범위**: 사용자 요청 "응 배포해줘"에 따라 Task 60~63의 ORNSCORE 2차 QA 개선 결과를 `main`에 반영하고 `origin/main`에 push했다.
 - **원격 최신 데이터 보존**: push 직전 `origin/main`에 `e8222f1 chore(data): daily refresh 2026-06-26T10:44Z`가 먼저 올라와 있어, 이를 버리지 않고 2차 QA 브랜치에 병합한 뒤 `main`을 fast-forward했다.

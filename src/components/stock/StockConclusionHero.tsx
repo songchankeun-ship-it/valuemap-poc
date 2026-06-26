@@ -3,7 +3,7 @@ import { StockHeader } from "./StockHeader";
 import { PriorityScoreCard } from "./PriorityScoreCard";
 import { ConclusionSummaryCard } from "./ConclusionSummaryCard";
 import { StrengthWarningPanel } from "./StrengthWarningPanel";
-import { NextActionButtons } from "./NextActionButtons";
+import { StockDetailActionButtons } from "./StockDetailActionButtons";
 
 export interface HeroRiskAlert {
   level: "high" | "warn";
@@ -99,7 +99,7 @@ export function StockConclusionHero({
 
       <div>
         <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1.5">다음으로 확인할 것</div>
-        <NextActionButtons />
+        <StockDetailActionButtons />
       </div>
 
       <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2 space-y-0.5">
