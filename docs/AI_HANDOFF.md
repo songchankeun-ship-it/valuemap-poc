@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T23:30:00+09:00
+Last updated: 2026-06-26T14:48:15.568Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: P1 follow-up (task 66) — home disclosure policy label, disclosure scope buttons, beta→Pro pricing notice, terms copy, privacy mobile table
-- Run: claude implementation after P0 items 1-6 completed
-- Status: implemented, verified, local-smoked, committed locally (no main push)
+- Task: 66 - OrnScore P1 follow-up - disclosures pricing terms privacy
+- Run: 57
+- Status: completed
 - Agent: claude
-- Note: Implemented 4 of 5 P1 items and partially handled item 4 (terms). [1] Home DisclosureSignalSection now shows an explicit "표시 정책" line (analyzed 138-stock universe only; full market on /disclosures), count passed from dataMetadata.count. [2] /disclosures scope pills converted to a segmented button group (role=group, min-h-[38px], filled+ring selected state, aria-pressed kept, contrast count badges) plus a helper caption; default scope="all" and all filter/count logic unchanged. [3] /pricing gained a visible sky-toned callout (between cards and compare table) stating notification features are beta-free and planned to move to Pro at launch, timing/price still 미확정. [4] /terms added a stable "현재 적용되는 정책 (상용화 전)" box (no paid billing, magic-link/Kakao auth, no password storage, public data sources) while keeping unfinalized billing/refund clauses flagged as 미확정; recorded residual legal-confirmation risk in docs/legal-ai-commercial-readiness.md §F (not marked resolved). [5] /privacy §5-1 overseas-transfer table kept its 7-column structure (already overflow-x-auto min-w-[480px]); added a mobile-only horizontal-scroll affordance hint. Checks passed: tsc 0, verify_metrics 138 stocks/0 errors/0 forbidden/Metrics 2.4, npm run build 0, local prod smoke on 127.0.0.1:3267 for / /disclosures /pricing /terms /privacy /stocks (all 200, 0 fatal markers, new SSR copy confirmed). Playwright not configured → 390px visual confirmation is an operator gate. No main push (project boundary); ports 4310/3000 untouched.
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
