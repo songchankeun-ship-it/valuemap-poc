@@ -114,5 +114,3 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 4. (선택) navigation-only network-first SW 검토 — 데이터 JSON 비캐시 원칙 고정 시에만.
 
 > 본 문서는 스토어 출시를 약속하지 않는다. 모든 공개 문구는 "홈 화면에 추가/설치" PWA 표현만 사용하며, App Store·Play 스토어 출시 여부는 실제 스토어 작업 착수 전까지 "미확정"으로만 표기한다.
-</content>
-</invoke>
