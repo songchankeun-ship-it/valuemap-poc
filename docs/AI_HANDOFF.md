@@ -42,6 +42,19 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 61 — OrnScore 2차 QA 설계서 PART B~E·I P1 마감 (2026-06-26, Claude)
+- What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART B(§7~9)·C(§11~13)·D(§15)·E(§16~17)·I [P1-1~P1-5] 반영. branch `ai-center/task-61-ornscore-2-qa-p1-ux-cta`, 시작 HEAD `e8e5a34`(Task 60 위, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구/표시필터/한도값만). AI Center 4310·미리보기 3000 무중단(검증 prod 3254, 내 리스너 PID 30844만 taskkill).
+- 시작 전 상태(예상과 다른 점): 플래너 라인번호 base `b2fad41` 기준 → Task 60 변경분과 어긋나 grep으로 현재 위치 재확인. 백테스트 §17 KPI 균형·"구성 예시"는 이미 충족 → 중복 0, 위험 비교 한 줄만 강화. `FEATURES`는 미소비 단일 출처(필드 추가 안전), `FREE_WATCHLIST/AI_LIMIT`은 pricing 표시 전용(게이트 미사용).
+- Changed (코드 14파일):
+  - [P1-1/2] `src/lib/limits.ts`(Free 한도 20→5·3→1), `src/lib/pricing.ts`(Free 알림="베타 무료 체험·정식 출시 시 Pro", Pro `includes` 알림 핵심 승격, `COMPARE_ROWS` 알림 free=`"베타 무료"`), `src/app/pricing/page.tsx`(Cell "베타 무료" sky 분기·범례·정직 한 줄), `src/lib/features.ts`(알림 2종 `betaFree:true,plannedPlan:"pro"` 마커만, status active 유지). **`api/cron/notify`·`api/cron/evaluate-alerts` 무변경(라이브 크론 보존)**.
+  - [P1-3] `src/components/BeginnerReading.tsx` 카드 안 직접 `<NextActionButtons />` "다음으로 확인하기" CTA로 안내문 교체(STEP 카드·순서 보존).
+  - [§11~13] `StocksExplorer.tsx`(프리셋 라벨)·`guide/metrics/page.tsx`·`metricReadings.ts`·`ScoreTooltip.tsx`·`today/page.tsx` "급등했지만 위험"/"고점 추격"/"시장의 관심" → 중립·확인 포인트.
+  - [P1-4/§15] `src/components/DisclosureExplorer.tsx` "전체 시장/분석 대상만" 범위 토글(기본 전체 시장=기존 동작 보존, scoped 카운트 일관), `src/app/page.tsx` `pickTopSignals` universe 인자(홈 공시는 분석 대상만, 표시필터·`direction` 무변경).
+  - [§16/17] `backtest/BacktestRiskNotice.tsx` 중복 고지 1줄 제거, `BacktestClient.tsx` KPI 그리드 아래 위험 비교 한 줄(MDD/Sharpe vs 벤치) 추가(수치 산출 무변경).
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0(SSG 138p+전 라우트) · 변경 14파일 금칙어 grep=부정 고지 2건만·U+FFFD 0 · 로컬 prod 3254 10경로 200·치명 마커 0 · SSR로 신 문구 렌더·구 공격적 문구 0 확인.
+- Gate note: Playwright 미구성 → **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/pricing`(3티어·알림=Pro 경계·미확정 가격·비교표 가로 스크롤)·`/stocks`(첫 화면 밀도·재라벨)·`/stock/*`(카드 내 CTA 줄바꿈)·`/disclosures`(범위 토글)·`/backtest`(단일 고지·KPI 위험 줄) 가로 오버플로 0·콘솔 0 확인 권장.**
+- Residual / next: 실 결제·구독 권한 게이트 미연결(④)·가격 미확정(④/⑤) 유지. 무료 알림은 베타 동안 실제 발송(크론 라이브) → 정식 출시 시 Pro 전환은 결제 연동과 함께. 남은 P2(§10 관리자·§21 표·§22 AI 모달·§23~24 모바일/PWA)는 별도 큐. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 60 — OrnScore 2차 QA 설계서 PART A·I P0 5종 마감 (2026-06-26, Claude)
 - What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART A(P0)·PART I [P0-1~P0-5]를 작은 단위로 반영. branch `ai-center/task-60-ornscore-2-qa-p0`, 시작 HEAD `b2fad41`(클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310[PID 11160]·미리보기 3000 무중단(검증 prod 3253, 내 node PID 14504만 taskkill).
 - 시작 전 상태 확인: P0-2(비교 빈 상태)·P0-4 홈 스냅샷 공시 카드("DART · 최신 200건 내")는 #36/#41에서 이미 완료 → 재구축 0, 실제 공백만 채움.
