@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 - [codex] Task 68 3rd QA P0 main push/public smoke complete
+- **Scope**: User approved release of Task 68 after the 3rd QA P0 automation run completed.
+- **Push**: Fast-forwarded `main` from `d63149c` to `81c7922` and pushed `origin/main`.
+- **Public smoke**: Confirmed `https://ornscore.com/theme/battery` shows the neutral `저평가 원인과 회복 근거` copy and no longer shows `매수 검토 구간`, `분할 매수 권장`, or `매수 매력 증대`. Confirmed `https://ornscore.com/stock/096770` shows `반등 근거와 추가 하락 위험` and no longer shows `저가 매수일지 추가 하락일지 판단 필요`.
+- **Limit**: `/compare` returned HTTP 200, but the text markers used by the smoke script were not SSR-visible, so compare UX should still be visually checked in-browser if the next QA pass focuses on that page.
+- **Next**: Wait for the user's next review; if no new feedback is provided, continue with 3rd QA P1 items from the spec.
+
 ## 2026-06-27 · [claude] OrnScore 3차 QA P0 마감 — 행동성 문구 중립화·CTA/STEP/배지/비교 재검증 (Task 68, Claude)
 - **범위**: 사용자 제공 `ORNSCORE_3rd_QA_improvement_spec.md` PART A(P0-1~P0-5)·PART F 체크리스트를 기준으로 3차 QA P0를 마감. branch `ai-center/task-68-ornscore-3rd-qa-p0-polish-detail-ui-`, 시작 HEAD `d63149c`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3317`, 내가 띄운 PID 37232만 taskkill). 투자 조언성·압박성 표현 신규 0.
 - **시작 전 재검증(중복 구현 방지)**: 설계서의 P0-1~4는 직전 codex 배포(`743873a` post-deploy 2nd QA P0)에서 **이미 컴포넌트로 마감**됨을 소스+SSR로 재확인 → 재구축 0.
