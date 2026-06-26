@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T08:38:30.081Z
+Last updated: 2026-06-26T09:06:18.070Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 60 - OrnScore 2차 QA P0 — 상세 번호·비교 빈상태·백테스트/공시 오해 방지
-- Run: 53
+- Task: 61 - OrnScore 2차 QA P1 — 요금제 경계·탐색 UX·상세 CTA·공시/백테스트 균형
+- Run: 54
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
