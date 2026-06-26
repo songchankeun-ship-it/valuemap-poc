@@ -66,8 +66,8 @@ export function ScoreHistoryChart({ history, currentScore }: { history: ScorePoi
           <StatBox label="이전" value="—" />
           <StatBox label="변화" value="—" />
         </div>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">
-          점수 히스토리가 아직 쌓이지 않았습니다. 매일 자동으로 기록됩니다.
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 leading-snug">
+          점수 변화 이력은 매일 자동으로 기록되며, 아직 데이터가 충분히 쌓이지 않았습니다 · 추후 축적 후 제공됩니다. 기록이 10회 이상 모이면 추세 그래프가 함께 표시됩니다.
         </p>
       </div>
     );

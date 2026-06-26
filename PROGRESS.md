@@ -1,5 +1,36 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · 상용화 고도화 §5 점수 산출 근거·설명 레이어 강화 (Task 43, Claude)
+
+### 목표
+- 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§5 점수 산출 근거 고도화**(§5.1 종합 점수 근거 보기·§5.2 지표별 상세 설명) 중심. 사용자가 종목 상세에서 "왜 이 점수가 나왔는지"를 더 쉽게 이해하도록 **종합 점수 근거 레이어**를 추가. branch `ai-center/task-43-ornscore-2-a`. 시작 HEAD `993551c`(작업트리 클린) 위에 쌓음 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3344**`(내 리스너 node PID 27972만 taskkill). 점수 계산식(`score.ts`/`metrics.ts`/`sector.ts`)·`stocks.json`·`backtest-result.json`·`direction` **무변경**(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
+
+### 완료한 작업 (신규 2파일 + 수정 4파일, 표시 파생·문구만)
+- **신규 `src/lib/scoreBasis.ts`(순수 함수)**: 4지표 점수 + 실데이터(`returns`·`flowStats`·`per/pbr/roe`·`sectorValueScore`·`volStats`) → `{ composite, parts[] }` 근거 구조로 변환. 각 part = `{ label, kind, score, weightPct:25, contributionPts: round(score*0.25), rank, topPct, total, factors[], reading, missingNote?, extraNote? }`. 규칙: **추세** = `returns.r1m/r3m/r6m` 중 존재하는 값만 "+x.x%" factor(전무 시 missingNote); **거래활성도** = `flowStats.ratio`(5일/20일 평균 거래대금 비율) factor "x.xx배 · 거래 늘어남/비슷/줄어듦"(실데이터, 결측 시 missingNote); **밸류** = PER·PBR·ROE + 업종 상대(`sectorValue.score>=0`일 때만, 표본<4면 extraNote "추후 데이터 축적 후 제공"); **위험조정** = 연환산변동성·최대낙폭·Sharpe 중 존재하는 값만. 강점/주의 문구는 `metricReadings.ts`의 `Reading`(meaning/action/tone)을 **재사용**(중복 정의 0). composite는 `compositeOf`(4지표 단순평균) 재사용 — 계산식 무변경.
+  - **계획 대비 개선**: 플래너는 거래활성도 원시 거래대금 필드 부재로 missingNote 처리를 가정했으나, `stocks.json`의 `flowStats.ratio`가 **138종목 전부 채워져 있고**(0.14~2.81) 점수 산식의 실제 입력(ScoreTooltip "5일 거래량 ÷ 20일 평균"과 일치)임을 확인 → **지어내지 않고 실데이터 ratio를 factor로 정직하게 노출**(missingNote는 결측 시 graceful 폴백으로 유지).
+- **신규 `src/components/stock/ScoreBasisBreakdown.tsx`(서버)**: 상단 "종합 N점 = 추세·거래활성도·밸류·위험조정 4지표 동일 가중(각 25%) 평균" 설명 + **점수≠순위 1줄(카드 내 1곳만)** + 지표별 행(점수/100·`scoreColor.ts` 구간색 막대·"종합 기여 ≈ N점(가중 25%)"·전체 상대순위·상위/하위%·근거 factor 칩·강점/주의 1줄, factors 없으면 missingNote 중립 회색). 하단 고지("매수·매도 추천이 아닌 탐색 우선순위" + 지표 가이드 링크). 신규 npm 0(순수 HTML/Tailwind). 반응형: `grid-cols-1 sm:grid-cols-2`·`flex-wrap`·`tabular-nums`·`min-w-0`/`break-words`(390px 가드).
+- **`src/app/stock/[ticker]/page.tsx`**: "점수 근거" 탭의 단순 "점수는 어떻게 나오나요?" 카드를 `ScoreBasisBreakdown`으로 **대체**. `buildScoreBasis`에 이미 계산된 `rankOf/topPctOf`·`sectorValue`·`s.returns`·`vs`(volStats)·`s.flowStats` 전달. `dataWarnings` 경고·`ScoreHistoryChart`·`StockEventTimeline`·`AiAnalysisCard` 보존. 미사용된 `ScoreTooltip` import 제거.
+- **`src/lib/mockData.ts`**: `MockStock`에 `flowStats?`(returns·volStats와 동일하게 옵셔널) 타입 추가 — `s.flowStats` 타입 안전 접근용(런타임값은 `realStockPool`이 이미 제공).
+- **`src/components/ScoreHistoryChart.tsx`(작업범위 3)**: 빈 상태 문구를 "점수 변화 이력은 매일 자동 기록되며 아직 데이터가 충분히 쌓이지 않았습니다 · 추후 축적 후 제공 · 10회 이상 모이면 추세 그래프"로 명확히 분리. 데이터 있는 경우 로직·산식 무변경(현재값=`currentScore` 권위값, 이전=재계산 유지).
+- **`src/app/guide/metrics/page.tsx`**: "읽기 전 검토 포인트" 박스(재사용)에 **"종합점수 = 4지표 각 25% 동일 가중 평균"** 1항목 추가(한 지표만 높아도 종합은 중간대·점수 근거 보기 안내). 기존 점수≠순위·밸류 기준 항목 보존. 신규 자문 표현 0.
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p(`/stock/[ticker]` 14.1 kB), exit 0
+- 변경 6파일 금지표현(강력 매수/급등 예상/목표가/손절가/진입 시점/따라 사기/AI 픽/매수 후보/수익 보장/매수·매도 추천 등) grep = 0(유일 매치는 부정문 고지 "매수·매도 추천이 **아닌** 탐색 우선순위").
+- 로컬 prod(3344, 내 리스너 PID 27972만 taskkill·4310[PID 11160]·3000 무중단): `/stock/005380`·`/stock/032830`·`/guide/metrics` HTTP 200·에러 마커(Application error/Hydration/TypeError/ReferenceError/cannot read/Unhandled) 0. SSR 렌더 확인: "종합 점수 근거 보기"·"4지표를 동일 가중(각 25%)"·"종합 기여 ≈"·1/3/6개월 수익률·"최근 5일/20일 평균 거래대금 0.88배 · 거래 줄어듦"(005380 실데이터)·연환산 변동성·"점수와 순위는 다릅니다"·"매수·매도 추천이 아닌 탐색 우선순위", 가이드 "4지표를 각각 25%씩 동일 가중". **데이터 결측/저표본 정직 표현 확인**: 030200(통신·피어<4)에 "업종 내 상대 밸류는 추후 데이터 축적 후 제공" 렌더.
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → 실제 브라우저 자동 DESKTOP/390px 게이트 로컬 미가용(curl+SSR grep+build 대체, 픽셀 단위 미보장). **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px로 `/stock/*` 점수 근거 탭 확인 권장** — 근거 카드 2열↔1열·factor 칩 줄바꿈·기여/순위 줄·강점/주의·결측 안내(030200)·가로 오버플로우 0·콘솔 0.
+
+### 결정 / 잔여 리스크 / 다음
+- **§5.3 점수 변화 히스토리(시계열 축적)·§5.4 점수 급변 알림 라이브화는 ④ 후속**: cron 골격(`scoreHistory.ts`·`conditionAlerts.ts`) 존재하나 장기 시계열 데이터 축적·급변 사유 자동화·메일 발송 라이브는 운영 결정·데이터 필요. 이번엔 빈 상태/결측을 정직하게 분리 표시만.
+- **거래활성도 원시 거래대금 절대값(원 단위)은 미노출**: `flowStats.recent5dAvg/recent20dAvg`의 단위가 데이터상 명확하지 않아 오해 방지 위해 단위-독립 ratio(배수)만 factor로 노출. 절대 거래대금 표기는 단위 확정 후 후속.
+- 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-26 · 설계서 전체 커버리지 감사 — 추적 문서·남은 백로그 우선순위 (Task 42, Claude)
 
 ### 목표

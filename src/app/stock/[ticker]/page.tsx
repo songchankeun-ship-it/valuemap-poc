@@ -13,7 +13,6 @@ import { StockEventTimeline } from "@/components/StockEventTimeline";
 import { getScoreHistory } from "@/lib/scoreHistory";
 import { StockPriceChart } from "@/components/StockPriceChart";
 import { getPriceHistory } from "@/lib/priceHistory";
-import { ScoreTooltip } from "@/components/ScoreTooltip";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
 import { MetricInsightCards } from "@/components/stock/MetricInsightCards";
@@ -25,6 +24,8 @@ import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
 import { classifyConclusion } from "@/lib/conclusion";
+import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
+import { buildScoreBasis } from "@/lib/scoreBasis";
 
 export const revalidate = 3600;
 
@@ -154,6 +155,28 @@ export default async function StockDetailPage({ params }: PageProps) {
   };
   const rankOf = (val: number, key: "momentum" | "flow" | "value" | "vol") =>
     realStockPool.filter((p) => (key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol) > val).length + 1;
+
+  // ── 종합 점수 근거(설계서 2 §5.1~5.2) — 표시 파생만, 점수 계산식 무변경 ──
+  const scoreBasis = buildScoreBasis({
+    momentum: s.momentum,
+    flow: s.flow,
+    value: s.value,
+    vol: s.vol,
+    per: s.per,
+    pbr: s.pbr,
+    roe: s.roe,
+    total: poolN,
+    returns: s.returns,
+    volStats: vs,
+    flowStats: s.flowStats,
+    sectorValue,
+    ranks: {
+      momentum: { rank: rankOf(s.momentum, "momentum"), topPct: topPctOf(s.momentum, "momentum") },
+      flow: { rank: rankOf(s.flow, "flow"), topPct: topPctOf(s.flow, "flow") },
+      value: { rank: rankOf(s.value, "value"), topPct: topPctOf(s.value, "value") },
+      vol: { rank: rankOf(s.vol, "vol"), topPct: topPctOf(s.vol, "vol") },
+    },
+  });
 
   // ── 상단 결론 카드(StockConclusionHero) 입력값 ──────────────────────
   const suspect = dataWarnings.length > 0;
@@ -421,16 +444,8 @@ export default async function StockDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      {/* 왜 이 점수? — 강조 카드 (피드백 반영) */}
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <strong className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수는 어떻게 나오나요?</strong>
-          <ScoreTooltip kind="composite" size="md" />
-        </div>
-        <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-          종합 <strong className="tabular-nums">{composite}점</strong> = 추세·거래활성도·밸류·위험조정 4지표의 평균입니다. 각 지표 계산식은 <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline">지표 가이드</Link>에서 볼 수 있어요. 매수·매도 추천이 아닌 탐색 우선순위입니다.
-        </p>
-      </section>
+      {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2) */}
+      <ScoreBasisBreakdown basis={scoreBasis} />
 
       {scoreHistory.length > 0 ? (
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>

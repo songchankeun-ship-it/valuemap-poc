@@ -42,6 +42,21 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 43 — OrnScore 상용화 고도화 §5 점수 산출 근거·설명 레이어 강화 (2026-06-26, Claude)
+- Preview/branch: branch `ai-center/task-43-ornscore-2-a`. 시작 HEAD `993551c`(작업트리 클린) 위 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3344**`(내 리스너 node PID 27972만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 설계서 2 §5.1~5.2(종합 점수 근거 보기·지표별 상세) — 종목 상세에서 "왜 이 점수가 나왔는지"를 더 잘 보이게. 점수 계산식(`score.ts`/`metrics.ts`/`sector.ts`)·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0.
+- What changed (신규 2 + 수정 4파일):
+  - **신규 `src/lib/scoreBasis.ts`(순수)**: 4지표+실데이터(`returns`·`flowStats.ratio`·`per/pbr/roe`·`sectorValueScore`·`volStats`)→`{composite, parts[]}`. part = score·weightPct 25·`contributionPts=round(score*0.25)`·rank·topPct·factors[]·`reading`(metricReadings 재사용)·missingNote?·extraNote?. 추세=존재하는 r1m/r3m/r6m만 "+x.x%"(전무 시 missingNote)·거래활성도=flowStats.ratio "x.xx배·거래 늘어남/비슷/줄어듦"(실데이터)·밸류=PER/PBR/ROE+업종 상대(score>=0일 때만, 표본<4 extraNote)·위험조정=변동성/낙폭/Sharpe 중 존재값만. composite=`compositeOf` 재사용.
+  - **신규 `src/components/stock/ScoreBasisBreakdown.tsx`(서버)**: "종합 N점 = 4지표 동일 가중(각 25%) 평균"+점수≠순위 1줄+지표별(점수/막대/기여 ≈N점/상대순위/factor 칩/강점·주의/결측 안내)+하단 고지·지표 가이드 링크. 순수 Tailwind, 390px 가드(grid-cols-1 sm:grid-cols-2·flex-wrap·min-w-0·break-words).
+  - **`src/app/stock/[ticker]/page.tsx`**: "점수 근거" 탭 단순 카드→`ScoreBasisBreakdown` 대체(`buildScoreBasis`에 rankOf/topPctOf·sectorValue·returns·volStats·flowStats 전달). dataWarnings·ScoreHistoryChart·StockEventTimeline·AiAnalysisCard 보존. 미사용 ScoreTooltip import 제거.
+  - **`src/lib/mockData.ts`**: `MockStock.flowStats?` 타입 추가(타입 안전 접근, 런타임값은 realStockPool 제공).
+  - **`src/components/ScoreHistoryChart.tsx`**: 빈 상태 "추후 축적 후 제공·10회+ 추세 그래프" 명확화(데이터 있을 때 로직 무변경).
+  - **`src/app/guide/metrics/page.tsx`**: "읽기 전 검토 포인트"에 "종합점수 = 4지표 각 25% 동일 가중 평균" 항목 추가.
+- 플래너 대비 개선: 거래활성도 원시 거래대금 부재 가정 → 실제 `flowStats.ratio`가 138종목 전부 채워져 있고(0.14~2.81) 점수 산식 입력임을 확인 → 지어내지 않고 실데이터 ratio를 factor로 정직하게 노출(결측 시 missingNote 폴백 유지).
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/stock/[ticker]` 14.1 kB, exit 0) · 변경 6파일 금지표현 grep 0(유일 매치는 부정문 "매수·매도 추천이 아닌"). 로컬 prod(3344) `/stock/005380`·`/stock/032830`·`/guide/metrics` 200·에러 마커 0, SSR "종합 점수 근거 보기"·"4지표를 동일 가중(각 25%)"·"종합 기여 ≈"·1/3/6개월 수익률·"최근 5일/20일 평균 거래대금 0.88배 · 거래 줄어듦"·"점수와 순위는 다릅니다"·030200(피어<4) "업종 내 상대 밸류는 추후 데이터 축적 후 제공" 렌더.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+build 대체). **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/stock/*` 점수 근거 탭 확인 권장** — 근거 카드 2↔1열·factor 칩 줄바꿈·기여/순위·결측 안내(030200)·오버플로우 0·콘솔 0.
+- Residual / next: §5.3 점수 변화 시계열 축적·§5.4 급변 알림 라이브화는 ④ 후속(cron 골격 존재, 데이터·운영 결정 필요). 거래활성도 절대 거래대금(원 단위)은 단위 불명확으로 미노출(ratio만). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 42 — OrnScore 설계서 전체 커버리지 감사 — 추적 문서·남은 백로그 우선순위 (2026-06-26, Claude)
 - Preview/branch: branch `ai-center/task-42-ornscore`. 시작 HEAD `e9c3dad`(작업트리 클린) 위에 쌓음 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단(이번 작업 화면 변경 0 → 보조 포트 미기동). main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 사용자가 준 7개 설계서를 전수 정독, 현재 코드+#14~#41 결과와 대조해 **한 문서에서 추적**. 문서 작업이 주 목적 — 앱 UI 무변경(작은 오탈자 외). 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성 표현 신규 생성 0.

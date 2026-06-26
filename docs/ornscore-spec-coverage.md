@@ -75,8 +75,8 @@
 | 4.2 기준일 표시 | ① | 전역 `dataStatus`(#33) |
 | 4.3 데이터 오류 신고 | ③ | mailto 진입점 존재(#40). 카드별 인라인 신고 버튼·저장은 후속 |
 | 4.4 데이터 품질 로그(관리자) | ④ [개발] | 일별 수집 성공률·실패 이력 영속 로그 미구현 |
-| 5.1~5.2 점수 근거 보기 | ① | `stock/MetricInsightCards.tsx` 지표별 점수·해석·상위%·강점/주의(#34), `BeginnerReading` |
-| 5.3 점수 변화 히스토리 | ①/④ | `ScoreHistoryChart.tsx`·`history/page.tsx`·`scoreHistory.ts`·cron `save-scores`(Supabase). **장기 시계열 누적·급변 사유 자동화는 데이터 축적 필요(④)** |
+| 5.1~5.2 점수 근거 보기 | ① | `lib/scoreBasis.ts`+`stock/ScoreBasisBreakdown.tsx` 종합 점수 근거 보기(4지표 각 25% 동일 가중·지표별 기여 ≈N점·근거 factor[수익률·거래대금 ratio·PER/PBR/ROE·업종 상대·변동성/낙폭/Sharpe]·강점/주의·결측 시 "추후 데이터 축적 후 제공")(#43). `stock/MetricInsightCards.tsx`(#34)·`BeginnerReading`·`guide/metrics` "4지표 25% 동일 가중" 보강(#43) |
+| 5.3 점수 변화 히스토리 | ①/④ | `ScoreHistoryChart.tsx`(빈 상태 "추후 축적 후 제공·10회+ 추세 그래프" 명확화 #43)·`history/page.tsx`·`scoreHistory.ts`·cron `save-scores`(Supabase). **장기 시계열 누적·급변 사유 자동화는 데이터 축적 필요(④)** |
 | 5.4 점수 급변 알림 | ①/④ | `conditionAlerts.ts`·`cron/evaluate-alerts`·`settings/notifications`. **메일 발송 라이브·임계 튜닝은 운영 결정** |
 | 6.1~6.3 공시 분류·해석 카드 | ① | `disclosureType.ts`·`DisclosureSummaryCards`·`DisclosureExplorer`(#26·#35) |
 | 6.2 공시 중요도 점수 | ④ [개발] | 시총 대비 규모·과거 반응 기반 중요도 산출은 신규 모델·데이터 |
