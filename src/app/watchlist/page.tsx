@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 import { compositeOf } from "@/lib/score";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
+import type { StockForMatch } from "@/lib/matchConfig";
+import { realStockPool } from "@/lib/realStocks";
 
 export const metadata = {
   title: "관심 종목 — 오른스코어",
@@ -25,6 +27,21 @@ export default async function WatchlistPage() {
     value: s.value,
     vol: s.vol,
     compositeScore: Math.round(compositeOf(s)),
+  }));
+
+  // 저장 필터 실시간 충족 수 계산용 — 알림 cron(evaluate-alerts)과 동일한 StockForMatch 매핑 재사용
+  const matchPool: StockForMatch[] = realStockPool.map((s) => ({
+    ticker: s.ticker,
+    name: s.name,
+    per: s.per,
+    pbr: s.pbr,
+    roe: s.roe,
+    dividendYield: s.dividendYield ?? 0,
+    eps: s.eps ?? 0,
+    score: Math.round(compositeOf(s)),
+    marketCap: s.marketCap,
+    market: s.market ?? "KOSPI",
+    themes: s.themes,
   }));
 
   const tickerToDelta = await getScoreChangesBatch(allStocks.map((s) => s.ticker));
@@ -61,7 +78,7 @@ export default async function WatchlistPage() {
             : "현재는 이 브라우저에만 저장됩니다. 로그인하면 여러 기기에서 이어볼 수 있어요."}
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />
+      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />
     </div>
   );
 }

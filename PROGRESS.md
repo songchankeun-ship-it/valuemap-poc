@@ -1,5 +1,35 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · 상용화 고도화 2-B §8 개인화 대시보드·저장 필터·관심종목 UX (Task 44, Claude)
+
+### 목표
+- 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§8 개인화 대시보드 고도화**(8.1 내 대시보드 위젯·8.2 관심 종목·8.3 저장 필터)와 **§12 리텐션 기능**을 기존 로컬 저장(localStorage/Supabase) 구조 안에서 **재방문 개인화 출발점**으로 끌어올림. 계정/서버 스키마가 필요한 큰 위젯은 무리하지 않고 명확한 빈 상태 + 후속 범위로 분리. branch `ai-center/task-44-ornscore-2-b-ux`. 시작 HEAD `45131a4`(작업트리 클린) 위에 쌓음 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3391**`(내 리스너 node PID 22016만 taskkill). 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` **무변경**(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지). **§8.3 저장 필터 자체·조건 알림은 #36에서 이미 구현 → 재구축 안 함**, /watchlist 화면에서 가치를 보이게만.
+
+### 완료한 작업 (수정 2파일, 표시 파생·문구만)
+- **`src/components/WatchlistClient.tsx`**:
+  - **(현황 요약) "내 현황" strip 신설**(맨 위, §8.1 위젯 의도): 클라이언트에 이미 있는 3개 카운트(관심 종목 N · 최근 본 종목 N · 저장한 필터 N) + **관심 종목 변화 요약**(이미 전달받는 `tickerToDelta`에서 파생 — "점수 오른 종목 M · 내린 종목 K · 변동 없음 J", 중립 표현, 매수·매도/추천 문구 없음, "참고 정보이며 매수·매도 추천이 아닙니다" 캡션). **세 영역이 모두 비면** strip이 단일 "재방문 개인 출발점" 온보딩 1줄로 collapse. 390px 가드(`flex-wrap`·`min-w-[90px]`·`break-words`·`break-keep`·`tabular-nums`).
+  - **(저장한 필터) 신규 섹션**: `listSavedSearches()` 구독(`saved-searches-changed`·`storage`), 각 저장 필터마다 `matchConfig.ts`의 `matchesConfig`로 `matchPool` 대비 **실시간 충족 수**("현재 조건 충족 N개", 참여/탐색 프레이밍) 계산 + 짧은 자연어 조건 요약(`describeConfig`). 행은 `/stocks`로 링크(전체 config 자동 적용은 기존 라우팅에 없어 후속으로 문서화). **빈 상태**는 저장 필터의 가치를 평이하게 설명("자주 쓰는 조건을 저장해 매번 다시 설정하지 않고 한 번에 불러와요. … 로그인하면 여러 기기에서 같은 필터를 씁니다.") + `/stocks` CTA.
+  - **(정보 구조) 섹션 순서 재정렬**: 현황 요약 → 관심 종목 → **저장한 필터** → 최근 본 종목. 각 빈 상태가 다음 구체적 행동(종목 탐색/조건 만들기/종목 열기)을 명시. 기존 관심 종목 행·간단/분석 보기 토글·신호 배지·최근 본 종목 로직 보존.
+- **`src/app/watchlist/page.tsx`**: 저장 필터 충족 수 계산용 `matchPool: StockForMatch[]`를 **알림 cron(`evaluate-alerts/route.ts`)과 동일한 매핑**으로 `realStockPool`에서 만들어 `WatchlistClient`에 전달(`per/pbr/roe/dividendYield/eps/score/marketCap/market/themes`). 기존 `allStocks`(경량 StockInfo)·신호·델타·로그인 분기 보존. 신규 데이터 소스 0(`getAllStocks`/`realStockPool`/`compositeOf` 재사용).
+  - **계획 대비**: 플래너는 `getAllStocks()`에서 매치 필드를 뽑는다 했으나 `MockStock`에 `eps`/`market`이 없어 tsc 실패 → 그 두 필드를 가진 `RealStock`(`realStockPool`)로 매핑(cron과 동일). matchesConfig의 `excludeLoss`(eps)·`market` 분기가 정확히 동작.
+
+### 테스트 결과
+- `npx tsc --noEmit`: exit 0
+- `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`: 138종목 0오류 · 금칙어 0 · Metrics 2.4 일치, exit 0
+- `npm run build`: 타입게이트·SSG 138p(`/watchlist` 8.29 kB), exit 0
+- 변경 2파일 금지표현(강력 매수/급등 예상/목표가/손절가/진입 시점/매수 후보/AI 픽/수익 보장/따라 사기/오늘 살 종목 등) grep = 0(유일 매치는 부정문 고지 "매수·매도 추천이 **아닙니다**" 2곳).
+- 로컬 prod(3391, 내 리스너 PID 22016만 taskkill·4310·3000 무중단): `/watchlist`·`/stocks` HTTP 200·에러 마커 0(유일 매치는 React `suppressHydrationWarning` 정상 prop). 새 섹션은 클라 렌더라 SSR HTML 대신 빌드 청크(`.next/static/chunks/app/watchlist/page-*.js`)에 신규 문자열 포함 확인("내 현황"·"저장한 필터"·"현재 조건 충족"·"관심 종목 변화"·"종목 탐색에서 조건 만들기"; 온보딩 문구는 "다시 방문했을 때 … 개인 출발점"으로 동등 표현).
+
+### 게이트 한계 / 운영자 요청
+- Playwright 미구성 → 자동 DESKTOP/390px 게이트 로컬 미가용(curl+SSR grep+빌드 청크 grep+build 대체, 픽셀 단위 미보장). **운영자: http://127.0.0.1:3000 재빌드·재기동 후 데스크톱/390px로 `/watchlist` 확인 권장** — 현황 strip 카운트 3칸 줄바꿈·관심 변화 요약 줄바꿈·저장 필터 카드 충족 수/조건 요약·빈 상태(관심/저장/최근 각각)·가로 오버플로우 0·콘솔 0.
+
+### 결정 / 잔여 리스크 / 다음(후속 범위 — 계정/서버 스키마 결정 필요, 이번 미구현)
+- **§8.1 서버 백엔드 위젯**(관심종목 공시·알림 위젯·업종별 Top5·거래활성도 급증 위젯·오늘의 요약 리포트), **§8.2 관심종목 그룹 분류·CSV 다운로드**, **§8.4 분석 메모(종목별 개인 메모)**, **최근 본 종목 기기 간 동기화**는 계정/서버 스키마 결정이 필요해 **후속 범위**로 분리(`docs/ornscore-spec-coverage.md` §8 행 교차참조).
+- **저장 필터 충족 수는 비로그인 시 클라/로컬 기준**(localStorage 저장 필터 × 현재 점수 풀). 저장 필터 행 클릭 시 **전체 config 자동 적용 라우팅은 미구현** — 현재는 `/stocks`로만 이동(StocksExplorer가 저장 목록을 직접 노출). URL 파라미터 기반 자동 적용은 후속.
+- 원격 갱신·main 머지·외부 릴리스는 범위 밖(운영자).
+
+---
+
 ## 2026-06-26 · 상용화 고도화 §5 점수 산출 근거·설명 레이어 강화 (Task 43, Claude)
 
 ### 목표

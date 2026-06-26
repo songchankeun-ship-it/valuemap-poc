@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 44 — OrnScore 상용화 고도화 2-B §8 개인화 대시보드·저장 필터·관심종목 UX (2026-06-26, Claude)
+- Preview/branch: branch `ai-center/task-44-ornscore-2-b-ux`. 시작 HEAD `45131a4`(작업트리 클린) 위 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3391**`(내 리스너 node PID 22016만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 설계서 2 §8 개인화 대시보드(8.1 위젯·8.2 관심·8.3 저장 필터)·§12 리텐션을 기존 로컬 저장 구조 안에서 **재방문 개인 출발점**으로. 큰 계정/서버 위젯은 빈 상태+후속 범위로 분리. §8.3 저장 필터·조건 알림은 #36 기구현 → 재구축 안 함(가치 노출만). 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0.
+- What changed (수정 2파일, 표시 파생·문구만):
+  - **`src/components/WatchlistClient.tsx`**: (1) 맨 위 **"내 현황" strip** — 관심 N·최근 본 N·저장 필터 N 카운트 + 관심 종목 변화 요약(`tickerToDelta` 파생: 오른 M·내린 K·변동 없음 J, 중립·"매수·매도 추천이 아닙니다" 캡션); 세 영역 모두 비면 단일 "다시 방문했을 때 보는 개인 출발점" 온보딩으로 collapse(390px: flex-wrap·min-w-[90px]·break-words/keep·tabular-nums). (2) **"저장한 필터" 신규 섹션** — `listSavedSearches()` 구독(saved-searches-changed·storage), `matchConfig.matchesConfig`로 `matchPool` 대비 실시간 "현재 조건 충족 N개" + `describeConfig` 자연어 요약, 행은 `/stocks` 링크(전체 config 자동 적용 미구현→후속), 빈 상태는 저장 필터 가치 설명+`/stocks` CTA. (3) **섹션 순서**: 현황 요약→관심 종목→저장한 필터→최근 본 종목, 각 빈 상태가 다음 행동 명시. 기존 관심 행·간단/분석 토글·신호 배지·최근 본 로직 보존.
+  - **`src/app/watchlist/page.tsx`**: `matchPool: StockForMatch[]`를 알림 cron(`evaluate-alerts/route.ts`)과 동일 매핑으로 `realStockPool`에서 만들어 전달. 기존 allStocks·신호·델타·로그인 분기 보존, 신규 데이터 소스 0.
+  - 플래너 대비: `getAllStocks()`(MockStock)에 `eps`/`market` 없어 tsc 실패 → 그 필드를 가진 `RealStock`(`realStockPool`)로 매핑(cron 동일) — matchesConfig의 excludeLoss(eps)·market 분기 정확 동작.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p·`/watchlist` 8.29 kB, exit 0) · 변경 2파일 금지표현 grep 0(유일 매치는 부정문 "매수·매도 추천이 **아닙니다**" 2곳). 로컬 prod(3391) `/watchlist`·`/stocks` 200·에러 마커 0(유일 매치는 React `suppressHydrationWarning`). 새 섹션은 클라 렌더라 빌드 청크(`app/watchlist/page-*.js`)에 신규 문자열 포함 확인.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+빌드 청크 grep+build 대체). **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/watchlist` 확인 권장** — 현황 strip 3칸·관심 변화 요약·저장 필터 충족 수/조건 요약·빈 상태(관심/저장/최근)·오버플로우 0·콘솔 0.
+- Residual / next(후속 범위 — 계정/서버 스키마 결정 필요, 이번 미구현): §8.1 서버 백엔드 위젯(관심종목 공시·알림 위젯·업종별 Top5·거래활성도 급증·오늘의 요약 리포트), §8.2 그룹 분류·CSV 다운로드, §8.4 분석 메모(종목별 개인 메모), 최근 본 종목 기기 간 동기화 → `docs/ornscore-spec-coverage.md` §8 행 교차참조. 저장 필터 충족 수는 비로그인 시 클라/로컬 기준, 행 클릭 시 전체 config 자동 적용 라우팅 미구현(현재 `/stocks` 이동만). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 43 — OrnScore 상용화 고도화 §5 점수 산출 근거·설명 레이어 강화 (2026-06-26, Claude)
 - Preview/branch: branch `ai-center/task-43-ornscore-2-a`. 시작 HEAD `993551c`(작업트리 클린) 위 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3344**`(내 리스너 node PID 27972만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 설계서 2 §5.1~5.2(종합 점수 근거 보기·지표별 상세) — 종목 상세에서 "왜 이 점수가 나왔는지"를 더 잘 보이게. 점수 계산식(`score.ts`/`metrics.ts`/`sector.ts`)·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시 파생만), 신규 npm 0, 투자 조언성 표현 신규 생성 0.

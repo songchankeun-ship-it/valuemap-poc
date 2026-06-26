@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -11,6 +11,8 @@ import {
   type WatchlistItem,
 } from "@/lib/watchlist";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
+import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -28,6 +30,30 @@ function formatTime(iso: string): string {
   const day = Math.floor(hr / 24);
   if (day < 7) return `${day}일 전`;
   return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
+}
+
+const CAP_LABELS: Record<string, string> = { large: "대형주", mid: "중형주", small: "소형주" };
+
+/** 저장 필터 조건을 짧은 자연어로 요약(표시용, 산식·점수 무관) */
+function describeConfig(c: SavedSearchConfig): string {
+  const parts: string[] = [];
+  if (c.query) parts.push(`"${c.query}"`);
+  if (c.minComposite) parts.push(`종합 ${c.minComposite}점+`);
+  if (c.valueMin) parts.push(`밸류 ${c.valueMin}+`);
+  if (c.momentumMin) parts.push(`추세 ${c.momentumMin}+`);
+  if (c.flowMin) parts.push(`거래활성도 ${c.flowMin}+`);
+  if (c.volMin) parts.push(`위험조정 ${c.volMin}+`);
+  if (c.roeMin) parts.push(`ROE ${c.roeMin}%+`);
+  if (c.divYieldMin) parts.push(`배당 ${c.divYieldMin}%+`);
+  if (c.perMax) parts.push(`PER ${c.perMax}↓`);
+  if (c.pbrMax) parts.push(`PBR ${c.pbrMax}↓`);
+  if (c.capBucket && c.capBucket !== "all" && CAP_LABELS[c.capBucket]) parts.push(CAP_LABELS[c.capBucket]);
+  if (c.market && c.market !== "all") parts.push(c.market);
+  if (c.excludeLoss) parts.push("적자 제외");
+  if (c.themes && c.themes.length > 0) {
+    parts.push(c.themes.slice(0, 2).join("·") + (c.themes.length > 2 ? ` 외 ${c.themes.length - 2}` : ""));
+  }
+  return parts.length > 0 ? parts.join(" · ") : "조건 지정 없음(전체)";
 }
 
 type StockInfo = {
@@ -56,17 +82,20 @@ const SIGNAL_TONE: Record<string, string> = {
 
 export function WatchlistClient({
   allStocks,
+  matchPool = [],
   tickerToSignal = {},
   tickerToDelta = {},
   isLoggedIn = false,
 }: {
   allStocks: StockInfo[];
+  matchPool?: StockForMatch[];
   tickerToSignal?: Record<string, SignalInfo>;
   tickerToDelta?: Record<string, number>;
   isLoggedIn?: boolean;
 }) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
+  const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
@@ -101,6 +130,7 @@ export function WatchlistClient({
       }
     }
     load();
+    listSavedSearches().then((r) => { if (mounted) setSavedSearches(r); }).catch(() => {});
     // 무한 로딩 방지 — 8초 후 강제 종료
     const loadTimeout = setTimeout(() => { if (mounted) setLoading(false); }, 8000);
 
@@ -112,15 +142,22 @@ export function WatchlistClient({
     function onRecentChange() {
       if (mounted) setRecent(getRecentViews());
     }
+    function onSavedChange() {
+      listSavedSearches().then((r) => { if (mounted) setSavedSearches(r); }).catch(() => {});
+    }
 
     window.addEventListener("watchlist-changed", onWatchlistChange);
     window.addEventListener("recent-views-changed", onRecentChange);
+    window.addEventListener("saved-searches-changed", onSavedChange);
+    window.addEventListener("storage", onSavedChange);
 
     return () => {
       mounted = false;
       clearTimeout(loadTimeout);
       window.removeEventListener("watchlist-changed", onWatchlistChange);
       window.removeEventListener("recent-views-changed", onRecentChange);
+      window.removeEventListener("saved-searches-changed", onSavedChange);
+      window.removeEventListener("storage", onSavedChange);
     };
   }, []);
 
@@ -135,8 +172,11 @@ export function WatchlistClient({
     window.dispatchEvent(new CustomEvent("recent-views-changed"));
   }
 
-  function nameOf(ticker: string): string {
-    return allStocks.find((s) => s.ticker === ticker)?.name ?? ticker;
+  function matchCountOf(config: SavedSearchConfig): number {
+    if (matchPool.length === 0) return 0;
+    let n = 0;
+    for (const s of matchPool) if (matchesConfig(s, config)) n += 1;
+    return n;
   }
 
   if (loading) {
@@ -156,8 +196,59 @@ export function WatchlistClient({
     );
   }
 
+  // 관심 종목 점수 변화 요약(오늘 기준 · 중립 표현)
+  let upCount = 0;
+  let downCount = 0;
+  let flatCount = 0;
+  for (const item of watchlist) {
+    const d = tickerToDelta[item.ticker];
+    const r = d === undefined ? 0 : Math.round(d);
+    if (r > 0) upCount += 1;
+    else if (r < 0) downCount += 1;
+    else flatCount += 1;
+  }
+
+  const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
+
   return (
     <div className="space-y-8">
+      {/* 내 현황 요약 — 재방문 개인화 출발점 */}
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <LayoutDashboard className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">내 현황</h2>
+        </div>
+        {!hasAnything ? (
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed break-words">
+            여기는 다시 방문했을 때 <strong className="text-zinc-800 dark:text-zinc-200">내 관심 종목·최근 본 종목·저장한 필터</strong>를 한곳에서 보는 개인 출발점이에요. 종목을 관심에 담거나 탐색 조건을 저장하면 다음 방문부터 이 화면이 채워집니다.
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            <div className="flex items-stretch gap-2 flex-wrap">
+              {([
+                ["관심 종목", watchlist.length],
+                ["최근 본 종목", recent.length],
+                ["저장한 필터", savedSearches.length],
+              ] as const).map(([label, n]) => (
+                <div key={label} className="flex-1 min-w-[90px] bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-3 py-2 text-center">
+                  <div className="text-lg font-bold tabular-nums text-zinc-900 dark:text-zinc-100">{n}</div>
+                  <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{label}</div>
+                </div>
+              ))}
+            </div>
+            {watchlist.length > 0 ? (
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug break-words tabular-nums">
+                <span className="text-zinc-500 dark:text-zinc-500">관심 종목 변화(오늘):</span>{" "}
+                점수 오른 종목 <strong className="text-red-600 dark:text-red-400">{upCount}</strong> ·
+                내린 종목 <strong className="text-blue-600 dark:text-blue-400">{downCount}</strong> ·
+                변동 없음 <strong className="text-zinc-700 dark:text-zinc-300">{flatCount}</strong>
+                <span className="block mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</span>
+              </p>
+            ) : null}
+          </div>
+        )}
+      </section>
+
       {/* 관심 종목 */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -267,7 +358,69 @@ export function WatchlistClient({
         )}
       </section>
 
-      {/* 최근 본 */}
+      {/* 저장한 필터 */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
+            <SlidersHorizontal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            저장한 필터
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-normal">
+              {savedSearches.length}개
+            </span>
+          </h2>
+          {savedSearches.length > 0 ? (
+            <Link href="/stocks" className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-0.5">
+              조건 추가 <ArrowRight className="w-3 h-3" />
+            </Link>
+          ) : null}
+        </div>
+
+        {savedSearches.length === 0 ? (
+          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 text-center">
+            <SlidersHorizontal className="w-7 h-7 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
+            <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-1 max-w-sm mx-auto leading-relaxed">
+              자주 쓰는 조건을 저장해 매번 다시 설정하지 않고 한 번에 불러와요.
+            </p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">
+              종목 탐색에서 조건을 정한 뒤 <strong className="text-zinc-700 dark:text-zinc-300">조건 저장</strong>을 누르면 여기에 쌓입니다. 로그인하면 여러 기기에서 같은 필터를 씁니다.
+            </p>
+            <Link href="/stocks" className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+              종목 탐색에서 조건 만들기 <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        ) : (
+          <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
+            {savedSearches.map((sv) => {
+              const count = matchCountOf(sv.config);
+              return (
+                <li key={sv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                  <Link href="/stocks" className="flex items-center justify-between gap-3 px-4 py-3 group">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
+                        {sv.name}
+                      </div>
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-words leading-snug mt-0.5">
+                        {describeConfig(sv.config)}
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <div className="text-sm font-semibold tabular-nums text-blue-700 dark:text-blue-400">{count}개</div>
+                      <div className="text-[10px] text-zinc-400 dark:text-zinc-500">현재 조건 충족</div>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {savedSearches.length > 0 ? (
+          <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+            충족 종목 수는 현재 점수 기준 참고 정보예요 · 종목을 누르면 종목 탐색에서 저장한 필터를 불러올 수 있어요 · 매수·매도 추천이 아닙니다.
+          </p>
+        ) : null}
+      </section>
+
+      {/* 최근 본 종목 */}
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
