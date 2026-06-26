@@ -33,12 +33,13 @@ interface RecentSignal {
 // 캐시 갱신: 1시간 (정적 빌드 캐시가 너무 오래 안 갱신되는 문제 방지)
 export const revalidate = 3600;
 
-function pickTopSignals(n: number, all: RecentSignal[]): RecentSignal[] {
-  // 종목별 최강 신호 1개씩만
+function pickTopSignals(n: number, all: RecentSignal[], universe?: Set<string>): RecentSignal[] {
+  // 종목별 최강 신호 1개씩만. universe가 주어지면 분석 대상 종목 공시만(설계서 §15 — 홈은 분석 대상 중심).
   const byStock = new Map<string, RecentSignal>();
   for (const s of all) {
     const code = s.disclosure?.stock_code;
     if (!code) continue;
+    if (universe && !universe.has(code)) continue;
     const cur = byStock.get(code);
     if (!cur || s.strength > cur.strength) byStock.set(code, s);
   }
@@ -111,7 +112,7 @@ export default async function HomePage() {
   const recentSig = await getRecentSignals(7);
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   const top5 = pickTopStocks(5);
-  const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? []);
+  const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? [], universeTickers);
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
 

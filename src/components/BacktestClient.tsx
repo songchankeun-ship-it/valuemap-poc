@@ -224,6 +224,9 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
 
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 leading-relaxed">
         수익(왼쪽)과 위험(오른쪽)을 함께 보세요. 수익률이 높아도 낙폭·변동성이 크면 체감 위험은 커집니다.
+        {m.benchmarkMdd !== undefined && m.benchmarkSharpe !== undefined ? (
+          <> 이 전략 <strong className="text-zinc-700 dark:text-zinc-200 tabular-nums">MDD {pct(m.maxDrawdown)}</strong>(벤치 {pct(m.benchmarkMdd)}) · <strong className="text-zinc-700 dark:text-zinc-200 tabular-nums">Sharpe {m.sharpe.toFixed(2)}</strong>(벤치 {m.benchmarkSharpe.toFixed(2)}).</>
+        ) : null}
       </p>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">

@@ -50,7 +50,7 @@ export function BacktestRiskNotice({
         </h3>
       </div>
       <p className="text-xs md:text-sm font-medium text-amber-900 dark:text-amber-100 mb-2.5 leading-relaxed">
-        {dataStatus.limits.backtest} 현재 ORNSCORE 종합점수 검증 결과는 아닙니다.
+        {dataStatus.limits.backtest}
       </p>
       <ul className="space-y-2 text-[11px] md:text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
         {items.map((it) => (

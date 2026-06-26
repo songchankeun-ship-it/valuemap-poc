@@ -202,6 +202,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   const [error, setError] = useState<string | null>(null);
   const [days, setDays] = useState(initialData?.days ?? 7);
   const [filterType, setFilterType] = useState<string>("all");
+  // 분석 대상만 / 전체 시장 (설계서 §15 / [P1-4]). 기본은 '전체 시장' — 기존 동작 보존.
+  const [scope, setScope] = useState<"universe" | "all">("all");
   const firstRender = useRef(true);
 
   useEffect(() => {
@@ -253,8 +255,11 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   }
 
   const grouped = groupSignals(data.signals);
-  const filtered = filterType === "all" ? grouped : grouped.filter((g) => g.signalType === filterType);
-  const signalCounts = grouped.reduce<Record<string, number>>((acc, g) => {
+  // 분석 대상만 보기: 유니버스에 든 종목 공시만. 카운트·배지도 같은 범위로 일관.
+  const scoped = scope === "all" ? grouped : grouped.filter((g) => g.stock_code && universeSet.has(g.stock_code));
+  const universeCount = grouped.filter((g) => g.stock_code && universeSet.has(g.stock_code)).length;
+  const filtered = filterType === "all" ? scoped : scoped.filter((g) => g.signalType === filterType);
+  const signalCounts = scoped.reduce<Record<string, number>>((acc, g) => {
     acc[g.signalType] = (acc[g.signalType] || 0) + 1;
     return acc;
   }, {});
@@ -265,7 +270,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">공시 신호<span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />최신 200건 내</span></h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-            최근 {days}일 · 최신 200건 내 신호 {data.signalCount}건 · 이벤트 묶음 {grouped.length}개
+            최근 {days}일 · 최신 200건 내 신호 {data.signalCount}건 · {scope === "all" ? "이벤트 묶음" : "분석 대상 묶음"} {scoped.length}개
           </div>
         </div>
         {(() => {
@@ -300,6 +305,28 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           ))}
         </div>
 
+        {/* 분석 대상만 / 전체 시장 (설계서 §15) — 홈은 분석 대상 중심, 공시 페이지는 전체 시장 탐색까지 */}
+        <div className="flex items-center gap-1.5 flex-wrap mb-3">
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mr-0.5">범위</span>
+          {([
+            { key: "all", label: "전체 시장", count: grouped.length },
+            { key: "universe", label: "분석 대상만", count: universeCount },
+          ] as const).map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => setScope(opt.key)}
+              aria-pressed={scope === opt.key}
+              className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " +
+                (scope === opt.key
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400")}
+            >
+              {opt.label} <span className="tabular-nums opacity-80">{opt.count}</span>
+            </button>
+          ))}
+        </div>
+
         <div className="flex gap-1.5 flex-wrap">
           <button
             type="button"
@@ -309,7 +336,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                 : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
           >
-            전체 {grouped.length}
+            전체 {scoped.length}
           </button>
           {DISCLOSURE_TYPE_ORDER.map((type) => {
             const meta = typeMetaOf(type);
@@ -336,7 +363,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         </div>
       </header>
 
-      <DisclosureSummaryCards counts={signalCounts} days={days} total={grouped.length} />
+      <DisclosureSummaryCards counts={signalCounts} days={days} total={scoped.length} />
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
