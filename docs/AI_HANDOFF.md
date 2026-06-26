@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 46 — OrnScore 상용화 고도화 2-D §11·§13·§19 무료/Pro/Premium 경계·미확정 가격 안전 정리 (2026-06-26, Claude)
+- What: 설계서 2 §11(유료화 구조)·§13(법적 리스크)·§19(추천 요금제)를 기준으로 **실제 결제 연결 없이** 요금제 정보 구조·기능 경계·전환 CTA·고지를 안전하게 정리. Free/Pro/Premium 과장 금지, 미확정 가격을 확정처럼 쓰지 않음. branch `ai-center/task-46-ornscore-2-d-pro-premium-ux`, 시작 HEAD `849b995`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
+- Changed/new:
+  - 신규 `src/lib/pricing.ts` — 요금제 단일 출처: `PLANS`(free=active·pro/premium=planned, `priceConfirmed:false`, priceLabel은 "검토 중 · 미확정 (예상 월 9,900~14,900원, 확정 아님)" / "…월 29,000원대, 확정 아님" 형태로만 — 단일 확정 금액 금지), `COMPARE_ROWS`(✓/—/"준비 중"). Free 한도는 `limits.ts` 재사용.
+  - 변경 `src/lib/features.ts` — `premiumPlan:{status:"planned"}` + Premium 미구현 7항목 `plan:"premium",status:"planned"` 태그. 라이브 무료 알림 2종(watchlistDisclosureAlert·conditionAlert)은 그대로(Free/유료 경계 정직).
+  - 변경 `src/app/pricing/page.tsx` — 2티어→**3티어 카드**(Pro·Premium "출시 예정·준비 중" 배지+미확정 가격) + **Free/Pro/Premium 기능 비교표**(overflow-x-auto·min-w-[420px]·390px 가드) + §11 "왜 Pro/Premium인가" 가치 한 줄(시간 절약·변화 알림·기록·리서치 보조, 수익률/매수·매도 0). WaitlistForm은 planned 티어에만. 하단 §13.2 공통 고지 + "가격·정책 검토 중·출시 전 확정·공지" 1줄. `metadata.description` Premium 출시 예정.
+  - `terms/page.tsx`는 가격 무표기("출시 예정·초안") 유지 — 변경 없음(검증만).
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(`/pricing` 1.15 kB) · 변경 3파일 금칙어 grep 0 · 로컬 prod 3401 `/pricing`·`/terms`·`/settings/notifications`·`/watchlist` 200·에러 마커 0. `/pricing` SSR "출시 예정 · 준비 중"·"검토 중 · 미확정"·"가격 미확정"·"기능 비교"·"준비 중"·"최종 투자 판단과 책임은 사용자 본인"·"매수·매도 추천이 아닙니다" 렌더. `/terms` 가격 수치 0건. 검증 prod node PID 8676만 taskkill, 4310[PID 11160] 무중단·3000 미기동 상태 그대로.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용. **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/pricing` 확인 권장** — 3카드 3↔1열·기능 비교표 가로 스크롤(390px)·미확정 배지·오버플로 0·콘솔 0.
+- Residual / next(④): (1) 실제 결제·구독 권한 게이트 미연결 — Pro/Premium은 정보구조·대기 신청만(발송/과금 0). (2) 가격 전부 미확정(④/⑤) — 출시 전 법무·사업 확정·공지(범위 외). (3) Premium 비교표는 경계 표시만, 권한별 게이팅은 결제 라이브 시. `docs/ornscore-spec-coverage.md` §11·§13·§19 교차참조. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 45 — OrnScore 상용화 고도화 2-C §7 알림 설정 UX·무해한 알림 MVP (2026-06-26, Claude)
 - What: 설계서 2 §7(알림 종류/채널/설정/예시)·§5.4(점수 급변)·§6.5(공시 알림)을 **실 발송·외부 채널 없이** 사용자가 알림 종류·설정 개념을 이해하는 안전한 MVP로 구현. branch `ai-center/task-45-ornscore-2-c-ux-mvp`, 시작 HEAD `d110be6`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
 - Changed/new:

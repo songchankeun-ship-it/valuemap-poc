@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] 상용화 고도화 2-D §11·§13·§19 무료/Pro/Premium 경계·미확정 가격 안전 정리 (Task 46, Claude)
+- 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§11 유료화 구조·§13 법적 리스크 관리·§19 추천 요금제**를 기준으로, **실제 결제 연결 없이** 요금제 정보 구조·기능 경계·전환 CTA·고지 문구를 안전하게 정리. Free/Pro/Premium 구분이 과장되지 않게, 미확정 가격을 확정처럼 쓰지 않게. branch `ai-center/task-46-ornscore-2-d-pro-premium-ux`, 시작 HEAD `849b995`(클린) 위. **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단(검증 prod `127.0.0.1:3401`, 내 node PID 8676만 taskkill). 점수식·`stocks.json`·`direction` 무변경, 신규 npm 0, 투자 조언성·압박성 표현 신규 0(§13.3 금지 UI/카피 신규 도입 0).
+- **신규 파일**:
+  - `src/lib/pricing.ts` — 요금제 단일 출처. `PLANS`(free=active·pro/premium=planned) 각 `{id,name,status,priceLabel,priceConfirmed,tagline,valueLine,includes[]}`. Free 한도는 `limits.ts`(`FREE_COMPARE/WATCHLIST/AI_LIMIT`) 재사용. **Pro/Premium `priceConfirmed:false` + priceLabel을 "검토 중 · 미확정 (예상 월 9,900~14,900원, 확정 아님)" / "…월 29,000원대, 확정 아님" 형태로만**(단일 확정 금액 노출 금지). `COMPARE_ROWS`(✓/—/"준비 중") 비교표 데이터.
+- **변경**:
+  - `src/lib/features.ts` — `premiumPlan:{status:"planned"}` + Premium 미구현 7항목(개인화 대시보드·백테스트 커스터마이징·공시 반응 통계·CSV·고급 필터·업종 랭킹·자동 리포트) `plan:"premium",status:"planned"` 태그. 기존 라이브 무료 알림 2종(watchlistDisclosureAlert·conditionAlert) 그대로 — Free/유료 경계 정직 유지.
+  - `src/app/pricing/page.tsx` — 2티어→**3티어 카드**(Free active / Pro·Premium "출시 예정·준비 중" 배지+미확정 가격 라벨) + **Free/Pro/Premium 기능 비교표**(`overflow-x-auto`·`min-w-[420px]`·✓/—/준비 중, 390px 가드) + §11 "왜 Pro/Premium인가" 가치 한 줄(시간 절약·변화 알림·기록·리서치 보조 프레이밍, 수익률/매수·매도 표현 0). WaitlistForm은 planned 티어(Pro·Premium)에만. 하단 **§13.2 서비스 공통 고지**(투자 추천 아님·매수·매도 추천 아님·최종 책임 본인) + "가격·정책은 검토 중이며 출시 전 확정·공지됩니다" 1줄. `metadata.description`에 Premium 출시 예정 명시.
+- **§13 검토**: CTA는 §13.4 권장 동사(출시 알림 받기·지금 무료로 시작·자세히 보기)만 — 결제/압박형 0. §13.3 금지 UI/카피(매수 버튼형 CTA·강력 추천 배지·급등 예상·수익 보장·지금 진입·목표가/손절가·AI 픽 강조·리딩방 알림) 신규 도입 0. `terms/page.tsx`는 가격 무표기("출시 예정·초안") 유지 — 변경 안 함(검증만).
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(`/pricing` 1.15 kB) · 변경 3파일 금칙어 grep 0 · 로컬 prod 3401 `/pricing`·`/terms`·`/settings/notifications`·`/watchlist` 200·에러 마커 0. `/pricing` SSR: "출시 예정 · 준비 중" 배지·"검토 중 · 미확정"·"가격 미확정"·"기능 비교" 표·"준비 중" 셀·"최종 투자 판단과 책임은 사용자 본인"·"매수·매도 추천이 아닙니다" 렌더. `/terms` 가격 수치(9,900/14,900/29,000 등) 0건(가격 무표기 유지).
+- **잔여 리스크**: (1) **실제 결제·구독 권한 게이트 미연결(④)** — Pro/Premium은 정보구조·대기 신청만, 발송/과금 없음. (2) **가격 전부 미확정(④/⑤)** — 출시 전 법무·사업 확정·공지 필요(범위 외). (3) Playwright 미구성 → 운영자 데스크톱/390px 육안 게이트 권장(`/pricing` 3카드·비교표 가로 스크롤·미확정 배지·오버플로 0·콘솔 0). (4) Premium 비교표는 현재 "준비 중"/"미포함" 경계만 — 실제 권한별 게이팅은 결제 라이브 시 구현(④).
+- **다음**: §11·§15 결제/구독 연동·권한 게이트(④, 제품+사업 결정 후 분리 착수). `docs/ornscore-spec-coverage.md` §11·§13·§19 행 교차참조.
+
 ## 2026-06-26 · [claude] 상용화 고도화 2-C §7 알림 설정 UX·무해한 알림 MVP (Task 45, Claude)
 - 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§7 알림 시스템(7.1 종류·7.2 채널·7.3 설정·7.4 예시)·§5.4 점수 급변·§6.5 공시 알림**을 **실제 발송/외부 채널 없이** 사용자가 "알림 종류와 설정 개념"을 이해하는 안전한 MVP로 구현. branch `ai-center/task-45-ornscore-2-c-ux-mvp`, 시작 HEAD `d110be6`(클린) 위. **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3399`, 내 node PID 9152만 taskkill). 점수식·`stocks.json`·`direction` 무변경, 신규 npm 0, 투자 조언성·압박성 표현 신규 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
 - **신규 파일**:
