@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 42 — OrnScore 설계서 전체 커버리지 감사 — 추적 문서·남은 백로그 우선순위 (2026-06-26, Claude)
+- Preview/branch: branch `ai-center/task-42-ornscore`. 시작 HEAD `e9c3dad`(작업트리 클린) 위에 쌓음 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단(이번 작업 화면 변경 0 → 보조 포트 미기동). main 머지·외부 릴리스 범위 외(운영자).
+- 목표: 사용자가 준 7개 설계서를 전수 정독, 현재 코드+#14~#41 결과와 대조해 **한 문서에서 추적**. 문서 작업이 주 목적 — 앱 UI 무변경(작은 오탈자 외). 점수 계산식·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성 표현 신규 생성 0.
+- What changed: **문서 1파일 신규** `docs/ornscore-spec-coverage.md` — 7개 설계서(ORNSCORE_1st_commercial_stabilization·commercialization_upgrade·data_trust_badge·design_improvement·home_redesign·stock_detail_conclusion_card·stock_filter_ui) 전 항목을 5상태(①완료 ②#38~#41 ③남음·소 ④큰 제품결정 ⑤법무·사업)로 분류·소유자([개발]/[제품]/[법무·사업]) 표기·코드 경로/작업 번호 인용·근거 문서 교차링크. PROGRESS.md·이 노트 갱신.
+- 설계서 원문 발견: 7개 .md 모두 데스크톱(`C:\Users\dongy\OneDrive\바탕 화면\*.md`)에 존재 → 이번에 전수 정독. 과거 #33~#37 "PART D~P 원문 미확보"는 당시 PDF만 있던 상태였음을 문서에 정정 메모. 레포 내부엔 없어 커밋 대상 아님(커버리지 문서가 추적 대행).
+- 대조 결과: 설계서 1(1차안정화)·3(데이터신뢰)·4(디자인 Phase 1~7)·5(홈)·6(상세 결론카드)·7(탐색필터) 핵심은 #14~#41에서 대부분 ① 완료 → 중복 구현 금지. 남은 고도화는 대부분 **설계서 2(상용화 고도화)**: 관리자 데이터 상태판·오류 신고 영속 저장·결제/구독·알림 라이브·점수 히스토리 시계열·공시 전체 기간 수집·공시 중요도/반응 통계·생존편향 실해결·커버리지 확대·Premium 3티어 = ④, 데이터 소스 약관·결제 약관·실 브라우저 모바일 게이트 = ⑤.
+- What passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1, 138종목 0오류·금칙어 0·Metrics 2.4, exit 0) · `npm run build`(SSG 138p, exit 0) · 신규 문서 금지표현 grep 0. 화면 변경 0 → 로컬 서버 렌더 체크 생략.
+- Residual / next: 다음 자동화 큐는 커버리지 문서 **A절(③)** 권장 — 탐색 필터 감각화 마감(질문형 프리셋 카드화·조건 요약 자연어·예상 결과 수) → 데이터 신뢰 배지 5단계 마감·인라인 TrustBar → 산식 버전 불일치 빌드 게이트 → 오류 신고 진입점 확대 → 로딩 스켈레톤 → 압축 보기·모바일 바텀시트. B절(④)·C절(⑤)은 제품/법무 결정 후 분리 착수. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 41 — OrnScore 1차 안정화 후속 D — 비교 최근 본 종목·공시 범위 고지·업종 밸류 한계 표시 (2026-06-25, Claude)
 - Preview/branch: branch `ai-center/task-41-ornscore-1-d-ux`. 시작 HEAD `a18dad1`(= Task 33~40 위) — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만(작업트리 클린). AI Center 4310[PID 6008]·미리보기 3000 무중단. 로컬 검증 prod `127.0.0.1:**3277**`(내 리스너 node PID 30636만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
 - 목표: 작업범위 D — 상용화 전 눈에 보이는 불안 요소·확인 공백 축소(신규 기능 최소). 점수 계산식(`sectorValueScore`)·`stocks.json`·`backtest-result.json`·`direction` 무변경, 신규 npm 0, 투자 조언성 표현 신규 생성 0(후보·탐색·확인·참고 정보·매수·매도 추천 아님 유지).
