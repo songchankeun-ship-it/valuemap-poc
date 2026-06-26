@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 73 - OrnScore Naver login safe auth follow-up
+- Task: 72 - OrnScore app readiness and PWA / native path
 - Run: 61
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: PWA app-readiness — manifest metadata (id/categories/dir/shortcuts) + non-marketing install help on /about + docs/app-roadmap.md (native path PWA→TWA→iOS→Capacitor, SW intentionally unregistered). tsc/verify_metrics/build all passed; smoke 200 on /,/login,/offline,/manifest.webmanifest,/status,/about,/stock/005380. No store-availability promise. Next: operator supplies PNG/maskable/apple-touch-icon + decides first store.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 72 — PWA 앱 준비도 (manifest 메타 + 설치 안내 + 앱 로드맵) (2026-06-27, Claude)
+- **결정/범위**: "오른스코어도 앱이 되어야 한다" = 마케팅 랜딩이 아니라 **설치 가능 앱(PWA) 준비도 + 네이티브 배포 안전 경로 문서화**. 브랜치 `ai-center/task-72-...`(Task 73 `f728604` 이후 그대로). **신규 npm·lock 변동·Capacitor/RN 도입 0, 리셋/pull/머지/push 0, env/시크릿 0.**
+- **감사 결과**: manifest ✔ / `/offline` 정적 안내 ✔ / **service worker 미등록(의도적)** / 아이콘 SVG only(PNG·maskable·apple-touch 없음). 설치 가능하나 아이콘 품질·설치 배너는 PNG 에셋 보강 시 1급.
+- **Changed (코드 2 + 문서 신규 1 + 기록 2)**: `src/app/manifest.ts`(`id:"/"`·`categories:["finance"]`·`dir:"ltr"`·`shortcuts` 3종 추가, 색/아이콘/기존 필드 보존, 미존재 PNG 경로 미기재)·`src/app/about/page.tsx`(비마케팅 "앱처럼 설치하기" 소형 섹션, iOS/Android 단계+`/offline` 링크+네트워크 필요+**스토어 미확정 명시**, 새 nav 탭/히어로 0)·`docs/app-roadmap.md`(신규)·`PROGRESS.md`·이 노트. 인증/산식/stocks.json/`direction` 무변경, 고지 약화 0.
+- **app-roadmap.md 핵심**: PWA 감사표 / 네이티브 경로 **PWA→Android TWA(Bubblewrap, Play Console $25 1회 + assetlinks)→iOS(홈 추가 지금 / App Store 래퍼 Apple $99/yr)→Capacitor(레포 미수용, 범위 외)** / 운영자 에셋·계정 체크리스트 / **SW 미등록 결정 + 사유(데이터 신선도가 신뢰 배지와 충돌)·미래 안전형(navigation-only network-first, 데이터 JSON 비캐시)** / 앱 기능별 인증 준비도(OAuth standalone 복귀가 최대 리스크·Naver 준비 중·푸시 SW의존·watchlist·딥링크 scope).
+- **What passed**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(전 라우트). 로컬 prod 3332(내 PID만 taskkill, 4310·3000 무중단): `/ /login /offline /manifest.webmanifest /status /about /stock/005380` 전부 200, manifest JSON에 신규 `id`·`categories`·`dir`·`shortcuts` 확인, about SSR "앱처럼 설치하기"·"홈 화면에 추가" 렌더. 변경 파일 U+FFFD 0. **공개 문구 스토어 출시 약속 0.**
+- **남은 단계**: (운영자) PNG 192/512·maskable·apple-touch-icon 제작→`manifest.ts`/layout 연결 · 첫 스토어(TWA vs iOS 래퍼) 결정 + 계정($25 / $99/yr) · 실기기 OAuth standalone 복귀 검증 · (선택) navigation-only SW.
+- **Next**: 운영자 아이콘 에셋 공급 + 첫 스토어 결정 → 해당 패키징 별도 작업.
 
 ### Task 73 — 네이버 로그인 준비중 노출 + 운영자 설정 문서화 (네이티브 미지원) (2026-06-27, Claude)
 - **결정(가짜 세션 안 만듦)**: 설치 `@supabase/auth-js` 2.107.0 `Provider` 유니온에 **`naver` 없음** 재확인 → 네이티브 OAuth 불가. 안전한 두 경로((A) 앱 자체 OAuth 라우트 + service-role 세션 발급, (B) Supabase Pro 커스텀 OIDC) **모두 운영자 측 설정 선행 필요** → 본 작업(신규 npm·유료·env 금지) 범위 밖. 따라서 **실 라우트 미구현**, `/login`에 **"네이버 (준비 중)" 비활성 항목만 노출** + 운영자 설정 절차 문서화.

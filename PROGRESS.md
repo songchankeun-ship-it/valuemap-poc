@@ -1321,3 +1321,14 @@
 - **Verification before push**: `npx tsc --noEmit`, `python scripts/verify_metrics.py` with UTF-8 env, and `npm run build` all passed.
 - **Public smoke**: Confirmed `https://ornscore.com/login` is serving footer commit `fa33165`, renders two OAuth buttons (Kakao and Google), keeps Apple hidden by policy, and keeps the email magic-link button visible. Confirmed `/auth/callback` without a code redirects safely to `/login?error=auth_callback_failed`. Confirmed `/privacy` includes Google processor text.
 - **Next**: Supabase/Google Cloud console setup is still required before a real Google OAuth round trip can succeed; follow `docs/auth-providers-setup.md`, then test the live Google login redirect/callback.
+
+## 2026-06-27 · [claude] Task 72 — PWA 앱 준비도 (manifest 메타 + 설치 안내 + 앱 로드맵)
+- **Scope**: 사용자가 네이버 로그인 후속 다음으로 "오른스코어도 앱이 되어야 한다" 요청. 마케팅이 아니라 설치 가능 앱(PWA) 준비도 + 네이티브 배포 안전 경로 문서화. 브랜치 `ai-center/task-72-...`(Task 73 `f728604` 이후 그대로 이어감, 리셋/pull/머지/push 0).
+- **감사**: manifest ✔ / `/offline` ✔ / **service worker 미등록(의도적)** / 아이콘 SVG only(PNG·maskable·apple-touch 없음). 설치는 가능하나 아이콘 품질/설치 배너는 PNG 에셋 보강 시 1급.
+- **변경(무에셋·무의존)**:
+  - `src/app/manifest.ts` — `id:"/"`·`categories:["finance"]`·`dir:"ltr"`·`shortcuts`(오늘/종목 찾기/공시 신호) 추가. 색·아이콘·기존 필드 보존. 존재하지 않는 PNG 경로는 적지 않음(404 방지).
+  - `src/app/about/page.tsx` — 비마케팅 "앱처럼 설치하기" 소형 섹션(iOS 공유→홈 화면에 추가 / Android 메뉴→앱 설치 + `/offline` 링크 + 네트워크 필요 고지 + **스토어 출시 미확정 명시**). 새 nav 탭·히어로 없음.
+  - `docs/app-roadmap.md`(신규) — PWA 감사표·네이티브 경로(PWA→TWA(Play $25)→iOS(홈 추가 지금/App Store 래퍼 $99/yr)→Capacitor 범위 외)·운영자 에셋/계정 체크리스트·**SW 미등록 결정 + 사유(데이터 신선도 충돌)·미래 안전형(navigation-only network-first, 데이터 JSON 비캐시)**·앱 기능별 인증 준비도(OAuth standalone 복귀 리스크·Naver 준비 중·푸시·watchlist·딥링크).
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(전 라우트). 빈 포트 3332 `next start`(내가 띄운 PID만 종료, 3000·4310 무중단)로 스모크: `/ /login /offline /manifest.webmanifest /status /about /stock/005380` 전부 200, manifest JSON에 신규 `id`·`categories`·`dir`·`shortcuts` 확인, about에 "앱처럼 설치하기"·"홈 화면에 추가" SSR 렌더. 변경 파일 U+FFFD 0.
+- **남은 단계(운영자/제품)**: PNG 192/512·maskable·apple-touch-icon 에셋 제작→코드 연결 / TWA vs iOS 래퍼 결정 + 계정($25 / $99/yr) / 실기기 OAuth standalone 복귀 검증 / (선택) navigation-only SW. **공개 문구는 스토어 출시 미약속.**
+- **Next**: 운영자가 PNG/maskable/apple-touch-icon 에셋 공급 + 첫 스토어(TWA/iOS) 결정.

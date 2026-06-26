@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
-import { Mail, Database, Code, AlertTriangle } from "lucide-react";
+import { Mail, Database, Code, AlertTriangle, Smartphone } from "lucide-react";
 
 export const metadata = {
   title: "서비스 소개 — 오른스코어",
@@ -96,6 +96,29 @@ export default function AboutPage() {
             <dd>모든 지표는 과거 데이터 기반입니다. 미래 수익을 보장하지 않으며, 점수가 낮아도 회복 구간일 수 있습니다.</dd>
           </div>
         </dl>
+      </section>
+
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Smartphone className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">앱처럼 설치하기</h2>
+        </div>
+        <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed mb-3">
+          오른스코어는 웹앱(PWA)이라 별도 설치 없이 브라우저에서 바로 쓸 수 있고, 원하면 홈 화면에 추가해 앱처럼 전체 화면으로 실행할 수 있습니다.
+        </p>
+        <ul className="space-y-1.5 text-sm text-zinc-700 dark:text-zinc-300">
+          <li className="flex gap-2">
+            <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
+            <span><strong className="text-zinc-900 dark:text-zinc-100">iOS(Safari)</strong> — 공유 버튼 → <strong>홈 화면에 추가</strong></span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
+            <span><strong className="text-zinc-900 dark:text-zinc-100">Android(Chrome)</strong> — 메뉴(⋮) → <strong>앱 설치</strong> 또는 <strong>홈 화면에 추가</strong></span>
+          </li>
+        </ul>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
+          점수·시세·공시는 항상 최신 데이터를 불러오므로 실행 시 인터넷 연결이 필요합니다. 연결이 끊기면 <Link href="/offline" className="text-blue-600 dark:text-blue-400 underline">안내 화면</Link>이 표시됩니다. 앱 마켓(App Store·Play 스토어) 출시 여부는 아직 정해지지 않았습니다.
+        </p>
       </section>
 
       <section className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6">

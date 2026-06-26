@@ -203,7 +203,7 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | G §22 [P2-6] AI 분석 실행 전 고지 | ① | **Task 62**: `AiAnalysisCard.tsx` 실행 전 고지 문구 강화(데이터 Anthropic 전송·민감정보 금지·참고용) + **필수 동의 체크박스**(미동의 시 실행 버튼 disabled). 결과 하단 고지 2종 기존 유지. 순수 클라 상태(API/비용 경로 무변경) |
 | G §20 [P2] 유료 정책 확정 필요 항목 | ②/⑤ | **Task 62**: `terms/page.tsx` "유료 서비스 — 출시 전 확정 필요 항목(초안·미확정)" 블록(결제수단·주기·자동갱신·해지시점·환불·7일 청약철회·디지털 콘텐츠 환불제한·장애보상·정산 9항). 확정 가격 0. `legal-ai-commercial-readiness.md` A절과 정렬 |
 | H §23 [P2-6] 모바일 하단 탭 관심 종목 | ① | **Task 62**: `MobileBottomNav.tsx` `/watchlist`(관심) MORE→PRIMARY 승격(4 primary: 오늘·종목 찾기·공시 신호·관심 + 더보기), `grid-cols-4`→`grid-cols-5`. Heart 아이콘·active·HIDE 유지 |
-| H §24 [P2-7] PWA 기본 적용 | ①(최소)/④ | **Task 62**: `manifest.ts`(Next-native, 오른스코어·standalone·다크 테마·icon.svg 재사용) + `/offline` 안내 페이지(네트워크 필요·홈 화면 추가 힌트). **service worker는 캐싱/배포 충돌 회피로 미등록(문서 스텁)**, 512px PNG 마스커블 아이콘은 운영자 보강 권장(④) |
+| H §24 [P2-7] PWA 기본 적용 | ①/④ | **Task 62**: `manifest.ts`(Next-native·standalone·다크 테마·icon.svg) + `/offline` 안내. **Task 72(앱 준비도)**: manifest에 `id`·`categories:["finance"]`·`dir`·`shortcuts`(오늘/종목/공시) 무에셋 보강, `/about`에 비마케팅 "앱처럼 설치하기" 섹션(iOS/Android 단계·`/offline` 링크·스토어 미확정 명시), `docs/app-roadmap.md` 신규(감사표·네이티브 경로 PWA→TWA→iOS→Capacitor·SW 미등록 결정+미래 안전형·앱 기능별 인증 준비도). **service worker는 데이터 신선도 충돌 회피로 여전히 미등록**, PNG 192/512·maskable·apple-touch-icon은 운영자 보강(④), 스토어 계정·TWA/래퍼 패키징(④/⑤) |
 | I P1/P2 티켓 | ③/④/⑤ | 위 PART B~H 매핑 참조 |
 
 ## P1 follow-up (Task 66 — codex P0 1~6 이후 사용자 리뷰)
