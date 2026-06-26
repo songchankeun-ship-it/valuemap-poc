@@ -26,16 +26,16 @@ const FREE_INCLUDES = [
   "종목 상세(등급·차트·초보자 해석·공시)",
   `관심 종목 ${FREE_WATCHLIST_LIMIT}개 · 비교 ${FREE_COMPARE_LIMIT}개`,
   `AI 분석 월 ${FREE_AI_LIMIT}회`,
-  "관심 종목 공시 알림 · 저장 조건 알림 (이메일)",
+  "관심 종목 공시 알림 · 저장 조건 알림 (베타 무료 체험 · 정식 출시 시 Pro)",
 ];
 
-// §11.3 / §19.1 Pro — 준비 중(미발송/미과금). 가격 미확정.
+// §11.3 / §19.1 Pro — '놓치지 않게 해주는 알림'이 핵심 가치(준비 중·미발송/미과금). 가격 미확정.
 const PRO_INCLUDES = [
-  "관심 종목 무제한 + 점수 급변·거래활성도 알림",
-  "저장 필터 + 저장 조건 결과 알림 (확장)",
+  "관심 종목 공시 알림 · 저장 조건 알림 (Pro 핵심)",
+  "점수 급변 · 거래활성도 급증 알림",
+  "관심 종목 무제한 + 저장 필터 확장",
   "장기 점수 변화 히스토리 · 업종 대비 비교",
-  "백테스트 상세 리포트",
-  "주간 요약 리포트 메일",
+  "백테스트 상세 리포트 · 주간 요약 리포트 메일",
   "무료보다 많은 AI 분석 (구체 이용량은 출시 시 공개)",
 ];
 
@@ -102,7 +102,7 @@ export const COMPARE_ROWS: CompareRow[] = [
   { label: "종목 상세(등급·차트·공시·점수 근거)", free: true, pro: true, premium: true },
   { label: "관심 종목", free: `${FREE_WATCHLIST_LIMIT}개`, pro: "준비 중", premium: "준비 중" },
   { label: "종목 비교", free: `${FREE_COMPARE_LIMIT}개`, pro: "준비 중", premium: "준비 중" },
-  { label: "관심 종목 공시 알림 · 저장 조건 알림", free: true, pro: true, premium: true },
+  { label: "관심 종목 공시 알림 · 저장 조건 알림", free: "베타 무료", pro: true, premium: true },
   { label: "점수 급변 · 거래활성도 알림", free: false, pro: "준비 중", premium: "준비 중" },
   { label: "장기 점수 변화 히스토리", free: false, pro: "준비 중", premium: "준비 중" },
   { label: "백테스트 상세 리포트 · 주간 요약 메일", free: false, pro: "준비 중", premium: "준비 중" },

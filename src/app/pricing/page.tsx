@@ -91,14 +91,17 @@ function PlanCard({ plan }: { plan: Plan }) {
 function Cell({ value }: { value: CompareCell }) {
   if (value === true) return <span className="text-emerald-600 dark:text-emerald-400">✓</span>;
   if (value === false) return <span className="text-zinc-400 dark:text-zinc-600">—</span>;
-  // 문자열: "준비 중" 또는 한도("20개" 등)
+  // 문자열: "준비 중" · "베타 무료" 또는 한도("5개" 등)
   const planned = value === "준비 중";
+  const betaFree = value === "베타 무료";
   return (
     <span
       className={`text-[11px] break-words ${
         planned
           ? "text-amber-700 dark:text-amber-400"
-          : "text-zinc-700 dark:text-zinc-300"
+          : betaFree
+            ? "text-sky-700 dark:text-sky-400"
+            : "text-zinc-700 dark:text-zinc-300"
       }`}
     >
       {value}
@@ -130,7 +133,7 @@ export default function PricingPage() {
       <section className="space-y-2">
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">기능 비교</h2>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 break-words">
-          ✓ 제공 · — 미제공 · <span className="text-amber-700 dark:text-amber-400">준비 중</span> = 출시 예정(아직 이용·발송·과금 없음)
+          ✓ 제공 · — 미제공 · <span className="text-amber-700 dark:text-amber-400">준비 중</span> = 출시 예정(아직 이용·발송·과금 없음) · <span className="text-sky-700 dark:text-sky-400">베타 무료</span> = 베타 기간 한시 무료
         </p>
         <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
           <table className="w-full min-w-[420px] text-sm">
@@ -160,6 +163,7 @@ export default function PricingPage() {
         </div>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 break-words leading-relaxed">
           가격·정책은 검토 중이며 출시 전 확정·공지됩니다. 현재 Pro·Premium은 결제·발송이 연결돼 있지 않습니다.
+          관심 종목 공시·저장 조건 알림은 지금은 <strong className="text-sky-700 dark:text-sky-400">베타 기간 무료</strong>로 체험할 수 있으며, 정식 출시 시 Pro 기능으로 전환될 예정입니다.
         </p>
       </section>
 
