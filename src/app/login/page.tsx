@@ -213,6 +213,10 @@ function LoginForm() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
+                    autoComplete="email"
+                    // 일부 브라우저/비밀번호 관리자 확장이 input 에 style 등을 주입해
+                    // SSR↔클라이언트 hydration 경고가 뜨는 것을 막는다 (GlobalSearch 와 동일 처리).
+                    suppressHydrationWarning
                     className="w-full pl-10 pr-3 py-2.5 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>

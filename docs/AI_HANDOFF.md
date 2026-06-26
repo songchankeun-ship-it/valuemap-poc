@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 70 (게이트 수리) — /login 이메일 input hydration 경고 제거 (2026-06-27, Claude)
+- 블로커(Playwright MOBILE FAIL): `Extra attributes from the server: ... style`가 `src/app/login/page.tsx` `LoginForm` 이메일 `<input>`에서 발생. 일부 브라우저/비밀번호 관리자 확장이 input 에 `style` 주입 → SSR↔클라 hydration 경고(모바일·이메일 필드 빈발). 소스에는 input style 없음.
+- 수리(포커스 1파일): 이메일 input 에 `suppressHydrationWarning`(+`autoComplete="email"`) 추가. 저장소 기존 관행과 동일(`GlobalSearch.tsx:139`·`StocksExplorer.tsx:758`). 로직·문구·`next` 보존·friendly 오류·제공자 config 무변경.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0(`/login` 포함). 신규 npm·빌드 단계 0.
+- Next: 아래 Task 70 본문과 동일(운영자 Supabase Google 토글 → `/login` 구글 실동작 검증).
+
 ### Task 70 — OrnScore 로그인 제공자 확장 (구글 추가·제공자 config화·friendly 오류·약관/개인정보 동기화) (2026-06-27, Claude)
 - What: 상용화 대비 인증 확장. **카카오 OAuth + 이메일 매직링크 + 로그인 후 `next` 복귀 전부 보존**. branch `ai-center/task-70-ornscore-auth-provider-expansion-and`, 시작 HEAD `bbc5876`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction`·계정 테이블 무변경. AI Center 4310 무중단(검증 prod 3321, 내가 띄운 PID 36724만 taskkill). 미리보기 3000 미기동 유지.
 - 제공자 가용성(설치 `@supabase/auth-js` 2.107.0 `Provider` 유니온): **google ✅·apple ✅(타입)·kakao ✅(운영 중)·naver ❌**. naver는 커스텀 OIDC/SAML(Pro/Enterprise) 또는 직접 OAuth 라우트 필요 → 신규 의존성·유료 금지 범위상 보류(가짜 구현 안 함). SMS/Phone도 외부 게이트웨이·비용 → 보류.
