@@ -42,6 +42,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 68 — OrnScore 3차 QA P0 마감 (CTA/STEP/배지/비교 재검증 + 행동성 문구 중립화) (2026-06-27, Claude)
+- What: 사용자 제공 `ORNSCORE_3rd_QA_improvement_spec.md` PART A(P0-1~5)·PART F 기준 3차 QA P0 마감. branch `ai-center/task-68-ornscore-3rd-qa-p0-polish-detail-ui-`, 시작 HEAD `d63149c`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod 3317, 내가 띄운 PID 37232만 taskkill). main 머지·외부 릴리스 범위 외(운영자).
+- 시작 전 재검증(중복 구현 방지): **P0-1~4는 직전 codex 배포 `743873a`(post-deploy 2nd QA P0)에서 이미 컴포넌트로 마감** — 소스+SSR 재확인으로 재구축 0.
+  - P0-1 CTA: `src/components/stock/StockDetailActionButtons.tsx`(grid 1/2/4열·gap·min-h-44px·테두리/아이콘). 글루 `공시 확인재무 보기점수 근거업종 비교` SSR 0건.
+  - P0-2 STEP: `src/components/BeginnerReading.tsx` `StepCard` 3카드 그리드(STEP n 단일 배지·제목/본문 분리). 한 줄 글루 0.
+  - P0-3 배지: `src/components/stock/PriorityScoreCard.tsx` 독립 pill 3종(flex-wrap gap). 글루 `필수 데이터 100%이상값 점검 통과 Metrics 2.4` SSR 0건.
+  - P0-4 비교 빈 상태: `src/components/CompareClient.tsx` 검색·추천 세트·최근 본·관심 종목 추가 UI 모두 존재. `/compare` 200.
+- Changed (코드 2파일, 문구만):
+  - [P0-5] `src/lib/metricReadings.ts:49` 추세 약세(40 미만) "하락 추세일 수 있음 — 저가 매수일지 추가 하락일지 판단 필요" → "…반등 근거와 추가 하락 위험을 함께 확인"(설계서 §7.3 안2). `BeginnerReading`·`MetricInsightCards` 공유 단일 소스 → 종목 상세 양쪽 반영.
+  - [P0-5 일관성] `src/app/theme/[slug]/page.tsx` `evaluate()` "매수 검토 구간"·"분할 매수 권장"·"추가 하락 시 매수 매력 증대" → 확인·검토 톤 중립화. 고지의 "매수·매도 추천이 아닙니다"는 보존.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0 · 변경 2파일 U+FFFD 0·구 문구 grep 0 · 로컬 prod 3317 5경로 200·치명 마커 0(`/theme`만 Git Bash 한글 슬러그 curl 인코딩 아티팩트로 404 — 라우트는 정상 빌드).
+- Gate note: Playwright 미구성 → **운영자: 데스크톱/390px로 `/stock/005380`(CTA 4버튼 줄바꿈·STEP 3카드·배지 3개)·`/compare`(빈 상태) 1회 확인 권장.** 설계서 전제(공개 사이트 글루 잔존)는 직전 배포로 이미 해소 — 본 태스크 실 산출물은 P0-5 문구 마감 + P0-1~4 재검증.
+- Residual / next: 운영자 390px 육안 게이트 → main 머지·외부 릴리스(별도 단계). 큰 축은 ④ 결제 연동·⑤ 데이터/약관 법무(coverage 문서).
+
 ### Task 66 — OrnScore P1 후속 5종 (홈 표시 정책·공시 범위 버튼·베타→Pro·약관·개인정보 표 모바일) (2026-06-26, Claude)
 - What: codex P0(1~6) 이후 사용자 리뷰 P1 후속을 반영. branch `ai-center/task-66-ornscore-p1-follow-up-disclosures-pr`, 시작 HEAD `1ff744f`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod 3267, 내 PID 36376만 taskkill). 외부 릴리스·main push 범위 외(운영자).
 - Changed (코드 5 + 문서 4): `src/components/home/DisclosureSignalSection.tsx`(+`universeCount` prop·표시 정책 박스)·`src/app/page.tsx`(count 전달)·`src/components/DisclosureExplorer.tsx`(세그먼트 범위 버튼+캡션)·`src/app/pricing/page.tsx`(베타→Pro sky 콜아웃)·`src/app/terms/page.tsx`(현재 확정 정책 박스). 문서: `PROGRESS.md`·`docs/AI_HANDOFF.md`·`docs/legal-ai-commercial-readiness.md`(F항)·`docs/ornscore-spec-coverage.md`. `src/app/privacy/page.tsx`(모바일 스크롤 힌트).

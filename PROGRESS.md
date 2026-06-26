@@ -1,5 +1,20 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] OrnScore 3차 QA P0 마감 — 행동성 문구 중립화·CTA/STEP/배지/비교 재검증 (Task 68, Claude)
+- **범위**: 사용자 제공 `ORNSCORE_3rd_QA_improvement_spec.md` PART A(P0-1~P0-5)·PART F 체크리스트를 기준으로 3차 QA P0를 마감. branch `ai-center/task-68-ornscore-3rd-qa-p0-polish-detail-ui-`, 시작 HEAD `d63149c`(클린) 위 — **리셋/pull/머지/push·신규 npm·빌드 단계 추가 0**. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3317`, 내가 띄운 PID 37232만 taskkill). 투자 조언성·압박성 표현 신규 0.
+- **시작 전 재검증(중복 구현 방지)**: 설계서의 P0-1~4는 직전 codex 배포(`743873a` post-deploy 2nd QA P0)에서 **이미 컴포넌트로 마감**됨을 소스+SSR로 재확인 → 재구축 0.
+  - **[P0-1] CTA 버튼** — `src/components/stock/StockDetailActionButtons.tsx` 공통 컴포넌트 존재(grid 1/2/4열·`gap-2`·`min-h-[44px]`·테두리/배경/라운드·아이콘+라벨). 종목 상세 SSR에 `공시 확인`·`업종 비교` 독립 렌더, 글루 문자열 `공시 확인재무 보기점수 근거업종 비교` **0건**.
+  - **[P0-2] STEP 가이드** — `src/components/BeginnerReading.tsx` `StepCard` 3개 그리드(`grid-cols-1 md:grid-cols-3`·STEP n 단일 배지·제목/본문 분리). SSR에 `STEP` 카드 렌더, 한 줄 글루 0.
+  - **[P0-3] 데이터 품질 배지** — `src/components/stock/PriorityScoreCard.tsx` 독립 `DataStatusPill` 3종(`flex flex-wrap gap-2`·`필수 데이터 N%`/`이상값 점검 통과`/`Metrics 2.4`). SSR에 `이상값 점검 통과` pill 렌더, 글루 문자열 `필수 데이터 100%이상값 점검 통과 Metrics 2.4` **0건**(React가 보간 텍스트를 별도 노드로 분리 = 글루 아님).
+  - **[P0-4] 비교 빈 상태** — `src/components/CompareClient.tsx` 빈 상태에 종목 검색·추천 비교 세트·최근 본 종목·관심 종목 추가 UI + "비교할 종목을 선택하세요" 헤딩 모두 존재. `/compare` HTTP 200.
+- **반영(코드 2파일, 문구만)**:
+  - **[P0-5] 종목 상세 행동성 문구 제거** — `src/lib/metricReadings.ts:49` `readMomentum` 약세(40 미만) 구간 `"하락 추세일 수 있음 — 저가 매수일지 추가 하락일지 판단 필요"` → **`"하락 추세일 수 있음 — 반등 근거와 추가 하락 위험을 함께 확인"`**(설계서 §7.3 수정안 2). `metricReadings`는 `BeginnerReading`·`MetricInsightCards` 공유 단일 소스라 종목 상세 양쪽 동시 반영.
+  - **[P0-5 일관성] 테마 페이지 행동성 문구 중립화** — `src/app/theme/[slug]/page.tsx`의 `evaluate()` 일반 설명 3줄에서 `매수 검토 구간`·`분할 매수 권장`·`추가 하락 시 매수 매력 증대` → `저평가 원인과 회복 근거를 함께 확인`·`급등 사유와 지속 가능성, 가격 부담을 함께 확인`·`추가 하락 요인과 반등 근거를 함께 확인`(확인·검토 톤). 종목 상세 밖이지만 "매수" 행동 단어 잔존이라 같이 정리. 고지 문구의 `매수·매도 추천이 아닙니다`는 보존(법적 고지·필수).
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트) · 변경 2파일 U+FFFD 0(한글 무손상)·구 문구(`저가 매수일지`·`매수 검토`·`분할 매수`·`매수 매력`) 전수 grep **0건**. 로컬 prod 3317 6경로(`/stock/005380 /stock/032830 /compare /stocks /disclosures /theme`) — `/theme`는 Git Bash의 한글 슬러그 인코딩 아티팩트로 curl 404(라우트는 빌드·tsc 정상), 나머지 5경로 **HTTP 200·치명 마커 0**. SSR: 글루 CTA/배지 0·구 P0-5 문구 0.
+- **5종 상태**: [P0-1][P0-2][P0-3][P0-4] **이미 마감(743873a)·재검증 완료**. [P0-5] **구현 완료**(종목 상세 + 테마 페이지 일관 정리).
+- **게이트 한계 / 잔여 리스크**: Playwright 미구성 → **390px 실 브라우저 육안은 운영자 게이트**(curl+SSR grep+build로 대체). 운영자: 데스크톱/390px로 `/stock/005380`(CTA 4버튼 2열 줄바꿈·STEP 3카드·배지 3개 간격)·`/compare`(빈 상태 검색/추천/최근/관심) 1회 확인 권장. **설계서 전제(공개 사이트에 글루 잔존)는 직전 배포로 이미 해소된 상태** — 본 태스크는 P0-5 문구 마감 + P0-1~4 재검증이 실제 산출물.
+- **다음**: 운영자 390px 육안 게이트 → main 머지·외부 릴리스(별도 단계, 운영자). 이후 큰 축은 ④ 결제 연동·⑤ 데이터/약관 법무 확정(coverage 문서 추적).
+
 ## 2026-06-27 - [codex] Task 66 P1 follow-up main push/public smoke complete
 - **Scope**: User asked to push Task 66 before collecting new expert feedback.
 - **Push**: Fast-forwarded `main` from `1ff744f` to `51a7875` and pushed `origin/main`.

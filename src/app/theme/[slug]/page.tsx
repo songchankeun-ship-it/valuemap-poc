@@ -205,10 +205,10 @@ function RadarChart({
 
 function evaluate(return1y: number, valueScore: number): string {
   if (return1y < -15 && valueScore >= 80) {
-    return `1년간 ${return1y.toFixed(1)}%로 충분히 소외됨. 밸류 점수 ${valueScore}점으로 매수 검토 구간.`;
+    return `1년간 ${return1y.toFixed(1)}%로 소외 구간. 밸류 점수 ${valueScore}점 — 저평가 원인과 회복 근거를 함께 확인.`;
   }
   if (return1y >= 0) {
-    return `최근 흐름이 양호. 무리한 추격보다는 분할 매수 권장.`;
+    return `최근 흐름이 양호. 급등 사유와 지속 가능성, 가격 부담을 함께 확인.`;
   }
-  return `중간 구간. 추가 하락 시 매수 매력 증대.`;
+  return `중간 구간. 추가 하락 요인과 반등 근거를 함께 확인.`;
 }

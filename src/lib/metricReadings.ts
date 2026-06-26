@@ -46,7 +46,7 @@ export function readMomentum(score: number): Reading {
     r.tone = "watch";
   } else {
     r.meaning = "최근 흐름이 약합니다";
-    r.action = "하락 추세일 수 있음 — 저가 매수일지 추가 하락일지 판단 필요";
+    r.action = "하락 추세일 수 있음 — 반등 근거와 추가 하락 위험을 함께 확인";
     r.tone = "caution";
   }
   return r;
