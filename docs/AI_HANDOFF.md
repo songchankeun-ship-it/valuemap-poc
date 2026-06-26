@@ -42,6 +42,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 47 — OrnScore 상용화 고도화 2-E §10·§14·§15·§16·§18 베타 출시 체크리스트·커버리지 제한 노출·최종 QA (2026-06-26, Claude)
+- What: 설계서 2 §10(커버리지)·§14(관리자)·§15(기술 고도화)·§16(로드맵)·§18(MVP 범위)를 기준으로 **베타 노출 가능 vs 준비 중** 상태를 구분하고 남은 의사결정/개발 항목을 추적 가능하게 정리. 앱에 바로 넣을 작은 상태 개선(커버리지 제한 1줄)은 반영, 큰 제품/기술 결정은 체크리스트로 분리. branch `ai-center/task-47-ornscore-2-e-qa`, 시작 HEAD `eb2123c`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
+- Changed/new:
+  - 신규 `docs/ornscore-beta-launch-checklist.md`(주 산출물) — (a)§16 로드맵 현재 위치(Phase 1 마무리→Phase 2 진입, 작업별 완료/진행/대기+코드 인용) (b)§18 MVP 11항목 노출 가능(8: 로그인·관심·오늘 후보·점수 근거·공시 신호+범위 고지·저장 필터·데이터 상태·투자 추천 아님 고지) vs 준비 중(3: 공시 알림·점수 급변 알림·Pro 결제, #45/#46 인용) (c)§10 단계(138→KOSPI200·KOSDAQ150·ETF→상위 500→전체)+§10.4 주의사항+제한 안내 문구안 (d)§14 관리자 MVP(읽기 전용 현황·`/status` selfCheck 근접) vs 후속(재수집·재계산·계정정지·결제이력) (e)§15+§4.4 모니터링 현재 점검됨(selfCheck: suspectCount·missingFinancials·metricsVersionMatch + verify_metrics 게이트) vs 미점검(수집 성공률·API 실패·발송률·전환 이벤트) (f)베타 공개 전 최종 확인(검증 게이트·잔여 리스크·운영자 확인).
+  - 변경 `src/lib/dataStatus.ts` — `knownLimits` 맨 앞 "종목 커버리지" 항목(138종목·전체 아님·KOSPI200·KOSDAQ150·ETF부터 단계 확대·품질 검증 끝난 종목만 추가, `dataMetadata.count` 단일 참조). 기존 `/status` "알려진 제한" 리스트가 자동 렌더 — 신규 컴포넌트 0·산식/데이터/selfCheck 무변경·중립 톤.
+  - 추적 갱신 `docs/ornscore-spec-coverage.md` §10·§14·§15·§16~18 행 Task 47 + 체크리스트 교차참조(상태 ④ 유지).
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(SSG 172p) · 변경 파일 금칙어 grep 0(부정 고지 "매수·매도 추천이 아닙니다"만 매치) · 로컬 prod 3402 14경로 200·치명 마커 0 · `/status` SSR "종목 커버리지 — 현재 분석 대상은 138종목…" 렌더 확인. 검증 prod node PID만 taskkill, 4310·3000 무중단.
+- Gate note: Playwright 미구성 → 자동 DESKTOP/390px 게이트 미가용(curl+SSR grep+build 대체). **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/status` 알려진 제한 "종목 커버리지" 줄바꿈·오버플로 0·콘솔 0 확인 권장.**
+- Residual / next(④): (1) 결제·구독 권한 게이트 미연결. (2) 가격 미확정(④/⑤). (3) 알림 실 발송 미라이브. (4) 관리자 상태판·오류 신고 영속 저장 미구현. (5) 커버리지 138종목 → §10 단계적 확대+품질 표시. (6) 데이터 소스·결제 약관 [법무] 확정(⑤). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 46 — OrnScore 상용화 고도화 2-D §11·§13·§19 무료/Pro/Premium 경계·미확정 가격 안전 정리 (2026-06-26, Claude)
 - What: 설계서 2 §11(유료화 구조)·§13(법적 리스크)·§19(추천 요금제)를 기준으로 **실제 결제 연결 없이** 요금제 정보 구조·기능 경계·전환 CTA·고지를 안전하게 정리. Free/Pro/Premium 과장 금지, 미확정 가격을 확정처럼 쓰지 않음. branch `ai-center/task-46-ornscore-2-d-pro-premium-ux`, 시작 HEAD `849b995`(클린). 리셋/pull/머지/push 없이 로컬 수정·검증·커밋까지만.
 - Changed/new:

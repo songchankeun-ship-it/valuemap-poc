@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] 상용화 고도화 2-E §10·§14·§15·§16·§18 베타 출시 체크리스트·커버리지 제한 노출·최종 QA (Task 47, Claude)
+- 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§10 커버리지 확대·§14 관리자 기능·§15 기술 고도화·§16 로드맵·§18 MVP 범위**를 기준으로, 베타 수준에서 **사용자에게 보여도 되는 상태 vs 아직 준비 중인 상태**를 구분하고 남은 의사결정/개발 항목을 추적 가능하게 정리. branch `ai-center/task-47-ornscore-2-e-qa`, 시작 HEAD `eb2123c`(클린) 위. **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3402`, 내 node PID만 taskkill). 점수식·`stocks.json`·`direction` 무변경, 신규 npm 0, 투자 조언성 표현 신규 0.
+- **신규 문서** `docs/ornscore-beta-launch-checklist.md`(주 산출물): (a) §16 로드맵 현재 위치(Phase 1 베타 안정화 마무리→Phase 2 Pro 진입 직전, 작업별 완료/진행/대기 + 코드 인용) (b) §18 MVP 필수 11항목 "베타 노출 가능 vs 준비 중"(8 노출 가능 / 3 준비 중=공시알림·점수알림·결제, #45/#46 인용) (c) §10 커버리지 단계(현재 138→1단계 KOSPI200·KOSDAQ150·ETF→2단계 상위 500→3단계 전체)+§10.4 주의사항+사용자 제한 안내 문구안 (d) §14 관리자 MVP(읽기 전용 현황) vs 후속(재수집·재계산·계정정지) (e) §15+§4.4 모니터링/로그 "현재 점검됨(selfCheck·verify_metrics 게이트) vs 미점검(수집 성공률·API 실패·발송률·전환 이벤트)" (f) 베타 공개 전 최종 확인 체크리스트(검증 게이트·잔여 리스크·운영자 확인).
+- **앱 변경(표시 1줄)** `src/lib/dataStatus.ts` — `knownLimits` 맨 앞에 "종목 커버리지" 항목 추가(현재 분석 대상 138종목·전체 상장 종목 아님·KOSPI200·KOSDAQ150·주요 ETF부터 단계적 확대·품질 검증 끝난 종목만 순차 추가). `dataMetadata.count` 단일 참조, 기존 `/status` "알려진 제한" 리스트가 자동 렌더(신규 컴포넌트 0·산식/데이터/selfCheck 무변경·중립 톤).
+- **추적 갱신**: `docs/ornscore-spec-coverage.md` §10·§14·§15·§16~18 행에 Task 47 + 체크리스트 교차참조(상태 ④ 유지).
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(SSG 172p) · 변경 파일(`dataStatus.ts`·신규 문서) 금칙어 grep 0(부정 고지 "매수·매도 추천이 아닙니다"만 매치) · 로컬 prod 3402 14경로(`/ /today /stocks /stock/005380 /stock/032830 /disclosures /backtest /compare /pricing /status /settings/notifications /watchlist /terms /privacy`) 200·치명 마커 0 · `/status` SSR "종목 커버리지 — 현재 분석 대상은 138종목…" 렌더 확인. 검증 prod node PID만 taskkill, 4310·3000 무중단.
+- **잔여 리스크**: (1) 결제·구독 권한 게이트 미연결(④). (2) 가격 미확정(④/⑤, 법무·사업). (3) 알림 실 발송 미라이브(④). (4) 관리자 상태판·오류 신고 영속 저장 미구현(④). (5) 커버리지 138종목(④, 단계적 확대+품질 표시). (6) Playwright 미구성 → 운영자 데스크톱/390px 육안 게이트 권장(⑤). (7) 데이터 소스·결제 약관 [법무] 확정(⑤).
+- **다음**: §10 커버리지 1단계 확대(품질 표시 동반)·§14/§15 관리자 상태판+로그 시스템(④, 제품·개발 결정 후 분리 착수). `docs/ornscore-beta-launch-checklist.md`·`docs/ornscore-spec-coverage.md` 교차참조. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ## 2026-06-26 · [claude] 상용화 고도화 2-D §11·§13·§19 무료/Pro/Premium 경계·미확정 가격 안전 정리 (Task 46, Claude)
 - 설계서 2(`ornscore_commercialization_upgrade_spec.md`) **§11 유료화 구조·§13 법적 리스크 관리·§19 추천 요금제**를 기준으로, **실제 결제 연결 없이** 요금제 정보 구조·기능 경계·전환 CTA·고지 문구를 안전하게 정리. Free/Pro/Premium 구분이 과장되지 않게, 미확정 가격을 확정처럼 쓰지 않게. branch `ai-center/task-46-ornscore-2-d-pro-premium-ux`, 시작 HEAD `849b995`(클린) 위. **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단(검증 prod `127.0.0.1:3401`, 내 node PID 8676만 taskkill). 점수식·`stocks.json`·`direction` 무변경, 신규 npm 0, 투자 조언성·압박성 표현 신규 0(§13.3 금지 UI/카피 신규 도입 0).
 - **신규 파일**:

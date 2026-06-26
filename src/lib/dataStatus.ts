@@ -183,6 +183,10 @@ export interface KnownLimit {
  */
 export const knownLimits: KnownLimit[] = [
   {
+    title: "종목 커버리지",
+    detail: `현재 분석 대상은 ${dataMetadata.count}종목이며, 전체 상장 종목이 아닙니다. KOSPI200·KOSDAQ150·주요 ETF부터 단계적으로 확대할 예정이며, 데이터 품질 검증이 끝난 종목만 순차 추가합니다.`,
+  },
+  {
     title: "공시 분석 범위",
     detail: `${LIMIT_DISCLOSURE} 선택한 기간 전체 공시가 아니라 코스피·코스닥 각 최신 100건(합 200건) 안에서 추출합니다.`,
   },
