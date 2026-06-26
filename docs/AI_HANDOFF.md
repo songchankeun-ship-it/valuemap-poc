@@ -42,6 +42,22 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 62 — OrnScore 2차 QA 설계서 PART F·G·H·I P2 마감 (2026-06-26, Claude)
+- What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART F(§18~19)·G(§20~22)·H(§23~24)·I [P2-1~P2-7] 반영. branch `ai-center/task-62-ornscore-2-qa-p2-ai-pwa`, 시작 HEAD `d6bf701`(Task 61 위, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction`·크론 2종 무변경. AI Center 4310·미리보기 3000 무중단(검증 prod 3255, 내 PID 6104만 taskkill).
+- Changed (코드 8 + 문서 4):
+  - [P2-3/§18] `docs/data-source-commercial-risk.md` — §18 컬럼 형식 요약표(KRX·DART·Naver·yfinance·FDR) + 유료 기능→공식·안정 데이터 전환 로드맵 + 날짜/태스크 갱신. 법적 결론 [법무] 확인 필요 유지.
+  - [P2-4/§19] `src/components/stock/SectorComparison.tsx` — "업종 분류는 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다" 캡션. 산식 무변경.
+  - [P2-5/§21] `src/app/privacy/page.tsx` — 국외 이전 ul→table(overflow-x-auto·min-w-[480px]·7열·4행 Supabase/Vercel/Resend/Anthropic).
+  - [P2-6/§22] `src/components/AiAnalysisCard.tsx` — 실행 전 고지 강화 + 필수 동의 체크박스(미동의 시 실행 disabled). 비용/route 무변경.
+  - [§20] `src/app/terms/page.tsx` — "출시 전 확정 필요 항목(초안·미확정)" 9항 블록(가격 0).
+  - [P2-2] 신규 `api/report-data-issue/route.ts`(data_reports insert·graceful) + `components/status/ReportDataIssueForm.tsx`(인앱 폼) — mailto fallback 항상 유지.
+  - [P2-1] 신규 `app/admin/status/page.tsx`(noindex·읽기전용: selfCheck·검증보류·결측·신고목록 ADMIN_ENABLED 시) + `docs/ornscore-admin-status-backlog.md`. `/status` 무변경.
+  - [P2-6/§23] `components/MobileBottomNav.tsx` — 관심 MORE→PRIMARY(grid-cols-4→5).
+  - [P2-7/§24] 신규 `app/manifest.ts`(standalone·icon.svg) + `app/offline/page.tsx`(설치 힌트). SW 미등록(스텁)·512px 아이콘 운영자 보강.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·Metrics 2.4 · `npm run build` 0(manifest.webmanifest·offline·admin/status 포함). 로컬 prod 3255 10경로 200·치명 마커 0 · SSR 신 문구 렌더 확인 · 변경 파일 금칙어 grep=기존 부정 고지만·U+FFFD 0.
+- Gate note: Playwright 미구성 → **운영자: 데스크톱/390px로 하단 5탭(오버플로 0)·privacy 표 가로 스크롤·AI 동의 체크박스(StockTabs 탭 열어 확인)·`/stock/*` 업종 캡션·`/offline` 설치 힌트 1회 확인 권장.**
+- Residual / next: 결제·구독 게이트 미연결·가격 미확정(④/⑤). service worker 미등록(스텁)·512px 마스커블 아이콘 미보강(④). 관리자 인증·배치 이력·수집 로그·신고 워크플로 백로그(④). 데이터 소스 법무 확정(⑤). 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 61 — OrnScore 2차 QA 설계서 PART B~E·I P1 마감 (2026-06-26, Claude)
 - What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART B(§7~9)·C(§11~13)·D(§15)·E(§16~17)·I [P1-1~P1-5] 반영. branch `ai-center/task-61-ornscore-2-qa-p1-ux-cta`, 시작 HEAD `e8e5a34`(Task 60 위, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구/표시필터/한도값만). AI Center 4310·미리보기 3000 무중단(검증 prod 3254, 내 리스너 PID 30844만 taskkill).
 - 시작 전 상태(예상과 다른 점): 플래너 라인번호 base `b2fad41` 기준 → Task 60 변경분과 어긋나 grep으로 현재 위치 재확인. 백테스트 §17 KPI 균형·"구성 예시"는 이미 충족 → 중복 0, 위험 비교 한 줄만 강화. `FEATURES`는 미소비 단일 출처(필드 추가 안전), `FREE_WATCHLIST/AI_LIMIT`은 pricing 표시 전용(게이트 미사용).

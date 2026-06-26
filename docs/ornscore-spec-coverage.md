@@ -192,13 +192,18 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | B §7 [P1-1/P1-2] Free/Pro/Premium 경계·무료 알림 제한 | ①/④ | **Task 61**: 표시 경계 정직 재설계 — `limits.ts` Free 한도 축소(관심 20→5·AI 3→1), `pricing.ts` Free 알림="베타 무료 체험·정식 출시 시 Pro"·Pro `includes` 알림 핵심 승격·`COMPARE_ROWS` 알림 free="베타 무료", `pricing/page.tsx` 정직 한 줄, `features.ts` 알림 2종 `betaFree/plannedPlan:"pro"` 마커(크론 `notify`·`evaluate-alerts` 무변경=라이브 보존). **실 결제·구독 권한 게이트·가격 확정은 ④/⑤(미연결)** |
 | B §8 종목 탐색 정보 밀도(첫 화면 검색·프리셋 강조) | ①/③ | 검색 우선·질문형 프리셋·접힘 상세 필터(#36) + 필터 텍스트 중복 제거(#60). 모바일 바텀시트 풀세트는 설계서 7 ③ |
 | B §9 [P1-3] 종목 상세 초보자 카드 내부 CTA | ① | **Task 61**: `BeginnerReading.tsx` 하단 안내문 → 카드 안 직접 `<NextActionButtons />`("다음으로 확인하기": 공시·재무·점수 근거·업종 비교) 블록으로 교체. STEP 카드·읽기 순서·모바일 2열(44px) 보존 |
-| B §10 [P2-1] 관리자 데이터 상태판 | ④ [개발] | 미구현(§N·§14와 동일). `/status` selfCheck 근접 |
+| B §10 [P2-1] 관리자 데이터 상태판 | ①(MVP)/④ | **Task 62**: 읽기 전용 `/admin/status`(noindex·force-dynamic) — selfCheck 요약(분석/검증보류/결측/산식)·검증보류 종목 리스트·PER·PBR 결측 리스트·`data_reports` 최근 신고(ADMIN_ENABLED=1 시). `/status` 무변경(공개 유지). **배치 이력·수집 실패 로그·수동 재수집·신고 워크플로·관리자 인증은 백로그**(`docs/ornscore-admin-status-backlog.md`) |
+| B §10 [P2-2] 오류 신고 DB 저장 | ①(MVP)/④ | **Task 62**: `POST /api/report-data-issue`(nodejs, `data_reports` insert, waitlist 동일 graceful) + `ReportDataIssueForm.tsx`(인앱 폼) — **mailto 버튼은 항상 fallback 유지**(env/테이블 부재 시 안 깨짐). 테이블 SQL은 라우트 주석·백로그 문서. 신고 상태 전이 워크플로는 ④ |
 | C §11~13 문구 조정(급등/고점추격/시장관심) | ① | **Task 61**: `StocksExplorer`(프리셋 "급등했지만 위험"→"최근 상승폭이 커진 종목")·`guide/metrics`·`metricReadings`·`ScoreTooltip`·`today` "고점 추격"/"시장의 관심" → 변동성·확인 포인트 중립 표현. 금칙어 신규 0 |
 | D §14~15 공시 200건/분석 대상 필터 | ④/① | **Task 61(§15)**: `DisclosureExplorer` "전체 시장/분석 대상만" 범위 토글(기본 전체, scoped 카운트 일관) + 홈 `pickTopSignals` universe 인자(홈 공시=분석 대상만, 표시필터·`direction` 무변경). **공시 전체 기간 수집(§14 A안)은 ④** |
 | E §16~17 백테스트 고지 중복·KPI 균형 | ① | **Task 61**: `BacktestRiskNotice` 중복 고지 1줄 제거(헤더 1회+한계 박스 1회로 단일화), `BacktestClient` KPI 그리드 아래 위험 비교 한 줄(MDD/Sharpe vs 벤치) 추가(수치 무변경). 수익/위험 균형 캡션은 기존(#27) |
-| F §18~19 데이터 소스/업종 휴리스틱 리스크 | ②/⑤ | `docs/data-source-commercial-risk.md`(#39). 업종 내부 분류 고지 존재 |
-| G §20~22 약관/개인정보/AI 고지 | ②/⑤ | terms 초안·privacy 국외이전·AI 고지(#37·#46). 표 형식·실행 전 모달은 ⑤/③ |
-| H §23~24 모바일 App-first·PWA | ③/④ | 반응형 가드 존재. 하단 탭 관심 추가·PWA는 후속 |
+| F §18 [P2-3] 데이터 소스 상용 리스크 | ②/⑤ | **Task 62**: `data-source-commercial-risk.md` 보강 — §18 컬럼 형식 요약표(KRX·DART·Naver·yfinance·FDR / 용도·상용가능성·장애·대체·조치) + "핵심 유료 기능→공식·안정 데이터 전환 로드맵"(재무 1순위·현재가 2순위·yfinance 3순위·KRX 4순위·업종 중기) + 날짜 갱신. 법적 결론은 **[법무] 확인 필요** 유지 |
+| F §19 [P2-4] 업종 휴리스틱 리스크 UI 표시 | ① | **Task 62**: `SectorComparison.tsx`·`stock/[ticker]/page.tsx` 업종 대비 밸류에 "업종 분류는 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다" 캡션. `sectorOf`/`sectorValueScore` 무변경(문구만). 공식 업종(KRX/WICS/GICS) 연동=중기 로드맵(데이터 소스 문서) |
+| G §21 [P2-5] 개인정보 국외 이전 표 | ① | **Task 62**: `privacy/page.tsx` 국외 이전 `<ul>`→`<table>`(overflow-x-auto·min-w-[480px]·이전받는 자/국가/항목/목적/시점/보유기간/거부방법, Supabase·Vercel·Resend·Anthropic 4행). Kakao 국내 주석·Anthropic 학습 미사용 보존 |
+| G §22 [P2-6] AI 분석 실행 전 고지 | ① | **Task 62**: `AiAnalysisCard.tsx` 실행 전 고지 문구 강화(데이터 Anthropic 전송·민감정보 금지·참고용) + **필수 동의 체크박스**(미동의 시 실행 버튼 disabled). 결과 하단 고지 2종 기존 유지. 순수 클라 상태(API/비용 경로 무변경) |
+| G §20 [P2] 유료 정책 확정 필요 항목 | ②/⑤ | **Task 62**: `terms/page.tsx` "유료 서비스 — 출시 전 확정 필요 항목(초안·미확정)" 블록(결제수단·주기·자동갱신·해지시점·환불·7일 청약철회·디지털 콘텐츠 환불제한·장애보상·정산 9항). 확정 가격 0. `legal-ai-commercial-readiness.md` A절과 정렬 |
+| H §23 [P2-6] 모바일 하단 탭 관심 종목 | ① | **Task 62**: `MobileBottomNav.tsx` `/watchlist`(관심) MORE→PRIMARY 승격(4 primary: 오늘·종목 찾기·공시 신호·관심 + 더보기), `grid-cols-4`→`grid-cols-5`. Heart 아이콘·active·HIDE 유지 |
+| H §24 [P2-7] PWA 기본 적용 | ①(최소)/④ | **Task 62**: `manifest.ts`(Next-native, 오른스코어·standalone·다크 테마·icon.svg 재사용) + `/offline` 안내 페이지(네트워크 필요·홈 화면 추가 힌트). **service worker는 캐싱/배포 충돌 회피로 미등록(문서 스텁)**, 512px PNG 마스커블 아이콘은 운영자 보강 권장(④) |
 | I P1/P2 티켓 | ③/④/⑤ | 위 PART B~H 매핑 참조 |
 
 ---
