@@ -5,6 +5,7 @@ import {
   type Reading,
   type StockShape,
 } from "@/lib/metricReadings";
+import { NextActionButtons } from "@/components/stock/NextActionButtons";
 
 /**
  * 점수를 초보자가 이해할 수 있는 한 줄 행동 가이드로 번역.
@@ -99,9 +100,12 @@ export function BeginnerReading({ s }: { s: StockShape }) {
             </div>
           ))}
         </div>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3 pt-2.5 border-t border-zinc-200 dark:border-zinc-800 leading-snug">
-          이동은 위 <strong className="font-medium text-zinc-500 dark:text-zinc-400">먼저 확인할 것</strong> 순서 또는 상단 <strong className="font-medium text-zinc-500 dark:text-zinc-400">다음으로 확인할 것</strong> 버튼을 이용하세요.
-        </p>
+      </div>
+
+      {/* 다음으로 확인하기 — 초보자 해석 카드 안 직접 CTA (설계서 §9 / [P1-3]) */}
+      <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3 mb-3">
+        <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">다음으로 확인하기</div>
+        <NextActionButtons />
       </div>
 
       {/* 지표별 한 줄 해석 — 기본 접힘 */}

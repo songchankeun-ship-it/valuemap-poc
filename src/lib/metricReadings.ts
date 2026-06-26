@@ -56,7 +56,7 @@ export function readFlow(score: number): Reading {
   const r: Reading = { label: "거래활성도", score, emoji: "💰", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
     r.meaning = "거래량이 평소보다 늘었습니다";
-    r.action = "시장의 관심이 모이는 중 — 어떤 이슈인지 공시·뉴스 확인";
+    r.action = "거래량이 평소보다 늘어난 상태 — 어떤 이슈인지 공시·뉴스·수급 변화 확인";
     r.tone = "good";
   } else if (score >= 40) {
     r.meaning = "거래량은 평범한 편입니다";
@@ -174,7 +174,7 @@ export function getChecklistByPattern(s: StockShape): { headline: string; items:
       items: [
         "최근 공시/뉴스 (자기주식 취득? 임원·주요주주 보유 변동? 대형 계약?)",
         "거래 급증이 일시적인지 추세적인지",
-        "고점 추격 위험 — 어디까지 사도 괜찮을지 본인 기준",
+        "상승이 이미 진행된 구간일 수 있어 원인·지속 가능성 확인 필요",
       ],
     };
   }

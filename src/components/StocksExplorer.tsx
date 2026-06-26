@@ -126,7 +126,7 @@ const QUESTION_PRESETS: QuestionPreset[] = [
   { id: "q-small-value", symbol: "🌱", label: "숨은 소형 저평가?", desc: "작은 회사 중 밸류가 낮은 종목", explain: "시가총액이 작으면서 밸류가 낮은 종목을 찾습니다.", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
   { id: "q-value-trend", symbol: "⚖️", label: "밸류 + 추세 동시?", desc: "밸류와 추세가 동시에 좋은 종목", explain: "밸류와 추세가 동시에 좋은 종목을 찾습니다.", config: { valueMin: 70, momentumMin: 70, volMin: 50, sortKey: "compositeScore", sortDir: "desc" } },
   { id: "q-strong-trend", symbol: "📈", label: "최근 흐름 강한 종목?", desc: "최근 가격 흐름이 강한 종목", explain: "최근 가격 흐름이 강한 종목을 찾습니다.", caution: "추세는 빠르게 식을 수 있어 급등 사유 확인이 필요합니다.", config: { momentumMin: 80, sortKey: "momentum", sortDir: "desc" } },
-  { id: "q-surge-risk", symbol: "⚠️", label: "급등했지만 위험한 종목?", desc: "최근 급등해 추가 확인이 필요한 종목", explain: "최근 3개월 상승률이 큰, 추가 확인이 필요한 종목을 보여줍니다.", caution: "급등 후 변동성이 큰 구간이라 급등 사유 확인이 필요합니다.", config: { sortKey: "r3m", sortDir: "desc" } },
+  { id: "q-surge-risk", symbol: "⚠️", label: "최근 상승폭이 커진 종목", desc: "최근 급등해 추가 확인이 필요한 종목", explain: "최근 3개월 상승률이 큰, 추가 확인이 필요한 종목을 보여줍니다.", caution: "급등 후 변동성이 큰 구간이라 급등 사유 확인이 필요합니다.", config: { sortKey: "r3m", sortDir: "desc" } },
 ];
 
 // ── 순수 필터 로직: 상태(state)와 분리해 '예상 결과 수' 계산에 재사용 ──
