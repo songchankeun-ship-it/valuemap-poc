@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 55 — OrnScore 최종 검증·배포 — #38~#48 origin/main 반영 (2026-06-26, Claude)
+- What: AI Dev Center 승인(2026-06-26 KST 메인 스레드, "작업 종료 후 배포까지")에 따라 #42~#48(동일 선형 체인의 #38~#41 포함) 완료 큐를 **origin/main에 fast-forward 반영하고 운영 배포**. 이 태스크 한정 원격 변경·운영 배포 승인. DB·env/키/시크릿·결제/인증 설정·히스토리 재작성·강제 푸시·일괄 삭제 비승인.
+- 완료 게이트: "Last AI Center Event = Task 48 completed" + #42~#48 PROGRESS 엔트리·브랜치 존재 → 전부 completed·커밋됨(블로커 0).
+- git: branch `ai-center/task-55-ornscore-final-verification-and-prod`, 작업트리 클린. `origin/main`=`a561e45`가 HEAD `85e48d9`의 조상 → **FF 가능**. `origin/main..HEAD` = #38~#48 커밋만(무관 0). 로컬 main `dad6e3b`는 origin/main 조상.
+- 검증 통과: `tsc --noEmit` 0 · `verify_metrics.py` 138/0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(SSG 138p+전 라우트) · 로컬 prod 3408 19경로 200·치명 마커 0 · 릴리스 표면 데이터기준 2026.06.25·Metrics 2.4.
+- 배포: `git merge --ff-only`로 #38~#48만 main 반영 → `git push origin main`(force 아님) → Vercel 자동배포 트리거.
+- 운영 검증(`https://ornscore.com/`): __PROD_RESULT_PENDING__
+- 잔여 리스크: Playwright 미구성(운영자 데스크톱/390px 육안 게이트 권장) · 결제·알림 미라이브 · 커버리지 138종목 · 가격 미확정 · Vercel 배포 전파는 운영자 대시보드 최종 확인 권장.
+
 ### Task 48 — OrnScore 독립 QA 리뷰 — 전 경로 QA 리포트·핸드오프 갱신 (2026-06-26, Claude)
 - What: #38~#47 자동화가 끝난 베타 직전 상태를 **QA 전문가 관점**으로 점검(만든 사람 관점 아님). 산출물은 QA 리포트 + 진행/핸드오프 기록 — **앱 소스 무수정**. branch `ai-center/task-48-ornscore-qa`, 시작 HEAD `d3d92f6`(클린). 리셋/pull/머지/push·신규 npm 0.
 - Changed/new: **신규 `docs/ornscore-qa-feedback.md`**(주 산출물) — Severity 분포(P0=0·P1=1·P2=2·P3=3·확인 완료 12), 각 이슈 경로/재현/기대/실제/제안, 운영자 육안 체크리스트(19경로·데스크톱+390px), 열린 질문 6, 잔여 리스크. `PROGRESS.md`·이 노트 갱신.

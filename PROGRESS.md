@@ -1,5 +1,19 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] OrnScore 최종 검증·배포 — #38~#48 main 반영 (Task 55, Claude)
+- 작업: AI Dev Center 승인(2026-06-26 KST 메인 스레드 — "작업 종료 후 배포까지")에 따라 #42~#48(및 동일 선형 체인의 #38~#41) 완료 큐를 **origin/main에 반영하고 운영 배포**. 이 태스크 한정으로 원격 변경·운영 배포 승인. DB·env/키/시크릿·결제/인증 설정·히스토리 재작성·강제 푸시·일괄 삭제는 비승인.
+- 완료 게이트 확인: AI_HANDOFF "Last AI Center Event = Task 48 completed" + #42~#48 각각 PROGRESS 엔트리·태스크 브랜치가 선형 체인 내 커밋을 가리킴 → 전부 completed·커밋됨. 실패/실행중/일시정지/미커밋 0.
+- git 상태(읽기 전용 점검): branch `ai-center/task-55-ornscore-final-verification-and-prod`, 작업트리 클린. `origin/main`=`a561e45`(Task 37 머지)가 HEAD `85e48d9`(Task 48 tip)의 **조상 → fast-forward 가능**. `origin/main..HEAD` = #38~#48 커밋만(무관 커밋 0). 로컬 `main`=`dad6e3b`는 origin/main의 조상(클린 ff).
+- 릴리스 검증(HEAD `85e48d9` + 이 릴리스노트 커밋):
+  - `npx tsc --noEmit` exit 0
+  - `PYTHONUTF8=1 verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 일치
+  - `npm run build` exit 0(타입게이트·SSG 138 종목 페이지 + 전 라우트, 빌드 트레이스 정상)
+  - 로컬 prod 3408 스모크 **19경로 전부 HTTP 200·치명 마커(Application error/Unhandled/TypeError/ReferenceError/cannot read) 0**: `/ /today /stocks /stock/005380 /stock/032830 /pricing /status /watchlist /disclosures /backtest /compare /privacy /terms /about /universe /history /login /guide/metrics /settings/notifications`. 내 리스너 PID 23860만 taskkill, 3000·4310 무중단.
+  - 릴리스 표면 마커: 데이터 기준일 **2026.06.25**·**Metrics 2.4**(`/`·`/status` 동일) — 운영 배포 후 동일 값 노출 확인 대상.
+- 배포 방식: origin/main이 HEAD의 조상 → **fast-forward 머지**(`git merge --ff-only`)로 #38~#48 완료 커밋만 반영. 머지 커밋·리베이스·리셋·강제 푸시 없음. `git push origin main`(force 아님).
+- 운영 검증(`https://ornscore.com/`): __PROD_RESULT_PENDING__
+- 잔여 리스크: (1) Playwright 미구성 → 실 브라우저 데스크톱/390px 시각 게이트 부재 → **운영자 육안 1회 권장**. (2) 결제·구독·알림 실 발송 미라이브(④). (3) 커버리지 138종목(전체 상장 아님·단계적 확대 예정). (4) 가격 전부 미확정(④/⑤·법무·사업). (5) Vercel 자동배포는 main push로 트리거 — 배포 완료/전파는 운영자 대시보드에서 최종 확인 권장.
+
 ## 2026-06-26 · [claude] OrnScore 독립 QA 리뷰 — 전 경로 QA 리포트·핸드오프 갱신 (Task 48, Claude)
 - #38~#47 자동화가 끝난 베타 직전 상태를 **QA 전문가 관점(만든 사람 아님)**으로 점검. branch `ai-center/task-48-ornscore-qa`, 시작 HEAD `d3d92f6`(클린). **앱 소스 무수정** — 산출물은 QA 리포트 + 진행/핸드오프 기록. 리셋/pull/머지/push·신규 npm 0. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3403`, 내 node PID 14648만 정리).
 - **신규 문서** `docs/ornscore-qa-feedback.md`(주 산출물): Severity 분포(P0=0·P1=1·P2=2·P3=3·확인 완료 12) + 각 이슈 경로/재현/기대/실제/제안 + 운영자 육안 체크리스트(19경로·데스크톱+390px) + 열린 질문 6 + 잔여 리스크.
