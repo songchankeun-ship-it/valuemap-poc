@@ -647,3 +647,8 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Fix: `src/components/StocksExplorer.tsx` 검색 input 에 `suppressHydrationWarning` 추가(Next.js 권장). 동작/스타일/필터 무변경. 상세필터 number/range/checkbox 는 패널 펼침 시 렌더라 초기 SSR 비대상 → 첫 검색 input 한 곳 수정으로 충분.
 - Passed: `tsc --noEmit` 0 · `npm run build` 0(`/stocks` 14.2 kB·138p 프리렌더) · Korean 무손상(grep).
 - Residual: 없음(속성 한정). 향후 SSR 첫 렌더 노출 폼 input 추가 시 동일 처방 고려.
+### Codex release - Task 70 auth provider expansion main push/public smoke complete (2026-06-27)
+- User approved pushing Task 70. `main` was fast-forwarded from `bbc5876` to `fa33165` and pushed to `origin/main`.
+- Pre-push gates passed: `npx tsc --noEmit`, UTF-8 `python scripts/verify_metrics.py`, and `npm run build`.
+- Public smoke passed on `https://ornscore.com/login`: footer commit `fa33165`, Kakao and Google OAuth buttons visible, Apple hidden by policy, email magic-link visible. `/auth/callback` without a code redirects to `/login?error=auth_callback_failed`. `/privacy` includes Google processor text.
+- Remaining operator step: configure Supabase Google provider and Google Cloud OAuth client using `docs/auth-providers-setup.md`, then test a real Google OAuth round trip.

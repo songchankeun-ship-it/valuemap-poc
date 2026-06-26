@@ -1303,3 +1303,9 @@
 - Fix: `src/components/StocksExplorer.tsx` 검색 input 에 `suppressHydrationWarning` 추가(Next.js 권장 처방). 동작·스타일·필터 로직 무변경. 상세 필터 안의 number/range/checkbox input 들은 showAdvanced/drawer 가 열려야 렌더돼 초기 SSR 대상이 아니므로 첫 검색 input 한 곳만 수정으로 충분.
 - Passed: `npx tsc --noEmit` exit 0 · `npm run build` exit 0(/stocks 14.2 kB·138p 프리렌더, 라우트 전수 빌드). Korean 문구 무손상 확인(grep).
 - Residual: 없음(속성 한정 수정). 향후 SSR 첫 렌더에 노출되는 폼 input 추가 시 확장 주입 대비 동일 처방 고려.
+## 2026-06-27 - [codex] Task 70 auth provider expansion main push/public smoke complete
+- **Scope**: User approved release of Task 70 after the auth provider expansion automation run completed.
+- **Push**: Fast-forwarded `main` from `bbc5876` to `fa33165` and pushed `origin/main`.
+- **Verification before push**: `npx tsc --noEmit`, `python scripts/verify_metrics.py` with UTF-8 env, and `npm run build` all passed.
+- **Public smoke**: Confirmed `https://ornscore.com/login` is serving footer commit `fa33165`, renders two OAuth buttons (Kakao and Google), keeps Apple hidden by policy, and keeps the email magic-link button visible. Confirmed `/auth/callback` without a code redirects safely to `/login?error=auth_callback_failed`. Confirmed `/privacy` includes Google processor text.
+- **Next**: Supabase/Google Cloud console setup is still required before a real Google OAuth round trip can succeed; follow `docs/auth-providers-setup.md`, then test the live Google login redirect/callback.
