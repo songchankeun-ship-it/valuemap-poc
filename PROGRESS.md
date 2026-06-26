@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [codex] 2차 QA main 반영·운영 배포 완료
+- **배포 승인/범위**: 사용자 요청 "응 배포해줘"에 따라 Task 60~63의 ORNSCORE 2차 QA 개선 결과를 `main`에 반영하고 `origin/main`에 push했다.
+- **원격 최신 데이터 보존**: push 직전 `origin/main`에 `e8222f1 chore(data): daily refresh 2026-06-26T10:44Z`가 먼저 올라와 있어, 이를 버리지 않고 2차 QA 브랜치에 병합한 뒤 `main`을 fast-forward했다.
+- **검증**: 병합 후 `npx tsc --noEmit`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `npm run build` 모두 통과. Metrics 2.4 정합, 138종목 오류 0건, 금칙어 0건.
+- **push**: `origin/main`이 `e8222f1`에서 `2efe523`으로 갱신됨. 강제 push 없음.
+- **운영 확인**: `https://ornscore.com` 공개 사이트에서 `/pricing`, `/privacy`, `/offline`, `/backtest`, `/stock/005380`, `/status`가 HTTP 200이며 2차 QA 마커를 노출. `/manifest.webmanifest`도 HTTP 200 및 `application/manifest+json`으로 응답.
+- **다음**: 사용자가 실제 화면을 보고 체감 피드백을 주면 그 내용을 다음 개선 큐로 등록한다. 남은 큰 축은 결제/구독 권한 연결, 데이터 소스 법무 확정, 관리자 인증/로그, service worker/아이콘 보강, 모바일 실브라우저 육안 QA.
+
 ## 2026-06-26 · [claude] 2차 QA 최종 검증 — 게이트 전수 통과·공개 전 릴리스 체크리스트 (Task 63, Claude)
 - **목적**: 방금 등록된 ORNSCORE 2차 QA 작업(Task 60 P0 · Task 61 P1 · Task 62 P2)이 모두 완료·정리됐는지 최종 검증하고, **공개 주소(`https://ornscore.com/`) 최신화 전에 운영자가 확인할 마커**를 명확히 남긴다. branch `ai-center/task-63-ornscore-2-qa`, 시작·종료 HEAD `01df662`(Task 62 tip, 클린). **앱 소스 무수정** — 산출물은 검증 결과 + 이 릴리스 체크리스트(PROGRESS·AI_HANDOFF). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. AI Center 4310·미리보기 3000 무중단(검증 prod `127.0.0.1:3256`, 내 리스너 node PID 23936만 taskkill).
 - **완료 확인(읽기 전용 감사)**: `git log` 선형 히스토리에 2차 QA 3개 묶음 전부 존재 — Task 60(`e8e5a34`←`c3b6765`, PART A·I P0 5종), Task 61(`d6bf701`←`071f759`/`c321f2a`/`9908805`/`3f75d23`, PART B~E·I P1), Task 62(`01df662`←`56e1ee7`/`9f92756`/`3086863`/`09380a6`/`ea5ef24`, PART F~I P2). 시작 기준 `b2fad41`(codex 운영 배포 기록) 위에 P0→P1→P2가 선형으로 쌓임. `git status` 클린(미커밋/미추적 0). `docs/ornscore-spec-coverage.md` §8(2차 QA 설계서 표) PART A~I 전 행 ①(또는 ①/④/⑤ — 미연결 결제·가격 미확정·SW 스텁·법무 결론은 명시 백로그 사유 동반). 예상과 다른 미커밋 변경·누락 항목 0.

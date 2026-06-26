@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T09:51:48.726Z
+Last updated: 2026-06-26T11:10:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 63 - OrnScore 2차 QA 최종 검증 — 릴리스 준비와 공개 확인 체크리스트
-- Run: 56
+- Task: 2차 QA main 반영 및 운영 배포
+- Run: manual codex deploy after Task 63
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: User approved deployment. Codex preserved the latest origin/main daily data refresh, merged the completed Task 60~63 QA branch, verified tsc/metrics/build, pushed origin/main to 2efe523, and confirmed ornscore.com public markers on /pricing, /privacy, /offline, /backtest, /stock/005380, /status plus manifest HTTP 200.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Codex deploy — 2차 QA main 반영·운영 배포 완료 (2026-06-26)
+- What: 사용자 "응 배포해줘" 승인에 따라 Task 60~63의 ORNSCORE 2차 QA 결과를 `main`에 반영하고 `origin/main`에 push. 시작 시 `origin/main`은 자동 데이터 갱신 `e8222f1 chore(data): daily refresh 2026-06-26T10:44Z`가 먼저 올라와 있었으므로, 해당 데이터 갱신을 보존해 작업 브랜치에 병합한 뒤 `main`을 fast-forward. 강제 push·히스토리 재작성 없음.
+- Verification: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4, `npm run build` 0.
+- Push/public: `git push origin main` 성공, `origin/main` = `2efe523`. Vercel 전파 후 `https://ornscore.com`에서 `/pricing`, `/privacy`, `/offline`, `/backtest`, `/stock/005380`, `/status` HTTP 200 및 2차 QA 마커 확인. `/manifest.webmanifest`도 HTTP 200 `application/manifest+json`.
+- Next: 사용자가 실제 화면 체감 피드백을 주면 다음 개선 큐로 등록. 남은 큰 항목은 결제/구독 권한 연결, 데이터 소스 법무 확정, 관리자 인증/로그, service worker/아이콘 보강, 모바일 실브라우저 육안 QA.
 
 ### Task 63 — OrnScore 2차 QA 최종 검증 — 게이트 전수 통과·공개 전 릴리스 체크리스트 (2026-06-26, Claude)
 - What: 방금 등록된 2차 QA 작업(Task 60 P0·Task 61 P1·Task 62 P2)이 모두 완료·정리됐는지 최종 검증하고 **공개 주소 최신화 전 운영자 확인 마커**를 문서화. **앱 소스 무수정**(산출물=PROGRESS·이 노트). branch `ai-center/task-63-ornscore-2-qa`, 시작·종료 HEAD `01df662`(Task 62 tip, 클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. AI Center 4310·미리보기 3000 무중단(검증 prod 3256, 내 node PID 23936만 taskkill).
