@@ -281,8 +281,8 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
           <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
             <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5">마지막 리밸런싱 보유 {active.latestHoldings.length}종목</div>
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 시뮬레이션의 마지막 리밸런싱 구성입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
+              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5">마지막 리밸런싱 구성 예시 {active.latestHoldings.length}종목</div>
+              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 백테스트 규칙을 마지막 리밸런싱 시점에 적용했을 때의 구성 예시입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
               <div className="flex flex-wrap gap-1.5">
                 {active.latestHoldings.map((tk) => (
                   <Link key={tk} href={"/stock/" + tk} prefetch={false} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>

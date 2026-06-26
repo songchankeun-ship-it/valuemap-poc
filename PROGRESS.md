@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-26 · [claude] 2차 QA 설계서 PART A·I P0 5종 마감 (Task 60, Claude)
+- 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART A(P0)·PART I [P0-1~P0-5]를 작은 단위로 반영. branch `ai-center/task-60-ornscore-2-qa-p0`, 시작 HEAD `b2fad41`(클린) 위 — **리셋/pull/머지/push 없이** 로컬 수정·검증·커밋까지만. AI Center 4310[PID 11160]·미리보기 3000 무중단(검증 prod `127.0.0.1:3253`, 내 리스너 node PID 14504만 taskkill). 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만), 신규 npm 0, 빌드 단계 추가 0, 투자 조언성 표현 신규 0(부정 고지 "추천이 아닙니다"만).
+- **시작 전 상태 확인**: P0-2(비교 빈 상태)·P0-4 홈 스냅샷 공시 카드("DART · 최신 200건 내")는 **#36/#41에서 이미 완료** 확인 → 재구축 0, 실제 공백만 채움.
+- **반영(코드 4파일, 표시/마크업/문구만)**:
+  - **[P0-1] `src/components/BeginnerReading.tsx`** — "먼저 확인할 것" `<ol>/<li>`(자동 번호 + 내부 숫자 배지가 겹쳐 `1. 1` 중복)을 **STEP 카드**(`<a>` 카드 + `STEP n` 단일 배지)로 교체. 번호는 `STEP {i+1}` props 단일 출처(ol 자동 번호 제거), `CONFIRM_ORDER` 텍스트·href·`#basis`/`#disclosures`/`#financials` 앵커·읽기 순서 보존(스크린리더 순서 유지). 390px: `flex items-start`·`break-keep`·`min-w-0` 줄바꿈 가드.
+  - **[P0-3] `src/components/BacktestClient.tsx`** — "마지막 리밸런싱 **보유** {n}종목" → "마지막 리밸런싱 **구성 예시** {n}종목"("보유" 제거). 캡션도 spec 권장문("과거 백테스트 규칙을 마지막 리밸런싱 시점에 적용했을 때의 구성 예시입니다 · 현재 확인 후보나 추천이 아닙니다.")으로 강화.
+  - **[P0-4] `src/components/home/DisclosureSignalSection.tsx`** — 홈 "오늘 먼저 볼 공시 신호" 설명에 "**DART 최신 200건 내**" 기준 추가(스냅샷 카드와 일관). `MarketSnapshotCards.tsx`는 기존 "DART · 최신 200건 내" 유지(무변경).
+  - **[P0-5] `src/components/StocksExplorer.tsx`** — 상세 필터 버튼(모바일/데스크톱)의 카운트 배지를 라벨에서 분리(`ml-0.5`→`ml-1.5` + 라벨 `<span>` 래핑 + `aria-label`)해 "▾1"로 안 읽히게. 모바일(`lg:hidden`)/데스크톱(`hidden lg:inline-flex`)은 브레이크포인트 배타라 동시 노출 없음. 빠른 프리셋 `펼치기 ▾`/`접기 ▴`는 `group-open` 토글로 단일 노출(기존). 필터 로직 무변경.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` exit 0(SSG 138 종목 + 전 라우트) · 변경 4파일 금칙어 grep 0(부정 고지만). 로컬 prod 3253 7경로(`/ /stocks /compare /stock/005380 /stock/032830 /backtest /disclosures`) **HTTP 200·치명 마커(Application error/TypeError/ReferenceError/cannot read/Unhandled) 0**. SSR 확인: `/stock/005380` STEP 1/2/3 렌더·`1. 1` 중복 0, `/backtest` "리밸런싱 보유" 0건·"마지막 리밸런싱 구성 예시" 렌더, `/` "DART 최신 200건 내"(섹션)·"DART · 최신 200건 내"(스냅샷) 양쪽 렌더.
+- **잔여 리스크 / 게이트 한계**: Playwright 미구성 → 실 브라우저 데스크톱/390px 시각 게이트 부재 → **운영자 육안 1회 권장**(STEP 카드 줄바꿈·비교 빈 상태·탐색 필터 배지 간격·가로 오버플로 0·콘솔 0). PART B~H(무료/유료 경계·문구 중립화·공시 전체 기간·관리자 상태판·약관 표 형식·모바일 App-first/PWA)는 제품/데이터/법무 결정 동반(④/⑤) → 별도 큐.
+- **다음**: P1 티켓([P1-1] Free/Pro/Premium 경계·[P1-2] 무료 알림 제한·[P1-3] 초보자 카드 CTA·[P1-5] 백테스트 KPI 균형) 중 표시 가능한 것부터. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ## 2026-06-26 - [codex] OrnScore production push and public verification complete
 
 - Follow-up to Task 55: Claude completed all local verification but stopped at direct `git push origin main` because the project boundary blocks Claude main pushes.

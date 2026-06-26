@@ -68,20 +68,24 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">{checklist.headline}</div>
       </div>
 
-      {/* 먼저 확인할 것 — 점수 → 공시 → 재무 순서(설계서 §9.5) */}
+      {/* 먼저 확인할 것 — 점수 → 공시 → 재무 STEP 카드(설계서 §9.5·§3 번호 중복 제거). ol 자동 번호 대신 STEP n 단일 표기 */}
       <div className="rounded-md border border-blue-100 dark:border-blue-950 bg-blue-50/40 dark:bg-blue-950/20 p-3 mb-3">
         <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">먼저 확인할 것 <span className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">— 순서대로</span></div>
-        <ol className="space-y-2">
+        <div className="space-y-2">
           {CONFIRM_ORDER.map((c, i) => (
-            <li key={c.href} className="flex gap-2.5">
-              <span className="shrink-0 w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center tabular-nums">{i + 1}</span>
+            <a
+              key={c.href}
+              href={c.href}
+              className="flex gap-2.5 items-start rounded-md border border-blue-100 dark:border-blue-950 bg-white/70 dark:bg-zinc-900/50 p-2.5 hover:border-blue-400 dark:hover:border-blue-700 transition group"
+            >
+              <span className="shrink-0 inline-flex items-center h-5 px-1.5 rounded bg-blue-600 text-white text-[10px] font-bold tracking-wide tabular-nums">STEP {i + 1}</span>
               <div className="min-w-0">
-                <a href={c.href} className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 hover:text-blue-700 dark:hover:text-blue-400 transition">{c.step} →</a>
+                <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition break-keep">{c.step} <span aria-hidden>→</span></div>
                 <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-snug mt-0.5">{c.detail}</p>
               </div>
-            </li>
+            </a>
           ))}
-        </ol>
+        </div>
       </div>
 
       {/* 이 종목에서 특히 — 점수 패턴별 추가 확인 항목 */}

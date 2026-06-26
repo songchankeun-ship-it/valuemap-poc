@@ -13,7 +13,7 @@ export function DisclosureSignalSection({ signals }: { signals: DisclosureSignal
         </Link>
       </div>
       <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
-        자기주식, 보유 변동, 정정공시, 계약, 자금조달 관련 공시를 자동 분류해 확인할 신호를 정리합니다.
+        자기주식, 보유 변동, 정정공시, 계약, 자금조달 관련 공시를 <strong className="font-medium text-zinc-600 dark:text-zinc-300">DART 최신 200건 내</strong>에서 자동 분류해 확인할 신호를 정리합니다.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

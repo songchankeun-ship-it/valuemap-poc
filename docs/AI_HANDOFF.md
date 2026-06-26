@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 60 — OrnScore 2차 QA 설계서 PART A·I P0 5종 마감 (2026-06-26, Claude)
+- What: 기준 설계서 `ORNSCORE_2nd_QA_improvement_spec.md` PART A(P0)·PART I [P0-1~P0-5]를 작은 단위로 반영. branch `ai-center/task-60-ornscore-2-qa-p0`, 시작 HEAD `b2fad41`(클린). 리셋/pull/머지/push·신규 npm·빌드 단계 추가 0. 점수식·`stocks.json`·`backtest-result.json`·`direction` 무변경(표시/문구만). AI Center 4310[PID 11160]·미리보기 3000 무중단(검증 prod 3253, 내 node PID 14504만 taskkill).
+- 시작 전 상태 확인: P0-2(비교 빈 상태)·P0-4 홈 스냅샷 공시 카드("DART · 최신 200건 내")는 #36/#41에서 이미 완료 → 재구축 0, 실제 공백만 채움.
+- Changed (코드 4파일, 표시/마크업/문구만):
+  - [P0-1] `src/components/BeginnerReading.tsx` — "먼저 확인할 것" `<ol>/<li>`(자동 번호+내부 숫자 배지 → `1. 1` 중복)을 **STEP 카드**(`<a>` 카드+`STEP n` 단일 배지)로 교체. 번호 `STEP {i+1}` props 단일 출처, ol 자동 번호 제거. `CONFIRM_ORDER` 텍스트·href·`#basis`/`#disclosures`/`#financials` 앵커·읽기 순서 보존.
+  - [P0-3] `src/components/BacktestClient.tsx` — "마지막 리밸런싱 **보유** {n}종목"→"…**구성 예시** {n}종목"("보유" 제거) + 캡션 spec 권장문 강화.
+  - [P0-4] `src/components/home/DisclosureSignalSection.tsx` — 홈 "오늘 먼저 볼 공시 신호" 설명에 "DART 최신 200건 내" 기준 추가(스냅샷 카드와 일관). `MarketSnapshotCards.tsx` 무변경.
+  - [P0-5] `src/components/StocksExplorer.tsx` — 상세 필터 버튼 카운트 배지를 라벨에서 분리(`ml-1.5`+라벨 `<span>` 래핑+`aria-label`)해 "▾1"로 안 읽히게. 모바일/데스크톱 변형은 브레이크포인트 배타. 필터 로직 무변경.
+- What passed: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(SSG 138p+전 라우트) · 변경 4파일 금칙어 grep 0(부정 고지만). 로컬 prod 3253 7경로(`/ /stocks /compare /stock/005380 /stock/032830 /backtest /disclosures`) 200·치명 마커 0. SSR: `/stock/005380` STEP 1/2/3·`1. 1` 중복 0, `/backtest` "리밸런싱 보유" 0건·"구성 예시" 렌더, `/` 공시 기준 양쪽(섹션·스냅샷) 렌더.
+- Gate note: Playwright 미구성 → **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 `/stock/*` STEP 카드 줄바꿈·`/compare` 빈 상태·`/stocks` 상세 필터 배지 간격·`/backtest` 구성 예시·가로 오버플로 0·콘솔 0 확인 권장.**
+- Residual / next: PART B~H(무료/유료 경계·문구 중립화 §11~13·공시 전체 기간 §14·관리자 상태판 §10·약관 표 형식 §21·모바일 App-first/PWA §23~24)는 제품/데이터/법무 결정 동반(④/⑤) → 별도 큐. P1 티켓 중 표시 가능분([P1-3] 초보자 카드 CTA 등) 후속. 원격 갱신·main 머지·외부 릴리스 범위 외(운영자).
+
 ### Task 55 — OrnScore 최종 검증·배포 — #38~#48 origin/main 반영 (2026-06-26, Claude)
 - What: AI Dev Center 승인(2026-06-26 KST 메인 스레드, "작업 종료 후 배포까지")에 따라 #42~#48(동일 선형 체인의 #38~#41 포함) 완료 큐를 **origin/main에 fast-forward 반영하고 운영 배포**. 이 태스크 한정 원격 변경·운영 배포 승인. DB·env/키/시크릿·결제/인증 설정·히스토리 재작성·강제 푸시·일괄 삭제 비승인.
 - 완료 게이트: "Last AI Center Event = Task 48 completed" + #42~#48 PROGRESS 엔트리·브랜치 존재 → 전부 completed·커밋됨(블로커 0).

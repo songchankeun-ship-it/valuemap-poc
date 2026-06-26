@@ -879,16 +879,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         </select>
         <button type="button" onClick={() => setDrawerOpen(true)} className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          상세 필터
+          <span>상세 필터</span>
           {nonThemeFilterCount + themeFilterCount > 0 ? (
-            <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>
+            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
           ) : null}
         </button>
         <button type="button" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced} className="hidden lg:inline-flex px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          {showAdvanced ? "상세 필터 닫기 ▴" : "상세 필터 열기 ▾"}
+          <span>{showAdvanced ? "상세 필터 닫기 ▴" : "상세 필터 열기 ▾"}</span>
           {activeFilterCount > 0 ? (
-            <span className="ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums">{activeFilterCount}</span>
+            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
           ) : null}
         </button>
         {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
