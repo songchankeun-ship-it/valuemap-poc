@@ -53,7 +53,7 @@ const siteJsonLd = {
       "@type": "Organization",
       name: "오른스코어",
       url: "https://ornscore.com",
-      logo: "https://ornscore.com/icon.png",
+      logo: "https://ornscore.com/icon-512.png",
       description: "한국 테마주 데이터 분석 도구",
       foundingDate: "2026",
       sameAs: [],

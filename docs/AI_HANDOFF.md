@@ -43,6 +43,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 앱 패키징 마감 게이트 추가 (2026-06-28, Codex)
+- `src/app/manifest.ts`의 깨진 앱 이름/설명/shortcuts 문구를 정상 한국어로 복구했다. 설치 이름은 `오른스코어`, 긴 이름은 `오른스코어 — 한국 주식 탐색 도구`.
+- `scripts/check-app-packaging.mjs`와 `npm run app:check`를 추가해 PWA 아이콘, manifest 필드, 설치 도우미, 오프라인 안내, service worker 미등록, assetlinks 자리표시자 미배포를 확인한다.
+- `scripts/generate-assetlinks.mjs`와 `npm run app:assetlinks`를 추가했다. Android TWA 진행 시 실제 패키지명과 서명 SHA-256 지문이 생긴 뒤에만 `public/.well-known/assetlinks.json`을 생성한다.
+- `docs/app-packaging-final-checklist.md`에 PWA/TWA/iOS 마감 상태와 운영자 직접 확인 항목을 정리했다. 남은 외부 게이트는 실기기 standalone 로그인 복귀 확인, Play Console/패키지명/SHA-256, Apple Developer/Mac/Xcode 여부다.
+
 ### Google 로그인 운영자 콘솔 설정 완료 (2026-06-28, Codex/User)
 - 운영자가 Google Cloud OAuth Client + Supabase Authentication Provider 설정을 완료했고, `https://ornscore.com/login`에서 실제 Google 로그인 왕복이 정상 동작함을 직접 확인했다.
 - 코드 변경은 필요 없었다. Task 70의 Google OAuth 버튼/콜백/약관·개인정보 문구가 그대로 실동작 상태가 됐다.

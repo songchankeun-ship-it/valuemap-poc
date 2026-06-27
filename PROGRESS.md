@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] 앱 패키징 마감 게이트 추가
+- **수정**: `src/app/manifest.ts`의 깨진 앱 이름/설명/바로가기 문구를 복구해 홈 화면 설치 이름이 `오른스코어`로 정상 노출되도록 수정.
+- **추가**: `scripts/check-app-packaging.mjs`로 PWA manifest, 아이콘, 설치 도우미, 오프라인 안내, service worker 미등록, assetlinks 자리표시자 미배포를 한 번에 점검.
+- **추가**: `scripts/generate-assetlinks.mjs`와 `npm run app:assetlinks`로 Android TWA 진행 시 실제 패키지명·SHA-256 지문을 받아 `public/.well-known/assetlinks.json`을 안전하게 생성할 수 있게 준비.
+- **문서**: `docs/app-packaging-final-checklist.md`에 PWA/TWA/iOS 마감 상태, 실행 명령, 운영자 직접 확인 항목을 고정.
+- **남은 운영자 게이트**: 실기기 PWA 설치·standalone 로그인 복귀 확인, Android TWA용 Play Console/패키지명/SHA-256 지문, iOS App Store 여부 결정.
+
 ## 2026-06-28 · [codex] Google 로그인 운영자 콘솔 설정 완료 기록
 - **완료 확인**: 운영자가 Google Cloud OAuth Client + Supabase Authentication Provider 설정을 마치고, `https://ornscore.com/login`에서 Google 로그인 실동작을 직접 테스트해 정상 동작을 확인.
 - **코드 변경 없음**: Task 70에서 이미 구현된 Google OAuth 버튼/콜백/약관·개인정보 문구가 그대로 사용됨. 이번 변경은 운영 상태 문서 갱신만.
