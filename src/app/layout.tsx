@@ -80,15 +80,18 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        {/* Pretendard 웹폰트 — 비차단 로드.
-         * media="print" 로 받아 첫 페인트를 막지 않고, 로드되면 media='all' 로 승격한다.
-         * 오프라인/헤드리스에서 외부 CDN 이 멈춰도 렌더(및 스크린샷)가 지연되지 않는다. */}
+        {/* Pretendard 웹폰트 — 비차단 로드(JS 주입 방식).
+         * SSR 마크업에는 스타일시트 링크를 넣지 않고, 아래 인라인 스크립트가
+         * media="print" 로 link 를 만든 뒤 onload 시 media='all' 로 승격한다.
+         * React 가 렌더하지 않은 노드라 하이드레이션 불일치(Prop media did not match)가
+         * 발생하지 않으며, 오프라인/헤드리스에서 외부 CDN 이 멈춰도 시스템 한글 폰트
+         * 폴백으로 즉시 렌더(및 스크린샷)된다. 프로덕션은 그대로 Pretendard 적용. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          data-font="pretendard"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
-          media="print"
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var h='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';var l=document.createElement('link');l.rel='stylesheet';l.href=h;l.media='print';l.onload=function(){l.media='all';};document.head.appendChild(l);}catch(e){}})();",
+          }}
         />
         <noscript>
           {/* JS 비활성 시에도 폰트를 적용 (차단되지만 안전한 폴백) */}
@@ -98,12 +101,6 @@ export default function RootLayout({
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
           />
         </noscript>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){var l=document.querySelector('link[data-font=\"pretendard\"]');if(!l)return;if(l.sheet){l.media='all';}else{l.addEventListener('load',function(){l.media='all';});}})();",
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}

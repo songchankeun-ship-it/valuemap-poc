@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 87 (repair 2) — Pretendard 폰트 하이드레이션 불일치 제거 (Playwright 게이트 수복) (2026-06-27, Claude)
+- **증상**: Playwright DESKTOP FAILED + MOBILE 스크린샷 타임아웃, 공통 `Warning: Prop media did not match. Server: "all" Client: "print"` (`layout.tsx` `<head><link>`). 직전 repair(`cde711b`)가 SSR에 `<link media="print">`를 렌더 후 인라인 스크립트로 `media='all'` 승격 → DOM 변형이 React 하이드레이션 전에 일어나 서버(`print`)↔실제 DOM(`all`) 불일치 경고가 매 렌더 발생, 게이트가 실패 처리.
+- **수정**: `src/app/layout.tsx` `<head>`에서 스왑 대상 `<link media="print">`와 별도 승격 스크립트를 제거하고, 인라인 스크립트가 `document.createElement('link')`로 `media='print'` 링크를 만든 뒤 `onload`에서 `media='all'` 승격하도록 교체. React가 렌더하지 않은 노드라 하이드레이션이 비교할 노드 자체가 없음(경고 억제가 아니라 구조적 제거). `preconnect`·`<noscript>` 폴백 유지. 프로덕션 Pretendard 유지, 오프라인/헤드리스는 시스템 한글 폰트 폴백 즉시 렌더. **`globals.css`·점수식·`stocks.json`·인증·manifest 무변경, 신규 npm 0.**
+- **What passed**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(SSG 138p). 로컬 prod **3187**(내 PID 14092만 taskkill·**AI Center 4310 무중단**): 13개 라우트 200, SSR `<head>` `media="print"` 스타일시트 링크 0건·JS 주입 스크립트 존재 확인. `layout.tsx` U+FFFD 0.
+- **Next**: 게이트 재실행으로 desktop/mobile 통과 확인. 기능/운영자 잔여는 Task 87 본 노트 그대로.
+
 ### Task 87 — 로컬 최종 상용 준비도 마감 (라우트 스모크 + 운영자 전용 체크리스트 + 핸드오프) (2026-06-27, Claude)
 - **결정/범위**: Task 77 위 **로컬 전용 QA·문구·핸드오프 마감** = AI가 코드로 고칠 로컬 갭과 운영자만 할 수 있는 폰/계정/법무 점검 분리. branch `ai-center/task-87-...`(HEAD `5d33e25`=origin/main 클린 시작). **신규 npm 0 · 리셋/pull/머지/push 0 · env 0 · `src` 코드·`stocks.json`·점수식·`direction`·manifest·인증 config 무변경 · 가짜 OAuth/세션 0 · 레포 밖 변경 0.**
 - **정적 감사(읽기 전용)**: `/about`·`PwaInstallHelper`·`manifest.ts`·`/pricing`·`/status`·`/privacy`·`/terms`·`/login`·`providers.ts`+docs 전수 → (a) 스토어 과대표현 0, (b) PWA 설치 한계 충분 설명, (c) 제공자 정합(`/login` 카카오·구글·이메일+네이버"준비 중", Apple 미노출 — privacy/terms/auth-setup 일치), (d) 베타→Pro·미확정 존재. 매수/매도/수익보장 문구 0. **→ 공개 문구 추가 수정 불필요로 확인(편집 0).**
