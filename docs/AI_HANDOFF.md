@@ -708,3 +708,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Pre-push gates passed: `npx tsc --noEmit`, UTF-8 `python scripts/verify_metrics.py`, and `npm run build`.
 - Public smoke passed on `https://ornscore.com/login`: footer commit `fa33165`, Kakao and Google OAuth buttons visible, Apple hidden by policy, email magic-link visible. `/auth/callback` without a code redirects to `/login?error=auth_callback_failed`. `/privacy` includes Google processor text.
 - Remaining operator step: configure Supabase Google provider and Google Cloud OAuth client using `docs/auth-providers-setup.md`, then test a real Google OAuth round trip.
+
+
+### Task 87 — Repair: 데스크톱 Playwright 스크린샷 30s 타임아웃(외부 폰트 @import) (2026-06-27, Claude)
+- Blocker(게이트 FAIL): `page.screenshot: Timeout 30000ms exceeded` (DESKTOP), `fonts loaded` 직후 캡처 멈춤.
+- Root cause: `src/app/globals.css` 의 render-blocking 외부 `@import`(jsdelivr Pretendard). 오프라인/헤드리스에서 외부 CDN 요청이 hang → 렌더 안정 미도달 → 스크린샷 타임아웃.
+- Fix: @import 제거 + `layout.tsx` head 에서 `media="print"` 비차단 링크 + 로드 후 `media='all'` 승격 인라인 스크립트(+`<noscript>` 폴백). 시스템 한글 폰트 폴백 체인 유지 → 폰트 미로드 시에도 정상.
+- Passed: `tsc --noEmit` 0 · `npm run build` 0(전 라우트) · `verify_metrics.py`(UTF8) 138종목 0오류·금칙어 0·산식 2.4 · 포트 4399 prod 스모크 13개 라우트 전부 200, 빌드 CSS 에 jsdelivr @import 0건. (검증 PID 만 종료, 4310 무중단.)
+- Residual: 없음. (선택) Pretendard self-host(`next/font/local`)로 CDN 의존 완전 제거 가능 — 운영자 결정.

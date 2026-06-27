@@ -1,4 +1,8 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+/* Pretendard 웹폰트는 globals.css 의 render-blocking @import 대신
+ * layout.tsx 의 head 에서 비차단(non-blocking)으로 로드한다.
+ * 오프라인/헤드리스(예: Playwright 스크린샷, CI)에서 외부 CDN 요청이 멈춰
+ * 첫 페인트를 막던 문제를 없애기 위함. 폰트가 없으면 아래 html font-family
+ * 의 시스템 폴백(Apple SD Gothic Neo / Noto Sans KR 등)으로 정상 동작한다. */
 
 @tailwind base;
 @tailwind components;

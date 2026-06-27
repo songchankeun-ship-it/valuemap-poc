@@ -1388,3 +1388,13 @@
 - **검증**: `npx tsc --noEmit` exit 0 · `check-icons.mjs` 4개 전부 OK(시그니처+정확 치수) · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(`/manifest.webmanifest` 포함 전 라우트). 빈 포트 3340 prod 스모크(내가 띄운 PID만 taskkill, 4310 무중단·3000 본래 미기동): `/manifest.webmanifest` 200 `application/manifest+json` + icons JSON에 PNG 3종(192/512 any + 512 maskable) 노출, `icon-192/512/512-maskable/apple-touch-icon.png` 전부 200 `image/png`, `/`·`/about` 모두 `<link rel="apple-touch-icon" ... sizes="180x180">` 방출, `/about` "앱처럼 설치하기"·"홈 화면에 추가" 렌더. 변경 .ts/.tsx U+FFFD 0.
 - **남은 단계(운영자/제품)**: 첫 스토어 결정(TWA(Play $25)+assetlinks vs iOS App Store 래퍼 $99/yr) · 실기기 standalone OAuth 복귀 검증(§5 최대 리스크) · (선택) navigation-only network-first SW(데이터 JSON 비캐시 원칙 고정 시). **공개 문구 스토어 출시 미약속 유지.**
 - **Next**: 운영자 첫 스토어(TWA vs iOS) 결정 + 실기기 OAuth standalone 복귀 확인.
+
+
+## 2026-06-27 · Repair · Task 87 Playwright 게이트: 데스크톱 스크린샷 30s 타임아웃 (Claude)
+- Blocker(QUALITY-GATE PLAYWRIGHT DESKTOP): `page.screenshot: Timeout 30000ms exceeded` — call log 가 `waiting for fonts to load... / fonts loaded` 직후 캡처 단계에서 멈춤.
+- Root cause: 코드 결함성 — `src/app/globals.css` 1행의 **render-blocking 외부 @import**(`https://cdn.jsdelivr.net/.../pretendard...min.css`). 헤드리스/오프라인 게이트 샌드박스에서 이 외부 CDN 요청이 실패가 아니라 *멈춤(hang)* 으로 잡혀 첫 페인트·폰트 로드가 끝나도 렌더러/네트워크가 안정 상태에 도달하지 못해 스크린샷 캡처가 30초까지 대기 후 타임아웃. (프로덕션에서도 외부 폰트 CDN 단일 의존은 상용 준비도/프라이버시 리스크.)
+- Fix(무의존·무에셋·시각 폴백 안전): @import 를 제거하고 Pretendard 를 **비차단(non-blocking)** 으로 로드.
+  - `src/app/globals.css` — 1행 외부 @import 삭제(사유 주석으로 대체). 기존 `html { font-family: 'Pretendard Variable', Pretendard, ...시스템 한글 폴백 }` 체인은 유지 → 폰트 미로드 시 Apple SD Gothic Neo / Noto Sans KR 등으로 정상 폴백.
+  - `src/app/layout.tsx` `<head>` — `preconnect` + `<link rel="stylesheet" data-font="pretendard" media="print">`(media 가 screen 과 불일치라 첫 페인트를 막지 않음) + 인라인 스크립트가 로드 완료 시 `media='all'` 로 승격. JS 비활성용 `<noscript>` 폴백 링크 동봉. → 프로덕션은 Pretendard 를 그대로 받고, 오프라인/헤드리스는 즉시 폴백·외부요청 대기 없음 → 스크린샷 무지연.
+- Passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(전 라우트). 빈 포트 4399 prod 스모크(내가 띄운 PID 만 종료, 4310 무중단): 과제 13개 라우트(`/ /login /about /offline /manifest.webmanifest /status /pricing /privacy /terms /stocks /stock/005380 /watchlist /settings/notifications`) 전부 200. 홈 head 에 `data-font="pretendard"`·`media="print"` 링크 확인, **빌드 CSS 번들에 jsdelivr @import 0건**(재현 차단 입증).
+- Residual: 없음(폰트 로드 방식 한정, 점수/데이터/인증/PWA 로직 무변경). 운영자 선택: 정확한 브랜드 폰트를 CDN 의존 없이 고정하려면 추후 Pretendard woff2 self-host(예: `next/font/local`) 로 승격 가능 — 현재 폴백 동작은 안전.
