@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 75 — PWA 설치 프롬프트 + standalone UX 폴리시 (정직한 설치 도우미) (2026-06-27, Claude)
+- **결정/범위**: Task 74(아이콘 에셋) 위 app-readiness 후속 = **마케팅 아님**, 실용 설치 UX. `/about` "앱처럼 설치하기" 섹션의 정적 수동 단계를 **클라이언트 설치 도우미**로 교체 — 가짜 버튼 없이 브라우저가 `beforeinstallprompt`를 줄 때만 실제 설치를 제안하고, 이미 설치(standalone)된 사용자에겐 다시 권하지 않는다. 브랜치 `ai-center/task-75-...`(Task 74 `0cdc496` 위 클린 시작). **신규 npm 0 · service worker/캐싱 0(§4 데이터 신선도 결정 유지) · manifest 아이콘 무변경 · 리셋/pull/머지/push 0 · env 0.** 공개 문구 PWA/홈 화면 추가만(App Store·Play 주장 0).
+- **Changed (신규 1 + 코드 1 + 문서 3)**: `src/components/PwaInstallHelper.tsx`(신규, `"use client"`) / `src/app/about/page.tsx`(정적 `<ul>` → `<PwaInstallHelper />`, import 추가; 섹션 `<h2>`·인트로·네트워크/스토어 미확정 각주·`Smartphone` 아이콘·카드 스타일 보존) / `docs/app-roadmap.md`(§1 '설치 프롬프트 UX' 행·§2-1·§6 next)·`PROGRESS.md`·이 노트. 점수식·`stocks.json`·`direction`·인증·manifest 무변경.
+- **컴포넌트 동작(SSR 안전)**: `window`/`navigator` 가드. 로컬 최소 `BeforeInstallPromptEvent` 인터페이스(신규 타입 의존 0). `beforeinstallprompt`→`preventDefault()`+보관, `appinstalled`→설치 직후 standalone 전환. standalone 감지 = `matchMedia('(display-mode: standalone)') || navigator.standalone`. **3-상태 상호배타**: (a) standalone="이미 앱으로 실행 중"(권유 0) / (b) 프롬프트 보유=실제 "앱 설치" 버튼(violet-600·`min-h-[44px]`·full-width, `prompt()`→`userChoice` 후 이벤트 비움) / (c) 그 외=iOS/Android 수동 단계. **SSR 기본 = (c)** 폴백이라 비지원 환경도 정직.
+- **What passed**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(전 라우트, `/about` 포함) · 변경 .ts/.tsx U+FFFD 0. 로컬 prod 3346(내 PID 37740만 taskkill, 4310·3000 무중단): `/about` 200 SSR '앱처럼 설치하기'·'홈 화면에 추가'·'Android(Chrome)' 수동 폴백 렌더, `/manifest.webmanifest` 200 `application/manifest+json`(불변), 클라 번들 `app/about/page-*.js`에 `beforeinstallprompt`·'이미 앱으로 실행 중' 컴파일 확인.
+- **게이트 한계**: Playwright 미구성 → 390px 실 브라우저 육안·실제 `beforeinstallprompt`는 **운영자 게이트**. 실 프롬프트는 설치 가능 origin + 지원 브라우저(Android Chrome)에서만 발화 → 데스크톱/SSR은 수동 폴백 노출(정상, 버그 아님). 운영자: 390px `/about` 설치 섹션 오버플로 0·설치 컨트롤 사용성 1회 확인.
+- **Next**: 실기기 standalone 실행 + **OAuth 복귀**(app-roadmap §5 최대 리스크) 검증 → 깨지면 콜백 보강(별도 큐). 같은 세션에서 Android 설치 버튼·iOS 수동 흐름 육안. 첫 스토어(TWA vs iOS) 결정은 제품/운영자.
+
 ### Task 74 — PWA PNG 아이콘 에셋(192/512/maskable/apple-touch) + 매니페스트/메타 연결 (2026-06-27, Claude)
 - **결정/범위**: Task 72에서 운영자 보강으로 남겨둔 PNG 아이콘을 **코드로 생성·연결**(실용 app-readiness, 마케팅 아님). 브랜치 `ai-center/task-74-...`(Task 72 `abad23c` 위 클린 시작). **신규 npm 0·SW 0(§4 데이터 신선도 결정 유지)·리셋/pull/머지/push 0·env 0.** 공개 문구 PWA/홈 화면 추가만.
 - **생성기(외부 의존 0)**: `scripts/generate-icons.mjs` — Node `fs`+`zlib`만으로 `src/app/icon.svg` 마크를 RGBA 버퍼에 4x 슈퍼샘플 AA로 직접 렌더 → 유효 PNG(시그니처+IHDR+IDAT(deflateSync)+IEND, 청크별 CRC32) 인코딩(SVG 래스터라이저 없음). 치수 검증 `scripts/check-icons.mjs` — 8바이트 PNG 시그니처 + IHDR 폭/높이(offset 16/20) 파싱으로 192/512/512/180 정확 단언, 불일치 시 exit 1.

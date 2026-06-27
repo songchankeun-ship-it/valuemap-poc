@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] Task 75 — PWA 설치 프롬프트 + standalone UX 폴리시 (정직한 설치 도우미)
+- **범위/결정**: Task 74(아이콘 에셋) 위 app-readiness 후속 = **마케팅 랜딩 아님**, 실용 설치 UX. `/about` "앱처럼 설치하기" 섹션의 정적 수동 단계를 **클라이언트 설치 도우미**로 교체해 가짜 버튼 없이 브라우저가 제공할 때만 실제 설치를 제안. branch `ai-center/task-75-ornscore-pwa-install-prompt-and-stan`, 시작 HEAD `0cdc496`(Task 74, 클린). **신규 npm 0 · service worker/캐싱 0(§4 데이터 신선도 결정 유지) · manifest 아이콘 무변경 · 리셋/pull/머지/push 0 · env/시크릿 0.** 점수식·`stocks.json`·`direction`·인증 무변경. 공개 문구 PWA/홈 화면 추가만(App Store·Play 출시 주장 0).
+- **반영(신규 1 + 코드 1 + 문서 3)**:
+  - **[신규] `src/components/PwaInstallHelper.tsx`**(`"use client"`) — `window`/`navigator` 가드(SSR 안전). 로컬 최소 `BeforeInstallPromptEvent` 인터페이스(신규 타입 의존 0). 마운트 시 `beforeinstallprompt` 리스너가 `preventDefault()` 후 이벤트 보관, `appinstalled` 리스너로 설치 직후 상태 전환. standalone 감지 = `matchMedia('(display-mode: standalone)') || navigator.standalone`. **3-상태 상호배타 렌더**: (a) standalone → "이미 앱으로 실행 중" 보라 안내(설치 권유 0), (b) 프롬프트 보유 → 실제 "앱 설치" 버튼(violet-600·`min-h-[44px]`·full-width) `prompt()`→`userChoice` 후 이벤트 비움, (c) 그 외 → iOS(Safari 공유→홈 화면에 추가)/Android(Chrome 메뉴→앱 설치) 수동 단계. **SSR 기본 = (c)** 라 비지원 환경/서버 렌더도 정직한 폴백.
+  - **`src/app/about/page.tsx`** — 설치 섹션의 정적 `<ul>` 수동 단계 블록을 `<PwaInstallHelper />`로 교체(+ import). 섹션 `<h2>`(앱처럼 설치하기)·인트로·네트워크 필요/스토어 미확정 각주(서버 렌더 정직 컨텍스트)·`Smartphone` 아이콘·카드 스타일 보존. 새 nav 탭/히어로 0.
+  - **`docs/app-roadmap.md`**(§1 '설치 프롬프트 UX' 행 추가·§2-1 다음 액션·§6 next: 1·2 done, 다음 구체 단계=실기기 standalone OAuth 복귀 검증)·**`PROGRESS.md`**·**`docs/AI_HANDOFF.md`**(Manual Note) — 이 엔트리.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트, `/about` 포함) · 변경 .ts/.tsx U+FFFD 0. 로컬 prod 3346(내 PID 37740만 taskkill, 4310·3000 무중단): `/about` **200** SSR에 '앱처럼 설치하기'·'홈 화면에 추가'·'Android(Chrome)' 수동 폴백 렌더, `/manifest.webmanifest` **200 `application/manifest+json`**(불변), 클라 번들 `app/about/page-*.js`에 `beforeinstallprompt`·'이미 앱으로 실행 중' 컴파일 확인.
+- **게이트 한계 / 잔여**: Playwright 미구성 → **390px 실 브라우저 육안·실제 `beforeinstallprompt`는 운영자 게이트**. 실 프롬프트는 설치 가능 origin + 지원 브라우저(Android Chrome)에서만 발화하므로 데스크톱/SSR은 수동 단계 폴백을 보임(정상, 버그 아님). 운영자: 390px에서 `/about` 설치 섹션 가로 오버플로 0·설치 컨트롤 사용성 1회 확인 권장.
+- **다음**: 실기기 standalone 실행 + **OAuth 복귀**(§5 최대 리스크) 검증 → 깨지면 콜백 보강(별도 큐). 같은 세션에서 Android `beforeinstallprompt` 버튼·iOS 수동 흐름 육안. 큰 축은 여전히 ④ 결제·⑤ 법무.
+
+
 ## 2026-06-27 · [claude] Task 73 — 네이버 로그인 준비중 노출 + 운영자 설정 문서화 (네이티브 미지원)
 - **범위/결정**: 네이버 로그인을 안전한 경로로만 진행. 설치된 `@supabase/auth-js` 2.107.0 `Provider` 유니온 재확인 = `apple|azure|...|google|kakao|...` → **`naver` 없음**(네이티브 OAuth 타입·런타임 불가). 진짜 세션을 안전하게 만들려면 운영자 측 설정(네이버 콘솔 자격증명 및/또는 Supabase Pro 플랜)이 선행돼야 함 → **가짜 로그인 성공 경로를 만들지 않고**, `/login`에 **"네이버 (준비 중)" 비활성 항목만 노출** + 운영자 설정 절차 문서화. branch `ai-center/task-73-ornscore-naver-login-safe-auth-follo`, 시작 HEAD `6954fb3`(클린). **리셋/pull/머지/push·신규 npm·빌드 단계 추가·env/시크릿 0**. 카카오·구글·이메일·`/auth/callback`·`signInWithOAuth`·`src/lib/supabase/*` 무변경. AI Center 4310·미리보기 3000 무중단(검증 prod 3331, 내가 띄운 PID 22092만 taskkill).
 - **반영(코드 2 + 문서 3)**:

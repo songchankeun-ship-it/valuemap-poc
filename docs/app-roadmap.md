@@ -17,6 +17,7 @@
 | 모바일 내비게이션 | ✔ | `src/components/MobileBottomNav.tsx` — 하단 5셀(오늘·종목 찾기·공시 신호·관심·더보기), `display:standalone`에서도 동작 |
 | 반응형 로그인/온보딩 | ✔ | `/login` 모바일 가드(Task 70·73). 390px 소스 점검은 기존 QA 스윕(#38) 수준, 실 브라우저 게이트는 운영자(⑤) |
 | 설치성(installability) 차단 요소 | ✔ (Task 74) | manifest·HTTPS·standalone 충족 + **PNG 192/512(purpose any)·512 maskable** 추가로 Android Chrome "앱 설치" 프롬프트 요건 충족, **apple-touch-icon 180** 추가로 iOS "홈 화면에 추가" 아이콘 품질 확보. 남은 설치성 변수는 에셋이 아니라 standalone 런타임(§5 OAuth 복귀) |
+| 설치 프롬프트 UX | ✔ (Task 75) | `src/components/PwaInstallHelper.tsx`(클라이언트) — `/about` 설치 섹션에 연결. **3-상태 정직 분기**: (a) standalone 감지(`display-mode: standalone` \|\| `navigator.standalone`) 시 "이미 앱으로 실행 중" 안내(설치 권유 0), (b) 브라우저가 `beforeinstallprompt` 제공 시에만 **실제 "앱 설치" 버튼**(`prompt()`→`userChoice`, `min-h-[44px]`), (c) 그 외(iOS Safari 등)에는 수동 추가 단계만. `appinstalled` 리스너로 설치 직후 상태 전환. SSR 기본은 (c) 수동 단계라 비지원 환경도 안전. 신규 npm 0·SW 0·스토어 주장 0 |
 
 **설치성 판정**: PWA로 **설치 가능**하며(standalone 실행·바로가기 동작), Task 74에서 **PNG 192/512·maskable·apple-touch-icon 에셋을 추가·연결해 아이콘 품질/설치 배너가 1급(installable)으로 올라갔다.** 이 에셋은 `scripts/generate-icons.mjs`로 코드 생성하므로 더 이상 운영자 보강 대기 항목이 아니다(브랜드 변경 시 재생성).
 
@@ -30,7 +31,7 @@
 - 현재 경로. 사용자는 ornscore.com 접속 후 "홈 화면에 추가"로 앱처럼 사용.
 - **장점**: 별도 빌드·심사·스토어 계정 불필요. 배포는 기존 Vercel 그대로. 한 코드베이스.
 - **단점**: 스토어 노출 없음(검색·랭킹·리뷰 부재). iOS는 푸시 알림 제약(웹 푸시는 iOS 16.4+ 홈 화면 추가 상태에서만). 설치 전환율이 스토어보다 낮음.
-- **다음 액션**: 아이콘 에셋은 Task 74에서 완료(§1·§3). 남은 PWA 품질/설치 변수는 실기기 standalone OAuth 복귀(§5)뿐.
+- **다음 액션**: 아이콘 에셋(Task 74)·설치 프롬프트 UX(Task 75, `/about` `PwaInstallHelper`)는 완료(§1). 남은 PWA 품질/설치 변수는 실기기 standalone OAuth 복귀(§5)뿐.
 
 ### 2-2. Android TWA (다음 — 가장 적은 추가 작업으로 Play 스토어 등재)
 - TWA(Trusted Web Activity) = 기존 PWA를 안드로이드 앱 셸로 감싸 Play 스토어에 올리는 방식. 별도 UI 코드 없음.
@@ -109,8 +110,9 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 ## 6. 다음 구체적 액션(권장 순서)
 
 1. ~~운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결~~ **(Task 74 완료 — `scripts/generate-icons.mjs`로 생성·연결·검증)**.
-2. 제품 결정: TWA(Play) vs iOS 래퍼 중 어느 스토어를 먼저 갈지 결정 → 해당 계정($25 / $99) 준비.
-3. 실기기에서 OAuth standalone 복귀(§5) 검증 → 깨지면 콜백 처리 보강(별도 큐).
-4. (선택) navigation-only network-first SW 검토 — 데이터 JSON 비캐시 원칙 고정 시에만.
+2. ~~설치 프롬프트 UX(`beforeinstallprompt` 실제 버튼 + standalone 감지 + 수동 안내)~~ **(Task 75 완료 — `src/components/PwaInstallHelper.tsx`, `/about` 연결)**.
+3. **(다음 구체 단계)** 실기기에서 standalone 실행 + **OAuth 복귀**(§5 최대 리스크) 검증 → 깨지면 콜백 처리 보강(별도 큐). 같은 실기기 세션에서 Android Chrome `beforeinstallprompt` 버튼·iOS 수동 추가 흐름도 1회 육안 확인.
+4. 제품 결정: TWA(Play) vs iOS 래퍼 중 어느 스토어를 먼저 갈지 결정 → 해당 계정($25 / $99) 준비.
+5. (선택) navigation-only network-first SW 검토 — 데이터 JSON 비캐시 원칙 고정 시에만.
 
 > 본 문서는 스토어 출시를 약속하지 않는다. 모든 공개 문구는 "홈 화면에 추가/설치" PWA 표현만 사용하며, App Store·Play 스토어 출시 여부는 실제 스토어 작업 착수 전까지 "미확정"으로만 표기한다.
