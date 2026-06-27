@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] Task 87 — 로컬 최종 상용 준비도 마감 (라우트 스모크 + 운영자 전용 체크리스트 + 핸드오프)
+- **범위/결정**: Task 77 위 **로컬 전용 QA·문구·핸드오프 마감**. AI가 코드로 고칠 수 있는 로컬 갭과 운영자만 할 수 있는 폰/계정/법무 점검을 분리하는 것이 목표. branch `ai-center/task-87-ornscore-local-final-qa-closeout`, 시작·기준 HEAD `5d33e25`(=origin/main, 클린). **신규 npm 0 · 리셋/pull/머지/push 0 · env/시크릿 0 · `stocks.json`·점수식·`direction`·manifest·인증 config 무변경. 가짜 OAuth/세션 경로 0. 레포 밖 변경 0.**
+- **정적 감사(읽기 전용) 결과 — 공개 문구 추가 수정 불필요**: `/about`·`PwaInstallHelper`·`manifest.ts`·`/pricing`·`/status`·`/privacy`·`/terms`·`/login`·`providers.ts` + docs(app-roadmap·app-packaging-readiness·auth-providers-setup) 전수 확인. (a) 스토어/앱 준비도 과대표현 0(`/about` "출시 여부 미확정", `/pricing` "미확정"), (b) PWA 설치 한계 충분 설명(인터넷 필요·`/offline`·3-상태 정직 분기), (c) 제공자 정합성 OK(`/login` 카카오·구글·이메일+네이버 "준비 중", Apple 미노출=`enabled:false` — `/privacy`·`/terms`·`auth-providers-setup.md`와 일치), (d) 베타→Pro·미확정 문구 존재. **매수/매도/수익보장 류 행동 문구 0.** → 문구 편집 0, 변경 없음을 증거와 함께 기록.
+- **반영(신규 1 + 문서 3)**:
+  - **[신규] `docs/ornscore-owner-final-checklist.md`** — §A AI가 끝낸 것(운영자 작업 아님), §B 운영자만 할 수 있는 일(B-1 실기기 QA 7항: 설치·아이콘 품질·standalone 내비·**OAuth 복귀**·watchlist 복귀·알림 설정·법적/소개 문구 / B-2 계정·패키징·서명: 첫 스토어 결정·package id·SHA-256 지문·계정 결제·네이버 / B-3 결제·법무: 결제 게이트·약관 확정·데이터 라이선스·최종 승인), §C 다음 한 걸음. 실기기 OAuth 복귀 절차는 app-roadmap §5-1, 패키징 사전 점검은 app-packaging-readiness §4로 cross-link(중복 0).
+  - **`docs/app-roadmap.md`** §6 상단에 Task 87 신규 체크리스트 포인터 append. **`PROGRESS.md`**·**`docs/AI_HANDOFF.md`**(Manual Note) — 이 엔트리.
+- **검증**: pre-edit `npx tsc --noEmit` exit 0 → post-edit `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트) · 변경 문서 U+FFFD 0. **로컬 prod 미리보기 3370**(내 PID 35204만 종료, **AI Center 4310 무중단**): 14개 라우트(`/ /login /login?next=/watchlist /about /offline /manifest.webmanifest /status /pricing /privacy /terms /stocks /stock/005380 /watchlist /settings/notifications`) **HTTP 200**, `/auth/callback`(code 없음) **307→`/login?error=auth_callback_no_code`**, `/manifest.webmanifest` `application/manifest+json`. SSR 마커: `/login` 카카오·구글·네이버"준비 중"(Apple 미노출), `/pricing` 베타무료·Pro전환·미확정, `/about` 투자추천아님·스토어 미확정, `/`·`/status` Metrics 2.4 일치. 스테일 청크/ChunkLoadError 미발생(클린 빌드 후 start). 안전 복구법 메모: 발생 시 `.next` 삭제 후 재빌드(4310은 절대 종료 안 함).
+- **게이트 한계 / 잔여(운영자)**: 실기기 폰 설치·아이콘 품질·standalone OAuth/watchlist 복귀·알림 설정·법적 문구 standalone 노출은 Playwright 미구성으로 **운영자 게이트**(checklist §B-1). 서명 지문/package id·Play$25/Apple$99 계정 결제·결제 게이트 연결·약관/데이터 법무 최종 승인은 **운영자/법무 게이트**(§B-2·§B-3).
+- **다음**: 운영자 — checklist §C 순서: (1) 실기기 QA(특히 OAuth 복귀 app-roadmap §5-1) → 깨지면 콜백 보강 큐, (2) 첫 스토어 결정 → 서명 지문·package id 확보 시 예시 assetlinks 실값 치환·배치, (3) 결제·약관·데이터 법무 확정 후 결제 게이트 연결(별도 AI 작업 가능).
+
+
 ## 2026-06-27 · [claude] Task 77 — 앱 패키징 준비도 체크리스트 + 안전한 assetlinks 예시 (스토어 출시 미확정 유지)
 - **범위/결정**: Task 76(standalone 로그인 복귀) 위 app-readiness 후속 = **다음 패키징 결정을 채팅 기록 없이 고를 수 있게 문서화**. 마케팅·스토어 발표 아님. branch `ai-center/task-77-ornscore-app-packaging-readiness-che`, 시작 HEAD `24cf1c6`(Task 76, 클린). **문서 전용 — `src/`·`stocks.json`·점수식·`direction`·인증·manifest 무변경. 신규 npm 0 · service worker 0 · 리셋/pull/머지/push 0 · env/시크릿 0 · `public/.well-known` 미생성(가짜 서명 관계 파일 0).**
 - **반영(신규 2 + 문서 3)**:

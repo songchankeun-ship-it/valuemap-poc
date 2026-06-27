@@ -124,6 +124,8 @@ standalone(홈 화면 추가/래퍼) 창에서 로그인 후 **앱 컨텍스트�
 
 ## 6. 다음 구체적 액션(권장 순서)
 
+> **(Task 87 추가)** AI 자동화가 끝낸 일과 **운영자만 할 수 있는 일**(실기기 QA·서명 지문/package id·계정 결제·결제 연동·법무 최종 승인)을 한 화면에서 분리한 **`docs/ornscore-owner-final-checklist.md`** 신설. 실기기 OAuth 복귀는 §5-1, 패키징 사전 점검은 `app-packaging-readiness.md` §4를 가리킨다(중복 없음). Task 87은 14개 라우트 스모크·문구 보수성 재검증 결과 공개 문구 추가 수정 불필요로 확인.
+>
 > **(Task 77 추가)** 패키징 결정을 채팅 기록 없이 바로 고를 수 있게 **`docs/app-packaging-readiness.md`** 신설 — 결정 트리(PWA-only→TWA→iOS 홈/래퍼→Capacitor, 각 "다음 인간 결정·전제"), 경로별 필요 에셋·계정 비용·QA 게이트·반려 리스크 표, **실기기 사전 점검 체크리스트**(설치 아이콘·standalone 내비·로그인 복귀(§5-1 절차 참조)·watchlist·알림 설정·오프라인·법적 고지), 안전한 **`docs/templates/assetlinks.example.json`**(자리표시자·서빙 안 함). 실 서명 지문·스토어 계정·실기기 QA는 여전히 운영자 게이트(미확정은 미확정으로만).
 
 1. ~~운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결~~ **(Task 74 완료 — `scripts/generate-icons.mjs`로 생성·연결·검증)**.

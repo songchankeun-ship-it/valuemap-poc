@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 87 — 로컬 최종 상용 준비도 마감 (라우트 스모크 + 운영자 전용 체크리스트 + 핸드오프) (2026-06-27, Claude)
+- **결정/범위**: Task 77 위 **로컬 전용 QA·문구·핸드오프 마감** = AI가 코드로 고칠 로컬 갭과 운영자만 할 수 있는 폰/계정/법무 점검 분리. branch `ai-center/task-87-...`(HEAD `5d33e25`=origin/main 클린 시작). **신규 npm 0 · 리셋/pull/머지/push 0 · env 0 · `src` 코드·`stocks.json`·점수식·`direction`·manifest·인증 config 무변경 · 가짜 OAuth/세션 0 · 레포 밖 변경 0.**
+- **정적 감사(읽기 전용)**: `/about`·`PwaInstallHelper`·`manifest.ts`·`/pricing`·`/status`·`/privacy`·`/terms`·`/login`·`providers.ts`+docs 전수 → (a) 스토어 과대표현 0, (b) PWA 설치 한계 충분 설명, (c) 제공자 정합(`/login` 카카오·구글·이메일+네이버"준비 중", Apple 미노출 — privacy/terms/auth-setup 일치), (d) 베타→Pro·미확정 존재. 매수/매도/수익보장 문구 0. **→ 공개 문구 추가 수정 불필요로 확인(편집 0).**
+- **Changed (신규 1 + 문서 3)**: `docs/ornscore-owner-final-checklist.md`(신규 — §A AI 완료/§B 운영자 전용[B-1 실기기 QA 7항·B-2 계정·서명 지문·package id·B-3 결제·법무]/§C 다음 단계, 실기기 OAuth 복귀는 app-roadmap §5-1·패키징 사전점검은 app-packaging-readiness §4로 cross-link) / `docs/app-roadmap.md`(§6 Task 87 포인터)·`PROGRESS.md`·이 노트.
+- **What passed**: pre/post `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(전 라우트) · 변경 문서 U+FFFD 0. 로컬 prod **3370**(내 PID 35204만 종료·**AI Center 4310 무중단**): 14개 라우트 200, `/auth/callback`(no code) 307→`auth_callback_no_code`, manifest `application/manifest+json`, SSR 마커(제공자·베타→Pro·투자추천아님·Metrics 2.4) 일치. 스테일 청크 미발생(클린 빌드 후 start).
+- **운영자 전용 잔여(checklist 참조)**: §B-1 실기기 폰 설치·아이콘 품질·standalone OAuth/watchlist 복귀·알림 설정·법적 문구(Playwright 미구성 게이트). §B-2 서명 SHA-256 지문·package id·Play$25/Apple$99 결제·네이버 콘솔. §B-3 결제 게이트 연결·약관/데이터 법무 최종 승인.
+- **Next**: 운영자 checklist §C — (1) 실기기 OAuth 복귀(app-roadmap §5-1) → 깨지면 콜백 보강 큐, (2) 첫 스토어 결정 → 서명 지문 확보 시 예시 assetlinks 실값 배치, (3) 결제·법무 확정 후 결제 게이트 연결.
+
 ### Task 77 — 앱 패키징 준비도 체크리스트 + 안전한 assetlinks 예시 (2026-06-27, Claude)
 - **결정/범위**: Task 76 위 app-readiness 후속 = **다음 패키징 결정을 채팅 기록 없이 고를 수 있게 문서화**(마케팅·스토어 발표 아님). branch `ai-center/task-77-...`(Task 76 `24cf1c6` 위 클린 시작). **문서 전용 — `src/`·`stocks.json`·점수식·`direction`·인증·manifest 무변경. 신규 npm 0 · SW 0 · 리셋/pull/머지/push 0 · env 0 · `public/.well-known` 미생성(가짜 서명 관계 파일 0).**
 - **Changed (신규 2 + 문서 3)**: `docs/app-packaging-readiness.md`(신규 — 결정 트리 PWA-only→TWA→iOS 홈/래퍼→Capacitor 각 "다음 인간 결정·전제" + 경로별 에셋/비용/QA 게이트/반려 리스크 표 + 실기기 사전 점검 체크리스트(설치 아이콘·standalone 내비·로그인 복귀(roadmap §5-1 cross-link)·watchlist·알림 설정·오프라인·법적 고지) + "이 작업에서 하지 않는 것") / `docs/templates/assetlinks.example.json`(신규, `public/.well-known` **밖**, Digital Asset Links 배열·`com.example.ornscore`·`REPLACE_WITH_REAL_SHA256_FINGERPRINT` 자리표시자·**서빙 안 함**) / `docs/app-roadmap.md`(§3 TWA 항목 예시 파일 메모 + §6 포인터)·`docs/ornscore-spec-coverage.md`(§8 H §24 PWA 행 Task 77 노트)·`PROGRESS.md`·이 노트.
