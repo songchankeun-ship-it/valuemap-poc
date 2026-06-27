@@ -43,6 +43,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Google 로그인 운영자 콘솔 설정 완료 (2026-06-28, Codex/User)
+- 운영자가 Google Cloud OAuth Client + Supabase Authentication Provider 설정을 완료했고, `https://ornscore.com/login`에서 실제 Google 로그인 왕복이 정상 동작함을 직접 확인했다.
+- 코드 변경은 필요 없었다. Task 70의 Google OAuth 버튼/콜백/약관·개인정보 문구가 그대로 실동작 상태가 됐다.
+- 남은 인증 관련 운영자 결정: Naver는 Supabase 기본 OAuth provider가 아니므로 계속 "준비 중" 상태. 실제 활성화하려면 앱 자체 Naver OAuth 라우트 + 세션 발급 설계 또는 Supabase custom OIDC/Pro 경로 중 하나를 별도 작업으로 선택해야 한다.
+- 다음 직접 확인 권장: 실기기 PWA 설치, standalone Kakao/Google/email 복귀, watchlist 복귀, 알림 설정, 법적/소개 문구 확인.
+
 ### Task 87 (repair 2) — Pretendard 폰트 하이드레이션 불일치 제거 (Playwright 게이트 수복) (2026-06-27, Claude)
 - **증상**: Playwright DESKTOP FAILED + MOBILE 스크린샷 타임아웃, 공통 `Warning: Prop media did not match. Server: "all" Client: "print"` (`layout.tsx` `<head><link>`). 직전 repair(`cde711b`)가 SSR에 `<link media="print">`를 렌더 후 인라인 스크립트로 `media='all'` 승격 → DOM 변형이 React 하이드레이션 전에 일어나 서버(`print`)↔실제 DOM(`all`) 불일치 경고가 매 렌더 발생, 게이트가 실패 처리.
 - **수정**: `src/app/layout.tsx` `<head>`에서 스왑 대상 `<link media="print">`와 별도 승격 스크립트를 제거하고, 인라인 스크립트가 `document.createElement('link')`로 `media='print'` 링크를 만든 뒤 `onload`에서 `media='all'` 승격하도록 교체. React가 렌더하지 않은 노드라 하이드레이션이 비교할 노드 자체가 없음(경고 억제가 아니라 구조적 제거). `preconnect`·`<noscript>` 폴백 유지. 프로덕션 Pretendard 유지, 오프라인/헤드리스는 시스템 한글 폰트 폴백 즉시 렌더. **`globals.css`·점수식·`stocks.json`·인증·manifest 무변경, 신규 npm 0.**

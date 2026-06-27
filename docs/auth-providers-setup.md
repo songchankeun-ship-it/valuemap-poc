@@ -12,7 +12,7 @@
 | 제공자 | 패키지 지원 | 앱 노출(`enabled`) | 운영자 콘솔 작업 |
 |---|---|---|---|
 | Kakao | ✅ | ✅ (운영 중) | 완료 (이미 연결됨) |
-| Google | ✅ | ✅ | **필요** — Supabase 토글 + Google Cloud OAuth 클라이언트 |
+| Google | ✅ | ✅ | ✅ 완료 — 2026-06-28 운영자 콘솔 설정 + 실로그인 확인 |
 | Apple | ✅ (타입 지원) | ❌ (의도적 비활성) | 보류 — Apple Developer Program 가입 후 결정 |
 | Naver | ❌ (네이티브 미지원) | ⏳ "준비 중"(비활성 노출) | 아래 "Naver" 섹션의 (A)/(B) 중 하나 선행 필요 |
 
@@ -40,6 +40,9 @@
 - 동의 항목: 닉네임/프로필(선택), 카카오계정 이메일(선택).
 
 ## Google
+
+> 상태: **완료(2026-06-28)**. 운영자가 Google Cloud OAuth Client와 Supabase Google Provider 설정을 마치고,
+> `https://ornscore.com/login`에서 실제 Google 로그인 왕복이 정상 동작함을 확인했다.
 
 1. [Google Cloud Console](https://console.cloud.google.com/) → 프로젝트 생성/선택.
 2. **APIs & Services → OAuth consent screen** 구성 (앱 이름·지원 이메일·도메인).

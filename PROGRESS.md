@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] Google 로그인 운영자 콘솔 설정 완료 기록
+- **완료 확인**: 운영자가 Google Cloud OAuth Client + Supabase Authentication Provider 설정을 마치고, `https://ornscore.com/login`에서 Google 로그인 실동작을 직접 테스트해 정상 동작을 확인.
+- **코드 변경 없음**: Task 70에서 이미 구현된 Google OAuth 버튼/콜백/약관·개인정보 문구가 그대로 사용됨. 이번 변경은 운영 상태 문서 갱신만.
+- **업데이트**: `docs/auth-providers-setup.md`의 Google 상태를 "완료"로 갱신하고, `docs/AI_HANDOFF.md`에 외부 콘솔 설정 완료 메모 추가.
+- **다음 직접 확인**: 실기기 PWA 설치·standalone 로그인 복귀 확인, 그리고 네이버 로그인을 실제로 붙일지(직접 OAuth 라우트 vs Supabase custom OIDC/Pro) 결정.
+
 ## 2026-06-27 · [claude] Task 87 (repair 2) — Pretendard 폰트 하이드레이션 불일치 제거 (Playwright 게이트 수복)
 - **증상(품질 게이트)**: Playwright DESKTOP FAILED + MOBILE 스크린샷 타임아웃, 공통 경고 `Warning: Prop media did not match. Server: "all" Client: "print"` (`layout.tsx`의 `<head><link>`). 직전 repair(`cde711b`)가 Pretendard를 비차단 로드하려고 **SSR에 `<link media="print">`를 렌더 후 인라인 스크립트로 `media='all'` 승격**했는데, 이 DOM 변형이 React 하이드레이션 *전*에 일어나 서버 마크업(`print`)과 실제 DOM(`all`)이 어긋나 매 렌더 경고가 떴고, 게이트가 이를 실패로 처리.
 - **원인/수정**: SSR이 스왑 대상 `<link>`를 *전혀 렌더하지 않도록* 변경 = 하이드레이션이 비교할 노드 자체를 제거(경고를 끄는 게 아니라 구조적으로 제거). `src/app/layout.tsx` `<head>`에서 `media="print"` 스타일시트 링크와 별도 승격 스크립트를 빼고, **인라인 스크립트가 `document.createElement('link')`로 `media='print'` 링크를 만든 뒤 `onload`에서 `media='all'`로 승격**하도록 교체. `preconnect`·`<noscript>` 폴백 유지. React가 렌더하지 않은 노드라 불일치 없음. 프로덕션은 그대로 Pretendard 적용, 오프라인/헤드리스는 시스템 한글 폰트 폴백으로 즉시 렌더. **`globals.css`·점수식·`stocks.json`·인증·manifest 무변경. 신규 npm 0.**
