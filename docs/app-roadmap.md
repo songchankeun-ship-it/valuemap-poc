@@ -71,7 +71,7 @@
 - [x] **PNG 아이콘** `public/icon-192.png`, `public/icon-512.png` — Task 74에서 `scripts/generate-icons.mjs`로 생성, `manifest.ts` icons(`purpose:"any"`)에 연결 완료.
 - [x] **maskable 아이콘** `public/icon-512-maskable.png` — Task 74. 안전영역 10% 패딩(마크가 내부 80%), `manifest.ts`에 `purpose:"maskable"`로 연결 완료.
 - [x] **apple-touch-icon** `public/apple-touch-icon.png` (180×180) — Task 74. `src/app/layout.tsx` metadata.icons.apple로 연결(`<link rel="apple-touch-icon">` 방출 확인).
-- [ ] **(TWA 시)** Google Play Console 개발자 등록 $25 + `public/.well-known/assetlinks.json` + 서명 키 지문.
+- [ ] **(TWA 시)** Google Play Console 개발자 등록 $25 + `public/.well-known/assetlinks.json` + 서명 키 지문. **(Task 77)** 안전한 예시 파일 `docs/templates/assetlinks.example.json`(자리표시자만·서빙 안 함) 추가 — 실 서명 지문이 생긴 뒤에만 `public/.well-known/assetlinks.json`으로 배치. 결정 트리·반려 리스크는 `docs/app-packaging-readiness.md`.
 - [ ] **(App Store 시)** Apple Developer Program $99/yr + Mac/Xcode 빌드 환경 + 래퍼 패키징.
 
 > 코드 쪽 메모(완료): Task 74에서 `src/app/manifest.ts` `icons`에 192/512/maskable을 추가하고 `apple-touch-icon`은 `src/app/layout.tsx` metadata.icons.apple로 연결했다. 에셋은 `node scripts/generate-icons.mjs`로 재생성, `node scripts/check-icons.mjs`로 PNG 시그니처·정확 치수(192/512/512/180)를 검증한다(외부 npm 의존 0). 브랜드 마크가 바뀌면 두 스크립트를 다시 실행.
@@ -123,6 +123,8 @@ standalone(홈 화면 추가/래퍼) 창에서 로그인 후 **앱 컨텍스트�
 ---
 
 ## 6. 다음 구체적 액션(권장 순서)
+
+> **(Task 77 추가)** 패키징 결정을 채팅 기록 없이 바로 고를 수 있게 **`docs/app-packaging-readiness.md`** 신설 — 결정 트리(PWA-only→TWA→iOS 홈/래퍼→Capacitor, 각 "다음 인간 결정·전제"), 경로별 필요 에셋·계정 비용·QA 게이트·반려 리스크 표, **실기기 사전 점검 체크리스트**(설치 아이콘·standalone 내비·로그인 복귀(§5-1 절차 참조)·watchlist·알림 설정·오프라인·법적 고지), 안전한 **`docs/templates/assetlinks.example.json`**(자리표시자·서빙 안 함). 실 서명 지문·스토어 계정·실기기 QA는 여전히 운영자 게이트(미확정은 미확정으로만).
 
 1. ~~운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결~~ **(Task 74 완료 — `scripts/generate-icons.mjs`로 생성·연결·검증)**.
 2. ~~설치 프롬프트 UX(`beforeinstallprompt` 실제 버튼 + standalone 감지 + 수동 안내)~~ **(Task 75 완료 — `src/components/PwaInstallHelper.tsx`, `/about` 연결)**.

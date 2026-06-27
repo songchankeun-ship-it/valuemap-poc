@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] Task 77 — 앱 패키징 준비도 체크리스트 + 안전한 assetlinks 예시 (스토어 출시 미확정 유지)
+- **범위/결정**: Task 76(standalone 로그인 복귀) 위 app-readiness 후속 = **다음 패키징 결정을 채팅 기록 없이 고를 수 있게 문서화**. 마케팅·스토어 발표 아님. branch `ai-center/task-77-ornscore-app-packaging-readiness-che`, 시작 HEAD `24cf1c6`(Task 76, 클린). **문서 전용 — `src/`·`stocks.json`·점수식·`direction`·인증·manifest 무변경. 신규 npm 0 · service worker 0 · 리셋/pull/머지/push 0 · env/시크릿 0 · `public/.well-known` 미생성(가짜 서명 관계 파일 0).**
+- **반영(신규 2 + 문서 3)**:
+  - **[신규] `docs/app-packaging-readiness.md`** — 플레인 한국어. (a) **결정 트리**: PWA-only(지금)→Android TWA→iOS 홈 화면 추가(지금)→iOS App Store 래퍼(나중)→Capacitor(레포가 네이티브 빌드 도구 수용 시만), 각 경로의 **다음 인간 결정·전제(선결)** 명시. (b) **경로별 필요 에셋·계정 비용·QA 게이트·반려 리스크 표**(Play $25 1회·Apple $99/년·Mac+Xcode·"단순 웹 래퍼" 반려·assetlinks 서명 지문 관리). (c) §4 **실기기 사전 점검 체크리스트**(설치 아이콘 품질·standalone 내비·로그인 복귀·watchlist·알림 설정·오프라인·법적 고지) — 로그인 복귀 절차는 app-roadmap §5-1 8단계로 cross-link(재작성 0), 전체를 운영자/실기기 게이트(Playwright 미구성)로 표기. (d) §5 "이 작업에서 하지 않는 것"(네이티브 도구·SW·공개 스토어 주장·실 서명값·계정 결제 0). 경로 비교표·SW 결정·인증 준비도는 app-roadmap로 포인터(중복 0).
+  - **[신규] `docs/templates/assetlinks.example.json`** — `public/.well-known` **밖**. Digital Asset Links 배열 형태(`relation: delegate_permission/common.handle_all_urls`), `package_name:"com.example.ornscore"`·`sha256_cert_fingerprints:["REPLACE_WITH_REAL_SHA256_FINGERPRINT"]` = **명백한 자리표시자**(그대로는 비동작). 문서에 "예시·**서빙 안 함**, 실 서명 지문 생긴 뒤에만 `public/.well-known/assetlinks.json`으로 배치" 명시.
+  - **`docs/app-roadmap.md`**(§3 TWA 항목에 Task 77 예시 파일 메모 + §6 상단 신규 문서 포인터)·**`docs/ornscore-spec-coverage.md`**(§8 H §24 [P2-7] PWA 행에 Task 77 노트 append, 스토어/계정/실 서명/실기기 QA 여전히 ④/⑤)·**`PROGRESS.md`**·**`docs/AI_HANDOFF.md`**(Manual Note) — 이 엔트리.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트) · 변경 4문서 U+FFFD 0. **문서 전용이라 `/about`+`/manifest.webmanifest` 스모크 불필요**(app-facing 소스 무변경) — AI Center 4310·미리보기 3000 무중단(임시 서버 미기동). `public/.well-known` 부재 재확인(가짜 관계 파일 0).
+- **게이트 한계 / 잔여**: 실 서명 키 SHA-256 지문·Play/Apple 계정 결제·실기기 QA는 **운영자 게이트**. assetlinks 실파일은 실 지문 생긴 뒤에만 `public/.well-known/assetlinks.json`로 배치(그 전엔 디렉터리 미생성). 스토어 출시 여부는 "미확정" 표기 유지.
+- **다음**: 운영자 — (1) 첫 스토어(TWA vs iOS) 제품 결정 → 해당 계정 준비, (2) 서명 키 지문 확보 시 예시→실 assetlinks 배치, (3) app-roadmap §5-1 + 본 문서 §4로 실기기 사전 점검. 큰 축은 여전히 ④ 결제·⑤ 법무.
+
+
 ## 2026-06-27 · [claude] Task 76 — standalone 앱 로그인 복귀 + 내부 딥링크 정규화 (open-redirect 가드)
 - **범위/결정**: Task 75(설치 UX) 위 후속 = app/PWA 경로의 **로그인 복귀·내부 딥링크 견고화**(네이티브 래퍼 결정 전 선결). `/login`·`/auth/callback`의 `next`를 내부 경로로만 제한하는 **공유 정규화기**를 추가하고, 친절한 한국어 앱 복귀 오류를 보강. branch `ai-center/task-76-ornscore-standalone-auth-return-and-`, 시작 HEAD `9df4313`(Task 75, 클린). **신규 npm 0 · 가짜 로그인 성공 경로 0 · 리셋/pull/머지/push 0 · env/시크릿 0.** 점수식·`stocks.json`·`direction`·Supabase·제공자 config(`OAUTH_PROVIDERS`/`PLANNED_PROVIDERS`) 무변경. 네이버는 "준비 중" 비활성 유지, Apple `enabled:false` 유지, 카카오·구글·이메일 동작 불변.
 - **반영(신규 1 + 코드 4 + 문서 3)**:
