@@ -2,10 +2,12 @@ import type { MetadataRoute } from "next";
 
 /**
  * PWA manifest (Next-native · 설계서 PART H §24).
- * 외부 npm 의존 없이 기존 에셋만 재사용한다. 현재 저장소의 아이콘은 src/app/icon.svg(벡터) 하나뿐이라
- * SVG 아이콘을 sizes "any"로 참조한다. 일부 안드로이드 런처는 설치 시 512px PNG 마스커블 아이콘을
- * 선호하므로, 운영자가 public/icon-512.png(+ maskable)를 추가하면 아래 icons 배열에 보강 권장.
- * service worker는 캐싱/배포 충돌을 피하기 위해 이번에는 미등록(문서 스텁) — docs 참조.
+ * 외부 npm 의존 없이 기존 에셋만 재사용한다. Task 74에서 src/app/icon.svg(브랜드 마크)를
+ * 기반으로 PNG 아이콘을 생성(scripts/generate-icons.mjs, Node 표준 라이브러리만)해
+ * public/icon-192.png · icon-512.png · icon-512-maskable.png를 추가했다.
+ * 아래 icons 배열은 SVG(sizes "any" 폴백) + PNG 192/512(purpose "any") + 512 maskable을 함께 노출한다.
+ * apple-touch-icon(180px)은 src/app/layout.tsx metadata.icons.apple로 연결한다.
+ * service worker는 캐싱/배포 충돌을 피하기 위해 이번에도 미등록(문서 스텁) — docs/app-roadmap.md §4 참조.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -34,6 +36,24 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/svg+xml",
         sizes: "any",
         purpose: "any",
+      },
+      {
+        src: "/icon-192.png",
+        type: "image/png",
+        sizes: "192x192",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png",
+        type: "image/png",
+        sizes: "512x512",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512-maskable.png",
+        type: "image/png",
+        sizes: "512x512",
+        purpose: "maskable",
       },
     ],
   };

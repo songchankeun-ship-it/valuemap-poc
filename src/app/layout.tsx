@@ -33,6 +33,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Task 74: PNG 아이콘 연결. Next는 public/ 에셋을 자동으로 head에 넣지 않으므로
+  // 여기서 명시해 iOS 홈 화면용 apple-touch-icon(180px) <link>가 방출되게 한다.
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 // 사이트 전체 Organization + WebSite 구조화 데이터

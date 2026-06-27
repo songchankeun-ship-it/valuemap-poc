@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-26T19:20:32.759Z
+Last updated: 2026-06-27T06:07:08.782Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 72 - OrnScore app readiness and PWA/native roadmap
-- Run: 62
+- Task: 74 - OrnScore PWA icon assets and installability polish
+- Run: 63
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 74 — PWA PNG 아이콘 에셋(192/512/maskable/apple-touch) + 매니페스트/메타 연결 (2026-06-27, Claude)
+- **결정/범위**: Task 72에서 운영자 보강으로 남겨둔 PNG 아이콘을 **코드로 생성·연결**(실용 app-readiness, 마케팅 아님). 브랜치 `ai-center/task-74-...`(Task 72 `abad23c` 위 클린 시작). **신규 npm 0·SW 0(§4 데이터 신선도 결정 유지)·리셋/pull/머지/push 0·env 0.** 공개 문구 PWA/홈 화면 추가만.
+- **생성기(외부 의존 0)**: `scripts/generate-icons.mjs` — Node `fs`+`zlib`만으로 `src/app/icon.svg` 마크를 RGBA 버퍼에 4x 슈퍼샘플 AA로 직접 렌더 → 유효 PNG(시그니처+IHDR+IDAT(deflateSync)+IEND, 청크별 CRC32) 인코딩(SVG 래스터라이저 없음). 치수 검증 `scripts/check-icons.mjs` — 8바이트 PNG 시그니처 + IHDR 폭/높이(offset 16/20) 파싱으로 192/512/512/180 정확 단언, 불일치 시 exit 1.
+- **Changed (코드 2 + 신규 스크립트 2 + 에셋 4 + 문서 3)**: `public/icon-192.png`(192²,any,라운드)·`public/icon-512.png`(512²,any)·`public/icon-512-maskable.png`(512²,maskable,안전영역 10% 패딩)·`public/apple-touch-icon.png`(180²,불투명 풀블리드) / `scripts/generate-icons.mjs`·`scripts/check-icons.mjs` / `src/app/manifest.ts`(icons에 PNG 192/512 any + 512 maskable 추가, `/icon.svg` 폴백 보존, 주석 갱신)·`src/app/layout.tsx`(`metadata.icons` icon+apple 추가 → apple-touch-icon <link> 방출) / `docs/app-roadmap.md`(§1 표·판정·§2-1·§3 체크리스트·§6 done)·`PROGRESS.md`·이 노트. title/OG/twitter/robots/JSON-LD·점수식·stocks.json·`direction` 무변경.
+- **What passed**: `tsc --noEmit` 0 · `check-icons.mjs` 4/4 OK(시그니처+정확 치수) · `verify_metrics.py`(PYTHONUTF8=1) 138/0·금칙어 0·**Metrics 2.4** · `npm run build` 0(전 라우트). 로컬 prod 3340(내 PID만 taskkill, 4310 무중단·3000 본래 미기동): `/manifest.webmanifest` 200 `application/manifest+json`·icons에 PNG 3종(192/512 any + 512 maskable), 4개 아이콘 URL 200 `image/png`, `/`·`/about` `apple-touch-icon` <link> 방출(sizes 180x180), `/about` 설치 섹션 렌더. 변경 .ts/.tsx U+FFFD 0. **스토어 출시 약속 0.**
+- **남은 단계**: (운영자/제품) 첫 스토어 결정(TWA Play $25+assetlinks vs iOS App Store 래퍼 $99/yr) → 해당 패키징 별도 작업 · 실기기 standalone **OAuth 복귀** 검증(§5 최대 리스크) · (선택) navigation-only network-first SW(데이터 JSON 비캐시 고정 시).
+- **Next**: 운영자 첫 스토어(TWA vs iOS) 결정 + 실기기 OAuth standalone 복귀 확인.
 
 ### Task 72 — PWA 앱 준비도 (manifest 메타 + 설치 안내 + 앱 로드맵) (2026-06-27, Claude)
 - **결정/범위**: "오른스코어도 앱이 되어야 한다" = 마케팅 랜딩이 아니라 **설치 가능 앱(PWA) 준비도 + 네이티브 배포 안전 경로 문서화**. 브랜치 `ai-center/task-72-...`(Task 73 `f728604` 이후 그대로). **신규 npm·lock 변동·Capacitor/RN 도입 0, 리셋/pull/머지/push 0, env/시크릿 0.**

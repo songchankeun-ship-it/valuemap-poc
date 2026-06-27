@@ -13,12 +13,12 @@
 | Web App Manifest | ✔ | `src/app/manifest.ts` (Next-native, `/manifest.webmanifest`로 서빙). `id`·`name`·`short_name`·`description`·`start_url`·`scope`·`display:standalone`·`dir`·`categories:["finance"]`·테마/배경색·`lang`·`orientation`·`shortcuts`(오늘/종목 찾기/공시 신호) — Task 72에서 무에셋 필드 보강 |
 | 오프라인 안내 페이지 | ✔ | `src/app/offline/page.tsx` — 네트워크 필요 안내 + 홈 화면 추가 힌트(iOS/Android). 정적 페이지라 SW 없이도 동작 |
 | Service Worker | ✗ (의도적 미등록) | 등록 안 함. 사유는 §4 참조. 오프라인 자동 fallback·푸시·백그라운드 동기화는 SW 도입 전까지 불가 |
-| 아이콘 에셋 | △ SVG only | `src/app/icon.svg`(32px 벡터) 하나. PNG 192/512·**maskable**·**apple-touch-icon** 없음. manifest는 SVG를 `sizes:"any"`로 참조 |
+| 아이콘 에셋 | ✔ (Task 74) | `src/app/icon.svg`(벡터) + **PNG 192/512**·**512 maskable**(안전영역 패딩)·**apple-touch-icon 180**. `scripts/generate-icons.mjs`(Node 표준 라이브러리만, 외부 의존 0)가 브랜드 마크에서 생성. manifest는 SVG(`sizes:"any"` 폴백)+PNG 192/512(`purpose:"any"`)+512 maskable, apple-touch는 layout metadata로 연결 |
 | 모바일 내비게이션 | ✔ | `src/components/MobileBottomNav.tsx` — 하단 5셀(오늘·종목 찾기·공시 신호·관심·더보기), `display:standalone`에서도 동작 |
 | 반응형 로그인/온보딩 | ✔ | `/login` 모바일 가드(Task 70·73). 390px 소스 점검은 기존 QA 스윕(#38) 수준, 실 브라우저 게이트는 운영자(⑤) |
-| 설치성(installability) 차단 요소 | △ | manifest·HTTPS·standalone은 충족. **Android Chrome의 "앱 설치" 프롬프트는 보통 PNG(192/512) 아이콘을 요구** → SVG-only라 일부 런처에서 설치 배너가 약하게 뜨거나 홈 화면 아이콘 품질이 낮을 수 있음. iOS Safari "홈 화면에 추가"는 apple-touch-icon PNG가 없으면 스크린샷 기반 저품질 아이콘을 씀 |
+| 설치성(installability) 차단 요소 | ✔ (Task 74) | manifest·HTTPS·standalone 충족 + **PNG 192/512(purpose any)·512 maskable** 추가로 Android Chrome "앱 설치" 프롬프트 요건 충족, **apple-touch-icon 180** 추가로 iOS "홈 화면에 추가" 아이콘 품질 확보. 남은 설치성 변수는 에셋이 아니라 standalone 런타임(§5 OAuth 복귀) |
 
-**설치성 판정**: PWA로 **설치는 가능**하나(standalone 실행·바로가기 동작), **아이콘 품질/설치 배너는 PNG·maskable·apple-touch-icon 에셋이 추가돼야 1급(installable)으로 올라간다.** 이 에셋은 디자인 산출물이라 운영자 보강 항목(§3).
+**설치성 판정**: PWA로 **설치 가능**하며(standalone 실행·바로가기 동작), Task 74에서 **PNG 192/512·maskable·apple-touch-icon 에셋을 추가·연결해 아이콘 품질/설치 배너가 1급(installable)으로 올라갔다.** 이 에셋은 `scripts/generate-icons.mjs`로 코드 생성하므로 더 이상 운영자 보강 대기 항목이 아니다(브랜드 변경 시 재생성).
 
 ---
 
@@ -30,7 +30,7 @@
 - 현재 경로. 사용자는 ornscore.com 접속 후 "홈 화면에 추가"로 앱처럼 사용.
 - **장점**: 별도 빌드·심사·스토어 계정 불필요. 배포는 기존 Vercel 그대로. 한 코드베이스.
 - **단점**: 스토어 노출 없음(검색·랭킹·리뷰 부재). iOS는 푸시 알림 제약(웹 푸시는 iOS 16.4+ 홈 화면 추가 상태에서만). 설치 전환율이 스토어보다 낮음.
-- **다음 액션**: §3 아이콘 에셋 보강만 하면 PWA 품질이 올라간다. 코드 추가 거의 없음.
+- **다음 액션**: 아이콘 에셋은 Task 74에서 완료(§1·§3). 남은 PWA 품질/설치 변수는 실기기 standalone OAuth 복귀(§5)뿐.
 
 ### 2-2. Android TWA (다음 — 가장 적은 추가 작업으로 Play 스토어 등재)
 - TWA(Trusted Web Activity) = 기존 PWA를 안드로이드 앱 셸로 감싸 Play 스토어에 올리는 방식. 별도 UI 코드 없음.
@@ -67,13 +67,13 @@
 
 이 작업(Task 72)에서 코드로 끝낼 수 없는, 사람이 준비해야 할 산출물.
 
-- [ ] **PNG 아이콘** `public/icon-192.png`, `public/icon-512.png` (오른스코어 로고, 투명/배경 포함). 추가 후 `manifest.ts` icons 배열에 보강.
-- [ ] **maskable 아이콘** `public/icon-512-maskable.png` (안전 영역 패딩 포함, `purpose:"maskable"`). 안드로이드 적응형 아이콘 클리핑 방지.
-- [ ] **apple-touch-icon** `public/apple-touch-icon.png` (180×180). iOS 홈 화면 아이콘 품질.
+- [x] **PNG 아이콘** `public/icon-192.png`, `public/icon-512.png` — Task 74에서 `scripts/generate-icons.mjs`로 생성, `manifest.ts` icons(`purpose:"any"`)에 연결 완료.
+- [x] **maskable 아이콘** `public/icon-512-maskable.png` — Task 74. 안전영역 10% 패딩(마크가 내부 80%), `manifest.ts`에 `purpose:"maskable"`로 연결 완료.
+- [x] **apple-touch-icon** `public/apple-touch-icon.png` (180×180) — Task 74. `src/app/layout.tsx` metadata.icons.apple로 연결(`<link rel="apple-touch-icon">` 방출 확인).
 - [ ] **(TWA 시)** Google Play Console 개발자 등록 $25 + `public/.well-known/assetlinks.json` + 서명 키 지문.
 - [ ] **(App Store 시)** Apple Developer Program $99/yr + Mac/Xcode 빌드 환경 + 래퍼 패키징.
 
-> 코드 쪽 메모: 위 PNG가 추가되면 `src/app/manifest.ts`의 `icons`에 192/512/maskable을 더하고, `apple-touch-icon`은 `src/app/layout.tsx`의 metadata(또는 `app/apple-icon.png` 컨벤션)로 연결. **현재는 존재하지 않는 PNG 경로를 manifest에 적지 않는다**(404·설치 실패 방지).
+> 코드 쪽 메모(완료): Task 74에서 `src/app/manifest.ts` `icons`에 192/512/maskable을 추가하고 `apple-touch-icon`은 `src/app/layout.tsx` metadata.icons.apple로 연결했다. 에셋은 `node scripts/generate-icons.mjs`로 재생성, `node scripts/check-icons.mjs`로 PNG 시그니처·정확 치수(192/512/512/180)를 검증한다(외부 npm 의존 0). 브랜드 마크가 바뀌면 두 스크립트를 다시 실행.
 
 ---
 
@@ -108,7 +108,7 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 
 ## 6. 다음 구체적 액션(권장 순서)
 
-1. 운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결(작은 후속 큐).
+1. ~~운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결~~ **(Task 74 완료 — `scripts/generate-icons.mjs`로 생성·연결·검증)**.
 2. 제품 결정: TWA(Play) vs iOS 래퍼 중 어느 스토어를 먼저 갈지 결정 → 해당 계정($25 / $99) 준비.
 3. 실기기에서 OAuth standalone 복귀(§5) 검증 → 깨지면 콜백 처리 보강(별도 큐).
 4. (선택) navigation-only network-first SW 검토 — 데이터 JSON 비캐시 원칙 고정 시에만.
