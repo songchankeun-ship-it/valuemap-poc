@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { safeInternalPath } from "@/lib/auth/returnPath";
 
 export function AccountButtons() {
   const pathname = usePathname();
-  const next =
-    pathname && pathname !== "/" && pathname !== "/login"
-      ? `?next=${encodeURIComponent(pathname)}`
-      : "";
+  // 현재 내부 위치를 로그인 후 복귀 목적지로 보존. 쿼리스트링도 가능하면 포함하되,
+  // safeInternalPath 로 한 번 더 걸러 외부 URL 이 next 로 새어들지 않게 한다.
+  const onRedirectablePage = !!pathname && pathname !== "/" && pathname !== "/login";
+  const search = typeof window !== "undefined" ? window.location.search : "";
+  const dest = onRedirectablePage ? safeInternalPath(`${pathname}${search}`) : "/";
+  const next = dest !== "/" ? `?next=${encodeURIComponent(dest)}` : "";
 
   return (
     <>

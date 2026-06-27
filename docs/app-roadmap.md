@@ -96,7 +96,7 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 
 | 기능 | 준비도 | standalone에서 점검할 것 |
 |---|---|---|
-| Kakao/Google OAuth | △ 점검 필요 | OAuth는 외부 브라우저/시스템 웹뷰로 튕겼다가 standalone 창으로 **되돌아오지 못할 수 있음**(콜백이 Safari/Chrome 탭에서 끝나 앱 컨텍스트 상실). 콜백 redirect가 `scope:"/"` 안으로 복귀하는지 실기기 확인 필요. 코드 변경은 이 작업 범위 아님 |
+| Kakao/Google OAuth | △ 점검 필요 | OAuth는 외부 브라우저/시스템 웹뷰로 튕겼다가 standalone 창으로 **되돌아오지 못할 수 있음**(콜백이 Safari/Chrome 탭에서 끝나 앱 컨텍스트 상실). 콜백 redirect가 `scope:"/"` 안으로 복귀하는지 실기기 확인 필요. **코드 측 가드(Task 76)**: `next`는 `safeInternalPath`로 내부 경로만 허용(open-redirect 차단), `code` 없는 콜백은 `auth_callback_no_code` 친절 안내로 분기. 실기기 복귀 동작은 §5-1 절차로 확인 |
 | Naver 로그인 | 준비 중(Task 73) | `/login`에 "네이버 (준비 중)" 비활성만 노출. 운영자 콘솔 설정 전까지 standalone에서도 동일하게 비활성 |
 | 알림 설정 | △ | `settings/notifications`는 UI/미리보기 골격(Task 45). iOS 웹 푸시는 16.4+ 홈 화면 추가 상태에서만, SW 필요 → 현재 미지원. 네이티브 푸시는 래퍼/Capacitor 단계 |
 | 관심 종목 동기화(watchlist) | △ | 로그인 기반 동기화가 standalone 세션에서 유지되는지(쿠키/스토리지 격리) 확인. 비로그인은 로컬 저장 |
@@ -105,13 +105,28 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 
 **우선순위**: 스토어 배포 전 **OAuth standalone 복귀**가 가장 큰 리스크(로그인 깨지면 핵심 기능 불가). 그 다음 푸시(SW/네이티브 의존). watchlist 동기화·딥링크는 그 뒤.
 
+### 5-1. 실기기 standalone 로그인/복귀 QA 절차 (Task 76)
+
+standalone(홈 화면 추가/래퍼) 창에서 로그인 후 **앱 컨텍스트로 정확히 복귀**하는지, 그리고 외부 URL이 복귀 대상으로 새어들지 않는지를 실기기에서 점검한다. 코드 측 가드는 `safeInternalPath`(`src/lib/auth/returnPath.ts`)가 `/login`·`/auth/callback`의 `next`를 내부 경로로만 제한해 마련해 두었다. 아래는 운영자/실기기 확인 단계.
+
+1. **standalone 실행**: 홈 화면에 추가한 아이콘으로 앱을 연다(주소창 없는 standalone 창). `/`·`/stocks`가 앱 창 안에서 열리는지 확인.
+2. **Kakao 복귀**: 로그인 → 카카오 → 동의 후 **`scope:"/"` 내부(앱 창)로 복귀**하는지. 외부 브라우저 탭에 머물러 앱 창으로 못 돌아오면 §5 최대 리스크 발현 → 콜백 보강 큐로 기록.
+3. **Google 복귀**: 동일하게 구글 동의 후 앱 창 복귀 확인(콘솔 토글 전이면 빨간 박스 친절 안내가 뜨는지).
+4. **이메일 매직링크 복귀**: 메일의 링크를 standalone에서 열었을 때 `/auth/callback`을 거쳐 로그인되고 원래 목적지로 도착하는지(`welcome=1` 토스트).
+5. **code 없는 콜백(앱 복귀 실패)**: `/auth/callback`이 `code` 없이 호출되면 `/login?error=auth_callback_no_code`로 떨어지며 **"앱에서 로그인 후 돌아오지 못했어요…"** 친절 안내가 보이는지(원문 제공자 메시지 미노출).
+6. **Naver 비활성 상태**: standalone에서도 `/login`의 "네이버 (준비 중)"이 **클릭 불가**(`aria-disabled`, 인증 호출 0)로만 보이는지.
+7. **watchlist 복귀 왕복**: `/login?next=/watchlist` 로그인 → 로그인 후 **watchlist로 정확히 복귀**하는지. AccountButtons/MobileNav의 로그인 진입점도 현재 페이지를 `next`로 보존하는지 확인.
+8. **negative(open-redirect 방지)**: `/login?next=//evil.com`, `/login?next=https://evil.com`, `/auth/callback?next=//evil.com` 모두 **외부로 가지 않고 `/`(내부)로** 떨어지는지. 정상 동작이면 외부 도메인으로 절대 redirect 되지 않는다.
+
+> 위 절차는 §5의 정직성/톤 규칙을 유지하며 스토어 출시를 약속하지 않는다. 코드 가드(내부 경로 제한·친절 오류)는 적용 완료, 실기기 복귀 동작 자체는 운영자 게이트로 남는다.
+
 ---
 
 ## 6. 다음 구체적 액션(권장 순서)
 
 1. ~~운영자: §3 PNG/maskable/apple-touch-icon 에셋 제작 → 코드에 연결~~ **(Task 74 완료 — `scripts/generate-icons.mjs`로 생성·연결·검증)**.
 2. ~~설치 프롬프트 UX(`beforeinstallprompt` 실제 버튼 + standalone 감지 + 수동 안내)~~ **(Task 75 완료 — `src/components/PwaInstallHelper.tsx`, `/about` 연결)**.
-3. **(다음 구체 단계)** 실기기에서 standalone 실행 + **OAuth 복귀**(§5 최대 리스크) 검증 → 깨지면 콜백 처리 보강(별도 큐). 같은 실기기 세션에서 Android Chrome `beforeinstallprompt` 버튼·iOS 수동 추가 흐름도 1회 육안 확인.
+3. **(다음 구체 단계)** 실기기에서 standalone 실행 + **OAuth 복귀**(§5 최대 리스크) 검증 → §5-1 절차 사용. 코드 측 복귀 경로 가드(내부 경로 제한·`auth_callback_no_code` 친절 안내)는 **Task 76 완료**. 깨지면 콜백 처리 추가 보강(별도 큐). 같은 실기기 세션에서 Android Chrome `beforeinstallprompt` 버튼·iOS 수동 추가 흐름도 1회 육안 확인.
 4. 제품 결정: TWA(Play) vs iOS 래퍼 중 어느 스토어를 먼저 갈지 결정 → 해당 계정($25 / $99) 준비.
 5. (선택) navigation-only network-first SW 검토 — 데이터 JSON 비캐시 원칙 고정 시에만.
 

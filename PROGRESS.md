@@ -1,5 +1,19 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-27 · [claude] Task 76 — standalone 앱 로그인 복귀 + 내부 딥링크 정규화 (open-redirect 가드)
+- **범위/결정**: Task 75(설치 UX) 위 후속 = app/PWA 경로의 **로그인 복귀·내부 딥링크 견고화**(네이티브 래퍼 결정 전 선결). `/login`·`/auth/callback`의 `next`를 내부 경로로만 제한하는 **공유 정규화기**를 추가하고, 친절한 한국어 앱 복귀 오류를 보강. branch `ai-center/task-76-ornscore-standalone-auth-return-and-`, 시작 HEAD `9df4313`(Task 75, 클린). **신규 npm 0 · 가짜 로그인 성공 경로 0 · 리셋/pull/머지/push 0 · env/시크릿 0.** 점수식·`stocks.json`·`direction`·Supabase·제공자 config(`OAUTH_PROVIDERS`/`PLANNED_PROVIDERS`) 무변경. 네이버는 "준비 중" 비활성 유지, Apple `enabled:false` 유지, 카카오·구글·이메일 동작 불변.
+- **반영(신규 1 + 코드 4 + 문서 3)**:
+  - **[신규] `src/lib/auth/returnPath.ts`** — 의존성 0·ASCII-only `safeInternalPath(raw, fallback="/")`. 규칙: 빈값→fallback, 백슬래시→슬래시 정규화로 `\\`/`/\` 우회 일반화, 길이 ≤512, **제어문자/공백(코드포인트 ≤0x20 또는 0x7F) 거부**(`charCodeAt` 루프 — 리터럴 제어바이트 임베드 회피), `"://"` 포함 거부(스킴 차단), 반드시 `"/"` 하나로 시작(`//` 프로토콜-상대 거부). 내부 경로의 query/hash 보존. open-redirect 사유 헤더 주석.
+  - **`src/app/auth/callback/route.ts`** — 인라인 `nextParam.startsWith("/")` 체크를 `safeInternalPath(...)`로 교체. 실패 경로를 **`code` 없음(앱/standalone 복귀 실패) = `auth_callback_no_code`** vs **교환 오류 = `auth_callback_failed`**로 분기. 두 경우 모두 검증된 `next`를 `/login?error=<code>&next=<safeNext>`로 보존(단 `next==="/"`면 미부착). 성공 경로(`welcome=1`)·`exchangeCodeForSession` 불변.
+  - **`src/app/login/page.tsx`** — `safeInternalPath` import 후 `next = safeInternalPath(searchParams.get("next"))`로 교체 → 뒤로가기 `<Link href={next}>`·OAuth/이메일 `redirectTo` 모두 외부 URL 불가. `friendlyAuthError`에 `auth_callback_no_code` → "앱에서 로그인 후 돌아오지 못했어요. 다시 시도하거나 브라우저에서 로그인해 주세요." 매핑 추가(원문 제공자 문자열 미노출). 기존 매핑·핸들러·제공자 렌더 불변.
+  - **`src/components/AccountButtons.tsx`·`src/components/MobileNav.tsx`** — 로그인 진입점의 `next`를 현재 내부 위치(`pathname` + 가능 시 `window.location.search`)에서 만들되 `safeInternalPath`로 한 번 더 통과시켜 내부 보장. `/`·`/login`에선 미부착(기존 동작 유지).
+  - **하드코딩 내부 리터럴 진입점 무변경(확인만)**: `WatchlistClient.tsx:302`(→`/watchlist`)·`history/page.tsx:36`·`settings/notifications/page.tsx:165`·`StocksExplorer.tsx:326`(→`/stocks`) — 이미 안전한 내부 리터럴.
+  - **`docs/app-roadmap.md`**(§5 OAuth 행에 코드 가드 명시 + 신규 **§5-1 실기기 standalone 로그인/복귀 QA 절차** 8단계 + §6 next 3 갱신)·**`PROGRESS.md`**·**`docs/AI_HANDOFF.md`**(Manual Note) — 이 엔트리.
+- **검증**: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류 0·금칙어 0·**Metrics 2.4** · `npm run build` exit 0(SSG 138p+전 라우트, `/login`·`/auth/callback` 포함) · 변경 6파일 U+FFFD 0·제어바이트 0. 로컬 prod 3352(내 PID 33624만 taskkill, 4310 무중단·3000 본래 미기동): `/login`·`/login?next=/watchlist`·`/watchlist`·`/history`·`/settings/notifications` **200**. **콜백 redirect 검증**: `/auth/callback`(code 없음) **307 → `/login?error=auth_callback_no_code`**, `/auth/callback?next=//evil.com` 및 `?next=https://evil.com` 모두 **외부 미복귀**(next 미부착, 내부로만), `/auth/callback?next=/watchlist` → **`&next=%2Fwatchlist` 보존**. `/login` 클라 번들에 친절 문구('돌아오지 못했어요') 컴파일 확인.
+- **게이트 한계 / 잔여**: Playwright 미구성 → **실기기 standalone 실제 OAuth 복귀(Kakao/Google 앱 창 복귀)는 운영자 게이트**(§5-1 절차). 코드 측 가드(내부 경로 제한·`auth_callback_no_code` 친절 안내)는 완료 — 복귀 자체가 깨지면 콜백 추가 보강은 별도 큐. 네이버 실로그인은 여전히 운영자 콘솔 선결(Task 73).
+- **다음**: 운영자 실기기에서 §5-1 8단계 1회 검증 → 깨지면 콜백 보강 큐. 큰 축은 ④ 결제·⑤ 법무.
+
+
 ## 2026-06-27 · [claude] Task 75 — PWA 설치 프롬프트 + standalone UX 폴리시 (정직한 설치 도우미)
 - **범위/결정**: Task 74(아이콘 에셋) 위 app-readiness 후속 = **마케팅 랜딩 아님**, 실용 설치 UX. `/about` "앱처럼 설치하기" 섹션의 정적 수동 단계를 **클라이언트 설치 도우미**로 교체해 가짜 버튼 없이 브라우저가 제공할 때만 실제 설치를 제안. branch `ai-center/task-75-ornscore-pwa-install-prompt-and-stan`, 시작 HEAD `0cdc496`(Task 74, 클린). **신규 npm 0 · service worker/캐싱 0(§4 데이터 신선도 결정 유지) · manifest 아이콘 무변경 · 리셋/pull/머지/push 0 · env/시크릿 0.** 점수식·`stocks.json`·`direction`·인증 무변경. 공개 문구 PWA/홈 화면 추가만(App Store·Play 출시 주장 0).
 - **반영(신규 1 + 코드 1 + 문서 3)**:

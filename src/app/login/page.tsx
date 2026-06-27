@@ -8,6 +8,7 @@ import {
   plannedProviders,
   type OAuthProviderId,
 } from "@/lib/auth/providers";
+import { safeInternalPath } from "@/lib/auth/returnPath";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bell } from "lucide-react";
 
@@ -19,6 +20,11 @@ function friendlyAuthError(raw: string | null | undefined): string {
   if (!raw) return "";
   const s = raw.toLowerCase();
 
+  // 앱/홈 화면(standalone) 실행에서 외부 브라우저로 로그인 후 앱 창으로 복귀하지
+  // 못한 경우(콜백에 code 없음). 원문 제공자 메시지는 노출하지 않는다.
+  if (s.includes("auth_callback_no_code")) {
+    return "앱에서 로그인 후 돌아오지 못했어요. 다시 시도하거나 브라우저에서 로그인해 주세요.";
+  }
   if (s.includes("auth_callback_failed")) {
     return "로그인 처리 중 문제가 발생했어요. 다시 시도해 주세요.";
   }
@@ -42,7 +48,9 @@ function friendlyAuthError(raw: string | null | undefined): string {
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/";
+  // next 는 URL 에서 온 조작 가능 입력 → 내부 경로만 허용(open-redirect 방지).
+  // 뒤로가기 링크·OAuth/이메일 redirectTo 모두 이 정규화된 값에서 파생된다.
+  const next = safeInternalPath(searchParams.get("next"));
   const CONTEXT_MSG: Record<string, string> = {
     "/history": "분석 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
     "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
