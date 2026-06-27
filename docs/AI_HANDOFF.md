@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-27T06:07:08.782Z
+Last updated: 2026-06-27T06:27:57.595Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 74 - OrnScore PWA icon assets and installability polish
-- Run: 63
+- Task: 75 - OrnScore PWA install prompt and standalone UX polish
+- Run: 64
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
