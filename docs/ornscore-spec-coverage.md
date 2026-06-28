@@ -49,7 +49,7 @@
 | C. 데이터 상태 배지 분리(§14) | ① | `stock/PriorityScoreCard.tsx` 독립 pill 3종(#34) |
 | D. 공시 호재/악재 → 확인 포인트(§15~18) | ① | `DisclosureExplorer.tsx`·`disclosure-signals.ts` valence 제거·중립화(#35), 카드 5색 토큰(#26) |
 | D. 공시 200건 제한 명확화(§19) | ① | `DisclosureExplorer.tsx`·`disclosures/page.tsx`·`StockDisclosures.tsx` 상시 캡션(#35·#41) |
-| D. 공시 기간 전체 수집(§19.2 권장안) | ④ [개발] | 전체 기간 DART pagination 수집·저장 = 별도 파이프라인. 현재는 임시안(최신 200건 고지)로 충족 |
+| D. 공시 기간 전체 수집(§19.2 권장안) | ④ [개발] | 전체 기간 DART pagination 수집·저장 = 별도 파이프라인. 현재는 임시안(최신 200건 고지)로 충족. **Task 93**: Pro 관심 종목 공시 알림이 "최신 200건 일반 피드"에 의존하지 않도록(종목 단위 DART 조회 + 영속 커서) 구현 준비 설계 노트를 `ornscore-beta-launch-checklist.md` (g)에 추가 |
 | D. 홈↔공시 숫자 동기화(§20) | ① | `recentSignals.ts`·`api/disclosures/recent` signalCount 클램프, 샘플 폴백 교정(#35) |
 | E. 백테스트 제목·고지·리밸런싱 문구(§22~25) | ① | `BacktestClient.tsx` "실험 전략", `BacktestRiskNotice.tsx`, 3날짜 분리, 리밸런싱 "추천 아님"(#27·#35) |
 | F. 비교 빈 상태 개선(§26~27) | ① | `compare/page.tsx`·`CompareClient.tsx` 추천 세트·최근 본 종목·오늘 Top5·관심·검색·업종(#36·#41) |

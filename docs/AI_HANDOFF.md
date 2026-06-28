@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 93 — 3차 QA P1 감사 + Pro 관심 종목 공시 수집 설계 노트 (2026-06-28, Claude)
+- **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md` P0(상세·비교) 이후 **P1 명료성 5항(공시 필터·탐색 밀도·요금제 베타 고지·공시 200건 한계·AI 고지)**. 현황 전수 점검 → **5개 P1 모두 이미 배포 확인**(Task 60/61/62/66/89~94). 작동 컴포넌트 재작업 금지, 감사 + **유일 신규 산출물 = P1-4(§10) 공시 수집 설계 노트**. 소스 코드 무변경(문서 3종만).
+- **감사 결과(읽기 전용·무변경)**:
+  - **P1-1**: `DisclosureExplorer.tsx` 범위 토글 = 세그먼트 버튼 그룹(`role=group`·`aria-pressed`·선택 blue-600+ring·카운트 배지) + 설명 한 줄 + "최신 200건 내" 배지. `copy/disclosures.ts` ko/en 완비. ✅
+  - **P1-2**: `StocksExplorer.tsx` 첫 화면 = 검색 → 질문형 프리셋 카드(예상 결과 수) → 빠른 프리셋 칩(기본 접힘) → 정렬/상세 필터 drawer. 유용 필터 보존. ✅
+  - **P1-3**: `PricingContent.tsx`+`copy/pricing.ts` sky `betaCard` = 베타 무료 알림 → 정식 출시 시 Pro 전환 예정·시점/가격 미확정·**변경 전 미리 공지**. 확정 유료 가격 0. ✅
+  - **P1-5**: `AiAnalysisCard.tsx`+`aiAnalysisCardCopy` = 실행 전 고지(데이터→Anthropic 미국·민감정보 금지·참고용) + **필수 동의 체크박스 게이팅** + 결과 상단 면책 + 푸터/하단 비자문. `privacy/page.tsx`(Anthropic 미국·국외이전 표·학습 미사용)와 정합. ko/en 완비. ✅
+- **신규 산출물(P1-4)**: `docs/ornscore-beta-launch-checklist.md` **(g) 공시 수집 범위 설계 노트** — (g-1) 현재 최신 200건 제한 고지 표면 정리 / (g-2) 알림이 일반 200건 피드 의존 금지 이유(누락·커버리지 미보장·신뢰성) / (g-3) 권장 설계(기존 `listDisclosuresByStock` 종목 단위 조회 재사용 + 영속 커서 `watched_disclosure_cursor` 델타 + cron 배치·rate limit + 탐색 피드 분리) / (g-4) 범위 경계(설계만·파이프라인/스키마/cron=대기④). `ornscore-spec-coverage.md` line 52에 교차 참조.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `git diff --check` 0 · 변경 문서 U+FFFD 0. 신규 금칙어 0. **소스 무변경 → `app:check`·로컬 prod 스모크 불요**(app-facing 소스 무변경).
+- **남은 갭(후속)**: ④ 공시 전체 기간 수집 파이프라인 + 관심 종목 알림 라이브(g-3 구현)·관리자 상태판·결제/법무 확정·실브라우저 390px 육안(운영자 Playwright 게이트).
+- **다음**: 운영자/제품 — 알림 라이브 결정 시 (g-3)대로 종목 단위 수집 + 영속 커서 착수, 또는 spec §19.2 전체 기간 수집 파이프라인.
+
 ### Task 94 — 모바일 드로어/로그인 레이아웃 수리 (헤더 backdrop-filter 컨테이닝 블록 탈출) (2026-06-28, Claude)
 - **증상(운영자 스크린샷)**: 모바일에서 햄버거 메뉴를 열면 드로어가 화면 전체를 덮는 깔끔한 오버레이가 아니라 헤더 영역 안에 갇힌 좁은 좌측 패널처럼 보이고, 백드롭이 페이지를 완전히 가리지 못해 글로벌 데이터바·KO/EN·테마·로그인 카드가 드로어와 겹쳐/충돌해 보임.
 - **근본 원인**: `AppHeader`의 `<header>`가 `backdrop-blur-md`(=`backdrop-filter`)를 가져 **고정 위치 자손의 컨테이닝 블록**이 됨. `MobileNav`이 그 헤더 안에서 렌더되므로 드로어/백드롭의 `fixed inset-0`/`inset-y-0`가 뷰포트가 아니라 **짧은 헤더 바 기준으로 크기/위치가 잡혀** 클리핑·겹침 발생. (CSS: transform/filter/backdrop-filter 가진 조상은 fixed 자손의 컨테이닝 블록이 된다.)

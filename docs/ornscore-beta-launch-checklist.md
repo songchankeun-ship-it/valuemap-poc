@@ -163,6 +163,49 @@ Phase 1 작업 대부분이 #14~#46 큐에서 완료됐고, 남은 건 Phase 2�
 
 ---
 
+## (g) 공시 수집 범위 설계 노트 — 베타 "최신 200건" vs Pro "관심 종목 공시 알림" (Task 93)
+
+> 3차 QA P1-4(§10) 설계서 요구: 베타/무료 페이지에서 **최신 공시 수집 제한을 명확히 고지**하고, 향후 **관심 종목 공시 알림이 "최신 200건 일반 피드"에만 의존하지 않도록** 설계 방향을 구현 준비 수준으로 남긴다.
+> 이번 Task 93은 **설계/문서만**. 실제 수집 파이프라인·Supabase 스키마·cron 연결은 대기④(결제·알림 라이브와 함께 착수).
+> 교차 참조: `ornscore-spec-coverage.md` §1 D §19.2(전체 기간 DART 수집, line ~52)·§2 6.5(공시 알림) · `data-source-commercial-risk.md`(DART 안정성).
+
+### (g-1) 현재 베타 구조(완료·정직 고지됨)
+
+| 표면 | 데이터 소스 | 제한 고지 | 증거 |
+|---|---|---|---|
+| `/disclosures`(탐색) | `/api/disclosures/recent` — 코스피·코스닥 각 최신 100건(합 200건) **일반 피드**에서 신호 추출 | 상시 "최신 200건 내" 배지·인트로 `collapseBody`·`infoNote` | `DisclosureExplorer.tsx`(`within200`)·`copy/disclosures.ts`·`DisclosuresIntro` |
+| 홈 공시 카드 | 동일 일반 피드(분석 대상 universe 필터) | "DART · 최신 200건 내" | `MarketSnapshotCards`·`DisclosureSignalSection` |
+| `/status` | — | `knownLimits` "공시 분석 범위 — 최신 200건"(ko/en) | `dataStatus.ts`(`LIMIT_DISCLOSURE`) |
+| 종목 상세 공시 | `/api/disclosures/[ticker]` — **종목 단위 DART 조회**(`listDisclosuresByStock`, 최신 200건 일반 피드와 무관) | 종목별 N일·limit 표기 | `StockDisclosures.tsx` |
+
+→ **탐색 표면의 최신 200건 제한은 이미 충분히 정직하게 고지됨**(P1-4 고지 요구 충족). 추가 코드 변경 불필요.
+
+### (g-2) 문제 — 알림은 일반 피드에 의존하면 안 됨
+
+향후 Pro "관심 종목 공시 알림"(watched-stock disclosure alerts)을 **탐색용 최신 200건 일반 피드 위에 그대로 얹으면 안 된다**. 이유:
+
+- **누락 위험**: 200건은 시장 전체 최신순 윈도라 거래·공시가 몰리는 날에는 빠르게 회전한다. 관심 종목 공시가 그 윈도 밖으로 밀리면 **알림이 발화하지 않는다**(특히 거래가 적은 비인기 관심 종목).
+- **커버리지 미보장**: 일반 피드는 "시장 전체 최신 N건"이지 "이 종목의 모든 공시"가 아니다. 특정 종목 커버리지를 구조적으로 보장하지 못한다.
+- **신뢰성 요구 차이**: 탐색은 best-effort 표본으로 충분하지만, **알림은 "놓치면 안 되는" 신뢰성**을 요구한다. best-effort 일반 피드는 알림 SLA에 부적합.
+
+### (g-3) 권장 설계(구현 준비 — 기존 코드 위에서 안전하게 확장)
+
+알림 경로를 **탐색용 일반 피드와 분리**하고, **관심 종목별 종목 단위 수집 + 영속 커서**로 설계한다.
+
+1. **소스: 종목 단위 DART 조회 재사용.** 이미 존재하는 `listDisclosuresByStock(ticker, days, limit)`(`src/lib/dart.ts`, `/api/disclosures/[ticker]`가 사용)는 corp_code 기반 종목별 조회라 200건 일반 피드와 무관하다. 알림은 **관심 종목 집합을 종목 단위로 순회**해 수집한다(최신 200건 피드를 스캔하지 않음).
+2. **영속 커서로 델타 감지.** 관심 종목별 **마지막으로 처리한 `rcept_no`/`rcept_dt`를 영속 저장**(예: Supabase `watched_disclosure_cursor(user_id, ticker, last_rcept_no, last_rcept_dt, updated_at)`). cron마다 종목별 조회 결과를 커서와 diff → **신규 공시만** 발송 큐에 적재 → 중복 발송 방지.
+3. **cron 배치 + DART rate limit.** `cron/notify`·`cron/evaluate-alerts` 골격에서 전체 관심 종목 집합을 dedup해 모은 뒤 종목 단위로 배치 조회한다(DART 분당 호출 한도 고려해 청크·백오프). 발송 성공/실패는 §15.2 발송 로그(현재 미점검)와 함께 기록.
+4. **탐색 피드는 현 상태 유지.** `/api/disclosures/recent`(최신 200건)는 **탐색·홈 표면 전용으로 유지**한다. 알림 경로와 물리적으로 분리해, 탐색 제한 고지(g-1)와 알림 신뢰성(g-2)을 동시에 만족.
+5. **(선택) 전체 기간 수집과의 관계.** spec §19.2 "전체 기간 DART pagination 수집·저장"이 별도로 진행되면, 알림은 그 저장본을 1차 소스로 쓰고 종목 단위 조회를 보강용으로 둘 수 있다. 둘은 배타가 아님(저장본 = 커버리지, 종목 조회 = 실시간 보강).
+
+### (g-4) 범위 경계 / 소유자
+
+- **이번 Task 93 = 설계/문서만.** 수집 파이프라인·Supabase 스키마(`watched_disclosure_cursor`)·cron diff 로직·발송 큐는 **대기④ [개발]**(결제·알림 라이브 결정과 함께 착수). 안전한 소규모 코드 개선이 자명하지 않아(알림 인프라 신규) 이번엔 코드 변경 없음.
+- **고지(P1-4 전반부)는 이미 충족**(g-1) — 베타/무료 페이지의 최신 200건 제한 상시 캡션.
+- 알림 라이브 착수 시 (e) §15.2 발송 로그·(d) 관리자 상태판과 같은 시스템에 속하므로 함께 설계.
+
+---
+
 ## (f) 베타 공개 전 최종 확인 체크리스트
 
 ### 검증 게이트(이번 Task 47 통과 결과는 PROGRESS.md·AI_HANDOFF.md 참조)
