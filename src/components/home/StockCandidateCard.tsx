@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { MetricChip } from "@/components/ui/MetricChip";
 import { MetricBar } from "@/components/ui/MetricBar";
+import { useLanguage } from "@/components/LanguageProvider";
+import { homeCopy, type StrongMetric, type RiskKind } from "@/lib/copy/home";
 
 export interface StockCandidate {
   rank: number;
@@ -12,17 +16,21 @@ export interface StockCandidate {
   changePct: number;
   r3m: number | null;
   score: number;
-  /** 강점 라벨(강한 지표 2개 "추세 96" 형태). */
-  metrics: string[];
+  /** 강점 라벨(강한 지표 2개) — key+값만, 라벨은 로케일별 렌더. */
+  metrics: StrongMetric[];
   /** 4지표 점수 — 막대 시각화용. */
   m: { momentum: number; flow: number; value: number; vol: number };
-  riskNote: string;
+  /** 주의 문구 종류 — 문장은 로케일별 렌더(서버는 원시 점수로 분기만). */
+  riskKind: RiskKind;
   highReturn: boolean;
 }
 
 // 오늘 추가 확인 후보 카드 — 종합점수를 카드의 핵심(게이지)으로, 위계는
 // 종목명 → 업종 → 가격 → 점수 → 4지표 막대 → 강점/주의 → CTA 순으로 또렷하게.
 export function StockCandidateCard({ c }: { c: StockCandidate }) {
+  const { locale } = useLanguage();
+  const t = homeCopy[locale];
+  const labels = t.metricLabels;
   return (
     <div className="flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-md transition">
       {/* 상단 — 종목 정보 + 종합점수 게이지(핵심) */}
@@ -54,20 +62,20 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
 
       {/* 4지표 막대 */}
       <div className="mt-3.5 space-y-1.5 rounded-lg bg-slate-50/60 dark:bg-zinc-950/30 border border-zinc-100 dark:border-zinc-800/80 p-2.5">
-        <MetricBar label="추세" value={c.m.momentum} />
-        <MetricBar label="거래활성도" value={c.m.flow} />
-        <MetricBar label="밸류" value={c.m.value} />
-        <MetricBar label="위험조정" value={c.m.vol} />
+        <MetricBar label={labels.momentum} value={c.m.momentum} />
+        <MetricBar label={labels.flow} value={c.m.flow} />
+        <MetricBar label={labels.value} value={c.m.value} />
+        <MetricBar label={labels.vol} value={c.m.vol} />
       </div>
 
       {/* 강점 — 강한 지표 2개 (체크 마커로 스캔 용이) */}
       <div className="mt-3 flex items-start gap-1.5">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-[9px] font-bold shrink-0 mt-0.5" aria-hidden="true">✓</span>
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">강점</div>
+          <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">{t.topCandidate.strength}</div>
           <div className="flex items-center gap-1.5 flex-wrap">
             {c.metrics.map((m) => (
-              <MetricChip key={m} label={m.replace(/\s*\d+$/, "")} value={m.match(/\d+$/)?.[0] ?? ""} tone="strong" />
+              <MetricChip key={m.key} label={labels[m.key]} value={String(m.value)} tone="strong" />
             ))}
           </div>
         </div>
@@ -77,8 +85,8 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
       <div className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-2.5 py-2">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-bold shrink-0 mt-px" aria-hidden="true">!</span>
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">주의</div>
-          <p className="text-[11px] leading-snug text-amber-800/90 dark:text-amber-300/80">{c.riskNote}</p>
+          <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t.topCandidate.caution}</div>
+          <p className="text-[11px] leading-snug text-amber-800/90 dark:text-amber-300/80">{t.topCandidate.risk[c.riskKind]}</p>
         </div>
       </div>
 
@@ -87,7 +95,7 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
         href={"/stock/" + c.ticker}
         className="mt-3.5 text-center px-3 py-2 min-h-[44px] inline-flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 hover:border-blue-400 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       >
-        종목 보기 →
+        {t.topCandidate.viewStock}
       </Link>
     </div>
   );

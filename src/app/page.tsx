@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { dataMetadata, realStockPool, formatBizDateShort, isDataStale } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
@@ -16,6 +15,8 @@ import type { DisclosureSignalVM } from "@/components/home/DisclosureSignalCard"
 import { FeatureCards } from "@/components/home/FeatureCards";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { RiskNotice } from "@/components/home/RiskNotice";
+import { HomeDataSourceFooter } from "@/components/home/HomeDataSourceFooter";
+import type { StrongMetric, RiskKind } from "@/lib/copy/home";
 
 interface RecentSignal {
   signalType: string;
@@ -55,41 +56,30 @@ function pickTopStocks(n: number) {
     .slice(0, n);
 }
 
-// 4지표 중 강한 2개를 "라벨 점수" 칩으로 — 점수만 보여주지 않고 강점 근거를 함께 표시.
-function strongMetrics(s: { momentum: number; flow: number; value: number; vol: number }): string[] {
-  const items = [
-    { label: "추세", v: s.momentum },
-    { label: "거래활성도", v: s.flow },
-    { label: "밸류", v: s.value },
-    { label: "위험조정", v: s.vol },
+// 4지표 중 강한 2개를 "라벨 점수" 칩으로 — key+값만 넘기고 라벨은 클라이언트에서 현지화.
+function strongMetrics(s: { momentum: number; flow: number; value: number; vol: number }): StrongMetric[] {
+  const items: StrongMetric[] = [
+    { key: "momentum", value: Math.round(s.momentum) },
+    { key: "flow", value: Math.round(s.flow) },
+    { key: "value", value: Math.round(s.value) },
+    { key: "vol", value: Math.round(s.vol) },
   ];
-  return items
-    .sort((a, b) => b.v - a.v)
-    .slice(0, 2)
-    .map((x) => x.label + " " + Math.round(x.v));
+  return items.sort((a, b) => b.value - a.value).slice(0, 2);
 }
 
-// 탐색 언어 기반 주의 문구 — '추천'이 아니라 '확인 필요'를 안내.
-function riskNote(s: { value: number; vol: number }, r3m: number | null): string {
+// 탐색 언어 기반 주의 문구 종류 — 문장은 클라이언트에서 현지화(원시 점수로 분기만).
+function riskKindOf(s: { value: number; vol: number }, r3m: number | null): RiskKind {
   if (r3m !== null && r3m >= 80) {
     // 급등 정도·변동성에 따라 문구를 나눠 같은 주의 문장이 반복되지 않게 한다(모두 확인·검토 톤).
-    if (r3m >= 150) return "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요";
-    if (r3m >= 120) return "단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요";
-    if (s.vol < 45) return "상승폭이 커진 데다 변동성도 높아 사유·시점 함께 검토 필요";
-    return "최근 상승폭이 커서 급등 사유 확인 필요";
+    if (r3m >= 150) return "surgeXl";
+    if (r3m >= 120) return "surgeL";
+    if (s.vol < 45) return "surgeVol";
+    return "surge";
   }
-  if (s.vol < 45) return "변동성이 큰 편이라 비중·시점 분할 검토 필요";
-  if (s.value < 40) return "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요";
-  return "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요";
+  if (s.vol < 45) return "volHigh";
+  if (s.value < 40) return "valueLow";
+  return "default";
 }
-
-const CHECK_POINT: Record<string, string> = {
-  treasury_buy: "자기주식 취득 규모와 목적을 원문에서 확인 필요",
-  insider_buy: "보유 변동의 매수·매도 방향과 규모는 본문 확인 필요",
-  correction: "정정 사유와 변경된 수치를 원문에서 확인 필요",
-  single_contract: "계약 규모와 직전 매출 대비 비율을 원문에서 확인 필요",
-  capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인 필요",
-};
 
 export const metadata = {
   title: "오른스코어 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
@@ -146,7 +136,7 @@ export default async function HomePage() {
         value: Math.round(s.value),
         vol: Math.round(s.vol),
       },
-      riskNote: riskNote(s, r3m),
+      riskKind: riskKindOf(s, r3m),
       highReturn: r3m !== null && r3m >= 80,
     };
   });
@@ -163,7 +153,6 @@ export default async function HomePage() {
       corpName: s.disclosure.corp_name,
       reportNm: s.disclosure.report_nm,
       dateLabel: fmtDate + " · DART",
-      checkPoint: CHECK_POINT[s.signalType] ?? "공시 원문에서 세부 내용 확인 필요",
       inUniv: universeTickers.has(code),
       code,
       dartUrl: "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=" + s.disclosure.rcept_no,
@@ -201,16 +190,7 @@ export default async function HomePage() {
 
       <RiskNotice />
 
-      <section className="text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
-        <strong className="text-zinc-700 dark:text-zinc-300">데이터 출처:</strong> KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 보조 지표, DART 공시 실데이터. {dataMetadata.count}개 종목 · 매일 갱신 · 데이터 기준 {dataAsOf} 장마감.
-        <div className="mt-3 flex items-center gap-3 text-zinc-400 dark:text-zinc-500">
-          <Link href="/about" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">서비스 소개</Link>
-          <span>·</span>
-          <Link href="/terms" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">이용약관</Link>
-          <span>·</span>
-          <Link href="/privacy" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">개인정보처리방침</Link>
-        </div>
-      </section>
+      <HomeDataSourceFooter count={dataMetadata.count} dataAsOf={dataAsOf} />
     </div>
   );
 }

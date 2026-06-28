@@ -7,6 +7,7 @@ import { TodayStatusBar } from "@/components/today/TodayStatusBar";
 import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
 import { TodayTopSection } from "@/components/today/TodayTopSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
+import type { StrongMetric, RiskKind } from "@/lib/copy/home";
 import { SignalSection } from "@/components/today/SignalSection";
 import type { SignalStockVM } from "@/components/today/SignalStockCard";
 
@@ -166,29 +167,26 @@ export function TodayContent(props: TodayContentProps) {
     return t.reason.momFallback;
   }
 
-  function strongMetrics(s: { momentum: number; flow: number; value: number; vol: number }): string[] {
-    const items = [
-      { label: M.momentum, v: s.momentum },
-      { label: M.flow, v: s.flow },
-      { label: M.value, v: s.value },
-      { label: M.vol, v: s.vol },
+  function strongMetrics(s: { momentum: number; flow: number; value: number; vol: number }): StrongMetric[] {
+    const items: StrongMetric[] = [
+      { key: "momentum", value: Math.round(s.momentum) },
+      { key: "flow", value: Math.round(s.flow) },
+      { key: "value", value: Math.round(s.value) },
+      { key: "vol", value: Math.round(s.vol) },
     ];
-    return items
-      .sort((a, b) => b.v - a.v)
-      .slice(0, 2)
-      .map((x) => x.label + " " + Math.round(x.v));
+    return items.sort((a, b) => b.value - a.value).slice(0, 2);
   }
 
-  function riskNote(s: { value: number; vol: number }, r3m: number | null): string {
+  function riskKindOf(s: { value: number; vol: number }, r3m: number | null): RiskKind {
     if (r3m !== null && r3m >= 80) {
-      if (r3m >= 150) return t.reason.riskHigh150;
-      if (r3m >= 120) return t.reason.riskHigh120;
-      if (s.vol < 45) return t.reason.riskHighVol;
-      return t.reason.riskHigh;
+      if (r3m >= 150) return "surgeXl";
+      if (r3m >= 120) return "surgeL";
+      if (s.vol < 45) return "surgeVol";
+      return "surge";
     }
-    if (s.vol < 45) return t.reason.riskVol;
-    if (s.value < 40) return t.reason.riskValue;
-    return t.reason.riskDefault;
+    if (s.vol < 45) return "volHigh";
+    if (s.value < 40) return "valueLow";
+    return "default";
   }
 
   const toVM = (s: TodayStockRaw, note: string, caution = false): SignalStockVM => ({
@@ -214,7 +212,7 @@ export function TodayContent(props: TodayContentProps) {
     score: s.score,
     metrics: strongMetrics(s.m),
     m: s.m,
-    riskNote: riskNote({ value: s.value, vol: s.vol }, s.r3m),
+    riskKind: riskKindOf({ value: s.value, vol: s.vol }, s.r3m),
     highReturn: s.r3m !== null && s.r3m >= 80,
   }));
 

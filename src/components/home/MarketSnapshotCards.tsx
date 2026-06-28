@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Database, Award, Activity, FileText } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { homeCopy } from "@/lib/copy/home";
 
 interface MarketSnapshotCardsProps {
   totalCount: number;
@@ -10,17 +14,22 @@ interface MarketSnapshotCardsProps {
 
 // 오늘의 시장 스냅샷 — 4개 카드(데스크톱 4열, 모바일 2열).
 export function MarketSnapshotCards({ totalCount, strongCount, volumeSpikeCount, signalCount }: MarketSnapshotCardsProps) {
+  const { locale } = useLanguage();
+  const t = homeCopy[locale];
+  const s = t.snapshot;
+  const stock = t.countStock;
+  const cases = t.countCase;
   const cards = [
-    { icon: Database, tone: "text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800", title: "분석 종목", value: `${totalCount}개`, sub: "실데이터 기반", href: "/stocks" },
-    { icon: Award, tone: "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40", title: "종합 80+ 후보", value: `${strongCount}개`, sub: "여러 지표에서 강점 확인", href: "/stocks" },
-    { icon: Activity, tone: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40", title: "거래활성도 급증", value: `${volumeSpikeCount}개`, sub: "평소보다 거래 관심 증가", href: "/stocks" },
-    { icon: FileText, tone: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40", title: "공시 신호", value: `${signalCount}건`, sub: "DART · 최신 200건 내", href: "/disclosures" },
+    { icon: Database, tone: "text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800", title: s.cards.total.title, value: `${totalCount}${stock}`, sub: s.cards.total.sub, href: "/stocks" },
+    { icon: Award, tone: "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40", title: s.cards.strong.title, value: `${strongCount}${stock}`, sub: s.cards.strong.sub, href: "/stocks" },
+    { icon: Activity, tone: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40", title: s.cards.spike.title, value: `${volumeSpikeCount}${stock}`, sub: s.cards.spike.sub, href: "/stocks" },
+    { icon: FileText, tone: "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40", title: s.cards.signal.title, value: `${signalCount}${cases}`, sub: s.cards.signal.sub, href: "/disclosures" },
   ];
   return (
     <section>
       <div className="flex items-baseline justify-between gap-2 mb-3">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">오늘의 시장 스냅샷</h2>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">장마감 데이터 요약</span>
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{s.heading}</h2>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{s.sub}</span>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {cards.map(({ icon: Icon, tone, title, value, sub, href }) => (

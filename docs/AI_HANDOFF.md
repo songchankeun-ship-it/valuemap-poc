@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 영어 지원 QA + 홈 화면 다국어화 + 모바일 점검 (2026-06-28, Claude · task 90)
+- **범위/판단**: task 89(영어 v2) 후속 QA. 먼저 결과를 점검 → task 89가 `/stocks`·`/stock/[ticker]`·`/today`·`/disclosures`·`/pricing`·`/status`·`/guide/metrics`·`/terms`·`/privacy`를 충실히 영어화했고 모바일 하드닝도 이미 양호함을 확인. 재번역 대신 **최대 임팩트 갭 = 홈(/) 히어로 아래 전 구간이 EN 모드에서도 한국어**를 우선 처리.
+- **홈 다국어화**: 신규 `src/lib/copy/home.ts`(ko/en 단일 출처). 홈 카드 서버 컴포넌트를 `"use client"`+`useLanguage`로 전환 — `MarketSnapshotCards`·`FeatureCards`·`HowItWorksSection`·`TopCandidateSection`·`StockCandidateCard`·`DisclosureSignalSection`·`DisclosureSignalCard` + 신규 `HomeDataSourceFooter`. `HomeHero`·`TodayContent`의 후보 칩도 신규 구조에 맞춤.
+- **데이터 무변경**: `page.tsx`는 점수·필터 유지. 강점 칩 `metrics: string[]`→`StrongMetric[]`(key+값), 주의 문구 서버 문자열→`riskKind`(원시 점수 분기만)로 바꿔 문장은 클라에서 현지화. `stocks.json`·점수식·`direction` 불변. 종목명·업종·공시 원문(corpName/reportNm/signalLabel)·숫자는 한국어 원형 유지(스코프 허용).
+- **법무**: `LegalEnSummary`가 `/terms`·`/privacy` EN 상단에 영어 요약 + `LEGAL_EN_PENDING_NOTE`("full English legal translation is pending owner/legal review")를 렌더하고 한국어 본문 정본을 보존함을 확인 — 추가 수정 불필요. **전문 영어 법무 번역은 운영자/법무 검토 잔여.**
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(176p SSG) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0(CRLF만) · 변경/신규 12파일 U+FFFD 0. 로컬 prod **3500**(내 PID만 종료·**AI Center 4310 무중단**): 11라우트 200, KO SSR 홈 한국어 기본(회귀 0), EN 홈 카피 클라 청크 컴파일 확인, `/login` 4제공자(네이버 "설정 필요" 비활성) KO/EN 렌더(인증 동작 무변경).
+- **남은 갭(후속)**: (1) 종목 상세 라이브러리 파생 문구 EN 한국어(`conclusion`·`composeReasonV2`·`metricReadings`·`scoreBasis`·`disclosureType`·`signalGuide`·AI 인사이트). (2) 서버 `metadata`/OpenGraph 한국어 고정. (3) `/terms`·`/privacy` 영어 요약만 — 전문 법무 번역 잔여. (4) `/en` URL 미도입.
+- **다음**: 종목 상세 라이브러리 파생 문구 로케일화 → `/en` URL 라우팅 + `metadata` 다국어화.
+
 ### 영어 지원 v2 — 핵심 제품 화면 다국어화 (2026-06-28, Claude · task 89)
 - **범위**: v1(진입/로그인/내비) 위에서 해외 사용자가 실제로 쓰는 화면을 영어로 확장. 반영: `/stocks`, `/stock/[ticker]`, `/today`, `/disclosures`, `/pricing`, `/status`, `/guide/metrics`, `/terms`·`/privacy`(영어 요약 토글), 데이터 신뢰 레이어(헤더 데이터바·DataTrustModal·RiskNotice·TodayStatusBar). 클라이언트 전환(쿠키/localStorage/`?lang=`) 유지, `/en` URL·`metadata` 다국어화 미도입.
 - **아키텍처**: 화면별 카피를 `src/lib/copy/*.ts`(`{ko,en} as const satisfies Record<Locale, unknown>`)로 분리(공유 `i18n.ts` 미수정, 병렬 작업 충돌 회피). 서버 page는 `metadata`/`generateStaticParams`/`revalidate`/점수·데이터 호출 유지, 보이는 JSX만 새 `"use client"` 콘텐츠 컴포넌트로 추출. 데이터 신뢰 문자열은 `src/lib/dataStatus.ts`에 **가산** 영어 레이어(`LocalizedDataStatus`·`dataStatusByLocale`·`localizedDataStatus`·`buildDataIssueMailto({locale})`) 추가 후 서버→클라 직렬화 props로 전달(`stocks.json` 클라 미번들; `AppHeader`→`LocalizedDataTrustModal` 선례).

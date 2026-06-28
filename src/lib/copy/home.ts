@@ -1,0 +1,252 @@
+// 홈(/) 히어로 아래 섹션 카피 — ko/en. 시장 스냅샷·오늘 후보·공시 신호·핵심 기능·
+// 사용 방법·데이터 출처 푸터를 다국어로. 종목명·업종·공시 원문(corpName/reportNm/
+// signalLabel)·숫자는 원형 유지(스코프상 시장·공시 데이터는 한국어 원문 허용).
+// 금융 카피는 양 언어 모두 보수적·비자문(매수/매도/추천/수익보장 금지).
+import type { Locale } from "@/lib/i18n";
+
+// 4지표 키 — 강점 칩·막대 라벨을 로케일 인식으로 렌더하기 위해 서버는 key+값만 넘긴다.
+export type MetricKey = "momentum" | "flow" | "value" | "vol";
+
+// 후보 카드 "주의" 문구 종류 — 서버가 원시 점수로 분기(key)만 정하고 문장은 여기서 현지화.
+export type RiskKind =
+  | "surgeXl"
+  | "surgeL"
+  | "surgeVol"
+  | "surge"
+  | "volHigh"
+  | "valueLow"
+  | "default";
+
+export interface StrongMetric {
+  key: MetricKey;
+  value: number;
+}
+
+export const homeCopy = {
+  ko: {
+    metricLabels: {
+      momentum: "추세",
+      flow: "거래활성도",
+      value: "밸류",
+      vol: "위험조정",
+    } as Record<MetricKey, string>,
+    countStock: "개",
+    countCase: "건",
+    snapshot: {
+      heading: "오늘의 시장 스냅샷",
+      sub: "장마감 데이터 요약",
+      cards: {
+        total: { title: "분석 종목", sub: "실데이터 기반" },
+        strong: { title: "종합 80+ 후보", sub: "여러 지표에서 강점 확인" },
+        spike: { title: "거래활성도 급증", sub: "평소보다 거래 관심 증가" },
+        signal: { title: "공시 신호", sub: "DART · 최신 200건 내" },
+      },
+    },
+    topCandidate: {
+      heading: "오늘 추가 확인 후보",
+      tag: "종합점수 상위 · 검증 보류 제외",
+      intro:
+        "종합점수 상위 종목 중 검증 보류 종목을 제외해, 오늘 먼저 살펴볼 후보를 정리했습니다.",
+      empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
+      footer:
+        "여러 지표에서 상대적으로 강점이 확인된 종목입니다. 점수가 높다고 매수 추천을 의미하지 않으며, 원문 공시와 재무를 함께 확인해야 합니다.",
+      strength: "강점",
+      caution: "주의",
+      viewStock: "종목 보기 →",
+      risk: {
+        surgeXl: "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요",
+        surgeL: "단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요",
+        surgeVol: "상승폭이 커진 데다 변동성도 높아 사유·시점 함께 검토 필요",
+        surge: "최근 상승폭이 커서 급등 사유 확인 필요",
+        volHigh: "변동성이 큰 편이라 비중·시점 분할 검토 필요",
+        valueLow: "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요",
+        default: "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요",
+      } as Record<RiskKind, string>,
+    },
+    disclosure: {
+      heading: "오늘 먼저 볼 공시 신호",
+      viewAll: "전체 보기 →",
+      introA: "자기주식, 보유 변동, 정정공시, 계약, 자금조달 관련 공시를 ",
+      introStrong: "DART 최신 200건 내",
+      introB: "에서 자동 분류해 확인할 신호를 정리합니다.",
+      policyLabel: "표시 정책",
+      policyA: "홈에는 ",
+      policyStrongPrefix: "분석 대상 ",
+      policyStrongSuffix: "종목",
+      policyB: "에 해당하는 공시만 우선 표시합니다. 전체 시장 공시는 ",
+      policyLink: "공시 신호 페이지",
+      policyC: "에서 범위를 바꿔 볼 수 있습니다.",
+      footer:
+        "공시 신호의 숫자는 호재/악재 점수가 아니라 분류 신뢰도입니다. 실제 영향은 원문 공시에서 직접 확인해야 합니다.",
+      outOfUniverse: "분석 대상 외",
+      checkLabel: "확인 포인트",
+      viewStock: "종목 보기",
+      dartOriginal: "DART 원문 ↗",
+      check: {
+        treasury_buy: "자기주식 취득 규모와 목적을 원문에서 확인 필요",
+        insider_buy: "보유 변동의 매수·매도 방향과 규모는 본문 확인 필요",
+        correction: "정정 사유와 변경된 수치를 원문에서 확인 필요",
+        single_contract: "계약 규모와 직전 매출 대비 비율을 원문에서 확인 필요",
+        capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인 필요",
+        default: "공시 원문에서 세부 내용 확인 필요",
+      } as Record<string, string>,
+    },
+    features: {
+      heading: "오른스코어 핵심 기능",
+      sub: "점수 · 공시 · 백테스트",
+      cards: {
+        today: {
+          title: "오늘의 후보",
+          body: "종합점수를 기준으로 오늘 먼저 확인할 종목을 빠르게 좁힙니다.",
+          statPrefix: "종합 80↑ ",
+          cta: "후보 보기",
+        },
+        signal: {
+          title: "공시 신호",
+          body: "자사주, 보유변동, 대형계약, 손익정정, 유증/CB를 신호로 분류합니다.",
+          statPrefix: "최근 ",
+          cta: "신호 보기",
+        },
+        backtest: {
+          title: "백테스트",
+          body: "수익률뿐 아니라 MDD, Sharpe 등 위험 지표까지 함께 확인합니다.",
+          stat: "위험 지표 포함",
+          cta: "결과 보기",
+        },
+      },
+    },
+    howItWorks: {
+      heading: "오른스코어는 이렇게 사용하세요",
+      sub: "점수로 좁히고, 이유를 보고, 원문으로 검증하는 3단계입니다.",
+      start: "종목 탐색 시작하기 →",
+      steps: [
+        { title: "오늘 후보 확인", body: "종합점수와 급변 지표로 오늘 먼저 볼 종목을 좁힙니다." },
+        { title: "이유 확인", body: "추세·거래활성도·밸류·위험조정 지표를 나눠 보며 근거를 점검합니다." },
+        { title: "원문 검증", body: "공시·재무·차트를 함께 확인하고 최종 판단은 직접 합니다." },
+      ],
+    },
+    dataSource: {
+      label: "데이터 출처:",
+      bodyA:
+        "KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 보조 지표, DART 공시 실데이터. ",
+      bodyMid: "개 종목 · 매일 갱신 · 데이터 기준 ",
+      bodyEnd: " 장마감.",
+      about: "서비스 소개",
+      terms: "이용약관",
+      privacy: "개인정보처리방침",
+    },
+  },
+  en: {
+    metricLabels: {
+      momentum: "Trend",
+      flow: "Trading activity",
+      value: "Value",
+      vol: "Risk-adjusted",
+    } as Record<MetricKey, string>,
+    countStock: "",
+    countCase: "",
+    snapshot: {
+      heading: "Today's market snapshot",
+      sub: "Market-close data summary",
+      cards: {
+        total: { title: "Analyzed stocks", sub: "Based on real data" },
+        strong: { title: "Composite 80+ candidates", sub: "Strengths across several metrics" },
+        spike: { title: "Trading-activity spikes", sub: "More trading interest than usual" },
+        signal: { title: "Disclosure signals", sub: "DART · within latest 200" },
+      },
+    },
+    topCandidate: {
+      heading: "More candidates to check today",
+      tag: "Top composite · pending verification excluded",
+      intro:
+        "Top-composite stocks with pending-verification names removed, organized as candidates to look at first today.",
+      empty: "Candidate data is being prepared. Please check back shortly.",
+      footer:
+        "These stocks show relative strength across several metrics. A high score is not a buy recommendation — always check the original disclosures and financials too.",
+      strength: "Strengths",
+      caution: "Caution",
+      viewStock: "View stock →",
+      risk: {
+        surgeXl: "The recent rise is very large — check the reason for the surge and whether it is overheated.",
+        surgeL: "The short-term rise is large — check the reason for the surge and its volatility.",
+        surgeVol: "The rise is large and volatility is high — review the reason and timing together.",
+        surge: "The recent rise is large — check the reason behind the surge.",
+        volHigh: "Volatility is high — consider splitting position size and timing.",
+        valueLow: "The value metric is low — check the original financials for possible overvaluation.",
+        default: "Check the metrics behind the score together with the original disclosures and financials.",
+      } as Record<RiskKind, string>,
+    },
+    disclosure: {
+      heading: "Disclosure signals to check first today",
+      viewAll: "View all →",
+      introA: "Treasury stock, holding changes, corrections, contracts, and financing disclosures are ",
+      introStrong: "automatically classified within DART's latest 200",
+      introB: " into signals worth checking.",
+      policyLabel: "Display policy",
+      policyA: "The home page first shows only disclosures for the ",
+      policyStrongPrefix: "",
+      policyStrongSuffix: " analyzed stocks",
+      policyB: ". You can change the scope to the whole market on the ",
+      policyLink: "Disclosures page",
+      policyC: ".",
+      footer:
+        "The number on a disclosure signal is classification confidence, not a good/bad score. Check the actual impact directly in the original disclosure.",
+      outOfUniverse: "Not in coverage",
+      checkLabel: "What to check",
+      viewStock: "View stock",
+      dartOriginal: "DART original ↗",
+      check: {
+        treasury_buy: "Check the size and purpose of the treasury-stock purchase in the original.",
+        insider_buy: "Check the buy/sell direction and size of the holding change in the body.",
+        correction: "Check the reason for the correction and the changed figures in the original.",
+        single_contract: "Check the contract size and its ratio to recent revenue in the original.",
+        capital_raise: "Check the issuance size and the purpose of the funds in the original.",
+        default: "Check the details in the original disclosure.",
+      } as Record<string, string>,
+    },
+    features: {
+      heading: "OrnScore core features",
+      sub: "Scores · disclosures · backtest",
+      cards: {
+        today: {
+          title: "Today's candidates",
+          body: "Quickly narrow down the stocks to check first today, based on the composite score.",
+          statPrefix: "Composite 80+ · ",
+          cta: "View candidates",
+        },
+        signal: {
+          title: "Disclosure signals",
+          body: "Classifies treasury stock, holding changes, large contracts, P&L corrections, and rights/CB issues into signals.",
+          statPrefix: "Recent ",
+          cta: "View signals",
+        },
+        backtest: {
+          title: "Backtest",
+          body: "Check not only returns but also risk metrics such as MDD and Sharpe.",
+          stat: "Includes risk metrics",
+          cta: "View results",
+        },
+      },
+    },
+    howItWorks: {
+      heading: "How to use OrnScore",
+      sub: "Three steps: narrow by score, see the reasons, verify in the original.",
+      start: "Start exploring stocks →",
+      steps: [
+        { title: "Check today's candidates", body: "Narrow today's stocks to check first using the composite score and rapid-change metrics." },
+        { title: "See the reasons", body: "Review the trend, trading-activity, value, and risk-adjusted metrics separately to check the basis." },
+        { title: "Verify the original", body: "Check disclosures, financials, and charts together, and make the final call yourself." },
+      ],
+    },
+    dataSource: {
+      label: "Data sources:",
+      bodyA:
+        "KRX daily close (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance auxiliary metrics, DART disclosure data. ",
+      bodyMid: " stocks · updated daily · data as of ",
+      bodyEnd: " market close.",
+      about: "About",
+      terms: "Terms",
+      privacy: "Privacy Policy",
+    },
+  },
+} as const satisfies Record<Locale, unknown>;

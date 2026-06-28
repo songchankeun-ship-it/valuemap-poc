@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Target, FileSearch, LineChart } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { homeCopy } from "@/lib/copy/home";
 
 interface FeatureCardsProps {
   strongCount: number;
@@ -9,44 +13,46 @@ interface FeatureCardsProps {
 // 핵심 기능 3개 카드(설계서 §6.5) — 오늘의 후보 / 공시 신호 / 백테스트.
 // 각 카드가 '무엇을 해주는지'를 3초 안에 이해되게: 한 줄 설명 + 작은 숫자/배지 + 이동.
 export function FeatureCards({ strongCount, signalCount }: FeatureCardsProps) {
+  const { locale } = useLanguage();
+  const t = homeCopy[locale];
+  const f = t.features;
+  const stock = t.countStock;
+  const cases = t.countCase;
   const cards = [
     {
       icon: Target,
       tone: "text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40",
-      title: "오늘의 후보",
-      body: "종합점수를 기준으로 오늘 먼저 확인할 종목을 빠르게 좁힙니다.",
-      stat: `종합 80↑ ${strongCount}개`,
-      cta: "후보 보기",
+      title: f.cards.today.title,
+      body: f.cards.today.body,
+      stat: `${f.cards.today.statPrefix}${strongCount}${stock}`,
+      cta: f.cards.today.cta,
       href: "#today-candidates",
-      external: false,
     },
     {
       icon: FileSearch,
       tone: "text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40",
-      title: "공시 신호",
-      body: "자사주, 보유변동, 대형계약, 손익정정, 유증/CB를 신호로 분류합니다.",
-      stat: `최근 ${signalCount}건`,
-      cta: "신호 보기",
+      title: f.cards.signal.title,
+      body: f.cards.signal.body,
+      stat: `${f.cards.signal.statPrefix}${signalCount}${cases}`,
+      cta: f.cards.signal.cta,
       href: "/disclosures",
-      external: false,
     },
     {
       icon: LineChart,
       tone: "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40",
-      title: "백테스트",
-      body: "수익률뿐 아니라 MDD, Sharpe 등 위험 지표까지 함께 확인합니다.",
-      stat: "위험 지표 포함",
-      cta: "결과 보기",
+      title: f.cards.backtest.title,
+      body: f.cards.backtest.body,
+      stat: f.cards.backtest.stat,
+      cta: f.cards.backtest.cta,
       href: "/backtest",
-      external: false,
     },
   ];
 
   return (
     <section>
       <div className="flex items-baseline justify-between gap-2 mb-3">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">오른스코어 핵심 기능</h2>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">점수 · 공시 · 백테스트</span>
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{f.heading}</h2>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{f.sub}</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {cards.map(({ icon: Icon, tone, title, body, stat, cta, href }) => (

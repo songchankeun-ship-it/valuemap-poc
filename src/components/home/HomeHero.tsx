@@ -5,6 +5,7 @@ import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { ScoreBadge } from "@/components/ui/ScoreBadge";
 import { MetricChip } from "@/components/ui/MetricChip";
 import { homeHeroCopy } from "@/lib/i18n";
+import { homeCopy } from "@/lib/copy/home";
 import { useLanguage } from "@/components/LanguageProvider";
 import type { StockCandidate } from "./StockCandidateCard";
 import type { ReactNode } from "react";
@@ -34,6 +35,7 @@ export function HomeHero({
 }: HomeHeroProps) {
   const { locale } = useLanguage();
   const copy = homeHeroCopy[locale];
+  const metricLabels = homeCopy[locale].metricLabels;
   const lead = previewCandidates[0];
   const rest = previewCandidates.slice(1, 3);
 
@@ -96,7 +98,7 @@ export function HomeHero({
                   <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">{lead.sector} · {lead.ticker}</div>
                   <div className="flex items-center gap-1 mt-2 flex-wrap">
                     {lead.metrics.map((m) => (
-                      <MetricChip key={m} label={m.replace(/\s*\d+$/, "")} value={m.match(/\d+$/)?.[0] ?? ""} tone="strong" />
+                      <MetricChip key={m.key} label={metricLabels[m.key]} value={String(m.value)} tone="strong" />
                     ))}
                   </div>
                 </div>
