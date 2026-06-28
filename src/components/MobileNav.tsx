@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Bot, Info, CreditCard, type LucideIcon } from "lucide-react";
@@ -32,9 +33,14 @@ function isActive(pathname: string, href: string) {
 
 export function MobileNav({ userEmail }: { userEmail: string | null }) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { copy } = useLanguage();
+
+  // 드로어/백드롭을 document.body 로 포털해 헤더의 backdrop-blur(고정요소 컨테이닝 블록)
+  // 밖으로 빼낸다. SSR 에서는 마운트 전이라 오버레이를 렌더하지 않는다(하이드레이션 안전).
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
@@ -77,14 +83,14 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
         <Menu className="w-5 h-5" strokeWidth={2} />
       </button>
 
-      {open ? (
+      {open && mounted ? createPortal(
         <>
           <div
             onClick={() => setOpen(false)}
             className="lg:hidden fixed inset-0 bg-black/70 z-[60] backdrop-blur-sm"
             aria-hidden
           />
-          <div className="lg:hidden fixed inset-y-0 left-0 w-[300px] max-w-[85vw] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10">
+          <div className="lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10">
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="13" cy="15" r="7" stroke="white" strokeWidth="2.4"/><path d="M8 19L20 8" stroke="white" strokeWidth="2.4" strokeLinecap="round"/></svg></span>
@@ -129,9 +135,9 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             </nav>
 
             <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 space-y-2 shrink-0">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{copy.chrome.theme}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <LanguageSwitcher compact />
                   <ThemeToggle />
                 </div>
@@ -167,7 +173,8 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
               {copy.chrome.explorationNotice}
             </div>
           </div>
-        </>
+        </>,
+        document.body
       ) : null}
     </>
   );

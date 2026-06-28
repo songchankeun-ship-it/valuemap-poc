@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 94 — 모바일 드로어/로그인 레이아웃 수리 (헤더 backdrop-filter 컨테이닝 블록 탈출) (2026-06-28, Claude)
+- **증상(운영자 스크린샷)**: 모바일에서 햄버거 메뉴를 열면 드로어가 화면 전체를 덮는 깔끔한 오버레이가 아니라 헤더 영역 안에 갇힌 좁은 좌측 패널처럼 보이고, 백드롭이 페이지를 완전히 가리지 못해 글로벌 데이터바·KO/EN·테마·로그인 카드가 드로어와 겹쳐/충돌해 보임.
+- **근본 원인**: `AppHeader`의 `<header>`가 `backdrop-blur-md`(=`backdrop-filter`)를 가져 **고정 위치 자손의 컨테이닝 블록**이 됨. `MobileNav`이 그 헤더 안에서 렌더되므로 드로어/백드롭의 `fixed inset-0`/`inset-y-0`가 뷰포트가 아니라 **짧은 헤더 바 기준으로 크기/위치가 잡혀** 클리핑·겹침 발생. (CSS: transform/filter/backdrop-filter 가진 조상은 fixed 자손의 컨테이닝 블록이 된다.)
+- **수정(`src/components/MobileNav.tsx` 1파일)**: 드로어+백드롭을 `react-dom`의 `createPortal(<>…</>, document.body)`로 **헤더 밖 body 직속**으로 포털해 컨테이닝 블록 트랩 탈출. SSR 하이드레이션 안전을 위해 `mounted` 가드(`useEffect(()=>setMounted(true),[])`) 추가 — 마운트 전엔 오버레이 미렌더. **드로어 폭** `w-[300px] max-w-[85vw]` → `w-[min(340px,calc(100vw-48px))]`(예측 가능, 360–390px에서 우측 여백 48px 보장). 푸터 테마/언어 행을 `flex-wrap gap-2`로 하드닝(좁은 폭에서 라벨+`LanguageSwitcher`+`ThemeToggle` 줄바꿈, 클리핑 방지). **기존 동작 전부 보존**: body 스크롤 락·Escape 닫기·라우트 변경 자동 닫기·`loginNext` `safeInternalPath`·로그아웃·`flex-1 overflow-y-auto`(내부 스크롤)·`shrink-0` 푸터. `z-[60]`(백드롭)/`z-[61]`(드로어)는 이제 body 직속이라 헤더(z-40)·하단 탭(z-40) 위에 전역으로 뜸.
+- **무변경(검증만)**: `LanguageSwitcher.tsx`·`ThemeToggle.tsx`(wrap 후 클리핑 없음) · `src/app/login/page.tsx`(포털 백드롭이 로그인 카드/소셜/이메일 폼을 완전히 덮음 — mix-through 없음, 360px 오버플로 없음) · `HeaderDataBar`/`MobileBottomNav`(z-40 유지, 포털 드로어가 위에 옴).
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0 · `MobileNav.tsx` U+FFFD 0. 로컬 prod **3500**(내 PID만 taskkill·**AI Center 4310 무중단·200 확인**): `/login`·`/`·`/stocks`·`/stock/005380` 200, 클라 청크에 새 드로어 폭 토큰(`min(340px,calc(100vw-48px))`)·`explorationNotice` 컴파일 확인.
+- **남은 UI 리스크(후속)**: (1) 실기기 390px 모바일 육안(드로어 열림 시 데이터바/로그인 겹침 최종 확인)은 운영자 게이트(Playwright 미구성) — 코드상 포털·폭·wrap·스크롤은 보존. (2) 사용 안 하는 `src/components/MobileMenu.tsx`(데드 코드)는 이번 범위 밖으로 무변경 — 추후 정리 후보. (3) `ThemeToggle` compact 탭타깃 36px(w-9 h-9)은 기존값 유지(범위 밖, 클리핑 없음).
+- **다음**: Task 93 — P1 공시/가격/AI 고지 정리.
+
 ### Task 92 — 3차 QA P0-B 비교 페이지 시작 화면 마감 (큐레이션 vs-쌍 추천 + 390px 디클러터) (2026-06-28, Claude)
 - **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md` P0-B = `/compare` 빈 상태를 "완성된 비교 시작 화면"으로. 먼저 현황 점검 → 직전 작업으로 **검색·선택 칩(× 제거)·추천 세트·최근 본·오늘 Top5·관심·업종 탐색이 이미 구현돼 있음** 확인. 따라서 전면 재작업 대신 spec이 콕 집은 두 갭만 메움: (1) 추천 세트를 **의미 있는 "A vs B" 동종 피어 쌍**으로 업그레이드, (2) **390px 카드-속-카드 디클러터**.
 - **수정 파일 2개**:

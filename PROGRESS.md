@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [claude] task 94 — 모바일 드로어/로그인 레이아웃 수리 (헤더 backdrop-filter 컨테이닝 블록 탈출)
+- **증상**: 모바일 햄버거 메뉴를 열면 드로어가 헤더 영역에 갇힌 좁은 좌측 패널처럼 보이고 백드롭이 페이지를 다 못 가려 데이터바·KO/EN·테마·로그인 카드가 드로어와 겹쳐 보임(운영자 스크린샷).
+- **근본 원인**: `AppHeader`의 `<header>`가 `backdrop-blur-md`(=`backdrop-filter`)라 **고정 위치 자손의 컨테이닝 블록**이 됨 → 헤더 안에서 렌더되는 `MobileNav` 드로어/백드롭의 `fixed`가 뷰포트가 아니라 짧은 헤더 바 기준으로 잡혀 클리핑·겹침.
+- **수정(`src/components/MobileNav.tsx` 1파일)**: 드로어+백드롭을 `createPortal(<>…</>, document.body)`로 헤더 밖 body 직속으로 포털 → 컨테이닝 블록 트랩 탈출. SSR 안전 `mounted` 가드로 마운트 전 미렌더. 드로어 폭 `w-[300px] max-w-[85vw]` → `w-[min(340px,calc(100vw-48px))]`(360–390px 우측 여백 48px 보장). 푸터 테마/언어 행 `flex-wrap gap-2`로 좁은 폭 줄바꿈. body 스크롤 락·Escape·라우트 변경 자동 닫기·`loginNext`·로그아웃·내부 스크롤(`flex-1 overflow-y-auto`) 전부 보존. `z-[60]/z-[61]`이 body 직속이라 헤더(z-40)·하단 탭(z-40) 위에 전역으로 뜸.
+- **무변경(검증만)**: `LanguageSwitcher`·`ThemeToggle`(wrap 후 클리핑 없음), `/login`(포털 백드롭이 카드/소셜/이메일 폼 완전 덮음, 360px 오버플로 없음), `HeaderDataBar`/`MobileBottomNav`.
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0 · `MobileNav.tsx` U+FFFD 0. 로컬 prod **3500**(내 PID만 종료·**AI Center 4310 무중단**): `/login`·`/`·`/stocks`·`/stock/005380` 200, 클라 청크에 새 폭 토큰·`explorationNotice` 컴파일 확인.
+- **남은 UI 리스크**: 실기기 390px 육안은 운영자 게이트(Playwright 미구성). 데드 코드 `MobileMenu.tsx`는 범위 밖 무변경(추후 정리 후보).
+- **다음 구체 작업**: Task 93 — P1 공시/가격/AI 고지 정리.
+
 ## 2026-06-28 · [claude] task 92 — 3차 QA P0-B 비교 페이지 시작 화면 마감 (큐레이션 vs-쌍 추천 + 390px 디클러터)
 - **범위**: `ORNSCORE_3rd_QA_improvement_spec.md` P0-B = `/compare` 빈 상태를 종목 2개 선택 전에도 "완성된 비교 시작 화면"으로. 검색·추천 세트·선택 칩 제거·최근/관심 추가·모바일(≈390px) 사용성.
 - **현황 점검(재작업 안 함)**: 직전 작업으로 검색(`StockSearchBox`)·선택 칩(`aria-label` × 제거)·추천 세트·최근 본·오늘 Top5·관심·`/stocks` 탐색이 이미 구현돼 있음 확인 → spec이 콕 집은 두 갭만 보강.
