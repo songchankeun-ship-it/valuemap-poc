@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-29 · [claude] task 99 — 재검수 P0 신뢰 문구 3건 (stocks 카운트·status 시간대·terms 내부경로)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **즉시 수정 P0 3건**만. P1/P2(공시 50/42 라벨·홈/상세 순위·관심/비교 빈 상태·요금제 표·업종 카운트·배지 띄어쓰기·백테스트 히트맵 등)는 후속.
+- **P0-1 `/stocks` 카운트·필터 문구 충돌(안 A)** — `src/lib/copy/stocks.ts`(ko/en): `matchCount`·`matchCountShort` 라벨 "조건 충족"→**"현재 표시"**(en "match"→"Showing … / total"). `noDetailFilter` "적용된 상세 필터 없음"→**"적용된 사용자 상세 필터 없음"**(en "No user detail filters applied"). `describeAll(total)`→**`describeAll(shown,total)`** 분기: `shown<total`이면 **"기본 품질 필터(PER 200·PBR 30 이하)가 적용된 N개 종목을 종합점수 기준으로 보고 있습니다."**, `shown===total`이면 기존 "전체 N개 …" 유지. `StocksExplorer.tsx` line 481 호출만 `t.describeAll(sorted.length, total)`로 변경. 기본 화면(123/138)에서 "전체 138개를 보고 있다"는 충돌 제거. `baseScreenNote`(이미 PER/PBR 정확)·제외 사유는 무변경(검증보류 주장 추가 안 함 — 제외 수는 PER/PBR 기본 필터에서만 나옴).
+- **P0-2 `/status`·데이터 바 점수 계산 시각 시간대** — `src/app/status/page.tsx`: `generatedAt`(GitHub Actions UTC naive ISO)을 `formatScoreTimes()`로 **KST(+9h)·UTC 두 표기** 산출(정규식 파싱 + `Date.UTC`+9h, 신규 의존성 0). props `generatedAt`→`scoreTimeKst`+`scoreTimeUtc`. `StatusContent.tsx`: 스냅샷 셀에 **`{scoreTimeKst} KST`** 우선 + 캡션 `(장마감 후 배치)` + 보조 muted `원본 배치 {scoreTimeUtc} UTC`. 스냅샷 노트 아래 carry-forward 문구 추가. `copy/status.ts`(ko/en): `scoreTimeBatchNote`·`scoreTimeUtcLabel`·`dataCadenceNote`("가격·점수 데이터는 한국거래소 영업일 장마감 후 갱신되며, 주말·휴장일에는 마지막 정상 영업일 데이터가 유지됩니다.") 추가. 검증: 10:44 UTC→19:44 KST(스펙 예시 일치).
+- **P0-3 `/terms` 내부 문서 경로 노출 제거** — `src/app/terms/page.tsx`: `위 항목 추적: docs/legal-ai-commercial-readiness.md.` 절 삭제 → **"가격과 유료 정책은 현재 미확정이며, 유료 결제 오픈 전 약관과 결제 화면에 동일하게 확정 공지합니다(요금제 안내)."**로 교체. `/pricing` 링크 보존. src 전체에 해당 경로 잔여 0(docs/* 내부 참조는 무관).
+- **금융 문구**: 보수적·비자문 유지(매수/매도/추천/수익보장 0). 신규 확정 유료 정책 주장 0.
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존, 텍스트 전용 변경이라 PWA/auth/shell 무관) · `git diff --check` 0(변경 6파일만) · 변경 파일 U+FFFD 0. 로컬 prod **3199**(내 PID만 종료·**AI Center 무중단**): `/`·`/stocks`·`/status`·`/terms`·`/stock/005930` 200. SSR(ko)에 "현재 표시"·"기본 품질 필터(PER 200·PBR 30 이하)가 적용된"·"적용된 사용자 상세 필터 없음" 노출, 구 "전체 138개 …보고 있습니다" 0건. `/status` KST·원본 배치·장마감 후 배치·carry-forward 노출. `/terms` `legal-ai-commercial-readiness` 0건. 언어 전환이 클라이언트라 EN은 빌드 청크에서 신규 문자열(`default quality filter: PER`·`No user detail filters applied`·`last business-day data is carried forward`·`after market-close batch`) 컴파일 확인.
+- **남은 갭(후속)**: 재검수 P1(홈 공시 50/42 라벨 일치·홈↔상세 순위 기준 분리·`/watchlist`·`/compare` 빈 상태/실패 fallback·요금제 비교 표 값 중심·종목 상세 업종 카운트 본인 포함/제외 통일·데이터 품질 배지 띄어쓰기)·P2(STEP `ol>li`·공시 CTA/배지 DOM 분리·백테스트 히트맵 `%`/aria·밸류 업종 미보정 경고 강화).
+- **다음**: 운영자/제품 — P1 빈 상태(관심/비교) 보강이 신뢰감 영향 큼(스펙 §10 최종판단 4순위). 그다음 홈/상세 순위 기준 분리 표기.
+
 ## 2026-06-28 · [claude] task 93 — 3차 QA P1 감사 + Pro 관심 종목 공시 수집 설계 노트
 - **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md` P0(상세·비교) 이후 **P1 명료성 항목(공시 필터·탐색 밀도·요금제 베타 고지·공시 200건 한계·AI 고지)**. 먼저 현황 전수 점검 → **5개 P1 모두 이미 배포됨 확인**(Task 60/61/62/66/89~94). 따라서 작동하는 컴포넌트 재작업 금지, 감사 + **유일한 신규 산출물 = P1-4(§10) 공시 수집 설계 노트**.
 - **감사 결과(읽기 전용·무변경)**:

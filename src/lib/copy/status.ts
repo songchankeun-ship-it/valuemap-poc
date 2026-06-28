@@ -40,6 +40,10 @@ export const statusCopy = {
     snapshotMatch: "일치합니다",
     snapshotMismatch: "불일치 — 점검이 필요합니다",
     snapshotNoteSuffix: ".",
+    scoreTimeBatchNote: "장마감 후 배치",
+    scoreTimeUtcLabel: "원본 배치",
+    dataCadenceNote:
+      "가격·점수 데이터는 한국거래소 영업일 장마감 후 갱신되며, 주말·휴장일에는 마지막 정상 영업일 데이터가 유지됩니다.",
 
     // 데이터 종류별 상태
     domainsHeading: "데이터 종류별 상태",
@@ -112,6 +116,10 @@ export const statusCopy = {
     snapshotMatch: "matches",
     snapshotMismatch: "does not match — review needed",
     snapshotNoteSuffix: ").",
+    scoreTimeBatchNote: "after market-close batch",
+    scoreTimeUtcLabel: "Source batch",
+    dataCadenceNote:
+      "Price/score data updates after KRX market close on business days; on weekends/holidays the last business-day data is carried forward.",
 
     domainsHeading: "Status by data type",
     domainsChangelogPrefix: "When the formula changes, we record it in the ",

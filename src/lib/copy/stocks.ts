@@ -9,7 +9,7 @@ export const stocksCopy = {
   ko: {
     // ── 페이지 헤더 ──
     headerTitle: "오늘 확인할 종목 찾기",
-    matchCount: (n: number, total: number) => ({ a: `조건 충족 ${n}개 `, b: `/ 전체 ${total}개` }),
+    matchCount: (n: number, total: number) => ({ a: `현재 표시 ${n}개 `, b: `/ 전체 ${total}개` }),
     headerDesc: (total: number) => `질문형 프리셋과 상세 필터로 ${total}개 종목 중 먼저 볼 후보를 좁혀보세요.`,
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
@@ -81,8 +81,8 @@ export const stocksCopy = {
 
     // ── 현재 조건 요약 바 ──
     currentCond: "현재 조건",
-    matchCountShort: (n: number, total: number) => ({ a: `조건 충족 ${n} `, b: `/ 전체 ${total}` }),
-    noDetailFilter: "적용된 상세 필터 없음",
+    matchCountShort: (n: number, total: number) => ({ a: `현재 표시 ${n} `, b: `/ 전체 ${total}` }),
+    noDetailFilter: "적용된 사용자 상세 필터 없음",
     removeFilterAria: (label: string) => `${label} 필터 제거`,
     saveCond: "조건 저장",
     alertCondShort: "이 조건 알림",
@@ -184,7 +184,10 @@ export const stocksCopy = {
     describeQuick: (label: string, desc: string) => `빠른 프리셋 "${label}" — ${desc}.`,
     describeTheme: (themes: string) => `${themes} 테마에 속한 종목 중 조건에 맞는 후보를 보고 있습니다.`,
     describeManual: "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.",
-    describeAll: (total: number) => `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`,
+    describeAll: (shown: number, total: number) =>
+      shown < total
+        ? `기본 품질 필터(PER 200·PBR 30 이하)가 적용된 ${shown}개 종목을 종합점수 기준으로 보고 있습니다.`
+        : `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`,
 
     // ── 가장 강한 조건(strongestConstraint) ──
     cons: {
@@ -277,7 +280,7 @@ export const stocksCopy = {
   en: {
     // ── Page header ──
     headerTitle: "Find stocks to review today",
-    matchCount: (n: number, total: number) => ({ a: `${n} match `, b: `/ ${total} total` }),
+    matchCount: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
     headerDesc: (total: number) => `Use question presets and detailed filters to narrow ${total} stocks down to candidates to look at first.`,
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
@@ -349,8 +352,8 @@ export const stocksCopy = {
 
     // ── Current condition bar ──
     currentCond: "Current conditions",
-    matchCountShort: (n: number, total: number) => ({ a: `${n} match `, b: `/ ${total} total` }),
-    noDetailFilter: "No detailed filters applied",
+    matchCountShort: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
+    noDetailFilter: "No user detail filters applied",
     removeFilterAria: (label: string) => `Remove ${label} filter`,
     saveCond: "Save",
     alertCondShort: "Alert",
@@ -452,7 +455,10 @@ export const stocksCopy = {
     describeQuick: (label: string, desc: string) => `Quick preset "${label}" — ${desc}.`,
     describeTheme: (themes: string) => `Showing candidates that match the conditions among stocks in the ${themes} theme.`,
     describeManual: "You've narrowed the candidates with custom PER, PBR, ROE, market cap and other conditions.",
-    describeAll: (total: number) => `Viewing all ${total} stocks by composite score.`,
+    describeAll: (shown: number, total: number) =>
+      shown < total
+        ? `Viewing ${shown} stocks (default quality filter: PER ≤ 200 · PBR ≤ 30) by composite score.`
+        : `Viewing all ${total} stocks by composite score.`,
 
     // ── Strongest constraint ──
     cons: {

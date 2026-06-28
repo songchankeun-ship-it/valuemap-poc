@@ -85,7 +85,7 @@ export default function TermsPage() {
               <li>장애 보상 기준</li>
               <li>요금제 변경 시 정산 방식</li>
             </ul>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격은 현재 미확정입니다(<Link href="/pricing" className="underline">요금제 안내</Link>). 위 항목 추적: <code className="text-[10px]">docs/legal-ai-commercial-readiness.md</code>.</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격과 유료 정책은 현재 미확정이며, 유료 결제 오픈 전 약관과 결제 화면에 동일하게 확정 공지합니다(<Link href="/pricing" className="underline">요금제 안내</Link>).</p>
           </div>
         </section>
 

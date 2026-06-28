@@ -478,7 +478,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     if (nonThemeFilterCount > 0 || query) {
       return t.describeManual;
     }
-    return t.describeAll(total);
+    return t.describeAll(sorted.length, total);
   }
 
   // 결과 0건일 때 가장 강한(=binding) 단일 조건을 골라 그 조건만 완화할 수 있게 한다(설계서 §20.5).

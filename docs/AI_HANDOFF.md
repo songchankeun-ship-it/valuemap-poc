@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 99 — 재검수 P0 신뢰 문구 3건 (stocks 카운트·status 시간대·terms 내부경로) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **즉시 수정 P0 3건**. P1/P2는 후속. 텍스트 전용 변경(6파일), 점수식·`stocks.json`·인증·manifest·PWA 무변경. 신규 npm 0.
+- **P0-1 `/stocks` 카운트·필터 충돌(안 A)** — `src/lib/copy/stocks.ts`(ko/en): `matchCount`·`matchCountShort` "조건 충족"→**"현재 표시"**(en "Showing"). `noDetailFilter`→**"적용된 사용자 상세 필터 없음"**(en "No user detail filters applied"). `describeAll(total)`→**`describeAll(shown,total)`** 분기(`shown<total`→"기본 품질 필터(PER 200·PBR 30 이하)가 적용된 N개 …", else 기존 전체 문구). `StocksExplorer.tsx` 호출 1곳 `t.describeAll(sorted.length, total)`. 기본 123/138에서 "전체 138개 보고 있다" 충돌 제거. 제외 사유 문구(`baseScreenNote`) PER/PBR 정확 유지, 검증보류 주장 추가 안 함.
+- **P0-2 `/status` 점수 계산 시각 시간대** — `src/app/status/page.tsx` `formatScoreTimes()`로 `generatedAt`(GitHub Actions UTC naive ISO)을 **KST(+9h)·UTC** 두 표기 산출(정규식+`Date.UTC`, 의존성 0). `StatusContent.tsx` 스냅샷 셀: `{scoreTimeKst} KST` 우선 + `(장마감 후 배치)` + `원본 배치 {scoreTimeUtc} UTC` + carry-forward 노트. `copy/status.ts`(ko/en) `scoreTimeBatchNote`·`scoreTimeUtcLabel`·`dataCadenceNote` 추가. 10:44 UTC→19:44 KST(스펙 일치).
+- **P0-3 `/terms` 내부 경로 제거** — `src/app/terms/page.tsx` `docs/legal-ai-commercial-readiness.md` 추적 문장 삭제 → "가격과 유료 정책은 현재 미확정이며, 유료 결제 오픈 전 약관과 결제 화면에 동일하게 확정 공지합니다(요금제 안내)."로 교체. `/pricing` 링크 보존. src 잔여 0.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0(6파일) · U+FFFD 0. 로컬 prod **3199**(내 PID만 종료·**AI Center 무중단**): `/`·`/stocks`·`/status`·`/terms`·`/stock/005930` 200. ko SSR에 신규 문구 노출·구 충돌 문구 0건, `/terms` 내부 경로 0건. EN은 클라 전환이라 빌드 청크에서 신규 EN 문자열 컴파일 확인.
+- **남은 갭(후속)**: 재검수 P1(공시 50/42 라벨·홈↔상세 순위 기준 분리·`/watchlist`·`/compare` 빈 상태·요금제 표·업종 카운트·배지 띄어쓰기)·P2(STEP `ol>li`·공시 CTA/배지 DOM 분리·백테스트 히트맵 단위/aria·밸류 업종 미보정 경고 강화).
+- **다음**: 운영자/제품 — P1 빈 상태(관심/비교) 보강(스펙 §10 최종판단 4순위), 이어서 홈/상세 순위 기준 분리.
+
 ### Task 93 — 3차 QA P1 감사 + Pro 관심 종목 공시 수집 설계 노트 (2026-06-28, Claude)
 - **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md` P0(상세·비교) 이후 **P1 명료성 5항(공시 필터·탐색 밀도·요금제 베타 고지·공시 200건 한계·AI 고지)**. 현황 전수 점검 → **5개 P1 모두 이미 배포 확인**(Task 60/61/62/66/89~94). 작동 컴포넌트 재작업 금지, 감사 + **유일 신규 산출물 = P1-4(§10) 공시 수집 설계 노트**. 소스 코드 무변경(문서 3종만).
 - **감사 결과(읽기 전용·무변경)**:

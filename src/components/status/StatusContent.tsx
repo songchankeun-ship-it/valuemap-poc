@@ -30,7 +30,8 @@ export function StatusContent({
   dataStatusByLocale,
   priceStale,
   priceAge,
-  generatedAt,
+  scoreTimeKst,
+  scoreTimeUtc,
   alertedCount,
   metricsChangelogPath,
   selfCheck,
@@ -38,7 +39,8 @@ export function StatusContent({
   dataStatusByLocale: Record<Locale, LocalizedDataStatus>;
   priceStale: boolean;
   priceAge: number | null;
-  generatedAt: string;
+  scoreTimeKst: string;
+  scoreTimeUtc: string;
   alertedCount: number;
   metricsChangelogPath: string;
   selfCheck: {
@@ -111,7 +113,9 @@ export function StatusContent({
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">{t.snapshotScoreTime}</div>
-            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{generatedAt}</div>
+            <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200 break-words">{scoreTimeKst} KST</div>
+            <div className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500">({t.scoreTimeBatchNote})</div>
+            <div className="text-[10px] font-normal tabular-nums text-zinc-400 dark:text-zinc-500 break-words">{t.scoreTimeUtcLabel} {scoreTimeUtc} UTC</div>
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">{t.snapshotMetricsVersion}</div>
@@ -128,6 +132,9 @@ export function StatusContent({
             ? <span className="text-emerald-700 dark:text-emerald-400 font-medium">{t.snapshotMatch}</span>
             : <span className="text-amber-700 dark:text-amber-400 font-medium">{t.snapshotMismatch}</span>}
           {t.snapshotNoteSuffix}
+        </p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+          {t.dataCadenceNote}
         </p>
       </section>
 
