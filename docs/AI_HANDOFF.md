@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-28T04:32:27.902Z
+Last updated: 2026-06-28T05:26:32.123Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 89 - OrnScore multilingual support v2 page expansion
-- Run: 76
+- Task: 90 - OrnScore multilingual QA and mobile polish
+- Run: 77
 - Status: failed
 - Agent: claude
-- Note: Cost limit exceeded: $33.1453 used, $15.00 allowed.
+- Note: Quality gate failed after 1 repair attempt(s): Cost limit exceeded: $12.3500 used, $12.00 allowed.
 
 ## Next Agent Checklist
 
