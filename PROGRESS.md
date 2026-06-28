@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [claude] task 92 — 3차 QA P0-B 비교 페이지 시작 화면 마감 (큐레이션 vs-쌍 추천 + 390px 디클러터)
+- **범위**: `ORNSCORE_3rd_QA_improvement_spec.md` P0-B = `/compare` 빈 상태를 종목 2개 선택 전에도 "완성된 비교 시작 화면"으로. 검색·추천 세트·선택 칩 제거·최근/관심 추가·모바일(≈390px) 사용성.
+- **현황 점검(재작업 안 함)**: 직전 작업으로 검색(`StockSearchBox`)·선택 칩(`aria-label` × 제거)·추천 세트·최근 본·오늘 Top5·관심·`/stocks` 탐색이 이미 구현돼 있음 확인 → spec이 콕 집은 두 갭만 보강.
+- **수정 ① 추천 세트를 "A vs B" 동종 피어 쌍으로** (`src/app/compare/page.tsx`): 큐레이션 후보 4쌍(삼성전자005930↔SK하이닉스000660·삼성생명032830↔미래에셋생명085620·DB하이텍000990↔한미반도체042700·에코프로비엠247540↔엘앤에프066970)을 `byTicker`로 검증 — **두 종목 모두 존재 & `isSuspect` 아님**일 때만 `label:"A vs B"`로 노출. 에코프로비엠(PER≥300)·엘앤에프(ROE≥80) 둘 다 검증 보류 → 자동 제외(3쌍 생존). 기존 같은-업종 그룹은 **큐레이션이 커버한 업종(반도체·보험) dedup 제외** 후 보충, **총 4세트 슬라이스**. 결과 = 3 쌍 + `2차전지·소재` 1개.
+- **수정 ② 390px 디클러터** (`src/components/CompareClient.tsx`, `stocks.length < 2` 시작 화면만): 히어로 축소(emoji `text-2xl`)·외곽 패딩 `p-6 md:p-10`→`p-4 md:p-8`·**최근 본/오늘 Top5/관심을 테두리 박스 3개 → 가벼운 라벨 그룹(`space-y-3.5`)으로** 통합해 6박스 적층 제거(검색만 강조 박스 유지). 추천 버튼은 label에 `" vs "` 있으면 names 서브타이틀 생략. 모든 어포던스·`min-h-[44px]` 터치타깃·`flex-wrap` 보존. `addToCompare`/`removeFromCompare`/`clearCompare`/`addSet`/결과 뷰 무변경.
+- **금융 문구**: 보수적·비자문 유지(매수/매도/추천/수익보장 0).
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG) · `python scripts/verify_metrics.py`(PYTHONUTF8) 138/0·금칙어 0·Metrics 2.4 · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0 · 변경 파일 U+FFFD 0. 로컬 prod **3500**(내 PID만 종료·**AI Center 4310 무중단**): `/compare` 200, flight 페이로드에 큐레이션 라벨 3종 + 보충 `2차전지·소재` 확인, 검증 보류 쌍(에코프로비엠 vs 엘앤에프) 미노출 확인.
+- **남은 갭(후속)**: (1) `/compare`는 한국어 전용 — 언어 전환이 이 페이지를 마운트하지 않아 i18n 미적용(EN 잔여, 스코프 밖). (2) 실브라우저 390px 육안은 운영자 게이트(Playwright 미구성). (3) 추천 쌍은 정적 큐레이션(suspect 자동 제외만 동적).
+- **다음 구체 작업**: P1 — 공시 전체 시장/분석 대상 토글, 종목 탐색(`/stocks`) 첫 화면 밀도/우선순위 정리.
+
 ## 2026-06-28 · [claude] task 91 — 3차 QA P0-A 종목 상세 UI 마감 (CTA·STEP·배지 검증 + 잔여 행동 문구 중립화)
 - **범위**: `ORNSCORE_3rd_QA_improvement_spec.md` PART A P0-A = 종목 상세 (1) CTA 버튼 붙음 (2) 초보자 STEP 가이드 붙음 (3) 데이터 품질 배지 붙음 (4) 남은 행동성 문구 제거. 비교 페이지(P0-4)·P1 이하는 범위 밖.
 - **현황 점검 결과(재작업 안 함)**: (1)(2)(3)은 이미 분리 렌더링 구현됨을 코드·SSR로 확인 — `StockDetailActionButtons.tsx`(grid 1→2→4열, 독립 `<a>`, `min-h-[44px]`, gap, flex 스타일), `BeginnerReading.tsx`의 `StepCard`(grid 1→3열, STEP 라벨/제목/설명 분리 카드 3개), `PriorityScoreCard.tsx`의 `DataStatusPill`(flex-wrap, 독립 pill 3종: 필수 데이터 %·점검 통과/검증 보류·Metrics 2.4). spec 예시 글루(`공시 확인재무 보기`·`100%이상값`) 0건 확인.

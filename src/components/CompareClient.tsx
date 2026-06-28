@@ -195,18 +195,18 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
     // 최근 본 종목 — 이미 담은 종목은 제외. 실제 방문 기록이 1개 이상일 때만 노출(빈/가짜 칩 없음)
     const recentAddable = recentViews.filter((r) => !tickers.includes(r.ticker));
     return (
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-10">
-        <div className="text-center">
-          <div className="text-3xl md:text-4xl mb-3">📊</div>
-          <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">비교할 종목을 선택하세요</h2>
-          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-5 max-w-md mx-auto leading-relaxed">
-            <strong className="text-zinc-700 dark:text-zinc-300">최소 2개 · 최대 4개</strong>를 골라 종합 점수 · PER/PBR/ROE · 수익률 · 위험을 나란히 비교할 수 있어요. 아래에서 바로 시작하세요.
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-8">
+        <div className="text-center mb-5">
+          <div className="text-2xl md:text-3xl mb-2">📊</div>
+          <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">비교할 종목을 선택하세요</h2>
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+            <strong className="text-zinc-700 dark:text-zinc-300">최소 2개 · 최대 4개</strong>를 고르면 종합 점수 · PER/PBR/ROE · 수익률 · 위험을 나란히 비교합니다.
           </p>
         </div>
 
         <div className="max-w-2xl mx-auto space-y-5">
-          {/* 1) 직접 검색하기 — 빈 상태의 첫 행동 */}
-          <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-4">
+          {/* 1) 직접 검색하기 — 빈 상태의 첫 행동(유일하게 강조한 박스) */}
+          <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3.5">
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목명 또는 코드 검색</div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 4개까지 담아 비교할 수 있어요.</p>
             <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="예: 삼성전자, 005930" />
@@ -233,11 +233,11 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             </div>
           ) : null}
 
-          {/* 2) 추천 비교 세트 — 같은 업종끼리 한 번에 담기 */}
+          {/* 2) 추천 비교 세트 — "A vs B" 동종 피어 쌍/같은 업종 묶음을 한 번에 담기 */}
           {recommendedSets.length > 0 ? (
             <div>
-              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">추천 비교 세트</div>
-              <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-2">같은 업종 종목을 한 번에 담아 바로 비교를 시작할 수 있어요.</p>
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1 uppercase tracking-wide">추천 비교 세트</div>
+              <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-2">바로 비교를 시작할 수 있는 동종·동업종 묶음이에요.</p>
               <div className="grid gap-1.5 sm:grid-cols-2">
                 {recommendedSets.map((set) => (
                   <button
@@ -247,81 +247,85 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     className="w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition"
                   >
                     <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">{set.label} <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500">{set.tickers.length}종목</span></div>
-                    <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">{set.names.join(" · ")}</div>
+                    {!set.label.includes(" vs ") ? (
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">{set.names.join(" · ")}</div>
+                    ) : null}
                   </button>
                 ))}
               </div>
             </div>
           ) : null}
 
-          {/* 3) 최근 본 종목에서 추가 */}
-          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-3">
-            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">최근 본 종목에서 추가</div>
-            {recentAddable.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {recentAddable.map((r) => (
-                  <button
-                    key={r.ticker}
-                    type="button"
-                    onClick={() => { void addToCompare(r.ticker); }}
-                    className="text-xs px-2.5 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
-                  >
-                    + {r.name}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">종목 상세를 열어본 뒤 다시 오면 최근 본 종목에서 바로 추가할 수 있어요.</p>
-            )}
-          </div>
-
-          {/* 3) 오늘 Top 5에서 고르기 */}
-          {top5.length > 0 ? (
+          {/* 3) 빠른 추가 — 최근 본 / 오늘 Top 5 / 관심 종목을 가벼운 그룹 섹션으로(카드 중첩 제거) */}
+          <div className="space-y-3.5">
+            {/* 최근 본 종목 */}
             <div>
-              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">오늘 Top 5에서 고르기</div>
-              <div className="flex flex-wrap gap-1.5">
-                {top5.map((s) => (
-                  <button
-                    key={s.ticker}
-                    type="button"
-                    onClick={() => { void addToCompare(s.ticker); }}
-                    disabled={tickers.includes(s.ticker)}
-                    className="text-xs px-2.5 py-1.5 min-h-[36px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition disabled:opacity-40 disabled:hover:border-zinc-200"
-                  >
-                    {tickers.includes(s.ticker) ? "✓ " : "+ "}{s.name}
-                  </button>
-                ))}
-              </div>
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">최근 본 종목</div>
+              {recentAddable.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {recentAddable.map((r) => (
+                    <button
+                      key={r.ticker}
+                      type="button"
+                      onClick={() => { void addToCompare(r.ticker); }}
+                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                    >
+                      + {r.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">종목 상세를 열어본 뒤 다시 오면 여기서 바로 추가할 수 있어요.</p>
+              )}
             </div>
-          ) : null}
 
-          {/* 5) 관심 종목에서 추가 */}
-          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-3">
-            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">관심 종목에서 추가</div>
-            {watchlistAddable.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {watchlistAddable.map((w) => (
-                  <button
-                    key={w.ticker}
-                    type="button"
-                    onClick={() => { void addToCompare(w.ticker); }}
-                    className="text-xs px-2.5 py-1.5 min-h-[36px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
-                  >
-                    + {w.name}
-                  </button>
-                ))}
+            {/* 오늘 Top 5 */}
+            {top5.length > 0 ? (
+              <div>
+                <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">오늘 Top 5</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {top5.map((s) => (
+                    <button
+                      key={s.ticker}
+                      type="button"
+                      onClick={() => { void addToCompare(s.ticker); }}
+                      disabled={tickers.includes(s.ticker)}
+                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition disabled:opacity-40 disabled:hover:border-zinc-200"
+                    >
+                      {tickers.includes(s.ticker) ? "✓ " : "+ "}{s.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">관심 종목을 담아두면 여기서 바로 비교에 추가할 수 있어요.</p>
-                <Link href="/watchlist" prefetch={false} className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">관심 종목 보기</Link>
-              </div>
-            )}
+            ) : null}
+
+            {/* 관심 종목 */}
+            <div>
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">관심 종목</div>
+              {watchlistAddable.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {watchlistAddable.map((w) => (
+                    <button
+                      key={w.ticker}
+                      type="button"
+                      onClick={() => { void addToCompare(w.ticker); }}
+                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                    >
+                      + {w.name}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">관심 종목을 담아두면 여기서 바로 비교에 추가할 수 있어요.</p>
+                  <Link href="/watchlist" prefetch={false} className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">관심 종목 보기</Link>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* 6) 같은 업종에서 고르기 */}
-          <div>
-            <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">같은 업종에서 고르기</div>
+          {/* 4) 업종·테마로 종목 탐색 */}
+          <div className="pt-1">
             <Link href="/stocks" prefetch={false} className="inline-flex items-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition">
               업종·테마로 종목 탐색 →
             </Link>

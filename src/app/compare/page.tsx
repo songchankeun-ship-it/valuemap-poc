@@ -46,18 +46,45 @@ export default function ComparePage() {
     .slice(0, 5)
     .map((s) => ({ ticker: s.ticker, name: s.name }));
 
-  // 추천 비교 세트 — 실데이터만 사용. 같은 업종(sector) 내 종합점수 상위 종목을
-  // 묶어 "같은 업종끼리 나란히 보기" 시작점을 제공한다(가짜 세트 생성 안 함).
+  // 추천 비교 세트 — (1) 큐레이션한 "A vs B" 동종 피어 쌍을 우선 노출하고
+  // (2) 같은 업종(sector) 그룹을 중복 업종 제외하고 보충한다. 전부 실데이터만 쓰며,
+  // 결측·검증 보류(isSuspect) 종목이 들어간 쌍/그룹은 만들지 않는다(가짜 세트 없음).
+  const byTicker = new Map(allStocks.map((s) => [s.ticker, s]));
+
+  // 의미 있는 동종 피어 쌍. 두 종목이 모두 풀에 존재하고 검증 보류가 아닐 때만 노출한다.
+  const CURATED_PAIRS: ReadonlyArray<readonly [string, string]> = [
+    ["005930", "000660"], // 삼성전자 vs SK하이닉스 (반도체 대형주)
+    ["032830", "085620"], // 삼성생명 vs 미래에셋생명 (생명보험)
+    ["000990", "042700"], // DB하이텍 vs 한미반도체 (반도체 소부장)
+    ["247540", "066970"], // 에코프로비엠 vs 엘앤에프 (2차전지 소재 — 검증 보류면 자동 제외)
+  ];
+  const curatedSets = CURATED_PAIRS.map(([a, b]) => {
+    const sa = byTicker.get(a);
+    const sb = byTicker.get(b);
+    if (!sa || !sb || isSuspect(sa) || isSuspect(sb)) return null;
+    return {
+      label: `${sa.name} vs ${sb.name}`,
+      tickers: [sa.ticker, sb.ticker],
+      names: [sa.name, sb.name],
+    };
+  }).filter((x): x is { label: string; tickers: string[]; names: string[] } => x !== null);
+
+  // 큐레이션 쌍이 이미 커버한 업종은 보충에서 제외(중복 방지)
+  const curatedSectors = new Set(
+    curatedSets.flatMap((set) => set.tickers.map((t) => sectorOf(byTicker.get(t)!.themes)))
+  );
+
+  // 같은 업종(sector) 그룹 — 검증 보류 제외, 큐레이션이 다루지 않은 업종만 보충
   const bySector = new Map<string, typeof allStocks>();
   for (const s of allStocks) {
     if (!(compositeOf(s) > 0) || isSuspect(s)) continue;
     const sector = sectorOf(s.themes);
-    if (!sector || sector === "기타") continue;
+    if (!sector || sector === "기타" || curatedSectors.has(sector)) continue;
     const arr = bySector.get(sector) ?? [];
     arr.push(s);
     bySector.set(sector, arr);
   }
-  const recommendedSets = Array.from(bySector.entries())
+  const sectorSets = Array.from(bySector.entries())
     .filter(([, arr]) => arr.length >= 2)
     .map(([sector, arr]) => {
       const picks = [...arr]
@@ -69,9 +96,11 @@ export default function ComparePage() {
         names: picks.map((s) => s.name),
       };
     })
-    // 피어가 가장 많이 모이는(=비교 의미가 큰) 업종 우선, 상위 3세트만 노출
-    .sort((a, b) => b.tickers.length - a.tickers.length)
-    .slice(0, 3);
+    // 피어가 가장 많이 모이는(=비교 의미가 큰) 업종 우선
+    .sort((a, b) => b.tickers.length - a.tickers.length);
+
+  // 큐레이션 쌍 우선 + 업종 그룹 보충, 스캔 가능하도록 총 4세트로 제한
+  const recommendedSets = [...curatedSets, ...sectorSets].slice(0, 4);
 
   return (
     <div className="space-y-4">
