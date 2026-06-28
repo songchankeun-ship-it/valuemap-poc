@@ -43,6 +43,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Naver 로그인 실동작 확인 + 약관/개인정보 정합성 갱신 (2026-06-28, Codex/User)
+- 운영자가 공개 사이트에서 네이버 로그인이 실제로 동작함을 확인했다. 현재 인증 제공자는 카카오·구글·네이버·이메일 매직링크다.
+- 공개 문구 정합성 후속으로 `src/app/privacy/page.tsx`와 `src/app/terms/page.tsx`를 카카오·구글·네이버 기준으로 갱신했다. 개인정보처리방침 위탁 처리에 Naver(대한민국, 네이버 계정 식별자·이메일)를 추가했고, 국외이전 표 설명은 Kakao/Naver 국내·Google 미국으로 정리했다.
+- `docs/auth-providers-setup.md`, `docs/app-roadmap.md`, `docs/ornscore-owner-final-checklist.md`, `PROGRESS.md`도 네이버 실로그인 완료 상태로 맞췄다.
+- 남은 인증 게이트는 실기기 홈 화면 추가/standalone 앱 컨텍스트에서 네이버·카카오·구글 OAuth 복귀와 watchlist 복귀 확인이다.
+
 ### Naver Custom OAuth2 준비 + 실기기 게이트 재정리 (2026-06-28, Codex)
 - `@supabase/auth-js` 2.107.0의 Provider 타입에 `custom:${string}`이 있음을 확인했고, 공식 Supabase Custom OAuth/OIDC Providers 문서 기준 Free plan에서도 custom provider 3개까지 가능하므로 네이버의 1순위 경로를 **Supabase Custom OAuth2 provider `custom:naver`**로 갱신했다.
 - 코드: `src/lib/auth/providers.ts`에 `custom:naver` 설정을 추가하되 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`일 때만 활성화한다. 기본 상태에서는 `/login`에 **"네이버 (설정 필요)" 비활성 항목**만 보이며 onClick/인증 호출 없음. `src/app/login/page.tsx`는 활성/비활성 네이버 아이콘 조건과 미설정 오류 안내를 갱신했다.
@@ -52,7 +58,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ### 스토어 제출 준비 패키지 초안 (2026-06-28, Codex)
 - `docs/app-store-submission-pack.md`를 추가했다. Google Play/App Store 등록 설명 초안, 스크린샷 후보, 리뷰 노트, 개인정보 답변 초안, 심사 리스크를 한 곳에 모았다.
-- 초안은 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 맞춰 작성했다. 투자 추천 아님, 유료 결제 미제공, Pro/Premium 가격 미확정, Naver 준비 중 상태를 유지한다.
+- 초안은 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 맞춰 작성했다. 투자 추천 아님, 유료 결제 미제공, Pro/Premium 가격 미확정 상태를 유지한다. 이후 Naver는 실로그인 확인 완료 상태로 전환됐다(위 2026-06-28 Naver 노트 참조).
 - `docs/app-packaging-final-checklist.md`와 `docs/ornscore-owner-final-checklist.md`에서 새 문서를 참조하도록 연결했다.
 - 다음 외부 게이트는 실기기 PWA 로그인 복귀 확인, Android TWA 우선 여부 결정, Play Console/패키지명/SHA-256 지문 확보.
 

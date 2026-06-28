@@ -15,7 +15,7 @@ export default function TermsPage() {
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">현재 적용되는 정책 (상용화 전)</div>
         <ul className="list-disc list-inside space-y-1 ml-1 text-[13px]">
           <li>본 서비스는 현재 <strong className="text-zinc-900 dark:text-zinc-100">유료 결제를 제공하지 않으며</strong>, 모든 기능을 무료로 이용할 수 있습니다.</li>
-          <li>로그인은 <strong className="text-zinc-900 dark:text-zinc-100">이메일 매직링크 또는 소셜 로그인(카카오·구글)</strong>으로만 처리하며, <strong className="text-zinc-900 dark:text-zinc-100">비밀번호를 저장하지 않습니다.</strong></li>
+          <li>로그인은 <strong className="text-zinc-900 dark:text-zinc-100">이메일 매직링크 또는 소셜 로그인(카카오·구글·네이버)</strong>으로만 처리하며, <strong className="text-zinc-900 dark:text-zinc-100">비밀번호를 저장하지 않습니다.</strong></li>
           <li>제공 데이터의 출처는 <strong className="text-zinc-900 dark:text-zinc-100">KRX·DART·Naver Finance·yfinance</strong> 등 공개 데이터이며, 본 서비스는 데이터 분석 도구로서 투자자문·매수·매도 추천을 제공하지 않습니다.</li>
         </ul>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">유료 구독 도입 시 적용될 결제·환불·청약철회 등 세부 조건은 아래 「유료 서비스 이용」 섹션에 별도로 표기하며, 현재는 미확정 상태입니다.</p>
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제3조 (회원가입 및 계정)</h2>
-          <p>이용자는 이메일 매직링크 또는 소셜 로그인(카카오·구글)을 통해 본 서비스에 회원가입할 수 있습니다. 계정의 보안 유지 책임은 이용자 본인에게 있습니다.</p>
+          <p>이용자는 이메일 매직링크 또는 소셜 로그인(카카오·구글·네이버)을 통해 본 서비스에 회원가입할 수 있습니다. 계정의 보안 유지 책임은 이용자 본인에게 있습니다.</p>
         </section>
 
         <section>

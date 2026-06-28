@@ -96,8 +96,7 @@ standalone(홈 화면 추가/래퍼) 실행 시 웹과 다르게 동작할 수 �
 
 | 기능 | 준비도 | standalone에서 점검할 것 |
 |---|---|---|
-| Kakao/Google OAuth | △ 점검 필요 | OAuth는 외부 브라우저/시스템 웹뷰로 튕겼다가 standalone 창으로 **되돌아오지 못할 수 있음**(콜백이 Safari/Chrome 탭에서 끝나 앱 컨텍스트 상실). 콜백 redirect가 `scope:"/"` 안으로 복귀하는지 실기기 확인 필요. **코드 측 가드(Task 76)**: `next`는 `safeInternalPath`로 내부 경로만 허용(open-redirect 차단), `code` 없는 콜백은 `auth_callback_no_code` 친절 안내로 분기. 실기기 복귀 동작은 §5-1 절차로 확인 |
-| Naver 로그인 | 설정 필요 | 앱 코드는 Supabase Custom OAuth2 provider `custom:naver`를 준비했다. `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`이 꺼져 있으면 `/login`에 "네이버 (설정 필요)" 비활성만 노출. 네이버 Developers + Supabase Custom OAuth2 설정 + env 토글 후 standalone OAuth 복귀를 실기기로 확인 |
+| Kakao/Google/Naver OAuth | △ 실기기 점검 필요 | 공개 웹 로그인 왕복은 동작 확인됨(네이버 포함). 다만 OAuth는 외부 브라우저/시스템 웹뷰로 튕겼다가 standalone 창으로 **되돌아오지 못할 수 있음**(콜백이 Safari/Chrome 탭에서 끝나 앱 컨텍스트 상실). 콜백 redirect가 `scope:"/"` 안으로 복귀하는지 실기기 확인 필요. **코드 측 가드(Task 76)**: `next`는 `safeInternalPath`로 내부 경로만 허용(open-redirect 차단), `code` 없는 콜백은 `auth_callback_no_code` 친절 안내로 분기. 실기기 복귀 동작은 §5-1 절차로 확인 |
 | 알림 설정 | △ | `settings/notifications`는 UI/미리보기 골격(Task 45). iOS 웹 푸시는 16.4+ 홈 화면 추가 상태에서만, SW 필요 → 현재 미지원. 네이티브 푸시는 래퍼/Capacitor 단계 |
 | 관심 종목 동기화(watchlist) | △ | 로그인 기반 동기화가 standalone 세션에서 유지되는지(쿠키/스토리지 격리) 확인. 비로그인은 로컬 저장 |
 | 오프라인 동작 | ✔(안내만) | `/offline` 정적 안내. 데이터 캐시는 §4대로 의도적으로 없음 |
@@ -111,10 +110,10 @@ standalone(홈 화면 추가/래퍼) 창에서 로그인 후 **앱 컨텍스트�
 
 1. **standalone 실행**: 홈 화면에 추가한 아이콘으로 앱을 연다(주소창 없는 standalone 창). `/`·`/stocks`가 앱 창 안에서 열리는지 확인.
 2. **Kakao 복귀**: 로그인 → 카카오 → 동의 후 **`scope:"/"` 내부(앱 창)로 복귀**하는지. 외부 브라우저 탭에 머물러 앱 창으로 못 돌아오면 §5 최대 리스크 발현 → 콜백 보강 큐로 기록.
-3. **Google 복귀**: 동일하게 구글 동의 후 앱 창 복귀 확인(콘솔 토글 전이면 빨간 박스 친절 안내가 뜨는지).
+3. **Google 복귀**: 동일하게 구글 동의 후 앱 창 복귀 확인.
 4. **이메일 매직링크 복귀**: 메일의 링크를 standalone에서 열었을 때 `/auth/callback`을 거쳐 로그인되고 원래 목적지로 도착하는지(`welcome=1` 토스트).
 5. **code 없는 콜백(앱 복귀 실패)**: `/auth/callback`이 `code` 없이 호출되면 `/login?error=auth_callback_no_code`로 떨어지며 **"앱에서 로그인 후 돌아오지 못했어요…"** 친절 안내가 보이는지(원문 제공자 메시지 미노출).
-6. **Naver 상태**: `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`이 꺼진 배포에서는 standalone에서도 `/login`의 "네이버 (설정 필요)"이 **클릭 불가**(`aria-disabled`, 인증 호출 0)로만 보이는지. env를 켠 배포에서는 네이버 동의 후 `/auth/callback?next=...`로 복귀하는지.
+6. **Naver 복귀**: 네이버 동의 후 앱 창으로 돌아오고 `/auth/callback?next=...`를 거쳐 세션이 유지되는지.
 7. **watchlist 복귀 왕복**: `/login?next=/watchlist` 로그인 → 로그인 후 **watchlist로 정확히 복귀**하는지. AccountButtons/MobileNav의 로그인 진입점도 현재 페이지를 `next`로 보존하는지 확인.
 8. **negative(open-redirect 방지)**: `/login?next=//evil.com`, `/login?next=https://evil.com`, `/auth/callback?next=//evil.com` 모두 **외부로 가지 않고 `/`(내부)로** 떨어지는지. 정상 동작이면 외부 도메인으로 절대 redirect 되지 않는다.
 

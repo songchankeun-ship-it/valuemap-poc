@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] 네이버 로그인 실동작 확인 + 약관/개인정보 정합성 갱신
+- **실동작 확인**: 운영자가 공개 사이트에서 네이버 로그인이 실제로 동작함을 확인. Supabase Custom OAuth2 provider `custom:naver` + Vercel `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 배포 조합이 정상 동작 상태가 됨.
+- **공개 문구 정합성**: `src/app/privacy/page.tsx`와 `src/app/terms/page.tsx`의 소셜 로그인 제공자 표기를 카카오·구글·네이버로 갱신. 개인정보처리방침 위탁 처리에 Naver(대한민국, 네이버 계정 식별자·이메일)를 추가했고, 국외이전 표 설명은 Kakao/Naver 국내·Google 미국으로 정리.
+- **운영 문서**: `docs/auth-providers-setup.md`, `docs/app-roadmap.md`, `docs/ornscore-owner-final-checklist.md`, `docs/AI_HANDOFF.md`를 네이버 실로그인 완료 상태로 갱신. 남은 게이트는 실기기 standalone 앱 컨텍스트에서 네이버/카카오/구글 OAuth 복귀 확인.
+- **다음**: 실기기 홈 화면 추가/standalone에서 네이버·카카오·구글 로그인 후 앱 창 복귀와 watchlist 복귀를 확인한다.
+
 ## 2026-06-28 · [codex] 네이버 로그인 Custom OAuth2 준비 + 실기기 게이트 정리
 - **코드 준비**: `src/lib/auth/providers.ts`에 Supabase Custom OAuth2 provider `custom:naver`를 추가하고, `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`일 때만 활성 버튼으로 노출되도록 토글 처리. 기본값은 비활성이라 `/login`에는 "네이버 (설정 필요)"만 보이며 인증 호출은 없음.
 - **로그인 UI**: `src/app/login/page.tsx`에 활성/비활성 네이버 아이콘 조건을 `custom:naver` 기준으로 정리하고, 미설정 provider 오류 문구를 카카오·구글·이메일 대체 경로로 안내하도록 보정.
