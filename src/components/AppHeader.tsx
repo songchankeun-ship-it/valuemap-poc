@@ -9,6 +9,7 @@ import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { dataStatus } from "@/lib/dataStatus";
 import { MetricsVersionBadge } from "./trust/badges";
 import { DataTrustModal } from "./trust/TrustLayer";
@@ -81,6 +82,7 @@ export async function AppHeader() {
           <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <CompareBadge />
             <span className="hidden md:inline text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{dataMetadata.count}개 종목</span>
+            <LanguageSwitcher compact />
             <div className="hidden md:block">
               <ThemeToggle compact />
             </div>

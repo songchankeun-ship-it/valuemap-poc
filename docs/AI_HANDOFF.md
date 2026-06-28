@@ -43,6 +43,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 영어 지원 v1 — 핵심 진입/로그인/내비게이션 다국어화 (2026-06-28, Codex)
+- `src/lib/i18n.ts`와 `LanguageProvider`/`LanguageSwitcher`를 추가했다. 서버 루트 레이아웃에서 `cookies()`를 읽지 않아 기존 정적 생성 경로를 동적으로 바꾸지 않는 클라이언트 전환 방식이다.
+- 영어 전환 범위: 홈 온보딩·히어로, 검색창, App navigation(사이드바/모바일 메뉴/하단 탭), 로그인 페이지 소셜/이메일/오류 안내, 비교 배지, footer. 종목명·섹터·데이터 날짜 원문과 일부 서버 데이터 상태/Trust modal 문구는 아직 한국어가 남아 있다.
+- 로컬 검증: `npx tsc --noEmit` 통과. dev 서버 `http://127.0.0.1:3000`에서 `?lang=en` 홈/로그인 영어 전환, `?lang=ko` 한국어 기본 복귀 확인.
+- 다음 추천: `/stock/[ticker]`, `/today`, `/stocks`, `/disclosures`, `/pricing`, `/terms`, `/privacy`, DataTrustModal을 페이지별 dictionary로 확장하고, 실제 해외 유입을 원하면 `/en` URL 라우팅·metadata/OpenGraph 다국어화를 별도 작업으로 추가.
+
 ### Naver 로그인 실동작 확인 + 약관/개인정보 정합성 갱신 (2026-06-28, Codex/User)
 - 운영자가 공개 사이트에서 네이버 로그인이 실제로 동작함을 확인했다. 현재 인증 제공자는 카카오·구글·네이버·이메일 매직링크다.
 - 공개 문구 정합성 후속으로 `src/app/privacy/page.tsx`와 `src/app/terms/page.tsx`를 카카오·구글·네이버 기준으로 갱신했다. 개인정보처리방침 위탁 처리에 Naver(대한민국, 네이버 계정 식별자·이메일)를 추가했고, 국외이전 표 설명은 Kakao/Naver 국내·Google 미국으로 정리했다.

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
+import { AppFooter } from "@/components/AppFooter";
+import { LanguageProvider } from "@/components/LanguageProvider";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -108,34 +110,28 @@ export default function RootLayout({
       </head>
       <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
         <ThemeProvider>
-          <AppHeader />
-          <div className="flex">
-            <Sidebar />
-            <main className="flex-1 min-w-0 pb-16 lg:pb-0">
-              <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
-              <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
-                <span className="tabular-nums" title={process.env.VERCEL_GIT_COMMIT_SHA ? "코드 " + process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : undefined}>데이터 {dataStatus.globalAsOfLabel} 장마감</span>
-                <span>·</span>
-                <span>산식 {dataStatus.metricsVersionLabel}</span>
-                <span>·</span>
-                <a href="/status" className={(dataStatus.dataStale ? "text-amber-600/90 dark:text-amber-500/90" : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"}>데이터 상태 {dataStatus.dataStale ? "갱신 지연 확인" : "정상"}</a>
-                <span>·</span>
-                <span>오른스코어 — 투자 권유가 아닌 탐색 도구입니다</span>
-                <span>·</span>
-                <a href="/pricing" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">요금</a>
-                <a href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">이용약관</a>
-                <a href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">개인정보</a>
-                <a href="/status#report" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">오류 신고</a>
-              </footer>
-            </main>
-          </div>
-          <MobileBottomNav />
-          {process.env.VERCEL ? (
-            <>
-              <Analytics />
-              <SpeedInsights />
-            </>
-          ) : null}
+          <LanguageProvider>
+            <AppHeader />
+            <div className="flex">
+              <Sidebar />
+              <main className="flex-1 min-w-0 pb-16 lg:pb-0">
+                <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
+                <AppFooter
+                  globalAsOfLabel={dataStatus.globalAsOfLabel}
+                  metricsVersionLabel={dataStatus.metricsVersionLabel}
+                  dataStale={dataStatus.dataStale}
+                  commitSha={process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)}
+                />
+              </main>
+            </div>
+            <MobileBottomNav />
+            {process.env.VERCEL ? (
+              <>
+                <Analytics />
+                <SpeedInsights />
+              </>
+            ) : null}
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

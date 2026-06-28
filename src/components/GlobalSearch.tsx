@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "./LanguageProvider";
 
 interface StockItem {
   ticker: string;
@@ -28,6 +29,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { copy } = useLanguage();
 
   const results: SearchResult[] = (() => {
     const q = query.trim().toLowerCase();
@@ -127,7 +129,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
       <input
         ref={inputRef}
         type="search"
-        placeholder="종목·테마 검색"
+        placeholder={copy.search.placeholder}
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -154,7 +156,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
         <div className="absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50">
           {results.length === 0 ? (
             <div className="px-3 py-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-              일치하는 종목이나 테마가 없습니다
+              {copy.search.empty}
             </div>
           ) : (
             <ul>
@@ -186,7 +188,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
                     ) : (
                       <>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 shrink-0">
-                          테마
+                          {copy.search.theme}
                         </span>
                         <span className="text-sm text-zinc-900 dark:text-zinc-100 truncate flex-1">
                           {result.name}
@@ -199,8 +201,8 @@ export function GlobalSearch({ stocks, themes }: Props) {
             </ul>
           )}
           <div className="px-3 py-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 flex items-center justify-between">
-            <span>↑↓ 이동 · Enter 선택 · Esc 닫기</span>
-            <span>{results.length}건</span>
+            <span>{copy.search.help}</span>
+            <span>{results.length}{copy.search.countSuffix}</span>
           </div>
         </div>
       ) : null}

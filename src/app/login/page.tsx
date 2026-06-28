@@ -9,6 +9,8 @@ import {
   type OAuthProviderId,
 } from "@/lib/auth/providers";
 import { safeInternalPath } from "@/lib/auth/returnPath";
+import { loginCopy, type Locale } from "@/lib/i18n";
+import { useLanguage } from "@/components/LanguageProvider";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bell } from "lucide-react";
 
@@ -16,17 +18,18 @@ import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bel
 // - 콜백 실패(auth_callback_failed) → URL 의 ?error= 로 들어옴
 // - 콘솔 토글 전 OAuth 제공자 클릭 시 "provider is not enabled" 류 → friendly 안내
 // - 이메일 매직링크 재요청 제한 등도 읽기 쉽게
-function friendlyAuthError(raw: string | null | undefined): string {
+function friendlyAuthError(raw: string | null | undefined, locale: Locale): string {
   if (!raw) return "";
   const s = raw.toLowerCase();
+  const errors = loginCopy[locale].errors;
 
   // 앱/홈 화면(standalone) 실행에서 외부 브라우저로 로그인 후 앱 창으로 복귀하지
   // 못한 경우(콜백에 code 없음). 원문 제공자 메시지는 노출하지 않는다.
   if (s.includes("auth_callback_no_code")) {
-    return "앱에서 로그인 후 돌아오지 못했어요. 다시 시도하거나 브라우저에서 로그인해 주세요.";
+    return errors.noCode;
   }
   if (s.includes("auth_callback_failed")) {
-    return "로그인 처리 중 문제가 발생했어요. 다시 시도해 주세요.";
+    return errors.callback;
   }
   if (
     s.includes("provider is not enabled") ||
@@ -34,47 +37,43 @@ function friendlyAuthError(raw: string | null | undefined): string {
     s.includes("validation_failed") ||
     s.includes("provider_disabled")
   ) {
-    return "현재 이 로그인 방식은 설정 중이에요. 카카오·구글 또는 이메일로 로그인해 주세요.";
+    return errors.provider;
   }
   if (s.includes("only request this") || s.includes("rate limit") || s.includes("too many")) {
-    return "요청이 많아요. 잠시 후 다시 시도해 주세요.";
+    return errors.rateLimit;
   }
   if (s.includes("invalid") && s.includes("email")) {
-    return "이메일 주소를 다시 확인해 주세요.";
+    return errors.invalidEmail;
   }
   // 알 수 없는 오류는 원문을 그대로 노출하지 않고 일반 안내로 대체
-  return "로그인 중 문제가 발생했어요. 잠시 후 다시 시도해 주세요.";
+  return errors.unknown;
 }
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const { locale } = useLanguage();
+  const copy = loginCopy[locale];
   // next 는 URL 에서 온 조작 가능 입력 → 내부 경로만 허용(open-redirect 방지).
   // 뒤로가기 링크·OAuth/이메일 redirectTo 모두 이 정규화된 값에서 파생된다.
   const next = safeInternalPath(searchParams.get("next"));
-  const CONTEXT_MSG: Record<string, string> = {
-    "/history": "분석 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
-    "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
-    "/compare": "비교 목록을 저장하려면 로그인하세요.",
-    "/settings/notifications": "알림을 설정하려면 로그인하세요.",
-  };
-  const contextMsg = CONTEXT_MSG[next];
+  const contextMsg = (copy.contexts as Record<string, string>)[next];
 
   const providers = enabledOAuthProviders();
   // "설정 필요"로만 노출하는 제공자(네이버 등) — env/콘솔 설정 전에는 클릭 불가.
   const planned = plannedProviders();
   // 노출 문구(leadCopy)는 활성화된 제공자만으로 파생 → 화면에 없는/준비 중인 방식을 절대 광고하지 않음
-  const providerNames = providers.map((p) => p.shortName).join("·");
+  const providerNames = providers.map((p) => copy.providers[p.id].name).join(locale === "ko" ? "·" : ", ");
   const leadCopy =
     providers.length > 0
-      ? `${providerNames}로 1초 만에 시작하거나, 이메일로 로그인 링크를 받으세요.`
-      : "이메일로 로그인 링크를 받으세요.";
+      ? copy.lead(providerNames)
+      : copy.emailOnlyLead;
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "oauth_redirecting">(
     () => (searchParams.get("error") ? "error" : "idle"),
   );
   const [redirectingProvider, setRedirectingProvider] = useState<OAuthProviderId | null>(null);
-  const [errorMsg, setErrorMsg] = useState(() => friendlyAuthError(searchParams.get("error")));
+  const [errorMsg, setErrorMsg] = useState(() => friendlyAuthError(searchParams.get("error"), locale));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -93,7 +92,7 @@ function LoginForm() {
 
     if (error) {
       setStatus("error");
-      setErrorMsg(friendlyAuthError(error.message));
+      setErrorMsg(friendlyAuthError(error.message, locale));
     } else {
       setStatus("sent");
     }
@@ -118,7 +117,7 @@ function LoginForm() {
     if (error) {
       setStatus("error");
       setRedirectingProvider(null);
-      setErrorMsg(friendlyAuthError(error.message));
+      setErrorMsg(friendlyAuthError(error.message, locale));
     }
   }
 
@@ -132,11 +131,11 @@ function LoginForm() {
         className="inline-flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        {next === "/" ? "홈으로" : "이전 페이지로"}
+        {next === "/" ? copy.backHome : copy.backPrevious}
       </Link>
 
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 md:p-8">
-        <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">오른스코어 로그인</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">{copy.title}</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">{leadCopy}</p>
         {contextMsg ? (
           <div className="mb-5 text-xs text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2">
@@ -150,13 +149,13 @@ function LoginForm() {
               <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <div>
                 <div className="text-sm font-semibold text-emerald-900 dark:text-emerald-200 mb-1">
-                  로그인 링크를 보냈어요
+                  {copy.sentTitle}
                 </div>
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 leading-relaxed">
-                  <strong>{email}</strong>로 메일을 발송했습니다. 메일함에서 링크를 클릭하면 자동으로 로그인됩니다.
+                  {copy.sentBodyPrefix}<strong>{email}</strong>{copy.sentBodySuffix}
                 </p>
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-2">
-                  메일이 오지 않으면 <strong>스팸함</strong>을 확인해주세요.
+                  {copy.spam}
                 </p>
               </div>
             </div>
@@ -168,6 +167,7 @@ function LoginForm() {
               <div className="space-y-2">
                 {providers.map((p) => {
                   const isRedirecting = oauthBusy && redirectingProvider === p.id;
+                  const providerCopy = copy.providers[p.id];
                   return (
                     <button
                       key={p.id}
@@ -199,7 +199,7 @@ function LoginForm() {
                           <path d="M16.36 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.18-1.15 2.34-.69 1-1.41 1.99-2.55 2.01-1.11.02-1.47-.66-2.75-.66-1.27 0-1.67.64-2.72.68-1.09.04-1.92-1.08-2.62-2.08-1.42-2.05-2.51-5.79-1.05-8.32.72-1.25 2.02-2.05 3.43-2.07 1.08-.02 2.1.73 2.75.73.66 0 1.89-.9 3.19-.77.54.02 2.06.22 3.04 1.64-.08.05-1.81 1.06-1.79 3.16M14.28 5.39c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.54.62-1.01 1.61-.88 2.56.93.07 1.88-.47 2.46-1.16" />
                         </svg>
                       ) : null}
-                      {isRedirecting ? p.redirectingLabel : p.label}
+                      {isRedirecting ? providerCopy.redirecting : providerCopy.label}
                     </button>
                   );
                 })}
@@ -211,7 +211,7 @@ function LoginForm() {
                   <div
                     key={p.id}
                     aria-disabled="true"
-                    title="설정이 필요한 로그인 방식이에요"
+                    title={copy.plannedTitle}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-700 opacity-70 cursor-not-allowed select-none"
                   >
                     {p.id === "custom:naver" ? (
@@ -219,20 +219,28 @@ function LoginForm() {
                         <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
                       </svg>
                     ) : null}
-                    <span>{p.label}</span>
+                    <span>{locale === "ko" ? p.label : `${copy.providers[p.id].name} (${copy.plannedNote})`}</span>
                     <span className="ml-1 rounded-full bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 text-[9px] font-medium text-zinc-500 dark:text-zinc-400">
-                      {p.note}
+                      {locale === "ko" ? p.note : copy.plannedNote}
                     </span>
                   </div>
                 ))}
 
                 <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center leading-relaxed">
-                  계속하면 <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">이용약관</Link>과 <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>에 동의하게 됩니다.
+                  {locale === "ko" ? (
+                    <>
+                      계속하면 <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">이용약관</Link>과 <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>에 동의하게 됩니다.
+                    </>
+                  ) : (
+                    <>
+                      {copy.legalPrefix} <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalTerms}</Link> {copy.legalAnd} <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalPrivacy}</Link>{copy.legalSuffix}
+                    </>
+                  )}
                 </p>
 
                 <div className="flex items-center gap-3 my-1">
                   <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">또는</span>
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">{copy.or}</span>
                   <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-700" />
                 </div>
               </div>
@@ -241,7 +249,7 @@ function LoginForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  이메일로 로그인
+                  {copy.emailLabel}
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500" />
@@ -273,35 +281,44 @@ function LoginForm() {
                 disabled={emailBusy || oauthBusy}
                 className="w-full px-4 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {emailBusy ? "발송 중..." : "로그인 링크 받기"}
+                {emailBusy ? copy.sending : copy.getLink}
               </button>
 
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-center leading-relaxed">
-                로그인 링크 외에 <strong>광고성 메일은 보내지 않습니다</strong>.<br />
-                알림 메일도 사용자가 직접 설정할 때만 발송됩니다.
+                {locale === "ko" ? (
+                  <>
+                    로그인 링크 외에 <strong>광고성 메일은 보내지 않습니다</strong>.<br />
+                    알림 메일도 사용자가 직접 설정할 때만 발송됩니다.
+                  </>
+                ) : (
+                  <>
+                    <strong>{copy.noAds}</strong><br />
+                    {copy.noAdsSecond}
+                  </>
+                )}
               </p>
             </form>
           </div>
         )}
 
         <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-          <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">로그인하면 가능해요</h3>
+          <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">{copy.benefitsTitle}</h3>
           <ul className="space-y-2.5">
             <li className="flex items-start gap-2.5">
               <Heart className="w-4 h-4 text-pink-600 shrink-0 mt-0.5" fill="currentColor" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목을 여러 기기에서 이어보기</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[0]}</div>
             </li>
             <li className="flex items-start gap-2.5">
               <GitCompare className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">비교 목록 영구 저장</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[1]}</div>
             </li>
             <li className="flex items-start gap-2.5">
               <Bot className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">AI 분석 기록 보관</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[2]}</div>
             </li>
             <li className="flex items-start gap-2.5">
               <Bell className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">관심 종목 공시 알림 (등록 시 · 무료)</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[3]}</div>
             </li>
           </ul>
         </div>
@@ -312,7 +329,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="max-w-md mx-auto px-4 py-12 text-sm text-zinc-500">로딩 중...</div>}>
+    <Suspense fallback={<div className="max-w-md mx-auto px-4 py-12 text-sm text-zinc-500">Loading...</div>}>
       <LoginForm />
     </Suspense>
   );

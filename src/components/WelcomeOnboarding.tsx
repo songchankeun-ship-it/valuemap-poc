@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { X, Search, TrendingUp, Bell, ChevronDown } from "lucide-react";
+import { welcomeOnboardingCopy } from "@/lib/i18n";
+import { useLanguage } from "./LanguageProvider";
+import type { ReactNode } from "react";
 
 const STORAGE_KEY = "ornscore_welcome_dismissed_v1";
 const LEGACY_STORAGE_KEY = "valuemap_welcome_dismissed_v1";
@@ -16,6 +19,8 @@ const LEGACY_STORAGE_KEY = "valuemap_welcome_dismissed_v1";
 export function WelcomeOnboarding() {
   const [show, setShow] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const { locale } = useLanguage();
+  const copy = welcomeOnboardingCopy[locale];
 
   useEffect(() => {
     try {
@@ -44,12 +49,12 @@ export function WelcomeOnboarding() {
           type="button"
           onClick={() => setExpanded(!expanded)}
           className="w-full flex items-center justify-between gap-2 px-4 py-3 min-h-[48px] text-left active:bg-amber-100/40 dark:active:bg-amber-900/30 transition"
-          aria-label="처음 사용 가이드 열기/닫기"
+          aria-label={copy.toggle}
         >
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-lg shrink-0">👋</span>
             <span className="text-sm font-semibold text-amber-900 dark:text-amber-200 truncate">
-              처음 오셨어요? 3단계 가이드 보기
+              {copy.mobileTitle}
             </span>
           </div>
           <ChevronDown
@@ -62,17 +67,17 @@ export function WelcomeOnboarding() {
 
         {expanded ? (
           <div className="px-4 pb-4 pt-1 space-y-2">
-            <Step n={1} title="오늘의 후보 종목 보기" href="/today" icon={<TrendingUp className="w-3.5 h-3.5" />}>
-              네 지표가 우호적인 상위 5개 종목 확인
+            <Step n={1} title={copy.steps[0].title} href="/today" icon={<TrendingUp className="w-3.5 h-3.5" />}>
+              {copy.steps[0].mobileBody}
             </Step>
-            <Step n={2} title="관심 종목 깊이 보기" href="/stocks" icon={<Search className="w-3.5 h-3.5" />}>
-              점수 옆 <strong>(?)</strong>를 누르면 각 지표 의미 보임
+            <Step n={2} title={copy.steps[1].title} href="/stocks" icon={<Search className="w-3.5 h-3.5" />}>
+              {copy.steps[1].mobileBody}
             </Step>
-            <Step n={3} title="알림 받기 (선택)" href="/settings/notifications" icon={<Bell className="w-3.5 h-3.5" />}>
-              관심 종목에 ❤ 등록 → 새 공시 신호 시 이메일
+            <Step n={3} title={copy.steps[2].title} href="/settings/notifications" icon={<Bell className="w-3.5 h-3.5" />}>
+              {copy.steps[2].mobileBody}
             </Step>
             <p className="text-[10px] text-amber-800 dark:text-amber-300 leading-relaxed pt-1">
-              ⚠ 본 도구는 매수·매도 추천이 아니라 <strong>데이터 기반 탐색 우선순위</strong>를 제공합니다.
+              {copy.notice}
             </p>
           </div>
         ) : null}
@@ -83,7 +88,7 @@ export function WelcomeOnboarding() {
         type="button"
         onClick={dismiss}
         className="absolute top-1.5 right-1.5 w-9 h-9 inline-flex items-center justify-center rounded-md text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 active:bg-amber-200 dark:active:bg-amber-900/60 transition z-10"
-        aria-label="안내 닫기"
+        aria-label={copy.close}
       >
         <X className="w-4 h-4" />
       </button>
@@ -93,24 +98,24 @@ export function WelcomeOnboarding() {
         <div className="flex items-center gap-2 mb-3 pr-10">
           <span className="text-lg">👋</span>
           <h2 className="text-base font-bold text-amber-900 dark:text-amber-200">
-            처음 오셨나요? 3단계로 사용해보세요
+            {copy.heading}
           </h2>
         </div>
 
         <div className="grid grid-cols-3 gap-2.5">
-          <DesktopCard n={1} title="오늘의 후보 종목 보기" href="/today" icon={<TrendingUp className="w-3 h-3" />}>
-            네 지표가 우호적인 상위 5개 종목을 확인하세요.
+          <DesktopCard n={1} title={copy.steps[0].title} href="/today" icon={<TrendingUp className="w-3 h-3" />} cta={copy.go}>
+            {copy.steps[0].body}
           </DesktopCard>
-          <DesktopCard n={2} title="관심 종목 깊이 보기" href="/stocks" icon={<Search className="w-3 h-3" />}>
-            점수 옆 <strong>(?)</strong>를 누르면 각 지표 의미를 알 수 있어요.
+          <DesktopCard n={2} title={copy.steps[1].title} href="/stocks" icon={<Search className="w-3 h-3" />} cta={copy.go}>
+            {copy.steps[1].body}
           </DesktopCard>
-          <DesktopCard n={3} title="알림 받기 (선택)" href="/settings/notifications" icon={<Bell className="w-3 h-3" />}>
-            관심 종목에 ❤ 등록하면 새 공시 신호 발생 시 이메일 발송.
+          <DesktopCard n={3} title={copy.steps[2].title} href="/settings/notifications" icon={<Bell className="w-3 h-3" />} cta={copy.go}>
+            {copy.steps[2].body}
           </DesktopCard>
         </div>
 
         <p className="text-[10px] text-amber-800 dark:text-amber-300 mt-3 leading-relaxed">
-          ⚠ 본 도구는 매수·매도 추천이 아니라 <strong>데이터 기반 탐색 우선순위</strong>를 제공합니다. 투자 결정은 본인이 직접.
+          {copy.noticeLong}
         </p>
       </div>
     </section>
@@ -127,8 +132,8 @@ function Step({
   n: number;
   title: string;
   href: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
+  icon: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <Link
@@ -153,13 +158,15 @@ function DesktopCard({
   title,
   href,
   icon,
+  cta,
   children,
 }: {
   n: number;
   title: string;
   href: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
+  icon: ReactNode;
+  cta: string;
+  children: ReactNode;
 }) {
   return (
     <div className="bg-white/80 dark:bg-zinc-900/60 rounded-lg p-3 border border-amber-100 dark:border-amber-900/50">
@@ -176,7 +183,7 @@ function DesktopCard({
         className="inline-flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 font-medium hover:underline"
       >
         {icon}
-        가기 →
+        {cta}
       </Link>
     </div>
   );

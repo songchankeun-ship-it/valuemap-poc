@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { ScoreBadge } from "@/components/ui/ScoreBadge";
 import { MetricChip } from "@/components/ui/MetricChip";
+import { homeHeroCopy } from "@/lib/i18n";
+import { useLanguage } from "@/components/LanguageProvider";
 import type { StockCandidate } from "./StockCandidateCard";
+import type { ReactNode } from "react";
 
 interface HomeHeroProps {
   dataAsOf: string;
@@ -27,6 +32,8 @@ export function HomeHero({
   signalCount,
   previewCandidates,
 }: HomeHeroProps) {
+  const { locale } = useLanguage();
+  const copy = homeHeroCopy[locale];
   const lead = previewCandidates[0];
   const rest = previewCandidates.slice(1, 3);
 
@@ -37,32 +44,32 @@ export function HomeHero({
         <div>
           <div className="flex items-center gap-2 mb-4 flex-wrap">
             <span className="inline-flex items-center text-[10px] font-semibold tracking-wide text-blue-50 px-2 py-0.5 rounded-full bg-white/10 border border-white/20">
-              오른스코어 · 베타
+              {copy.badge}
             </span>
             <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-100/80">
               <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-orange-400" : "bg-emerald-400")} />
-              <span className="tabular-nums">데이터 기준 {dataAsOf} 장마감</span>
-              {dataStale ? <span className="font-medium text-orange-300">· 갱신 지연</span> : <span className="text-emerald-300">· 정상</span>}
+              <span className="tabular-nums">{copy.dataPrefix} {dataAsOf} {copy.marketClose}</span>
+              {dataStale ? <span className="font-medium text-orange-300">· {copy.delayed}</span> : <span className="text-emerald-300">· {copy.normal}</span>}
             </span>
           </div>
           <h1 className="text-[25px] leading-tight md:text-[36px] md:leading-[1.12] font-bold tracking-tight text-white">
-            오늘 볼 한국 주식,{" "}
-            <span className="text-sky-300">점수로 먼저</span> 좁혀보세요.
+            {copy.titleBefore}{" "}
+            <span className="text-sky-300">{copy.titleAccent}</span> {copy.titleAfter}
           </h1>
           <p className="text-[13px] md:text-[15px] text-blue-100/90 mt-4 max-w-xl leading-relaxed">
-            추세 · 거래활성도 · 밸류 · 위험조정 · 공시 신호를 한 화면에 정리해, 오늘 먼저 확인할 탐색 우선순위를 보여주는 데이터 도구입니다.
+            {copy.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-2.5 mt-6">
             <a href="#today-candidates" className="text-center px-5 py-3 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-white text-blue-800 text-sm font-bold hover:bg-blue-50 transition shadow-md shadow-blue-950/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-              오늘 후보 보기 →
+              {copy.primaryCta}
             </a>
             <Link prefetch={false} href="/guide/metrics" className="text-center px-5 py-3 min-h-[44px] inline-flex items-center justify-center rounded-lg bg-transparent border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-              지표 이해하기
+              {copy.secondaryCta}
             </Link>
           </div>
           <p className="text-[11px] text-blue-200/80 mt-4">
-            오른스코어는 투자 추천이 아닌 데이터 기반 탐색 도구입니다.{" "}
-            <Link prefetch={false} href="/stocks" className="text-white font-medium hover:underline">종목 직접 찾기 →</Link>
+            {copy.note}{" "}
+            <Link prefetch={false} href="/stocks" className="text-white font-medium hover:underline">{copy.stockSearch}</Link>
           </p>
         </div>
 
@@ -71,9 +78,9 @@ export function HomeHero({
           <div className="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b border-zinc-100 dark:border-zinc-800">
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-[12px] font-semibold text-zinc-800 dark:text-zinc-100">오늘의 탐색 후보</span>
+              <span className="text-[12px] font-semibold text-zinc-800 dark:text-zinc-100">{copy.previewTitle}</span>
             </div>
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500">검증 보류 제외</span>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{copy.previewFilter}</span>
           </div>
 
           {lead ? (
@@ -111,7 +118,7 @@ export function HomeHero({
             </>
           ) : (
             <div className="rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700 p-5 text-center text-[12px] text-zinc-500 dark:text-zinc-400">
-              후보 데이터를 준비 중입니다.
+              {copy.empty}
             </div>
           )}
 
@@ -119,7 +126,7 @@ export function HomeHero({
           <div className="mt-3 grid grid-cols-3 gap-2">
             <KpiCell
               value={signalCount}
-              label="공시 신호"
+              label={copy.kpiSignals}
               tone="amber"
               icon={
                 <path d="M4 3.5h7l3 3V14a.5.5 0 0 1-.5.5h-9A.5.5 0 0 1 4 14V4a.5.5 0 0 1 0-.5Zm6.5.5v2.5H13" />
@@ -127,18 +134,22 @@ export function HomeHero({
             />
             <KpiCell
               value={volumeSpikeCount}
-              label="거래활성도 급증"
+              label={copy.kpiVolume}
               tone="emerald"
               icon={<path d="M2.5 11.5 6.5 7l2.5 2.5L13.5 5M13.5 5h-2.6M13.5 5v2.6" />}
             />
             <KpiCell
               value={strongCount}
-              label="종합 80↑"
+              label={copy.kpiStrong}
               tone="blue"
               icon={<path d="M8 2.5 9.7 6l3.8.4-2.8 2.5.8 3.7L8 11.2 4.5 12.6l.8-3.7L2.5 6.4 6.3 6 8 2.5Z" />}
             />
           </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2.5">분석 종목 {totalCount}개 · 영업일 장마감 후 자동 갱신 · KRX · Naver · DART</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2.5">
+            {locale === "ko"
+              ? `${copy.footerPrefix} ${totalCount}${copy.footerSuffix}`
+              : `${copy.footerPrefix} ${totalCount} ${copy.footerSuffix}`}
+          </p>
         </div>
       </div>
     </section>
@@ -155,7 +166,7 @@ function KpiCell({
   value: number;
   label: string;
   tone: "blue" | "emerald" | "amber";
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
   // 정적 리터럴 클래스만 사용(런타임 합성 금지 — Tailwind 정적 스캔).
   const toneCls =

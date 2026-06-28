@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] 영어 지원 v1 — 핵심 진입/로그인/내비게이션 다국어화
+- **추가**: 무의존성 i18n 기반(`src/lib/i18n.ts`)과 `LanguageProvider`/`LanguageSwitcher`를 추가했다. 브라우저 언어가 한국어가 아니면 영어로 자동 전환하고, 사용자가 KO/EN 토글을 누르면 localStorage·cookie·`html lang`에 반영한다.
+- **반영 범위**: 홈 첫 화면 온보딩·히어로, 검색창, 데스크톱/모바일 내비게이션, 사이드바, 하단 탭, 로그인/소셜 버튼/이메일 로그인 안내, 비교 배지, 공통 footer를 한국어/영어로 전환한다. 종목명·시장 데이터는 한국 주식 원문을 유지한다.
+- **검증**: `npx tsc --noEmit` 통과. 로컬 dev `http://127.0.0.1:3000/?lang=en`에서 영어 온보딩·히어로·검색·내비 확인, `/login?lang=en`에서 영어 로그인/Provider 버튼/이메일 안내 확인, `?lang=ko`에서 한국어 기본 UI 확인.
+- **다음**: 종목 상세/오늘/공시/요금/약관·개인정보/데이터 신뢰 모달까지 페이지 단위 번역을 확장한다. SEO용 `/en` 라우팅과 `metadata`/OpenGraph 다국어화는 별도 후속으로 진행한다.
+
 ## 2026-06-28 · [codex] 네이버 로그인 실동작 확인 + 약관/개인정보 정합성 갱신
 - **실동작 확인**: 운영자가 공개 사이트에서 네이버 로그인이 실제로 동작함을 확인. Supabase Custom OAuth2 provider `custom:naver` + Vercel `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 배포 조합이 정상 동작 상태가 됨.
 - **공개 문구 정합성**: `src/app/privacy/page.tsx`와 `src/app/terms/page.tsx`의 소셜 로그인 제공자 표기를 카카오·구글·네이버로 갱신. 개인정보처리방침 위탁 처리에 Naver(대한민국, 네이버 계정 식별자·이메일)를 추가했고, 국외이전 표 설명은 Kakao/Naver 국내·Google 미국으로 정리.
