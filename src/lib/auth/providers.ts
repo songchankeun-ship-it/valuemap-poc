@@ -11,15 +11,14 @@
 //   - kakao  : 지원 ✅ (이미 운영 중 — Supabase 콘솔 연결 완료)
 //   - google : 지원 ✅ (Supabase 콘솔 Google provider 토글 + Google Cloud OAuth 클라이언트 필요)
 //   - apple  : 지원 ✅ (단, 의사결정상 기본 비활성 — 아래 주석 참조)
-//   - naver  : 미지원 ❌ (Provider 유니온에 없음 → 네이티브 OAuth 불가)
-//       네이버를 붙이려면 Supabase 커스텀 OIDC/SAML(custom:* · Pro/Enterprise + 콘솔 구성)
-//       또는 직접 OAuth 라우트 구현이 필요하다 — 신규 의존성·유료 플랜 없이는 범위 밖.
-//       자세한 차단 사유·운영자 설정 절차는 docs/auth-providers-setup.md 참조. 가짜로 만들지 않는다.
-//       대신 아래 PLANNED_PROVIDERS 로 "준비 중" 비활성 항목만 노출한다(실제 로그인 경로 없음).
-//       PLANNED_PROVIDERS.id 는 의도적으로 OAuthProviderId 가 아니므로 signInWithOAuth 에
-//       타입상 넘길 수 없다 → 가짜 세션 경로가 컴파일 단계에서 차단된다.
+//   - naver  : 네이티브 "naver" provider 는 없지만 `custom:naver` OAuth2 provider 로 연결 가능.
+//       Supabase Custom OAuth provider + Naver Developers 설정이 끝난 뒤
+//       NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true 로 켠다. 설정 전에는 아래 PLANNED_PROVIDERS 로
+//       "설정 필요" 비활성 항목만 노출한다(가짜 로그인 경로 없음).
 
-export type OAuthProviderId = "kakao" | "google" | "apple";
+export type OAuthProviderId = "kakao" | "google" | "apple" | "custom:naver";
+
+const ENABLE_NAVER_LOGIN = process.env.NEXT_PUBLIC_ENABLE_NAVER_LOGIN === "true";
 
 export type OAuthProviderConfig = {
   id: OAuthProviderId;
@@ -78,6 +77,18 @@ export const OAUTH_PROVIDERS: OAuthProviderConfig[] = [
     // 이 한 줄을 enabled: true 로 바꾸면 즉시 버튼·문구·콜백이 활성화된다.
     enabled: false,
   },
+  {
+    id: "custom:naver",
+    label: "네이버로 시작하기",
+    redirectingLabel: "네이버로 이동 중...",
+    shortName: "네이버",
+    brandClasses:
+      "bg-[#03C75A] text-white hover:brightness-95 disabled:opacity-60 disabled:cursor-not-allowed",
+    // Supabase Dashboard > Auth > Providers > Custom OAuth 에서 provider identifier 를
+    // "custom:naver" 로 만든 뒤, Vercel/로컬에 NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true 를 켠다.
+    // env 가 꺼져 있으면 아래 plannedProviders()에서 "설정 필요" 비활성 항목만 보인다.
+    enabled: ENABLE_NAVER_LOGIN,
+  },
 ];
 
 /** 화면에 노출할(활성화된) 제공자만 반환 */
@@ -85,18 +96,17 @@ export function enabledOAuthProviders(): OAuthProviderConfig[] {
   return OAUTH_PROVIDERS.filter((p) => p.enabled);
 }
 
-// "준비 중"(coming soon)으로만 노출하는 제공자 — 실제 로그인 경로가 아직 없다.
+// "설정 필요"(coming soon)로만 노출하는 제공자 — env/콘솔 설정 전에는 인증 호출을 하지 않는다.
 //
-// 네이버는 설치된 @supabase/auth-js 의 Provider 유니온에 없어 네이티브 OAuth 가 불가하고,
-// 직접 라우트/커스텀 OIDC 는 운영자 콘솔 설정(네이버 Developers 앱·시크릿·세션 발급 설계)이
-// 선행돼야 한다. 그 설정 전에는 진짜 세션을 만들 수 없으므로, 사용자에게 솔직하게
-// "준비 중" 비활성 항목으로만 보여준다(클릭해도 인증 호출 없음).
+// 네이버는 네이티브 provider 이름 "naver" 는 없지만, Supabase Custom OAuth2 provider 를
+// "custom:naver" 로 등록하면 정식 OAuth 경로로 연결할 수 있다. 다만 Naver Developers 앱,
+// Supabase Custom Provider, Vercel env 설정 전에는 진짜 세션을 만들 수 없으므로
+// 사용자에게 솔직하게 비활성 항목으로만 보여준다(클릭해도 인증 호출 없음).
 export type PlannedProviderConfig = {
   /**
-   * 의도적으로 OAuthProviderId 가 아니다(평범한 string).
-   * → signInWithOAuth({ provider }) 에 넘기려 하면 tsc 가 막는다 = 가짜 세션 경로 원천 차단.
+   * 활성 provider 와 같은 id 를 사용하되, plannedProviders()에서 활성 상태면 자동으로 숨긴다.
    */
-  id: string;
+  id: OAuthProviderId;
   /** 비활성 버튼 라벨 */
   label: string;
   /** 약관·문구용 짧은 이름 */
@@ -107,14 +117,15 @@ export type PlannedProviderConfig = {
 
 export const PLANNED_PROVIDERS: PlannedProviderConfig[] = [
   {
-    id: "naver",
-    label: "네이버 (준비 중)",
+    id: "custom:naver",
+    label: "네이버 (설정 필요)",
     shortName: "네이버",
-    note: "준비 중",
+    note: "설정 필요",
   },
 ];
 
 /** "준비 중"으로 노출할 (아직 실동작하지 않는) 제공자 목록 */
 export function plannedProviders(): PlannedProviderConfig[] {
-  return PLANNED_PROVIDERS;
+  const enabledIds = new Set(enabledOAuthProviders().map((p) => p.id));
+  return PLANNED_PROVIDERS.filter((p) => !enabledIds.has(p.id));
 }

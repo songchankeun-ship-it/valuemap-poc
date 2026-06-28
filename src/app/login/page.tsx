@@ -34,7 +34,7 @@ function friendlyAuthError(raw: string | null | undefined): string {
     s.includes("validation_failed") ||
     s.includes("provider_disabled")
   ) {
-    return "현재 이 로그인 방식은 준비 중이에요. 카카오 또는 이메일로 로그인해 주세요.";
+    return "현재 이 로그인 방식은 설정 중이에요. 카카오·구글 또는 이메일로 로그인해 주세요.";
   }
   if (s.includes("only request this") || s.includes("rate limit") || s.includes("too many")) {
     return "요청이 많아요. 잠시 후 다시 시도해 주세요.";
@@ -60,7 +60,7 @@ function LoginForm() {
   const contextMsg = CONTEXT_MSG[next];
 
   const providers = enabledOAuthProviders();
-  // "준비 중"으로만 노출하는 제공자(네이버 등) — 실제 로그인 경로 없음, 클릭 불가.
+  // "설정 필요"로만 노출하는 제공자(네이버 등) — env/콘솔 설정 전에는 클릭 불가.
   const planned = plannedProviders();
   // 노출 문구(leadCopy)는 활성화된 제공자만으로 파생 → 화면에 없는/준비 중인 방식을 절대 광고하지 않음
   const providerNames = providers.map((p) => p.shortName).join("·");
@@ -189,6 +189,11 @@ function LoginForm() {
                           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
                         </svg>
                       ) : null}
+                      {p.id === "custom:naver" ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                          <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
+                        </svg>
+                      ) : null}
                       {p.id === "apple" ? (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                           <path d="M16.36 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.18-1.15 2.34-.69 1-1.41 1.99-2.55 2.01-1.11.02-1.47-.66-2.75-.66-1.27 0-1.67.64-2.72.68-1.09.04-1.92-1.08-2.62-2.08-1.42-2.05-2.51-5.79-1.05-8.32.72-1.25 2.02-2.05 3.43-2.07 1.08-.02 2.1.73 2.75.73.66 0 1.89-.9 3.19-.77.54.02 2.06.22 3.04 1.64-.08.05-1.81 1.06-1.79 3.16M14.28 5.39c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.54.62-1.01 1.61-.88 2.56.93.07 1.88-.47 2.46-1.16" />
@@ -199,17 +204,17 @@ function LoginForm() {
                   );
                 })}
 
-                {/* 준비 중 제공자(네이버 등) — 의도적으로 비활성. onClick·인증 호출 없음.
-                    실제 로그인 경로는 운영자 콘솔 설정 후 별도 작업으로 활성화된다
+                {/* 설정 필요 제공자(네이버 등) — 의도적으로 비활성. onClick·인증 호출 없음.
+                    실제 로그인 경로는 운영자 콘솔 설정 + env 토글 후 활성화된다
                     (docs/auth-providers-setup.md 네이버 섹션 참조). 가짜 성공 경로를 만들지 않는다. */}
                 {planned.map((p) => (
                   <div
                     key={p.id}
                     aria-disabled="true"
-                    title="준비 중인 로그인 방식이에요"
+                    title="설정이 필요한 로그인 방식이에요"
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-700 opacity-70 cursor-not-allowed select-none"
                   >
-                    {p.id === "naver" ? (
+                    {p.id === "custom:naver" ? (
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                         <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
                       </svg>

@@ -43,6 +43,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Naver Custom OAuth2 준비 + 실기기 게이트 재정리 (2026-06-28, Codex)
+- `@supabase/auth-js` 2.107.0의 Provider 타입에 `custom:${string}`이 있음을 확인했고, 공식 Supabase Custom OAuth/OIDC Providers 문서 기준 Free plan에서도 custom provider 3개까지 가능하므로 네이버의 1순위 경로를 **Supabase Custom OAuth2 provider `custom:naver`**로 갱신했다.
+- 코드: `src/lib/auth/providers.ts`에 `custom:naver` 설정을 추가하되 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`일 때만 활성화한다. 기본 상태에서는 `/login`에 **"네이버 (설정 필요)" 비활성 항목**만 보이며 onClick/인증 호출 없음. `src/app/login/page.tsx`는 활성/비활성 네이버 아이콘 조건과 미설정 오류 안내를 갱신했다.
+- 문서: `docs/auth-providers-setup.md` Naver 섹션을 네이버 Developers + Supabase Custom OAuth2 + Vercel env 토글 절차로 갱신했고, `docs/app-roadmap.md`/`docs/ornscore-owner-final-checklist.md`/`PROGRESS.md`도 같은 상태로 맞췄다. `.env.example`에 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN="false"` 추가.
+- 운영자 게이트: 네이버 UserInfo 응답은 `response.id`/`response.email` 중첩 구조라 Supabase Custom OAuth2가 실제 세션을 정상 생성하는지 콘솔 저장 후 왕복 테스트가 필요. 실패하면 env를 끄고 앱 자체 Naver OAuth 어댑터 라우트를 별도 작업으로 검토.
+- 다음: 운영자가 네이버 Developers 앱 + Supabase provider `custom:naver` 설정 → Vercel env `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` → 재배포 → 실기기 standalone에서 네이버/카카오/구글 OAuth 복귀 확인.
+
 ### 스토어 제출 준비 패키지 초안 (2026-06-28, Codex)
 - `docs/app-store-submission-pack.md`를 추가했다. Google Play/App Store 등록 설명 초안, 스크린샷 후보, 리뷰 노트, 개인정보 답변 초안, 심사 리스크를 한 곳에 모았다.
 - 초안은 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 맞춰 작성했다. 투자 추천 아님, 유료 결제 미제공, Pro/Premium 가격 미확정, Naver 준비 중 상태를 유지한다.

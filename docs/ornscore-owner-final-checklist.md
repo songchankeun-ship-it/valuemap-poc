@@ -19,7 +19,7 @@
 
 - [x] PWA manifest·아이콘(192/512/maskable/apple-touch)·설치 도우미 UX(`PwaInstallHelper`) — Task 72·74·75.
 - [x] standalone 로그인 복귀 **코드 측 가드**(`safeInternalPath` open-redirect 차단, `code` 없는 콜백 친절 안내) — Task 76.
-- [x] 로그인 제공자 정합성: `/login`(카카오·구글·이메일 + 네이버 "준비 중" 비활성)이 `providers.ts`·`/privacy`·`/terms`·`auth-providers-setup.md`와 일치 — Task 70·73, Task 87 재검증.
+- [x] 로그인 제공자 정합성: `/login`(카카오·구글·이메일 + 네이버 "설정 필요" 비활성)이 `providers.ts`·`/privacy`·`/terms`·`auth-providers-setup.md`와 일치. 네이버는 `custom:naver` 코드 준비 완료, env/콘솔 설정 전 비활성 — Task 70·73·87 + 2026-06-28 Codex 재정리.
 - [x] 상용 문구 보수성: `/pricing`(베타→Pro·가격 미확정), `/about`(스토어 미확정·투자 추천 아님), `/terms`·`/privacy`(현재 정책·국외이전 표) — Task 66·70 외, Task 87 재검증(매수/매도/수익보장 문구 0).
 - [x] 패키징 결정 가이드·assetlinks 예시(자리표시자·서빙 안 함) — Task 77.
 - [x] 스토어 등록 초안(Play/App Store 설명, 개인정보 답변, 스크린샷 후보, 리뷰 노트) — `docs/app-store-submission-pack.md`.
@@ -53,7 +53,7 @@ AI는 이 항목들을 **만들 수 없다**(실기기·유료 계정·콘솔 �
 - [ ] **package id(패키지명)**: TWA/래퍼의 실제 애플리케이션 ID 확정. 현재 예시는 자리표시자 `com.example.ornscore` (`docs/templates/assetlinks.example.json`) — **실값으로 교체 필요**.
 - [ ] **서명 SHA-256 지문(signing fingerprint)**: 실제 업로드/앱 서명 키의 SHA-256 지문 확보 → 예시의 `REPLACE_WITH_REAL_SHA256_FINGERPRINT` 교체 → **그 뒤에만** `public/.well-known/assetlinks.json`로 배치(그 전엔 생성 금지). 지문 불일치 시 TWA 주소창 노출, 키 분실 시 업데이트 불가.
 - [ ] **개발자 계정 결제**: Google Play Console $25(1회) / Apple Developer $99(연) — 선택한 스토어에 맞춰.
-- [ ] **네이버 로그인 실동작**(원할 때): `auth-providers-setup.md` Naver (A) 앱 자체 OAuth 라우트 + 세션 발급 설계, 또는 (B) Supabase Pro 커스텀 OIDC. 둘 중 하나 완료 전까지 "준비 중" 유지.
+- [ ] **네이버 로그인 실동작**: `auth-providers-setup.md` Naver 절차대로 네이버 Developers 앱 + Supabase Custom OAuth2 provider `custom:naver` 설정 → Vercel `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` → 재배포 → 실기기 standalone OAuth 복귀 확인. 실패 시 env를 끄고 앱 자체 Naver OAuth 어댑터 라우트를 별도 작업으로 검토.
 
 ### B-3. 결제·법무 — 출시 전 확정 (사람/법무)
 

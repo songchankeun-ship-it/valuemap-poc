@@ -14,11 +14,11 @@
 | Kakao | ✅ | ✅ (운영 중) | 완료 (이미 연결됨) |
 | Google | ✅ | ✅ | ✅ 완료 — 2026-06-28 운영자 콘솔 설정 + 실로그인 확인 |
 | Apple | ✅ (타입 지원) | ❌ (의도적 비활성) | 보류 — Apple Developer Program 가입 후 결정 |
-| Naver | ❌ (네이티브 미지원) | ⏳ "준비 중"(비활성 노출) | 아래 "Naver" 섹션의 (A)/(B) 중 하나 선행 필요 |
+| Naver | ✅ (`custom:naver`) / ❌ (네이티브 `naver`) | ⏳ "설정 필요"(env 기본 false) | 네이버 Developers + Supabase Custom OAuth2 + env 토글 필요 |
 
 `enabled` 플래그를 켜기 전이라도 버튼이 보이는 제공자는, Supabase 콘솔 토글이
 꺼져 있으면 클릭 시 `provider is not enabled` 오류가 난다. 이 오류는 사용자에게
-한국어 안내("현재 이 로그인 방식은 준비 중이에요...")로 graceful 처리되므로,
+한국어 안내("현재 이 로그인 방식은 설정 중이에요...")로 graceful 처리되므로,
 콘솔 설정 전이라도 앱이 깨지지 않는다. **다만 정식 노출 전에는 아래 콘솔 작업을
 완료해 실제로 동작하게 만들어야 한다.**
 
@@ -74,54 +74,58 @@
 5. Supabase → Authentication → Providers → **Apple**에 Services ID·Team ID·Key ID·Secret(JWT) 입력 후 Enabled.
 6. `src/lib/auth/providers.ts`의 apple 항목 `enabled: false` → `true`로 변경, 약관/개인정보 문구에 Apple 추가.
 
-## Naver (현재 "준비 중" 비활성 노출 — 가짜로 만들지 않음)
+## Naver (Custom OAuth2 준비 — 콘솔 설정 후 env 로 활성화)
 
-- 설치된 `@supabase/auth-js`(2.107.0)의 `Provider` 유니온에 **`naver`가 없다.**
-  즉 `signInWithOAuth({ provider: "naver" })`는 타입·런타임 모두 불가.
-- **현재 앱 동작(Task 73)**: `/login`에 **"네이버 (준비 중)" 비활성 항목**만 노출한다.
-  - `src/lib/auth/providers.ts`의 `PLANNED_PROVIDERS`(id=`"naver"`)에서 파생된다.
-    이 id는 **의도적으로 `OAuthProviderId`(=`kakao|google|apple`)가 아니므로**
-    `signInWithOAuth`에 넘기면 tsc가 막는다 → **가짜 세션 경로가 컴파일 단계에서 차단**된다.
-  - 버튼이 아니라 `aria-disabled`·`cursor-not-allowed` `<div>`로 렌더되며 **onClick·인증 호출이 없다.**
-  - `leadCopy`(상단 안내 문구)는 활성 제공자만으로 파생되므로 **네이버를 "사용 가능"으로 광고하지 않는다.**
-  - 약관·개인정보의 활성 데이터 처리자 목록(카카오·구글)에도 **네이버를 넣지 않는다**
-    (실제 데이터를 받지 않으므로). 진짜로 동작하게 만든 뒤에 처리자로 추가한다.
-- **실제 로그인을 켜려면 둘 중 한 경로의 운영자 설정이 선행돼야 한다:**
+`@supabase/auth-js`에는 네이티브 provider 이름 `naver`가 없지만, 현재 SDK 타입에는
+`custom:${string}` provider가 포함되어 있다. 따라서 앱 코드는 **`custom:naver`** 경로를
+준비해 두고, 실제 외부 콘솔 설정이 끝난 뒤에만 활성화한다.
 
-### (A) 앱 자체 OAuth 라우트 (App-owned route)
+- **현재 앱 동작**:
+  - `src/lib/auth/providers.ts`에 `custom:naver` 설정이 있다.
+  - 기본값은 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN` 미설정/false 이므로 `/login`에는
+    **"네이버 (설정 필요)" 비활성 항목**만 보인다.
+  - 비활성 항목은 `aria-disabled`·`cursor-not-allowed` `<div>`이며 **onClick·인증 호출이 없다.**
+  - 환경변수 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 로 빌드하면 활성 OAuth 버튼으로 바뀌고
+    `supabase.auth.signInWithOAuth({ provider: "custom:naver" })`를 호출한다.
+- **약관·개인정보 처리자 목록**에는 아직 네이버를 넣지 않는다.
+  실제 네이버 로그인이 성공해 사용자 데이터를 받기 시작하는 배포에서 추가한다.
 
-네이버 로그인 API를 직접 호출하는 서버 라우트를 구현하는 경로. 운영자/개발자가 함께 준비할 것:
+### 1순위 경로: Supabase Custom OAuth2 Provider
+
+공식 Supabase Custom OAuth/OIDC Providers 문서 기준, Free plan 프로젝트도 custom provider 3개까지
+추가할 수 있고, OAuth2 provider는 Authorization URL / Token URL / UserInfo URL을 수동 입력한다.
+따라서 현재 우선 경로는 앱 자체 세션 발급 라우트가 아니라 **Supabase Custom OAuth2**다.
 
 1. **네이버 Developers 앱 등록** — <https://developers.naver.com/> → 애플리케이션 등록 →
-   "네이버 로그인" 사용 API 추가. 서비스 URL과 **Callback URL** 등록:
-   - 운영: `https://ornscore.com/auth/naver/callback`
-   - 로컬: `http://localhost:3000/auth/naver/callback`
-   (실제 라우트 경로는 구현 시 확정. 위는 권장 예시.)
-2. **운영자 전용 시크릿(소스/클라이언트에 절대 노출 금지)** — Supabase/Vercel **환경변수에만** 입력:
-   - `NAVER_CLIENT_ID`
-   - `NAVER_CLIENT_SECRET`
-   (이 저장소·번들에 하드코딩 금지. 서버 라우트에서만 `process.env`로 읽는다.)
-3. **서버 라우트 2개 구현(설계 필요)**:
-   - `start` 라우트: `state`(CSRF 방지 난수)+nonce 생성 → HttpOnly 쿠키에 저장 →
-     사용자가 가려던 곳을 보존하는 `next`를 `state`에 함께 묶고 네이버 인가 URL로 redirect.
-   - `callback` 라우트: 돌아온 `state`를 쿠키와 **대조 검증**(불일치면 거부) → 인가 코드를
-     `NAVER_CLIENT_SECRET`으로 토큰 교환 → 네이버 프로필 조회.
-4. **세션 발급(핵심 선결 과제)**: 네이버 프로필만으로는 Supabase 세션이 생기지 않는다.
-   네이버 사용자를 Supabase 사용자에 연결해 **실제 세션을 발급**하는 설계가 필요하다
-   (예: 서버에서 service-role 키로 사용자 조회/생성 후 세션/매직링크 발급).
-   이 세션 발급 설계가 끝나기 전에는 **로그인을 활성화하지 않는다.** 검증된 `next`로만 복귀시킨다.
+   "네이버 로그인" 사용 API 추가.
+2. **Supabase Dashboard → Authentication → Providers → Custom OAuth Providers → New Provider**.
+3. Provider identifier는 **`custom:naver`** 로 만든다.
+4. Supabase 생성 화면의 read-only **Callback URL**을 복사한다.
+5. 네이버 Developers 앱의 Callback URL에 위 Supabase Callback URL을 등록한다.
+   - 운영 사이트의 최종 복귀는 앱 코드의 `redirectTo`가 담당한다:
+     `https://ornscore.com/auth/callback?next=...`
+   - 네이버 콘솔에는 앱 콜백이 아니라 **Supabase가 보여준 Callback URL**을 넣는다.
+6. Supabase Custom OAuth2 설정값:
+   - Client ID / Secret: 네이버 Developers에서 발급받은 값
+   - Authorization URL: `https://nid.naver.com/oauth2.0/authorize`
+   - Token URL: `https://nid.naver.com/oauth2.0/token`
+   - UserInfo URL: `https://openapi.naver.com/v1/nid/me`
+7. 이메일 제공 동의가 필요하다. 네이버 프로필 API는 `response.email`을 반환하므로,
+   네이버 앱 권한에서 이메일 제공을 켜고 실제 동의 화면에 노출되는지 확인한다.
+8. Supabase provider 저장/enable 후, Vercel 환경변수에
+   `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 를 추가하고 재배포한다.
+9. `/login`에서 "네이버로 시작하기" 클릭 → 네이버 동의 → `/auth/callback?next=...` 복귀 →
+   사용자 세션 생성 여부를 확인한다.
 
-### (B) Supabase 커스텀 OIDC/SAML (`custom:*`)
+### 검증 리스크
 
-- Supabase **Pro/Enterprise 플랜**에서 제공되는 **Custom Provider(OIDC/SAML)** 콘솔 구성으로
-  네이버를 OIDC 제공자로 연결하는 경로. 플랜 업그레이드(유료)와 콘솔 설정이 선행된다.
-- 플랜·콘솔 구성이 끝나면 앱 측은 `signInWithSSO`/커스텀 provider 흐름으로 연결한다
-  (현재 `@supabase/auth-js` 2.107.0 네이티브 `signInWithOAuth({provider:"naver"})`로는 불가).
+네이버 UserInfo 응답은 표준 OIDC처럼 `sub`/`email`이 최상위에 있는 형태가 아니라
+`response.id`, `response.email`처럼 중첩되어 있다. Supabase Custom OAuth2 콘솔이 이 응답을
+정상 사용자 정보로 처리하는지는 실제 저장/로그인 왕복으로 검증해야 한다.
 
-> **결론:** (A) 또는 (B) 중 한 경로의 **운영자 측 설정(네이버 콘솔 자격증명 및/또는 Supabase 플랜)이
-> 완료되기 전까지 네이버는 "준비 중" 비활성 상태로 유지**하며, 어떤 가짜 세션도 만들지 않는다.
-> 본 작업 범위(신규 npm 의존성·유료 서비스 금지)에서는 (A)의 세션 발급 설계·(B)의 플랜 모두
-> 범위 밖이므로, 운영자 설정이 준비되면 별도 작업으로 진행한다.
+- 성공하면: `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 유지, 약관·개인정보에 네이버 처리자 추가.
+- 실패하면: `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`을 끄고 비활성 항목으로 되돌린 뒤,
+  앱 자체 `/auth/naver/start` + `/auth/naver/callback` 어댑터 라우트 설계를 별도 작업으로 진행한다.
 
 ## Phone / SMS 로그인 (보류)
 
@@ -133,6 +137,6 @@
 
 - `/login`에서 활성 제공자 버튼이 모두 보이는지.
 - 각 버튼 클릭 시 제공자 동의 화면으로 이동 → 로그인 후 `/auth/callback?next=<원래 목적지>`로 복귀하는지.
-- 콘솔 토글 OFF 상태에서 클릭 시 빨간 박스에 "현재 이 로그인 방식은 준비 중이에요..."가 뜨는지.
+- 콘솔 토글 OFF 상태에서 클릭 시 빨간 박스에 "현재 이 로그인 방식은 설정 중이에요..."가 뜨는지.
 - `/privacy`·`/terms`의 소셜 로그인 제공자 표기가 실제 노출 버튼과 일치하는지(활성=카카오·구글).
-- `/login`의 **"네이버 (준비 중)" 항목이 비활성**(클릭 불가·인증 호출 없음)으로만 보이는지.
+- `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`이 false인 배포에서 `/login`의 **"네이버 (설정 필요)" 항목이 비활성**(클릭 불가·인증 호출 없음)으로만 보이는지.

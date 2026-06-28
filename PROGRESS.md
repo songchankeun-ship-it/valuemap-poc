@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] 네이버 로그인 Custom OAuth2 준비 + 실기기 게이트 정리
+- **코드 준비**: `src/lib/auth/providers.ts`에 Supabase Custom OAuth2 provider `custom:naver`를 추가하고, `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`일 때만 활성 버튼으로 노출되도록 토글 처리. 기본값은 비활성이라 `/login`에는 "네이버 (설정 필요)"만 보이며 인증 호출은 없음.
+- **로그인 UI**: `src/app/login/page.tsx`에 활성/비활성 네이버 아이콘 조건을 `custom:naver` 기준으로 정리하고, 미설정 provider 오류 문구를 카카오·구글·이메일 대체 경로로 안내하도록 보정.
+- **문서**: `docs/auth-providers-setup.md`의 오래된 "Pro/직접 라우트만 가능" 판단을 현재 Supabase Custom OAuth/OIDC 문서 기준으로 갱신. 네이버 Developers + Supabase Custom OAuth2 provider + Vercel env 토글 + 실기기 OAuth 복귀 검증 절차를 명시.
+- **운영자 게이트**: 네이버 UserInfo 응답은 `response.id`, `response.email` 중첩 구조라 Supabase Custom OAuth2 콘솔이 실제 사용자 정보로 정상 처리하는지 왕복 테스트가 필요. 실패 시 env를 끄고 앱 자체 Naver OAuth 어댑터 라우트를 별도 작업으로 검토.
+- **다음**: 운영자가 네이버 Developers 앱과 Supabase Custom OAuth2 provider `custom:naver`를 설정한 뒤, `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`로 재배포하고 실기기 standalone에서 네이버/카카오/구글 OAuth 복귀를 함께 확인.
+
 ## 2026-06-28 · [codex] 스토어 제출 준비 패키지 초안
 - **추가**: `docs/app-store-submission-pack.md`에 Google Play/App Store 등록 설명 초안, 스크린샷 후보, 리뷰 노트, 개인정보 답변 초안, 심사 리스크를 정리.
 - **근거**: 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 일치하도록 투자 추천 아님·결제 미제공·데이터 신선도·로그인 제공자 상태를 반영.
