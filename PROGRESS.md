@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [claude] task 91 — 3차 QA P0-A 종목 상세 UI 마감 (CTA·STEP·배지 검증 + 잔여 행동 문구 중립화)
+- **범위**: `ORNSCORE_3rd_QA_improvement_spec.md` PART A P0-A = 종목 상세 (1) CTA 버튼 붙음 (2) 초보자 STEP 가이드 붙음 (3) 데이터 품질 배지 붙음 (4) 남은 행동성 문구 제거. 비교 페이지(P0-4)·P1 이하는 범위 밖.
+- **현황 점검 결과(재작업 안 함)**: (1)(2)(3)은 이미 분리 렌더링 구현됨을 코드·SSR로 확인 — `StockDetailActionButtons.tsx`(grid 1→2→4열, 독립 `<a>`, `min-h-[44px]`, gap, flex 스타일), `BeginnerReading.tsx`의 `StepCard`(grid 1→3열, STEP 라벨/제목/설명 분리 카드 3개), `PriorityScoreCard.tsx`의 `DataStatusPill`(flex-wrap, 독립 pill 3종: 필수 데이터 %·점검 통과/검증 보류·Metrics 2.4). spec 예시 글루(`공시 확인재무 보기`·`100%이상값`) 0건 확인.
+- **수정(잔여 행동 문구 중립화)**: `src/lib/metricReadings.ts` 2줄. (a) 위험조정 <40 `"출렁임 감내 가능한 비중으로 접근 권장"` → `"변동 폭이 큰 구간 — 실제 일간 변동·최대낙폭과 본인 감내 범위를 함께 확인"` (행동 권유 "접근 권장"·"비중" 제거, 확인 톤). (b) 거래활성도 <40 `"… 회복 신호 기다리기"` → `"… 거래량 회복 신호가 나오는지 확인"`. spec §7 핵심 예시(`저가 매수일지 …`)는 이미 `"반등 근거와 추가 하락 위험을 함께 확인"`으로 선반영돼 있어 무변경. 점수식·`Reading` 타입·이모지·임계값 불변. 나머지 "매수/매도" 잔존은 전부 비자문 고지(`매수·매도 추천이 아닙니다`)·DART 사실 방향 라벨(장내매수/장내매도 단서)로 유지가 정답.
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG) · `python scripts/verify_metrics.py`(PYTHONUTF8) 138/0·금칙어 0·Metrics 2.4 · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0 · 변경 파일 U+FFFD 0. 로컬 prod **3500**(내 PID만 종료·**AI Center 4310 무중단**): `/stock/005380·005930·032830` 200, SSR에 글루 텍스트 0 / CTA 4 hrefs 분리 / STEP 3 카드 / 배지 3종(필수 데이터·점검 통과·Metrics 2.4) 분리 / 신규 중립 문구 컴파일 확인.
+- **남은 갭(후속)**: P0-4 비교 페이지 빈 상태(검색·추천 세트·최근/관심 추가 UI) 미완 — 다음 작업 1순위. `metricReadings`·`conclusion`·`scoreBasis`·`signalGuide` 파생 문구는 EN에서도 한국어(i18n 잔여). 실브라우저 390px 모바일 육안은 운영자 게이트.
+- **다음 구체 작업**: P0-4 비교 페이지 빈 상태를 "비교 시작 화면"으로 마감(종목 검색 + 추천 비교 세트 + 최근 본/관심 종목 추가, 칩 제거 가능, 2종목 전에도 완성도).
+
 ## 2026-06-28 · [claude] task 90 후속 수리 — 로그인 링크 hydration mismatch 해결
 - **증상**: Playwright 품질게이트(데스크톱·모바일 모두) 실패 — `AccountButtons`의 로그인 `href`가 서버/클라이언트 불일치. 서버 `/login?next=%2Fstock%2F005380` vs 클라 `/login?next=%2Fstock%2F005380%3Flang%3Den`. 원인: 렌더 중 `window.location.search`를 직접 읽어 SSR엔 `?lang=en`이 없고 클라엔 있어 React hydration 경고 발생.
 - **수정**: `src/components/AccountButtons.tsx` — 쿼리스트링을 렌더 중 읽지 않고 `useState("")`+`useEffect`(pathname 의존)로 **마운트 후에만** 채우도록 변경. 초기 렌더가 SSR과 동일(빈 search)해져 mismatch 제거. 복귀 목적지(next)에 쿼리는 hydration 후 정상 반영, 인증·동작 무변경.

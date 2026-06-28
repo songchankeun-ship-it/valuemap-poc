@@ -64,7 +64,7 @@ export function readFlow(score: number): Reading {
     r.tone = "watch";
   } else {
     r.meaning = "거래량이 줄어들고 있습니다";
-    r.action = "시장이 관심을 덜 갖는 중 — 회복 신호 기다리기";
+    r.action = "시장이 관심을 덜 갖는 중 — 거래량 회복 신호가 나오는지 확인";
     r.tone = "caution";
   }
   return r;
@@ -100,7 +100,7 @@ export function readVol(score: number): Reading {
     r.tone = "watch";
   } else {
     r.meaning = "변동성이 큰 편입니다";
-    r.action = "출렁임 감내 가능한 비중으로 접근 권장";
+    r.action = "변동 폭이 큰 구간 — 실제 일간 변동·최대낙폭과 본인 감내 범위를 함께 확인";
     r.tone = "caution";
   }
   return r;

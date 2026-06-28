@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 91 — 3차 QA P0-A 종목 상세 UI 마감 (CTA·STEP·배지 분리 검증 + 잔여 행동 문구 중립화) (2026-06-28, Claude)
+- **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md`(데스크톱 상위 폴더) PART A의 **P0-A = 종목 상세 마감**만. 먼저 현황을 점검 → spec이 지적한 (1) CTA 버튼 글루 (2) 초보자 STEP 한 줄 글루 (3) 데이터 품질 배지 글루는 **이미 분리 컴포넌트로 구현돼 있음**을 코드·SSR로 확인. 따라서 재작업하지 않고 검증 + 실제로 남아 있던 (4) 행동성 문구만 중립화.
+- **검증된 분리 컴포넌트(무변경)**: `src/components/stock/StockDetailActionButtons.tsx`(grid `grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-4`·독립 `<a>`·`min-h-[44px]`·gap·아이콘+라벨·border/shadow — 모바일 2열·데스크톱 4열 자연 줄바꿈) / `src/components/BeginnerReading.tsx`의 `StepCard`(grid `grid-cols-1 md:grid-cols-3`·STEP 라벨 배지+제목+설명 분리 카드 3개·모바일 세로) / `src/components/stock/PriorityScoreCard.tsx`의 `DataStatusPill`(flex-wrap·gap·독립 pill 3종: `필수 데이터 N%`·`이상값 점검 통과`(또는 검증 보류)·`Metrics 2.4`).
+- **수정(1파일·2줄)**: `src/lib/metricReadings.ts` — 위험조정 <40 action `"출렁임 감내 가능한 비중으로 접근 권장"`(행동 권유 "접근 권장"+"비중") → `"변동 폭이 큰 구간 — 실제 일간 변동·최대낙폭과 본인 감내 범위를 함께 확인"`; 거래활성도 <40 action `"… 회복 신호 기다리기"` → `"… 거래량 회복 신호가 나오는지 확인"`. spec §7 핵심 예시(`하락 추세 … 저가 매수일지 …`)는 직전 배포에서 이미 `"… 반등 근거와 추가 하락 위험을 함께 확인"`으로 선반영 → 무변경. 점수 산식·`Reading` 타입·이모지·임계값 불변. 잔존 "매수/매도"는 모두 비자문 고지·DART 사실 방향 라벨이라 유지가 맞음(grep 전수 확인).
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG) · `verify_metrics.py`(PYTHONUTF8) 138/0·금칙어 0·**Metrics 2.4** · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0 · 변경 파일 U+FFFD 0. 로컬 prod **3500**(내 PID만 taskkill·**AI Center 4310 무중단**): `/stock/005380·005930·032830` 200, SSR에 글루 텍스트(`공시 확인재무 보기`·`100%이상값`) 0 / CTA 4개 분리 href / STEP 3 카드 / 배지 3종 분리 / 중립 문구 페이지 청크 컴파일 확인.
+- **남은 갭(후속)**: (1) **P0-4 비교 페이지 빈 상태**(검색·추천 비교 세트·최근 본/관심 종목 추가 UI) 미완 = 다음 1순위. (2) `metricReadings`·`conclusion`·`scoreBasis`·`signalGuide` 파생 문구 EN 로케일에서 한국어(i18n 잔여). (3) 실브라우저 390px 모바일 육안은 운영자 게이트(Playwright 미구성).
+- **다음**: P0-4 비교 페이지 "비교 시작 화면" 마감(종목 검색 + 추천 세트 + 최근/관심 추가 + 칩 제거, 2종목 선택 전에도 완성도).
+
 ### Task 90 후속 수리 — 로그인 링크 hydration mismatch 제거 (Playwright 게이트 수복) (2026-06-28, Claude)
 - **증상**: Playwright 품질게이트 데스크톱·모바일 모두 실패. `AccountButtons`의 로그인 `href` 서버/클라 불일치 — 서버 `/login?next=%2Fstock%2F005380`, 클라 `/login?next=%2Fstock%2F005380%3Flang%3Den`(`?lang=en` 차이). 렌더 중 `window.location.search`를 직접 읽어 SSR엔 없고 클라 hydration엔 있어 React `did not match` 경고.
 - **수정**: `src/components/AccountButtons.tsx` — search를 렌더 중이 아닌 `useState("")`+`useEffect`(pathname 의존)로 **마운트 후에만** 채움. 초기 렌더가 SSR과 동일(빈 search)해 mismatch 제거. 복귀 next 쿼리는 hydration 후 반영, 인증·동작 무변경.
