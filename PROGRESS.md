@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [codex] 스토어 제출 준비 패키지 초안
+- **추가**: `docs/app-store-submission-pack.md`에 Google Play/App Store 등록 설명 초안, 스크린샷 후보, 리뷰 노트, 개인정보 답변 초안, 심사 리스크를 정리.
+- **근거**: 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 일치하도록 투자 추천 아님·결제 미제공·데이터 신선도·로그인 제공자 상태를 반영.
+- **연결**: `docs/app-packaging-final-checklist.md`, `docs/ornscore-owner-final-checklist.md`에서 새 스토어 제출 패키지를 참조하도록 갱신.
+- **다음 운영자 게이트**: 실기기 PWA 로그인 복귀 확인 후, Android TWA 우선 여부와 Play Console/패키지명/SHA-256 지문 확보 결정.
+
 ## 2026-06-28 · [codex] 앱 패키징 마감 게이트 추가
 - **수정**: `src/app/manifest.ts`의 깨진 앱 이름/설명/바로가기 문구를 복구해 홈 화면 설치 이름이 `오른스코어`로 정상 노출되도록 수정.
 - **추가**: `scripts/check-app-packaging.mjs`로 PWA manifest, 아이콘, 설치 도우미, 오프라인 안내, service worker 미등록, assetlinks 자리표시자 미배포를 한 번에 점검.

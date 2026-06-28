@@ -43,6 +43,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 스토어 제출 준비 패키지 초안 (2026-06-28, Codex)
+- `docs/app-store-submission-pack.md`를 추가했다. Google Play/App Store 등록 설명 초안, 스크린샷 후보, 리뷰 노트, 개인정보 답변 초안, 심사 리스크를 한 곳에 모았다.
+- 초안은 현재 공개 문구(`/about`, `/privacy`, `/terms`, `/pricing`)와 맞춰 작성했다. 투자 추천 아님, 유료 결제 미제공, Pro/Premium 가격 미확정, Naver 준비 중 상태를 유지한다.
+- `docs/app-packaging-final-checklist.md`와 `docs/ornscore-owner-final-checklist.md`에서 새 문서를 참조하도록 연결했다.
+- 다음 외부 게이트는 실기기 PWA 로그인 복귀 확인, Android TWA 우선 여부 결정, Play Console/패키지명/SHA-256 지문 확보.
+
 ### 앱 패키징 마감 게이트 추가 (2026-06-28, Codex)
 - `src/app/manifest.ts`의 깨진 앱 이름/설명/shortcuts 문구를 정상 한국어로 복구했다. 설치 이름은 `오른스코어`, 긴 이름은 `오른스코어 — 한국 주식 탐색 도구`.
 - `scripts/check-app-packaging.mjs`와 `npm run app:check`를 추가해 PWA 아이콘, manifest 필드, 설치 도우미, 오프라인 안내, service worker 미등록, assetlinks 자리표시자 미배포를 확인한다.

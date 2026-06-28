@@ -17,6 +17,7 @@
 - `src/app/offline/page.tsx`: 네트워크 필요 안내.
 - `scripts/check-app-packaging.mjs`: 앱 패키징 로컬 게이트.
 - `scripts/generate-assetlinks.mjs`: Android TWA용 `assetlinks.json` 생성기.
+- `docs/app-store-submission-pack.md`: Play/App Store 등록 문구, 개인정보 답변, 스크린샷, 리뷰 노트 초안.
 
 ## 실행 명령
 
@@ -39,6 +40,7 @@ npm run app:check
 - 관심 종목, 알림 설정, `/offline`, `/terms`, `/privacy`가 모바일 앱 모드에서 깨지지 않는지 확인.
 - Android TWA를 진행할 경우 Play Console 개발자 등록, 패키지명 확정, 앱 서명 SHA-256 지문 확보.
 - iOS App Store를 진행할 경우 Apple Developer Program, Mac/Xcode, 래퍼 방식 검토.
+- 스토어 등록을 시작할 경우 `docs/app-store-submission-pack.md`의 초안을 실제 콘솔 입력값에 맞게 최종 검토.
 
 ## 배포 전 금지
 
