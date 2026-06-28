@@ -9,7 +9,10 @@
  * 서버 컴포넌트가 dataStatus를 직렬화 props로 주입한다(클라이언트가 stocks.json을 번들하지 않도록).
  */
 import { useEffect, useId, useRef, useState } from "react";
-import type { DataStatus, DataStatusKind, DataSource } from "@/lib/dataStatus";
+import type { LocalizedDataStatus, DataStatusKind, DataSource } from "@/lib/dataStatus";
+import type { Locale } from "@/lib/i18n";
+import { useLanguage } from "@/components/LanguageProvider";
+import { trustModalCopy } from "@/lib/copy/trust";
 import { DataStatusBadge, AsOfDateBadge, MetricsVersionBadge } from "./badges";
 
 const TONE_RING: Record<DataStatusKind, string> = {
@@ -78,13 +81,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 /** 데이터 기준과 출처 모달 — 트리거 버튼 + 다이얼로그. */
 export function DataTrustModal({
   status,
-  triggerLabel = "데이터 기준 보기",
+  triggerLabel,
   triggerClassName = "",
 }: {
-  status: DataStatus;
+  status: LocalizedDataStatus;
   triggerLabel?: string;
   triggerClassName?: string;
 }) {
+  const { locale } = useLanguage();
+  const t = trustModalCopy[locale];
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -116,7 +121,7 @@ export function DataTrustModal({
           triggerClassName
         }
       >
-        {triggerLabel}
+        {triggerLabel ?? t.trigger}
       </button>
 
       {open ? (
@@ -133,13 +138,13 @@ export function DataTrustModal({
           >
             <div className="flex items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800 px-4 py-3 sticky top-0 bg-white dark:bg-zinc-900">
               <h2 id={titleId} className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                데이터 기준과 출처
+                {t.title}
               </h2>
               <button
                 ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="닫기"
+                aria-label={t.close}
                 className="rounded p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -149,14 +154,14 @@ export function DataTrustModal({
             </div>
 
             <div className="px-4 py-4 space-y-4">
-              <Section title="기준일">
+              <Section title={t.secDate}>
                 <div>
-                  <span className="text-zinc-500 dark:text-zinc-400">가격·점수 기준 </span>
-                  <AsOfDateBadge label={status.globalAsOfLabel} />
+                  <span className="text-zinc-500 dark:text-zinc-400">{t.priceBasis} </span>
+                  <AsOfDateBadge label={status.globalAsOfLabel} suffix={t.marketClose} />
                 </div>
               </Section>
 
-              <Section title="출처">
+              <Section title={t.secSources}>
                 <ul className="space-y-1">
                   {status.sources.map((s) => (
                     <li key={s.id} className="flex gap-1.5">
@@ -167,22 +172,22 @@ export function DataTrustModal({
                 </ul>
               </Section>
 
-              <Section title="산식">
+              <Section title={t.secMetrics}>
                 <MetricsVersionBadge label={status.metricsVersionLabel} />
                 {status.metricsEffectiveDate ? (
                   <span className="ml-1.5 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-                    적용 {status.metricsEffectiveDate}
+                    {t.metricsApplied} {status.metricsEffectiveDate}
                   </span>
                 ) : null}
-                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">현재 운영 중인 지표 계산식 버전입니다.</div>
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.metricsDesc}</div>
               </Section>
 
-              <Section title="상태">
+              <Section title={t.secStatus}>
                 <DataStatusBadge tone={status.statusTone} label={status.statusLabel} />
                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{status.statusMeaning}</div>
               </Section>
 
-              <Section title="제한">
+              <Section title={t.secLimits}>
                 <ul className="space-y-1 text-[12px] text-zinc-600 dark:text-zinc-300">
                   <li>· {status.limits.disclosure}</li>
                   <li>· {status.limits.backtest}</li>
@@ -190,7 +195,7 @@ export function DataTrustModal({
               </Section>
 
               <div className={"rounded-lg border bg-zinc-50/70 dark:bg-zinc-800/40 px-3 py-2 " + TONE_RING[status.statusTone]}>
-                <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-0.5">투자 고지</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-0.5">{t.secNotice}</div>
                 <p className="text-[12px] text-zinc-600 dark:text-zinc-300 leading-relaxed">{status.notices.investment}</p>
               </div>
             </div>
@@ -206,7 +211,9 @@ export function DataTrustModal({
  * 데스크톱: 기준일 · 상태 · 산식 + 출처 배지 + 상세 트리거.
  * 모바일(compact): "{기준일} 장마감 · {상태}" 1줄 + 상세 트리거.
  */
-export function DataTrustBar({ status }: { status: DataStatus }) {
+export function DataTrustBar({ status }: { status: LocalizedDataStatus }) {
+  const { locale } = useLanguage();
+  const t = trustModalCopy[locale];
   return (
     <div className="flex items-center justify-between gap-2 text-[11px]">
       {/* 데스크톱 */}
@@ -223,11 +230,26 @@ export function DataTrustBar({ status }: { status: DataStatus }) {
       {/* 모바일 압축형 */}
       <div className="flex sm:hidden items-center gap-1.5 min-w-0 text-zinc-600 dark:text-zinc-300 truncate">
         <strong className="tabular-nums text-zinc-900 dark:text-zinc-100">{status.marketDateLabel}</strong>
-        <span className="text-zinc-500">장마감</span>
+        <span className="text-zinc-500">{t.marketClose}</span>
         <span className="text-zinc-300 dark:text-zinc-600">·</span>
         <DataStatusBadge tone={status.statusTone} label={status.statusLabel} />
       </div>
       <DataTrustModal status={status} triggerClassName="shrink-0" />
     </div>
   );
+}
+
+/**
+ * 로케일 인식 모달 래퍼 — 서버가 dataStatusByLocale(ko/en)를 직렬화 props로 주입하면
+ * 현재 로케일에 맞는 status를 골라 DataTrustModal에 넘긴다(클라이언트가 stocks.json 미번들).
+ */
+export function LocalizedDataTrustModal({
+  statusByLocale,
+  triggerClassName = "",
+}: {
+  statusByLocale: Record<Locale, LocalizedDataStatus>;
+  triggerClassName?: string;
+}) {
+  const { locale } = useLanguage();
+  return <DataTrustModal status={statusByLocale[locale]} triggerClassName={triggerClassName} />;
 }

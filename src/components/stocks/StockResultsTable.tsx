@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { fmtWon } from "@/lib/format";
 import { scoreColorOf } from "@/lib/scoreColor";
+import { useLanguage } from "@/components/LanguageProvider";
+import { stocksCopy } from "@/lib/copy/stocks";
 
 // /stocks 데스크톱 점수 히트맵 테이블 — 카드와 같은 점수 색 규칙(scoreColor)을 쓴다.
 // 모바일에서는 렌더하지 않는다(상위 StocksExplorer가 lg:block로만 노출).
@@ -26,20 +30,29 @@ export interface StockRowVM {
   sector?: string;
 }
 
+// 신호 칩 라벨 — 로케일 copy의 t.signal 형태. 기본값은 한국어(서버/구버전 호출 호환).
+// 값은 로케일별로 다르므로 키만 고정하고 값은 string으로 넓힌다(ko/en 모두 대입 가능).
+type SignalLabels = Record<keyof (typeof stocksCopy)["ko"]["signal"], string>;
+const KO_SIGNAL: SignalLabels = stocksCopy.ko.signal;
+
 // 점수에서 파생한 신호 칩(강점/주의) — 카드 리스트와 동일 규칙. 공시 실데이터를 날조하지 않는다.
-export function deriveSignals(s: { momentum: number; flow: number; value: number; vol: number; changePct: number; r3m?: number | null }): { strengths: string[]; warnings: string[] } {
+// 라벨은 로케일 copy(sig)에서 주입한다(미전달 시 한국어).
+export function deriveSignals(
+  s: { momentum: number; flow: number; value: number; vol: number; changePct: number; r3m?: number | null },
+  sig: SignalLabels = KO_SIGNAL,
+): { strengths: string[]; warnings: string[] } {
   const strengths: string[] = [];
-  if (s.momentum >= 70) strengths.push("추세 강함");
-  if (s.flow >= 70) strengths.push("거래 활발");
-  if (s.value >= 70) strengths.push("저평가 가능");
-  if (s.vol >= 70) strengths.push("위험 대비 양호");
+  if (s.momentum >= 70) strengths.push(sig.strongTrend);
+  if (s.flow >= 70) strengths.push(sig.activeTrade);
+  if (s.value >= 70) strengths.push(sig.undervalued);
+  if (s.vol >= 70) strengths.push(sig.goodRisk);
   const warnings: string[] = [];
-  if (s.momentum < 40) warnings.push("추세 약함");
-  if (s.flow < 40) warnings.push("거래 부진");
-  if (s.value < 40) warnings.push("밸류 부담");
-  if (s.vol < 40) warnings.push("변동성 큼");
-  if (s.changePct < 0) warnings.push("가격 하락 중");
-  if (s.r3m != null && s.r3m >= 50) warnings.push("급등 주의");
+  if (s.momentum < 40) warnings.push(sig.weakTrend);
+  if (s.flow < 40) warnings.push(sig.lowTrade);
+  if (s.value < 40) warnings.push(sig.valueBurden);
+  if (s.vol < 40) warnings.push(sig.highVol);
+  if (s.changePct < 0) warnings.push(sig.priceFalling);
+  if (s.r3m != null && s.r3m >= 50) warnings.push(sig.surgeCaution);
   return { strengths, warnings };
 }
 
@@ -61,27 +74,29 @@ const TH = "px-2.5 py-2 font-semibold text-zinc-500 dark:text-zinc-400 whitespac
 const TD = "px-2.5 py-2 align-middle whitespace-nowrap";
 
 export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
+  const { locale } = useLanguage();
+  const t = stocksCopy[locale];
   return (
     <div className="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
           <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/70">
-            <th className={TH + " text-left"}>종목명</th>
-            <th className={TH}>업종</th>
-            <th className={TH + " text-right"}>현재가</th>
-            <th className={TH + " text-right"}>등락률</th>
-            <th className={TH + " text-center"}>종합점수</th>
-            <th className={TH + " text-center"}>추세</th>
-            <th className={TH + " text-center"}>거래활성도</th>
-            <th className={TH + " text-center"}>밸류</th>
-            <th className={TH + " text-center"}>위험조정</th>
-            <th className={TH}>신호</th>
-            <th className={TH + " text-right"}>액션</th>
+            <th className={TH + " text-left"}>{t.table.name}</th>
+            <th className={TH}>{t.table.sector}</th>
+            <th className={TH + " text-right"}>{t.table.price}</th>
+            <th className={TH + " text-right"}>{t.table.change}</th>
+            <th className={TH + " text-center"}>{t.table.composite}</th>
+            <th className={TH + " text-center"}>{t.table.momentum}</th>
+            <th className={TH + " text-center"}>{t.table.flow}</th>
+            <th className={TH + " text-center"}>{t.table.value}</th>
+            <th className={TH + " text-center"}>{t.table.vol}</th>
+            <th className={TH}>{t.table.signal}</th>
+            <th className={TH + " text-right"}>{t.table.action}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((s) => {
-            const { strengths, warnings } = deriveSignals(s);
+            const { strengths, warnings } = deriveSignals(s, t.signal);
             const chips = [...strengths.slice(0, 1), ...warnings.slice(0, 1)];
             const up = s.changePct >= 0;
             return (
@@ -92,7 +107,7 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono tabular-nums">{s.ticker} · {s.market}</span>
                   </Link>
                 </td>
-                <td className={TD + " text-zinc-600 dark:text-zinc-400"}>{s.sector ?? "기타"}</td>
+                <td className={TD + " text-zinc-600 dark:text-zinc-400"}>{s.sector ?? t.table.sectorEtc}</td>
                 <td className={TD + " text-right tabular-nums text-zinc-900 dark:text-zinc-100"}>{fmtWon(s.currentPrice)}</td>
                 <td className={TD + " text-right tabular-nums " + (up ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
                   {up ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
@@ -118,7 +133,7 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
                 </td>
                 <td className={TD + " text-right"}>
                   <Link prefetch={false} href={"/stock/" + s.ticker} className="inline-flex items-center px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap">
-                    확인
+                    {t.table.view}
                   </Link>
                 </td>
               </tr>

@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
 import { AiAnalysisCard } from "@/components/AiAnalysisCard";
@@ -26,6 +25,15 @@ import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/Stoc
 import { classifyConclusion } from "@/lib/conclusion";
 import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
 import { buildScoreBasis } from "@/lib/scoreBasis";
+import {
+  StockBreadcrumb,
+  MetricsSectionHeader,
+  RiskDetailCard,
+  DataBasisCard,
+  SectorValueCard,
+  FinancialsSection,
+  DataWarningsBanner,
+} from "@/components/stock/StockDetailIntro";
 
 export const revalidate = 3600;
 
@@ -237,11 +245,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       />
       <RecentViewTracker ticker={s.ticker} name={s.name} />
 
-      <nav className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
-        <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-100">홈</Link><span>›</span>
-        <Link href="/stocks" className="hover:text-zinc-900 dark:hover:text-zinc-100">종목 탐색</Link><span>›</span>
-        <span className="text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-      </nav>
+      <StockBreadcrumb name={s.name} />
 
       <StockConclusionHero
         sector={mySector}
@@ -274,7 +278,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         tabs={[
           {
             id: "summary",
-            label: "요약",
+            labelKey: "summary",
             content: (
               <>
       {/* 주가 차트 (가격 데이터 있을 때만) */}
@@ -284,10 +288,7 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       {/* 자체 지표 4종 (점수 카드) */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <div className="flex items-baseline justify-between mb-3">
-          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">자체 지표 4종 <span className="text-[10px] font-normal text-zinc-400">전체 {poolN}종목 대비</span></div>
-          <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline">지표 가이드 →</Link>
-        </div>
+        <MetricsSectionHeader poolN={poolN} />
         <MetricInsightCards metrics={[
           { label: "추세", kind: "momentum", score: s.momentum, topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN },
           { label: "거래활성도", kind: "flow", score: s.flow, topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN },
@@ -298,39 +299,21 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       {/* 위험 상세 — 위험조정 점수와 별개로 실제 변동성·낙폭 (설계서 6.4) */}
       {vs && (vs.annualStd != null || vs.maxDrawdown != null) ? (
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">위험 상세 <span className="text-[10px] font-normal text-zinc-400">위험조정 점수와 별개</span></div>
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">관측 {vs.days ?? 0}거래일 · 신뢰도 {(() => { const d = vs?.days ?? 0; return d >= 252 ? "정상" : d >= 200 ? "보통" : d >= 120 ? "낮음" : "부족"; })()}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
-              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">연환산 변동성</div>
-              <div className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{vs.annualStd != null ? vs.annualStd.toFixed(1) + "%" : "—"}</div>
-            </div>
-            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
-              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">최대낙폭</div>
-              <div className="text-sm font-semibold tabular-nums text-rose-600 dark:text-rose-400">{vs.maxDrawdown != null ? vs.maxDrawdown.toFixed(1) + "%" : "—"}</div>
-            </div>
-            <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
-              <div className="text-[10px] text-zinc-500 dark:text-zinc-400">최악의 하루</div>
-              <div className="text-sm font-semibold tabular-nums text-rose-600 dark:text-rose-400">{vs.worstDay != null ? vs.worstDay.toFixed(1) + "%" : "—"}</div>
-            </div>
-          </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">위험조정 점수가 높아도 절대 변동성이 낮거나 향후 하락 위험이 작다는 의미는 아닙니다.</p>
-        </section>
+        <RiskDetailCard
+          days={vs.days ?? 0}
+          annualStd={vs.annualStd ?? null}
+          maxDrawdown={vs.maxDrawdown ?? null}
+          worstDay={vs.worstDay ?? null}
+        />
       ) : null}
 
       {/* 데이터 기준 (설계서 12.2) */}
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-3">
-        <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 mb-1.5">데이터 기준</div>
-        <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-          <div>주가 <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} 장마감</span></div>
-          <div>분석 대상 <span className="text-zinc-700 dark:text-zinc-300">{poolN}종목</span></div>
-          <div>점수 계산 <span className="text-zinc-700 dark:text-zinc-300">{formatBizDateLong(dataMetadata.asOfBusinessDate)}</span></div>
-          <div>산식 버전 <span className="text-zinc-700 dark:text-zinc-300">{dataStatus.metricsVersionLabel}</span></div>
-        </div>
-      </div>
+      <DataBasisCard
+        priceAsOf={priceAsOf}
+        poolN={poolN}
+        scoreDate={formatBizDateLong(dataMetadata.asOfBusinessDate)}
+        formulaVersion={dataStatus.metricsVersionLabel}
+      />
 
       {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
       <BeginnerReading s={{
@@ -343,31 +326,15 @@ export default async function StockDetailPage({ params }: PageProps) {
         roe: s.roe,
       }} />
 
-      {sectorValue.score >= 0 ? (() => {
-        // 동종 비교 표본이 10개 미만이면 강한 강조(큰 cyan 숫자) 대신 중립 톤으로 낮춰 "참고만"임을 보인다.
-        // 점수 산식(sectorValueScore)은 무변경 — 표시/문구만 분기. (표본 부족 peers<4는 아래 else 분기에서 미제공)
-        const lowSample = sectorValue.peers < 10;
-        return (
-        <div className={"rounded-lg border p-3 flex items-center justify-between gap-3 " + (lowSample ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40" : "border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20")}>
-          <div className="min-w-0">
-            <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>업종 대비 밸류 · {sectorValue.sector} <span className={"font-normal " + (lowSample ? "text-zinc-400 dark:text-zinc-500" : "text-cyan-700/70 dark:text-cyan-400/70")}>(위 밸류 점수와 기준 다름)</span></div>
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">같은 업종 {sectorValue.peers}개(본인 제외) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체 {poolN}종목 풀 기준({Math.round(s.value)}점)</div>
-            {lowSample ? (
-              <div className="text-[10px] font-medium text-amber-600 dark:text-amber-400 mt-1">표본 작음 · 참고만 — 동종 비교 종목이 10개 미만이라 업종 내 위치는 참고용입니다. 충분한 표본이 모이면 강조 표시됩니다.</div>
-            ) : null}
-          </div>
-          <div className="text-right shrink-0">
-            <span className={"font-bold tabular-nums " + (lowSample ? "text-base text-zinc-500 dark:text-zinc-400" : "text-lg text-cyan-700 dark:text-cyan-400")}>{sectorValue.score}</span>
-            <span className="text-[10px] text-zinc-400">/100</span>
-          </div>
-        </div>
-        );
-      })() : (
-        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
-          <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-300 font-semibold">업종 대비 밸류 · {sectorValue.sector}</div>
-          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">같은 업종 비교 표본(PER·PBR 보유 종목 {sectorValue.peers}개)이 부족해 업종 내 상대 밸류는 아직 제공하지 않습니다. 위 4지표 밸류는 전체 {poolN}종목 풀 기준이며, 업종 기준 보정은 후속 과제로 남겨둡니다.</div>
-        </div>
-      )}
+      {/* 업종 대비 밸류 — 점수 산식(sectorValueScore) 무변경. 표시/문구만 SectorValueCard에서 분기 */}
+      <SectorValueCard
+        hasScore={sectorValue.score >= 0}
+        sectorName={sectorValue.sector}
+        peers={sectorValue.peers}
+        score={sectorValue.score}
+        poolN={poolN}
+        valueScore={s.value}
+      />
 
       <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
 
@@ -376,48 +343,20 @@ export default async function StockDetailPage({ params }: PageProps) {
           },
           {
             id: "financials",
-            label: "재무",
+            labelKey: "financials",
             content: (
-              <>
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {[
-          { l: "PER(최근 실적)", v: s.per > 0 ? s.per.toFixed(1) + "배" : "—" },
-          { l: "PBR", v: s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—" },
-          { l: "ROE", v: s.roe !== 0 ? s.roe.toFixed(1) + "%" : "—" },
-          { l: "배당수익률", v: s.dividendYield > 0 ? s.dividendYield.toFixed(2) + "%" : "0%" },
-        ].map((m) => (
-          <div key={m.l} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 md:p-3">
-            <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-0.5">{m.l}</div>
-            <div className="text-base md:text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{m.v}</div>
-          </div>
-        ))}
-      </section>
-
-      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
-        PER·PBR은 <strong>최근 실적(후행) 기준</strong>이며 현재가에 따라 매일 달라집니다. 향후 이익을 반영한 예상(Forward) PER과는 다릅니다. 적자(EPS 0 이하)·결측 종목은 밸류 점수를 임의값으로 채우지 않고 <strong>—</strong>로 표시합니다.
-      </p>
-
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <div className="text-sm font-semibold mb-2 text-zinc-900 dark:text-zinc-100">소속 테마 {s.themes.length}</div>
-        <div className="flex gap-1.5 flex-wrap">
-          {s.themes.map((t, i) => (
-            <Link
-              key={t}
-              href={"/stocks?theme=" + encodeURIComponent(t)}
-              className={"text-[11px] px-2 py-1 rounded-md font-medium hover:opacity-80 transition " + (i === 0 ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300")}
-            >
-              {t}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-              </>
+              <FinancialsSection
+                per={s.per}
+                pbr={s.pbr}
+                roe={s.roe}
+                dividendYield={s.dividendYield}
+                themes={s.themes}
+              />
             ),
           },
           {
             id: "disclosures",
-            label: "공시",
+            labelKey: "disclosures",
             content: (
               <>
       <section><StockDisclosures ticker={s.ticker} /></section>              </>
@@ -425,24 +364,10 @@ export default async function StockDetailPage({ params }: PageProps) {
           },
           {
             id: "basis",
-            label: "점수 근거",
+            labelKey: "basis",
             content: (
               <>
-      {dataWarnings.length > 0 ? (
-        <section className="rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 md:p-4">
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="text-sm">⚠️</span>
-            <strong className="text-xs md:text-sm font-semibold text-amber-900 dark:text-amber-200">데이터 점검 필요</strong>
-          </div>
-          <ul className="list-none pl-0 space-y-1">
-            {dataWarnings.map((w, i) => (
-              <li key={i} className="text-[11px] md:text-xs text-amber-800 dark:text-amber-300 leading-snug flex gap-1.5">
-                <span className="shrink-0">·</span><span>{w}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <DataWarningsBanner warnings={dataWarnings} />
 
       {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2) */}
       <ScoreBasisBreakdown basis={scoreBasis} />

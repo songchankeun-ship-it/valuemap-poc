@@ -1,5 +1,9 @@
+"use client";
+
 import { ScoreTooltip, type ScoreKind } from "@/components/ScoreTooltip";
 import { scoreColorOf } from "@/lib/scoreColor";
+import { useLanguage } from "@/components/LanguageProvider";
+import { metricInsightCardsCopy, stockDetailCopy } from "@/lib/copy/stockDetail";
 import {
   readMomentum,
   readFlow,
@@ -41,6 +45,9 @@ function readingFor(m: MetricInsight): Reading {
  * 문구는 @/lib/metricReadings 단일 소스(초보자 해석 카드와 공유) — 표시 전용, 점수 계산 무변경.
  */
 export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
+  const { locale } = useLanguage();
+  const t = metricInsightCardsCopy[locale];
+  const metricLabels = stockDetailCopy[locale].metricLabels;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
       {metrics.map((m) => {
@@ -49,14 +56,15 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
         const r = readingFor(m);
         const isTop = m.topPct <= 50;
         const cautionTag = r.tone === "caution";
+        const label = metricLabels[m.kind];
         return (
           <div
-            key={m.label}
+            key={m.kind}
             className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                {m.label}
+                {label}
                 <ScoreTooltip kind={m.kind} />
               </span>
               <span className={"text-[10px] font-medium shrink-0 " + c.text}>{c.label}</span>
@@ -64,7 +72,7 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
 
             {/* 점수(0~100) — 순위와 다른 줄·다른 라벨로 분리해 같은 숫자로 보이지 않게 */}
             <div className="flex items-baseline gap-1.5">
-              <span className="text-[10px] text-zinc-400 dark:text-zinc-500">점수</span>
+              <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.scoreLabel}</span>
               <span className={"text-2xl font-bold leading-none tabular-nums " + c.text}>{v}</span>
               <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">/ 100</span>
             </div>
@@ -75,20 +83,20 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
 
             {/* 상대순위 — 점수와 별개 지표 */}
             <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-              전체 상대순위 <strong className="text-zinc-700 dark:text-zinc-300">{m.rank}</strong> / {m.total}위
-              <span className="text-zinc-400 dark:text-zinc-500"> · {isTop ? `상위 ${m.topPct}%` : `하위 ${100 - m.topPct}%`}</span>
+              {t.rankPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{m.rank}</strong> / {m.total}{t.rankSuffix}
+              <span className="text-zinc-400 dark:text-zinc-500"> · {isTop ? `${t.topPctPrefix} ${m.topPct}%` : `${t.bottomPctPrefix} ${100 - m.topPct}%`}</span>
             </div>
 
             {m.kind === "value" ? (
-              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 leading-snug">전체 풀 기준 점수 · 업종 내 상대 위치는 아래 ‘업종 대비 밸류’ 참고</div>
+              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 leading-snug">{t.valueNote}</div>
             ) : null}
 
             <p className="text-[11px] text-zinc-700 dark:text-zinc-300 leading-snug">
-              <span className="font-semibold text-zinc-500 dark:text-zinc-400">해석:</span> {r.meaning}
+              <span className="font-semibold text-zinc-500 dark:text-zinc-400">{t.interpretLabel}</span> {r.meaning}
             </p>
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug flex gap-1">
               <span className={"shrink-0 font-semibold " + (cautionTag ? "text-amber-600 dark:text-amber-400" : "text-blue-600 dark:text-blue-400")}>
-                {cautionTag ? "주의" : "확인"}
+                {cautionTag ? t.cautionTag : t.confirmTag}
               </span>
               <span>{r.action}</span>
             </p>

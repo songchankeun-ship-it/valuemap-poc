@@ -10,9 +10,8 @@ import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { dataStatus } from "@/lib/dataStatus";
-import { MetricsVersionBadge } from "./trust/badges";
-import { DataTrustModal } from "./trust/TrustLayer";
+import { dataStatus, dataStatusByLocale } from "@/lib/dataStatus";
+import { HeaderDataBar, HeaderStockCount } from "./HeaderDataBar";
 
 function formatGeneratedAt(iso?: string): string {
   if (!iso) return "";
@@ -81,7 +80,7 @@ export async function AppHeader() {
 
           <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <CompareBadge />
-            <span className="hidden md:inline text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{dataMetadata.count}개 종목</span>
+            <HeaderStockCount count={dataMetadata.count} />
             <LanguageSwitcher compact />
             <div className="hidden md:block">
               <ThemeToggle compact />
@@ -91,38 +90,15 @@ export async function AppHeader() {
         </div>
       </header>
 
-      <div className={isStale ? "bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900" : "bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800"}>
-        <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px]">
-          <div className={"flex items-center gap-1.5 md:gap-2 min-w-0 " + (isStale ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-400")}>
-            <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
-            <span className="truncate">
-              {businessDate !== "데이터 준비 중" ? (
-                <>
-                  {/* 모바일: 짧고 명확한 형태 */}
-                  <span className="sm:hidden">
-                    <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDateShort}</strong>
-                    <span className="ml-1 text-zinc-500 dark:text-zinc-500">장마감</span>
-                  </span>
-                  {/* 데스크톱: 단일 기준일만 */}
-                  <span className="hidden sm:inline">
-                    데이터 기준{" "}
-                    <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
-                    <span className="text-zinc-500 dark:text-zinc-500"> 장마감</span>
-                  </span>
-                  {isStale ? <span className="ml-1.5 font-semibold">· {bizDaysSince}영업일 전</span> : null}
-                </>
-              ) : (
-                <span className="text-zinc-500 dark:text-zinc-500">데이터 준비 중</span>
-              )}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
-            <span className="hidden sm:inline-flex"><MetricsVersionBadge label={dataStatus.metricsVersionLabel} /></span>
-            <DataTrustModal status={dataStatus} />
-          </div>
-        </div>
-      </div>
+      <HeaderDataBar
+        businessDate={businessDate}
+        businessDateShort={businessDateShort}
+        bizDaysSince={bizDaysSince}
+        isStale={isStale}
+        hasData={businessDate !== "데이터 준비 중"}
+        metricsVersionLabel={dataStatus.metricsVersionLabel}
+        statusByLocale={dataStatusByLocale}
+      />
 
       <WelcomeToast />
     </>

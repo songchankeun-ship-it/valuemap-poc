@@ -1,5 +1,9 @@
+"use client";
+
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import type { ReactNode } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { priorityScoreCardCopy } from "@/lib/copy/stockDetail";
 
 function DataStatusPill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "good" | "warn" }) {
   const toneClass =
@@ -41,9 +45,11 @@ export function PriorityScoreCard({
   metricsVersion?: string | null;
   suspect: boolean;
 }) {
+  const { locale } = useLanguage();
+  const t = priorityScoreCardCopy[locale];
   return (
     <div className={"rounded-xl border p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20" : "border-indigo-200 dark:border-indigo-900 bg-indigo-50/40 dark:bg-indigo-950/20")}>
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-indigo-700 dark:text-indigo-300">탐색 우선도</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-indigo-700 dark:text-indigo-300">{t.title}</div>
 
       <div className="mt-2 flex items-center gap-3">
         {suspect ? (
@@ -57,19 +63,19 @@ export function PriorityScoreCard({
         )}
 
         <div className="min-w-0 space-y-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
-          <div className="text-[10px] text-zinc-400 dark:text-zinc-500">상대순위 <span className="font-normal">(점수와 별개)</span></div>
-          <div>전체 <strong className="text-zinc-900 dark:text-zinc-100">{overallRank}</strong> / {poolN}위</div>
-          <div className="truncate">업종({sector}) <strong className="text-zinc-900 dark:text-zinc-100">{sectorRank}</strong> / {sectorCount}위</div>
+          <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.rankLabel} <span className="font-normal">{t.rankParen}</span></div>
+          <div>{t.overallPrefix} <strong className="text-zinc-900 dark:text-zinc-100">{overallRank}</strong> / {poolN}{t.rankSuffix}</div>
+          <div className="truncate">{t.sectorPrefix}({sector}) <strong className="text-zinc-900 dark:text-zinc-100">{sectorRank}</strong> / {sectorCount}{t.rankSuffix}</div>
         </div>
       </div>
 
       {/* 데이터 상태 배지 — 각각 독립 pill로 분리(텍스트처럼 붙지 않게). */}
-      <div role="list" aria-label="데이터 상태 배지" className="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] tabular-nums">
-        <DataStatusPill>필수 데이터 {completeness}%</DataStatusPill>
+      <div role="list" aria-label={t.badgeAriaLabel} className="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] tabular-nums">
+        <DataStatusPill>{t.requiredDataPrefix} {completeness}%</DataStatusPill>
         {suspect ? (
-          <DataStatusPill tone="warn">이상값 점검 중 · 임시 점수</DataStatusPill>
+          <DataStatusPill tone="warn">{t.suspectPill}</DataStatusPill>
         ) : (
-          <DataStatusPill tone="good">이상값 점검 통과</DataStatusPill>
+          <DataStatusPill tone="good">{t.passPill}</DataStatusPill>
         )}
         {metricsVersion ? (
           <DataStatusPill>{metricsVersion}</DataStatusPill>

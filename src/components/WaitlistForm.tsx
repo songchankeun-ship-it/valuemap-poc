@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { waitlistCopy } from "@/lib/copy/pricing";
 
 export function WaitlistForm({ source = "pricing" }: { source?: string }) {
+  const { locale } = useLanguage();
+  const t = waitlistCopy[locale];
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -19,14 +23,14 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
       const j = await r.json();
       if (r.ok) {
         setStatus("done");
-        setMsg(j.already ? "이미 등록돼 있어요. 출시되면 가장 먼저 알려드릴게요!" : "등록 완료! 출시되면 가장 먼저 알려드릴게요.");
+        setMsg(j.already ? t.doneAlready : t.doneNew);
       } else {
         setStatus("error");
-        setMsg(j.error || "오류가 발생했어요.");
+        setMsg(j.error || t.errorGeneric);
       }
     } catch {
       setStatus("error");
-      setMsg("네트워크 오류 — 잠시 후 다시 시도해주세요.");
+      setMsg(t.errorNetwork);
     }
   }
 
@@ -45,7 +49,7 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="이메일 주소"
+        placeholder={t.placeholder}
         className="flex-1 min-w-[180px] px-3 py-2.5 text-sm border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500"
       />
       <button
@@ -53,7 +57,7 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
         disabled={status === "loading"}
         className="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 shrink-0"
       >
-        {status === "loading" ? "등록 중..." : "출시 알림 받기"}
+        {status === "loading" ? t.submitting : t.submit}
       </button>
       {status === "error" ? <p className="w-full text-xs text-rose-600">{msg}</p> : null}
     </form>

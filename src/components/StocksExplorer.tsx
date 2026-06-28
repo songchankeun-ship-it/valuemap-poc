@@ -7,6 +7,9 @@ import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch,
 import { addConditionAlert } from "@/lib/conditionAlerts";
 import { DataStatusBadge } from "@/components/trust/badges";
 import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResultsTable";
+import { useLanguage } from "@/components/LanguageProvider";
+import { stocksCopy } from "@/lib/copy/stocks";
+import type { Locale } from "@/lib/i18n";
 
 interface Stock {
   ticker: string;
@@ -91,42 +94,40 @@ interface PresetConfig {
 
 interface Preset {
   id: string;
-  label: string;
-  desc: string;
   config: PresetConfig;
 }
 
 interface QuestionPreset extends Preset {
-  symbol: string;   // 카드 심볼(아이콘 대용)
-  explain: string;  // 현재 조건 요약 바의 자연어 설명(소문자 이어쓰기)
-  caution?: string; // 위험 고지가 필요한 질문에만
+  symbol: string;   // 카드 심볼(아이콘 대용) — 데이터성 이모지, 번역 안 함
 }
 
 // 빠른 프리셋 — 질문형보다 가볍고 빠른 보조 필터(칩). 단일 선택.
+// 라벨/설명 문구는 stocksCopy.preset[id]에서 로케일별로 가져온다(여기엔 동작 config만).
 const PRESETS: Preset[] = [
-  { id: "lowper", label: "저평가", desc: "PER 15 이하 · 밸류 정렬", config: { perMax: 15, sortKey: "value", sortDir: "desc" } },
-  { id: "momentum", label: "추세 강세", desc: "추세 강한 종목 · 종합 60+", config: { minComposite: 60, sortKey: "momentum", sortDir: "desc" } },
-  { id: "lowpbr", label: "저PBR", desc: "PBR 1.0 이하 · 밸류 정렬", config: { pbrMax: 1.0, sortKey: "value", sortDir: "desc" } },
-  { id: "value-momentum", label: "밸류+추세", desc: "두 지표 모두 우호적 · 종합 70+", config: { minComposite: 70, sortKey: "compositeScore", sortDir: "desc" } },
-  { id: "balanced", label: "균형 종목", desc: "종합 80+", config: { minComposite: 80, sortKey: "compositeScore", sortDir: "desc" } },
-  { id: "roe", label: "ROE 우수", desc: "ROE 15%+ · ROE 정렬", config: { roeMin: 15, sortKey: "roe", sortDir: "desc" } },
-  { id: "dividend", label: "배당 있음", desc: "배당 1%+ · 배당 정렬", config: { divYieldMin: 1, sortKey: "dividendYield", sortDir: "desc" } },
-  { id: "bigcap", label: "대형주", desc: "대형 5조+ · 시총 정렬", config: { capBucket: "large", sortKey: "marketCap", sortDir: "desc" } },
-  { id: "smallcap", label: "소형주", desc: "소형 1조- · 밸류 정렬", config: { capBucket: "small", sortKey: "value", sortDir: "desc" } },
-  { id: "surge", label: "급등 위험", desc: "3개월 상승률 높은순 · 급등 사유 확인", config: { sortKey: "r3m", sortDir: "desc" } },
-  { id: "active", label: "거래 급증", desc: "거래활성도 높은순", config: { sortKey: "flow", sortDir: "desc" } },
+  { id: "lowper", config: { perMax: 15, sortKey: "value", sortDir: "desc" } },
+  { id: "momentum", config: { minComposite: 60, sortKey: "momentum", sortDir: "desc" } },
+  { id: "lowpbr", config: { pbrMax: 1.0, sortKey: "value", sortDir: "desc" } },
+  { id: "value-momentum", config: { minComposite: 70, sortKey: "compositeScore", sortDir: "desc" } },
+  { id: "balanced", config: { minComposite: 80, sortKey: "compositeScore", sortDir: "desc" } },
+  { id: "roe", config: { roeMin: 15, sortKey: "roe", sortDir: "desc" } },
+  { id: "dividend", config: { divYieldMin: 1, sortKey: "dividendYield", sortDir: "desc" } },
+  { id: "bigcap", config: { capBucket: "large", sortKey: "marketCap", sortDir: "desc" } },
+  { id: "smallcap", config: { capBucket: "small", sortKey: "value", sortDir: "desc" } },
+  { id: "surge", config: { sortKey: "r3m", sortDir: "desc" } },
+  { id: "active", config: { sortKey: "flow", sortDir: "desc" } },
 ];
 
 // 질문형 프리셋 — 자연어 질문 그대로 클릭. /stocks의 핵심 시작점.
+// 라벨/설명/고지 문구는 stocksCopy.qPreset[id]에서 로케일별로 가져온다.
 const QUESTION_PRESETS: QuestionPreset[] = [
-  { id: "q-cheap-active", symbol: "🔍", label: "싸고 거래 늘었나?", desc: "밸류가 낮고 최근 거래 관심이 늘어난 종목", explain: "밸류가 낮으면서 최근 거래 관심이 늘어난 종목을 찾습니다.", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
-  { id: "q-good-earner", symbol: "💰", label: "돈 잘 버는 회사?", desc: "ROE가 높고 수익성이 확인되는 종목", explain: "ROE가 높고 수익성이 확인되는 종목을 찾습니다.", config: { roeMin: 15, excludeLoss: true, sortKey: "roe", sortDir: "desc" } },
-  { id: "q-dividend", symbol: "🪙", label: "배당 주는 우량주?", desc: "배당이 있고 상대적으로 안정적인 종목", explain: "배당이 있고 상대적으로 안정적인 종목을 찾습니다.", config: { divYieldMin: 2, roeMin: 8, excludeLoss: true, sortKey: "dividendYield", sortDir: "desc" } },
-  { id: "q-bigcap-stable", symbol: "🏛️", label: "대형주 안정형?", desc: "시가총액이 크고 위험조정이 양호한 종목", explain: "시가총액이 크고 위험조정 점수가 양호한 종목을 찾습니다.", config: { capBucket: "large", volMin: 60, sortKey: "vol", sortDir: "desc" } },
-  { id: "q-small-value", symbol: "🌱", label: "숨은 소형 저평가?", desc: "작은 회사 중 밸류가 낮은 종목", explain: "시가총액이 작으면서 밸류가 낮은 종목을 찾습니다.", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
-  { id: "q-value-trend", symbol: "⚖️", label: "밸류 + 추세 동시?", desc: "밸류와 추세가 동시에 좋은 종목", explain: "밸류와 추세가 동시에 좋은 종목을 찾습니다.", config: { valueMin: 70, momentumMin: 70, volMin: 50, sortKey: "compositeScore", sortDir: "desc" } },
-  { id: "q-strong-trend", symbol: "📈", label: "최근 흐름 강한 종목?", desc: "최근 가격 흐름이 강한 종목", explain: "최근 가격 흐름이 강한 종목을 찾습니다.", caution: "추세는 빠르게 식을 수 있어 급등 사유 확인이 필요합니다.", config: { momentumMin: 80, sortKey: "momentum", sortDir: "desc" } },
-  { id: "q-surge-risk", symbol: "⚠️", label: "최근 상승폭이 커진 종목", desc: "최근 급등해 추가 확인이 필요한 종목", explain: "최근 3개월 상승률이 큰, 추가 확인이 필요한 종목을 보여줍니다.", caution: "급등 후 변동성이 큰 구간이라 급등 사유 확인이 필요합니다.", config: { sortKey: "r3m", sortDir: "desc" } },
+  { id: "q-cheap-active", symbol: "🔍", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
+  { id: "q-good-earner", symbol: "💰", config: { roeMin: 15, excludeLoss: true, sortKey: "roe", sortDir: "desc" } },
+  { id: "q-dividend", symbol: "🪙", config: { divYieldMin: 2, roeMin: 8, excludeLoss: true, sortKey: "dividendYield", sortDir: "desc" } },
+  { id: "q-bigcap-stable", symbol: "🏛️", config: { capBucket: "large", volMin: 60, sortKey: "vol", sortDir: "desc" } },
+  { id: "q-small-value", symbol: "🌱", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
+  { id: "q-value-trend", symbol: "⚖️", config: { valueMin: 70, momentumMin: 70, volMin: 50, sortKey: "compositeScore", sortDir: "desc" } },
+  { id: "q-strong-trend", symbol: "📈", config: { momentumMin: 80, sortKey: "momentum", sortDir: "desc" } },
+  { id: "q-surge-risk", symbol: "⚠️", config: { sortKey: "r3m", sortDir: "desc" } },
 ];
 
 // ── 순수 필터 로직: 상태(state)와 분리해 '예상 결과 수' 계산에 재사용 ──
@@ -199,42 +200,33 @@ function matchesConfig(s: Stock, c: FilterConfig): boolean {
   return true;
 }
 
-const SORT_BADGE: Partial<Record<SortKey, string>> = {
-  compositeScore: "종합점수순",
-  momentum: "추세순",
-  flow: "거래활성도순",
-  value: "밸류순",
-  vol: "위험조정순",
-  roe: "ROE순",
-  per: "PER 낮은순",
-  pbr: "PBR 낮은순",
-  dividendYield: "배당순",
-  marketCap: "시총순",
-  r3m: "3개월 상승률순",
-};
+type StocksCopyT = (typeof stocksCopy)[Locale];
 
 // 프리셋 config에서 실제 적용되는 조건 배지를 도출(표시 문구가 진짜 동작과 일치).
-function badgesFromConfig(c: PresetConfig): string[] {
+// 라벨은 로케일 copy(t)에서 가져온다.
+function badgesFromConfig(c: PresetConfig, t: StocksCopyT): string[] {
   const b: string[] = [];
-  if (c.minComposite) b.push(`종합 ${c.minComposite}+`);
-  if (c.momentumMin) b.push(`추세 ${c.momentumMin}+`);
-  if (c.flowMin) b.push(`거래활성도 ${c.flowMin}+`);
-  if (c.valueMin) b.push(`밸류 ${c.valueMin}+`);
-  if (c.volMin) b.push(`위험조정 ${c.volMin}+`);
-  if (c.perMax != null && c.perMax < 200) b.push(`PER ${c.perMax}↓`);
-  if (c.pbrMax != null && c.pbrMax < 30) b.push(`PBR ${c.pbrMax}↓`);
-  if (c.roeMin) b.push(`ROE ${c.roeMin}%+`);
-  if (c.divYieldMin) b.push(`배당 ${c.divYieldMin}%+`);
-  if (c.capBucket === "large") b.push("대형주");
-  if (c.capBucket === "mid") b.push("중형주");
-  if (c.capBucket === "small") b.push("소형주");
-  if (c.excludeLoss) b.push("적자 제외");
-  const sb = SORT_BADGE[c.sortKey];
+  if (c.minComposite) b.push(t.badge.composite(c.minComposite));
+  if (c.momentumMin) b.push(t.badge.momentum(c.momentumMin));
+  if (c.flowMin) b.push(t.badge.flow(c.flowMin));
+  if (c.valueMin) b.push(t.badge.value(c.valueMin));
+  if (c.volMin) b.push(t.badge.vol(c.volMin));
+  if (c.perMax != null && c.perMax < 200) b.push(t.badge.perMax(c.perMax));
+  if (c.pbrMax != null && c.pbrMax < 30) b.push(t.badge.pbrMax(c.pbrMax));
+  if (c.roeMin) b.push(t.badge.roe(c.roeMin));
+  if (c.divYieldMin) b.push(t.badge.div(c.divYieldMin));
+  if (c.capBucket === "large") b.push(t.badge.large);
+  if (c.capBucket === "mid") b.push(t.badge.mid);
+  if (c.capBucket === "small") b.push(t.badge.small);
+  if (c.excludeLoss) b.push(t.badge.excludeLoss);
+  const sb = t.sortBadge[c.sortKey as keyof typeof t.sortBadge];
   if (sb) b.push(sb);
   return b;
 }
 
 export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, asOf, metricsVersion, dataStale }: Props) {
+  const { locale } = useLanguage();
+  const t = stocksCopy[locale];
   const total = totalCount ?? stocks.length;
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("compositeScore");
@@ -308,7 +300,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     setSelectedThemes(new Set(c.themes ?? []));
   }
   async function handleSaveSearch() {
-    const name = (typeof window !== "undefined" ? window.prompt("이 검색 조건의 이름을 정해주세요 (예: 저PER 배당주)") : "")?.trim();
+    const name = (typeof window !== "undefined" ? window.prompt(t.promptSaveName) : "")?.trim();
     if (!name) return;
     const ok = await addSavedSearch(name, buildCurrentConfig());
     if (ok) listSavedSearches().then(setSavedSearches);
@@ -318,17 +310,17 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     if (ok) setSavedSearches((prev) => prev.filter((sv) => sv.id !== id));
   }
   async function handleCreateAlert() {
-    const name = (typeof window !== "undefined" ? window.prompt("알림 이름을 정해주세요 (예: 저PER 배당주 신규)") : "")?.trim();
+    const name = (typeof window !== "undefined" ? window.prompt(t.promptAlertName) : "")?.trim();
     if (!name) return;
     const r = await addConditionAlert(name, buildCurrentConfig());
     if (r === "login") {
-      if (typeof window !== "undefined" && window.confirm("조건 알림은 로그인 후 이메일로 받을 수 있어요. 로그인하러 갈까요?")) {
+      if (typeof window !== "undefined" && window.confirm(t.confirmAlertLogin)) {
         window.location.href = "/login?next=/stocks";
       }
     } else if (r === "ok") {
-      if (typeof window !== "undefined") window.alert("알림을 등록했어요. 조건에 새 종목이 들어오면 이메일로 알려드릴게요. (설정 > 알림에서 관리)");
+      if (typeof window !== "undefined") window.alert(t.alertCreated);
     } else {
-      if (typeof window !== "undefined") window.alert("등록에 실패했어요. 잠시 후 다시 시도해주세요.");
+      if (typeof window !== "undefined") window.alert(t.alertFailed);
     }
   }
 
@@ -462,7 +454,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   // 현재 조건 요약 바의 초기화 — 실수 방지용 확인(설계서 §16).
   function handleResetWithConfirm() {
     if (!hasAnyCondition) return;
-    if (typeof window !== "undefined" && !window.confirm("모든 조건을 초기화할까요?")) return;
+    if (typeof window !== "undefined" && !window.confirm(t.confirmReset)) return;
     resetFilters();
   }
 
@@ -477,35 +469,35 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   // 현재 조건을 한 줄 자연어로 설명(설계서 §10 상태별).
   function describeConditions(): string {
     const qp = QUESTION_PRESETS.find((p) => p.id === activePreset);
-    if (qp) return `"${qp.label}" 조건은 ${qp.explain}`;
+    if (qp) { const c = t.qPreset[qp.id]; return t.describeQuestion(c.label, c.explain); }
     const cp = PRESETS.find((p) => p.id === activePreset);
-    if (cp) return `빠른 프리셋 "${cp.label}" — ${cp.desc}.`;
+    if (cp) { const c = t.preset[cp.id]; return t.describeQuick(c.label, c.desc); }
     if (themeFilterCount > 0 && nonThemeFilterCount === 0 && !query) {
-      return `${[...selectedThemes].join(", ")} 테마에 속한 종목 중 조건에 맞는 후보를 보고 있습니다.`;
+      return t.describeTheme([...selectedThemes].join(", "));
     }
     if (nonThemeFilterCount > 0 || query) {
-      return "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.";
+      return t.describeManual;
     }
-    return `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`;
+    return t.describeAll(total);
   }
 
   // 결과 0건일 때 가장 강한(=binding) 단일 조건을 골라 그 조건만 완화할 수 있게 한다(설계서 §20.5).
   // strength는 표시·랭킹용 휴리스틱일 뿐 점수 계산과 무관하다.
   function strongestConstraint(): { label: string; relax: () => void } | null {
     const cons: { label: string; strength: number; relax: () => void }[] = [];
-    if (minComposite > 0) cons.push({ label: `종합점수 ${minComposite}+ 조건`, strength: minComposite, relax: () => clearPreset(() => setMinComposite(0)) });
-    if (momentumMin > 0) cons.push({ label: `추세 ${momentumMin}+ 조건`, strength: momentumMin, relax: () => clearPreset(() => setMomentumMin(0)) });
-    if (flowMin > 0) cons.push({ label: `거래활성도 ${flowMin}+ 조건`, strength: flowMin, relax: () => clearPreset(() => setFlowMin(0)) });
-    if (valueMin > 0) cons.push({ label: `밸류 ${valueMin}+ 조건`, strength: valueMin, relax: () => clearPreset(() => setValueMin(0)) });
-    if (volMin > 0) cons.push({ label: `위험조정 ${volMin}+ 조건`, strength: volMin, relax: () => clearPreset(() => setVolMin(0)) });
-    if (perMax < 200) cons.push({ label: `PER ${perMax}↓ 조건`, strength: 100 - Math.min(100, perMax), relax: () => clearPreset(() => setPerMax(200)) });
-    if (pbrMax < 30) cons.push({ label: `PBR ${pbrMax.toFixed(1)}↓ 조건`, strength: 100 - Math.min(100, pbrMax * 3), relax: () => clearPreset(() => setPbrMax(30)) });
-    if (roeMin > 0) cons.push({ label: `ROE ${roeMin}%+ 조건`, strength: roeMin * 3, relax: () => clearPreset(() => setRoeMin(0)) });
-    if (divYieldMin > 0) cons.push({ label: `배당 ${divYieldMin.toFixed(1)}%+ 조건`, strength: divYieldMin * 15, relax: () => clearPreset(() => setDivYieldMin(0)) });
-    if (selectedThemes.size > 0) cons.push({ label: `선택한 테마(${selectedThemes.size}개) 조건`, strength: 55, relax: () => clearPreset(() => setSelectedThemes(new Set())) });
-    if (capBucket !== "all") cons.push({ label: "시가총액 구간 조건", strength: 45, relax: () => clearPreset(() => setCapBucket("all")) });
-    if (excludeLoss) cons.push({ label: "적자 제외 조건", strength: 30, relax: () => clearPreset(() => setExcludeLoss(false)) });
-    if (market !== "all") cons.push({ label: "시장 조건", strength: 25, relax: () => clearPreset(() => setMarket("all")) });
+    if (minComposite > 0) cons.push({ label: t.cons.composite(minComposite), strength: minComposite, relax: () => clearPreset(() => setMinComposite(0)) });
+    if (momentumMin > 0) cons.push({ label: t.cons.momentum(momentumMin), strength: momentumMin, relax: () => clearPreset(() => setMomentumMin(0)) });
+    if (flowMin > 0) cons.push({ label: t.cons.flow(flowMin), strength: flowMin, relax: () => clearPreset(() => setFlowMin(0)) });
+    if (valueMin > 0) cons.push({ label: t.cons.value(valueMin), strength: valueMin, relax: () => clearPreset(() => setValueMin(0)) });
+    if (volMin > 0) cons.push({ label: t.cons.vol(volMin), strength: volMin, relax: () => clearPreset(() => setVolMin(0)) });
+    if (perMax < 200) cons.push({ label: t.cons.perMax(perMax), strength: 100 - Math.min(100, perMax), relax: () => clearPreset(() => setPerMax(200)) });
+    if (pbrMax < 30) cons.push({ label: t.cons.pbrMax(pbrMax.toFixed(1)), strength: 100 - Math.min(100, pbrMax * 3), relax: () => clearPreset(() => setPbrMax(30)) });
+    if (roeMin > 0) cons.push({ label: t.cons.roe(roeMin), strength: roeMin * 3, relax: () => clearPreset(() => setRoeMin(0)) });
+    if (divYieldMin > 0) cons.push({ label: t.cons.div(divYieldMin.toFixed(1)), strength: divYieldMin * 15, relax: () => clearPreset(() => setDivYieldMin(0)) });
+    if (selectedThemes.size > 0) cons.push({ label: t.cons.themes(selectedThemes.size), strength: 55, relax: () => clearPreset(() => setSelectedThemes(new Set())) });
+    if (capBucket !== "all") cons.push({ label: t.cons.cap, strength: 45, relax: () => clearPreset(() => setCapBucket("all")) });
+    if (excludeLoss) cons.push({ label: t.cons.excludeLoss, strength: 30, relax: () => clearPreset(() => setExcludeLoss(false)) });
+    if (market !== "all") cons.push({ label: t.cons.market, strength: 25, relax: () => clearPreset(() => setMarket("all")) });
     if (cons.length === 0) return null;
     cons.sort((a, b) => b.strength - a.strength);
     return { label: cons[0].label, relax: cons[0].relax };
@@ -514,7 +506,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   // 카드형 결과 목록 — 모바일/데스크톱 공용. 신호 칩은 표형과 동일한 deriveSignals 사용.
   function renderCards() {
     return sorted.slice(0, 100).map((s) => {
-      const { strengths, warnings } = deriveSignals(s);
+      const { strengths, warnings } = deriveSignals(s, t.signal);
       return (
         <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
           <div className="flex items-start justify-between gap-3">
@@ -532,11 +524,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                 </span>
               </div>
               <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
-                <span>시총 {fmtMarketCap(s.marketCap)}</span>
-                <span>PER {s.per > 0 ? s.per.toFixed(1) + "배" : "—"}</span>
-                <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + "배" : "—"}</span>
-                <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</span>
-                {s.dividendYield > 0 ? <span>배당 {s.dividendYield.toFixed(1)}%</span> : null}
+                <span>{t.card.cap} {fmtMarketCap(s.marketCap)}</span>
+                <span>PER {s.per > 0 ? s.per.toFixed(1) + (locale === "ko" ? "배" : "x") : t.card.perDash}</span>
+                <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + (locale === "ko" ? "배" : "x") : t.card.perDash}</span>
+                <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : t.card.perDash}</span>
+                {s.dividendYield > 0 ? <span>{t.chip.div}{s.dividendYield.toFixed(1)}%</span> : null}
               </div>
             </div>
             <div className="text-right shrink-0">
@@ -545,10 +537,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
               </div>
               <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                <span title="모멘텀(추세)" className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">추 {s.momentum}</span>
-                <span title="거래활성도(거래)" className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">거 {s.flow}</span>
-                <span title="밸류(저평가)" className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">저 {s.value}</span>
-                <span title="변동성조정(위험조정)" className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">위 {s.vol}</span>
+                <span title={t.card.tip.momentum} className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.momentum} {s.momentum}</span>
+                <span title={t.card.tip.flow} className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.flow} {s.flow}</span>
+                <span title={t.card.tip.value} className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.value} {s.value}</span>
+                <span title={t.card.tip.vol} className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.vol} {s.vol}</span>
               </div>
             </div>
           </div>
@@ -556,7 +548,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <div className="flex flex-col gap-1 mt-2">
               {strengths.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">✓ 강점</span>
+                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">{t.card.strength}</span>
                   {strengths.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900">{label}</span>
                   ))}
@@ -564,7 +556,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
               ) : null}
               {warnings.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0">⚠ 주의</span>
+                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0">{t.card.warning}</span>
                   {warnings.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">{label}</span>
                   ))}
@@ -584,15 +576,15 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   }
 
   const CAP_OPTIONS: { id: CapBucket; label: string }[] = [
-    { id: "all", label: "전체" },
-    { id: "large", label: "대형 5조+" },
-    { id: "mid", label: "중형 1~5조" },
-    { id: "small", label: "소형 1조-" },
+    { id: "all", label: t.capOpt.all },
+    { id: "large", label: t.capOpt.large },
+    { id: "mid", label: t.capOpt.mid },
+    { id: "small", label: t.capOpt.small },
   ];
   const MARKET_OPTIONS: { id: MarketFilter; label: string }[] = [
-    { id: "all", label: "전체" },
-    { id: "KOSPI", label: "코스피" },
-    { id: "KOSDAQ", label: "코스닥" },
+    { id: "all", label: t.marketOpt.all },
+    { id: "KOSPI", label: t.marketOpt.KOSPI },
+    { id: "KOSDAQ", label: t.marketOpt.KOSDAQ },
   ];
 
   // 현재 적용된 필터를 사람이 읽을 수 있는 칩으로 — 각 칩의 ×는 해당 필터만 해제
@@ -601,25 +593,25 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     fn();
   }
   const activeChips: { key: string; label: string; onRemove: () => void }[] = [];
-  if (market !== "all") activeChips.push({ key: "market", label: "시장 " + (MARKET_OPTIONS.find((o) => o.id === market)?.label ?? market), onRemove: () => clearPreset(() => setMarket("all")) });
-  if (capBucket !== "all") activeChips.push({ key: "cap", label: "시총 " + (CAP_OPTIONS.find((o) => o.id === capBucket)?.label ?? capBucket), onRemove: () => clearPreset(() => setCapBucket("all")) });
-  if (minComposite > 0) activeChips.push({ key: "composite", label: "종합 " + minComposite + "+", onRemove: () => clearPreset(() => setMinComposite(0)) });
-  if (momentumMin > 0) activeChips.push({ key: "mom", label: "추세 " + momentumMin + "+", onRemove: () => clearPreset(() => setMomentumMin(0)) });
-  if (flowMin > 0) activeChips.push({ key: "flow", label: "거래활성도 " + flowMin + "+", onRemove: () => clearPreset(() => setFlowMin(0)) });
-  if (valueMin > 0) activeChips.push({ key: "val", label: "밸류 " + valueMin + "+", onRemove: () => clearPreset(() => setValueMin(0)) });
-  if (volMin > 0) activeChips.push({ key: "vol", label: "위험조정 " + volMin + "+", onRemove: () => clearPreset(() => setVolMin(0)) });
-  if (roeMin > 0) activeChips.push({ key: "roe", label: "ROE " + roeMin + "%+", onRemove: () => clearPreset(() => setRoeMin(0)) });
-  if (divYieldMin > 0) activeChips.push({ key: "div", label: "배당 " + divYieldMin.toFixed(1) + "%+", onRemove: () => clearPreset(() => setDivYieldMin(0)) });
+  if (market !== "all") activeChips.push({ key: "market", label: t.chip.market + (MARKET_OPTIONS.find((o) => o.id === market)?.label ?? market), onRemove: () => clearPreset(() => setMarket("all")) });
+  if (capBucket !== "all") activeChips.push({ key: "cap", label: t.chip.cap + (CAP_OPTIONS.find((o) => o.id === capBucket)?.label ?? capBucket), onRemove: () => clearPreset(() => setCapBucket("all")) });
+  if (minComposite > 0) activeChips.push({ key: "composite", label: t.chip.composite + minComposite + "+", onRemove: () => clearPreset(() => setMinComposite(0)) });
+  if (momentumMin > 0) activeChips.push({ key: "mom", label: t.chip.mom + momentumMin + "+", onRemove: () => clearPreset(() => setMomentumMin(0)) });
+  if (flowMin > 0) activeChips.push({ key: "flow", label: t.chip.flow + flowMin + "+", onRemove: () => clearPreset(() => setFlowMin(0)) });
+  if (valueMin > 0) activeChips.push({ key: "val", label: t.chip.val + valueMin + "+", onRemove: () => clearPreset(() => setValueMin(0)) });
+  if (volMin > 0) activeChips.push({ key: "vol", label: t.chip.vol + volMin + "+", onRemove: () => clearPreset(() => setVolMin(0)) });
+  if (roeMin > 0) activeChips.push({ key: "roe", label: t.chip.roe + roeMin + "%+", onRemove: () => clearPreset(() => setRoeMin(0)) });
+  if (divYieldMin > 0) activeChips.push({ key: "div", label: t.chip.div + divYieldMin.toFixed(1) + "%+", onRemove: () => clearPreset(() => setDivYieldMin(0)) });
   if (perMin > 0 || perMax < 200) activeChips.push({ key: "per", label: "PER " + perMin + "~" + perMax, onRemove: () => clearPreset(() => { setPerMin(0); setPerMax(200); }) });
   if (pbrMin > 0 || pbrMax < 30) activeChips.push({ key: "pbr", label: "PBR " + pbrMin.toFixed(1) + "~" + pbrMax.toFixed(1), onRemove: () => clearPreset(() => { setPbrMin(0); setPbrMax(30); }) });
-  if (excludeLoss) activeChips.push({ key: "loss", label: "적자 제외", onRemove: () => clearPreset(() => setExcludeLoss(false)) });
-  for (const t of selectedThemes) activeChips.push({ key: "theme-" + t, label: "테마 " + t, onRemove: () => toggleTheme(t) });
+  if (excludeLoss) activeChips.push({ key: "loss", label: t.chip.loss, onRemove: () => clearPreset(() => setExcludeLoss(false)) });
+  for (const th of selectedThemes) activeChips.push({ key: "theme-" + th, label: t.chip.theme + th, onRemove: () => toggleTheme(th) });
 
   function ScoreSlider({ label, value, set }: { label: string; value: number; set: (n: number) => void }) {
     return (
       <div>
         <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">
-          최소 {label}: <span className="tabular-nums">{value}</span>
+          {t.minLabel(label)}: <span className="tabular-nums">{value}</span>
         </label>
         <input type="range" min={0} max={100} step={5} value={value} onChange={(e) => { setActivePreset(null); set(Number(e.target.value)); }} className="w-full" />
       </div>
@@ -630,7 +622,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     return (
       <div className="space-y-5">
         <div>
-          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">시장</label>
+          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.labelMarket}</label>
           <div className="grid grid-cols-3 gap-1.5">
             {MARKET_OPTIONS.map((o) => (
               <button key={o.id} type="button" onClick={() => { setActivePreset(null); setMarket(o.id); }}
@@ -641,7 +633,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           </div>
         </div>
         <div>
-          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">시가총액</label>
+          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.labelMarketCap}</label>
           <div className="grid grid-cols-2 gap-1.5">
             {CAP_OPTIONS.map((o) => (
               <button key={o.id} type="button" onClick={() => { setActivePreset(null); setCapBucket(o.id); }}
@@ -652,36 +644,36 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           </div>
         </div>
         <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">ORNSCORE 지표</div>
-          <ScoreSlider label="종합점수" value={minComposite} set={setMinComposite} />
-          <ScoreSlider label="추세" value={momentumMin} set={setMomentumMin} />
-          <ScoreSlider label="거래활성도" value={flowMin} set={setFlowMin} />
-          <ScoreSlider label="밸류" value={valueMin} set={setValueMin} />
-          <ScoreSlider label="위험조정" value={volMin} set={setVolMin} />
+          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.sectionMetrics}</div>
+          <ScoreSlider label={t.metric.composite} value={minComposite} set={setMinComposite} />
+          <ScoreSlider label={t.metric.momentum} value={momentumMin} set={setMomentumMin} />
+          <ScoreSlider label={t.metric.flow} value={flowMin} set={setFlowMin} />
+          <ScoreSlider label={t.metric.value} value={valueMin} set={setValueMin} />
+          <ScoreSlider label={t.metric.vol} value={volMin} set={setVolMin} />
         </div>
         <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">재무</div>
+          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.sectionFinance}</div>
           <div>
             <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">
-              최소 ROE: <span className="tabular-nums">{roeMin}%</span>
+              {t.minRoe}: <span className="tabular-nums">{roeMin}%</span>
             </label>
             <input type="range" min={0} max={30} step={1} value={roeMin} onChange={(e) => { setActivePreset(null); setRoeMin(Number(e.target.value)); }} className="w-full" />
           </div>
           <div>
             <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">
-              최소 배당수익률: <span className="tabular-nums">{divYieldMin.toFixed(1)}%</span>
+              {t.minDivYield}: <span className="tabular-nums">{divYieldMin.toFixed(1)}%</span>
             </label>
             <input type="range" min={0} max={6} step={0.5} value={divYieldMin} onChange={(e) => { setActivePreset(null); setDivYieldMin(Number(e.target.value)); }} className="w-full" />
           </div>
           <div>
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">PER 범위: <span className="tabular-nums">{perMin} - {perMax}</span></label>
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.perRange}: <span className="tabular-nums">{perMin} - {perMax}</span></label>
             <div className="flex gap-2">
               <input type="number" value={perMin} onChange={(e) => { setActivePreset(null); setPerMin(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
               <input type="number" value={perMax} onChange={(e) => { setActivePreset(null); setPerMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">PBR 범위: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax.toFixed(1)}</span></label>
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.pbrRange}: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax.toFixed(1)}</span></label>
             <div className="flex gap-2">
               <input type="number" value={pbrMin} step={0.1} onChange={(e) => { setActivePreset(null); setPbrMin(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
               <input type="number" value={pbrMax} step={0.1} onChange={(e) => { setActivePreset(null); setPbrMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
@@ -689,36 +681,36 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           </div>
           <label className="flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
             <input type="checkbox" checked={excludeLoss} onChange={(e) => { setActivePreset(null); setExcludeLoss(e.target.checked); }} className="rounded" />
-            적자 기업 제외 <span className="text-zinc-400 font-normal">(EPS &gt; 0)</span>
+            {t.excludeLossLabel} <span className="text-zinc-400 font-normal">{t.excludeLossHint}</span>
           </label>
         </div>
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">테마 <span className="text-zinc-400 tabular-nums">({selectedThemes.size}개 선택)</span></label>
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{t.themeLabel} <span className="text-zinc-400 tabular-nums">{t.themeSelected(selectedThemes.size)}</span></label>
             {selectedThemes.size > 0 ? (
-              <button type="button" onClick={() => setSelectedThemes(new Set())} className="text-[10px] text-blue-700 hover:underline">선택 초기화</button>
+              <button type="button" onClick={() => setSelectedThemes(new Set())} className="text-[10px] text-blue-700 hover:underline">{t.themeClear}</button>
             ) : null}
           </div>
-          <input type="search" placeholder="테마 검색..." value={themeQuery} onChange={(e) => setThemeQuery(e.target.value)} className="w-full mb-2 px-2 py-1.5 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded focus:outline-none focus:border-blue-500" />
-          {!themeQuery && !showAllThemes ? (<div className="text-[10px] text-zinc-500 mb-1.5">인기 테마 {popularThemes.length}개</div>) : null}
+          <input type="search" placeholder={t.themeSearchPlaceholder} value={themeQuery} onChange={(e) => setThemeQuery(e.target.value)} className="w-full mb-2 px-2 py-1.5 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded focus:outline-none focus:border-blue-500" />
+          {!themeQuery && !showAllThemes ? (<div className="text-[10px] text-zinc-500 mb-1.5">{t.popularThemes(popularThemes.length)}</div>) : null}
           <div className="max-h-44 overflow-y-auto space-y-0.5 border border-zinc-200 dark:border-zinc-700 rounded p-2 bg-white dark:bg-zinc-900">
-            {visibleThemes.length === 0 ? (<div className="text-[11px] text-zinc-400 text-center py-3">일치하는 테마가 없습니다</div>) : (
-              visibleThemes.map((t) => (
-                <label key={t} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 px-1 py-0.5 rounded">
-                  <input type="checkbox" checked={selectedThemes.has(t)} onChange={() => toggleTheme(t)} className="rounded shrink-0" />
-                  <span className="truncate">{t}</span>
+            {visibleThemes.length === 0 ? (<div className="text-[11px] text-zinc-400 text-center py-3">{t.noTheme}</div>) : (
+              visibleThemes.map((th) => (
+                <label key={th} className="flex items-center gap-2 text-xs cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 px-1 py-0.5 rounded">
+                  <input type="checkbox" checked={selectedThemes.has(th)} onChange={() => toggleTheme(th)} className="rounded shrink-0" />
+                  <span className="truncate">{th}</span>
                 </label>
               ))
             )}
           </div>
           {!themeQuery && !showAllThemes && allThemes.length > popularThemes.length ? (
-            <button type="button" onClick={() => setShowAllThemes(true)} className="mt-2 text-[11px] text-blue-700 hover:underline">전체 테마 보기 ({allThemes.length}개) →</button>
+            <button type="button" onClick={() => setShowAllThemes(true)} className="mt-2 text-[11px] text-blue-700 hover:underline">{t.showAllThemes(allThemes.length)}</button>
           ) : null}
           {showAllThemes ? (
-            <button type="button" onClick={() => setShowAllThemes(false)} className="mt-2 text-[11px] text-blue-700 hover:underline">← 인기 테마만 보기</button>
+            <button type="button" onClick={() => setShowAllThemes(false)} className="mt-2 text-[11px] text-blue-700 hover:underline">{t.showPopularThemes}</button>
           ) : null}
         </div>
-        <button type="button" onClick={resetFilters} className="w-full px-3 py-2 text-xs border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">필터 전체 초기화</button>
+        <button type="button" onClick={resetFilters} className="w-full px-3 py-2 text-xs border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">{t.resetAllFilters}</button>
       </div>
     );
   }
@@ -728,20 +720,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       {/* ── 페이지 헤더 ── */}
       <header className="space-y-2">
         <div className="flex items-baseline justify-between flex-wrap gap-x-3 gap-y-1">
-          <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">오늘 확인할 종목 찾기</h1>
-          <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">조건 충족 {sorted.length}개 <span className="text-zinc-400 dark:text-zinc-500 font-normal">/ 전체 {total}개</span></span>
+          <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t.headerTitle}</h1>
+          <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCount(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCount(sorted.length, total).b}</span></span>
         </div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">질문형 프리셋과 상세 필터로 {total}개 종목 중 먼저 볼 후보를 좁혀보세요.</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">{t.headerDesc(total)}</p>
         <div className="flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
-          {asOf ? <span className="tabular-nums">{asOf} 장마감</span> : null}
-          {metricsVersion ? <><span aria-hidden>·</span><span>Metrics {metricsVersion}</span></> : null}
+          {asOf ? <span className="tabular-nums">{asOf} {t.marketCloseSuffix}</span> : null}
+          {metricsVersion ? <><span aria-hidden>·</span><span>{t.metricsPrefix} {metricsVersion}</span></> : null}
           <span aria-hidden>·</span>
-          <DataStatusBadge tone={dataStale ? "delayed" : "normal"} label={dataStale ? "갱신 지연" : "데이터 정상"} />
+          <DataStatusBadge tone={dataStale ? "delayed" : "normal"} label={dataStale ? t.dataStaleLabel : t.dataNormalLabel} />
           <span aria-hidden>·</span>
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">투자 추천 아님 · 탐색 도구</span>
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">{t.notAdvice}</span>
         </div>
         {nonThemeFilterCount === 0 && themeFilterCount === 0 && !query && sorted.length < stocks.length ? (
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">기본 화면은 PER 200·PBR 30 이하만 표시해요. 제외된 {stocks.length - sorted.length}개(고PER·고PBR 등)는 상세 필터에서 범위를 넓히면 포함됩니다.</p>
+          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
         ) : null}
       </header>
 
@@ -752,7 +744,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         </svg>
         <input
           type="search"
-          placeholder="종목명 · 코드로 바로 검색"
+          placeholder={t.searchPlaceholder}
           value={query}
           onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
           suppressHydrationWarning
@@ -762,12 +754,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
 
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       <section>
-        <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">어떤 종목을 찾고 있나요?</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 mb-3">어려운 지표명을 몰라도 질문을 고르면 조건이 자동으로 적용됩니다.</p>
+        <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 mb-3">{t.questionDesc}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
-            const badges = badgesFromConfig(p.config);
+            const badges = badgesFromConfig(p.config, t);
+            const qc = t.qPreset[p.id];
             return (
               <button
                 key={p.id}
@@ -782,8 +775,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                 <div className="flex items-start gap-2">
                   <span aria-hidden className="text-lg leading-none mt-0.5">{p.symbol}</span>
                   <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{p.label}</div>
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{p.desc}</p>
+                    <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{qc.label}</div>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{qc.desc}</p>
                   </div>
                   {selected ? <span aria-hidden className="shrink-0 text-blue-600 dark:text-blue-400 text-sm">✓</span> : null}
                 </div>
@@ -794,10 +787,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                     ))}
                   </div>
                 ) : null}
-                {p.caution ? (
-                  <div className="text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug">⚠ {p.caution}</div>
+                {qc.caution ? (
+                  <div className="text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug">{t.cautionPrefix}{qc.caution}</div>
                 ) : null}
-                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 tabular-nums">예상 결과 <strong className="text-zinc-700 dark:text-zinc-200">{presetCounts[p.id] ?? 0}개</strong></div>
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 tabular-nums">{t.expectedResults(presetCounts[p.id] ?? 0).a}<strong className="text-zinc-700 dark:text-zinc-200">{t.expectedResults(presetCounts[p.id] ?? 0).b}</strong></div>
               </button>
             );
           })}
@@ -812,26 +805,27 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           aria-expanded={showQuickPresets}
           className="w-full flex items-center justify-between gap-2 text-left"
         >
-          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">빠른 프리셋 <span className="font-normal normal-case text-zinc-400 dark:text-zinc-500">— 지표로 바로 좁히기</span></span>
-          <span className="shrink-0 text-[10px] text-zinc-400 dark:text-zinc-500">{showQuickPresets ? "접기 ▴" : "펼치기 ▾"}</span>
+          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.quickPresetsLabel} <span className="font-normal normal-case text-zinc-400 dark:text-zinc-500">{t.quickPresetsHint}</span></span>
+          <span className="shrink-0 text-[10px] text-zinc-400 dark:text-zinc-500">{showQuickPresets ? t.collapse : t.expand}</span>
         </button>
         {showQuickPresets ? (
           <div className="flex gap-1.5 flex-wrap mt-2.5">
             {PRESETS.map((p) => {
               const selected = activePreset === p.id;
+              const pc = t.preset[p.id];
               return (
                 <button
                   key={p.id}
                   type="button"
                   aria-pressed={selected}
                   onClick={() => togglePreset(p)}
-                  title={p.desc + " · 예상 " + (presetCounts[p.id] ?? 0) + "개"}
+                  title={t.quickTitle(pc.desc, presetCounts[p.id] ?? 0)}
                   className={"text-xs px-3 py-1.5 rounded-full border transition " +
                     (selected
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
                 >
-                  {p.label}
+                  {pc.label}
                   {selected ? <span aria-hidden className="ml-1">✓</span> : null}
                 </button>
               );
@@ -843,20 +837,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       {/* ── 내 검색 조건(저장/알림) ── */}
       <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">내 검색 조건</span>
+          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
           <div className="flex gap-1.5">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">+ 현재 조건 저장</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">🔔 이 조건 알림</button>
+            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
+            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">{t.alertThis}</button>
           </div>
         </div>
         {savedSearches.length === 0 ? (
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">자주 쓰는 필터 조합을 저장해 한 번에 불러올 수 있어요. 로그인하면 기기 간 동기화돼요.</p>
+          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.savedEmpty}</p>
         ) : (
           <div className="flex gap-1.5 flex-wrap">
             {savedSearches.map((sv) => (
               <span key={sv.id} className="inline-flex items-center gap-1 text-xs pl-3 pr-1 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800">
                 <button type="button" onClick={() => applySavedConfig(sv.config)} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400">{sv.name}</button>
-                <button type="button" onClick={() => handleRemoveSaved(sv.id)} aria-label="삭제" className="w-4 h-4 flex items-center justify-center rounded-full text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 dark:hover:bg-zinc-700">×</button>
+                <button type="button" onClick={() => handleRemoveSaved(sv.id)} aria-label={t.removeSaved} className="w-4 h-4 flex items-center justify-center rounded-full text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 dark:hover:bg-zinc-700">×</button>
               </span>
             ))}
           </div>
@@ -865,44 +859,44 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
 
       {/* ── 정렬 · 필터 열기(검색창은 첫 화면 상단으로 이동) ── */}
       <div className="flex gap-2 flex-wrap">
-        <select aria-label="정렬 기준" value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900">
-          <optgroup label="ORNSCORE 점수">
-            <option value="compositeScore-desc">종합점수 높은순</option>
-            <option value="momentum-desc">추세 높은순</option>
-            <option value="value-desc">밸류 높은순</option>
-            <option value="vol-desc">위험조정 높은순</option>
-            <option value="flow-desc">거래활성도 높은순</option>
+        <select aria-label={t.sortAria} value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900">
+          <optgroup label={t.sortGroupScore}>
+            <option value="compositeScore-desc">{t.sortOpt.compositeDesc}</option>
+            <option value="momentum-desc">{t.sortOpt.momentumDesc}</option>
+            <option value="value-desc">{t.sortOpt.valueDesc}</option>
+            <option value="vol-desc">{t.sortOpt.volDesc}</option>
+            <option value="flow-desc">{t.sortOpt.flowDesc}</option>
           </optgroup>
-          <optgroup label="재무 지표">
-            <option value="roe-desc">ROE 높은순</option>
-            <option value="per-asc">PER 낮은순</option>
-            <option value="pbr-asc">PBR 낮은순</option>
-            <option value="dividendYield-desc">배당수익률 높은순</option>
-            <option value="marketCap-desc">시가총액 큰순</option>
+          <optgroup label={t.sortGroupFinance}>
+            <option value="roe-desc">{t.sortOpt.roeDesc}</option>
+            <option value="per-asc">{t.sortOpt.perAsc}</option>
+            <option value="pbr-asc">{t.sortOpt.pbrAsc}</option>
+            <option value="dividendYield-desc">{t.sortOpt.divDesc}</option>
+            <option value="marketCap-desc">{t.sortOpt.capDesc}</option>
           </optgroup>
-          <optgroup label="움직임·위험">
-            <option value="r3m-desc">3개월 상승률 높은순</option>
+          <optgroup label={t.sortGroupMove}>
+            <option value="r3m-desc">{t.sortOpt.r3mDesc}</option>
           </optgroup>
         </select>
-        <button type="button" onClick={() => setDrawerOpen(true)} aria-label="상세 필터 열기" className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
+        <button type="button" onClick={() => setDrawerOpen(true)} aria-label={t.openFilterAria} className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>필터</span>
+          <span>{t.filterShort}</span>
           {nonThemeFilterCount + themeFilterCount > 0 ? (
-            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
+            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
           ) : null}
         </button>
         <button type="button" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced} className="hidden lg:inline-flex px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>{showAdvanced ? "필터 닫기 ▴" : "필터 열기 ▾"}</span>
+          <span>{showAdvanced ? t.closeFilter : t.openFilter}</span>
           {activeFilterCount > 0 ? (
-            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={`적용된 필터 ${activeFilterCount}개`}>{activeFilterCount}</span>
+            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
           ) : null}
         </button>
         {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
-        <div role="group" aria-label="보기 방식" className="hidden lg:inline-flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
+        <div role="group" aria-label={t.viewModeAria} className="hidden lg:inline-flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
           {([
-            { id: "card", label: "카드형" },
-            { id: "table", label: "표형" },
+            { id: "card", label: t.viewCard },
+            { id: "table", label: t.viewTable },
           ] as { id: ViewMode; label: string }[]).map((o) => (
             <button
               key={o.id}
@@ -922,8 +916,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
-              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">현재 조건</span>
-              <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">조건 충족 {sorted.length} <span className="text-zinc-400 dark:text-zinc-500 font-normal">/ 전체 {total}</span></span>
+              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.currentCond}</span>
+              <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCountShort(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCountShort(sorted.length, total).b}</span></span>
             </div>
             {activeChips.length > 0 ? (
               <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
@@ -932,7 +926,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                     key={c.key}
                     type="button"
                     onClick={c.onRemove}
-                    aria-label={c.label + " 필터 제거"}
+                    aria-label={t.removeFilterAria(c.label)}
                     className="inline-flex items-center gap-1 text-[11px] pl-2.5 pr-1.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition tabular-nums"
                   >
                     <span className="truncate max-w-[160px]">{c.label}</span>
@@ -941,27 +935,27 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                 ))}
               </div>
             ) : (
-              <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-1.5">적용된 상세 필터 없음</div>
+              <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-1.5">{t.noDetailFilter}</div>
             )}
             <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug">{describeConditions()}</p>
           </div>
           <div className="flex gap-1.5 shrink-0">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">조건 저장</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">이 조건 알림</button>
-            <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>초기화</button>
+            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCond}</button>
+            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">{t.alertCondShort}</button>
+            <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>{t.reset}</button>
           </div>
         </div>
       </section>
 
       <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2 text-[10px] text-blue-800 dark:text-blue-300 flex items-center justify-between md:hidden">
-        <span><strong>추</strong>=추세(모멘텀) · <strong>거</strong>=거래활성도 · <strong>저</strong>=저평가(밸류) · <strong>위</strong>=위험조정</span>
-        <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">자세히</Link>
+        <span><strong>{t.legend.momentum}</strong>={t.legend.momentumFull} · <strong>{t.legend.flow}</strong>={t.legend.flowFull} · <strong>{t.legend.value}</strong>={t.legend.valueFull} · <strong>{t.legend.vol}</strong>={t.legend.volFull}</span>
+        <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">{t.legendMore}</Link>
       </div>
 
       <div className={"grid gap-6 " + (showAdvanced ? "lg:grid-cols-[280px_1fr]" : "lg:grid-cols-1")}>
         {showAdvanced ? (
           <aside className="hidden lg:block bg-zinc-50/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 h-fit sticky top-24">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">상세 필터</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t.filterDetailTitle}</h3>
             <FilterPanel />
           </aside>
         ) : null}
@@ -971,17 +965,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             const sc = strongestConstraint();
             return (
               <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4">
-                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">조건에 맞는 종목이 없습니다.</div>
-                {sc ? (
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed"><strong className="text-zinc-700 dark:text-zinc-200">{sc.label}</strong>이 강해 지금 범위에 드는 종목이 없습니다.<br className="hidden sm:block" />이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요.</p>
-                ) : (
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">조건을 조금 완화하면 더 많은 후보를 확인할 수 있습니다.</p>
+                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{t.emptyTitle}</div>
+                {sc ? (() => {
+                  const es = t.emptyStrong(sc.label);
+                  return (
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">{es.pre}<strong className="text-zinc-700 dark:text-zinc-200">{es.label}</strong>{es.post}<br className="hidden sm:block" />{es.line2}</p>
+                  );
+                })() : (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">{t.emptyLoose}</p>
                 )}
                 <div className="flex gap-2 justify-center mt-4 flex-wrap">
                   {sc ? (
-                    <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">가장 강한 조건 완화</button>
+                    <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.relaxStrongest}</button>
                   ) : null}
-                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">전체 종목 보기</button>
+                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">{t.viewAll}</button>
                 </div>
               </div>
             );
@@ -994,7 +991,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           ) : (
             renderCards()
           )}
-          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">조건 충족 {sorted.length}개 중 상위 100개 표시 · 조건을 좁히면 비교하기 쉬워요.</div>) : null}
+          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">{t.topCapNote(sorted.length)}</div>) : null}
         </div>
       </div>
 
@@ -1003,15 +1000,15 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
           <div onClick={() => setDrawerOpen(false)} className="lg:hidden fixed inset-0 bg-black/50 z-50" aria-hidden />
           <div className="lg:hidden fixed inset-y-0 right-0 w-[340px] max-w-[90vw] bg-white dark:bg-zinc-950 z-50 shadow-2xl flex flex-col">
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">상세 필터</h3>
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.filterDetailTitle}</h3>
               <button type="button" onClick={() => setDrawerOpen(false)} className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4"><FilterPanel /></div>
             <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 shrink-0 grid grid-cols-2 gap-2">
-              <button type="button" onClick={resetFilters} className="px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 min-h-[44px]">초기화</button>
-              <button type="button" onClick={() => setDrawerOpen(false)} className="px-3 py-2 text-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded hover:bg-zinc-800 min-h-[44px]">{sorted.length}개 보기</button>
+              <button type="button" onClick={resetFilters} className="px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 min-h-[44px]">{t.reset}</button>
+              <button type="button" onClick={() => setDrawerOpen(false)} className="px-3 py-2 text-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded hover:bg-zinc-800 min-h-[44px]">{t.closeDrawerView(sorted.length)}</button>
             </div>
           </div>
         </>

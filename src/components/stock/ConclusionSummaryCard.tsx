@@ -1,3 +1,8 @@
+"use client";
+
+import { useLanguage } from "@/components/LanguageProvider";
+import { conclusionSummaryCardCopy } from "@/lib/copy/stockDetail";
+
 /**
  * 현재 결론 카드 — 종목 유형 + 한 줄 결론 + 주의점.
  * 강점과 주의를 함께 설명하되 향후 가격 방향을 단정하지 않음. 설계서 §6.3 / §15.
@@ -13,11 +18,13 @@ export function ConclusionSummaryCard({
   riskNote: string;
   suspect: boolean;
 }) {
+  const { locale } = useLanguage();
+  const t = conclusionSummaryCardCopy[locale];
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 md:p-4">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">현재 결론</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{t.title}</div>
       <div className="mt-1 text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-        {suspect ? <span className="text-amber-600 dark:text-amber-400">데이터 검증 중 · 임시 점수 — </span> : null}
+        {suspect ? <span className="text-amber-600 dark:text-amber-400">{t.suspectPrefix}</span> : null}
         {type}
       </div>
       <p className="mt-1.5 text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{summary}</p>

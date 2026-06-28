@@ -43,6 +43,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 영어 지원 v2 — 핵심 제품 화면 다국어화 (2026-06-28, Claude · task 89)
+- **범위**: v1(진입/로그인/내비) 위에서 해외 사용자가 실제로 쓰는 화면을 영어로 확장. 반영: `/stocks`, `/stock/[ticker]`, `/today`, `/disclosures`, `/pricing`, `/status`, `/guide/metrics`, `/terms`·`/privacy`(영어 요약 토글), 데이터 신뢰 레이어(헤더 데이터바·DataTrustModal·RiskNotice·TodayStatusBar). 클라이언트 전환(쿠키/localStorage/`?lang=`) 유지, `/en` URL·`metadata` 다국어화 미도입.
+- **아키텍처**: 화면별 카피를 `src/lib/copy/*.ts`(`{ko,en} as const satisfies Record<Locale, unknown>`)로 분리(공유 `i18n.ts` 미수정, 병렬 작업 충돌 회피). 서버 page는 `metadata`/`generateStaticParams`/`revalidate`/점수·데이터 호출 유지, 보이는 JSX만 새 `"use client"` 콘텐츠 컴포넌트로 추출. 데이터 신뢰 문자열은 `src/lib/dataStatus.ts`에 **가산** 영어 레이어(`LocalizedDataStatus`·`dataStatusByLocale`·`localizedDataStatus`·`buildDataIssueMailto({locale})`) 추가 후 서버→클라 직렬화 props로 전달(`stocks.json` 클라 미번들; `AppHeader`→`LocalizedDataTrustModal` 선례).
+- **신규**: 카피 `src/lib/copy/{trust,stocks,stockDetail,today,disclosures,pricing,status,metricsGuide,legal}.ts` + 클라 콘텐츠 `HeaderDataBar`·`PricingContent`·`MetricsGuideContent`·`StatusContent`·`ReportDataIssueContent`·`RiskNoticeContent`·`TodayContent`·`TodayStatusBarContent`·`StockDetailIntro`·`DisclosuresIntro`·`LegalEnSummary`.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(전 라우트 + 138 종목 SSG) · `npm run app:check` 통과 · `git diff --check` 0(CRLF 경고만) · U+FFFD 0. 로컬 prod 3517(내 PID만 종료·**4310 무중단**) 11라우트 + `?lang=en` 200, 빌드 청크에 EN 카피 컴파일 확인.
+- **남은 갭(후속)**: 서버 `metadata` 한국어 고정; 라이브러리 파생 문구가 EN에서도 한국어(`@/lib/conclusion`·`composeReasonV2`·`metricReadings`·`scoreBasis`·`disclosureType`·`signalGuide`, 홈 `StockCandidateCard`·`MarketSnapshotCards`, AI 인사이트 LLM 출력); `/terms`·`/privacy`는 **영어 요약만 — 전문 법무 번역은 운영자/법무 검토 잔여**; 헤더 워드마크 브랜드 한국어 유지; `/en` URL·OpenGraph 미도입.
+- **다음**: 라이브러리 파생 문구 + 홈 카드 로케일화 → `/en` URL 라우팅 + `metadata`/OpenGraph 다국어화.
+
 ### 영어 지원 v1 — 핵심 진입/로그인/내비게이션 다국어화 (2026-06-28, Codex)
 - `src/lib/i18n.ts`와 `LanguageProvider`/`LanguageSwitcher`를 추가했다. 서버 루트 레이아웃에서 `cookies()`를 읽지 않아 기존 정적 생성 경로를 동적으로 바꾸지 않는 클라이언트 전환 방식이다.
 - 영어 전환 범위: 홈 온보딩·히어로, 검색창, App navigation(사이드바/모바일 메뉴/하단 탭), 로그인 페이지 소셜/이메일/오류 안내, 비교 배지, footer. 종목명·섹터·데이터 날짜 원문과 일부 서버 데이터 상태/Trust modal 문구는 아직 한국어가 남아 있다.

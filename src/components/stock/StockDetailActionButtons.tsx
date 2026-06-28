@@ -1,19 +1,24 @@
+"use client";
+
 import { BarChart3, Building2, FileText, Landmark } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { actionButtonsCopy } from "@/lib/copy/stockDetail";
 
 /**
  * 종목 상세 공통 CTA 버튼 그룹.
  * 텍스트가 붙어 보이지 않도록 아이콘, 라벨, 테두리, 간격을 한 컴포넌트에서 고정한다.
  */
-const ACTIONS = [
-  { label: "공시 확인", Icon: FileText, href: "#disclosures" },
-  { label: "재무 보기", Icon: Landmark, href: "#financials" },
-  { label: "점수 근거", Icon: BarChart3, href: "#basis" },
-  { label: "업종 비교", Icon: Building2, href: "#summary" },
-] as const;
-
 export function StockDetailActionButtons() {
+  const { locale } = useLanguage();
+  const t = actionButtonsCopy[locale];
+  const ACTIONS = [
+    { label: t.disclosures, Icon: FileText, href: "#disclosures" },
+    { label: t.financials, Icon: Landmark, href: "#financials" },
+    { label: t.basis, Icon: BarChart3, href: "#basis" },
+    { label: t.sector, Icon: Building2, href: "#summary" },
+  ] as const;
   return (
-    <nav aria-label="종목 상세 다음 확인 항목" className="w-full">
+    <nav aria-label={t.navAriaLabel} className="w-full">
       <div className="grid grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-4 gap-2">
         {ACTIONS.map(({ label, Icon, href }) => (
           <a

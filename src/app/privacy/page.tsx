@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LegalEnSummary } from "@/components/legal/LegalEnSummary";
 
 export const metadata = {
   title: "개인정보처리방침 — 오른스코어",
@@ -9,6 +10,8 @@ export default function PrivacyPage() {
     <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-10">
       <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">개인정보처리방침</h1>
       <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026년 6월</p>
+
+      <LegalEnSummary surface="privacy" />
 
       <div className="space-y-5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
 

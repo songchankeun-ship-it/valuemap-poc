@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { scoreColorOf } from "@/lib/scoreColor";
+import { useLanguage } from "@/components/LanguageProvider";
+import { sectorComparisonCopy } from "@/lib/copy/stockDetail";
 
 export interface SectorRow {
   ticker: string;
@@ -26,17 +30,19 @@ export function SectorComparison({
   sector: string;
   sectorCount: number;
 }) {
+  const { locale } = useLanguage();
+  const t = sectorComparisonCopy[locale];
   return (
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
       <div className="flex items-baseline justify-between mb-2 gap-2">
-        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">같은 업종 비교 · {sector}</div>
-        <Link href={"/stocks?theme=" + encodeURIComponent(sector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline shrink-0">업종 전체 →</Link>
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">{t.titlePrefix} {sector}</div>
+        <Link href={"/stocks?theme=" + encodeURIComponent(sector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline shrink-0">{t.sectorAllLink}</Link>
       </div>
 
       {sectorCount < 2 ? (
         <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-6 text-center">
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">같은 업종 비교 표본이 부족합니다.</p>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">분석 풀에 같은 업종 종목이 1곳뿐이라 상대 비교를 표시할 수 없어요.</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{t.emptyTitle}</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">{t.emptySub}</p>
         </div>
       ) : (
         <>
@@ -53,7 +59,7 @@ export function SectorComparison({
                     <span className="shrink-0 w-6 text-center text-[10px] font-bold tabular-nums text-zinc-500 dark:text-zinc-400">{p.rank}</span>
                     <div className="shrink-0 w-[5.5rem] sm:w-28 truncate text-xs">
                       {p.isMe ? (
-                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{p.name} <span className="text-[9px] text-blue-600 dark:text-blue-400">현재</span></span>
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100">{p.name} <span className="text-[9px] text-blue-600 dark:text-blue-400">{t.currentTag}</span></span>
                       ) : (
                         <Link href={"/stock/" + p.ticker} prefetch={false} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400">{p.name}</Link>
                       )}
@@ -70,10 +76,10 @@ export function SectorComparison({
             </ul>
           </div>
           <div className="flex items-center gap-2 mt-2 text-[10px] text-zinc-400 dark:text-zinc-500">
-            <span className="shrink-0">막대 = 종합점수 · 배지 = 업종 순위 · PER/등락 보조</span>
+            <span className="shrink-0">{t.legend}</span>
           </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">같은 업종 {sectorCount}곳(본인 포함) 중 종합점수 상위 {Math.min(6, sectorCount)}곳. 종합점수는 탐색 우선순위용 실험 지표입니다.</p>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">업종 분류는 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">{t.sampleBefore} {Math.min(6, sectorCount)} {t.sampleMid} {sectorCount} {t.sampleAfter}</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.classNote}</p>
         </>
       )}
     </section>

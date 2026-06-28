@@ -1,4 +1,8 @@
+"use client";
+
 import { type ReactNode } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { conclusionHeroCopy } from "@/lib/copy/stockDetail";
 import { StockHeader } from "./StockHeader";
 import { PriorityScoreCard } from "./PriorityScoreCard";
 import { ConclusionSummaryCard } from "./ConclusionSummaryCard";
@@ -55,6 +59,8 @@ export function StockConclusionHero({
   warnings: string[];
   riskAlert: HeroRiskAlert | null;
 }) {
+  const { locale } = useLanguage();
+  const t = conclusionHeroCopy[locale];
   return (
     <section className="space-y-3">
       <StockHeader
@@ -69,7 +75,7 @@ export function StockConclusionHero({
       {suspect ? (
         <div className="flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg px-3 py-2">
           <span aria-hidden="true">⚠</span>
-          <span>가격 데이터 검증 중 — 아래 점수는 임시 계산값이며, 공식 후보·순위에서 제외됩니다.</span>
+          <span>{t.suspectBanner}</span>
         </div>
       ) : null}
 
@@ -98,13 +104,13 @@ export function StockConclusionHero({
       <StrengthWarningPanel strengths={strengths} warnings={warnings} />
 
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1.5">다음으로 확인할 것</div>
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1.5">{t.nextToCheck}</div>
         <StockDetailActionButtons />
       </div>
 
       <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2 space-y-0.5">
-        <p className="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">매수·매도 추천이 아닌 탐색 우선순위입니다.</p>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500">점수는 탐색 우선순위용 실험 지표이며, 향후 수익률을 의미하지 않습니다.</p>
+        <p className="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">{t.disclaimerMain}</p>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.disclaimerSub}</p>
       </div>
     </section>
   );

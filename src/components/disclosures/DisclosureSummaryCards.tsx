@@ -6,6 +6,8 @@
 // 비자문: 호재/악재 표현 없이 'N건'·'이벤트 없음' 같은 사실만 표기.
 
 import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
+import { useLanguage } from "@/components/LanguageProvider";
+import { disclosureSummaryCopy } from "@/lib/copy/disclosures";
 
 export interface DisclosureSummaryCardsProps {
   counts: Record<string, number>; // signalType → 이벤트 묶음 수
@@ -14,6 +16,8 @@ export interface DisclosureSummaryCardsProps {
 }
 
 export function DisclosureSummaryCards({ counts, days, total }: DisclosureSummaryCardsProps) {
+  const { locale } = useLanguage();
+  const t = disclosureSummaryCopy[locale];
   return (
     <div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
@@ -59,14 +63,14 @@ export function DisclosureSummaryCards({ counts, days, total }: DisclosureSummar
                 {count}
               </div>
               <div className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
-                {active ? `최근 ${days}일 · ${count}건` : "이벤트 없음"}
+                {active ? t.recentCount(days, count) : t.noEvents}
               </div>
             </div>
           );
         })}
       </div>
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1.5">
-        최근 {days}일 공시를 5개 유형으로 자동 분류한 결과 · 전체 {total}건. 호재/악재 판단이 아닌 분류입니다.
+        {t.bottomNote(days, total)}
       </p>
     </div>
   );

@@ -1,0 +1,274 @@
+import type { Locale } from "@/lib/i18n";
+
+/**
+ * 지표 가이드(/guide/metrics) 표시 카피 단일 소스 (다국어 v2).
+ * ko = 기존 한국어 그대로, en = 충실 번역. 화면은 useLanguage()로 로케일만 바꿔 읽는다.
+ *
+ * 주의(보수적·비자문):
+ * - "탐색 우선순위" → "research priority", "매수·매도 신호가 아닙니다" → "not a buy or sell signal",
+ *   "실험 지표" → "experimental metric". 매수/매도/추천/수익 보장 표현 금지.
+ * - 출처명(KRX/Naver/yfinance/FinanceDataReader/DART), 날짜, 숫자, 코드 식별자
+ *   (compute_metrics.py, metrics.ts), 산식 버전 문자열(Metrics 2.4), GitHub URL은 원형 유지.
+ *
+ * 지표별 id/anchor와 color 클래스는 화면 쪽 상수로 고정하고, 여기서는 표시 텍스트만 둔다.
+ * count(전체 풀 종목 수)는 서버에서 계산해 prop으로 받아 detailFn/valueNoteFn에 주입한다.
+ */
+
+export interface MetricCopy {
+  /** 화면의 METRIC_META id와 매칭하는 키 (display 아님). */
+  key: "momentum" | "flow" | "value" | "vol";
+  name: string;
+  desc: string;
+  calc: string;
+  /** count를 주입해 상세 문구를 만든다(밸류만 사용, 그 외는 무시). */
+  detail: (count: number) => string;
+  high: string;
+  low: string;
+}
+
+interface MetricsGuideCopy {
+  backHome: string;
+  headerTitle: string;
+  headerLead: string;
+  navLabel: string;
+  notInvestmentAdvice: {
+    leadStrong: string;
+    body: (count: number) => string;
+  };
+  reviewPoints: {
+    title: string;
+    items: (count: number) => readonly string[];
+  };
+  metrics: readonly MetricCopy[];
+  metricSection: {
+    calcSummary: string;
+    highTitle: string;
+    lowTitle: string;
+  };
+  composite: {
+    title: string;
+    body: string;
+    bodyStrong: string;
+    bodyTail: string;
+    note: string;
+    noteStrong: string;
+    noteTail: string;
+  };
+  commonBasis: {
+    title: string;
+    items: (count: number) => readonly string[];
+    versionPrefix: string;
+    appliedPrefix: string;
+    samePolicy: string;
+    changelogLink: string;
+    codeIntro: string;
+    codeGenerator: string;
+    codeReference: string;
+    codeNote: string;
+  };
+  footer: {
+    sourcePrefix: string;
+    body: (count: number) => string;
+  };
+}
+
+export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
+  ko: {
+    backHome: "← 홈으로",
+    headerTitle: "지표 가이드",
+    headerLead:
+      "오른스코어는 한 종목을 네 각도로 봅니다. 각 지표가 어떻게 계산되고 무엇을 의미하는지 모두 공개합니다.",
+    navLabel: "바로 가기:",
+    notInvestmentAdvice: {
+      leadStrong: "이 도구는 투자 추천이 아닙니다.",
+      body: () =>
+        "자체 지표는 어떤 종목을 더 자세히 들여다볼지를 정하는 탐색 우선순위에 도움을 주는 신호이며, 매수·매도 판단의 근거가 아닙니다. 모든 투자 결정과 책임은 사용자 본인에게 있습니다.",
+    },
+    reviewPoints: {
+      title: "읽기 전 검토 포인트",
+      items: (count: number) => [
+        "종합점수는 네 지표를 똑같은 비중으로 평균합니다. 추세 · 거래활성도 · 밸류 · 위험조정 4지표를 각각 25%씩 동일 가중으로 더해 평균한 값이라, 한 지표만 아주 높아도 나머지가 평범하면 종합점수는 중간대에 머뭅니다. 종목 상세의 점수 근거 보기에서 각 지표가 종합점수에 얼마나 기여했는지 확인할 수 있습니다.",
+        "점수와 순위는 다릅니다. 점수는 0~100 절대값이고, 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 점수와 상대순위를 분리해 표시합니다.",
+        `밸류 점수의 기준에 주의하세요. 밸류는 전체 ${count}개 풀 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 업종 대비 밸류는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합점수에는 포함되지 않습니다.`,
+      ],
+    },
+    metrics: [
+      {
+        key: "momentum",
+        name: "추세 (모멘텀)",
+        desc: "최근 1개월·3개월·6개월 수익률을 가중평균한 추세 지표.",
+        calc: "1개월(30%) + 3개월(40%) + 6개월(30%) 가중평균 수익률을 구한 뒤, 전체 종목 내 백분위(0~100)로 환산. 상위일수록 100에 가까움.",
+        detail: () =>
+          "수익률 산정: 수정종가 기준 · 기간: 1·3·6개월(약 21·63·126거래일) · 고정 구간 매핑 대신 전체 백분위를 써 고점 포화(여러 종목이 100점) 문제를 제거.",
+        high: "최근 추세가 강한 상태. 다만 상승폭이 커져 변동성이 확대될 수 있어 원인·지속 가능성 확인이 필요합니다.",
+        low: "최근 흐름이 부진합니다. 저평가 여부는 재무·공시로 별도 확인하세요.",
+      },
+      {
+        key: "flow",
+        name: "거래활성도",
+        desc: "최근 거래량 변화로 측정한 시장 관심도 지표.",
+        calc: "최근 5일 평균 거래량 / 20일 평균 거래량 비율. 1배 = 50점, 2배 = 75점, 3배+ = 100점.",
+        detail: () =>
+          "기준: 최근 5거래일 vs 20거래일 평균 거래량 · 한계: 거래대금·가격 방향·수급(외국인/기관)은 미반영(순수 거래량 변화).",
+        high: "거래량이 평소보다 증가 — 이슈·뉴스·공시·수급 변화 여부 확인 필요.",
+        low: "거래량이 평소보다 줄어든 상태. 관심도 낮음 또는 횡보 중.",
+      },
+      {
+        key: "value",
+        name: "밸류",
+        desc: "전체 풀 안에서의 상대적 저평가 정도 (PER·PBR 분위).",
+        calc: "PER 분위(낮을수록 점수↑) + PBR 분위 평균. 100 = 풀에서 가장 저PER·저PBR.",
+        detail: (count: number) =>
+          `분위 기준: 전체 ${count}개 종목 풀 · 한계: 업종 차이 미보정(금융·지주사가 구조적으로 상위에 몰릴 수 있음) — 업종 분위 보정 개발 중.`,
+        high: "전체 풀에서 상대적으로 저평가된 위치. 단, 이유 있는 저평가일 수 있습니다.",
+        low: "전체 풀에서 상대적으로 고평가. 성장 기대치가 가격에 이미 반영됐을 수 있습니다.",
+      },
+      {
+        key: "vol",
+        name: "위험조정 (변동성조정)",
+        desc: "연간화 수익률을 연간화 변동성으로 나눈 위험조정 수익 (Sharpe 유사).",
+        calc: "(연간 수익 - 무위험률 3.5%) / 연간 변동성. -2~+2 범위를 0~100점으로 매핑.",
+        detail: () =>
+          "기간: 최근 1년(약 252거래일) · 수익률: 수정종가 일별 · 무위험률: 연 3.5% · 최소 관측치 미달 시 중립 처리.",
+        high: "관측 기간 변동성 대비 수익이 양호했던 구간입니다. 과거 기준이며 향후를 보장하지 않습니다.",
+        low: "변동성 대비 수익이 부진. 흔들림은 큰데 결과가 못 따라간 상태일 수 있습니다.",
+      },
+    ],
+    metricSection: {
+      calcSummary: "계산 방법 펼치기 ▾",
+      highTitle: "점수가 높을 때 (70~100)",
+      lowTitle: "점수가 낮을 때 (0~30)",
+    },
+    composite: {
+      title: "종합 점수",
+      body: "위 네 지표의 단순 평균입니다. 종합 점수가 높다는 건 ",
+      bodyStrong: '"네 각도에서 모두 우호적인 상태"',
+      bodyTail: "로 해석할 수 있다는 뜻입니다.",
+      note: "종합 점수는 매수 점수가 아니라 ",
+      noteStrong: "탐색 우선순위",
+      noteTail: "입니다. 어떤 종목을 더 자세히 들여다볼지 정하는 데 활용하세요. 점수 100인 종목이 항상 좋은 투자라는 보장은 없습니다.",
+    },
+    commonBasis: {
+      title: "계산 공통 기준",
+      items: (count: number) => [
+        "가격은 수정종가(액면분할·배당락 반영) 기준으로 계산합니다.",
+        "결측·거래정지 구간은 가능한 데이터만 사용하고, 최소 관측치 미달 시 중립(50점)으로 처리합니다.",
+        "무위험률은 연 3.5%를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).",
+        `종합점수의 밸류는 전체 ${count}개 기준 분위입니다. 종목 상세의 업종 대비 밸류는 별도 참고 지표로, 종합점수에는 포함되지 않습니다.`,
+        "점수는 실험 지표입니다 — 백테스트 검증이 진행 중이라 참고용입니다.",
+      ],
+      versionPrefix: "산식 버전: ",
+      appliedPrefix: " · 적용 ",
+      samePolicy: ". 이 페이지의 설명은 실제 운영 계산식과 동일합니다.",
+      changelogLink: "산식 변경 이력 보기",
+      codeIntro: "계산 코드 공개(산식 검증용) — ",
+      codeGenerator: " (실제 데이터 생성기) · ",
+      codeReference: " (참조 구현). 점수는 ",
+      codeNote: "이며 매수·매도 신호가 아닙니다.",
+    },
+    footer: {
+      sourcePrefix: "데이터 출처:",
+      body: (count: number) =>
+        ` KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 보조 지표. ${count}개 종목. 영업일 마감 후 자동 갱신.`,
+    },
+  },
+  en: {
+    backHome: "← Home",
+    headerTitle: "Metric guide",
+    headerLead:
+      "OrnScore looks at a stock from four angles. We fully disclose how each metric is calculated and what it means.",
+    navLabel: "Jump to:",
+    notInvestmentAdvice: {
+      leadStrong: "This tool is not investment advice.",
+      body: () =>
+        "Our metrics are signals that help set a research priority — which stocks to look at more closely — and are not a basis for buy or sell decisions. All investment decisions and responsibility rest with you.",
+    },
+    reviewPoints: {
+      title: "Points to review before reading",
+      items: (count: number) => [
+        "The composite score averages the four metrics with equal weight. Trend, trading activity, valuation, and risk-adjusted are each weighted 25% and averaged, so even if one metric is very high, the composite stays mid-range when the others are average. In a stock's detail page, See score basis shows how much each metric contributed to the composite.",
+        "Score and rank are different. The score is an absolute value from 0 to 100, while the relative rank shows where a stock places within the full pool. The same 52 points can rank differently depending on the distribution, so the two should not be read as the same thing. Stock detail pages show score and relative rank separately.",
+        `Note the basis of the valuation score. Valuation is a percentile within the full pool of ${count} stocks, so it does not adjust for sector differences — sectors that are structurally low-PER/low-PBR, such as financials and holding companies, can cluster near the top. The in-sector valuation on a stock's detail page is a separate reference metric viewed within the same sector and is not included in the composite score.`,
+      ],
+    },
+    metrics: [
+      {
+        key: "momentum",
+        name: "Trend (Momentum)",
+        desc: "A trend metric that takes a weighted average of 1-, 3-, and 6-month returns.",
+        calc: "Compute a weighted-average return of 1 month (30%) + 3 months (40%) + 6 months (30%), then convert it to a percentile (0–100) within all stocks. The higher the rank, the closer to 100.",
+        detail: () =>
+          "Returns: based on adjusted close · Periods: 1/3/6 months (about 21/63/126 trading days) · Uses the full percentile instead of fixed-band mapping to remove top saturation (many stocks scoring 100).",
+        high: "A recently strong trend. That said, a large run-up can widen volatility, so check the cause and whether it is likely to continue.",
+        low: "Recent movement is weak. Check separately via financials and disclosures whether it is undervalued.",
+      },
+      {
+        key: "flow",
+        name: "Trading activity",
+        desc: "A market-interest metric measured from recent changes in trading volume.",
+        calc: "Ratio of the 5-day average volume to the 20-day average volume. 1x = 50 points, 2x = 75 points, 3x+ = 100 points.",
+        detail: () =>
+          "Basis: average volume of the last 5 vs. 20 trading days · Limit: does not reflect traded value, price direction, or flows (foreign/institutional) — only pure volume change.",
+        high: "Volume is higher than usual — check for any issues, news, disclosures, or changes in flows.",
+        low: "Volume is lower than usual. Low interest, or moving sideways.",
+      },
+      {
+        key: "value",
+        name: "Valuation",
+        desc: "Relative degree of undervaluation within the full pool (PER·PBR percentile).",
+        calc: "Average of the PER percentile (lower → higher score) and the PBR percentile. 100 = the lowest PER and PBR in the pool.",
+        detail: (count: number) =>
+          `Percentile basis: the full pool of ${count} stocks · Limit: no sector adjustment (financials and holding companies can structurally cluster near the top) — sector-percentile adjustment is in development.`,
+        high: "Relatively undervalued within the full pool. Note that it may be undervalued for a reason.",
+        low: "Relatively overvalued within the full pool. Growth expectations may already be reflected in the price.",
+      },
+      {
+        key: "vol",
+        name: "Risk-adjusted (Volatility-adjusted)",
+        desc: "Risk-adjusted return, annualized return divided by annualized volatility (Sharpe-like).",
+        calc: "(Annual return − risk-free rate 3.5%) / annual volatility. Maps the −2 to +2 range onto 0–100 points.",
+        detail: () =>
+          "Period: the last 1 year (about 252 trading days) · Returns: daily adjusted close · Risk-free rate: 3.5% per year · Treated as neutral when below the minimum number of observations.",
+        high: "A stretch where return was favorable relative to volatility over the observed period. This is historical and does not guarantee the future.",
+        low: "Return was weak relative to volatility. The swings may have been large while the result failed to keep up.",
+      },
+    ],
+    metricSection: {
+      calcSummary: "Show calculation method ▾",
+      highTitle: "When the score is high (70–100)",
+      lowTitle: "When the score is low (0–30)",
+    },
+    composite: {
+      title: "Composite score",
+      body: "A simple average of the four metrics above. A high composite score can be read as ",
+      bodyStrong: '"favorable from all four angles."',
+      bodyTail: "",
+      note: "The composite score is not a buy score but a ",
+      noteStrong: "research priority",
+      noteTail: ". Use it to decide which stocks to look at more closely. A stock scoring 100 is not guaranteed to be a good investment.",
+    },
+    commonBasis: {
+      title: "Common calculation basis",
+      items: (count: number) => [
+        "Prices are calculated on an adjusted-close basis (reflecting splits and ex-dividend).",
+        "For missing or trading-halt periods, only available data is used, and below the minimum number of observations it is treated as neutral (50 points).",
+        "The risk-free rate is applied simply at 3.5% per year (precise reference-date adjustment is a later task).",
+        `The valuation in the composite score is a percentile based on all ${count} stocks. The in-sector valuation on a stock's detail page is a separate reference metric and is not included in the composite score.`,
+        "The score is an experimental metric — backtest validation is in progress, so it is for reference only.",
+      ],
+      versionPrefix: "Formula version: ",
+      appliedPrefix: " · applied ",
+      samePolicy: ". The explanations on this page match the actual production formulas.",
+      changelogLink: "View formula change history",
+      codeIntro: "Calculation code published (for formula verification) — ",
+      codeGenerator: " (the actual data generator) · ",
+      codeReference: " (reference implementation). The score is a ",
+      codeNote: " and is not a buy or sell signal.",
+    },
+    footer: {
+      sourcePrefix: "Data sources:",
+      body: (count: number) =>
+        ` KRX daily close (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance supplementary metrics. ${count} stocks. Updated automatically after market close on business days.`,
+    },
+  },
+};

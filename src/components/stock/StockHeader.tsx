@@ -1,4 +1,8 @@
+"use client";
+
 import { type ReactNode } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { stockHeaderCopy } from "@/lib/copy/stockDetail";
 
 /**
  * 종목 헤더 — 업종 태그 · 종목명(가장 크게) · 종목코드 + 현재가/액션 슬롯.
@@ -20,6 +24,8 @@ export function StockHeader({
   priceSlot: ReactNode;
   actionsSlot: ReactNode;
 }) {
+  const { locale } = useLanguage();
+  const t = stockHeaderCopy[locale];
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 md:p-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -31,7 +37,7 @@ export function StockHeader({
           </div>
           <div className="mt-1.5">{priceSlot}</div>
           {asOfLabel ? (
-            <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{asOfLabel} 장마감 기준</div>
+            <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{asOfLabel} {t.asOfSuffix}</div>
           ) : null}
         </div>
         {/* CTA 버튼 그룹 — 데스크톱은 우측 가로 배치(명확한 간격), 모바일은 한 줄로 내려 균등 폭으로 줄바꿈(텍스트처럼 붙지 않게). */}

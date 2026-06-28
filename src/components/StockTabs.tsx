@@ -1,10 +1,17 @@
 "use client";
 
 import { useState, useEffect, type ReactNode } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { stockDetailCopy } from "@/lib/copy/stockDetail";
+
+type TabLabelKey = keyof (typeof stockDetailCopy)["ko"]["tabs"];
 
 export interface StockTab {
   id: string;
-  label: string;
+  /** 정적 라벨(하위 호환). labelKey가 있으면 무시된다. */
+  label?: string;
+  /** 다국어 라벨 키 — stockDetailCopy.tabs에서 현지화. */
+  labelKey?: TabLabelKey;
   content: ReactNode;
 }
 
@@ -13,6 +20,8 @@ export interface StockTab {
  * URL 해시(#disclosures 등)로 특정 탭 딥링크 — 초보자 해석의 '관련 공시 보기' 등에서 사용.
  */
 export function StockTabs({ tabs }: { tabs: StockTab[] }) {
+  const { locale } = useLanguage();
+  const tabCopy = stockDetailCopy[locale].tabs;
   const [active, setActive] = useState(tabs[0]?.id ?? "");
 
   useEffect(() => {
@@ -53,7 +62,7 @@ export function StockTabs({ tabs }: { tabs: StockTab[] }) {
                 : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200")
             }
           >
-            {t.label}
+            {t.labelKey ? tabCopy[t.labelKey] : t.label}
           </button>
         ))}
       </div>

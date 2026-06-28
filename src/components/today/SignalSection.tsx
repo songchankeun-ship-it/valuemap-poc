@@ -7,11 +7,13 @@ export function SignalSection({
   caption,
   items,
   footnote,
+  emptyText,
 }: {
   title: string;
   caption: string;
   items: SignalStockVM[];
   footnote?: string;
+  emptyText: string;
 }) {
   return (
     <section>
@@ -28,7 +30,7 @@ export function SignalSection({
         </div>
       ) : (
         <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 px-4 py-6 text-center text-[12px] text-zinc-500 dark:text-zinc-400">
-          아직 해당하는 종목이 없습니다. 데이터가 갱신되면 다시 채워집니다.
+          {emptyText}
         </div>
       )}
 

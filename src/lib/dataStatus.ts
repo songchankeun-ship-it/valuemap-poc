@@ -15,6 +15,7 @@ import {
   realStockPool,
 } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
+import type { Locale } from "@/lib/i18n";
 
 export type DataStatusKind = "normal" | "partial" | "delayed" | "limited" | "error";
 
@@ -313,25 +314,224 @@ export const dataStatus = {
   reportEmail,
 } as const;
 
+// ── 다국어 v2: 영어 표시 레이어 ─────────────────────────────────────────
+// 날짜·숫자·상태 종류(DataStatusKind)는 동일하게 두고 라벨·의미·상세 문구만 영어로 제공한다.
+// dataStatus(한국어)와 같은 구조라 TrustLayer·/status가 로케일만 바꿔 읽는다.
+// 라벨 문자열을 넓힌(widened) 구조 타입으로, ko 리터럴 객체와 en 객체가 모두 대입 가능하다.
+export interface LocalizedDataStatus {
+  globalAsOfDate: string | undefined;
+  globalAsOfLabel: string;
+  marketDateLabel: string;
+  businessDaysSince: number | null;
+  dataStale: boolean;
+  status: DataStatusKind;
+  statusLabel: string;
+  statusMeaning: string;
+  statusTone: DataStatusKind;
+  domainStatuses: readonly DomainStatus[];
+  universeCount: number;
+  metricsVersion: string | undefined;
+  metricsVersionLabel: string;
+  metricsEffectiveDate: string | undefined;
+  sources: readonly DataSource[];
+  notices: { investment: string; score: string; disclaimer: readonly string[] };
+  limits: { disclosure: string; backtest: string };
+  knownLimits: readonly KnownLimit[];
+  selfCheck: SelfCheck;
+  reportEmail: string;
+}
+
+const DATA_STATUS_META_EN: Record<DataStatusKind, { label: string; meaning: string }> = {
+  normal: { label: "Data normal", meaning: "Key data is up to date as of the reference date." },
+  partial: { label: "Partial delay", meaning: "Financial data for some stocks may not be current." },
+  delayed: { label: "Update delayed", meaning: "Price data is from the previous business day." },
+  limited: { label: "Limited collection", meaning: "Disclosures are analyzed for the latest 200 filings only." },
+  error: { label: "Check needed", meaning: "Some data could not be generated and needs review." },
+};
+
+const DATA_SOURCES_EN_USAGE: Record<string, string> = {
+  krx: "Used for price, volume, and close-based calculations.",
+  naver: "Used for PER, PBR, ROE, dividend, and other financial metrics.",
+  yfinance: "Used for supplementary price data and time-series validation.",
+  dart: "Used for disclosure text and disclosure-signal classification.",
+};
+
+const LIMIT_DISCLOSURE_EN =
+  "For performance and cost, disclosures are analyzed for the latest 200 filings only.";
+const LIMIT_BACKTEST_EN =
+  "Backtests are idea-validation simulations, not a performance verification of the current composite score.";
+
+const knownLimitsEn: KnownLimit[] = [
+  {
+    title: "Stock coverage",
+    detail: `Currently ${dataMetadata.count} stocks are analyzed — not all listed companies. Coverage expands gradually from KOSPI 200, KOSDAQ 150, and major ETFs, adding only stocks that pass data-quality checks.`,
+  },
+  {
+    title: "Disclosure scope",
+    detail: `${LIMIT_DISCLOSURE_EN} Signals come from the latest 100 filings each on KOSPI and KOSDAQ (200 total), not every filing in the selected period.`,
+  },
+  {
+    title: "Backtest limits",
+    detail: `${LIMIT_BACKTEST_EN} Survivorship bias (no point-in-time universe) is a follow-up task.`,
+  },
+  {
+    title: "Sector valuation basis",
+    detail:
+      "In-sector valuation is shown only when a sector has 4 or more PER·PBR peers; with too few samples, only the full-pool score is shown.",
+  },
+  {
+    title: "Sector classification",
+    detail:
+      "Sectors use a theme-based heuristic, not official KRX sector codes; official-code integration is a follow-up task.",
+  },
+  {
+    title: "Pending-verification stocks",
+    detail:
+      "Stocks with extreme PER·PBR·ROE are marked pending verification and excluded from today's candidates and Top lists.",
+  },
+];
+
+const domainLabelEn: Record<DomainStatus["key"], string> = {
+  price: "Price · Score",
+  financial: "Financial metrics",
+  disclosure: "Disclosures",
+  metrics: "Formula",
+};
+
+const domainStatusesEn: DomainStatus[] = [
+  {
+    key: "price",
+    label: domainLabelEn.price,
+    status,
+    statusLabel: DATA_STATUS_META_EN[status].label,
+    meaning: DATA_STATUS_META_EN[status].meaning,
+    detail: `${formatBizDateLong(asOf)} market close · KRX`,
+  },
+  {
+    key: "financial",
+    label: domainLabelEn.financial,
+    status: financialStatus,
+    statusLabel: DATA_STATUS_META_EN[financialStatus].label,
+    meaning: DATA_STATUS_META_EN[financialStatus].meaning,
+    detail:
+      missingFinancials > 0
+        ? `Naver Finance · PER·PBR missing for ${missingFinancials} of ${universeSize} stocks`
+        : `Naver Finance · no missing values (${universeSize} stocks)`,
+  },
+  {
+    key: "disclosure",
+    label: domainLabelEn.disclosure,
+    status: "limited",
+    statusLabel: DATA_STATUS_META_EN.limited.label,
+    meaning: DATA_STATUS_META_EN.limited.meaning,
+    detail: "DART · last 7 days · latest 200 filings",
+  },
+  {
+    key: "metrics",
+    label: domainLabelEn.metrics,
+    status: metricsStatus,
+    statusLabel: DATA_STATUS_META_EN[metricsStatus].label,
+    meaning:
+      metricsStatus === "error"
+        ? "Formula version metadata is missing and needs review."
+        : `Currently based on ${metricsVersion ? `Metrics ${metricsVersion}` : "—"}.`,
+    detail: metricsVersion ? `Metrics ${metricsVersion}` : "No version metadata",
+  },
+];
+
+const dataStatusEn: LocalizedDataStatus = {
+  globalAsOfDate: asOf,
+  globalAsOfLabel: formatBizDateLong(asOf),
+  marketDateLabel: formatBizDateMobile(asOf),
+  businessDaysSince: bizDays,
+  dataStale: stale,
+  status,
+  statusLabel: DATA_STATUS_META_EN[status].label,
+  statusMeaning: DATA_STATUS_META_EN[status].meaning,
+  statusTone: statusMeta.tone,
+  domainStatuses: domainStatusesEn,
+  universeCount: dataMetadata.count,
+  metricsVersion,
+  metricsVersionLabel: metricsVersion ? `Metrics ${metricsVersion}` : "Metrics —",
+  metricsEffectiveDate: isoToDotDate(dataMetadata.generatedAt),
+  sources: DATA_SOURCES.map((s) => ({ ...s, usage: DATA_SOURCES_EN_USAGE[s.id] ?? s.usage })),
+  notices: {
+    investment: "OrnScore is a data tool that reduces stock-research time — not investment advice.",
+    score: "Scores are a relative position within the same analysis pool and do not imply future returns.",
+    disclaimer: [
+      "OrnScore is a data-based exploration tool, not investment advice.",
+      "All scores and signals are reference information, not buy or sell recommendations.",
+      "Final investment decisions and responsibility rest with you.",
+    ],
+  },
+  limits: { disclosure: LIMIT_DISCLOSURE_EN, backtest: LIMIT_BACKTEST_EN },
+  knownLimits: knownLimitsEn,
+  selfCheck,
+  reportEmail,
+};
+
+/** 로케일별 데이터 신뢰 객체 — ko는 기존 dataStatus(한국어), en은 영어 트윈. */
+export const dataStatusByLocale: Record<Locale, LocalizedDataStatus> = {
+  ko: dataStatus,
+  en: dataStatusEn,
+};
+
+/** 로케일에 맞는 데이터 신뢰 객체를 반환(서버에서 직렬화 props로 클라이언트에 전달). */
+export function localizedDataStatus(locale: Locale): LocalizedDataStatus {
+  return dataStatusByLocale[locale] ?? dataStatus;
+}
+
+/** 오류 신고 포함 항목 — 영어. */
+export const dataIssueReportFieldsEn: DataIssueField[] = [
+  { label: "Stock name · code", hint: "e.g., Samsung Electronics 005930" },
+  { label: "Field (price/financial/disclosure/score)", hint: "which data looks wrong" },
+  { label: "Unexpected value and expected", hint: "value shown / value you expected" },
+  { label: "Page URL where found", hint: "address of the page with the issue" },
+  { label: "Contact method", hint: "email for a reply (optional)" },
+];
+
+export const dataIssueReportFieldsByLocale: Record<Locale, DataIssueField[]> = {
+  ko: dataIssueReportFields,
+  en: dataIssueReportFieldsEn,
+};
+
 /**
  * 데이터 오류 신고 mailto: 링크 — /status·/about·푸터가 같은 본문/기준일을 공유한다.
  * prefill에는 해당 화면에서 자동 채운 컨텍스트(종목·URL 등)를 넘긴다. 본문은 실제 줄바꿈(\n)을 쓴다.
  */
-export function buildDataIssueMailto(opts?: { subject?: string; prefill?: string }): string {
-  const subject = opts?.subject ?? "[오른스코어] 데이터 오류 신고";
-  const bodyLines = [
-    "종목명/코드:",
-    "항목(가격/재무/공시/점수):",
-    "이상한 값과 기대값:",
-    "발견 화면(URL):",
-    "연락 방법(선택):",
-  ];
+export function buildDataIssueMailto(opts?: {
+  subject?: string;
+  prefill?: string;
+  locale?: Locale;
+}): string {
+  const locale: Locale = opts?.locale ?? "ko";
+  const ds = dataStatusByLocale[locale] ?? dataStatus;
+  const subject =
+    opts?.subject ?? (locale === "en" ? "[OrnScore] Data issue report" : "[오른스코어] 데이터 오류 신고");
+  const bodyLines =
+    locale === "en"
+      ? [
+          "Stock name/code:",
+          "Field (price/financial/disclosure/score):",
+          "Unexpected value and expected:",
+          "Page (URL):",
+          "Contact (optional):",
+        ]
+      : [
+          "종목명/코드:",
+          "항목(가격/재무/공시/점수):",
+          "이상한 값과 기대값:",
+          "발견 화면(URL):",
+          "연락 방법(선택):",
+        ];
   if (opts?.prefill) {
     bodyLines.push("", opts.prefill);
   }
   bodyLines.push(
     "",
-    `— 데이터 기준일: ${dataStatus.globalAsOfLabel} · 산식 ${dataStatus.metricsVersionLabel}`,
+    locale === "en"
+      ? `— Data as of: ${ds.globalAsOfLabel} · Formula ${ds.metricsVersionLabel}`
+      : `— 데이터 기준일: ${ds.globalAsOfLabel} · 산식 ${ds.metricsVersionLabel}`,
   );
   const body = bodyLines.join("\n");
   return `mailto:${reportEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

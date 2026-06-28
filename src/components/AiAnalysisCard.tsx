@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { saveAnalysis } from "@/lib/aiHistory";
 import { Bot, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
+import { aiAnalysisCardCopy } from "@/lib/copy/stockDetail";
 
 interface AnalysisOutput {
   oneLineSummary: string;
@@ -28,6 +30,8 @@ interface AnalysisResponse {
 }
 
 export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string }) {
+  const { locale } = useLanguage();
+  const t = aiAnalysisCardCopy[locale];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AnalysisResponse | null>(null);
@@ -44,7 +48,7 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "분석 생성에 실패했습니다.");
+        setError(json.error ?? t.runError);
       } else {
         setData(json);
         saveAnalysis({
@@ -72,10 +76,10 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
           </div>
           <div>
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-              AI 종합 분석
+              {t.title}
             </div>
             <div className="text-xs text-zinc-600 dark:text-zinc-400">
-              지표 4종 + 재무 + 공시를 통합한 분석 (1~3초)
+              {t.subtitle}
             </div>
           </div>
         </div>
@@ -86,7 +90,7 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         )}
         <div className="mb-2 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 leading-relaxed flex items-start gap-2">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" strokeWidth={2} />
-          <span>AI 분석을 실행하면 선택한 종목 데이터와 입력 항목이 <strong>AI 처리업체 Anthropic(미국)</strong>으로 전송됩니다. 개인 메모·민감한 개인정보는 입력하지 마세요. AI 분석은 투자 추천이 아닌 참고용 요약입니다.</span>
+          <span>{t.consentNotice}</span>
         </div>
         <label className="mb-2 flex items-start gap-2 min-h-[44px] py-1.5 cursor-pointer select-none text-[11px] text-zinc-700 dark:text-zinc-300 leading-relaxed">
           <input
@@ -95,14 +99,14 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
             onChange={(e) => setConsented(e.target.checked)}
             className="mt-0.5 w-4 h-4 shrink-0 accent-zinc-900 dark:accent-zinc-100"
           />
-          <span>위 내용을 확인했으며, 데이터가 <strong>Anthropic(미국)</strong>으로 전송되는 것에 동의합니다.</span>
+          <span>{t.consentCheckboxBefore} <strong>{t.consentCheckboxProcessor}</strong>{t.consentCheckboxAfter}</span>
         </label>
         <button
           onClick={runAnalysis}
           disabled={loading || !consented}
           className="w-full py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 disabled:cursor-not-allowed transition"
         >
-          {loading ? "분석 생성 중…" : !consented ? "동의 후 실행할 수 있어요" : "AI 분석 실행"}
+          {loading ? t.btnRunning : !consented ? t.btnNeedConsent : t.btnRun}
         </button>
       </div>
     );
@@ -113,12 +117,12 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
       <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md p-2.5 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed flex items-start gap-2">
         <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" strokeWidth={2} />
-        <span>이 분석은 투자 판단을 돕기 위한 <strong>참고 정보</strong>이며, 매수·매도 추천이 아닙니다. 호재·리스크를 함께 확인하세요.</span>
+        <span>{t.resultDisclaimerBefore} <strong>{t.resultDisclaimerBold}</strong>{t.resultDisclaimerAfter}</span>
       </div>
       <header className="flex items-start justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">AI 종합 분석</span>
+            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{t.title}</span>
             <SourceBadge source={data.source} />
           </div>
           <p className="text-base font-medium leading-tight text-zinc-900 dark:text-zinc-100">{a.oneLineSummary}</p>
@@ -126,16 +130,16 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         <ScoreCircle score={a.finalScore} />
       </header>
 
-      <Section title="자체 지표 해석">{a.scoreInterpretation}</Section>
-      <Section title="재무 핵심">{a.financialContext}</Section>
-      <Section title="테마 맥락">{a.themeContext}</Section>
+      <Section title={t.secScore}>{a.scoreInterpretation}</Section>
+      <Section title={t.secFinancial}>{a.financialContext}</Section>
+      <Section title={t.secTheme}>{a.themeContext}</Section>
       {a.disclosureInsight && (
-        <Section title="최근 공시 시사점">{a.disclosureInsight}</Section>
+        <Section title={t.secDisclosure}>{a.disclosureInsight}</Section>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
-        <BulletBox title="호재 3" color="success" items={a.positives} />
-        <BulletBox title="리스크 3" color="danger" items={a.risks} />
+        <BulletBox title={t.positivesTitle} color="success" items={a.positives} />
+        <BulletBox title={t.risksTitle} color="danger" items={a.risks} />
       </div>
 
       <div className="bg-zinc-50 dark:bg-zinc-800/60 rounded-md p-3 text-xs text-zinc-700 dark:text-zinc-300 italic">
@@ -144,27 +148,27 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
 
       <footer className="flex justify-between items-center text-[11px] text-zinc-500 dark:text-zinc-400 pt-2 border-t border-zinc-100 dark:border-zinc-800 flex-wrap gap-2">
         <div>
-          {data.source === "sample" && "사전 생성 샘플 (Claude 키 없음)"}
-          {data.source === "cache" && "캐시된 결과 (24시간 유효)"}
+          {data.source === "sample" && t.footerSample}
+          {data.source === "cache" && t.footerCache}
           {data.source === "live" && data.model && (
-            <>모델: {data.model} · 비용 약 {data.costKRW?.toFixed(2)}원</>
+            <>{t.footerModelPrefix} {data.model} · {t.footerCostPrefix} {data.costKRW?.toFixed(2)}{t.footerCostSuffix}</>
           )}
         </div>
         <div className="flex items-center gap-2">
           {typeof data.rateLimitRemaining === "number" && (
-            <span>오늘 {data.rateLimitRemaining}회 남음</span>
+            <span>{t.footerRemainingPrefix} {data.rateLimitRemaining}{t.footerRemainingSuffix}</span>
           )}
           <button
             onClick={() => { setData(null); setError(null); }}
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
-            다시 실행
+            {t.rerun}
           </button>
         </div>
       </footer>
 
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
-        본 분석은 일반 정보 제공·교육 목적이며 투자 권유가 아닙니다. 시세·재무·지표는 시뮬레이션 데이터를 포함할 수 있으며, 실제 매매는 본인 책임입니다.
+        {t.bottomDisclaimer}
       </p>
     </div>
   );
