@@ -42,6 +42,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 90 후속 수리 — 로그인 링크 hydration mismatch 제거 (Playwright 게이트 수복) (2026-06-28, Claude)
+- **증상**: Playwright 품질게이트 데스크톱·모바일 모두 실패. `AccountButtons`의 로그인 `href` 서버/클라 불일치 — 서버 `/login?next=%2Fstock%2F005380`, 클라 `/login?next=%2Fstock%2F005380%3Flang%3Den`(`?lang=en` 차이). 렌더 중 `window.location.search`를 직접 읽어 SSR엔 없고 클라 hydration엔 있어 React `did not match` 경고.
+- **수정**: `src/components/AccountButtons.tsx` — search를 렌더 중이 아닌 `useState("")`+`useEffect`(pathname 의존)로 **마운트 후에만** 채움. 초기 렌더가 SSR과 동일(빈 search)해 mismatch 제거. 복귀 next 쿼리는 hydration 후 반영, 인증·동작 무변경.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0 · `npm run app:check` 통과 · `git diff --check` 0 · U+FFFD 0. (Task 87 repair 2의 Pretendard hydration 수복과 동일 패턴.)
+
 ### 영어 지원 QA + 홈 화면 다국어화 + 모바일 점검 (2026-06-28, Claude · task 90)
 - **범위/판단**: task 89(영어 v2) 후속 QA. 먼저 결과를 점검 → task 89가 `/stocks`·`/stock/[ticker]`·`/today`·`/disclosures`·`/pricing`·`/status`·`/guide/metrics`·`/terms`·`/privacy`를 충실히 영어화했고 모바일 하드닝도 이미 양호함을 확인. 재번역 대신 **최대 임팩트 갭 = 홈(/) 히어로 아래 전 구간이 EN 모드에서도 한국어**를 우선 처리.
 - **홈 다국어화**: 신규 `src/lib/copy/home.ts`(ko/en 단일 출처). 홈 카드 서버 컴포넌트를 `"use client"`+`useLanguage`로 전환 — `MarketSnapshotCards`·`FeatureCards`·`HowItWorksSection`·`TopCandidateSection`·`StockCandidateCard`·`DisclosureSignalSection`·`DisclosureSignalCard` + 신규 `HomeDataSourceFooter`. `HomeHero`·`TodayContent`의 후보 칩도 신규 구조에 맞춤.

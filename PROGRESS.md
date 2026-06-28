@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-28 · [claude] task 90 후속 수리 — 로그인 링크 hydration mismatch 해결
+- **증상**: Playwright 품질게이트(데스크톱·모바일 모두) 실패 — `AccountButtons`의 로그인 `href`가 서버/클라이언트 불일치. 서버 `/login?next=%2Fstock%2F005380` vs 클라 `/login?next=%2Fstock%2F005380%3Flang%3Den`. 원인: 렌더 중 `window.location.search`를 직접 읽어 SSR엔 `?lang=en`이 없고 클라엔 있어 React hydration 경고 발생.
+- **수정**: `src/components/AccountButtons.tsx` — 쿼리스트링을 렌더 중 읽지 않고 `useState("")`+`useEffect`(pathname 의존)로 **마운트 후에만** 채우도록 변경. 초기 렌더가 SSR과 동일(빈 search)해져 mismatch 제거. 복귀 목적지(next)에 쿼리는 hydration 후 정상 반영, 인증·동작 무변경.
+- **검증**: `npx tsc --noEmit` 0 · `npm run build` 0 · `npm run app:check` 통과 · `git diff --check` 0 · 변경 파일 U+FFFD 0.
+
 ## 2026-06-28 · [claude] 영어 지원 QA + 홈 화면 다국어화 + 모바일 점검 (task 90)
 - **목표**: task 89(영어 v2) 위 후속 QA·모바일 폴리시. task 89 결과를 먼저 점검하고 **재번역 대신 가장 영향 큰 갭**을 메움.
 - **핵심 발견**: task 89는 `/stocks`·`/stock/[ticker]`·`/today`·`/disclosures`·`/pricing`·`/status`·`/guide/metrics`·`/terms`·`/privacy`를 충실히 영어화했고 모바일 하드닝(`break-words`·`min-w-0`·`flex-wrap`·`overflow-x-auto`·`min-h-[44px]`)도 이미 잘 돼 있었다. **가장 큰 잔여 갭 = 홈(/) 히어로 아래 전 구간이 영어 모드에서도 한국어**(시장 스냅샷·오늘 후보 카드·공시 신호 카드·핵심 기능·사용 방법·데이터 출처 푸터). 영어 사용자가 첫 화면에서 서비스를 이해하지 못하는 최대 임팩트 지점이라 이를 우선 처리.
