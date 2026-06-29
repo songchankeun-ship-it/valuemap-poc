@@ -34,7 +34,7 @@ export function MonthlyHeatmap({ monthlyReturns }: { monthlyReturns: Record<stri
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
       <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-1">월별 수익률 히트맵</h3>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">
-        연도(행) × 월(열) 격자. <span className="text-red-600 dark:text-red-400">붉을수록 상승</span> · <span className="text-blue-600 dark:text-blue-400">푸를수록 하락</span> · 회색은 0%/미보유. 빈 칸은 데이터 없음.
+        연도(행) × 월(열) 격자. <strong className="text-zinc-700 dark:text-zinc-300">각 칸의 숫자는 그 달의 수익률(%)</strong>입니다. <span className="text-red-600 dark:text-red-400">붉을수록 상승</span> · <span className="text-blue-600 dark:text-blue-400">푸를수록 하락</span> · 회색은 0%/미보유. 빈 칸은 데이터 없음.
       </p>
       <div className="overflow-x-auto">
         <div className="min-w-[560px]">

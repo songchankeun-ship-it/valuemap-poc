@@ -1,5 +1,19 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-30 · [claude] task 112 — 최종 점검 QA 클로즈아웃 (P0/P1 재검증 + 잔여 P2 백테스트 히트맵 단위 명시)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) 전체를 클로즈아웃 관점에서 재검증. P0(task 108 기준일·109 필터)·P1(task 110 트러스트 카피) **회귀 없음 재확인** + 스펙이 콕 집은 잔여 P2 중 **유일하게 미충족이던 백테스트 히트맵 단위 명시 1건**만 보강. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA·정렬·`strength`/`direction` 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 1파일.
+- **P2 보강(`src/components/backtest/MonthlyHeatmap.tsx` 1파일)**: 히트맵 셀은 `(v*100).toFixed(0)`로 **숫자만**(예 `5`·`-3`) 표시되고 `title`/`aria-label`에만 `수익률 …%`가 있어, 텍스트 파싱·스캔 환경에서 각 칸이 월별 수익률(%)임이 시각적으로 드러나지 않던 갭(스펙 §2.3·§6.5·P2-1 작업표). 부제 문구에 `**각 칸의 숫자는 그 달의 수익률(%)**` 한 절 추가(기존 색상 범례·빈 칸 안내 보존). 셀 렌더·heatClass·색·값 무변경.
+- **재검증(읽기 전용·무변경)**:
+  - **P0-1 기준일** — `/`·`/stocks`·`/stock/034730`·`/watchlist`·`/about`·`/status` 전부 SSR `2026.06.29` 노출, 사용자 노출 stale `2026.06.26 (금) 장마감` 0건.
+  - **P0-2 `/stocks` 123/138** — `기본 품질 필터 적용 중: 123개 / 전체 138개` 헤드라인·전체/기본 토글·3행 현재조건 노출, 구 충돌 문구(`전체 138개 종목을 종합점수 기준으로 보고 있습니다`) 0건.
+  - **P1-1 `/watchlist`** — SSR에 `아직 관심 종목이 없습니다` 빈 상태(noscript fallback) 노출 — 로딩 텍스트 고착 아님.
+  - **P1-4 공시 라벨** — `/disclosures` `분류 신뢰도` 노출·구 `신호 강도` 0건.
+  - **P1-3 요금제 / P1-5 상태 톤** — `/pricing` `전환될 수 있` 노출, `/status` `단계적으로 공개할 예정입니다` 노출·구 내부 TODO 톤(`후속 과제입니다(현재는 배포 시점 스냅샷)`) 0건.
+  - **P2 업종 표본(task 102 처리분)** — `/stock/034730` `본인 포함` 노출·`본인 제외` 0건(`stockDetail.ts` peerDescMid/sampleEnd ko+en 일관).
+  - **P2 종목 상세 CTA 간격** — `StockDetailActionButtons.tsx` grid `grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-4 gap-2` + 독립 `<a>`·`min-h-[44px]`·아이콘 — 텍스트 글루 없음(이미 task 91 충족).
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG, 전 라우트) · `git diff --check` 0 · 변경 1파일 U+FFFD 0(Korean intact). 로컬 prod **4421**(리스너 PID 17776만 taskkill·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 스모크 15라우트(`/`·`/stocks`·`/stock/034730`·`/watchlist`·`/about`·`/status`·`/disclosures`·`/backtest`·`/pricing`·`/compare`·`/history`·`/guide/metrics`·`/terms`·`/privacy`·`/login`) 전부 200, `/backtest` SSR에 `각 칸의 숫자는 그 달의 수익률` 노출.
+- **남은 갭(후속·운영자)**: 390px 실 브라우저 육안(Playwright 미구성). 라이브러리 파생 문구 EN 로케일 한국어 잔여(기존). 스펙 P2-3 차트 접근성 텍스트 요약·P2-4 KO/EN 법무 전문 번역·유료화 전 결제/환불/청약철회·AI 분석 삭제 정책 보강은 운영자/제품 결정 게이트. `MonthlyHeatmap`은 한국어 전용(파일 기존 패턴) — EN 단위 절은 i18n 도입 시 후속.
+
 ## 2026-06-30 · [claude] task 110 repair — 데스크톱 Playwright 스크린샷 30s 타임아웃(자동화 브라우저에서 CDN 폰트 요청 생략)
 - **블로커(게이트 FAIL)**: `PLAYWRIGHT DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded` — `fonts loaded` 직후 캡처가 멈춤. **Task 87과 동일 시그니처**(외부 jsdelivr Pretendard 웹폰트 의존).
 - **근본원인**: task 110 P1 diff는 순수 카피/정적 JSX(애니메이션·fetch·외부 리소스 추가 0)라 무관. Task 87이 render-blocking `@import`를 비차단 JS 주입으로 바꿨지만, 그 인라인 스크립트는 여전히 **페이지 수명주기 중 jsdelivr CDN 요청을 발생**시킨다. 오프라인/헤드리스 QA 하니스에서 그 요청이 pending으로 멈춰 스크린샷 단계가 안정 상태에 도달하지 못함.

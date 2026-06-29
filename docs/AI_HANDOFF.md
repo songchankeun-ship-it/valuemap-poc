@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 112 — 최종 점검 QA 클로즈아웃 (P0/P1 회귀 재검증 + 잔여 P2 백테스트 히트맵 단위 1건 보강) (2026-06-30, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` 전체 클로즈아웃. P0(task 108 기준일·109 필터)·P1(task 110 트러스트 카피) 회귀 0 재확인 + 잔여 P2 중 유일 미충족(백테스트 히트맵 단위 명시)만 보강. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA·정렬·`strength`/`direction` 무변경, 신규 npm 0, 매수/매도/추천 0). **변경 1파일** + docs.
+- **유일 코드 변경** `src/components/backtest/MonthlyHeatmap.tsx`: 셀이 `(v*100).toFixed(0)`로 숫자만 표시되고 단위(%)가 `title`/`aria-label`에만 있어 텍스트 파싱 환경에서 안 보이던 갭(스펙 §6.5·P2-1) → 부제에 `각 칸의 숫자는 그 달의 수익률(%)` 한 절 추가. 셀/색/값 무변경.
+- **재검증 통과(무변경)**: 기준일 06.29 전 페이지 일치·stale 06.26 0 / `/stocks` 123/138 헤드라인·토글·구 충돌문구 0 / `/watchlist` 빈상태 노출(로딩 고착 아님) / `/disclosures` `분류 신뢰도`·구 `신호 강도` 0 / `/pricing` `전환될 수 있`·`/status` `단계적으로 공개할 예정` / 업종 표본 `본인 포함`·`본인 제외` 0(task 102) / CTA grid 분리(task 91).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4421**(PID 17776만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 스모크 15라우트 전부 200, `/backtest` SSR 신규 단위 절 노출.
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성)·EN 파생 문구 잔여·`MonthlyHeatmap` 한국어 전용(i18n 도입 시 EN 단위 절)·스펙 P2-3 차트 접근성 요약·유료화 전 결제/환불/청약철회·AI 분석 삭제 정책·법무 전문 EN 번역은 운영자/제품 게이트.
+
 ### Task 110 — 최종 점검 P1 출시 전 신뢰 문구 마감 (관심 빈 상태 하드닝·순위 범위·요금제 베타·공시 강도→분류 신뢰도·상태 톤) (2026-06-30, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **§4 P1-1~P1-5**. P0(task 108 기준일·109 필터 문구)는 완료 상태. 표시/문구 + localStorage 방어 try/catch만(점수식·`stocks.json`·인증·manifest·PWA·`strength`/`direction` 데이터·정렬 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 8파일.
 - **P1-5** `src/lib/copy/status.ts` `selfcheckFootnote`(ko+en): "…후속 과제입니다(현재는 배포 시점 스냅샷)" → "현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다." 문자열 1쌍만, 시각/값 무변경.
