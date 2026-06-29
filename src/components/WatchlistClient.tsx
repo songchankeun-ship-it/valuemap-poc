@@ -101,15 +101,24 @@ export function WatchlistClient({
   const [view, setView] = useState<"simple" | "analysis">("simple");
 
   useEffect(() => {
-    const v = typeof window !== "undefined" ? localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY) : null;
-    if (v === "analysis" || v === "simple") setView(v);
+    // 시크릿 모드·저장소 차단 환경에서 localStorage 접근이 예외를 던질 수 있어 방어
+    try {
+      const v = typeof window !== "undefined" ? localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY) : null;
+      if (v === "analysis" || v === "simple") setView(v);
+    } catch {
+      // 저장소 사용 불가 — 기본 보기(simple) 유지
+    }
   }, []);
 
   function changeView(v: "simple" | "analysis") {
     setView(v);
     if (typeof window !== "undefined") {
-      localStorage.setItem(VIEW_KEY, v);
-      localStorage.removeItem(LEGACY_VIEW_KEY);
+      try {
+        localStorage.setItem(VIEW_KEY, v);
+        localStorage.removeItem(LEGACY_VIEW_KEY);
+      } catch {
+        // 저장 실패 — 현재 세션에는 보기 전환이 반영되지만 새로고침 시 복원되지 않음
+      }
     }
   }
 

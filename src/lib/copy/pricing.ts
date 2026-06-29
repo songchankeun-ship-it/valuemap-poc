@@ -201,8 +201,8 @@ export const pricingCopy = {
       badge: "베타 무료",
       bodyStrong1: "관심 종목 공시 알림 · 저장 조건 알림",
       body2: "은 지금은 베타 기간 동안 무료로 쓸 수 있어요. 이 알림 기능은",
-      bodyStrong3: "정식 출시 시 Pro 기능으로 전환될 예정",
-      body4: "입니다. 전환 시점과 가격은 아직",
+      bodyStrong3: "정식 출시 시 Pro 기능으로 전환될 수 있습니다",
+      body4: ". 전환 시점과 가격은 아직",
       bodyStrong5: "미확정",
       body6: "이며, 변경 전 미리 공지합니다.",
     },
@@ -222,7 +222,7 @@ export const pricingCopy = {
       footer2a: "관심 종목 공시·저장 조건 알림은 지금은",
       footer2Strong: "베타 기간 무료",
       footer2b:
-        "로 체험할 수 있으며, 정식 출시 시 Pro 기능으로 전환될 예정입니다.",
+        "로 체험할 수 있으며, 정식 출시 시 Pro 기능으로 전환될 수 있고 전환 전 사전 안내합니다.",
     },
     legalStrong1: "투자 추천이 아닌 데이터 기반 탐색 도구",
     legalBody1:
@@ -254,8 +254,8 @@ export const pricingCopy = {
     betaCard: {
       badge: "Free in beta",
       bodyStrong1: "Watchlist disclosure & saved-condition alerts",
-      body2: "are free to use during the beta period for now. These alerts are",
-      bodyStrong3: "planned to become a Pro feature at full launch",
+      body2: "are free to use during the beta period for now. These alerts",
+      bodyStrong3: "may become a Pro feature at full launch",
       body4: ". The transition timing and price are still",
       bodyStrong5: "not finalized",
       body6: ", and we'll announce any change in advance.",
@@ -276,7 +276,7 @@ export const pricingCopy = {
       footer2a: "Watchlist disclosure & saved-condition alerts are currently",
       footer2Strong: "free during beta",
       footer2b:
-        ", and are planned to become a Pro feature at full launch.",
+        ", and may become a Pro feature at full launch, with advance notice before any change.",
     },
     legalStrong1: "a data-based exploration tool, not investment advice",
     legalBody1: "OrnScore is ",

@@ -66,6 +66,7 @@ export function PriorityScoreCard({
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.rankLabel} <span className="font-normal">{t.rankParen}</span></div>
           <div>{t.overallPrefix} <strong className="text-zinc-900 dark:text-zinc-100">{overallRank}</strong> / {poolN}{t.rankSuffix}</div>
           <div className="truncate">{t.sectorPrefix}({sector}) <strong className="text-zinc-900 dark:text-zinc-100">{sectorRank}</strong> / {sectorCount}{t.rankSuffix}</div>
+          <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scopeNote(poolN)}</div>
         </div>
       </div>
 

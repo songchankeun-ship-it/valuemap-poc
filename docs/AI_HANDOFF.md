@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 110 — 최종 점검 P1 출시 전 신뢰 문구 마감 (관심 빈 상태 하드닝·순위 범위·요금제 베타·공시 강도→분류 신뢰도·상태 톤) (2026-06-30, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **§4 P1-1~P1-5**. P0(task 108 기준일·109 필터 문구)는 완료 상태. 표시/문구 + localStorage 방어 try/catch만(점수식·`stocks.json`·인증·manifest·PWA·`strength`/`direction` 데이터·정렬 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 8파일.
+- **P1-5** `src/lib/copy/status.ts` `selfcheckFootnote`(ko+en): "…후속 과제입니다(현재는 배포 시점 스냅샷)" → "현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다." 문자열 1쌍만, 시각/값 무변경.
+- **P1-4** `src/lib/signalGuide.ts:54`(`insider_buy.cautionNote`) + `src/lib/copy/disclosures.ts` `cautionFallbackByType.insider_buy`(ko+en): 첫 노출어 `'강도'` → `'분류 신뢰도(자동분류 확신도)'`(호재 점수 아님·방향 DART 원문 확인 보존). + `disclosureExplorerCopy.periodScopeBadge`(ko "선택 기간 전체 아님 · 최신 200건 내" / en "Not the full period · within latest 200") 신설 → `DisclosureExplorer.tsx` 기간 버튼 행 끝 `within200` 동일 스타일 배지 렌더.
+- **P1-2** `priorityScoreCardCopy.scopeNote(n)`(ko+en) 신설 → `PriorityScoreCard.tsx` 순위 줄 아래 동적 `poolN`(하드코딩 138 금지)로 "전체 N종목 기준 상대순위 · 홈 후보 순위와 다를 수 있음" 캡션. 홈 후보 배지(오늘 후보 순위·검증 보류 제외)는 Task 100서 이미 충족 — 검증만.
+- **P1-3** `src/lib/copy/pricing.ts` `betaCard`(ko+en) "전환될 **예정**"→"전환될 **수 있습니다**", `compare.footer2b`(ko+en) "전환될 예정입니다"→"전환될 수 있고 전환 전 사전 안내합니다". 미확정 가격·사전 공지 보존, 가격값 0.
+- **P1-1** `src/components/WatchlistClient.tsx` `view` 읽기/`changeView` 쓰기 try/catch 래핑(저장소 차단 graceful). 인터랙티브 빈 상태(아직 관심 종목 없음 + 검색 + `/stocks`·`/today` CTA + 로그인 동기화 CTA + 헤더의 브라우저저장 vs 로그인동기화 설명 + `<noscript>` fallback)는 이미 충족 — 검증만, loading→empty 전환 확인(로딩 텍스트 고착 아님).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 8파일 U+FFFD 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod **4417**(PID 2496만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 6라우트 200, SSR(ko) 신규 문구 렌더·구 문구(`후속 과제…스냅샷`·`전환될 예정`·`신호 강도`) 0건, EN 신규 키 청크 컴파일 확인.
+- **의도적 범위**: `/status` 잔여 `후속 과제` 2건(`dataStatus.ts` 백테스트 생존편향·KRX 업종코드)은 '알려진 제한' 기술 고지로 P1-5 footnote와 다른 맥락 — 플래너 한정대로 무변경(운영자 후속 톤 조정 옵션).
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성)·EN 파생 문구 잔여·최종 점검 P2(히트맵 단위·업종 표본 일부 task 102 처리)는 별도 후속.
+
 ### Task 109 — 최종 점검 P0-2 `/stocks` 123/138 필터 문구 충돌 정리 (기본 품질 필터 ≠ 사용자 상세 필터 + 전체/기본 보기 토글) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **P0-2 종목 탐색 필터 문구 충돌**. 표시/문구만(점수식·`stocks.json`·`matchConfig.ts`·`savedSearches.ts`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 2파일(`src/lib/copy/stocks.ts`·`src/components/StocksExplorer.tsx`).
 - **실 카운트**: 138종목 중 기본 품질 필터(PER≤200·PBR≤30, 0=결측 통과) 통과 **123 / 제외 15**. `sorted.length`·`total` 동적 — 하드코딩 0.

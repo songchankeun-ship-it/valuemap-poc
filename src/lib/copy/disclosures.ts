@@ -48,6 +48,7 @@ export const disclosureExplorerCopy = {
     // 헤더
     title: "공시 신호",
     within200: "최신 200건 내",
+    periodScopeBadge: "선택 기간 전체 아님 · 최신 200건 내",
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
       `최근 ${days}일 · 최신 200건 내 신호 ${signalCount}건 · ${scopeAll ? "이벤트 묶음" : "분석 대상 묶음"} ${groupCount}개`,
     collectedAt: "수집 기준",
@@ -105,7 +106,7 @@ export const disclosureExplorerCopy = {
     // 타입별 주의 폴백(키=signalType 판별자 → 유지)
     cautionFallbackByType: {
       treasury_buy: "취득 결의일 뿐 실제 매입은 천천히 진행되며, 소각 여부에 따라 의미가 달라집니다.",
-      insider_buy: "신호 강도는 호재 점수가 아니라 보고서를 맞게 분류했다는 '분류 신뢰도'입니다.",
+      insider_buy: "여기 표시되는 '분류 신뢰도(자동분류 확신도)'는 호재 점수가 아니라 보고서를 맞게 분류했다는 확신 정도입니다. 매수/매도 방향은 DART 원문에서 확인하세요.",
       correction: "정정이 잦은 회사는 공시 신뢰도가 떨어질 수 있어 종목 자체 신뢰도 점검이 필요합니다.",
       single_contract: "'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.",
       capital_raise: "CB·신주인수권은 향후 주식 전환 시 잠재 매물이 될 수 있습니다.",
@@ -117,6 +118,7 @@ export const disclosureExplorerCopy = {
     errorUnknown: "Unknown error",
     title: "Disclosure signals",
     within200: "Within latest 200",
+    periodScopeBadge: "Not the full period · within latest 200",
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
       `Last ${days} days · ${signalCount} signals within latest 200 · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
     collectedAt: "Collected as of",
@@ -170,7 +172,7 @@ export const disclosureExplorerCopy = {
       treasury_buy:
         "This is only a buyback resolution; actual purchases proceed gradually, and the meaning depends on whether shares are cancelled.",
       insider_buy:
-        "Signal strength is not a positivity score but the 'classification confidence' that the report was categorized correctly.",
+        "The 'classification confidence (auto-classification certainty)' shown here is not a positivity score but how sure we are the report was categorized correctly. Confirm the buy/sell direction in the DART source.",
       correction:
         "Companies that correct often may have lower disclosure reliability, so check the stock's own reliability.",
       single_contract:

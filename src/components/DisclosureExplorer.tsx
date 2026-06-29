@@ -288,6 +288,10 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               {t.dayUnit(d)}
             </button>
           ))}
+          {/* 기간 버튼 옆 반복 배지 — 기간을 바꿔도 '선택 기간 전체 공시'가 아님을 다시 고지 */}
+          <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />{t.periodScopeBadge}
+          </span>
         </div>
 
         {/* 분석 대상만 / 전체 시장 (설계서 §15) — 홈은 분석 대상 중심, 공시 페이지는 전체 시장 탐색까지 */}
