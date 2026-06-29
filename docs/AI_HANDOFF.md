@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 109 — 최종 점검 P0-2 `/stocks` 123/138 필터 문구 충돌 정리 (기본 품질 필터 ≠ 사용자 상세 필터 + 전체/기본 보기 토글) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **P0-2 종목 탐색 필터 문구 충돌**. 표시/문구만(점수식·`stocks.json`·`matchConfig.ts`·`savedSearches.ts`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 2파일(`src/lib/copy/stocks.ts`·`src/components/StocksExplorer.tsx`).
+- **실 카운트**: 138종목 중 기본 품질 필터(PER≤200·PBR≤30, 0=결측 통과) 통과 **123 / 제외 15**. `sorted.length`·`total` 동적 — 하드코딩 0.
+- **수정**: 카피에 `qualityHeadline`/`viewAllToggle`/`backToDefaultToggle`/`qualityRowOn·Off`/`detailRowLabel·None`/`sortRowLabel`/`backToDefaultReset`/`noMaxPlaceholder` 신설, `baseScreenNote`·`describeAll(shown<total)` 개정(기존 "전체 138개 보고 있다" 충돌 제거). 컴포넌트에 `NO_MAX=999999`·`qualityFilterOn`·`pureBrowse`·`viewAllStocks/backToDefaultView`·`sortOptionLabel()` 추가 → 헤더 카운트를 순수 기본 상태에서 `기본 품질 필터 적용 중: 123개 / 전체 138개`로 + 전체/기본 토글(flex-wrap·whitespace-nowrap 390px 가드), 현재 조건 단일 칩 줄을 **3행**(기본 품질/상세 필터/정렬)으로, PER/PBR 상한 입력 NO_MAX 가드, 빈 상태 보조 버튼 `전체 종목 보기`→`기본 화면으로 초기화`(138 약속 오인 제거). 저장/알림은 `perMax/pbrMax`가 state에 인코딩되어 NO_MAX 왕복·크론 일관(코드 추가 0).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 2파일 U+FFFD/모지바케 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod **4399**(리스너 PID 37840만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): `/stocks` 200, SSR(ko) 신규 헤드라인·토글·3행·하단 문구 렌더·구 충돌 문구 0건, EN 신규 키 청크 컴파일 확인.
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성). 최종 점검 P1(관심 빈 상태·공시 강도 용어)·P2(히트맵 단위·업종 표본)는 별도 후속.
+
 ### Task 108 — 최종 점검 P0 데이터 기준일 페이지 일관성 (종목 상세 → 전역 스냅샷 A안 통일) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) **P0-1 페이지별 데이터 기준일 불일치**. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 5파일.
 - **유일 발산원**: `src/app/stock/[ticker]/page.tsx`의 `priceAsOf = lastPoint?.d`(per-stock 가격 시계열 마지막 거래일, raw `YYYY-MM-DD`)가 hero/`LivePrice`/`DataBasisCard`에 직접 들어가 전역 `formatBizDateLong(dataMetadata.asOfBusinessDate)`(`2026.06.29 (월)`)와 포맷·값이 어긋남. 나머지 라우트(헤더 데이터바·푸터·`/stocks`·`/status`·`/`·`/disclosures`·`/backtest`·`/pricing`·`/compare`·`/history`·`/guide/metrics`)는 이미 전역 스냅샷을 읽음. `/about`·`/watchlist`는 자체 기준일 없이 공통 헤더/푸터 상속(검증만).

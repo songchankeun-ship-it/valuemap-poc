@@ -230,6 +230,15 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 
 > PART B P1(§8~12)은 Task 61·66에서 다수 반영(§8 종목 탐색 밀도·§11 베타→Pro). PART C P2·D~G는 위 §1·§2 표와 중복 추적. PART F QA 체크리스트는 운영자 390px 육안 게이트(Playwright 미구성).
 
+## 최종 점검 P0 (`ornscore_reaudit_2026-06-29_final_check.md` §3 — Task 108·109)
+
+> 최종 배포 전 재검수. P0 2건만 마감 대상.
+
+| 항목 | 상태 | 근거 / 비고 |
+|---|---|---|
+| P0-1 페이지별 데이터 기준일 불일치(홈 06.29 vs 종목 상세 등 06.26) | ① | **Task 108**: 종목 상세 `priceAsOf`(per-stock 가격 시계열 마지막 거래일)를 전역 스냅샷(`formatBizDateLong(dataMetadata.asOfBusinessDate)`)과 비교→정상이면 hero/`LivePrice`/`DataBasisCard` 모두 `globalAsOf`로 A안 통일, 실제 더 과거면 `priceBasisLagCopy`로 명시. 나머지 라우트는 이미 전역 스냅샷. 현재 138종목 가격 마지막 점 모두 `2026-06-29` → 전 종목 정상 분기. 자세히=`PROGRESS.md`/`AI_HANDOFF.md` Task 108 |
+| P0-2 종목 탐색 123/138 필터 문구 충돌(기본 필터 vs 상세 필터 vs 결과 수) | ① | **Task 109**: `copy/stocks.ts`(ko/en)에 `qualityHeadline`("기본 품질 필터 적용 중: 123개 / 전체 138개")·`viewAllToggle`/`backToDefaultToggle`·현재 조건 3행(`qualityRowOn·Off`/`detailRowLabel·None`/`sortRowLabel`)·`backToDefaultReset`·`noMaxPlaceholder` 신설, `baseScreenNote`·`describeAll(shown<total)` 개정("현재 123개 …, 전체 138개를 보려면 기본 품질 필터를 해제하세요" — 기존 "전체 138개 보고 있다" 충돌 제거). `StocksExplorer.tsx`에 `NO_MAX`·`qualityFilterOn`·`pureBrowse`·`viewAllStocks/backToDefaultView`·`sortOptionLabel()` 추가 → 헤더 헤드라인+전체/기본 토글(390px flex-wrap·whitespace-nowrap), 현재 조건 3행 블록(기본 품질 ≠ 사용자 상세 명확화), PER/PBR 상한 NO_MAX 가드, 빈 상태 보조 버튼 라벨 138 약속 오인 제거. 실 카운트 123/138 동적(하드코딩 0). 점수식·`matchConfig`·`savedSearches` 무변경. 자세히=`PROGRESS.md`/`AI_HANDOFF.md` Task 109 |
+
 ---
 
 # 다음 큐 제안 (남은 ③/④/⑤만 — 이미 완료된 홈·상세·필터·데이터신뢰·Phase 7은 중복 구현 금지)

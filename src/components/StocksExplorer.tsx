@@ -65,6 +65,9 @@ type MarketFilter = "all" | "KOSPI" | "KOSDAQ";
 const CAP_LARGE = 5_000_000_000_000;
 const CAP_MID = 1_000_000_000_000;
 
+// 기본 품질 필터(PER≤200·PBR≤30)를 해제하고 전체 138개를 볼 때 PER/PBR 상한에 쓰는 '사실상 상한 없음' 값.
+const NO_MAX = 999999;
+
 function inCapBucket(cap: number, bucket: CapBucket): boolean {
   if (bucket === "all") return true;
   if (bucket === "large") return cap >= CAP_LARGE;
@@ -427,6 +430,43 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   const activeFilterCount = nonThemeFilterCount + themeFilterCount;
   const hasAnyCondition = activeFilterCount > 0 || !!query || !!activePreset;
 
+  // 기본 품질 필터(PER≤200·PBR≤30) 적용 여부 — 해제하면 전체 138개가 보인다.
+  const qualityFilterOn = perMax <= 200 && pbrMax <= 30;
+  // 프리셋·검색·상세 필터가 전혀 없는 '순수 기본 탐색' 상태(기본 123개 또는 전체 138개 보기).
+  // 이 상태에서만 헤더에 기본 품질 헤드라인과 전체/기본 보기 토글을 노출한다.
+  const pureBrowse = nonThemeFilterCount === 0 && themeFilterCount === 0 && !query && !activePreset;
+
+  // 기본 품질 필터 해제 → 전체 138개 보기(PER/PBR 상한 제거).
+  function viewAllStocks() {
+    setActivePreset(null);
+    setPerMax(NO_MAX);
+    setPbrMax(NO_MAX);
+  }
+  // 전체 보기 → 기본 품질 필터(PER≤200·PBR≤30)로 복귀.
+  function backToDefaultView() {
+    setActivePreset(null);
+    setPerMax(200);
+    setPbrMax(30);
+  }
+
+  // 현재 정렬 상태를 사람이 읽는 라벨로(현재 조건 블록 '정렬' 행). 매핑에 없으면 종합점수 기본값.
+  function sortOptionLabel(): string {
+    const map: Record<string, string> = {
+      "compositeScore-desc": t.sortOpt.compositeDesc,
+      "momentum-desc": t.sortOpt.momentumDesc,
+      "value-desc": t.sortOpt.valueDesc,
+      "vol-desc": t.sortOpt.volDesc,
+      "flow-desc": t.sortOpt.flowDesc,
+      "roe-desc": t.sortOpt.roeDesc,
+      "per-asc": t.sortOpt.perAsc,
+      "pbr-asc": t.sortOpt.pbrAsc,
+      "dividendYield-desc": t.sortOpt.divDesc,
+      "marketCap-desc": t.sortOpt.capDesc,
+      "r3m-desc": t.sortOpt.r3mDesc,
+    };
+    return map[sortKey + "-" + sortDir] ?? t.sortOpt.compositeDesc;
+  }
+
   function resetFilters() {
     setMinComposite(0);
     setPerMin(0);
@@ -666,17 +706,17 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <input type="range" min={0} max={6} step={0.5} value={divYieldMin} onChange={(e) => { setActivePreset(null); setDivYieldMin(Number(e.target.value)); }} className="w-full" />
           </div>
           <div>
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.perRange}: <span className="tabular-nums">{perMin} - {perMax}</span></label>
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.perRange}: <span className="tabular-nums">{perMin} - {perMax === NO_MAX ? t.noMaxPlaceholder : perMax}</span></label>
             <div className="flex gap-2">
               <input type="number" value={perMin} onChange={(e) => { setActivePreset(null); setPerMin(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
-              <input type="number" value={perMax} onChange={(e) => { setActivePreset(null); setPerMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
+              <input type="number" value={perMax === NO_MAX ? "" : perMax} placeholder={t.noMaxPlaceholder} onChange={(e) => { setActivePreset(null); setPerMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.pbrRange}: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax.toFixed(1)}</span></label>
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.pbrRange}: <span className="tabular-nums">{pbrMin.toFixed(1)} - {pbrMax === NO_MAX ? t.noMaxPlaceholder : pbrMax.toFixed(1)}</span></label>
             <div className="flex gap-2">
               <input type="number" value={pbrMin} step={0.1} onChange={(e) => { setActivePreset(null); setPbrMin(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
-              <input type="number" value={pbrMax} step={0.1} onChange={(e) => { setActivePreset(null); setPbrMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
+              <input type="number" value={pbrMax === NO_MAX ? "" : pbrMax} step={0.1} placeholder={t.noMaxPlaceholder} onChange={(e) => { setActivePreset(null); setPbrMax(Number(e.target.value)); }} className="w-1/2 px-2 py-1 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded" min={0} />
             </div>
           </div>
           <label className="flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
@@ -719,9 +759,24 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     <div className="space-y-4 md:space-y-5">
       {/* ── 페이지 헤더 ── */}
       <header className="space-y-2">
-        <div className="flex items-baseline justify-between flex-wrap gap-x-3 gap-y-1">
+        <div className="flex items-baseline justify-between flex-wrap gap-x-3 gap-y-1.5">
           <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t.headerTitle}</h1>
-          <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCount(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCount(sorted.length, total).b}</span></span>
+          <div className="flex items-center gap-2 flex-wrap">
+            {pureBrowse && qualityFilterOn ? (
+              <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.qualityHeadline(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.qualityHeadline(sorted.length, total).b}</span></span>
+            ) : (
+              <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCount(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCount(sorted.length, total).b}</span></span>
+            )}
+            {pureBrowse ? (
+              <button
+                type="button"
+                onClick={qualityFilterOn ? viewAllStocks : backToDefaultView}
+                className="text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap"
+              >
+                {qualityFilterOn ? t.viewAllToggle(total) : t.backToDefaultToggle}
+              </button>
+            ) : null}
+          </div>
         </div>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">{t.headerDesc(total)}</p>
         <div className="flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -919,24 +974,32 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
               <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.currentCond}</span>
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCountShort(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCountShort(sorted.length, total).b}</span></span>
             </div>
-            {activeChips.length > 0 ? (
-              <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-                {activeChips.map((c) => (
-                  <button
-                    key={c.key}
-                    type="button"
-                    onClick={c.onRemove}
-                    aria-label={t.removeFilterAria(c.label)}
-                    className="inline-flex items-center gap-1 text-[11px] pl-2.5 pr-1.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition tabular-nums"
-                  >
-                    <span className="truncate max-w-[160px]">{c.label}</span>
-                    <span aria-hidden className="w-3.5 h-3.5 flex items-center justify-center rounded-full text-blue-500 dark:text-blue-400">×</span>
-                  </button>
-                ))}
+            <div className="flex flex-col gap-1 text-[11px] mb-1.5">
+              {/* (a) 기본 품질 필터 행 — 사용자 상세 필터와 명확히 분리 */}
+              <div className="text-zinc-500 dark:text-zinc-400">{qualityFilterOn ? t.qualityRowOn : t.qualityRowOff}</div>
+              {/* (b) 상세 필터 행 — 칩이 있으면 칩, 없으면 '없음' */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-zinc-500 dark:text-zinc-400 shrink-0">{t.detailRowLabel}:</span>
+                {activeChips.length > 0 ? (
+                  activeChips.map((c) => (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onClick={c.onRemove}
+                      aria-label={t.removeFilterAria(c.label)}
+                      className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition tabular-nums"
+                    >
+                      <span className="truncate max-w-[160px]">{c.label}</span>
+                      <span aria-hidden className="w-3.5 h-3.5 flex items-center justify-center rounded-full text-blue-500 dark:text-blue-400">×</span>
+                    </button>
+                  ))
+                ) : (
+                  <span className="text-zinc-400 dark:text-zinc-500">{t.detailRowNone}</span>
+                )}
               </div>
-            ) : (
-              <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-1.5">{t.noDetailFilter}</div>
-            )}
+              {/* (c) 정렬 행 */}
+              <div className="text-zinc-500 dark:text-zinc-400">{t.sortRowLabel}: <span className="text-zinc-600 dark:text-zinc-300">{sortOptionLabel()}</span></div>
+            </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug">{describeConditions()}</p>
           </div>
           <div className="flex gap-1.5 shrink-0">
@@ -978,7 +1041,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                   {sc ? (
                     <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.relaxStrongest}</button>
                   ) : null}
-                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">{t.viewAll}</button>
+                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">{t.backToDefaultReset}</button>
                 </div>
               </div>
             );
