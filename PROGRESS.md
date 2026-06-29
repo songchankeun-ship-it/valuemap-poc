@@ -1550,3 +1550,28 @@
   - `src/app/layout.tsx` `<head>` — `preconnect` + `<link rel="stylesheet" data-font="pretendard" media="print">`(media 가 screen 과 불일치라 첫 페인트를 막지 않음) + 인라인 스크립트가 로드 완료 시 `media='all'` 로 승격. JS 비활성용 `<noscript>` 폴백 링크 동봉. → 프로덕션은 Pretendard 를 그대로 받고, 오프라인/헤드리스는 즉시 폴백·외부요청 대기 없음 → 스크린샷 무지연.
 - Passed: `npx tsc --noEmit` exit 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` exit 0(전 라우트). 빈 포트 4399 prod 스모크(내가 띄운 PID 만 종료, 4310 무중단): 과제 13개 라우트(`/ /login /about /offline /manifest.webmanifest /status /pricing /privacy /terms /stocks /stock/005380 /watchlist /settings/notifications`) 전부 200. 홈 head 에 `data-font="pretendard"`·`media="print"` 링크 확인, **빌드 CSS 번들에 jsdelivr @import 0건**(재현 차단 입증).
 - Residual: 없음(폰트 로드 방식 한정, 점수/데이터/인증/PWA 로직 무변경). 운영자 선택: 정확한 브랜드 폰트를 CDN 의존 없이 고정하려면 추후 Pretendard woff2 self-host(예: `next/font/local`) 로 승격 가능 — 현재 폴백 동작은 안전.
+
+
+## 2026-06-29 · [claude] Task 103 — OrnScore 2026-06-29 재검수 최종 커버리지·회귀 QA
+- **Scope**: 데스크톱 리포트 `ornscore_reaudit_2026-06-29.md`(접근 가능·전문 정독함)를 기준으로 Task #99~#102가 마감한 14개 검수 항목을 코드 대조 검증하고, 남은 소규모 안전 갭만 최소 패치. 외부 릴리스/푸시 0. 브랜치 `ai-center/task-103-ornscore-2026-06-29-re-audit-final-c`(클린 시작).
+- **검증(이미 정확 — 재작성 0)**:
+  - P0-1 `/stocks` 카운트/필터 문구 — `copy/stocks.ts` `matchCount`("현재 표시 N개 / 전체 M개")·`noDetailFilter`("적용된 사용자 상세 필터 없음")·"기본 품질 필터(PER 200·PBR 30 이하)가 적용된 N개" 분기 확인.
+  - P0-2 `/status` 시간대 — `status/page.tsx` generatedAt → KST 우선 + 원본 UTC 병기, `copy/status.ts dataCadenceNote`(영업일 장마감 후·주말/휴장 carry-forward) 확인.
+  - P1-1 `/terms` 내부 문서 경로 제거 — `grep "legal-ai-commercial-readiness" src/` 0건.
+  - P1-2 홈 공시 수 맥락 — `copy/home.ts` signal sub "DART · 최신 200건 내 · 신호 기준".
+  - P1-3/4 관심/비교 빈·실패 상태 — `watchlist/page.tsx`·`WatchlistClient.tsx` noscript 폴백, `CompareClient.tsx` 빈 상태(최소 2·최대 4 안내 + 검색 input + `/stocks` CTA + 관심 종목 링크).
+  - P1-5 요금제 표 — `pricing.ts COMPARE_ROWS`(관심 5개/무제한 예정·비교 4개/확장 예정·셀별 준비 중) 값 중심 명확화.
+  - P1-6 홈 후보 vs 전체 상대순위 — `copy/home.ts rankCriteria`·`rankBadgeAria`("오늘 후보 순위 N위") + `TopCandidateSection`.
+  - P1-7 업종 카운트 — `copy/stockDetail.ts peerDescMid` "곳(본인 포함)"으로 통일.
+  - P1-8 로그인 카피 — `i18n.ts` "1초" 제거·"빠르게 시작".
+  - P2-1 데이터 배지 분리 — `PriorityScoreCard.tsx` sr-only ` · ` 구분자.
+  - P2-2 STEP 시맨틱 — `BeginnerReading.tsx` `<ol>/<li>` + STEP n 단일 배지(list-none).
+  - P2-3 공시 CTA/배지 — `DisclosureExplorer.tsx` 원문 보기 액션과 `notInUniverse` 배지 DOM 분리(버튼 줄 아래 별도 줄).
+  - P2-4 백테스트 히트맵 단위 — `MonthlyHeatmap.tsx` `title`·`aria-label`에 `%` 포함(fmtPct).
+  - P2-5 생성일 vs 현재 데이터 — `BacktestClient.tsx` 상단 amber 배지("백테스트 기준: … 생성 · 현재 데이터 …과 다름").
+  - P2-6 밸류 업종 미보정 경고 — `copy/stockDetail.ts valueNote` amber 주의 문구.
+- **패치(1줄, 카피만)**: `copy/status.ts:86 footerNote` "데이터는 **매주 평일** 장 마감 후" → "데이터는 **평일마다** 장 마감 후". 리포트 §7.6이 "매주 평일"을 어색하다고 지적("매일 평일"/"평일마다" 권장)했고, 같은 파일 line 46(dataCadenceNote)·line 73(source detail "매일 평일")은 이미 자연스러운 표현이라 footerNote만 누락 → 일관성 정렬. 산식·`stocks.json`·인증·매니페스트 무변경, 금칙어 신규 0.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(138 SSG·전 라우트) · `git diff --check` 0. `app:check`는 앱셸/PWA 파일 무변경이라 생략(copy 모듈만 수정).
+- **스모크**: 빈 포트 47103 `next start`(listening PID 16664만 종료, 4310 PID 37328 무중단) — 16개 라우트(`/ /stocks /status /terms /watchlist /compare /pricing /login /history /privacy /disclosures /backtest /guide/metrics /stock/034730 /stock/032830`) 전부 200, `/status` SSR에 "평일마다 장 마감 후"·KST·"영업일 장마감" 렌더·"매주 평일" 0건. 변경 파일 U+FFFD 0.
+- **잔여 갭(리포트 권고 중 미반영 — 코드 범위 외)**: P2-3 샘플 데이터 가시성(전체 기간 공시 파이프라인=④), 도메인 기반 support/privacy 이메일(현재 개인 이메일만·발명 금지=⑤), EN 라이브러리/메타데이터 i18n 갭(언어 전환 클라 사이드라 curl로 EN 미검증 — SSR=ko·EN 문자열은 `.next/static/chunks` 컴파일 확인 필요), 390px 실기기 시각 게이트(Playwright 미구성=운영자).
+- **다음 소유자 검토**: 운영자/제품 — 위 잔여 ④/⑤ 항목 + EN 토글 실브라우저 확인. 본 작업은 푸시/릴리스 미수행(로컬 커밋만).

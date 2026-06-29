@@ -861,3 +861,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Fix: @import 제거 + `layout.tsx` head 에서 `media="print"` 비차단 링크 + 로드 후 `media='all'` 승격 인라인 스크립트(+`<noscript>` 폴백). 시스템 한글 폰트 폴백 체인 유지 → 폰트 미로드 시에도 정상.
 - Passed: `tsc --noEmit` 0 · `npm run build` 0(전 라우트) · `verify_metrics.py`(UTF8) 138종목 0오류·금칙어 0·산식 2.4 · 포트 4399 prod 스모크 13개 라우트 전부 200, 빌드 CSS 에 jsdelivr @import 0건. (검증 PID 만 종료, 4310 무중단.)
 - Residual: 없음. (선택) Pretendard self-host(`next/font/local`)로 CDN 의존 완전 제거 가능 — 운영자 결정.
+
+
+### Task 103 — OrnScore 2026-06-29 재검수 최종 커버리지·회귀 QA (2026-06-29, Claude)
+- **목적**: 데스크톱 리포트 `ornscore_reaudit_2026-06-29.md`(접근 가능·전문 정독) 기준 Task #99~#102 마감 항목(P0-1·P0-2·P1-1~8·P2-1~6)을 코드 대조로 최종 검증. 외부 릴리스 0·푸시 0.
+- **결과**: 14개 검수 항목 전부 코드에 정확히 반영됨(재작성 0). 자세한 파일·심볼 증거는 PROGRESS.md Task 103 항목 참조.
+- **패치(1줄·카피만)**: `src/lib/copy/status.ts` footerNote "매주 평일" → "평일마다"(리포트 §7.6 권고, 동일 파일 line 46/73과 표현 일관화). 산식/데이터/인증/PWA 무변경.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF8) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(138 SSG·전 라우트) · `git diff --check` 0. `app:check`는 앱셸/PWA 파일 무변경으로 생략.
+- **스모크**: 포트 47103 `next start`(PID 16664만 종료, 4310 무중단) — 16개 라우트 전부 200, `/status` SSR "평일마다 장 마감 후"·KST 확인.
+- **잔여(코드 범위 외)**: P2-3 샘플 데이터 가시성(공시 파이프라인 ④), 도메인 이메일(발명 금지 ⑤), EN i18n 라이브러리/메타 갭(언어 전환 클라 사이드 — SSR=ko, EN 문자열 chunks 컴파일만 확인), 390px 실기기 게이트(운영자).
+- **다음 소유자**: 운영자/제품 검토 — 잔여 ④/⑤ + EN 토글 실브라우저 확인. 본 작업 로컬 커밋만.
