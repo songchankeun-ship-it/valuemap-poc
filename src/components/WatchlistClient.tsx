@@ -181,8 +181,9 @@ export function WatchlistClient({
 
   if (loading) {
     return (
-      <div className="text-sm text-zinc-500 py-8 text-center">
-        불러오는 중...
+      <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center space-y-1">
+        <div>관심 종목을 불러오는 중...</div>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">잠시 후에도 비어 있으면 종목 상세에서 ‘관심 종목’을 눌러 추가해 보세요.</p>
       </div>
     );
   }

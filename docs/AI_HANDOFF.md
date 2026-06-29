@@ -51,6 +51,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **남은 갭(후속)**: 재검수 P1(공시 50/42 라벨·홈↔상세 순위 기준 분리·`/watchlist`·`/compare` 빈 상태·요금제 표·업종 카운트·배지 띄어쓰기)·P2(STEP `ol>li`·공시 CTA/배지 DOM 분리·백테스트 히트맵 단위/aria·밸류 업종 미보정 경고 강화).
 - **다음**: 운영자/제품 — P1 빈 상태(관심/비교) 보강(스펙 §10 최종판단 4순위), 이어서 홈/상세 순위 기준 분리.
 
+### Task 100 — 재검수 P1 출시 전 UX (카운트 맥락·순위 기준·빈/실패 상태) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29.md` **P1-2·P1-3·P1-4·P1-6** 4건. 텍스트 카피 + `<noscript>` fallback만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0). 보수적·비자문 유지(매수/매도/추천 0).
+- **P1-2 홈 공시 카운트 맥락(라벨링)** — 기저 정합은 Task 99 시기 이미 정리됨(홈 `signalCount`=`recentSig.signalCount` 최신 200건 내 raw 신호, `/disclosures`는 `최신 200건 내 신호 N건 · 이벤트 묶음 M개`로 명시). 남은 위험 = 홈 스냅샷 카드의 맨숫자(예 "50건")가 공시 페이지 "42(묶음)"와 충돌처럼 읽힘. `src/lib/copy/home.ts` 스냅샷 signal `sub` ko `"DART · 최신 200건 내"`→**`"DART · 최신 200건 내 · 신호 기준"`**, en `"… within latest 200"`→**`"… · signal basis"`**. 숫자 로직 무변경.
+- **P1-6 홈 후보 순위 vs 상세 전체 상대순위** — 상세는 이미 라벨 양호("전체 상대순위 N위"). 홈만 카피로 명료화: `home.ts` `topCandidate`에 `rankCriteria`(ko/en) + `rankBadgeAria(n)` 추가. `TopCandidateSection.tsx`에 intro 아래 캡션으로 렌더("여기 번호는 오늘 후보 목록(검증 보류 제외) 안의 표시 순서…상세의 전체 상대순위(전체 138종목 기준)와 의미 다를 수 있음"). `StockCandidateCard.tsx` 순위 배지에 `title`/`aria-label`="오늘 후보 순위 N위". **홈 카드에 전체 풀 순위 숫자 계산/표시는 하지 않음**(새 숫자 로직·노이즈 회피, 캡션으로 충분).
+- **P1-3 `/watchlist` 정적/실패 fallback** — 인터랙티브 빈 상태(`WatchlistClient` "아직 관심 종목이 없습니다"+검색+CTA)는 이미 양호(검증·보존). 실제 갭 = SSR/no-JS 시 `loading` 분기만 보여 "불러오는 중..."에 고착. `src/app/watchlist/page.tsx` `<WatchlistClient/>` 아래 **`<noscript>` fallback** 추가(빈 상태 카피 + `종목 찾기`→`/stocks`·`오늘 후보 보기`→`/today` 평문 `<a>`, 로그인 동기화는 보조 문구). `WatchlistClient.tsx` `loading` 분기에 보조 한 줄 추가(빈 스피너 방지), 기존 `loadError` "다시 시도" 보존.
+- **P1-4 `/compare` 빈 상태·CTA·한도** — 인터랙티브 빈 상태(`CompareClient` in-page 검색·추천 세트·최근/Top5/관심 빠른추가·`최소 2개·최대 4개` 한도)는 이미 충족(검증·보존). 갭 = `!mounted`일 때 `return null`(line 185) → SSR/no-JS 헤더 아래 빈 화면. `src/app/compare/page.tsx` `<CompareClient/>` 아래 **`<noscript>` fallback** 추가("비교할 종목이 아직 없습니다" + `최소 2개·최대 4개` 한도 + `종목 찾기`→`/stocks`·`오늘 후보에서 고르기`→`/today` 평문 `<a>`).
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `git diff --check` 0(6파일) · 변경 파일 U+FFFD 0. **`app:check` 생략**(PWA/auth/shell 무변경 — 카피+noscript만). 로컬 prod **47100**(내 PID 1754만 종료·**AI Center 4310 무중단·종료 후 4310 200 확인**): `/`·`/disclosures`·`/watchlist`·`/compare`·`/stock/034730` 200. SSR(ko) 노출 확인 — 홈 `신호 기준`·`오늘 후보 목록(검증 보류 제외)`·`전체 상대순위(전체 138종목 기준)`·`오늘 후보 순위 1~5위`, `/watchlist` noscript(아직 관심 종목이 없습니다·종목 찾기·오늘 후보 보기·여러 기기 동기화 보조), `/compare` noscript(비교할 종목이 아직 없습니다·최소 2개·최대 4개·종목 찾기·오늘 후보에서 고르기). EN은 클라 전환이라 빌드 청크에서 신규 EN 문자열 컴파일 확인.
+- **이미 됨(재작업 안 함)**: 인터랙티브 빈 상태(관심/비교) 모두 충족 — 검증만. 기저 50/42 카운트 정합/라벨도 Task 99 시기 완료 — 홈 라벨만 보강.
+- **남은 갭(후속)**: 재검수 P1-1(약관 내부 경로—Task 99서 처리)·P1-5(요금제 표 값 중심)·P1-7(상세 업종 카운트 본인 포함/제외 통일)·P1-8(로그인 "1초" 과장)·P2(배지 띄어쓰기·백테스트 히트맵 단위/aria·STEP `ol>li`).
+
 ### Task 93 — 3차 QA P1 감사 + Pro 관심 종목 공시 수집 설계 노트 (2026-06-28, Claude)
 - **범위/판단**: `ORNSCORE_3rd_QA_improvement_spec.md` P0(상세·비교) 이후 **P1 명료성 5항(공시 필터·탐색 밀도·요금제 베타 고지·공시 200건 한계·AI 고지)**. 현황 전수 점검 → **5개 P1 모두 이미 배포 확인**(Task 60/61/62/66/89~94). 작동 컴포넌트 재작업 금지, 감사 + **유일 신규 산출물 = P1-4(§10) 공시 수집 설계 노트**. 소스 코드 무변경(문서 3종만).
 - **감사 결과(읽기 전용·무변경)**:

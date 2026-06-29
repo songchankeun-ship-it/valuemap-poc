@@ -83,6 +83,27 @@ export default async function WatchlistPage() {
         </p>
       </header>
       <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />
+
+      {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면/로딩 고착 방지 fallback */}
+      <noscript>
+        <div className="mt-2 bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
+          <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5">아직 관심 종목이 없습니다</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed">
+            종목 상세에서 ‘관심 종목’을 누르면 여기에 모아 매일 점수 변화와 공시 신호를 추적할 수 있어요.
+          </p>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
+            <a href="/stocks" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold">
+              종목 찾기
+            </a>
+            <a href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium">
+              오늘 후보 보기
+            </a>
+          </div>
+          <p className="mt-3 text-[11px] text-zinc-400 dark:text-zinc-500">
+            로그인하면 여러 기기에서 관심 종목을 이어볼 수 있습니다.
+          </p>
+        </div>
+      </noscript>
     </div>
   );
 }

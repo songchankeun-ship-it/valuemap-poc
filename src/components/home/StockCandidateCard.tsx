@@ -37,7 +37,11 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-600 text-white text-[11px] font-bold shrink-0 tabular-nums">{c.rank}</span>
+            <span
+              className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-600 text-white text-[11px] font-bold shrink-0 tabular-nums"
+              title={t.topCandidate.rankBadgeAria(c.rank)}
+              aria-label={t.topCandidate.rankBadgeAria(c.rank)}
+            >{c.rank}</span>
             <span className="text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate">{c.name}</span>
           </div>
           <div className="flex items-center gap-1.5 mt-1 text-[11px] text-zinc-500 dark:text-zinc-400 flex-wrap">

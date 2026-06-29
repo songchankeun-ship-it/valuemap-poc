@@ -39,7 +39,7 @@ export const homeCopy = {
         total: { title: "분석 종목", sub: "실데이터 기반" },
         strong: { title: "종합 80+ 후보", sub: "여러 지표에서 강점 확인" },
         spike: { title: "거래활성도 급증", sub: "평소보다 거래 관심 증가" },
-        signal: { title: "공시 신호", sub: "DART · 최신 200건 내" },
+        signal: { title: "공시 신호", sub: "DART · 최신 200건 내 · 신호 기준" },
       },
     },
     topCandidate: {
@@ -47,6 +47,9 @@ export const homeCopy = {
       tag: "종합점수 상위 · 검증 보류 제외",
       intro:
         "종합점수 상위 종목 중 검증 보류 종목을 제외해, 오늘 먼저 살펴볼 후보를 정리했습니다.",
+      rankCriteria:
+        "여기 번호는 오늘 후보 목록(검증 보류 제외) 안의 표시 순서입니다. 종목 상세의 '전체 상대순위(전체 138종목 기준)'와는 의미가 다를 수 있습니다.",
+      rankBadgeAria: (n: number) => `오늘 후보 순위 ${n}위`,
       empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
       footer:
         "여러 지표에서 상대적으로 강점이 확인된 종목입니다. 점수가 높다고 매수 추천을 의미하지 않으며, 원문 공시와 재무를 함께 확인해야 합니다.",
@@ -152,7 +155,7 @@ export const homeCopy = {
         total: { title: "Analyzed stocks", sub: "Based on real data" },
         strong: { title: "Composite 80+ candidates", sub: "Strengths across several metrics" },
         spike: { title: "Trading-activity spikes", sub: "More trading interest than usual" },
-        signal: { title: "Disclosure signals", sub: "DART · within latest 200" },
+        signal: { title: "Disclosure signals", sub: "DART · within latest 200 · signal basis" },
       },
     },
     topCandidate: {
@@ -160,6 +163,9 @@ export const homeCopy = {
       tag: "Top composite · pending verification excluded",
       intro:
         "Top-composite stocks with pending-verification names removed, organized as candidates to look at first today.",
+      rankCriteria:
+        "These numbers are the display order within today's candidate list (pending-verification names excluded). They can mean something different from the “overall relative rank (out of all 138 stocks)” shown on each stock's detail page.",
+      rankBadgeAria: (n: number) => `Today's candidate rank #${n}`,
       empty: "Candidate data is being prepared. Please check back shortly.",
       footer:
         "These stocks show relative strength across several metrics. A high score is not a buy recommendation — always check the original disclosures and financials too.",

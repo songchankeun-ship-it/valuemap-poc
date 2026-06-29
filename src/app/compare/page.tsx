@@ -119,6 +119,26 @@ export default function ComparePage() {
       </header>
 
       <CompareClient stockMap={stockMap} top5={top5} recommendedSets={recommendedSets} />
+
+      {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback */}
+      <noscript>
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-8 text-center">
+          <div className="text-2xl mb-2">📊</div>
+          <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">비교할 종목이 아직 없습니다</h2>
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed mb-4">
+            종목 상세에서 ‘비교에 추가’를 누르거나, 아래에서 종목을 찾아 담아보세요.
+            <strong className="text-zinc-700 dark:text-zinc-300"> 최소 2개 · 최대 4개</strong>를 고르면 나란히 비교합니다.
+          </p>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
+            <a href="/stocks" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold">
+              종목 찾기
+            </a>
+            <a href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium">
+              오늘 후보에서 고르기
+            </a>
+          </div>
+        </div>
+      </noscript>
     </div>
   );
 }

@@ -14,8 +14,11 @@ export function TopCandidateSection({ candidates }: { candidates: StockCandidate
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
         <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.tag}</span>
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1.5 leading-relaxed">
         {t.intro}
+      </p>
+      <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-3 leading-relaxed">
+        {t.rankCriteria}
       </p>
 
       {candidates.length > 0 ? (

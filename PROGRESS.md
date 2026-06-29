@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-29 · [claude] task 100 — 재검수 P1 출시 전 UX (카운트 맥락·순위 기준·빈/실패 상태)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **P1-2·P1-3·P1-4·P1-6** 4건. 카피 + `<noscript>` fallback만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0).
+- **P1-2 홈 공시 카운트 맥락** — 기저 정합(50=최신 200건 내 raw 신호 / `/disclosures` 42=이벤트 묶음)은 Task 99 시기 정리됨. 홈 스냅샷 카드 맨숫자 오해 위험만 라벨로 해소: `src/lib/copy/home.ts` 스냅샷 signal `sub` ko "DART · 최신 200건 내"→**"DART · 최신 200건 내 · 신호 기준"**(en "… · signal basis"). 숫자 로직 무변경.
+- **P1-6 홈 후보 순위 vs 상세 전체 상대순위** — 상세는 이미 양호. 홈만 카피 명료화: `home.ts` `topCandidate`에 `rankCriteria`(ko/en)·`rankBadgeAria(n)` 추가 → `TopCandidateSection.tsx` intro 아래 캡션 + `StockCandidateCard.tsx` 순위 배지 `title`/`aria-label`("오늘 후보 순위 N위"). 홈에 전체 풀 순위 숫자 계산은 추가 안 함(캡션으로 충분).
+- **P1-3 `/watchlist` 정적/실패 fallback** — 인터랙티브 빈 상태는 이미 양호(검증·보존). 갭=SSR/no-JS 시 `loading`만 보여 "불러오는 중…" 고착. `src/app/watchlist/page.tsx`에 `<noscript>` 빈 상태(종목 찾기→`/stocks`·오늘 후보 보기→`/today`, 로그인 보조) 추가 + `WatchlistClient.tsx` `loading` 분기 보조 한 줄.
+- **P1-4 `/compare` 빈 상태·CTA·한도** — 인터랙티브 빈 상태(in-page 검색·추천 세트·빠른추가·최소 2개·최대 4개)는 이미 충족(검증·보존). 갭=`!mounted` 시 `return null` → SSR/no-JS 빈 화면. `src/app/compare/page.tsx`에 `<noscript>` 빈 상태(한도 명시 + 종목 찾기·오늘 후보에서 고르기) 추가.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG, 전 라우트) · `git diff --check` 0(6파일) · U+FFFD 0. `app:check` 생략(PWA/auth/shell 무변경). 로컬 prod **47100**(내 PID만 종료·**AI Center 4310 무중단**): `/`·`/disclosures`·`/watchlist`·`/compare`·`/stock/034730` 200. SSR(ko) 신규 문구·noscript 블록 노출 확인. EN은 빌드 청크에서 신규 문자열 컴파일 확인.
+- **남은 갭(후속)**: P1-5(요금제 표 값 중심)·P1-7(상세 업종 카운트 통일)·P1-8("1초" 과장)·P2(배지 띄어쓰기·백테스트 히트맵 단위/aria·STEP `ol>li`).
+
 ## 2026-06-29 · [claude] task 99 — 재검수 P0 신뢰 문구 3건 (stocks 카운트·status 시간대·terms 내부경로)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **즉시 수정 P0 3건**만. P1/P2(공시 50/42 라벨·홈/상세 순위·관심/비교 빈 상태·요금제 표·업종 카운트·배지 띄어쓰기·백테스트 히트맵 등)는 후속.
 - **P0-1 `/stocks` 카운트·필터 문구 충돌(안 A)** — `src/lib/copy/stocks.ts`(ko/en): `matchCount`·`matchCountShort` 라벨 "조건 충족"→**"현재 표시"**(en "match"→"Showing … / total"). `noDetailFilter` "적용된 상세 필터 없음"→**"적용된 사용자 상세 필터 없음"**(en "No user detail filters applied"). `describeAll(total)`→**`describeAll(shown,total)`** 분기: `shown<total`이면 **"기본 품질 필터(PER 200·PBR 30 이하)가 적용된 N개 종목을 종합점수 기준으로 보고 있습니다."**, `shown===total`이면 기존 "전체 N개 …" 유지. `StocksExplorer.tsx` line 481 호출만 `t.describeAll(sorted.length, total)`로 변경. 기본 화면(123/138)에서 "전체 138개를 보고 있다"는 충돌 제거. `baseScreenNote`(이미 PER/PBR 정확)·제외 사유는 무변경(검증보류 주장 추가 안 함 — 제외 수는 PER/PBR 기본 필터에서만 나옴).
