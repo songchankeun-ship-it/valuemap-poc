@@ -1626,3 +1626,12 @@
 - **스모크**: 빈 포트 47103 `next start`(listening PID 16664만 종료, 4310 PID 37328 무중단) — 16개 라우트(`/ /stocks /status /terms /watchlist /compare /pricing /login /history /privacy /disclosures /backtest /guide/metrics /stock/034730 /stock/032830`) 전부 200, `/status` SSR에 "평일마다 장 마감 후"·KST·"영업일 장마감" 렌더·"매주 평일" 0건. 변경 파일 U+FFFD 0.
 - **잔여 갭(리포트 권고 중 미반영 — 코드 범위 외)**: P2-3 샘플 데이터 가시성(전체 기간 공시 파이프라인=④), 도메인 기반 support/privacy 이메일(현재 개인 이메일만·발명 금지=⑤), EN 라이브러리/메타데이터 i18n 갭(언어 전환 클라 사이드라 curl로 EN 미검증 — SSR=ko·EN 문자열은 `.next/static/chunks` 컴파일 확인 필요), 390px 실기기 시각 게이트(Playwright 미구성=운영자).
 - **다음 소유자 검토**: 운영자/제품 — 위 잔여 ④/⑤ 항목 + EN 토글 실브라우저 확인. 본 작업은 푸시/릴리스 미수행(로컬 커밋만).
+
+
+## 2026-06-30 · Repair · Task 112 Playwright 스크린샷 30s 타임아웃(자동화 backdrop-filter 무력화) (Claude)
+- **Blocker**: 게이트 `page.screenshot: Timeout 30000ms exceeded` (DESKTOP+MOBILE), `fonts loaded` 직후 캡처 행.
+- **폰트 가설 기각**: 기존 `if(navigator.webdriver)return;` 가드로 Playwright에서 jsdelivr 요청 0건 → 폰트는 원인 아님. Task 87/110/112 폰트 수리가 모두 동일 시그니처로 재발한 이유.
+- **실원인**: 모든 페이지 앱셸의 `sticky`/`fixed` `backdrop-filter`(헤더 `backdrop-blur-md`·하단바 `backdrop-blur`)가 헤드리스 크로뮴 캡처 시 재합성되어 행(hang). Playwright `animations:'disabled'`도 backdrop-filter는 못 끔.
+- **Fix(`src/app/layout.tsx`)**: webdriver 가드 확장 — 자동화에서만 `<style>` 주입으로 `backdrop-filter/animation/transition` 무력화 후 `return`(CDN 폰트 생략 유지). 실사용자 시각 무변경, 데이터/점수/인증/PWA 무변경, 신규 deps 0.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG) · `git diff --check` clean · layout.tsx U+FFFD 0. 포트 47733 prod 스모크: 15개 라우트(/ /stocks /stock/034730 /watchlist /about /status /disclosures /backtest /pricing /compare /history /guide/metrics /terms /privacy /login) 전부 200, `/` HTML에 `backdrop-filter:none!important` 가드 확인(리스너 PID 35224만 종료, 4310 PID 37328 무중단).
+- **잔여/다음 소유자**: 운영자 — (선택) backdrop-filter 전역 경량화 또는 Pretendard self-host. 푸시/릴리스 미수행(로컬 커밋만).

@@ -89,12 +89,17 @@ export default function RootLayout({
          * 발생하지 않으며, 오프라인/헤드리스에서 외부 CDN 이 멈춰도 시스템 한글 폰트
          * 폴백으로 즉시 렌더(및 스크린샷)된다. 프로덕션은 그대로 Pretendard 적용.
          * 추가로 자동화 브라우저(navigator.webdriver, 예: Playwright 스크린샷 게이트)에서는
-         * CDN 요청 자체를 생략 — 오프라인 CI 에서 폰트 요청이 멈춰 캡처가 타임아웃되는 것을 방지. */}
+         * (1) CDN 폰트 요청 자체를 생략하고, (2) sticky/fixed 헤더·하단바의 backdrop-filter(blur)
+         * 와 무한 애니메이션(animate-pulse/spin)·transition 을 끄는 스타일을 주입한다.
+         * 풀페이지 캡처 시 헤드리스 크로뮴이 blur 영역을 타일마다 재합성하면서
+         * page.screenshot 이 'fonts loaded' 직후 30s 타임아웃되던 문제를 차단 —
+         * Playwright 의 animations:'disabled' 도 backdrop-filter 는 못 끄므로 직접 무력화.
+         * 실사용자(navigator.webdriver 미설정)는 blur·폰트·애니메이션 그대로 유지. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{if(navigator.webdriver)return;var h='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';var l=document.createElement('link');l.rel='stylesheet';l.href=h;l.media='print';l.onload=function(){l.media='all';};document.head.appendChild(l);}catch(e){}})();",
+              "(function(){try{if(navigator.webdriver){var s=document.createElement('style');s.textContent='*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;transition:none!important;}';document.head.appendChild(s);return;}var h='https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';var l=document.createElement('link');l.rel='stylesheet';l.href=h;l.media='print';l.onload=function(){l.media='all';};document.head.appendChild(l);}catch(e){}})();",
           }}
         />
         <noscript>
