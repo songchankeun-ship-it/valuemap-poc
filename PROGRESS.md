@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-30 · [claude] task 113 — Free Beta v1 제품 방향 잠금 (결정 기록 + 공개 표면 감사 + 구현 매핑, docs 전용)
+- **범위/판단**: 추가 구현 전에 v1 방향을 **고정**하는 결정-잠금 작업. 오너 결정 인코딩: **무료 · 한국어 전용 · 138종목 · AI 분석 공개 숨김 · 카카오톡 알림 로드맵 · 앱스토어 추후 목표 · 수익화는 내부 미래 옵션**. **docs 전용 — `src/**` 무변경**(점수식·`stocks.json`·인증·manifest·PWA·i18n 무변경, 신규 npm 0, 매수/매도/추천 0). 신규 1문서 + PROGRESS/AI_HANDOFF.
+- **신규 산출물**: `docs/ornscore-free-beta-v1-scope.md` — (1) 결정 요약(무료·내부 수익화·카카오 알림 우선/이메일 메인 아님·로그인 매직링크 허용·AI 공개 숨김 코드 보존·앱스토어 추후·EN 제외·138 유지·데이터 신뢰→탐색→모바일 우선), (2) 오너 결정 원문, (3) **공개 표면 감사 표**(요금제/AI/KO·EN/알림/앱스토어/138 각 영역 → 실제 `file:line` + 충돌 판정), (4) 구현 체크리스트 3분할(must-change 공개 UI / keep-internal / future roadmap), (5) 수용 기준 매핑.
+- **감사 앵커(실측)**: 요금제 1차 내비 `Sidebar.tsx:15`·`MobileBottomNav.tsx:21`(강등 권장) / 베타 카피 `copy/pricing.ts:204,225`(이미 보수화·정합) / 플랜 플래그 `features.ts:5,7,9,11,13`(내부 유지) / AI 카드 `stock/[ticker]/page.tsx:400`+`AiAnalysisCard.tsx`(공개 제거·게이트) / `/history` 내비 `Sidebar.tsx:19`·`MobileBottomNav.tsx:20`(제거·게이트) / AI 코드 `api/ai/analyze`·`lib/ai*`·`history/page.tsx`(보존) / 알림 이메일 `alertCatalog.ts:85`·`settings/notifications/page.tsx:127-128`(카카오 로드맵 톤) / 언어 토글 `AppHeader.tsx:84`·`MobileNav.tsx`(숨김) / EN i18n `i18n.ts`(보존) / 앱·스토어 `app-roadmap.md`·`app-packaging-*`·`app-store-submission-pack.md`+`manifest.ts`(로드맵 유지·제출 없음) / 138 문구 `layout.tsx`·`page.tsx`·`pricing.ts:25`·`copy/pricing.ts:67` 등(정합·유지).
+- **의도적 범위**: 공개 UI 실변경(내비 강등·AI 게이트·언어 토글 숨김·알림 문구)은 **다음 작업으로 명시 이연** — 본 task는 결정 잠금 + 매핑만(플래너 한정: tiny/safe 외 `src/**` 무변경). AI 코드·EN 문자열·요금제 플래그·수익화 문서는 삭제 없이 보존.
+- **검증(docs 전용)**: `git diff --check` 0(CRLF 노이즈만) · 변경 파일(신규 scope 문서·PROGRESS·AI_HANDOFF) U+FFFD/모지바케 0(Korean intact). `src/**` 무변경이라 `tsc`/`build`/로컬 prod 스모크 불요. **AI Center 4310 무중단**(로컬 서버 미기동).
+- **남은 갭(후속)**: 구현 체크리스트 (i) 5건(요금제 내비 강등·AI 카드 공개 제거/게이트·`/history` 내비 제거/게이트·KO/EN 토글 숨김·이메일 메인 알림 문구 톤 조정)이 다음 우선 후속. 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 재개는 오너/제품 게이트.
+
 ## 2026-06-30 · [claude] task 112 — 최종 점검 QA 클로즈아웃 (P0/P1 재검증 + 잔여 P2 백테스트 히트맵 단위 명시)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) 전체를 클로즈아웃 관점에서 재검증. P0(task 108 기준일·109 필터)·P1(task 110 트러스트 카피) **회귀 없음 재확인** + 스펙이 콕 집은 잔여 P2 중 **유일하게 미충족이던 백테스트 히트맵 단위 명시 1건**만 보강. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA·정렬·`strength`/`direction` 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 1파일.
 - **P2 보강(`src/components/backtest/MonthlyHeatmap.tsx` 1파일)**: 히트맵 셀은 `(v*100).toFixed(0)`로 **숫자만**(예 `5`·`-3`) 표시되고 `title`/`aria-label`에만 `수익률 …%`가 있어, 텍스트 파싱·스캔 환경에서 각 칸이 월별 수익률(%)임이 시각적으로 드러나지 않던 갭(스펙 §2.3·§6.5·P2-1 작업표). 부제 문구에 `**각 칸의 숫자는 그 달의 수익률(%)**` 한 절 추가(기존 색상 범례·빈 칸 안내 보존). 셀 렌더·heatClass·색·값 무변경.

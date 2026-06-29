@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-29T15:40:40.541Z
+Last updated: 2026-06-29T16:25:10.250Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,21 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 110 - OrnScore final check P1 trust copy polish
-- Run: 89
-- Status: completed
+- Task: 112 - OrnScore final check QA closeout no planner
+- Run: 91
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Quality gate failed after 1 repair attempt(s): PLAYWRIGHT: DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+; MOBILE ERROR: page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
 
 ## Next Agent Checklist
 
@@ -41,6 +51,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 113 — Free Beta v1 제품 방향 잠금 (결정 기록 + 공개 표면 감사 + 구현 매핑, docs 전용) (2026-06-30, Claude)
+- **범위**: 추가 구현 전에 v1 방향을 고정하는 **결정-잠금**. 오너 결정 인코딩 — **무료(유료/곧유료 포지셔닝 금지) · 수익화는 내부 미래 옵션 · 카카오톡 알림 우선(이메일을 메인 알림 경로로 포지셔닝 안 함, 로그인 매직링크 이메일은 허용) · AI 분석 공개 우선 경험에서 숨김(코드 보존, 공개 진입점 제거/게이트) · 앱스토어 추후 목표(로드맵 유지·제출 작업 없음) · 영어 당분간 제외(한국어 전용 공개) · 138종목 유지 · 그 외 데이터 신뢰→탐색→모바일 우선**. **docs 전용 — `src/**` 무변경**(점수식·`stocks.json`·인증·manifest·PWA·i18n 무변경, 신규 npm 0, 매수/매도/추천 0).
+- **신규 산출물**: `docs/ornscore-free-beta-v1-scope.md` — 결정 요약 + 오너 결정 원문 + **공개 표면 감사 표**(실측 `file:line` + 충돌 판정) + **구현 체크리스트 3분할**(must-change 공개 UI / keep-internal / future roadmap) + 수용 기준. 이 문서 1개만 읽으면 v1 범위 파악 가능.
+- **감사 핵심 충돌(⚠️, 후속 공개 UI 대상)**: 요금제 1차 내비 `Sidebar.tsx:15`·`MobileBottomNav.tsx:21`(강등) / AI 카드 `stock/[ticker]/page.tsx:400`(공개 제거·게이트) / `/history` AI 기록 내비 `Sidebar.tsx:19`·`MobileBottomNav.tsx:20`(제거·게이트) / KO·EN 토글 `AppHeader.tsx:84`·`MobileNav.tsx`(숨김) / 이메일 메인 알림 톤 `alertCatalog.ts:85`·`settings/notifications/page.tsx:127-128`(카카오 로드맵 톤).
+- **정합·보존(✅)**: 베타 카피 `copy/pricing.ts:204,225`(이미 보수화·정합) / 플랜 플래그 `features.ts:5,7,9,11,13`(내부 future) / AI 코드 `api/ai/analyze`·`lib/ai*`·`history/page.tsx`(보존) / EN i18n `i18n.ts`(보존) / 앱·스토어 `app-roadmap.md`·`app-packaging-*`·`app-store-submission-pack.md`+`manifest.ts`(로드맵 유지) / 138 문구 다수(정합).
+- **의도적 이연**: 공개 UI 실변경은 **다음 작업** — 본 task는 결정 잠금 + 매핑만(플래너 한정: tiny/safe 외 `src/**` 무변경, 기본 0편집).
+- **검증(docs 전용)**: `git diff --check` 0(CRLF 노이즈만) · 변경 파일(scope 신규·PROGRESS·AI_HANDOFF) U+FFFD/모지바케 0(Korean intact). `src/**` 무변경 → `tsc`/`build`/로컬 스모크 불요. **AI Center 4310 무중단**(로컬 서버 미기동).
+- **남은 갭(후속·운영자)**: 구현 체크리스트 (i) 5건이 다음 우선. 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 재개는 오너/제품 게이트.
 
 ### Task 112 — 최종 점검 QA 클로즈아웃 (P0/P1 회귀 재검증 + 잔여 P2 백테스트 히트맵 단위 1건 보강) (2026-06-30, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md` 전체 클로즈아웃. P0(task 108 기준일·109 필터)·P1(task 110 트러스트 카피) 회귀 0 재확인 + 잔여 P2 중 유일 미충족(백테스트 히트맵 단위 명시)만 보강. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA·정렬·`strength`/`direction` 무변경, 신규 npm 0, 매수/매도/추천 0). **변경 1파일** + docs.
