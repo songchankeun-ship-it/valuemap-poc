@@ -88,7 +88,7 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
             </div>
 
             {m.kind === "value" ? (
-              <div className="text-[10px] text-cyan-700 dark:text-cyan-400 leading-snug">{t.valueNote}</div>
+              <div className="text-[10px] font-medium text-amber-800 dark:text-amber-300 leading-snug rounded-md border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 px-2 py-1">{t.valueNote}</div>
             ) : null}
 
             <p className="text-[11px] text-zinc-700 dark:text-zinc-300 leading-snug">

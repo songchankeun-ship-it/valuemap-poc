@@ -458,10 +458,12 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                       </button>
                       <WatchlistToggle code={g.stock_code} t={t} />
                     </>
-                  ) : g.stock_code ? (
-                    <span className="inline-flex items-center px-3 py-2 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</span>
                   ) : null}
                 </div>
+                {/* 상태 배지는 '원문 보기' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
+                {g.stock_code && !universeSet.has(g.stock_code) ? (
+                  <div className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</div>
+                ) : null}
                 {/* 이 공시 이해하기 — 차별점 */}
                 {guide ? <SignalGuideExpand guide={guide} url={g.representative.disclosure.url} /> : null}
               </div>

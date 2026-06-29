@@ -56,7 +56,7 @@ export const stockDetailCopy = {
       titlePrefix: "업종 대비 밸류 ·",
       diffNote: "(위 밸류 점수와 기준 다름)",
       peerDescBefore: "같은 업종",
-      peerDescMid: "개(본인 제외) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체",
+      peerDescMid: "곳(본인 포함) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체",
       peerDescAfter: "종목 풀 기준",
       peerDescPoint: "점)",
       lowSample:
@@ -129,7 +129,7 @@ export const stockDetailCopy = {
       titlePrefix: "Value vs. sector ·",
       diffNote: "(different basis from the Value score above)",
       peerDescBefore: "Relative PER/PBR position among",
-      peerDescMid: "sector peers (excluding this stock) · the 4-metric Value above is based on the full pool of",
+      peerDescMid: "sector peers (this stock included) · the 4-metric Value above is based on the full pool of",
       peerDescAfter: "stocks ",
       peerDescPoint: ")",
       lowSample:
@@ -268,7 +268,7 @@ export const metricInsightCardsCopy = {
     topPctPrefix: "상위",
     bottomPctPrefix: "하위",
     valueNote:
-      "전체 풀 기준 점수 · 업종 내 상대 위치는 아래 ‘업종 대비 밸류’ 참고",
+      "주의: 밸류는 업종 보정 전 전체 풀 기준 · 금융·지주는 구조적으로 높게 나올 수 있음 — 업종 내 위치는 아래 ‘업종 대비 밸류’ 참고",
     interpretLabel: "해석:",
     cautionTag: "주의",
     confirmTag: "확인",
@@ -280,7 +280,7 @@ export const metricInsightCardsCopy = {
     topPctPrefix: "top",
     bottomPctPrefix: "bottom",
     valueNote:
-      "Full-pool score · for the in-sector position see “Value vs. sector” below",
+      "Note: Value is on the full pool before sector adjustment · financials/holding companies can read structurally high — for the in-sector position see “Value vs. sector” below",
     interpretLabel: "Read:",
     cautionTag: "Caution",
     confirmTag: "Check",

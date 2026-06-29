@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 102 — 재검수 P2 정적 텍스트·접근성·신뢰 문구 (배지 분리·STEP ol>li·업종 카운트·공시 CTA/배지·백테스트 단위/날짜·밸류 경고) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P2-1~P2-6**(§6) + §7.3/7.4/7.5/7.12. 카피/마크업/스타일만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 6파일.
+- **P2-1** `stock/PriorityScoreCard.tsx`: 데이터 배지 3종 사이 `<span class="sr-only"> · </span>` → 정적/스크린리더 `필수 데이터 100% · 이상값 점검 통과 · Metrics 2.4`(글루 해소). role=list·suspect 분기·whitespace-nowrap 보존.
+- **P2-2** `BeginnerReading.tsx`: STEP `div.grid` → `<ol class="… list-none p-0 m-0">` + 각 `StepCard` `<li class="h-full">` 래핑(key→li). STEP n 배지가 가시 번호 단일 소스. href·순서 보존.
+- **P2-3** `DisclosureExplorer.tsx`: `notInUniverse` 배지를 액션 행 밖 별도 `<div class="mt-1.5 …">`로 분리(원문 보기 버튼과 DOM·시각·텍스트 추출 분리). `strength` 숫자 카드 미렌더 + `signalGuide.ts:54`가 "강도=분류 신뢰도, 호재 점수 아님" 이미 명시 → 추가 라벨 불필요(검증만).
+- **P2-4/5** `BacktestClient.tsx`: 상단 KPI 위 amber 배지 `백테스트 기준: {yyyy-mm-dd} 생성 · 현재 데이터 {siteDataAsOf}과 다름`(신규 `formatGeneratedDate`, siteDataAsOf 없으면 생성일만). 마지막 리밸런싱 제목에 `현재 추천 아님` amber 배지. 히트맵 `title`+`aria-label`(%) 이미 충족(검증만).
+- **P2-6** `copy/stockDetail.ts` `metricInsightCardsCopy.valueNote` ko/en 강화(업종 보정 전 전체 풀·금융/지주 구조적 고평가 주의·아래 업종 대비 밸류 참고) + `stock/MetricInsightCards.tsx` 밸류 노트 cyan→amber 박스. 138 하드코딩 안 함.
+- **P1-7(동시 처리)** `copy/stockDetail.ts` `sectorValue.peerDescMid` ko "개(본인 제외)"→**"곳(본인 포함)"**, en "(excluding this stock)"→"(this stock included)". `sectorValueScore.peers`가 per/pbr>0 필터로 **본인 포함** → 실제 계산·`SectorComparison`("본인 포함")과 통일. 스모크: 034730 두 카드 `7곳`, 032830 두 카드 `15곳` 일치. (플래너의 "현재 종목 제외"는 계산과 모순 → 정확성 우선으로 "본인 포함" 채택.)
+- **검증**: `tsc --noEmit` 0 · `build` 0(138 SSG) · `verify_metrics.py` 0오류·금칙어 0·Metrics 2.4 · `git diff --check` 0 · U+FFFD 0. `app:check` 생략(PWA/auth/shell 무변경). prod **47102**(내 PID 31520만 종료·4310 무중단): 5라우트 200, SSR(ko) 신규 문구·sr-only 분리자·ol/li STEP·백테스트 배지 노출, EN 청크 패리티(`(this stock included)`·`before sector adjustment`).
+- **남은 갭(후속)**: P2-3 `notInUniverse` 카드 배지는 현재 SSR 샘플에 비유니버스 공시 카드가 없어 화면 미노출(구조만 분리). SEO 메타/OG·도메인 이메일·모바일 실기기 육안·`/en` URL은 운영자 게이트(범위 외).
+
 ### Task 101 — 재검수 P1/P2 상용 준비 페이지 문구 명료화 (요금제·로그인·히스토리·개인정보) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P1-5·P1-8·7.7·7.11·7.14** 커버. 텍스트 카피 + 위탁사 링크만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0). 보수적·비자문(매수/매도/추천 0).
 - **P1-5 요금제 비교표 값 중심화** — `src/lib/pricing.ts` `COMPARE_ROWS`: 관심 종목 pro/premium `true/준비 중` → **`무제한 예정`**, 종목 비교 → **`확장 예정`**, 공시 알림 pro/premium `true`(✓) → **`포함 예정`**(메세지 명확화). free 한도(`5개`/`4개`/`베타 무료`)·점수 급변 줄(free `—` 미제공·pro/premium 준비 중)·진짜 준비 중 행 무변경. `src/lib/copy/pricing.ts` `classifyKoCell`: "…예정"으로 끝나는 셀 → `planned`(amber) 동일 표시; `enCellText`: 무제한/확장/포함 예정 → `Unlimited/Expanded/Included (planned)`(EN 한국어 누출 차단). 범례(제공/미제공/준비 중/베타 무료) 모순 없음(예정=planned=준비 중 스타일).

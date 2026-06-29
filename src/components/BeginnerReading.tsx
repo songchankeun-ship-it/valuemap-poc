@@ -80,11 +80,14 @@ export function BeginnerReading({ s }: { s: StockShape }) {
       {/* 먼저 확인할 것 — 점수 → 공시 → 재무 STEP 카드(설계서 §9.5·§3 번호 중복 제거). ol 자동 번호 대신 STEP n 단일 표기 */}
       <div className="rounded-md border border-blue-100 dark:border-blue-950 bg-blue-50/40 dark:bg-blue-950/20 p-3 mb-3">
         <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.firstCheckTitle} <span className="text-[10px] font-normal text-zinc-500 dark:text-zinc-400">{t.firstCheckHint}</span></div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+        {/* 정적 텍스트/스크린리더에서 한 문단으로 붙지 않도록 ol > li 로 분리(설계서 §9.5 / 재검수 P2-2). 가시 번호는 STEP n 배지가 단일 소스 → list-none */}
+        <ol className="grid grid-cols-1 md:grid-cols-3 gap-2.5 list-none p-0 m-0">
           {t.steps.map((c, i) => (
-            <StepCard key={CONFIRM_HREFS[i]} item={c} href={CONFIRM_HREFS[i]} index={i} />
+            <li key={CONFIRM_HREFS[i]} className="h-full">
+              <StepCard item={c} href={CONFIRM_HREFS[i]} index={i} />
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
 
       {/* 이 종목에서 특히 — 점수 패턴별 추가 확인 항목 */}

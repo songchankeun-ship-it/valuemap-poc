@@ -65,6 +65,16 @@ function formatGeneratedAt(iso: string) {
   return `${yyyy}. ${mm}. ${dd}. ${ampm} ${h12}:${min}:${sec}`;
 }
 
+// 상단 배지용 컴팩트 날짜(yyyy-mm-dd) — deterministic(서버/클라 일관).
+function formatGeneratedDate(iso: string) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 // 등락 의미색(상승=빨강·하락=파랑). 수익 그룹 KPI에 사용.
 function upDownTone(x: number) {
   return x >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
@@ -181,6 +191,13 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
         ))}
       </div>
 
+      {/* 상단 요약 근처에 백테스트 기준일 vs 현재 데이터 차이 배지(재검수 P2-5) — 하단 3날짜 블록과 별개로 한 번 더 강조 */}
+      <div className="flex">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-300">
+          백테스트 기준: {formatGeneratedDate(data.generatedAt)} 생성{siteDataAsOf ? ` · 현재 데이터 ${siteDataAsOf}과 다름` : ""}
+        </span>
+      </div>
+
       {/* KPI: 수익 그룹 / 위험 그룹을 시각적으로 분리 (설계서 §11.2·§20.7) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
@@ -284,7 +301,10 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
           <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
             <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5">마지막 리밸런싱 구성 예시 {active.latestHoldings.length}종목</div>
+              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5 flex items-center gap-1.5 flex-wrap">
+                마지막 리밸런싱 구성 예시 {active.latestHoldings.length}종목
+                <span className="inline-flex items-center rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">현재 추천 아님</span>
+              </div>
               <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 백테스트 규칙을 마지막 리밸런싱 시점에 적용했을 때의 구성 예시입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
               <div className="flex flex-wrap gap-1.5">
                 {active.latestHoldings.map((tk) => (

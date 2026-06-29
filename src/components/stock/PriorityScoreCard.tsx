@@ -72,13 +72,18 @@ export function PriorityScoreCard({
       {/* 데이터 상태 배지 — 각각 독립 pill로 분리(텍스트처럼 붙지 않게). */}
       <div role="list" aria-label={t.badgeAriaLabel} className="mt-2.5 flex flex-wrap items-center gap-2 text-[10px] tabular-nums">
         <DataStatusPill>{t.requiredDataPrefix} {completeness}%</DataStatusPill>
+        {/* sr-only/정적 추출 분리자 — 화면엔 pill 간격, 스크린리더·텍스트 추출엔 ' · '로 끊어 읽히게 */}
+        <span className="sr-only"> · </span>
         {suspect ? (
           <DataStatusPill tone="warn">{t.suspectPill}</DataStatusPill>
         ) : (
           <DataStatusPill tone="good">{t.passPill}</DataStatusPill>
         )}
         {metricsVersion ? (
-          <DataStatusPill>{metricsVersion}</DataStatusPill>
+          <>
+            <span className="sr-only"> · </span>
+            <DataStatusPill>{metricsVersion}</DataStatusPill>
+          </>
         ) : null}
       </div>
     </div>
