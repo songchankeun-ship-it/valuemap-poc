@@ -263,7 +263,7 @@ export const loginCopy = {
     title: "오른스코어 로그인",
     emailOnlyLead: "이메일로 로그인 링크를 받으세요.",
     lead: (providers: string) =>
-      `${providers}로 1초 만에 시작하거나, 이메일로 로그인 링크를 받으세요.`,
+      `${providers}로 빠르게 시작하거나, 이메일로 로그인 링크를 받으세요.`,
     contexts: {
       "/history": "분석 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
       "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",

@@ -38,6 +38,8 @@ function classifyKoCell(value: CompareCell): { kind: CellKind; text?: string } {
   if (value === true) return { kind: "yes" };
   if (value === false) return { kind: "no" };
   if (value === "준비 중") return { kind: "planned", text: value };
+  // "무제한 예정 / 확장 예정 / 포함 예정"처럼 "…예정"으로 끝나는 셀도 준비 중(planned, amber)으로 표시.
+  if (typeof value === "string" && value.endsWith("예정")) return { kind: "planned", text: value };
   if (value === "베타 무료") return { kind: "betaFree", text: value };
   return { kind: "limit", text: value };
 }
@@ -45,6 +47,10 @@ function classifyKoCell(value: CompareCell): { kind: CellKind; text?: string } {
 // 영어 셀 텍스트 — 한국어 종류는 유지, 표시 문구만 영문화. 한도 숫자는 그대로.
 function enCellText(value: CompareCell): { kind: CellKind; text?: string } {
   const ko = classifyKoCell(value);
+  // "…예정" 한도형 셀은 종류로는 planned지만 영어 문구를 구체화(한국어 누출 방지).
+  if (value === "무제한 예정") return { kind: "planned", text: "Unlimited (planned)" };
+  if (value === "확장 예정") return { kind: "planned", text: "Expanded (planned)" };
+  if (value === "포함 예정") return { kind: "planned", text: "Included (planned)" };
   if (ko.kind === "planned") return { kind: "planned", text: "Coming soon" };
   if (ko.kind === "betaFree") return { kind: "betaFree", text: "Free in beta" };
   if (ko.kind === "limit") {
@@ -189,6 +195,8 @@ export const pricingCopy = {
     priceUndecided: "가격 미확정",
     freeCta: "지금 무료로 시작하기 →",
     waitlistPrompt: "아직 준비 중이에요. 출시되면 가장 먼저 알려드릴게요.",
+    waitlistDataNote:
+      "입력한 이메일은 출시 알림 발송 목적으로만 수집·보관하며, 출시 후 또는 수신 거부 시 파기합니다.",
     betaCard: {
       badge: "베타 무료",
       bodyStrong1: "관심 종목 공시 알림 · 저장 조건 알림",
@@ -241,6 +249,8 @@ export const pricingCopy = {
     priceUndecided: "Pricing not finalized",
     freeCta: "Start free now →",
     waitlistPrompt: "Still in preparation. We'll let you know first when it launches.",
+    waitlistDataNote:
+      "The email you enter is collected and kept only to send the launch notice, and is deleted after launch or when you unsubscribe.",
     betaCard: {
       badge: "Free in beta",
       bodyStrong1: "Watchlist disclosure & saved-condition alerts",

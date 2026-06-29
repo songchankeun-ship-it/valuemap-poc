@@ -9,7 +9,7 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-10">
       <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">개인정보처리방침</h1>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026년 6월</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026-06-29</p>
 
       <LegalEnSummary surface="privacy" />
 
@@ -58,15 +58,15 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5. 위탁 처리 (Processors)</h2>
-          <p>서비스 제공을 위해 다음 외부 서비스를 이용합니다. 각 서비스는 자체 개인정보처리방침을 따릅니다:</p>
+          <p>서비스 제공을 위해 다음 외부 서비스를 이용합니다. 각 서비스는 자체 개인정보처리방침을 따르며, 아래 링크에서 확인할 수 있습니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심종목·분석기록 / 목적: 인증·데이터 저장</li>
-            <li><strong>호스팅 제공자 — Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계</li>
-            <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송</li>
-            <li><strong>AI 처리 제공자 — Anthropic Claude</strong> (미국) — 항목: AI 분석 시 전달되는 종목 데이터·질의 / 목적: AI 분석. <strong className="text-zinc-900 dark:text-zinc-100">Anthropic은 API 입력을 모델 학습에 사용하지 않으며</strong>, 분석 결과는 본인 계정에만 저장됩니다.</li>
-            <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시)</li>
-            <li><strong>소셜 로그인 제공자 — Google</strong> (미국) — 항목: 구글 계정 식별자·이메일·이름·프로필 사진 / 목적: 소셜 로그인(선택 시)</li>
-            <li><strong>소셜 로그인 제공자 — Naver</strong> (대한민국) — 항목: 네이버 계정 식별자·이메일 / 목적: 소셜 로그인(선택 시)</li>
+            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심종목·분석기록 / 목적: 인증·데이터 저장 — <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>호스팅 제공자 — Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계 — <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송 — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>AI 처리 제공자 — Anthropic Claude</strong> (미국) — 항목: AI 분석 시 전달되는 종목 데이터·질의 / 목적: AI 분석. <strong className="text-zinc-900 dark:text-zinc-100">Anthropic은 API 입력을 모델 학습에 사용하지 않으며</strong>, 분석 결과는 본인 계정에만 저장됩니다. — <a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시) — <a href="https://policy.kakao.com/ko/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>소셜 로그인 제공자 — Google</strong> (미국) — 항목: 구글 계정 식별자·이메일·이름·프로필 사진 / 목적: 소셜 로그인(선택 시) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>소셜 로그인 제공자 — Naver</strong> (대한민국) — 항목: 네이버 계정 식별자·이메일 / 목적: 소셜 로그인(선택 시) — <a href="https://privacy.naver.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
           </ul>
         </section>
 

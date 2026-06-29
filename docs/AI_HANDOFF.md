@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 101 — 재검수 P1/P2 상용 준비 페이지 문구 명료화 (요금제·로그인·히스토리·개인정보) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P1-5·P1-8·7.7·7.11·7.14** 커버. 텍스트 카피 + 위탁사 링크만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0). 보수적·비자문(매수/매도/추천 0).
+- **P1-5 요금제 비교표 값 중심화** — `src/lib/pricing.ts` `COMPARE_ROWS`: 관심 종목 pro/premium `true/준비 중` → **`무제한 예정`**, 종목 비교 → **`확장 예정`**, 공시 알림 pro/premium `true`(✓) → **`포함 예정`**(메세지 명확화). free 한도(`5개`/`4개`/`베타 무료`)·점수 급변 줄(free `—` 미제공·pro/premium 준비 중)·진짜 준비 중 행 무변경. `src/lib/copy/pricing.ts` `classifyKoCell`: "…예정"으로 끝나는 셀 → `planned`(amber) 동일 표시; `enCellText`: 무제한/확장/포함 예정 → `Unlimited/Expanded/Included (planned)`(EN 한국어 누출 차단). 범례(제공/미제공/준비 중/베타 무료) 모순 없음(예정=planned=준비 중 스타일).
+- **요금제 7.7 데이터 수집 고지** — `copy/pricing.ts` ko/en `waitlistDataNote` 추가("입력한 이메일은 출시 알림 발송 목적으로만 수집·보관…수신 거부 시 파기"), `PricingContent.tsx` `<WaitlistForm>` 아래 muted `<p>`로 렌더. privacy §3 waitlist 보존정책과 정합.
+- **P1-8 로그인 과장 완화** — `src/lib/i18n.ts` `loginCopy.ko.lead` "…로 1초 만에 시작" → **"…로 빠르게 시작"**. EN lead(`Start with …`)는 이미 보수적 → 무변경. **소셜 실패 + 매직링크 fallback 카피는 이미 완비 — 검증만**: `login/page.tsx` `friendlyAuthError`(noCode/callback/provider/rateLimit/invalidEmail/unknown) + 이메일 "보냈어요"·스팸함 힌트. 재구축 안 함.
+- **7.11 히스토리 저장 항목 명시** — `src/app/history/page.tsx` 비로그인 헤더 + 로그인 서브헤더 양쪽에 "저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모." 한 줄(privacy §1/§3와 정합, 과대 저장 주장 없음). 한국어 전용(파일 기존 패턴).
+- **7.14 privacy 위탁사 링크 + 날짜** — `src/app/privacy/page.tsx` §5 각 위탁사(Supabase·Vercel·Resend·Anthropic·Kakao·Google·Naver)에 공식 처리방침 링크 추가(`target=_blank rel=noopener noreferrer`, 안정 공식 URL). "최종 갱신: 2026년 6월" → **"2026-06-29"**(문서 내용 변경됨). **도메인 이메일(privacy@/support@) 발명 안 함** — `songchankeun@gmail.com` 유지, 도메인 이메일은 docs 미래 노트만(공개 약속 0).
+- **이미 됨(재작업 안 함)**: P1-1 `/terms` 내부 문서 경로(`docs/legal-ai-commercial-readiness.md`)는 Task 99에서 제거 완료 — `src/**/*.tsx` grep 0건 재확인. terms 내용 무변경 → 갱신일 그대로. 로그인 실패/fallback 카피도 기구현 → 검증만.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 종목 SSG, 전 라우트) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0(CRLF 경고만) · 변경 파일 U+FFFD 0. 로컬 prod **4399**(내 PID 35952만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING 확인**): `/pricing`·`/login`·`/history`·`/privacy`·`/terms` 200. SSR(ko) 노출 — 요금제 `무제한 예정`·`확장 예정`·`포함 예정`·waitlist 고지, `/history` 저장 항목, `/login` `빠르게 시작`(`1초 만에` 0), `/privacy` 위탁사 링크+`2026-06-29`. EN은 클라 전환이라 빌드 청크에서 `Unlimited/Expanded/Included (planned)`·waitlist EN 컴파일 확인.
+- **남은 갭(후속)**: 재검수 P2(배지 띄어쓰기·STEP `ol>li`·공시 CTA/배지 DOM 분리·백테스트 히트맵 단위/aria·밸류 업종 미보정 경고)·P1-7(상세 업종 카운트 본인 포함/제외 통일). **도메인 support@/privacy@ 이메일 미구성** — 운영자 결정 대기(공개 약속 안 함, docs 노트만).
+
 ### Task 99 — 재검수 P0 신뢰 문구 3건 (stocks 카운트·status 시간대·terms 내부경로) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **즉시 수정 P0 3건**. P1/P2는 후속. 텍스트 전용 변경(6파일), 점수식·`stocks.json`·인증·manifest·PWA 무변경. 신규 npm 0.
 - **P0-1 `/stocks` 카운트·필터 충돌(안 A)** — `src/lib/copy/stocks.ts`(ko/en): `matchCount`·`matchCountShort` "조건 충족"→**"현재 표시"**(en "Showing"). `noDetailFilter`→**"적용된 사용자 상세 필터 없음"**(en "No user detail filters applied"). `describeAll(total)`→**`describeAll(shown,total)`** 분기(`shown<total`→"기본 품질 필터(PER 200·PBR 30 이하)가 적용된 N개 …", else 기존 전체 문구). `StocksExplorer.tsx` 호출 1곳 `t.describeAll(sorted.length, total)`. 기본 123/138에서 "전체 138개 보고 있다" 충돌 제거. 제외 사유 문구(`baseScreenNote`) PER/PBR 정확 유지, 검증보류 주장 추가 안 함.

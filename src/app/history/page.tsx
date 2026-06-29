@@ -26,6 +26,9 @@ export default async function HistoryPage() {
           <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400">
             종목 페이지에서 받은 AI 분석과 메모를 한곳에 저장합니다. <strong>로그인 후 이용 가능</strong>합니다.
           </p>
+          <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-500 mt-1">
+            저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모.
+          </p>
         </header>
         <div className="bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
@@ -49,6 +52,9 @@ export default async function HistoryPage() {
         <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">AI 분석 기록</h1>
         <p className="text-xs text-zinc-600 dark:text-zinc-400">
           종목 페이지에서 받은 AI 분석이 자동으로 저장됩니다. 최근 50개까지 보관.
+        </p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-500 mt-1">
+          저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모.
         </p>
       </header>
       <HistoryClient />

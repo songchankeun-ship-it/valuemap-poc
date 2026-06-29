@@ -90,6 +90,9 @@ function PlanCard({
               {t.waitlistPrompt}
             </p>
             <WaitlistForm source={`pricing-${plan.id}`} />
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed break-words">
+              {t.waitlistDataNote}
+            </p>
           </>
         )}
       </div>

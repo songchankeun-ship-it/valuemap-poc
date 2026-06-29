@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-29 · [claude] task 101 — 재검수 P1/P2 상용 준비 페이지 문구 명료화 (요금제·로그인·히스토리·개인정보)
+- **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P1-5·P1-8·7.7·7.11·7.14**. 텍스트 카피 + 위탁사 처리방침 링크만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0).
+- **P1-5 요금제 비교표 값 중심화** — `src/lib/pricing.ts` `COMPARE_ROWS`: 관심 종목 pro/premium → **`무제한 예정`**, 종목 비교 → **`확장 예정`**, 공시 알림 pro/premium `true`(✓) → **`포함 예정`**("준비 중" 반복/모호 ✓ 제거). free 한도(`5개`/`4개`/`베타 무료`)·점수 급변(free `—`/pro·premium 준비 중)·실제 준비-only 행 무변경. `src/lib/copy/pricing.ts`: `classifyKoCell`에 "…예정" 종료 셀 → `planned`(amber) 매핑, `enCellText`에 무제한/확장/포함 예정 → `Unlimited/Expanded/Included (planned)` 명시(EN 한국어 누출 차단). 범례(제공/미제공/준비 중/베타 무료) 모순 없음.
+- **요금제 7.7 데이터 수집 고지** — `copy/pricing.ts` ko/en `waitlistDataNote` 추가 + `PricingContent.tsx` `<WaitlistForm>` 아래 muted `<p>` 렌더("입력 이메일은 출시 알림 발송 목적만 수집·보관, 출시 후/수신 거부 시 파기"). privacy §3 waitlist 정책과 정합.
+- **P1-8 로그인 과장 완화** — `src/lib/i18n.ts` `loginCopy.ko.lead` "1초 만에 시작" → **"빠르게 시작"**. EN lead 이미 보수적(무변경). **소셜 실패 + 매직링크 fallback 카피는 이미 완비(검증만)**: `login/page.tsx` `friendlyAuthError`(noCode/callback/provider/rateLimit/invalidEmail/unknown) + 이메일 "보냈어요"·스팸함 힌트.
+- **7.11 히스토리 저장 항목 명시** — `src/app/history/page.tsx` 비로그인 헤더 + 로그인 서브헤더 양쪽에 "저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모." (privacy §1/§3 정합, 과대 저장 주장 0).
+- **7.14 privacy 위탁사 링크 + 날짜** — `src/app/privacy/page.tsx` §5 7개 위탁사(Supabase·Vercel·Resend·Anthropic·Kakao·Google·Naver)에 공식 처리방침 링크(`target=_blank rel=noopener noreferrer`). "최종 갱신: 2026년 6월" → **"2026-06-29"**. **도메인 이메일 발명 안 함** — `songchankeun@gmail.com` 유지, 도메인 이메일은 docs 미래 노트만(공개 약속 0).
+- **이미 됨(재작업 안 함)**: P1-1 `/terms` 내부 경로(`docs/legal-ai-commercial-readiness.md`)는 Task 99에서 제거 — `src/**/*.tsx` grep 0건 재확인, terms 내용 무변경 → 갱신일 그대로.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG, 전 라우트) · `npm run app:check` 통과(외부 게이트 1: assetlinks 대기-기존) · `git diff --check` 0(CRLF 경고만) · 변경 파일 U+FFFD 0. 로컬 prod **4399**(내 PID 35952만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING 확인**): `/pricing`·`/login`·`/history`·`/privacy`·`/terms` 200. SSR(ko) 노출 — 요금제 `무제한/확장/포함 예정`·waitlist 고지, `/history` 저장 항목, `/login` `빠르게 시작`(`1초 만에` 0), `/privacy` 위탁사 링크+`2026-06-29`. EN은 빌드 청크에서 `Unlimited/Expanded/Included (planned)`·waitlist EN 컴파일 확인.
+- **남은 갭(후속)**: 재검수 P1-7(상세 업종 카운트 본인 포함/제외 통일)·P2(배지 띄어쓰기·STEP `ol>li`·공시 CTA/배지 DOM 분리·백테스트 히트맵 단위/aria·밸류 업종 미보정 경고). 도메인 support@/privacy@ 이메일 미구성 — 운영자 결정 대기(docs 노트만).
+
 ## 2026-06-29 · [claude] task 100 — 재검수 P1 출시 전 UX (카운트 맥락·순위 기준·빈/실패 상태)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱)의 **P1-2·P1-3·P1-4·P1-6** 4건. 카피 + `<noscript>` fallback만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0).
 - **P1-2 홈 공시 카운트 맥락** — 기저 정합(50=최신 200건 내 raw 신호 / `/disclosures` 42=이벤트 묶음)은 Task 99 시기 정리됨. 홈 스냅샷 카드 맨숫자 오해 위험만 라벨로 해소: `src/lib/copy/home.ts` 스냅샷 signal `sub` ko "DART · 최신 200건 내"→**"DART · 최신 200건 내 · 신호 기준"**(en "… · signal basis"). 숫자 로직 무변경.

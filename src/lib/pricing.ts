@@ -100,9 +100,9 @@ export interface CompareRow {
 export const COMPARE_ROWS: CompareRow[] = [
   { label: "종목 탐색 · 질문형 프리셋", free: true, pro: true, premium: true },
   { label: "종목 상세(등급·차트·공시·점수 근거)", free: true, pro: true, premium: true },
-  { label: "관심 종목", free: `${FREE_WATCHLIST_LIMIT}개`, pro: "준비 중", premium: "준비 중" },
-  { label: "종목 비교", free: `${FREE_COMPARE_LIMIT}개`, pro: "준비 중", premium: "준비 중" },
-  { label: "관심 종목 공시 알림 · 저장 조건 알림", free: "베타 무료", pro: true, premium: true },
+  { label: "관심 종목", free: `${FREE_WATCHLIST_LIMIT}개`, pro: "무제한 예정", premium: "무제한 예정" },
+  { label: "종목 비교", free: `${FREE_COMPARE_LIMIT}개`, pro: "확장 예정", premium: "확장 예정" },
+  { label: "관심 종목 공시 알림 · 저장 조건 알림", free: "베타 무료", pro: "포함 예정", premium: "포함 예정" },
   { label: "점수 급변 · 거래활성도 알림", free: false, pro: "준비 중", premium: "준비 중" },
   { label: "장기 점수 변화 히스토리", free: false, pro: "준비 중", premium: "준비 중" },
   { label: "백테스트 상세 리포트 · 주간 요약 메일", free: false, pro: "준비 중", premium: "준비 중" },
