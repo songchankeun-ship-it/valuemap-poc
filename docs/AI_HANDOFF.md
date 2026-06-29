@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-29T00:00:00.000Z
+Last updated: 2026-06-29T01:00:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 99 - OrnScore re-audit P0 (/stocks count·filter wording, /status KST/UTC time, /terms internal-path removal)
-- Run: 99
+- Task: 100 - OrnScore re-audit P1 (home count/rank context labels, /watchlist + /compare noscript empty-state fallbacks)
+- Run: 100
 - Status: completed
 - Agent: claude
-- Note: Re-audit P0-1/2/3 implemented and all quality gates passed (tsc, build, app:check, route smoke). P1/P2 remain as follow-ups.
+- Note: Re-audit P1-2/P1-3/P1-4/P1-6 implemented (copy + noscript only); quality gates passed (tsc, build, diff-check, route smoke; app:check N/A — no PWA/auth/shell). Remaining P1-5/7/8 and P2 are follow-ups.
 
 ## Next Agent Checklist
 
