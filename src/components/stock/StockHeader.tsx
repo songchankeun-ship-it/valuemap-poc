@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
-import { stockHeaderCopy } from "@/lib/copy/stockDetail";
+import { stockHeaderCopy, priceBasisLagCopy } from "@/lib/copy/stockDetail";
 
 /**
  * 종목 헤더 — 업종 태그 · 종목명(가장 크게) · 종목코드 + 현재가/액션 슬롯.
@@ -14,6 +14,7 @@ export function StockHeader({
   name,
   ticker,
   asOfLabel,
+  priceLagAsOf,
   priceSlot,
   actionsSlot,
 }: {
@@ -21,11 +22,13 @@ export function StockHeader({
   name: string;
   ticker: string;
   asOfLabel?: string | null;
+  priceLagAsOf?: string | null;
   priceSlot: ReactNode;
   actionsSlot: ReactNode;
 }) {
   const { locale } = useLanguage();
   const t = stockHeaderCopy[locale];
+  const lag = priceBasisLagCopy[locale];
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 md:p-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -36,7 +39,9 @@ export function StockHeader({
             <span className="text-[11px] px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-md tabular-nums font-mono shrink-0">{ticker}</span>
           </div>
           <div className="mt-1.5">{priceSlot}</div>
-          {asOfLabel ? (
+          {priceLagAsOf && asOfLabel ? (
+            <div className="mt-0.5 text-[10px] text-amber-600 dark:text-amber-400 tabular-nums">{lag.servicePrefix} {asOfLabel} {lag.stockMid} {priceLagAsOf} {lag.stockSuffix}</div>
+          ) : asOfLabel ? (
             <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{asOfLabel} {t.asOfSuffix}</div>
           ) : null}
         </div>

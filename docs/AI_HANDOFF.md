@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 108 — 최종 점검 P0 데이터 기준일 페이지 일관성 (종목 상세 → 전역 스냅샷 A안 통일) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) **P0-1 페이지별 데이터 기준일 불일치**. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 5파일.
+- **유일 발산원**: `src/app/stock/[ticker]/page.tsx`의 `priceAsOf = lastPoint?.d`(per-stock 가격 시계열 마지막 거래일, raw `YYYY-MM-DD`)가 hero/`LivePrice`/`DataBasisCard`에 직접 들어가 전역 `formatBizDateLong(dataMetadata.asOfBusinessDate)`(`2026.06.29 (월)`)와 포맷·값이 어긋남. 나머지 라우트(헤더 데이터바·푸터·`/stocks`·`/status`·`/`·`/disclosures`·`/backtest`·`/pricing`·`/compare`·`/history`·`/guide/metrics`)는 이미 전역 스냅샷을 읽음. `/about`·`/watchlist`는 자체 기준일 없이 공통 헤더/푸터 상속(검증만).
+- **수정(A안 + B안 방어)**: 종목 상세에서 `priceAsOf`를 `YYYYMMDD`로 정규화→전역과 비교(`priceLagsGlobal`). 정상이면 hero `asOfLabel`·`DataBasisCard` 주가 행·`LivePrice asOf` 모두 `globalAsOf`로 통일(값+포맷 전역 일치). 종목 주가가 실제 더 과거면 `priceLagAsOf`로 명시(`전체 서비스 기준 … · 이 종목 주가 … (최신 배치 미반영)`, ko/en `priceBasisLagCopy` 신설). **현재 데이터는 138종목 모두 가격 마지막 점 `2026-06-29` → 전 종목 정상 분기**, 지연 안내는 미래 시점차 방어용.
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 5파일 U+FFFD 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod 4399(내 PID 34960만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING 확인**): `/stock/034730·005930·000660`·`/stocks`·`/watchlist`·`/about`·`/status`·`/` 200, 전 라우트 SSR(ko) `2026.06.29 (월)` 일치·사용자 노출 `2026.06.26` 0건(상세 HTML의 `2026-06-26`은 가격 차트 시계열·차트 x축 범위·JSON-LD ISO뿐, 기준일 아님).
+- **남은 갭(운영자)**: ISR/배포 캐시 — `revalidate` 라우트가 레이아웃 데이터바 날짜를 독립 캐시 → **데이터 갱신 후 전체 재배포가 stale 날짜 flush하는 운영 단계**(코드 아님). 시크릿/강력 새로고침 동일성은 재배포 후 운영자 확인. 최종 점검 P0-2(`/stocks` 123/138 필터 문구)·P1/P2는 별도 후속.
+
 ### Task 102 — 재검수 P2 정적 텍스트·접근성·신뢰 문구 (배지 분리·STEP ol>li·업종 카운트·공시 CTA/배지·백테스트 단위/날짜·밸류 경고) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P2-1~P2-6**(§6) + §7.3/7.4/7.5/7.12. 카피/마크업/스타일만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 6파일.
 - **P2-1** `stock/PriorityScoreCard.tsx`: 데이터 배지 3종 사이 `<span class="sr-only"> · </span>` → 정적/스크린리더 `필수 데이터 100% · 이상값 점검 통과 · Metrics 2.4`(글루 해소). role=list·suspect 분기·whitespace-nowrap 보존.

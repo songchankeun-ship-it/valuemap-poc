@@ -124,6 +124,24 @@ export default async function StockDetailPage({ params }: PageProps) {
     : s.changePct;
   const vs = s.volStats;
   const priceAsOf = lastPoint?.d ?? null;
+  // ── 데이터 기준일 통일(설계서 P0-1 A안) ───────────────────────────────
+  // 전 화면(헤더/푸터/홈/탐색/상태)이 읽는 전역 스냅샷 기준일을 종목 상세도 동일하게 사용한다.
+  // 종목 주가의 마지막 거래일(priceAsOf)을 YYYYMMDD로 정규화해 전역 기준일과 비교 →
+  //  - 같으면(정상): 전역 기준일을 그대로 노출해 값·포맷이 /status·헤더와 일치.
+  //  - priceAsOf가 더 과거면(지연): 전역 기준일을 보여주되 종목 주가 기준이 더 과거임을 명시(B안 안내).
+  const globalAsOf = formatBizDateLong(dataMetadata.asOfBusinessDate);
+  const priceAsOfDigits = priceAsOf ? priceAsOf.replace(/-/g, "") : null;
+  const priceLagsGlobal =
+    !!priceAsOfDigits &&
+    /^\d{8}$/.test(priceAsOfDigits) &&
+    !!dataMetadata.asOfBusinessDate &&
+    /^\d{8}$/.test(dataMetadata.asOfBusinessDate) &&
+    priceAsOfDigits < dataMetadata.asOfBusinessDate;
+  // 지연 시에만 종목 주가의 실제 기준일(과거)을 정식 포맷으로 표기. 정상이면 null.
+  const priceLagAsOf =
+    priceLagsGlobal && priceAsOfDigits ? formatBizDateLong(priceAsOfDigits) : null;
+  // LivePrice 종가 라벨: 정상이면 전역 기준일, 지연이면 종가가 실제로 찍힌 과거 기준일.
+  const livePriceAsOf = priceLagAsOf ?? globalAsOf;
   const dataWarnings = getDataWarnings(s, priceHistory);
   // 3개월(약 63거래일) 급등 위험 — 점수보다 먼저 노출
   let surge3m: number | null = null;
@@ -251,8 +269,9 @@ export default async function StockDetailPage({ params }: PageProps) {
         sector={mySector}
         name={s.name}
         ticker={s.ticker}
-        asOfLabel={priceAsOf}
-        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={priceAsOf} />}
+        asOfLabel={globalAsOf}
+        priceLagAsOf={priceLagAsOf}
+        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={livePriceAsOf} />}
         actionsSlot={
           <>
             <AddToWatchlistButton ticker={s.ticker} name={s.name} />
@@ -309,9 +328,10 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       {/* 데이터 기준 (설계서 12.2) */}
       <DataBasisCard
-        priceAsOf={priceAsOf}
+        priceAsOf={globalAsOf}
+        priceLagAsOf={priceLagAsOf}
         poolN={poolN}
-        scoreDate={formatBizDateLong(dataMetadata.asOfBusinessDate)}
+        scoreDate={globalAsOf}
         formulaVersion={dataStatus.metricsVersionLabel}
       />
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
-import { stockDetailCopy } from "@/lib/copy/stockDetail";
+import { stockDetailCopy, priceBasisLagCopy } from "@/lib/copy/stockDetail";
 
 /**
  * 종목 상세 서버 페이지가 직접 그리던 한글 JSX 블록을 다국어로 옮긴 클라이언트 자식들.
@@ -81,25 +81,33 @@ export function RiskDetailCard({
   );
 }
 
-// 데이터 기준 4칸(주가·분석 대상·점수 계산·산식 버전). 날짜·버전 라벨은 raw로 유지.
+// 데이터 기준 4칸(주가·분석 대상·점수 계산·산식 버전).
+// priceAsOf는 전역 스냅샷 기준일(정상). 종목 주가가 더 과거면 priceLagAsOf로 지연을 명시.
 export function DataBasisCard({
   priceAsOf,
+  priceLagAsOf,
   poolN,
   scoreDate,
   formulaVersion,
 }: {
   priceAsOf: string | null;
+  priceLagAsOf?: string | null;
   poolN: number;
   scoreDate: string;
   formulaVersion: string;
 }) {
   const { locale } = useLanguage();
   const t = stockDetailCopy[locale].dataBasis;
+  const lag = priceBasisLagCopy[locale];
   return (
     <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-3">
       <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-300 mb-1.5">{t.title}</div>
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-        <div>{t.price} <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} {t.marketClose}</span></div>
+        <div>{t.price} {priceLagAsOf ? (
+          <span className="text-amber-600 dark:text-amber-400">{lag.servicePrefix} {priceAsOf ?? "—"} {lag.stockMid} {priceLagAsOf} {lag.stockSuffix}</span>
+        ) : (
+          <span className="text-zinc-700 dark:text-zinc-300">{priceAsOf ?? "—"} {t.marketClose}</span>
+        )}</div>
         <div>{t.universe} <span className="text-zinc-700 dark:text-zinc-300">{poolN}{t.universeSuffix}</span></div>
         <div>{t.scoreCalc} <span className="text-zinc-700 dark:text-zinc-300">{scoreDate}</span></div>
         <div>{t.formulaVersion} <span className="text-zinc-700 dark:text-zinc-300">{formulaVersion}</span></div>

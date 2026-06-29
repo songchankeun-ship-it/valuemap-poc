@@ -25,6 +25,7 @@ export function StockConclusionHero({
   name,
   ticker,
   asOfLabel,
+  priceLagAsOf,
   priceSlot,
   actionsSlot,
   score,
@@ -44,6 +45,7 @@ export function StockConclusionHero({
   name: string;
   ticker: string;
   asOfLabel?: string | null;
+  priceLagAsOf?: string | null;
   priceSlot: ReactNode;
   actionsSlot: ReactNode;
   score: number;
@@ -68,6 +70,7 @@ export function StockConclusionHero({
         name={name}
         ticker={ticker}
         asOfLabel={asOfLabel}
+        priceLagAsOf={priceLagAsOf}
         priceSlot={priceSlot}
         actionsSlot={actionsSlot}
       />
