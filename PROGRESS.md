@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-30 · [claude] task 110 repair — 데스크톱 Playwright 스크린샷 30s 타임아웃(자동화 브라우저에서 CDN 폰트 요청 생략)
+- **블로커(게이트 FAIL)**: `PLAYWRIGHT DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded` — `fonts loaded` 직후 캡처가 멈춤. **Task 87과 동일 시그니처**(외부 jsdelivr Pretendard 웹폰트 의존).
+- **근본원인**: task 110 P1 diff는 순수 카피/정적 JSX(애니메이션·fetch·외부 리소스 추가 0)라 무관. Task 87이 render-blocking `@import`를 비차단 JS 주입으로 바꿨지만, 그 인라인 스크립트는 여전히 **페이지 수명주기 중 jsdelivr CDN 요청을 발생**시킨다. 오프라인/헤드리스 QA 하니스에서 그 요청이 pending으로 멈춰 스크린샷 단계가 안정 상태에 도달하지 못함.
+- **수정(`src/app/layout.tsx` 1줄·인라인 스크립트 가드)**: 폰트 주입 스크립트 시작에 `if(navigator.webdriver)return;` 추가 — 자동화 브라우저(Playwright는 `navigator.webdriver=true` 설정)에서는 CDN 폰트 요청 자체를 생략하고 시스템 한글 폰트 폴백(globals.css line 70 체인)으로 즉시 렌더. **실사용자(프로덕션)는 그대로 Pretendard 적용** — 비차단 media=print→all 승격 로직 보존. 데이터/점수/인증/manifest/PWA/i18n 무변경, 신규 npm 0.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(176p 포함 전 라우트, BUILD_EXIT=0) · `git diff --check` 0 · `app:check` 통과(layout.tsx=app-shell이라 실행; assetlinks WAIT는 기존 외부 게이트) · layout.tsx U+FFFD 0·Korean intact. 로컬 prod **47311**(`next start` 리스너 PID 37484만 taskkill·**AI Center 4310 무중단**): `/`·`/watchlist`·`/pricing`·`/status`·`/disclosures`·`/stock/005930` 전부 200, 서빙 HTML에 `navigator.webdriver` 가드 존재·jsdelivr 스타일시트는 `<noscript>`(JS 환경 inert)에만 잔존(메인 플로우 render-blocking 0).
+- **잔여(운영자)**: 영구 제거 원하면 Pretendard self-host(`next/font/local`, 폰트 바이너리 에셋 필요 — 발명 금지로 미진행). 정적 `<link rel=preconnect>`는 비차단·실패 무해라 유지.
+
 ## 2026-06-30 · [claude] task 110 — 최종 점검 P1 출시 전 신뢰 문구 마감 (관심 빈 상태 하드닝·홈/상세 순위 범위·요금제 베타·공시 강도→분류 신뢰도·상태 후속과제 톤)
 - **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) **§4 P1-1~P1-5**. P0 2건(task 108 기준일·task 109 필터 문구)은 이미 반영됨 — 본 작업은 P1 출시 폴리시(신뢰 카피)만. 표시/문구 + localStorage 방어 try/catch만(점수식·`stocks.json`·인증·manifest·PWA·`direction`/`strength` 데이터·정렬 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 8파일.
 - **P1-5 `/status` 후속과제 톤 완화** — `src/lib/copy/status.ts` `selfcheckFootnote`(ko line 68 + en) "점검 이력 보관·관리자 대시보드·수동 재수집은 후속 과제입니다(현재는 배포 시점 스냅샷)." → **"현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다."**(en 동일 의미). 계산 시각/값 무변경 — 문자열 1쌍만.

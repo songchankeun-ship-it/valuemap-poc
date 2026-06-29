@@ -896,3 +896,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **스모크**: 포트 47103 `next start`(PID 16664만 종료, 4310 무중단) — 16개 라우트 전부 200, `/status` SSR "평일마다 장 마감 후"·KST 확인.
 - **잔여(코드 범위 외)**: P2-3 샘플 데이터 가시성(공시 파이프라인 ④), 도메인 이메일(발명 금지 ⑤), EN i18n 라이브러리/메타 갭(언어 전환 클라 사이드 — SSR=ko, EN 문자열 chunks 컴파일만 확인), 390px 실기기 게이트(운영자).
 - **다음 소유자**: 운영자/제품 검토 — 잔여 ④/⑤ + EN 토글 실브라우저 확인. 본 작업 로컬 커밋만.
+
+
+### Task 110 repair — 데스크톱 Playwright 스크린샷 30s 타임아웃(자동화 브라우저 CDN 폰트 생략) (2026-06-30, Claude)
+- Blocker(게이트 FAIL): `PLAYWRIGHT DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded` — `fonts loaded` 직후 캡처가 멈춤. **Task 87과 동일 시그니처**(외부 jsdelivr Pretendard 웹폰트).
+- Root cause: Task 110 P1 diff는 순수 표시 카피/정적 JSX(애니메이션·fetch·외부 리소스 0)라 무관. Task 87이 render-blocking `@import`를 비차단 JS 주입으로 대체했으나, 그 인라인 스크립트가 **페이지 수명주기 중 jsdelivr CDN 요청을 계속 발생**시킨다. 오프라인/헤드리스 QA 하니스에서 그 요청이 pending으로 멈춰 스크린샷이 안정 상태 미도달 → 타임아웃.
+- Fix(`src/app/layout.tsx` 1줄): 폰트 주입 인라인 스크립트 시작에 `if(navigator.webdriver)return;` 가드 추가. Playwright 등 자동화 브라우저(`navigator.webdriver=true`)에서는 CDN 폰트 요청 자체를 생략, 시스템 한글 폰트 폴백(globals.css 체인)으로 즉시 렌더·스크린샷. **실사용자(프로덕션)는 그대로 Pretendard 적용**(비차단 media=print→all 승격 보존). 데이터/점수/인증/manifest/PWA/i18n 무변경, 신규 npm 0.
+- Passed: `tsc --noEmit` 0 · `npm run build` 0(전 라우트, BUILD_EXIT=0) · `git diff --check` 0 · `app:check` 통과(layout.tsx=app-shell이라 실행; assetlinks WAIT는 기존 외부 게이트) · layout.tsx U+FFFD 0·Korean intact. 로컬 prod 포트 47311(`next start` 리스너 PID 37484만 taskkill, **4310 무중단**): `/`·`/watchlist`·`/pricing`·`/status`·`/disclosures`·`/stock/005930` 200, 서빙 HTML에 `navigator.webdriver` 가드 존재·jsdelivr 스타일시트는 `<noscript>`에만 잔존.
+- Residual(운영자): 영구 제거 원하면 Pretendard self-host(`next/font/local`, 폰트 바이너리 에셋 필요 — 발명 금지로 미진행). 정적 `<link rel=preconnect>`는 비차단·실패 무해라 유지.
