@@ -1,5 +1,19 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-30 · [claude] task 115 — Free Beta v1 QA pass (공개 표면 정합 검증 + 18라우트 스모크 + 잔여 AI 진입점 1건 수정)
+- **범위/판단**: task 114 공개 표면 정리 이후 **무료 베타 v1 범위 QA**(주로 검증). free beta·한국어 전용·138종목·유료 미제공·투자자문 아님·AI 숨김/비홍보·카카오 알림 로드맵·앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장을 정적 스윕 + SSR(ko) 단언으로 확인. 확인된 **P0/P1 모순 1건만** 보수 수정(표시/내비만, 점수식·`stocks.json`·인증·cron·`features.ts`·manifest·라우트 삭제·신규 npm 0). 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(확인된 P1)** `src/components/UserMenu.tsx`: 로그인 시 헤더 계정 드롭다운에 `/history`(AI "분석 기록", `Bot` 아이콘) 링크가 **남아 있어** AI 진입점을 계속 홍보 — task 114가 3개 내비(`Sidebar`·`MobileNav`·`MobileBottomNav`)에서 제거한 것과 불일치(수용 기준 "AI 분석 숨김 또는 비홍보" 위반). task 114와 동일 패턴으로 **링크 + 미사용 `Bot` import 제거**(라우트 `/history`·페이지·`AiAnalysisCard`·`api/ai/*`·`lib/ai*`는 보존 — 직접 접근 가능, 홍보만 제거).
+- **검증 통과(무변경 항목)**:
+  - **AI 공개 숨김** — `AiAnalysisCard`는 자기 파일 + `copy/stockDetail.ts`에만 존재, `stock/[ticker]/page.tsx` 렌더/import 0. `/history`는 3개 내비 모두 부재(UserMenu만 잔존 → 수정).
+  - **한국어 전용** — `LanguageSwitcher` 렌더 0(자기 파일만). `LanguageProvider` 기본 `DEFAULT_LOCALE`(명시 저장/`?lang=`만 내부 EN). `LegalEnSummary`는 `locale!=="en"`이면 `null` → **SSR(ko) `/terms`·`/privacy`에 영어 본문 0**(내부 EN 보존, 공개 비노출).
+  - **유료 비포지셔닝** — `/pricing`(`PricingContent.tsx`)은 무료 베타 헤드라인 + 무료 포함목록 + §13.2 법무만. 공개 3-플랜 그리드·비교표·waitlist·"곧 유료/가격 미확정/Pro 전환" 0. 내비 라벨 `nav.pricing`="베타 안내", `/pricing`은 `more` 그룹.
+  - **알림 카카오 로드맵 톤** — `settings/notifications`는 카카오톡=우선/준비 중(미발송), 이메일=임시(베타) 채널, 로그인 매직링크=계정용 별개로 분리.
+  - **로그인 = 저장/동기화** — UserMenu·MobileNav·notifications 카피 모두 저장/동기화/개인화 프레이밍, 유료 전환 유도 0.
+  - **약관/개인정보 비과장** — `/terms` 유료는 "출시 예정·초안·구속력 없음·현재 미제공"으로 보수 서술. `/privacy`의 Anthropic/AI 처리·국외이전 고지는 **유지 권장 안전장치**(계획대로 비모순). 영어/네이티브 앱 출시 약속 0, 이메일 알림은 사용자 설정 시에만(실제 제공 기능과 일치).
+- **18라우트 스모크(로컬 prod 4423)**: `/`·`/today`·`/stocks`·`/stock/034730`·`/disclosures`·`/backtest`·`/compare`·`/pricing`·`/status`·`/privacy`·`/terms`·`/watchlist`·`/settings/notifications`·`/about`·`/universe`·`/history`·`/login`·`/guide/metrics` **전부 200**. SSR(ko) 단언 — `/pricing` "무료 베타" 노출·waitlist/Pro전환/가격미확정/Premium플랜 0 · `/stock/034730` "AI 종합 분석"/"분석 기록" 0 · 헤더 "베타 안내" 노출·LanguageSwitcher/`/history`/분석기록 0 · `/terms`·`/privacy` 영어 법무 본문 0·한국어 본문 노출. (UserMenu는 로그인 게이트라 SSR 미노출 — 소스+build+tsc로 검증.)
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG, `/pricing`·`/history`·`/terms`·`/privacy` 라우트 잔존) · `git diff --check` 0 · 변경 1파일 U+FFFD/모지바케 0(Korean intact). 로컬 prod **4423**(`next start`, 리스너 PID 36920만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**).
+- **오너용 요약**: ✅ **무료 베타 리뷰 준비 완료** — 공개 표면(요금제→무료 베타 안내·AI 숨김/비홍보·한국어 전용·138종목·카카오 알림 로드맵·앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장)에 P0/P1 공개 범위 모순 0(UserMenu 잔여 AI 진입점 1건 수정 완료). ⏳ **추후 오너/법무/사업 결정** — 카카오 알림 실발송, 앱스토어 제출, 수익화 활성화(결제/환불/청약철회·가격 확정), EN 토글 재개(코드/문자열/플래그 보존). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
 ## 2026-06-30 · [claude] task 114 — Free Beta v1 공개 표면 적용 (요금제→무료 베타 안내·AI/기록 진입점 숨김·한국어 전용·카카오 로드맵 알림)
 - **범위/판단**: task 113 결정 문서(`docs/ornscore-free-beta-v1-scope.md` §3~§4)의 구현 체크리스트 (i)1~5 + 요금제 리워크를 **공개 앱 표면에 실제 적용**. 표시/내비/문구 + 클라 기본 로케일 1줄만(점수식·`stocks.json`·인증·cron·`features.ts`·`pricing.ts`/`PLANS`·EN i18n 데이터·manifest·앱 로드맵 문서 무변경, 신규 npm 0, 매수/매도/추천 0, 라우트 삭제 0). 변경 12파일(+PROGRESS·AI_HANDOFF).
 - **(1) 요금제 → 무료 베타 안내**: `src/lib/copy/pricing.ts` ko/en에 `freeBeta` 키 신설(헤드라인 "지금은 무료 베타예요" + **유료 플랜은 현재 제공하지 않음** + 무료 포함 목록 6종 — **138종목 탐색·종합 점수·오늘 후보·공시 신호·종목 상세·관심/비교**, AI 불릿 제외 + `noPaidNote`). `src/components/PricingContent.tsx` 전면 재작성 — 공개 렌더는 **백홈·무료 베타 헤드라인/본문·무료 포함 목록·§13.2 법무 고지**만. **제거(공개)**: 3-플랜 그리드(`PlanCard`)·Pro/Premium 비교표·"정식 출시 시 Pro 전환" 베타카드·`priceUndecided`("가격 미확정")·`WaitlistForm`(가격 불확실/업그레이드/베타→유료 알람 프레이밍). 옛 `betaCard`/`compare`/플랜 키·`WaitlistForm` 컴포넌트·`plansByLocale`/`compareRowsByLocale`는 파일에 **보존(내부/추후)**. `src/app/pricing/page.tsx` 메타데이터 title "무료 베타 안내 — 오른스코어"·description 무료 베타 톤(무료/Pro/Premium·가격 문구 제거).

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LogOut, Heart, GitCompare, Bot, Bell } from "lucide-react";
+import { LogOut, Heart, GitCompare, Bell } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -62,14 +62,6 @@ export function UserMenu({ email }: { email: string }) {
           >
             <GitCompare className="w-4 h-4" />
             비교 목록
-          </Link>
-          <Link
-            href="/history"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-          >
-            <Bot className="w-4 h-4" />
-            분석 기록
           </Link>
           <Link
             href="/settings/notifications"

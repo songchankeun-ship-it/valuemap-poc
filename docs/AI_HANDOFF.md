@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 115 — Free Beta v1 QA pass (공개 표면 정합 검증 + 18라우트 스모크) (2026-06-30, Claude)
+- **범위**: task 114 공개 표면 정리 후 **무료 베타 v1 QA**(주로 검증). free beta·한국어 전용·138종목·유료 미제공·투자자문 아님·AI 숨김/비홍보·카카오/앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장을 정적 스윕 + SSR(ko) 단언으로 확인. 확인된 P0/P1 모순 **1건만** 보수 수정. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(P1)** `src/components/UserMenu.tsx`: 로그인 계정 드롭다운에 `/history`(AI "분석 기록"·`Bot` 아이콘) 링크가 잔존 — task 114가 3개 내비에서 제거한 AI 진입점과 불일치(수용 기준 "AI 숨김/비홍보" 위반). **링크 + 미사용 `Bot` import 제거**(라우트/페이지/AI 코드 보존, 홍보만 제거).
+- **검증 통과(무변경)**: `AiAnalysisCard` 상세 렌더 0 · `LanguageSwitcher` 렌더 0 · `LanguageProvider` 기본 한국어 · `LegalEnSummary` SSR(ko)=null(영어 법무 본문 비노출) · `/pricing` 무료 베타만(플랜 그리드/waitlist/Pro전환/곧유료 0)·`nav.pricing`="베타 안내"·more 그룹 · 알림 카카오 로드맵 톤 · 약관 유료=출시예정/초안/현재 미제공 · 개인정보 Anthropic/AI 고지=안전장치(유지) · 영어/네이티브앱 출시 약속 0.
+- **18라우트 스모크(로컬 prod 4423)**: `/`·`/today`·`/stocks`·`/stock/034730`·`/disclosures`·`/backtest`·`/compare`·`/pricing`·`/status`·`/privacy`·`/terms`·`/watchlist`·`/settings/notifications`·`/about`·`/universe`·`/history`·`/login`·`/guide/metrics` **전부 200**. SSR(ko) — `/pricing` "무료 베타"·waitlist/Pro전환/Premium 0 · `/stock/034730` "AI 종합 분석"/"분석 기록" 0 · 헤더 "베타 안내"·LanguageSwitcher/`/history` 0 · `/terms`·`/privacy` 영어 본문 0·한국어 노출. (UserMenu=로그인 게이트라 SSR 미노출 → 소스+build+tsc 검증.)
+- **검증**: `tsc` 0 · `build` 0(138 SSG, `/pricing`·`/history`·`/terms`·`/privacy` 잔존) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4423**(PID 36920만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**).
+- **오너 요약**: ✅ 무료 베타 리뷰 준비 완료(공개 P0/P1 범위 모순 0, AI 진입점 잔여 1건 수정). ⏳ 추후 오너/법무/사업: 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 재개(코드 보존). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
 ### Task 114 — Free Beta v1 공개 표면 적용 (요금제→무료 베타 안내·AI/기록 숨김·한국어 전용·카카오 로드맵 알림) (2026-06-30, Claude)
 - **범위**: task 113 결정문서(`docs/ornscore-free-beta-v1-scope.md`) 구현 체크리스트 (i)1~5 + 요금제 리워크를 **공개 앱 표면에 실제 적용**. 표시/내비/문구 + 클라 기본 로케일만(점수식·`stocks.json`·인증·cron·`features.ts`·`pricing.ts`/`PLANS`·EN i18n 데이터·manifest·앱 로드맵 무변경, 신규 npm 0, 라우트 삭제 0, 매수/매도/추천 0). 변경 **12파일**(+PROGRESS·AI_HANDOFF).
 - **요금제→무료 베타 안내**: `copy/pricing.ts` `freeBeta` 키 신설(ko/en) + `PricingContent.tsx` 전면 재작성(공개=백홈·무료 베타 헤드라인/본문·무료 포함목록 6종[138종목 포함, AI 제외]·§13.2 법무만). **공개 제거**: 3-플랜 그리드·Pro/Premium 비교표·"Pro 전환" 베타카드·"가격 미확정"·`WaitlistForm`. 옛 키·`WaitlistForm`·`plansByLocale` 등은 **파일 보존(내부/추후)**. `pricing/page.tsx` 메타 무료 베타 톤.
