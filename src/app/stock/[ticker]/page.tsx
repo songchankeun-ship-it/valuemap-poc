@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
-import { AiAnalysisCard } from "@/components/AiAnalysisCard";
 import { StockDisclosures } from "@/components/StockDisclosures";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
@@ -396,8 +395,6 @@ export default async function StockDetailPage({ params }: PageProps) {
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
       <section><StockEventTimeline ticker={s.ticker} scores={scoreHistory} /></section>
-
-      <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
               </>
             ),
           },

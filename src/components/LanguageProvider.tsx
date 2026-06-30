@@ -39,12 +39,6 @@ function readStoredLocale(): Locale | null {
   return readCookieLocale();
 }
 
-function preferredBrowserLocale(): Locale {
-  if (typeof navigator === "undefined") return DEFAULT_LOCALE;
-  const preferred = navigator.languages?.[0] ?? navigator.language;
-  return preferred?.toLowerCase().startsWith("ko") ? "ko" : "en";
-}
-
 function persistLocale(nextLocale: Locale) {
   if (typeof document !== "undefined") {
     document.documentElement.lang = nextLocale === "ko" ? "ko" : "en";
@@ -61,8 +55,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
 
   useEffect(() => {
+    // v1 무료 베타 = 한국어 전용 공개 경험. 명시적 저장값/?lang= 만 존중하고(내부 EN용),
+    // 그 외에는 브라우저 언어와 무관하게 한국어를 기본으로 고정한다.
     const stored = readStoredLocale();
-    const nextLocale = stored ?? preferredBrowserLocale();
+    const nextLocale = stored ?? DEFAULT_LOCALE;
     setLocaleState(nextLocale);
     persistLocale(nextLocale);
   }, []);

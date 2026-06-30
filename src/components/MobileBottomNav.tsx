@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, Bot, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
+import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
 import type { NavKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
 
@@ -17,7 +17,6 @@ const PRIMARY = [
 const MORE = [
   { href: "/compare", Icon: GitCompare, key: "compare" },
   { href: "/backtest", Icon: FlaskConical, key: "backtest" },
-  { href: "/history", Icon: Bot, key: "history" },
   { href: "/pricing", Icon: CreditCard, key: "pricing" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide" },
   { href: "/about", Icon: Info, key: "about" },

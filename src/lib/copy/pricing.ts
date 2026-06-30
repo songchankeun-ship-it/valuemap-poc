@@ -181,6 +181,25 @@ export const pricingCopy = {
   ko: {
     backHome: "← 홈으로",
     pageTitle: "요금제",
+    // 무료 베타 안내 — 공개 /pricing 페이지의 현재 메인 카피(유료 비교 대신).
+    freeBeta: {
+      badge: "무료 베타",
+      headline: "지금은 무료 베타예요",
+      body:
+        "오른스코어는 현재 무료 베타 단계의 한국 주식 탐색·데이터 도구입니다. 유료 플랜은 지금 제공하지 않습니다. 아래 기능을 무료로 쓸 수 있어요.",
+      includesTitle: "지금 무료로 쓸 수 있는 것",
+      includes: [
+        "138개 종목 탐색 · 질문형 프리셋",
+        "종합 점수 · 4개 지표로 후보 살펴보기",
+        "오늘의 후보 · 오늘의 브리핑",
+        "공시 신호(DART) 모아보기",
+        "종목 상세(등급 · 차트 · 초보자 읽기 · 공시)",
+        "관심 종목 · 종목 비교",
+      ],
+      cta: "지금 무료로 시작하기 →",
+      noPaidNote:
+        "유료 플랜은 현재 제공하지 않으며, 도입하게 되면 사전에 안내합니다.",
+    },
     intro: {
       free: "무료",
       proPremium: "Pro·Premium은 출시 예정(준비 중)",
@@ -236,6 +255,24 @@ export const pricingCopy = {
   en: {
     backHome: "← Home",
     pageTitle: "Pricing",
+    freeBeta: {
+      badge: "Free beta",
+      headline: "It's a free beta right now",
+      body:
+        "OrnScore is currently a free-beta Korean-stock exploration and data tool. No paid plans are offered now. The features below are free to use.",
+      includesTitle: "What's free right now",
+      includes: [
+        "Explore 138 stocks · question-style presets",
+        "Composite score · review candidates across 4 metrics",
+        "Today's candidates · today's briefing",
+        "Disclosure signals (DART) in one place",
+        "Stock detail (grade · chart · beginner reading · disclosures)",
+        "Watchlist · stock comparison",
+      ],
+      cta: "Start free now →",
+      noPaidNote:
+        "No paid plans are offered now; if we introduce them, we'll let you know in advance.",
+    },
     intro: {
       free: "free",
       proPremium: "Pro and Premium are coming soon (in preparation)",

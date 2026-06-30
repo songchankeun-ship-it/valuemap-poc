@@ -42,6 +42,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 114 — Free Beta v1 공개 표면 적용 (요금제→무료 베타 안내·AI/기록 숨김·한국어 전용·카카오 로드맵 알림) (2026-06-30, Claude)
+- **범위**: task 113 결정문서(`docs/ornscore-free-beta-v1-scope.md`) 구현 체크리스트 (i)1~5 + 요금제 리워크를 **공개 앱 표면에 실제 적용**. 표시/내비/문구 + 클라 기본 로케일만(점수식·`stocks.json`·인증·cron·`features.ts`·`pricing.ts`/`PLANS`·EN i18n 데이터·manifest·앱 로드맵 무변경, 신규 npm 0, 라우트 삭제 0, 매수/매도/추천 0). 변경 **12파일**(+PROGRESS·AI_HANDOFF).
+- **요금제→무료 베타 안내**: `copy/pricing.ts` `freeBeta` 키 신설(ko/en) + `PricingContent.tsx` 전면 재작성(공개=백홈·무료 베타 헤드라인/본문·무료 포함목록 6종[138종목 포함, AI 제외]·§13.2 법무만). **공개 제거**: 3-플랜 그리드·Pro/Premium 비교표·"Pro 전환" 베타카드·"가격 미확정"·`WaitlistForm`. 옛 키·`WaitlistForm`·`plansByLocale` 등은 **파일 보존(내부/추후)**. `pricing/page.tsx` 메타 무료 베타 톤.
+- **내비**: `i18n.ts` `nav.pricing`/`footer.pricing` ko "요금제/요금"→**"베타 안내"**(en "Beta info"). `/pricing` 라우트 유지. `Sidebar`·`MobileNav`에서 `/pricing` 1차→**more 그룹 이동**.
+- **AI 공개 숨김(코드 보존)**: `stock/[ticker]/page.tsx` `<AiAnalysisCard>` 렌더+import 제거. `/history` 내비 항목 3곳(`Sidebar`·`MobileNav`·`MobileBottomNav`) 제거 — **라우트·`nav.history` 키·`AiAnalysisCard.tsx`·`api/ai/*`·`history/page.tsx`는 보존**(직접 접근 가능, 홍보만 제거).
+- **한국어 전용**: `AppHeader`·`MobileNav` `<LanguageSwitcher>` 렌더+import 제거(컴포넌트·EN 문자열 보존). `LanguageProvider` 기본 폴백 `preferredBrowserLocale()`→`DEFAULT_LOCALE`(명시적 저장/`?lang=`만 내부 EN 존중).
+- **알림 카카오 로드맵 톤**: `settings/notifications/page.tsx` 상단+비로그인 카피를 로그인 매직링크 메일↔제품 알림 분리 + 제품 알림 우선=**카카오톡(준비 중·미발송)**, 이메일=임시 채널(장기 메인 아님). `alertCatalog.ts` `saved_filter_match` 이메일 단정 문구 임시/로드맵 톤화. cron·status 데이터 무변경.
+- **검증**: `tsc` 0 · `build` 0(138 SSG, `/pricing` 8.12kB·`/history` 라우트 잔존) · `git diff --check` 0 · 12파일 U+FFFD 0(Korean intact). 로컬 prod **4422**(PID 36716만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 12라우트 전부 200. SSR(ko) — `/pricing` 무료 베타 노출·기능비교/가격 미확정/Pro 전환/waitlist 0(Premium은 §13.2 법무 1회만 보존) · 헤더 LanguageSwitcher 0 · `/stock/034730` "AI 종합 분석" 0 · 내비 "베타 안내"·1차 "요금제" 0·`/history` 링크 0.
+- **남은 갭(운영자/제품 게이트)**: 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 토글 재개(코드/문자열/플래그 보존). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
 ### Task 113 — Free Beta v1 제품 방향 잠금 (결정 기록 + 공개 표면 감사 + 구현 매핑, docs 전용) (2026-06-30, Claude)
 - **범위**: 추가 구현 전에 v1 방향을 고정하는 **결정-잠금**. 오너 결정 인코딩 — **무료(유료/곧유료 포지셔닝 금지) · 수익화는 내부 미래 옵션 · 카카오톡 알림 우선(이메일을 메인 알림 경로로 포지셔닝 안 함, 로그인 매직링크 이메일은 허용) · AI 분석 공개 우선 경험에서 숨김(코드 보존, 공개 진입점 제거/게이트) · 앱스토어 추후 목표(로드맵 유지·제출 작업 없음) · 영어 당분간 제외(한국어 전용 공개) · 138종목 유지 · 그 외 데이터 신뢰→탐색→모바일 우선**. **docs 전용 — `src/**` 무변경**(점수식·`stocks.json`·인증·manifest·PWA·i18n 무변경, 신규 npm 0, 매수/매도/추천 0).
 - **신규 산출물**: `docs/ornscore-free-beta-v1-scope.md` — 결정 요약 + 오너 결정 원문 + **공개 표면 감사 표**(실측 `file:line` + 충돌 판정) + **구현 체크리스트 3분할**(must-change 공개 UI / keep-internal / future roadmap) + 수용 기준. 이 문서 1개만 읽으면 v1 범위 파악 가능.
