@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, GitCompare, Bot, Info, CreditCard, type LucideIcon } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, GitCompare, Info, CreditCard, type LucideIcon } from "lucide-react";
 import type { NavKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
 
@@ -12,11 +12,10 @@ const ITEMS = [
   { href: "/stocks", Icon: Search, key: "stocks", group: "" },
   { href: "/disclosures", Icon: Megaphone, key: "disclosures", group: "" },
   { href: "/backtest", Icon: FlaskConical, key: "backtest", group: "" },
-  { href: "/pricing", Icon: CreditCard, key: "pricing", group: "" },
   // 더보기 — 보조 기능
   { href: "/watchlist", Icon: Heart, key: "watchlist", group: "more" },
   { href: "/compare", Icon: GitCompare, key: "compare", group: "more" },
-  { href: "/history", Icon: Bot, key: "history", group: "more" },
+  { href: "/pricing", Icon: CreditCard, key: "pricing", group: "more" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide", group: "more" },
   { href: "/about", Icon: Info, key: "about", group: "more" },
 ] satisfies Array<{ href: string; Icon: LucideIcon; key: NavKey; group: "" | "more" }>;

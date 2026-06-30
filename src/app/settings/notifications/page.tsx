@@ -124,9 +124,11 @@ export default async function NotificationSettingsPage() {
         <div className="flex items-start gap-2.5">
           <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
           <div className="min-w-0 text-xs md:text-[13px] text-blue-900 dark:text-blue-200 leading-relaxed break-words">
-            <strong>지금은 이메일 알림 2종(관심 종목 공시 · 저장 필터 충족)만 실제로 발송돼요.</strong> 아래 다른 알림 종류와
-            이메일 외 채널(웹·텔레그램·카카오·앱 푸시)은 준비 중이라 아직 보내지 않습니다. 준비 중 항목은 설정 개념만 미리
-            체험할 수 있고, 켜둬도 메시지가 나가지 않아요.
+            <strong>지금은 제품 알림 2종(관심 종목 공시 · 저장 필터 충족)만 발송되며, 이메일은 그때까지의 임시(베타) 채널이에요.</strong>{" "}
+            앞으로 제품 알림은 <strong>카카오톡 알림</strong>을 우선 방향으로 준비 중입니다(아직 미발송). 이메일을 장기 메인 알림 경로로
+            두지는 않아요. 참고로 <strong>로그인 매직링크 메일</strong>(계정 로그인용)은 제품 알림과 별개입니다. 아래 다른 알림 종류와
+            그 밖의 채널(웹·텔레그램·카카오·앱 푸시)은 준비 중이라 아직 보내지 않으며, 준비 중 항목은 설정 개념만 미리
+            체험할 수 있고 켜둬도 메시지가 나가지 않아요.
           </div>
         </div>
       </div>
@@ -158,8 +160,9 @@ export default async function NotificationSettingsPage() {
               <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">로그인하면 알림 설정이 저장돼요</div>
             </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-3">
-              아래 알림 종류·예시는 로그인 없이도 둘러볼 수 있어요. 실제 이메일 알림(관심 종목 공시·저장 필터 충족)은 로그인한
-              계정의 메일로 발송되며, 설정도 계정에 저장됩니다.
+              아래 알림 종류·예시는 로그인 없이도 둘러볼 수 있어요. 로그인은 비밀번호 없이 매직링크 메일로 진행되며(계정 로그인용),
+              이는 제품 알림과 별개입니다. 현재 제품 알림(관심 종목 공시·저장 필터 충족)은 임시로 로그인 계정 메일로 발송되고 설정도
+              계정에 저장되며, 앞으로는 카카오톡 알림을 우선 방향으로 준비 중입니다(아직 미발송).
             </p>
             <Link
               href="/login?next=/settings/notifications"

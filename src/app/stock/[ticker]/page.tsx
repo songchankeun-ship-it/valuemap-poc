@@ -1,16 +1,15 @@
 import { notFound } from "next/navigation";
 import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
-import { AiAnalysisCard } from "@/components/AiAnalysisCard";
-import { StockDisclosures } from "@/components/StockDisclosures";
+import { StockDisclosuresLazy } from "@/components/StockDisclosuresLazy";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
-import { StockEventTimeline } from "@/components/StockEventTimeline";
-import { getScoreHistory } from "@/lib/scoreHistory";
-import { StockPriceChart } from "@/components/StockPriceChart";
+import { StockEventTimelineLazy } from "@/components/StockEventTimelineLazy";
+import { getScoreHistory, type ScorePoint } from "@/lib/scoreHistory";
+import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
@@ -36,6 +35,18 @@ import {
 } from "@/components/stock/StockDetailIntro";
 
 export const revalidate = 3600;
+
+/** 서버 SSR 데이터 호출이 렌더를 막지 않도록 짧은 타임아웃과 경쟁시키고, 초과 시
+ *  폴백으로 넘어간다(today/page.tsx 와 동일 패턴). 점수 히스토리는 기본 탭이 아닌
+ *  '근거' 탭의 보조 데이터라, 원격 조회가 멈추면 차트/타임라인만 빈 상태로 graceful
+ *  degrade 하고 결론·지표·재무·공시는 영향받지 않는다. 정상(특히 캐시 적중) 시에는
+ *  타임아웃 한참 전에 반환되어 동작 무변경. */
+async function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p.catch(() => fallback),
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
 
 // 138개 종목 페이지를 빌드 시 전부 정적 생성 → 배포마다 전체 갱신(구버전 캐시 잔존 방지).
 export function generateStaticParams() {
@@ -111,7 +122,10 @@ export default async function StockDetailPage({ params }: PageProps) {
   const composite = Math.round(compositeOf(s));
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
   const [scoreHistory, priceHistory] = await Promise.all([
-    getScoreHistory(ticker, 30),
+    // 유일한 요청 시점 원격 호출(Supabase daily_scores). 캐시 적중 시 즉시 반환되고,
+    // 원격이 느리거나 멈추면 4초 후 빈 배열로 떨어져 렌더(및 빌드/ISR 재생성)가 막히지
+    // 않게 가드한다. 프로덕션(동위치 Supabase)에서는 4초 한참 전에 반환되어 동작 무변경.
+    withTimeout(getScoreHistory(ticker, 30), 4000, [] as ScorePoint[]),
     getPriceHistory(ticker),
   ]);
 
@@ -124,6 +138,24 @@ export default async function StockDetailPage({ params }: PageProps) {
     : s.changePct;
   const vs = s.volStats;
   const priceAsOf = lastPoint?.d ?? null;
+  // ── 데이터 기준일 통일(설계서 P0-1 A안) ───────────────────────────────
+  // 전 화면(헤더/푸터/홈/탐색/상태)이 읽는 전역 스냅샷 기준일을 종목 상세도 동일하게 사용한다.
+  // 종목 주가의 마지막 거래일(priceAsOf)을 YYYYMMDD로 정규화해 전역 기준일과 비교 →
+  //  - 같으면(정상): 전역 기준일을 그대로 노출해 값·포맷이 /status·헤더와 일치.
+  //  - priceAsOf가 더 과거면(지연): 전역 기준일을 보여주되 종목 주가 기준이 더 과거임을 명시(B안 안내).
+  const globalAsOf = formatBizDateLong(dataMetadata.asOfBusinessDate);
+  const priceAsOfDigits = priceAsOf ? priceAsOf.replace(/-/g, "") : null;
+  const priceLagsGlobal =
+    !!priceAsOfDigits &&
+    /^\d{8}$/.test(priceAsOfDigits) &&
+    !!dataMetadata.asOfBusinessDate &&
+    /^\d{8}$/.test(dataMetadata.asOfBusinessDate) &&
+    priceAsOfDigits < dataMetadata.asOfBusinessDate;
+  // 지연 시에만 종목 주가의 실제 기준일(과거)을 정식 포맷으로 표기. 정상이면 null.
+  const priceLagAsOf =
+    priceLagsGlobal && priceAsOfDigits ? formatBizDateLong(priceAsOfDigits) : null;
+  // LivePrice 종가 라벨: 정상이면 전역 기준일, 지연이면 종가가 실제로 찍힌 과거 기준일.
+  const livePriceAsOf = priceLagAsOf ?? globalAsOf;
   const dataWarnings = getDataWarnings(s, priceHistory);
   // 3개월(약 63거래일) 급등 위험 — 점수보다 먼저 노출
   let surge3m: number | null = null;
@@ -251,8 +283,9 @@ export default async function StockDetailPage({ params }: PageProps) {
         sector={mySector}
         name={s.name}
         ticker={s.ticker}
-        asOfLabel={priceAsOf}
-        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={priceAsOf} />}
+        asOfLabel={globalAsOf}
+        priceLagAsOf={priceLagAsOf}
+        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={livePriceAsOf} />}
         actionsSlot={
           <>
             <AddToWatchlistButton ticker={s.ticker} name={s.name} />
@@ -283,7 +316,7 @@ export default async function StockDetailPage({ params }: PageProps) {
               <>
       {/* 주가 차트 (가격 데이터 있을 때만) */}
       {priceHistory && priceHistory.points.length >= 2 ? (
-        <StockPriceChart ticker={s.ticker} name={s.name} points={priceHistory.points} />
+        <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
       ) : null}
 
       {/* 자체 지표 4종 (점수 카드) */}
@@ -309,9 +342,10 @@ export default async function StockDetailPage({ params }: PageProps) {
 
       {/* 데이터 기준 (설계서 12.2) */}
       <DataBasisCard
-        priceAsOf={priceAsOf}
+        priceAsOf={globalAsOf}
+        priceLagAsOf={priceLagAsOf}
         poolN={poolN}
-        scoreDate={formatBizDateLong(dataMetadata.asOfBusinessDate)}
+        scoreDate={globalAsOf}
         formulaVersion={dataStatus.metricsVersionLabel}
       />
 
@@ -359,7 +393,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             labelKey: "disclosures",
             content: (
               <>
-      <section><StockDisclosures ticker={s.ticker} /></section>              </>
+      <section><StockDisclosuresLazy ticker={s.ticker} /></section>              </>
             ),
           },
           {
@@ -375,9 +409,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       {scoreHistory.length > 0 ? (
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
-      <section><StockEventTimeline ticker={s.ticker} scores={scoreHistory} /></section>
-
-      <section><AiAnalysisCard ticker={s.ticker} name={s.name} /></section>
+      <section><StockEventTimelineLazy ticker={s.ticker} scores={scoreHistory} /></section>
               </>
             ),
           },

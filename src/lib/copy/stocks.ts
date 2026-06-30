@@ -10,6 +10,10 @@ export const stocksCopy = {
     // ── 페이지 헤더 ──
     headerTitle: "오늘 확인할 종목 찾기",
     matchCount: (n: number, total: number) => ({ a: `현재 표시 ${n}개 `, b: `/ 전체 ${total}개` }),
+    // 기본 품질 필터(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
+    qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 적용 중: ${shown}개 `, b: `/ 전체 ${total}개` }),
+    viewAllToggle: (total: number) => `전체 ${total}개 보기`,
+    backToDefaultToggle: "기본 품질 보기",
     headerDesc: (total: number) => `질문형 프리셋과 상세 필터로 ${total}개 종목 중 먼저 볼 후보를 좁혀보세요.`,
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
@@ -17,7 +21,7 @@ export const stocksCopy = {
     dataNormalLabel: "데이터 정상",
     notAdvice: "투자 추천 아님 · 탐색 도구",
     baseScreenNote: (excluded: number) =>
-      `기본 화면은 PER 200·PBR 30 이하만 표시해요. 제외된 ${excluded}개(고PER·고PBR 등)는 상세 필터에서 범위를 넓히면 포함됩니다.`,
+      `기본 화면은 PER 200 이하 · PBR 30 이하 종목만 표시합니다. 고PER·고PBR 등 제외 ${excluded}개는 ‘전체 보기’를 선택하면 포함됩니다.`,
 
     // ── 검색 ──
     searchPlaceholder: "종목명 · 코드로 바로 검색",
@@ -82,6 +86,13 @@ export const stocksCopy = {
     // ── 현재 조건 요약 바 ──
     currentCond: "현재 조건",
     matchCountShort: (n: number, total: number) => ({ a: `현재 표시 ${n} `, b: `/ 전체 ${total}` }),
+    // 현재 조건 블록 3행: 기본 품질 필터 / 상세 필터 / 정렬 (기본 품질과 사용자 상세를 명확히 분리)
+    qualityRowOn: "기본 품질 필터: PER ≤ 200, PBR ≤ 30",
+    qualityRowOff: "기본 품질 필터: 해제됨 (전체 보기)",
+    detailRowLabel: "상세 필터",
+    detailRowNone: "없음",
+    sortRowLabel: "정렬",
+    backToDefaultReset: "기본 화면으로 초기화",
     noDetailFilter: "적용된 사용자 상세 필터 없음",
     removeFilterAria: (label: string) => `${label} 필터 제거`,
     saveCond: "조건 저장",
@@ -99,7 +110,7 @@ export const stocksCopy = {
     viewAll: "전체 종목 보기",
 
     // ── 결과 푸터 ──
-    topCapNote: (n: number) => `조건 충족 ${n}개 중 상위 100개 표시 · 조건을 좁히면 비교하기 쉬워요.`,
+    topCapNote: (n: number) => `현재 표시 대상 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
 
     // ── 상세 필터 패널 ──
     filterDetailTitle: "상세 필터",
@@ -113,6 +124,7 @@ export const stocksCopy = {
     minDivYield: "최소 배당수익률",
     perRange: "PER 범위",
     pbrRange: "PBR 범위",
+    noMaxPlaceholder: "상한 없음",
     excludeLossLabel: "적자 기업 제외",
     excludeLossHint: "(EPS > 0)",
     themeLabel: "테마",
@@ -186,7 +198,7 @@ export const stocksCopy = {
     describeManual: "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.",
     describeAll: (shown: number, total: number) =>
       shown < total
-        ? `기본 품질 필터(PER 200·PBR 30 이하)가 적용된 ${shown}개 종목을 종합점수 기준으로 보고 있습니다.`
+        ? `현재 ${shown}개 종목을 종합점수 기준으로 보고 있습니다. 전체 ${total}개를 보려면 기본 품질 필터를 해제하세요.`
         : `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`,
 
     // ── 가장 강한 조건(strongestConstraint) ──
@@ -281,6 +293,9 @@ export const stocksCopy = {
     // ── Page header ──
     headerTitle: "Find stocks to review today",
     matchCount: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
+    qualityHeadline: (shown: number, total: number) => ({ a: `Default quality filter on: ${shown} `, b: `/ ${total} total` }),
+    viewAllToggle: (total: number) => `View all ${total}`,
+    backToDefaultToggle: "Default view",
     headerDesc: (total: number) => `Use question presets and detailed filters to narrow ${total} stocks down to candidates to look at first.`,
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
@@ -288,7 +303,7 @@ export const stocksCopy = {
     dataNormalLabel: "Data current",
     notAdvice: "Not investment advice · research tool",
     baseScreenNote: (excluded: number) =>
-      `The default view shows only PER ≤ 200 and PBR ≤ 30. The ${excluded} excluded (high PER/PBR, etc.) are included if you widen the range in detailed filters.`,
+      `The default view shows only stocks with PER ≤ 200 and PBR ≤ 30. The ${excluded} excluded (high PER/PBR, etc.) are included when you choose "View all".`,
 
     // ── Search ──
     searchPlaceholder: "Search by name · ticker",
@@ -353,6 +368,12 @@ export const stocksCopy = {
     // ── Current condition bar ──
     currentCond: "Current conditions",
     matchCountShort: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
+    qualityRowOn: "Default quality filter: PER ≤ 200, PBR ≤ 30",
+    qualityRowOff: "Default quality filter: Off (viewing all)",
+    detailRowLabel: "Detail filters",
+    detailRowNone: "None",
+    sortRowLabel: "Sort",
+    backToDefaultReset: "Reset to default view",
     noDetailFilter: "No user detail filters applied",
     removeFilterAria: (label: string) => `Remove ${label} filter`,
     saveCond: "Save",
@@ -370,7 +391,7 @@ export const stocksCopy = {
     viewAll: "View all stocks",
 
     // ── Results footer ──
-    topCapNote: (n: number) => `Showing the top 100 of ${n} matches · narrow the conditions to compare more easily.`,
+    topCapNote: (n: number) => `Showing the top 100 of ${n} results · narrow the conditions to compare more easily.`,
 
     // ── Detailed filter panel ──
     filterDetailTitle: "Detailed filters",
@@ -384,6 +405,7 @@ export const stocksCopy = {
     minDivYield: "Min dividend yield",
     perRange: "PER range",
     pbrRange: "PBR range",
+    noMaxPlaceholder: "No max",
     excludeLossLabel: "Exclude loss-making",
     excludeLossHint: "(EPS > 0)",
     themeLabel: "Themes",
@@ -457,7 +479,7 @@ export const stocksCopy = {
     describeManual: "You've narrowed the candidates with custom PER, PBR, ROE, market cap and other conditions.",
     describeAll: (shown: number, total: number) =>
       shown < total
-        ? `Viewing ${shown} stocks (default quality filter: PER ≤ 200 · PBR ≤ 30) by composite score.`
+        ? `You're viewing ${shown} stocks by composite score. To see all ${total}, turn off the default quality filter.`
         : `Viewing all ${total} stocks by composite score.`,
 
     // ── Strongest constraint ──

@@ -230,6 +230,27 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 
 > PART B P1(§8~12)은 Task 61·66에서 다수 반영(§8 종목 탐색 밀도·§11 베타→Pro). PART C P2·D~G는 위 §1·§2 표와 중복 추적. PART F QA 체크리스트는 운영자 390px 육안 게이트(Playwright 미구성).
 
+## 최종 점검 P0 (`ornscore_reaudit_2026-06-29_final_check.md` §3 — Task 108·109)
+
+> 최종 배포 전 재검수. P0 2건만 마감 대상.
+
+| 항목 | 상태 | 근거 / 비고 |
+|---|---|---|
+| P0-1 페이지별 데이터 기준일 불일치(홈 06.29 vs 종목 상세 등 06.26) | ① | **Task 108**: 종목 상세 `priceAsOf`(per-stock 가격 시계열 마지막 거래일)를 전역 스냅샷(`formatBizDateLong(dataMetadata.asOfBusinessDate)`)과 비교→정상이면 hero/`LivePrice`/`DataBasisCard` 모두 `globalAsOf`로 A안 통일, 실제 더 과거면 `priceBasisLagCopy`로 명시. 나머지 라우트는 이미 전역 스냅샷. 현재 138종목 가격 마지막 점 모두 `2026-06-29` → 전 종목 정상 분기. 자세히=`PROGRESS.md`/`AI_HANDOFF.md` Task 108 |
+| P0-2 종목 탐색 123/138 필터 문구 충돌(기본 필터 vs 상세 필터 vs 결과 수) | ① | **Task 109**: `copy/stocks.ts`(ko/en)에 `qualityHeadline`("기본 품질 필터 적용 중: 123개 / 전체 138개")·`viewAllToggle`/`backToDefaultToggle`·현재 조건 3행(`qualityRowOn·Off`/`detailRowLabel·None`/`sortRowLabel`)·`backToDefaultReset`·`noMaxPlaceholder` 신설, `baseScreenNote`·`describeAll(shown<total)` 개정("현재 123개 …, 전체 138개를 보려면 기본 품질 필터를 해제하세요" — 기존 "전체 138개 보고 있다" 충돌 제거). `StocksExplorer.tsx`에 `NO_MAX`·`qualityFilterOn`·`pureBrowse`·`viewAllStocks/backToDefaultView`·`sortOptionLabel()` 추가 → 헤더 헤드라인+전체/기본 토글(390px flex-wrap·whitespace-nowrap), 현재 조건 3행 블록(기본 품질 ≠ 사용자 상세 명확화), PER/PBR 상한 NO_MAX 가드, 빈 상태 보조 버튼 라벨 138 약속 오인 제거. 실 카운트 123/138 동적(하드코딩 0). 점수식·`matchConfig`·`savedSearches` 무변경. 자세히=`PROGRESS.md`/`AI_HANDOFF.md` Task 109 |
+
+## 최종 점검 P1 (`ornscore_reaudit_2026-06-29_final_check.md` §4 — Task 110)
+
+> 출시 전 신뢰 문구 폴리시. 표시/문구 + localStorage 방어만(데이터·산식·정렬 무변경).
+
+| 항목 | 상태 | 근거 / 비고 |
+|---|---|---|
+| P1-1 `/watchlist` 빈 상태가 "불러오는 중…"만 남음 | ① | **Task 110**: 인터랙티브 빈 상태(아직 관심 종목 없음 + 검색 + `/stocks`·`/today` CTA + 비로그인 로그인 동기화 CTA + 헤더 브라우저저장 vs 로그인동기화 설명 + `<noscript>` fallback)는 Task 100서 이미 충족 — 검증(loading→empty 전환, 로딩 텍스트 고착 아님). 추가로 `WatchlistClient.tsx` `view` 읽기/`changeView` 쓰기 try/catch 래핑(시크릿·저장소 차단 graceful). 자세히=`PROGRESS.md`/`AI_HANDOFF.md` Task 110 |
+| P1-2 홈/상세 순위 기준 차이 설명 강화 | ① | **Task 110**: 홈 후보 배지("오늘 후보 순위 · 검증 보류 제외 기준")는 Task 100(`home.ts` `tag`/`rankCriteria`/`rankBadgeAria`) 이미 충족 — 검증만. 종목 상세는 `priorityScoreCardCopy.scopeNote(n)`(ko+en) 신설 → `PriorityScoreCard.tsx` 순위 줄 아래 동적 `poolN`로 "전체 N종목 기준 상대순위 · 홈 후보 순위와 다를 수 있음" 캡션 |
+| P1-3 요금제 베타→Pro 전환 비확정 톤 | ① | **Task 110**: `copy/pricing.ts` `betaCard`(ko+en) "전환될 **예정**"→"전환될 **수 있습니다**"(en "planned"→"may"), `compare.footer2b`(ko+en) "전환될 예정입니다"→"전환될 수 있고 전환 전 사전 안내합니다". 미확정 가격·사전 공지 보존, 가격값 추가 0 |
+| P1-4 공시 `강도` 용어 + 기간 배지 | ① | **Task 110**: `signalGuide.ts:54`·`copy/disclosures.ts` `cautionFallbackByType.insider_buy`(ko+en) 첫 노출어 `'강도'`→`'분류 신뢰도(자동분류 확신도)'`(호재 점수 아님·방향 DART 원문 보존). `disclosureExplorerCopy.periodScopeBadge`(ko+en) 신설 → `DisclosureExplorer.tsx` 기간 버튼 행 끝 "선택 기간 전체 아님 · 최신 200건 내" 배지. `strength`/정렬/`direction` 무변경 |
+| P1-5 `/status` "후속 과제" 내부 TODO 톤 | ① | **Task 110**: `copy/status.ts` `selfcheckFootnote`(ko+en) "점검 이력 보관·관리자 대시보드·수동 재수집은 후속 과제입니다(현재는 배포 시점 스냅샷)"→"현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다." 잔여 `후속 과제` 2건(`dataStatus.ts` 백테스트 생존편향·KRX 업종코드)은 '알려진 제한' 기술 고지로 다른 맥락 — 무변경(운영자 후속 옵션) |
+
 ---
 
 # 다음 큐 제안 (남은 ③/④/⑤만 — 이미 완료된 홈·상세·필터·데이터신뢰·Phase 7은 중복 구현 금지)

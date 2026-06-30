@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Bot, Info, CreditCard, type LucideIcon } from "lucide-react";
+import { CalendarDays, Search, Megaphone, FlaskConical, BookOpen, Heart, Menu, X, LogOut, GitCompare, Info, CreditCard, type LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { safeInternalPath } from "@/lib/auth/returnPath";
 import type { NavKey } from "@/lib/i18n";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "./LanguageProvider";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -18,11 +17,10 @@ const ITEMS = [
   { href: "/stocks", Icon: Search, key: "stocks", group: "" },
   { href: "/disclosures", Icon: Megaphone, key: "disclosures", group: "" },
   { href: "/backtest", Icon: FlaskConical, key: "backtest", group: "" },
-  { href: "/pricing", Icon: CreditCard, key: "pricing", group: "" },
   // 더보기 — 보조 기능
   { href: "/watchlist", Icon: Heart, key: "watchlist", group: "more" },
   { href: "/compare", Icon: GitCompare, key: "compare", group: "more" },
-  { href: "/history", Icon: Bot, key: "history", group: "more" },
+  { href: "/pricing", Icon: CreditCard, key: "pricing", group: "more" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide", group: "more" },
   { href: "/about", Icon: Info, key: "about", group: "more" },
 ] satisfies Array<{ href: string; Icon: LucideIcon; key: NavKey; group: "" | "more" }>;
@@ -138,7 +136,6 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
               <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                 <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{copy.chrome.theme}</span>
                 <div className="flex items-center gap-2 shrink-0">
-                  <LanguageSwitcher compact />
                   <ThemeToggle />
                 </div>
               </div>

@@ -184,6 +184,7 @@ export const priorityScoreCardCopy = {
     overallPrefix: "전체",
     sectorPrefix: "업종",
     rankSuffix: "위",
+    scopeNote: (n: number) => `전체 ${n}종목 기준 상대순위 · 홈 후보 순위와 다를 수 있음`,
     badgeAriaLabel: "데이터 상태 배지",
     requiredDataPrefix: "필수 데이터",
     suspectPill: "이상값 점검 중 · 임시 점수",
@@ -196,6 +197,7 @@ export const priorityScoreCardCopy = {
     overallPrefix: "Overall",
     sectorPrefix: "Sector",
     rankSuffix: "",
+    scopeNote: (n: number) => `Relative rank across all ${n} stocks · may differ from the home candidate order`,
     badgeAriaLabel: "Data status badges",
     requiredDataPrefix: "Required data",
     suspectPill: "Outlier check in progress · provisional score",
@@ -238,6 +240,22 @@ export const stockHeaderCopy = {
   },
   en: {
     asOfSuffix: "as of market close",
+  },
+} as const satisfies Record<Locale, unknown>;
+
+// ── 가격 기준일 지연 안내(방어용) ──
+// 정상(최신 배치 반영)일 때는 전 화면이 동일한 전역 기준일을 쓰고 이 문구는 쓰이지 않는다.
+// 종목 주가가 전역 기준일보다 실제로 과거일 때만 명시(설계서 P0-1 B안). 매수/매도/수익 표현 없음.
+export const priceBasisLagCopy = {
+  ko: {
+    servicePrefix: "전체 서비스 기준",
+    stockMid: "장마감 · 이 종목 주가",
+    stockSuffix: "기준(최신 배치 미반영)",
+  },
+  en: {
+    servicePrefix: "Service-wide as of",
+    stockMid: "market close · this stock's price as of",
+    stockSuffix: "(not yet in the latest batch)",
   },
 } as const satisfies Record<Locale, unknown>;
 

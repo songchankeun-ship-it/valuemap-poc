@@ -9,7 +9,6 @@ import { AccountButtons } from "./AccountButtons";
 import { UserMenu } from "./UserMenu";
 import { WelcomeToast } from "./WelcomeToast";
 import { ThemeToggle } from "./ThemeToggle";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { dataStatus, dataStatusByLocale } from "@/lib/dataStatus";
 import { HeaderDataBar, HeaderStockCount } from "./HeaderDataBar";
 
@@ -81,7 +80,6 @@ export async function AppHeader() {
           <div className="flex items-center gap-1 md:gap-2 shrink-0">
             <CompareBadge />
             <HeaderStockCount count={dataMetadata.count} />
-            <LanguageSwitcher compact />
             <div className="hidden md:block">
               <ThemeToggle compact />
             </div>

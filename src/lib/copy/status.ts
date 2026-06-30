@@ -65,7 +65,7 @@ export const statusCopy = {
     selfcheckMismatch: "불일치",
     selfcheckVersionNote: (v: string) => `${v} 기준`,
     selfcheckFootnote:
-      "이 수치는 현재 빌드에 포함된 데이터 풀에서 즉시 계산한 값입니다. 점검 이력 보관·관리자 대시보드·수동 재수집은 후속 과제입니다(현재는 배포 시점 스냅샷).",
+      "이 수치는 현재 빌드에 포함된 데이터 풀에서 즉시 계산한 값입니다. 현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다.",
 
     // 데이터 소스
     sourcesHeading: "데이터 소스",
@@ -138,7 +138,7 @@ export const statusCopy = {
     selfcheckMismatch: "Mismatch",
     selfcheckVersionNote: (v: string) => `as of ${v}`,
     selfcheckFootnote:
-      "These figures are computed instantly from the data pool included in the current build. Check-history retention, an admin dashboard, and manual re-collection are follow-up tasks (currently a deploy-time snapshot).",
+      "These figures are computed instantly from the data pool included in the current build. For now we provide deploy-time snapshot check results, and we plan to progressively disclose check history and re-collection status over time.",
 
     sourcesHeading: "Data sources",
     sources: {

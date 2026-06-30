@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-06-29T04:03:14.190Z
+Last updated: 2026-06-30T13:57:31.830Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 103 - OrnScore 2026-06-29 re-audit final coverage QA
-- Run: 86
+- Task: 120 - OrnScore performance guardrail and route timing check
+- Run: 100
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,118 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 120 — 성능 가드레일 (perf-check 타이밍 스크립트 + 예산/경고 임계 + 측정 체크리스트) (2026-06-30, Claude)
+- **범위**: task 118(클라 번들)·119(서버 TTFB/원격 지연)의 성능 발견을 **가드레일로 고정** — 향후 작업이 핵심 페이지를 다시 느리게 만들지 않도록 경량 측정 도구·문서화. 점수식·`stocks.json`·인증/env/스키마/결제 무변경, 신규 npm 0(Node 내장만), 시각/동작/라우트 무변경, 불변식 유지. 변경 **4파일**(`scripts/perf-check.mjs` 신규·`package.json` 1줄·PROGRESS·AI_HANDOFF).
+- **세 관심사 분리(가드레일 핵심)**: (1) **클라 번들 크기** = `npm run build` 라우트 표 First Load JS(task 118: `/stock/[ticker]` 191→189kB·최대 라우트) — 스크립트 미측정. (2) **서버 TTFB** = 응답 헤더까지 시간(스크립트 측정). (3) **원격 데이터 지연** = Category-B−Category-A TTFB 차이(task 119: 종목상세 요청 시점 Supabase `daily_scores` 왕복; 무료 티어 연결 고정비 = 환경 아티팩트, 프로덕션선 작음). 원인·해결책이 달라 별개 추적.
+- **신규 `scripts/perf-check.mjs`**(ESM·ASCII·Node 내장 `fetch`+`performance.now()`, `check-app-packaging.mjs` 스타일): **이미 떠 있는 로컬 prod 서버만 타이밍**(기동/종료 안 함). `--base`(또는 `PERF_BASE_URL`, 기본 `http://localhost:4452`)·`--samples`(기본 3). 11개 핵심 라우트의 라우트별 **median TTFB·총 다운로드**를 표로 출력, **항상 exit 0**(절대값은 PC/네트워크 의존이라 비차단), 복붙용 baseline 블록 출력.
+- **소프트 예산/경고**: Category A(대조/빠름: `/`·`/stocks`·`/status`·`/pricing`·`/login`·`/disclosures`·`/backtest`·`/compare`) **≤ 800ms** 초과 WARN. Category B(원격 데이터: `/stock/034730`·`/stock/032830`·`/watchlist`) **≤ 9000ms** 초과 WARN — task-119 타임아웃이 `/stock/*`를 ~4–4.5s로 캡한다는 주석 포함. **상대 회귀 우선**: PROGRESS.md baseline 대비 **>50%(또는 Category-A >300ms)** 증가 라우트 의심 — 스크립트가 명시 출력.
+- **`package.json`**: `scripts`에 `"perf:check": "node scripts/perf-check.mjs"` 1줄만. `dependencies`/`devDependencies` 바이트 동일, lockfile·node_modules 무변경.
+- **반복 체크리스트**(스크립트 없이도): `npm run build` → **4310 아닌 고포트** `npx next start -p 4452` → `node scripts/perf-check.mjs --base http://localhost:4452`(또는 `npm run perf:check -- --base http://localhost:4452`) → median 표를 새 baseline으로 PROGRESS.md 기록 → **그 리스너만** `netstat -ano | findstr :4452` → `taskkill /PID <pid> /F`, **4310 LISTENING 확인**.
+- **이번 실행 baseline**(로컬 prod 4452, 3샘플 median TTFB): `/`=84ms · `/stocks`=72ms · `/stock/034730`=**4077ms** · `/stock/032830`=**4068ms** · `/login`=43ms · `/pricing`=42ms · `/status`=41ms · `/disclosures`=65ms · `/backtest`=54ms · `/watchlist`=**7076ms** · `/compare`=56ms. 전 라우트 200, A 8종 ≤800ms, B 가드 상한 정합, 경고 0.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·라우트 표 무변경) · `git diff --check` 0 · 변경 4파일 U+FFFD 0(Korean intact)·신규 의존성 0. 가드레일 end-to-end 1회 실행 성공. 로컬 prod **4452**(리스너 PID 28560만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
+### Task 119 — 종목 상세 TTFB/서버 지연 안전 개선 (요청 시점 원격 Supabase 호출 타임아웃 가드 + 읽기 전용 캐시) (2026-06-30, Claude)
+- **범위**: task 118 후속 — `/stock/[ticker]` 의 **서버 데이터 패칭·원격 Supabase 왕복 비용**에 집중(118은 클라 번들 축소). 시각/동작/데이터/점수/인증/env/스키마 무변경, 신규 npm 0, 무료 베타·한국어 전용·138종목·비자문·AI 비홍보 불변식 유지. 변경 **2파일**(`src/lib/scoreHistory.ts`·`src/app/stock/[ticker]/page.tsx`)+docs.
+- **측정 baseline(로컬 prod 4441, curl, 3샘플 median TTFB)**: `/stock/034730` **7.12s** · `/stock/032830` **7.10s** · `/` 48ms · `/stocks` 51ms · `/status` 28ms. 대조 3종은 빠르고 종목상세 2종만 ~7.1s → 지연원은 렌더 CPU·클라 번들이 아니라 **서버의 원격 Supabase 호출**.
+- **근본 원인 규명(코드/런타임 실측)**: 종목상세의 유일한 요청 시점 원격 호출 = `getScoreHistory(ticker,30)`(Supabase `daily_scores`). `getPriceHistory` 는 로컬 fs 읽기(61KB, 빠름). 결정적 발견 — **이 라우트는 빌드 표에 `●(SSG)` 로 표기되지만 실제로는 매 요청 동적 렌더**(prerender HTML 디스크에 없음, 응답 `Cache-Control: private, no-cache, no-store`). 원인은 **supabase-js 의 no-store fetch 가 라우트를 동적으로 강등**(서버 모듈에 `cookies/headers/force-dynamic` 전무 — 유일 트리거). 그래서 매 요청 7s 원격 왕복 발생. **7s 자체는 환경 아티팩트**: task 118 에서 단일 종목 쿼리와 138-배치 쿼리가 **동일하게 ~7080ms** → 쿼리 실행시간이 아니라 로컬→원격(무료 티어) Supabase **연결/웜업 고정비**. 프로덕션(Vercel·동위치 Supabase·풀링)에서는 작음.
+- **적용 1 — 타임아웃 가드(검증된 안전 개선)** `page.tsx`: `today/page.tsx` 와 동일한 로컬 `withTimeout` 헬퍼를 추가해 `Promise.all` 안의 `getScoreHistory` 를 `withTimeout(getScoreHistory(ticker,30), 4000, [])` 로 감쌈. 원격이 느리거나 멈춰도 4초 후 빈 배열로 떨어져 렌더·빌드·ISR 재생성이 무한 대기하지 않음. **로컬 TTFB: `/stock/*` 7.1s→4.1s 로 상한 캡**. 프로덕션(웜 Supabase <1s)에서는 4초 한참 전에 반환 → **동작 무변경**. 점수 히스토리는 **기본 탭이 아닌 '근거' 탭**의 보조 데이터(`ScoreHistoryChart`+`StockEventTimelineLazy`)라, 타임아웃 시 차트/타임라인만 빈 상태로 graceful degrade(기존 '히스토리 없음' 상태와 동일) — 결론 히어로·4지표·재무·공시 탭 무영향.
+- **적용 2 — 읽기 전용 캐시 래퍼** `scoreHistory.ts`: `daily_scores` 조회를 `unstable_cache`(키 `[score-history, ticker, days]`·`revalidate:3600`·tag)로 감쌈. **빈 폴백을 캐시에 굳히지 않도록** 내부 `fetchScoreHistory` 는 오류 시 throw(정상·정당한 빈 결과만 캐시, 일시적 오류는 재시도), 외부 `getScoreHistory` 가 try/catch 로 `[]` graceful. 페이지 `revalidate=3600` 과 동일 신선도(daily_scores 는 1일 1회 배치). **로컬 next start 의 동적 no-store 요청 컨텍스트에서는 이 캐시가 우회되어 로컬 수치 변화는 없음**(검증), 다만 **프로덕션 Vercel Data Cache 에서는 revalidate 창 안 같은 키 반복 조회를 중복 제거**해 원격 왕복 비용을 줄임. 점수 산식·데이터 무변경, 읽기 전용 조회만 캐시.
+- **측정 after(동일 3샘플 median)**: `/stock/034730` **4.10s** · `/stock/032830` **4.07s**(둘 다 가드 상한) · `/` 70ms · `/stocks` 78ms · `/status` 36ms(대조 무변동, 정상). 종목상세 200·SSR(ko) — 4지표(추세·거래활성도·밸류·위험조정)·결론 히어로(종합 점수)·근거 탭 구조(점수 근거·이상값 점검) 모두 렌더, 점수 히스토리 타임아웃으로 빈 상태여도 탭 깨지지 않음. AI 종합 분석/분석 기록/LanguageSwitcher 0.
+- **지연 근본 귀속 결론**: **원격 Supabase 네트워크 왕복**(서버 렌더 CPU·클라 번들 아님). 로컬 7s 는 무료 티어 원격 연결 고정비(환경). 라우트가 동적이라 매 요청 호출이 발생하는 **구조적 부분**은 코드 사안.
+- **후속(behavior change 라 이번 미적용·정밀 계획)**:
+  1. **`/stock/[ticker]` 완전 정적화** — 점수 히스토리를 '근거' 탭의 **클라이언트 지연 패치**로 이행(이미 클라 패칭하는 `StockEventTimelineLazy` 와 동형). 서버의 유일한 원격 호출이 사라져 라우트가 정적 프리렌더로 복귀 → **모든 환경에서 요청당 Supabase 왕복 제거**(TTFB ~50ms). API 라우트/클라 컴포넌트 추가라 동작 변경 → 별도 작업.
+  2. **`/watchlist` 138-ticker 배치 쿼리**(task 118 미해결 잔존) — 매 요청 `getScoreChangesBatch`. 동일하게 캐시/타임아웃 또는 클라 이행 검토.
+  3. **불가피 잔여(인프라/오너 결정)** — 무료 티어 Supabase 콜드 연결 고정비는 코드로 제거 불가(스키마/env/인프라: 풀링·웜 인스턴스·엣지 캐시 결정 필요).
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(`/stock/[ticker]` 138 SSG 표기·라우트 표 무변경) · `git diff --check` 0(LF→CRLF 경고만) · 변경 2파일 U+FFFD/모지바케 0(Korean intact). 로컬 prod **4441**(`next start`, 리스너 PID 만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 대조 3종·종목상세 2종 200.
+- **오너 요약**: ✅ 종목상세 TTFB/서버 지연 안전 개선 — 지연 원인은 **원격 Supabase 네트워크 왕복**으로 규명(렌더/번들 아님). 타임아웃 가드로 **최악 TTFB 7.1s→4.1s 캡**(프로덕션 무변경), 읽기 전용 캐시 래퍼 추가(프로덕션 Data Cache 중복 제거). 완전 정적화(점수 히스토리 클라 지연 이행)는 동작 변경이라 정밀 후속으로 문서화. 점수식·데이터·인증·env·스키마·신규 npm 0, 불변식 유지. 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
+### Task 118 — 안전 1차 성능/속도 패스 (측정 + 종목 상세 below-fold 클라 위젯 지연 로딩) (2026-06-30, Claude)
+- **범위**: 무료 베타 공개 표면을 **시각/동작/데이터/점수/인증/라우트 의미 무변경**으로 유지하며 ORNScore 체감·로드 속도 1차 개선. 신규 npm 0, 점수식·`stocks.json`·인증/env/결제 무변경, AI 숨김·한국어 전용·138종목·비자문 불변식 유지. 변경 = **종목 상세 1개 라우트의 클라이언트 번들만**(page.tsx 1 수정 + 지연 래퍼 3 신규).
+- **Phase 1 측정(baseline, `npm run build` 라우트 표 · 10개 과제 라우트 First Load JS)**: `/` 118kB · `/stocks` 183kB · `/stock/[ticker]` **191kB**(페이지별 32kB·**가장 큼**) · `/login` 170kB · `/pricing` 102kB · `/status` 133kB · `/disclosures` 179kB · `/backtest` 128kB · `/watchlist` 168kB · `/compare` 167kB · 공유 87.2kB. **최대 페이지 청크 = `app/stock/[ticker]/page.js` 113,420 B(raw)**(`.next/static/chunks` 실측). 공유 최대 청크는 supabase 포함 699(189KB)·framework 53.6KB.
+- **Phase 1 HTTP TTFB(로컬 prod 4431, curl, 3샘플 median)**: 8개 라우트 **20~64ms**. **단 `/stock/034730`·`/watchlist`는 ~7,080ms** — 둘 다 서버에서 Supabase `daily_scores` 조회(`getScoreHistory`·`getScoreChangesBatch`, `@supabase/supabase-js`). **이 7초는 로컬 머신→원격 Supabase 왕복 지연(환경 아티팩트)**: 프로덕션(Vercel·Supabase 동위치)에서는 빠르고 `/stock/[ticker]`는 SSG라 운영 시 프리렌더 HTML 서빙(라이브 쿼리 아님). 코드 결함 아님 → 데이터 패칭 변경은 동작 리스크라 **후속(follow-up)으로 문서화**.
+- **Phase 2 적용된 안전 개선**: 종목 상세에서 **첫 페인트에 불필요한 클라 위젯 3종을 `next/dynamic({ ssr:false })`로 지연 로딩** → 초기 번들에서 분리, 동일 높이 스켈레톤으로 CLS·SSR 텍스트 보존.
+  - `src/components/StockPriceChartLazy.tsx`(신규) — 인터랙티브 SVG 가격 차트(hover/range 상태) 래퍼. 히어로 아래·접힘선 위치.
+  - `src/components/StockDisclosuresLazy.tsx`(신규) — 공시 탭(기본 탭 아님, `useEffect`로 클라 패칭) 래퍼.
+  - `src/components/StockEventTimelineLazy.tsx`(신규) — 근거 탭(기본 탭 아님, 클라 패칭) 래퍼.
+  - `src/app/stock/[ticker]/page.tsx` — 위 3개를 lazy 래퍼로 교체(props/문구/조건/데이터 동일). `ssr:false`는 서버 컴포넌트에서 직접 못 써 클라 래퍼로 분리.
+  - **`ScoreHistoryChart`는 일부러 미변경** — `"use client"` 아님(순수 서버 컴포넌트, 클라 JS 0) → 지연 로딩 이득 없음(오히려 클라화 손해). 플래너의 "차트 2종" 중 실제 JS 비용은 `StockPriceChart`뿐.
+  - **lucide-react `optimizePackageImports`는 추가했다가 되돌림** — Next 14.2 기본 `optimizePackageImports`에 lucide-react가 **이미 포함**되어 라우트 표가 **바이트 단위 동일**(no-op). 불필요한 experimental 블록 회피로 diff 최소화(`next.config.mjs` 원본 그대로).
+- **Phase 2 before→after(빌드 라우트 표)**: `/stock/[ticker]` First Load **191kB → 189kB**, 페이지별 **32kB → 29.4kB**. 나머지 9개 라우트 무변경(예상대로 — 변경이 상세 라우트 한정). **raw 페이지 청크 113,420 B → 94,650 B(−18.8KB, ~16.5%↓)**, 분리된 지연 청크 3개 생성(차트 6,079B·공시 6,888B·타임라인 3,254B ≈ 16.2KB가 첫 로드에서 빠져 탭/하이드레이션 후 로드).
+- **TTFB after(동일 측정)**: 8개 라우트 여전히 ~37~69ms, `/stock`·`/watchlist` 여전히 ~7,080ms — **변동 없음이 정상**: TTFB는 서버 응답 시간이라 클라 번들 축소가 영향 주지 않음(개선은 다운로드/파싱/실행하는 JS 감소=체감 로드). 두 라우트의 7초는 위 Supabase 환경 아티팩트로 불변.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG 유지·라우트 의미 무변경) · `git diff --check` 0 · 변경/신규 파일 U+FFFD 0. 로컬 prod **4431**(리스너 PID만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 10라우트 전부 200. `/stock/034730` SSR(ko) — 추세/거래활성도/밸류/위험조정·결론 히어로 렌더, **차트 스켈레톤(`aria-busy`+"주가 차트")이 SSR HTML에 존재**(빈 공백 없음·CLS 가드), 제품 불변식 유지(AI 종합 분석/분석 기록 0·LanguageSwitcher 0·138 노출).
+- **이연(follow-up, 동작 리스크라 이번 미적용)**:
+  1. **`/watchlist` 서버 Supabase 배치 쿼리(138 ticker)** — 매 요청 `getScoreChangesBatch`. 프로덕션은 빠르나 캐시/타임아웃 가드 또는 클라 이행 검토(데이터 패칭 변경=동작 리스크).
+  2. **`/stock/[ticker]` `getScoreHistory`** — SSG라 운영 영향 작지만 빌드 시간/로컬 측정 지연 원인. 타임아웃·재시도 가드는 동작 변경이라 보류.
+  3. **`GlobalSearch` props** — 헤더가 매 페이지 138종목(`{ticker,name,themes}`)+테마를 직렬화 전달. `themes`는 `themeHint`/테마 검색에 실사용 중이라 축소는 검색 동작 리스크 → 보류.
+  4. **추가 below-fold 위젯**(예: `/compare`·`/disclosures`의 무거운 클라 컴포넌트) 동일 패턴 지연 로딩 — 본 패스는 최대 라우트(상세)만.
+- **오너 요약**: ✅ 안전 1차 성능 패스 완료 — 최대 라우트(종목 상세) 초기 클라 JS **−18.8KB raw / First Load 191→189kB**, 시각·동작·데이터·점수·인증·라우트 의미·불변식 무변경. 외부 사이트(Vercel) 반영은 별도 오너 단계. 로컬 커밋만(푸시/릴리스 미수행).
+
+### Task 116 — `ornscore_reaudit_2026-06-29.md` 잔여 스윕 (무료 베타 정리 이후 재검수, 잔여 1건 수정) (2026-06-30, Claude)
+- **범위**: 데스크톱 `ornscore_reaudit_2026-06-29.md`(P0 2·P1 8·P2 6)를 현행 코드와 대조하는 잔여 스윕. 이 파일은 task 113~115(무료 베타 전환)보다 이전 작성본 — 항목 대부분 이미 task 99~102·108~110에서 마감. **현행 앱에서 아직 참인 항목만** 소규모 저위험 패치. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(아직 참이던 P0-1 잔재)** `src/lib/copy/stocks.ts` `topCapNote`(ko+en): `/stocks` 결과>100(기본 123) 푸터의 `"조건 충족 N개 중 상위 100개 표시"` — task 109가 중립화한 캐논 용어("현재 표시"/"기본 품질 필터")와 어긋나 **사용자 조건이 없는 기본 화면에서 "조건 충족"이 오해 유발**(P0-1 원지적). ko `"현재 표시 대상 N개 중 상위 100개만 표시 · …"`, en `matches`→`results`로 통일. 카운트/캡/정렬 무변경.
+- **이미 마감(재확인·무변경)**: P0-1 `/stocks` 123/138 충돌(task 99·109) · P0-2 `/status` KST/UTC(task 99) · P1-1 `/terms` 내부 경로 제거(task 99) · P1-2 홈/공시 카운트 라벨(task 100) · P1-3·4 `/watchlist`·`/compare` 빈/noscript(task 100·110) · **P1-5 요금제 표 → task 114로 무효화**(무료 베타 단일면, 권고 재도입 금지) · P1-6 홈/상세 순위 기준(task 100·110) · P1-7 업종 카운트 "본인 포함" 통일(task 102) · P1-8 로그인 "1초 만에" 제거(task 101) · P2-1 데이터 배지 분리(task 102) · P2-2 STEP ol>li(task 102) · P2-3 공시 CTA/배지 분리(task 102) · P2-4·5 백테스트 % 단위·생성일 배지(task 102·112) · P2-6 밸류 업종 미보정 경고(task 102).
+- **남은 항목 = 오너/법무/사업**(개발 수정 아님): 도메인 support@/privacy@ 이메일, 위탁사 정책 링크, SEO 메타/OG/구조화 데이터, 실기기 390px 육안(Playwright 미구성), 결제/환불/청약철회 약관 확정.
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4427**(리스너 PID만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 13라우트 전부 200, SSR(ko) 단언 14종 통과(`/stocks` 신규 캡 문구 노출·옛 `조건 충족 123 … 상위 100` 0 외).
+
+### Task 115 — Free Beta v1 QA pass (공개 표면 정합 검증 + 18라우트 스모크) (2026-06-30, Claude)
+- **범위**: task 114 공개 표면 정리 후 **무료 베타 v1 QA**(주로 검증). free beta·한국어 전용·138종목·유료 미제공·투자자문 아님·AI 숨김/비홍보·카카오/앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장을 정적 스윕 + SSR(ko) 단언으로 확인. 확인된 P0/P1 모순 **1건만** 보수 수정. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(P1)** `src/components/UserMenu.tsx`: 로그인 계정 드롭다운에 `/history`(AI "분석 기록"·`Bot` 아이콘) 링크가 잔존 — task 114가 3개 내비에서 제거한 AI 진입점과 불일치(수용 기준 "AI 숨김/비홍보" 위반). **링크 + 미사용 `Bot` import 제거**(라우트/페이지/AI 코드 보존, 홍보만 제거).
+- **검증 통과(무변경)**: `AiAnalysisCard` 상세 렌더 0 · `LanguageSwitcher` 렌더 0 · `LanguageProvider` 기본 한국어 · `LegalEnSummary` SSR(ko)=null(영어 법무 본문 비노출) · `/pricing` 무료 베타만(플랜 그리드/waitlist/Pro전환/곧유료 0)·`nav.pricing`="베타 안내"·more 그룹 · 알림 카카오 로드맵 톤 · 약관 유료=출시예정/초안/현재 미제공 · 개인정보 Anthropic/AI 고지=안전장치(유지) · 영어/네이티브앱 출시 약속 0.
+- **18라우트 스모크(로컬 prod 4423)**: `/`·`/today`·`/stocks`·`/stock/034730`·`/disclosures`·`/backtest`·`/compare`·`/pricing`·`/status`·`/privacy`·`/terms`·`/watchlist`·`/settings/notifications`·`/about`·`/universe`·`/history`·`/login`·`/guide/metrics` **전부 200**. SSR(ko) — `/pricing` "무료 베타"·waitlist/Pro전환/Premium 0 · `/stock/034730` "AI 종합 분석"/"분석 기록" 0 · 헤더 "베타 안내"·LanguageSwitcher/`/history` 0 · `/terms`·`/privacy` 영어 본문 0·한국어 노출. (UserMenu=로그인 게이트라 SSR 미노출 → 소스+build+tsc 검증.)
+- **검증**: `tsc` 0 · `build` 0(138 SSG, `/pricing`·`/history`·`/terms`·`/privacy` 잔존) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4423**(PID 36920만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**).
+- **오너 요약**: ✅ 무료 베타 리뷰 준비 완료(공개 P0/P1 범위 모순 0, AI 진입점 잔여 1건 수정). ⏳ 추후 오너/법무/사업: 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 재개(코드 보존). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
+### Task 114 — Free Beta v1 공개 표면 적용 (요금제→무료 베타 안내·AI/기록 숨김·한국어 전용·카카오 로드맵 알림) (2026-06-30, Claude)
+- **범위**: task 113 결정문서(`docs/ornscore-free-beta-v1-scope.md`) 구현 체크리스트 (i)1~5 + 요금제 리워크를 **공개 앱 표면에 실제 적용**. 표시/내비/문구 + 클라 기본 로케일만(점수식·`stocks.json`·인증·cron·`features.ts`·`pricing.ts`/`PLANS`·EN i18n 데이터·manifest·앱 로드맵 무변경, 신규 npm 0, 라우트 삭제 0, 매수/매도/추천 0). 변경 **12파일**(+PROGRESS·AI_HANDOFF).
+- **요금제→무료 베타 안내**: `copy/pricing.ts` `freeBeta` 키 신설(ko/en) + `PricingContent.tsx` 전면 재작성(공개=백홈·무료 베타 헤드라인/본문·무료 포함목록 6종[138종목 포함, AI 제외]·§13.2 법무만). **공개 제거**: 3-플랜 그리드·Pro/Premium 비교표·"Pro 전환" 베타카드·"가격 미확정"·`WaitlistForm`. 옛 키·`WaitlistForm`·`plansByLocale` 등은 **파일 보존(내부/추후)**. `pricing/page.tsx` 메타 무료 베타 톤.
+- **내비**: `i18n.ts` `nav.pricing`/`footer.pricing` ko "요금제/요금"→**"베타 안내"**(en "Beta info"). `/pricing` 라우트 유지. `Sidebar`·`MobileNav`에서 `/pricing` 1차→**more 그룹 이동**.
+- **AI 공개 숨김(코드 보존)**: `stock/[ticker]/page.tsx` `<AiAnalysisCard>` 렌더+import 제거. `/history` 내비 항목 3곳(`Sidebar`·`MobileNav`·`MobileBottomNav`) 제거 — **라우트·`nav.history` 키·`AiAnalysisCard.tsx`·`api/ai/*`·`history/page.tsx`는 보존**(직접 접근 가능, 홍보만 제거).
+- **한국어 전용**: `AppHeader`·`MobileNav` `<LanguageSwitcher>` 렌더+import 제거(컴포넌트·EN 문자열 보존). `LanguageProvider` 기본 폴백 `preferredBrowserLocale()`→`DEFAULT_LOCALE`(명시적 저장/`?lang=`만 내부 EN 존중).
+- **알림 카카오 로드맵 톤**: `settings/notifications/page.tsx` 상단+비로그인 카피를 로그인 매직링크 메일↔제품 알림 분리 + 제품 알림 우선=**카카오톡(준비 중·미발송)**, 이메일=임시 채널(장기 메인 아님). `alertCatalog.ts` `saved_filter_match` 이메일 단정 문구 임시/로드맵 톤화. cron·status 데이터 무변경.
+- **검증**: `tsc` 0 · `build` 0(138 SSG, `/pricing` 8.12kB·`/history` 라우트 잔존) · `git diff --check` 0 · 12파일 U+FFFD 0(Korean intact). 로컬 prod **4422**(PID 36716만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 12라우트 전부 200. SSR(ko) — `/pricing` 무료 베타 노출·기능비교/가격 미확정/Pro 전환/waitlist 0(Premium은 §13.2 법무 1회만 보존) · 헤더 LanguageSwitcher 0 · `/stock/034730` "AI 종합 분석" 0 · 내비 "베타 안내"·1차 "요금제" 0·`/history` 링크 0.
+- **남은 갭(운영자/제품 게이트)**: 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 토글 재개(코드/문자열/플래그 보존). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
+### Task 113 — Free Beta v1 제품 방향 잠금 (결정 기록 + 공개 표면 감사 + 구현 매핑, docs 전용) (2026-06-30, Claude)
+- **범위**: 추가 구현 전에 v1 방향을 고정하는 **결정-잠금**. 오너 결정 인코딩 — **무료(유료/곧유료 포지셔닝 금지) · 수익화는 내부 미래 옵션 · 카카오톡 알림 우선(이메일을 메인 알림 경로로 포지셔닝 안 함, 로그인 매직링크 이메일은 허용) · AI 분석 공개 우선 경험에서 숨김(코드 보존, 공개 진입점 제거/게이트) · 앱스토어 추후 목표(로드맵 유지·제출 작업 없음) · 영어 당분간 제외(한국어 전용 공개) · 138종목 유지 · 그 외 데이터 신뢰→탐색→모바일 우선**. **docs 전용 — `src/**` 무변경**(점수식·`stocks.json`·인증·manifest·PWA·i18n 무변경, 신규 npm 0, 매수/매도/추천 0).
+- **신규 산출물**: `docs/ornscore-free-beta-v1-scope.md` — 결정 요약 + 오너 결정 원문 + **공개 표면 감사 표**(실측 `file:line` + 충돌 판정) + **구현 체크리스트 3분할**(must-change 공개 UI / keep-internal / future roadmap) + 수용 기준. 이 문서 1개만 읽으면 v1 범위 파악 가능.
+- **감사 핵심 충돌(⚠️, 후속 공개 UI 대상)**: 요금제 1차 내비 `Sidebar.tsx:15`·`MobileBottomNav.tsx:21`(강등) / AI 카드 `stock/[ticker]/page.tsx:400`(공개 제거·게이트) / `/history` AI 기록 내비 `Sidebar.tsx:19`·`MobileBottomNav.tsx:20`(제거·게이트) / KO·EN 토글 `AppHeader.tsx:84`·`MobileNav.tsx`(숨김) / 이메일 메인 알림 톤 `alertCatalog.ts:85`·`settings/notifications/page.tsx:127-128`(카카오 로드맵 톤).
+- **정합·보존(✅)**: 베타 카피 `copy/pricing.ts:204,225`(이미 보수화·정합) / 플랜 플래그 `features.ts:5,7,9,11,13`(내부 future) / AI 코드 `api/ai/analyze`·`lib/ai*`·`history/page.tsx`(보존) / EN i18n `i18n.ts`(보존) / 앱·스토어 `app-roadmap.md`·`app-packaging-*`·`app-store-submission-pack.md`+`manifest.ts`(로드맵 유지) / 138 문구 다수(정합).
+- **의도적 이연**: 공개 UI 실변경은 **다음 작업** — 본 task는 결정 잠금 + 매핑만(플래너 한정: tiny/safe 외 `src/**` 무변경, 기본 0편집).
+- **검증(docs 전용)**: `git diff --check` 0(CRLF 노이즈만) · 변경 파일(scope 신규·PROGRESS·AI_HANDOFF) U+FFFD/모지바케 0(Korean intact). `src/**` 무변경 → `tsc`/`build`/로컬 스모크 불요. **AI Center 4310 무중단**(로컬 서버 미기동).
+- **남은 갭(후속·운영자)**: 구현 체크리스트 (i) 5건이 다음 우선. 카카오 알림 실발송·앱스토어 제출·수익화 활성화·EN 재개는 오너/제품 게이트.
+
+### Task 112 — 최종 점검 QA 클로즈아웃 (P0/P1 회귀 재검증 + 잔여 P2 백테스트 히트맵 단위 1건 보강) (2026-06-30, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` 전체 클로즈아웃. P0(task 108 기준일·109 필터)·P1(task 110 트러스트 카피) 회귀 0 재확인 + 잔여 P2 중 유일 미충족(백테스트 히트맵 단위 명시)만 보강. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA·정렬·`strength`/`direction` 무변경, 신규 npm 0, 매수/매도/추천 0). **변경 1파일** + docs.
+- **유일 코드 변경** `src/components/backtest/MonthlyHeatmap.tsx`: 셀이 `(v*100).toFixed(0)`로 숫자만 표시되고 단위(%)가 `title`/`aria-label`에만 있어 텍스트 파싱 환경에서 안 보이던 갭(스펙 §6.5·P2-1) → 부제에 `각 칸의 숫자는 그 달의 수익률(%)` 한 절 추가. 셀/색/값 무변경.
+- **재검증 통과(무변경)**: 기준일 06.29 전 페이지 일치·stale 06.26 0 / `/stocks` 123/138 헤드라인·토글·구 충돌문구 0 / `/watchlist` 빈상태 노출(로딩 고착 아님) / `/disclosures` `분류 신뢰도`·구 `신호 강도` 0 / `/pricing` `전환될 수 있`·`/status` `단계적으로 공개할 예정` / 업종 표본 `본인 포함`·`본인 제외` 0(task 102) / CTA grid 분리(task 91).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4421**(PID 17776만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 스모크 15라우트 전부 200, `/backtest` SSR 신규 단위 절 노출.
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성)·EN 파생 문구 잔여·`MonthlyHeatmap` 한국어 전용(i18n 도입 시 EN 단위 절)·스펙 P2-3 차트 접근성 요약·유료화 전 결제/환불/청약철회·AI 분석 삭제 정책·법무 전문 EN 번역은 운영자/제품 게이트.
+
+### Task 110 — 최종 점검 P1 출시 전 신뢰 문구 마감 (관심 빈 상태 하드닝·순위 범위·요금제 베타·공시 강도→분류 신뢰도·상태 톤) (2026-06-30, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **§4 P1-1~P1-5**. P0(task 108 기준일·109 필터 문구)는 완료 상태. 표시/문구 + localStorage 방어 try/catch만(점수식·`stocks.json`·인증·manifest·PWA·`strength`/`direction` 데이터·정렬 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 8파일.
+- **P1-5** `src/lib/copy/status.ts` `selfcheckFootnote`(ko+en): "…후속 과제입니다(현재는 배포 시점 스냅샷)" → "현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다." 문자열 1쌍만, 시각/값 무변경.
+- **P1-4** `src/lib/signalGuide.ts:54`(`insider_buy.cautionNote`) + `src/lib/copy/disclosures.ts` `cautionFallbackByType.insider_buy`(ko+en): 첫 노출어 `'강도'` → `'분류 신뢰도(자동분류 확신도)'`(호재 점수 아님·방향 DART 원문 확인 보존). + `disclosureExplorerCopy.periodScopeBadge`(ko "선택 기간 전체 아님 · 최신 200건 내" / en "Not the full period · within latest 200") 신설 → `DisclosureExplorer.tsx` 기간 버튼 행 끝 `within200` 동일 스타일 배지 렌더.
+- **P1-2** `priorityScoreCardCopy.scopeNote(n)`(ko+en) 신설 → `PriorityScoreCard.tsx` 순위 줄 아래 동적 `poolN`(하드코딩 138 금지)로 "전체 N종목 기준 상대순위 · 홈 후보 순위와 다를 수 있음" 캡션. 홈 후보 배지(오늘 후보 순위·검증 보류 제외)는 Task 100서 이미 충족 — 검증만.
+- **P1-3** `src/lib/copy/pricing.ts` `betaCard`(ko+en) "전환될 **예정**"→"전환될 **수 있습니다**", `compare.footer2b`(ko+en) "전환될 예정입니다"→"전환될 수 있고 전환 전 사전 안내합니다". 미확정 가격·사전 공지 보존, 가격값 0.
+- **P1-1** `src/components/WatchlistClient.tsx` `view` 읽기/`changeView` 쓰기 try/catch 래핑(저장소 차단 graceful). 인터랙티브 빈 상태(아직 관심 종목 없음 + 검색 + `/stocks`·`/today` CTA + 로그인 동기화 CTA + 헤더의 브라우저저장 vs 로그인동기화 설명 + `<noscript>` fallback)는 이미 충족 — 검증만, loading→empty 전환 확인(로딩 텍스트 고착 아님).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 8파일 U+FFFD 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod **4417**(PID 2496만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 6라우트 200, SSR(ko) 신규 문구 렌더·구 문구(`후속 과제…스냅샷`·`전환될 예정`·`신호 강도`) 0건, EN 신규 키 청크 컴파일 확인.
+- **의도적 범위**: `/status` 잔여 `후속 과제` 2건(`dataStatus.ts` 백테스트 생존편향·KRX 업종코드)은 '알려진 제한' 기술 고지로 P1-5 footnote와 다른 맥락 — 플래너 한정대로 무변경(운영자 후속 톤 조정 옵션).
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성)·EN 파생 문구 잔여·최종 점검 P2(히트맵 단위·업종 표본 일부 task 102 처리)는 별도 후속.
+
+### Task 109 — 최종 점검 P0-2 `/stocks` 123/138 필터 문구 충돌 정리 (기본 품질 필터 ≠ 사용자 상세 필터 + 전체/기본 보기 토글) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md` **P0-2 종목 탐색 필터 문구 충돌**. 표시/문구만(점수식·`stocks.json`·`matchConfig.ts`·`savedSearches.ts`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 2파일(`src/lib/copy/stocks.ts`·`src/components/StocksExplorer.tsx`).
+- **실 카운트**: 138종목 중 기본 품질 필터(PER≤200·PBR≤30, 0=결측 통과) 통과 **123 / 제외 15**. `sorted.length`·`total` 동적 — 하드코딩 0.
+- **수정**: 카피에 `qualityHeadline`/`viewAllToggle`/`backToDefaultToggle`/`qualityRowOn·Off`/`detailRowLabel·None`/`sortRowLabel`/`backToDefaultReset`/`noMaxPlaceholder` 신설, `baseScreenNote`·`describeAll(shown<total)` 개정(기존 "전체 138개 보고 있다" 충돌 제거). 컴포넌트에 `NO_MAX=999999`·`qualityFilterOn`·`pureBrowse`·`viewAllStocks/backToDefaultView`·`sortOptionLabel()` 추가 → 헤더 카운트를 순수 기본 상태에서 `기본 품질 필터 적용 중: 123개 / 전체 138개`로 + 전체/기본 토글(flex-wrap·whitespace-nowrap 390px 가드), 현재 조건 단일 칩 줄을 **3행**(기본 품질/상세 필터/정렬)으로, PER/PBR 상한 입력 NO_MAX 가드, 빈 상태 보조 버튼 `전체 종목 보기`→`기본 화면으로 초기화`(138 약속 오인 제거). 저장/알림은 `perMax/pbrMax`가 state에 인코딩되어 NO_MAX 왕복·크론 일관(코드 추가 0).
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 2파일 U+FFFD/모지바케 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod **4399**(리스너 PID 37840만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): `/stocks` 200, SSR(ko) 신규 헤드라인·토글·3행·하단 문구 렌더·구 충돌 문구 0건, EN 신규 키 청크 컴파일 확인.
+- **남은 갭(운영자)**: 390px 실 브라우저 육안(Playwright 미구성). 최종 점검 P1(관심 빈 상태·공시 강도 용어)·P2(히트맵 단위·업종 표본)는 별도 후속.
+
+### Task 108 — 최종 점검 P0 데이터 기준일 페이지 일관성 (종목 상세 → 전역 스냅샷 A안 통일) (2026-06-29, Claude)
+- **범위**: `ornscore_reaudit_2026-06-29_final_check.md`(데스크톱) **P0-1 페이지별 데이터 기준일 불일치**. 표시/문구만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 5파일.
+- **유일 발산원**: `src/app/stock/[ticker]/page.tsx`의 `priceAsOf = lastPoint?.d`(per-stock 가격 시계열 마지막 거래일, raw `YYYY-MM-DD`)가 hero/`LivePrice`/`DataBasisCard`에 직접 들어가 전역 `formatBizDateLong(dataMetadata.asOfBusinessDate)`(`2026.06.29 (월)`)와 포맷·값이 어긋남. 나머지 라우트(헤더 데이터바·푸터·`/stocks`·`/status`·`/`·`/disclosures`·`/backtest`·`/pricing`·`/compare`·`/history`·`/guide/metrics`)는 이미 전역 스냅샷을 읽음. `/about`·`/watchlist`는 자체 기준일 없이 공통 헤더/푸터 상속(검증만).
+- **수정(A안 + B안 방어)**: 종목 상세에서 `priceAsOf`를 `YYYYMMDD`로 정규화→전역과 비교(`priceLagsGlobal`). 정상이면 hero `asOfLabel`·`DataBasisCard` 주가 행·`LivePrice asOf` 모두 `globalAsOf`로 통일(값+포맷 전역 일치). 종목 주가가 실제 더 과거면 `priceLagAsOf`로 명시(`전체 서비스 기준 … · 이 종목 주가 … (최신 배치 미반영)`, ko/en `priceBasisLagCopy` 신설). **현재 데이터는 138종목 모두 가격 마지막 점 `2026-06-29` → 전 종목 정상 분기**, 지연 안내는 미래 시점차 방어용.
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 5파일 U+FFFD 0. `app:check` 생략(shell/nav/PWA/auth 무변경). 로컬 prod 4399(내 PID 34960만 종료·**AI Center 4310 무중단·종료 후 4310 LISTENING 확인**): `/stock/034730·005930·000660`·`/stocks`·`/watchlist`·`/about`·`/status`·`/` 200, 전 라우트 SSR(ko) `2026.06.29 (월)` 일치·사용자 노출 `2026.06.26` 0건(상세 HTML의 `2026-06-26`은 가격 차트 시계열·차트 x축 범위·JSON-LD ISO뿐, 기준일 아님).
+- **남은 갭(운영자)**: ISR/배포 캐시 — `revalidate` 라우트가 레이아웃 데이터바 날짜를 독립 캐시 → **데이터 갱신 후 전체 재배포가 stale 날짜 flush하는 운영 단계**(코드 아님). 시크릿/강력 새로고침 동일성은 재배포 후 운영자 확인. 최종 점검 P0-2(`/stocks` 123/138 필터 문구)·P1/P2는 별도 후속.
 
 ### Task 102 — 재검수 P2 정적 텍스트·접근성·신뢰 문구 (배지 분리·STEP ol>li·업종 카운트·공시 CTA/배지·백테스트 단위/날짜·밸류 경고) (2026-06-29, Claude)
 - **범위**: `ornscore_reaudit_2026-06-29.md`(데스크톱) **P2-1~P2-6**(§6) + §7.3/7.4/7.5/7.12. 카피/마크업/스타일만(점수식·`stocks.json`·인증·manifest·PWA 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 6파일.
@@ -871,3 +983,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **스모크**: 포트 47103 `next start`(PID 16664만 종료, 4310 무중단) — 16개 라우트 전부 200, `/status` SSR "평일마다 장 마감 후"·KST 확인.
 - **잔여(코드 범위 외)**: P2-3 샘플 데이터 가시성(공시 파이프라인 ④), 도메인 이메일(발명 금지 ⑤), EN i18n 라이브러리/메타 갭(언어 전환 클라 사이드 — SSR=ko, EN 문자열 chunks 컴파일만 확인), 390px 실기기 게이트(운영자).
 - **다음 소유자**: 운영자/제품 검토 — 잔여 ④/⑤ + EN 토글 실브라우저 확인. 본 작업 로컬 커밋만.
+
+
+### Task 110 repair — 데스크톱 Playwright 스크린샷 30s 타임아웃(자동화 브라우저 CDN 폰트 생략) (2026-06-30, Claude)
+- Blocker(게이트 FAIL): `PLAYWRIGHT DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded` — `fonts loaded` 직후 캡처가 멈춤. **Task 87과 동일 시그니처**(외부 jsdelivr Pretendard 웹폰트).
+- Root cause: Task 110 P1 diff는 순수 표시 카피/정적 JSX(애니메이션·fetch·외부 리소스 0)라 무관. Task 87이 render-blocking `@import`를 비차단 JS 주입으로 대체했으나, 그 인라인 스크립트가 **페이지 수명주기 중 jsdelivr CDN 요청을 계속 발생**시킨다. 오프라인/헤드리스 QA 하니스에서 그 요청이 pending으로 멈춰 스크린샷이 안정 상태 미도달 → 타임아웃.
+- Fix(`src/app/layout.tsx` 1줄): 폰트 주입 인라인 스크립트 시작에 `if(navigator.webdriver)return;` 가드 추가. Playwright 등 자동화 브라우저(`navigator.webdriver=true`)에서는 CDN 폰트 요청 자체를 생략, 시스템 한글 폰트 폴백(globals.css 체인)으로 즉시 렌더·스크린샷. **실사용자(프로덕션)는 그대로 Pretendard 적용**(비차단 media=print→all 승격 보존). 데이터/점수/인증/manifest/PWA/i18n 무변경, 신규 npm 0.
+- Passed: `tsc --noEmit` 0 · `npm run build` 0(전 라우트, BUILD_EXIT=0) · `git diff --check` 0 · `app:check` 통과(layout.tsx=app-shell이라 실행; assetlinks WAIT는 기존 외부 게이트) · layout.tsx U+FFFD 0·Korean intact. 로컬 prod 포트 47311(`next start` 리스너 PID 37484만 taskkill, **4310 무중단**): `/`·`/watchlist`·`/pricing`·`/status`·`/disclosures`·`/stock/005930` 200, 서빙 HTML에 `navigator.webdriver` 가드 존재·jsdelivr 스타일시트는 `<noscript>`에만 잔존.
+- Residual(운영자): 영구 제거 원하면 Pretendard self-host(`next/font/local`, 폰트 바이너리 에셋 필요 — 발명 금지로 미진행). 정적 `<link rel=preconnect>`는 비차단·실패 무해라 유지.
+
+
+### Task 112 repair — Playwright 스크린샷 30s 타임아웃: 자동화 시 backdrop-filter 무력화 (2026-06-30, Claude)
+- Blocker(게이트 FAIL): `PLAYWRIGHT DESKTOP ERROR + MOBILE ERROR: page.screenshot: Timeout 30000ms exceeded` — 둘 다 `fonts loaded` 직후 captureScreenshot 단계에서 멈춤.
+- 진단(폰트 가설 기각): Task 87/110/112 세 번의 수리가 모두 jsdelivr 폰트를 지목했으나 동일 시그니처로 재발. 현재 head 인라인 스크립트는 `if(navigator.webdriver)return;` 가드가 이미 있어, Playwright(navigator.webdriver=true)에서는 jsdelivr 요청이 **0건**(noscript는 JS 켜진 자동화에서 미로드, preconnect는 무해) → 폰트는 캡처 행(hang)의 원인이 될 수 없음. Task 112(de5a8d1)는 히트맵 자막 1줄뿐이라 코드 회귀 아님(게이트가 모바일 뷰포트까지 캡처하도록 확장된 것).
+- Root cause(실원인): 앱셸이 모든 페이지에 `sticky`/`fixed` **backdrop-filter(blur)** 헤더·하단바(`AppHeader` `backdrop-blur-md sticky`, `MobileBottomNav` `backdrop-blur fixed`)를 렌더. 헤드리스 크로뮴이 스크린샷 캡처 시 blur 영역을 재합성하며 긴 페이지(/stocks 138·/disclosures)·양 뷰포트에서 30s까지 멈춤. Playwright의 `animations:'disabled'`도 backdrop-filter는 끄지 못함.
+- Fix(`src/app/layout.tsx`, 기존 webdriver 가드 확장): `navigator.webdriver`일 때 head에 `<style>` 주입 — `*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;transition:none!important;}` 후 `return`(CDN 폰트 생략은 그대로 유지). blur·무한 애니메이션(animate-pulse/spin)·body color transition을 자동화에서만 무력화 → 캡처 즉시 안정. **실사용자(webdriver 미설정)는 blur·폰트·애니메이션 100% 그대로.** 데이터/점수/인증/manifest/PWA/i18n 무변경, 신규 npm 0.
+- Passed: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·전 라우트, BUILD_EXIT=0) · `git diff --check` clean · layout.tsx U+FFFD 0·Korean intact. 로컬 prod 포트 47733(`next start` 리스너 PID 35224만 taskkill, **4310 PID 37328 무중단**): 과제 15개 라우트(`/ /stocks /stock/034730 /watchlist /about /status /disclosures /backtest /pricing /compare /history /guide/metrics /terms /privacy /login`) 전부 200, 서빙 HTML(`/`)에 `backdrop-filter:none!important` 가드 존재.
+- Residual(운영자): 가드는 자동화 한정 시각 변화(헤더 blur 제거)일 뿐 캡처 정상화. 영구적으로 자동화 의존을 더 줄이려면 backdrop-filter를 전역적으로 줄이거나 Pretendard self-host 고려 — 발명/디자인 변경이라 미진행. 푸시/릴리스 미수행(로컬 커밋만).

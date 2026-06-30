@@ -82,7 +82,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "saved_filter_match",
     label: "저장 필터 조건 충족 종목 발생",
     description:
-      "종목 탐색에서 저장한 조건에 새 종목이 들어오면 이메일로 알려드려요. 저장한 탐색 기준을 다시 맞춰볼 필요 없이 변화만 확인합니다.",
+      "종목 탐색에서 저장한 조건에 새 종목이 들어오면 알려드려요(현재는 임시로 이메일 발송, 카카오톡 알림은 준비 중). 저장한 탐색 기준을 다시 맞춰볼 필요 없이 변화만 확인합니다.",
     category: "필터",
     status: "live",
     connectsTo: "저장 필터",
