@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation";
 import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
-import { StockDisclosures } from "@/components/StockDisclosures";
+import { StockDisclosuresLazy } from "@/components/StockDisclosuresLazy";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
-import { StockEventTimeline } from "@/components/StockEventTimeline";
+import { StockEventTimelineLazy } from "@/components/StockEventTimelineLazy";
 import { getScoreHistory } from "@/lib/scoreHistory";
-import { StockPriceChart } from "@/components/StockPriceChart";
+import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
@@ -301,7 +301,7 @@ export default async function StockDetailPage({ params }: PageProps) {
               <>
       {/* 주가 차트 (가격 데이터 있을 때만) */}
       {priceHistory && priceHistory.points.length >= 2 ? (
-        <StockPriceChart ticker={s.ticker} name={s.name} points={priceHistory.points} />
+        <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
       ) : null}
 
       {/* 자체 지표 4종 (점수 카드) */}
@@ -378,7 +378,7 @@ export default async function StockDetailPage({ params }: PageProps) {
             labelKey: "disclosures",
             content: (
               <>
-      <section><StockDisclosures ticker={s.ticker} /></section>              </>
+      <section><StockDisclosuresLazy ticker={s.ticker} /></section>              </>
             ),
           },
           {
@@ -394,7 +394,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       {scoreHistory.length > 0 ? (
         <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
       ) : null}
-      <section><StockEventTimeline ticker={s.ticker} scores={scoreHistory} /></section>
+      <section><StockEventTimelineLazy ticker={s.ticker} scores={scoreHistory} /></section>
               </>
             ),
           },

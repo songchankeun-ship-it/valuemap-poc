@@ -42,6 +42,27 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 118 — 안전 1차 성능/속도 패스 (측정 + 종목 상세 below-fold 클라 위젯 지연 로딩) (2026-06-30, Claude)
+- **범위**: 무료 베타 공개 표면을 **시각/동작/데이터/점수/인증/라우트 의미 무변경**으로 유지하며 ORNScore 체감·로드 속도 1차 개선. 신규 npm 0, 점수식·`stocks.json`·인증/env/결제 무변경, AI 숨김·한국어 전용·138종목·비자문 불변식 유지. 변경 = **종목 상세 1개 라우트의 클라이언트 번들만**(page.tsx 1 수정 + 지연 래퍼 3 신규).
+- **Phase 1 측정(baseline, `npm run build` 라우트 표 · 10개 과제 라우트 First Load JS)**: `/` 118kB · `/stocks` 183kB · `/stock/[ticker]` **191kB**(페이지별 32kB·**가장 큼**) · `/login` 170kB · `/pricing` 102kB · `/status` 133kB · `/disclosures` 179kB · `/backtest` 128kB · `/watchlist` 168kB · `/compare` 167kB · 공유 87.2kB. **최대 페이지 청크 = `app/stock/[ticker]/page.js` 113,420 B(raw)**(`.next/static/chunks` 실측). 공유 최대 청크는 supabase 포함 699(189KB)·framework 53.6KB.
+- **Phase 1 HTTP TTFB(로컬 prod 4431, curl, 3샘플 median)**: 8개 라우트 **20~64ms**. **단 `/stock/034730`·`/watchlist`는 ~7,080ms** — 둘 다 서버에서 Supabase `daily_scores` 조회(`getScoreHistory`·`getScoreChangesBatch`, `@supabase/supabase-js`). **이 7초는 로컬 머신→원격 Supabase 왕복 지연(환경 아티팩트)**: 프로덕션(Vercel·Supabase 동위치)에서는 빠르고 `/stock/[ticker]`는 SSG라 운영 시 프리렌더 HTML 서빙(라이브 쿼리 아님). 코드 결함 아님 → 데이터 패칭 변경은 동작 리스크라 **후속(follow-up)으로 문서화**.
+- **Phase 2 적용된 안전 개선**: 종목 상세에서 **첫 페인트에 불필요한 클라 위젯 3종을 `next/dynamic({ ssr:false })`로 지연 로딩** → 초기 번들에서 분리, 동일 높이 스켈레톤으로 CLS·SSR 텍스트 보존.
+  - `src/components/StockPriceChartLazy.tsx`(신규) — 인터랙티브 SVG 가격 차트(hover/range 상태) 래퍼. 히어로 아래·접힘선 위치.
+  - `src/components/StockDisclosuresLazy.tsx`(신규) — 공시 탭(기본 탭 아님, `useEffect`로 클라 패칭) 래퍼.
+  - `src/components/StockEventTimelineLazy.tsx`(신규) — 근거 탭(기본 탭 아님, 클라 패칭) 래퍼.
+  - `src/app/stock/[ticker]/page.tsx` — 위 3개를 lazy 래퍼로 교체(props/문구/조건/데이터 동일). `ssr:false`는 서버 컴포넌트에서 직접 못 써 클라 래퍼로 분리.
+  - **`ScoreHistoryChart`는 일부러 미변경** — `"use client"` 아님(순수 서버 컴포넌트, 클라 JS 0) → 지연 로딩 이득 없음(오히려 클라화 손해). 플래너의 "차트 2종" 중 실제 JS 비용은 `StockPriceChart`뿐.
+  - **lucide-react `optimizePackageImports`는 추가했다가 되돌림** — Next 14.2 기본 `optimizePackageImports`에 lucide-react가 **이미 포함**되어 라우트 표가 **바이트 단위 동일**(no-op). 불필요한 experimental 블록 회피로 diff 최소화(`next.config.mjs` 원본 그대로).
+- **Phase 2 before→after(빌드 라우트 표)**: `/stock/[ticker]` First Load **191kB → 189kB**, 페이지별 **32kB → 29.4kB**. 나머지 9개 라우트 무변경(예상대로 — 변경이 상세 라우트 한정). **raw 페이지 청크 113,420 B → 94,650 B(−18.8KB, ~16.5%↓)**, 분리된 지연 청크 3개 생성(차트 6,079B·공시 6,888B·타임라인 3,254B ≈ 16.2KB가 첫 로드에서 빠져 탭/하이드레이션 후 로드).
+- **TTFB after(동일 측정)**: 8개 라우트 여전히 ~37~69ms, `/stock`·`/watchlist` 여전히 ~7,080ms — **변동 없음이 정상**: TTFB는 서버 응답 시간이라 클라 번들 축소가 영향 주지 않음(개선은 다운로드/파싱/실행하는 JS 감소=체감 로드). 두 라우트의 7초는 위 Supabase 환경 아티팩트로 불변.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG 유지·라우트 의미 무변경) · `git diff --check` 0 · 변경/신규 파일 U+FFFD 0. 로컬 prod **4431**(리스너 PID만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 10라우트 전부 200. `/stock/034730` SSR(ko) — 추세/거래활성도/밸류/위험조정·결론 히어로 렌더, **차트 스켈레톤(`aria-busy`+"주가 차트")이 SSR HTML에 존재**(빈 공백 없음·CLS 가드), 제품 불변식 유지(AI 종합 분석/분석 기록 0·LanguageSwitcher 0·138 노출).
+- **이연(follow-up, 동작 리스크라 이번 미적용)**:
+  1. **`/watchlist` 서버 Supabase 배치 쿼리(138 ticker)** — 매 요청 `getScoreChangesBatch`. 프로덕션은 빠르나 캐시/타임아웃 가드 또는 클라 이행 검토(데이터 패칭 변경=동작 리스크).
+  2. **`/stock/[ticker]` `getScoreHistory`** — SSG라 운영 영향 작지만 빌드 시간/로컬 측정 지연 원인. 타임아웃·재시도 가드는 동작 변경이라 보류.
+  3. **`GlobalSearch` props** — 헤더가 매 페이지 138종목(`{ticker,name,themes}`)+테마를 직렬화 전달. `themes`는 `themeHint`/테마 검색에 실사용 중이라 축소는 검색 동작 리스크 → 보류.
+  4. **추가 below-fold 위젯**(예: `/compare`·`/disclosures`의 무거운 클라 컴포넌트) 동일 패턴 지연 로딩 — 본 패스는 최대 라우트(상세)만.
+- **오너 요약**: ✅ 안전 1차 성능 패스 완료 — 최대 라우트(종목 상세) 초기 클라 JS **−18.8KB raw / First Load 191→189kB**, 시각·동작·데이터·점수·인증·라우트 의미·불변식 무변경. 외부 사이트(Vercel) 반영은 별도 오너 단계. 로컬 커밋만(푸시/릴리스 미수행).
+
 ### Task 116 — `ornscore_reaudit_2026-06-29.md` 잔여 스윕 (무료 베타 정리 이후 재검수, 잔여 1건 수정) (2026-06-30, Claude)
 - **범위**: 데스크톱 `ornscore_reaudit_2026-06-29.md`(P0 2·P1 8·P2 6)를 현행 코드와 대조하는 잔여 스윕. 이 파일은 task 113~115(무료 베타 전환)보다 이전 작성본 — 항목 대부분 이미 task 99~102·108~110에서 마감. **현행 앱에서 아직 참인 항목만** 소규모 저위험 패치. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
 - **유일 수정(아직 참이던 P0-1 잔재)** `src/lib/copy/stocks.ts` `topCapNote`(ko+en): `/stocks` 결과>100(기본 123) 푸터의 `"조건 충족 N개 중 상위 100개 표시"` — task 109가 중립화한 캐논 용어("현재 표시"/"기본 품질 필터")와 어긋나 **사용자 조건이 없는 기본 화면에서 "조건 충족"이 오해 유발**(P0-1 원지적). ko `"현재 표시 대상 N개 중 상위 100개만 표시 · …"`, en `matches`→`results`로 통일. 카운트/캡/정렬 무변경.

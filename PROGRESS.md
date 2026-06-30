@@ -1690,3 +1690,20 @@
 - **Fix(`src/app/layout.tsx`)**: webdriver 가드 확장 — 자동화에서만 `<style>` 주입으로 `backdrop-filter/animation/transition` 무력화 후 `return`(CDN 폰트 생략 유지). 실사용자 시각 무변경, 데이터/점수/인증/PWA 무변경, 신규 deps 0.
 - **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG) · `git diff --check` clean · layout.tsx U+FFFD 0. 포트 47733 prod 스모크: 15개 라우트(/ /stocks /stock/034730 /watchlist /about /status /disclosures /backtest /pricing /compare /history /guide/metrics /terms /privacy /login) 전부 200, `/` HTML에 `backdrop-filter:none!important` 가드 확인(리스너 PID 35224만 종료, 4310 PID 37328 무중단).
 - **잔여/다음 소유자**: 운영자 — (선택) backdrop-filter 전역 경량화 또는 Pretendard self-host. 푸시/릴리스 미수행(로컬 커밋만).
+
+
+## 2026-06-30 · [claude] Task 118 — OrnScore 안전 1차 성능/속도 패스 (측정 + 종목 상세 지연 로딩)
+- **Scope**: 무료 베타 공개 표면을 시각/동작/데이터/점수/인증/라우트 의미 무변경으로 유지하며 체감·로드 속도 1차 개선. 신규 npm 0, 점수식·stocks.json·인증/env/결제 무변경, AI 숨김·한국어 전용·138종목·비자문 불변식 유지. 변경 = 종목 상세 1개 라우트의 클라이언트 번들만(page.tsx 수정 + 지연 래퍼 3 신규). 브랜치 ai-center/task-118-ornscore-safe-performance-speed-pass(클린 시작).
+- **Phase 1 baseline 라우트 표(First Load JS, 10개 과제 라우트)**: / 118kB · /stocks 183kB · /stock/[ticker] **191kB(페이지별 32kB·최대)** · /login 170kB · /pricing 102kB · /status 133kB · /disclosures 179kB · /backtest 128kB · /watchlist 168kB · /compare 167kB · 공유 87.2kB. 최대 페이지 청크 raw = app/stock/[ticker]/page.js 113,420 B.
+- **Phase 1 TTFB(로컬 prod 4431, curl 3샘플 median)**: 8개 라우트 20~64ms. /stock/034730·/watchlist만 ~7,080ms — 둘 다 서버에서 Supabase daily_scores 조회(getScoreHistory·getScoreChangesBatch). 7초는 로컬→원격 Supabase 왕복 지연(환경 아티팩트): 프로덕션은 Supabase 동위치라 빠르고 /stock/[ticker]는 SSG라 프리렌더 서빙. 코드 결함 아님 → 데이터 패칭 변경은 동작 리스크라 follow-up 문서화.
+- **Phase 2 적용(안전)**: 종목 상세 below-fold 클라 위젯 3종을 next/dynamic({ssr:false})로 지연 로딩(동일 높이 스켈레톤·CLS/SSR 텍스트 보존):
+  - StockPriceChartLazy.tsx(신규) — 인터랙티브 SVG 가격 차트(hover/range).
+  - StockDisclosuresLazy.tsx(신규) — 공시 탭(기본 탭 아님·클라 패칭).
+  - StockEventTimelineLazy.tsx(신규) — 근거 탭(기본 탭 아님·클라 패칭).
+  - stock/[ticker]/page.tsx — 위 3개 lazy 래퍼로 교체(props/문구/조건/데이터 동일).
+  - ScoreHistoryChart 미변경(순수 서버 컴포넌트·클라 JS 0 → 지연 이득 없음). lucide-react optimizePackageImports는 Next 14.2 기본 포함이라 no-op(라우트 표 바이트 동일) → 되돌림(next.config.mjs 원본).
+- **Phase 2 before→after**: /stock/[ticker] First Load 191kB→189kB, 페이지별 32kB→29.4kB. 나머지 9개 무변경(상세 라우트 한정 변경). raw 페이지 청크 113,420 B→94,650 B(−18.8KB, ~16.5%↓). 분리 지연 청크 3개 생성(차트 6,079B·공시 6,888B·타임라인 3,254B). TTFB는 변동 없음이 정상(서버 시간이라 클라 번들 축소 무관).
+- **Gates**: tsc --noEmit 0 · npm run build 0(138 SSG·라우트 의미 무변경) · git diff --check 0 · 변경/신규 파일 U+FFFD 0. app:check 생략(셸/PWA/auth/nav 무변경).
+- **Smoke(로컬 prod 4431, 리스너 PID만 taskkill·AI Center 4310 PID 37328 무중단 확인)**: 10개 과제 라우트 전부 200. /stock/034730 SSR(ko) — 추세/거래활성도/밸류/위험조정·결론 히어로 렌더, 차트 스켈레톤(aria-busy+"주가 차트")이 SSR HTML에 존재(CLS 가드), 불변식 유지(AI 종합 분석/분석 기록 0·LanguageSwitcher 0·138 노출).
+- **Follow-up(동작 리스크라 미적용)**: (1) /watchlist 서버 Supabase 138-ticker 배치 쿼리 캐시/타임아웃/클라 이행 검토 (2) /stock getScoreHistory 타임아웃 가드 (3) GlobalSearch props themes 축소(검색 동작 의존이라 보류) (4) /compare·/disclosures 등 추가 below-fold 위젯 동일 패턴 지연.
+- **다음 소유자**: 운영자/제품 — 외부 사이트(Vercel) 반영은 별도 단계. 푸시/릴리스 미수행(로컬 커밋만).
