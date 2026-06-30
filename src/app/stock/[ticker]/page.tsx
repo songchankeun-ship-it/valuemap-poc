@@ -8,7 +8,7 @@ import { RecentViewTracker } from "@/components/RecentViewTracker";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { StockEventTimelineLazy } from "@/components/StockEventTimelineLazy";
-import { getScoreHistory } from "@/lib/scoreHistory";
+import { getScoreHistory, type ScorePoint } from "@/lib/scoreHistory";
 import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { BeginnerReading } from "@/components/BeginnerReading";
@@ -35,6 +35,18 @@ import {
 } from "@/components/stock/StockDetailIntro";
 
 export const revalidate = 3600;
+
+/** 서버 SSR 데이터 호출이 렌더를 막지 않도록 짧은 타임아웃과 경쟁시키고, 초과 시
+ *  폴백으로 넘어간다(today/page.tsx 와 동일 패턴). 점수 히스토리는 기본 탭이 아닌
+ *  '근거' 탭의 보조 데이터라, 원격 조회가 멈추면 차트/타임라인만 빈 상태로 graceful
+ *  degrade 하고 결론·지표·재무·공시는 영향받지 않는다. 정상(특히 캐시 적중) 시에는
+ *  타임아웃 한참 전에 반환되어 동작 무변경. */
+async function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p.catch(() => fallback),
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
 
 // 138개 종목 페이지를 빌드 시 전부 정적 생성 → 배포마다 전체 갱신(구버전 캐시 잔존 방지).
 export function generateStaticParams() {
@@ -110,7 +122,10 @@ export default async function StockDetailPage({ params }: PageProps) {
   const composite = Math.round(compositeOf(s));
   const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
   const [scoreHistory, priceHistory] = await Promise.all([
-    getScoreHistory(ticker, 30),
+    // 유일한 요청 시점 원격 호출(Supabase daily_scores). 캐시 적중 시 즉시 반환되고,
+    // 원격이 느리거나 멈추면 4초 후 빈 배열로 떨어져 렌더(및 빌드/ISR 재생성)가 막히지
+    // 않게 가드한다. 프로덕션(동위치 Supabase)에서는 4초 한참 전에 반환되어 동작 무변경.
+    withTimeout(getScoreHistory(ticker, 30), 4000, [] as ScorePoint[]),
     getPriceHistory(ticker),
   ]);
 
