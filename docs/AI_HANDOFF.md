@@ -42,6 +42,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 120 — 성능 가드레일 (perf-check 타이밍 스크립트 + 예산/경고 임계 + 측정 체크리스트) (2026-06-30, Claude)
+- **범위**: task 118(클라 번들)·119(서버 TTFB/원격 지연)의 성능 발견을 **가드레일로 고정** — 향후 작업이 핵심 페이지를 다시 느리게 만들지 않도록 경량 측정 도구·문서화. 점수식·`stocks.json`·인증/env/스키마/결제 무변경, 신규 npm 0(Node 내장만), 시각/동작/라우트 무변경, 불변식 유지. 변경 **4파일**(`scripts/perf-check.mjs` 신규·`package.json` 1줄·PROGRESS·AI_HANDOFF).
+- **세 관심사 분리(가드레일 핵심)**: (1) **클라 번들 크기** = `npm run build` 라우트 표 First Load JS(task 118: `/stock/[ticker]` 191→189kB·최대 라우트) — 스크립트 미측정. (2) **서버 TTFB** = 응답 헤더까지 시간(스크립트 측정). (3) **원격 데이터 지연** = Category-B−Category-A TTFB 차이(task 119: 종목상세 요청 시점 Supabase `daily_scores` 왕복; 무료 티어 연결 고정비 = 환경 아티팩트, 프로덕션선 작음). 원인·해결책이 달라 별개 추적.
+- **신규 `scripts/perf-check.mjs`**(ESM·ASCII·Node 내장 `fetch`+`performance.now()`, `check-app-packaging.mjs` 스타일): **이미 떠 있는 로컬 prod 서버만 타이밍**(기동/종료 안 함). `--base`(또는 `PERF_BASE_URL`, 기본 `http://localhost:4452`)·`--samples`(기본 3). 11개 핵심 라우트의 라우트별 **median TTFB·총 다운로드**를 표로 출력, **항상 exit 0**(절대값은 PC/네트워크 의존이라 비차단), 복붙용 baseline 블록 출력.
+- **소프트 예산/경고**: Category A(대조/빠름: `/`·`/stocks`·`/status`·`/pricing`·`/login`·`/disclosures`·`/backtest`·`/compare`) **≤ 800ms** 초과 WARN. Category B(원격 데이터: `/stock/034730`·`/stock/032830`·`/watchlist`) **≤ 9000ms** 초과 WARN — task-119 타임아웃이 `/stock/*`를 ~4–4.5s로 캡한다는 주석 포함. **상대 회귀 우선**: PROGRESS.md baseline 대비 **>50%(또는 Category-A >300ms)** 증가 라우트 의심 — 스크립트가 명시 출력.
+- **`package.json`**: `scripts`에 `"perf:check": "node scripts/perf-check.mjs"` 1줄만. `dependencies`/`devDependencies` 바이트 동일, lockfile·node_modules 무변경.
+- **반복 체크리스트**(스크립트 없이도): `npm run build` → **4310 아닌 고포트** `npx next start -p 4452` → `node scripts/perf-check.mjs --base http://localhost:4452`(또는 `npm run perf:check -- --base http://localhost:4452`) → median 표를 새 baseline으로 PROGRESS.md 기록 → **그 리스너만** `netstat -ano | findstr :4452` → `taskkill /PID <pid> /F`, **4310 LISTENING 확인**.
+- **이번 실행 baseline**(로컬 prod 4452, 3샘플 median TTFB): `/`=84ms · `/stocks`=72ms · `/stock/034730`=**4077ms** · `/stock/032830`=**4068ms** · `/login`=43ms · `/pricing`=42ms · `/status`=41ms · `/disclosures`=65ms · `/backtest`=54ms · `/watchlist`=**7076ms** · `/compare`=56ms. 전 라우트 200, A 8종 ≤800ms, B 가드 상한 정합, 경고 0.
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·라우트 표 무변경) · `git diff --check` 0 · 변경 4파일 U+FFFD 0(Korean intact)·신규 의존성 0. 가드레일 end-to-end 1회 실행 성공. 로컬 prod **4452**(리스너 PID 28560만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
 ### Task 119 — 종목 상세 TTFB/서버 지연 안전 개선 (요청 시점 원격 Supabase 호출 타임아웃 가드 + 읽기 전용 캐시) (2026-06-30, Claude)
 - **범위**: task 118 후속 — `/stock/[ticker]` 의 **서버 데이터 패칭·원격 Supabase 왕복 비용**에 집중(118은 클라 번들 축소). 시각/동작/데이터/점수/인증/env/스키마 무변경, 신규 npm 0, 무료 베타·한국어 전용·138종목·비자문·AI 비홍보 불변식 유지. 변경 **2파일**(`src/lib/scoreHistory.ts`·`src/app/stock/[ticker]/page.tsx`)+docs.
 - **측정 baseline(로컬 prod 4441, curl, 3샘플 median TTFB)**: `/stock/034730` **7.12s** · `/stock/032830` **7.10s** · `/` 48ms · `/stocks` 51ms · `/status` 28ms. 대조 3종은 빠르고 종목상세 2종만 ~7.1s → 지연원은 렌더 CPU·클라 번들이 아니라 **서버의 원격 Supabase 호출**.
