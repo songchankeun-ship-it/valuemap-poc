@@ -1,5 +1,27 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-06-30 · [claude] task 116 — `ornscore_reaudit_2026-06-29.md` 잔여 스윕 (무료 베타 정리 이후 재검수 · 잔여 1건 보수 수정)
+- **범위/판단**: 데스크톱 `ornscore_reaudit_2026-06-29.md`(P0 2 · P1 8 · P2 6 + 페이지별 메모)를 **현재 코드와 대조**하는 잔여 스윕. 이 파일은 task 113~115(무료 베타 전환)보다 **이전** 작성본 — 항목 대부분이 이미 task 99~102(원본 리뷰)·108~110(final_check 변형)에서 마감됨. 옛 권고 맹목 재실행 금지, **현행 앱에서 아직 참인 항목만** 소규모 저위험 패치. 표시/문구만(점수식·`stocks.json`·인증·cron·`features.ts`·manifest·라우트 무변경, 신규 npm 0, 매수/매도/추천 0). 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(아직 참이던 P0-1 잔재)** `src/lib/copy/stocks.ts` `topCapNote`(ko+en): `/stocks` 결과>100일 때(기본 123 포함) 푸터가 `"조건 충족 123개 중 상위 100개 표시…"`로 노출 → task 109가 헤드라인을 `"기본 품질 필터 적용 중: 123개 / 전체 138개"`/`"현재 표시"`로 중립화하며 폐기한 **"조건 충족" 프레이밍이 이 한 줄에만 잔존**(사용자 상세 조건이 없는 기본 화면인데 "조건 충족"이 사용자 조건 충족처럼 읽힘 — P0-1 원지적). 캐논 용어 `현재 표시`에 맞춰 ko `"현재 표시 대상 N개 중 상위 100개만 표시 · …"`, en `matches`→`results`로 통일. 카운트 로직·100개 캡·정렬 무변경.
+- **이미 마감(현행 코드 재확인, 무변경)**:
+  - **P0-1 `/stocks` 123/138 충돌**(task 99·109) — 헤드라인 `기본 품질 필터 적용 중: 123/138`·전체/기본 토글·현재 조건 3행(기본 품질≠사용자 상세)·`describeAll(shown<total)`. SSR에서 옛 충돌 `조건 충족 123 … 전체 138 보고 있습니다` 0(이번 잔재 1줄만 수정).
+  - **P0-2 `/status` 시간대**(task 99) — `formatScoreTimes()`로 `… KST (장마감 후 배치)` + `원본 배치 … UTC` 노출(`copy/status.ts`·`StatusContent.tsx`).
+  - **P1-1 `/terms` 내부 경로**(task 99) — `docs/legal-ai-commercial-readiness.md` src grep 0.
+  - **P1-2 홈/공시 카운트 라벨**(task 100) — 홈 스냅샷 `DART · 최신 200건 내 · 신호 기준`, `/disclosures` `periodScopeBadge`(선택 기간 전체 아님 · 최신 200건 내).
+  - **P1-3·P1-4 `/watchlist`·`/compare` 빈/실패 상태**(task 100·110) — 인터랙티브 빈 상태 + `<noscript>` fallback(`아직 관심 종목이 없습니다`·`비교할 종목이 아직 없습니다` + 종목 찾기/오늘 후보 CTA).
+  - **P1-5 요금제 표**(task 114로 **무효화**) — `/pricing`은 무료 베타 안내 단일면. 공개 Pro/Premium 비교표·waitlist 0(SSR `기능 비교` ABSENT). 옛 권고(표 재구성)는 현 방향과 상충 → **재도입 금지, 현행 유지**.
+  - **P1-6 홈 후보 순위 vs 상세 전체순위**(task 100·110) — 홈 `rankCriteria`(오늘 후보 목록 내 표시 순서 ≠ 전체 상대순위) + 상세 `priorityScoreCardCopy.scopeNote(n)`.
+  - **P1-7 업종 카운트 본인 포함/제외**(task 102) — `copy/stockDetail.ts` 두 곳 모두 `곳(본인 포함)`로 통일, `본인 제외` src grep 0.
+  - **P1-8 로그인 "1초 만에"**(task 101) — `빠르게 시작`, `1초 만에` src grep 0.
+  - **P2-1 데이터 배지 붙음**(task 102) — `PriorityScoreCard.tsx` `DataStatusPill` 3종 + `sr-only " · "` 분리자.
+  - **P2-2 STEP 붙음**(task 102) — `BeginnerReading.tsx` `<ol class="… list-none">` > `<li>` + STEP n 단일 배지.
+  - **P2-3 공시 CTA/배지 붙음**(task 102) — `DisclosureExplorer.tsx` `notInUniverse` 배지를 액션 줄 밖 `mt-1.5` 별도 div로 분리.
+  - **P2-4·P2-5 백테스트 히트맵 단위·생성일**(task 102·112) — 부제 `각 칸의 숫자는 그 달의 수익률(%)` + 셀 `title`/`aria-label`에 `%`, 상단 `백테스트 기준 … 생성 · 현재 데이터 …과 다름` 배지.
+  - **P2-6 밸류 업종 미보정 경고**(task 102) — `stockDetail.ts` `valueNote` "밸류는 업종 보정 전 전체 풀 기준 · 금융·지주 구조적 고평가 주의".
+- **남은 항목 = 오너/법무/사업 결정**(코드 수정 아님): 도메인 support@/privacy@ 이메일, 위탁사 정책 링크 추가분, SEO 메타/OG/구조화 데이터, 실기기 390px 모바일 육안(Playwright 미구성), 결제/환불/청약철회 약관 확정 — 모두 운영자 게이트. (이 reaudit 파일 범위 내 개발 수정은 잔재 1건으로 종료.)
+- **검증**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG, 전 라우트) · `git diff --check` 0 · 변경 1파일 U+FFFD/모지바케 0(Korean intact). 로컬 prod **4427**(`next start`, 리스너 PID만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 13라우트(`/`·`/stocks`·`/status`·`/terms`·`/watchlist`·`/compare`·`/pricing`·`/login`·`/disclosures`·`/backtest`·`/guide/metrics`·`/stock/034730`·`/stock/032830`) 전부 200. SSR(ko) 단언 14종 통과 — `/stocks` 신규 캡 문구 노출·옛 `조건 충족 123 … 상위 100` 0, 기본 품질 필터 헤드라인 노출 / `/status` KST / `/terms` 내부 경로 0 / `/pricing` 무료 베타·비교표 0 / `/login` 빠르게·1초 0 / 상세 본인 포함·본인 제외 0·AI 종합 분석 0 / `/watchlist`·`/compare` noscript 빈 상태 / 백테스트 % 단위.
+- **오너용 요약**: ✅ `ornscore_reaudit_2026-06-29.md` 잔여 스윕 완료 — P0/P1/P2 **이미 마감 다수 재확인 + 아직 참이던 잔재 1건(`/stocks` 캡 문구 "조건 충족"→"현재 표시")만 보수 수정**. 현행 공개 앱은 무료 베타·한국어 전용·138종목·AI 비홍보·비자문 톤 유지. ⏳ 남은 건 오너/법무/사업(도메인 이메일·SEO·결제 약관·실기기 육안). 외부 사이트(Vercel) 반영은 별도 오너 단계.
+
 ## 2026-06-30 · [claude] task 115 — Free Beta v1 QA pass (공개 표면 정합 검증 + 18라우트 스모크 + 잔여 AI 진입점 1건 수정)
 - **범위/판단**: task 114 공개 표면 정리 이후 **무료 베타 v1 범위 QA**(주로 검증). free beta·한국어 전용·138종목·유료 미제공·투자자문 아님·AI 숨김/비홍보·카카오 알림 로드맵·앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장을 정적 스윕 + SSR(ko) 단언으로 확인. 확인된 **P0/P1 모순 1건만** 보수 수정(표시/내비만, 점수식·`stocks.json`·인증·cron·`features.ts`·manifest·라우트 삭제·신규 npm 0). 변경 **1파일**(+PROGRESS·AI_HANDOFF).
 - **유일 수정(확인된 P1)** `src/components/UserMenu.tsx`: 로그인 시 헤더 계정 드롭다운에 `/history`(AI "분석 기록", `Bot` 아이콘) 링크가 **남아 있어** AI 진입점을 계속 홍보 — task 114가 3개 내비(`Sidebar`·`MobileNav`·`MobileBottomNav`)에서 제거한 것과 불일치(수용 기준 "AI 분석 숨김 또는 비홍보" 위반). task 114와 동일 패턴으로 **링크 + 미사용 `Bot` import 제거**(라우트 `/history`·페이지·`AiAnalysisCard`·`api/ai/*`·`lib/ai*`는 보존 — 직접 접근 가능, 홍보만 제거).

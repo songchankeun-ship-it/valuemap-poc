@@ -110,7 +110,7 @@ export const stocksCopy = {
     viewAll: "전체 종목 보기",
 
     // ── 결과 푸터 ──
-    topCapNote: (n: number) => `조건 충족 ${n}개 중 상위 100개 표시 · 조건을 좁히면 비교하기 쉬워요.`,
+    topCapNote: (n: number) => `현재 표시 대상 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
 
     // ── 상세 필터 패널 ──
     filterDetailTitle: "상세 필터",
@@ -391,7 +391,7 @@ export const stocksCopy = {
     viewAll: "View all stocks",
 
     // ── Results footer ──
-    topCapNote: (n: number) => `Showing the top 100 of ${n} matches · narrow the conditions to compare more easily.`,
+    topCapNote: (n: number) => `Showing the top 100 of ${n} results · narrow the conditions to compare more easily.`,
 
     // ── Detailed filter panel ──
     filterDetailTitle: "Detailed filters",

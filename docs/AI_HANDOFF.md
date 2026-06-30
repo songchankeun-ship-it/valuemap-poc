@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 116 — `ornscore_reaudit_2026-06-29.md` 잔여 스윕 (무료 베타 정리 이후 재검수, 잔여 1건 수정) (2026-06-30, Claude)
+- **범위**: 데스크톱 `ornscore_reaudit_2026-06-29.md`(P0 2·P1 8·P2 6)를 현행 코드와 대조하는 잔여 스윕. 이 파일은 task 113~115(무료 베타 전환)보다 이전 작성본 — 항목 대부분 이미 task 99~102·108~110에서 마감. **현행 앱에서 아직 참인 항목만** 소규모 저위험 패치. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
+- **유일 수정(아직 참이던 P0-1 잔재)** `src/lib/copy/stocks.ts` `topCapNote`(ko+en): `/stocks` 결과>100(기본 123) 푸터의 `"조건 충족 N개 중 상위 100개 표시"` — task 109가 중립화한 캐논 용어("현재 표시"/"기본 품질 필터")와 어긋나 **사용자 조건이 없는 기본 화면에서 "조건 충족"이 오해 유발**(P0-1 원지적). ko `"현재 표시 대상 N개 중 상위 100개만 표시 · …"`, en `matches`→`results`로 통일. 카운트/캡/정렬 무변경.
+- **이미 마감(재확인·무변경)**: P0-1 `/stocks` 123/138 충돌(task 99·109) · P0-2 `/status` KST/UTC(task 99) · P1-1 `/terms` 내부 경로 제거(task 99) · P1-2 홈/공시 카운트 라벨(task 100) · P1-3·4 `/watchlist`·`/compare` 빈/noscript(task 100·110) · **P1-5 요금제 표 → task 114로 무효화**(무료 베타 단일면, 권고 재도입 금지) · P1-6 홈/상세 순위 기준(task 100·110) · P1-7 업종 카운트 "본인 포함" 통일(task 102) · P1-8 로그인 "1초 만에" 제거(task 101) · P2-1 데이터 배지 분리(task 102) · P2-2 STEP ol>li(task 102) · P2-3 공시 CTA/배지 분리(task 102) · P2-4·5 백테스트 % 단위·생성일 배지(task 102·112) · P2-6 밸류 업종 미보정 경고(task 102).
+- **남은 항목 = 오너/법무/사업**(개발 수정 아님): 도메인 support@/privacy@ 이메일, 위탁사 정책 링크, SEO 메타/OG/구조화 데이터, 실기기 390px 육안(Playwright 미구성), 결제/환불/청약철회 약관 확정.
+- **검증**: `tsc` 0 · `build` 0(138 SSG) · `git diff --check` 0 · 변경 1파일 U+FFFD 0. 로컬 prod **4427**(리스너 PID만 `taskkill`·**AI Center 4310 무중단·종료 후 4310 LISTENING(PID 37328) 확인**): 13라우트 전부 200, SSR(ko) 단언 14종 통과(`/stocks` 신규 캡 문구 노출·옛 `조건 충족 123 … 상위 100` 0 외).
+
 ### Task 115 — Free Beta v1 QA pass (공개 표면 정합 검증 + 18라우트 스모크) (2026-06-30, Claude)
 - **범위**: task 114 공개 표면 정리 후 **무료 베타 v1 QA**(주로 검증). free beta·한국어 전용·138종목·유료 미제공·투자자문 아님·AI 숨김/비홍보·카카오/앱스토어 로드맵 한정·로그인=저장/동기화·약관/개인정보 비과장을 정적 스윕 + SSR(ko) 단언으로 확인. 확인된 P0/P1 모순 **1건만** 보수 수정. 변경 **1파일**(+PROGRESS·AI_HANDOFF).
 - **유일 수정(P1)** `src/components/UserMenu.tsx`: 로그인 계정 드롭다운에 `/history`(AI "분석 기록"·`Bot` 아이콘) 링크가 잔존 — task 114가 3개 내비에서 제거한 AI 진입점과 불일치(수용 기준 "AI 숨김/비홍보" 위반). **링크 + 미사용 `Bot` import 제거**(라우트/페이지/AI 코드 보존, 홍보만 제거).
