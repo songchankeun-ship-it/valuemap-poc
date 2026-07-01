@@ -59,6 +59,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
   2. **iOS App Store 래퍼 결정(보류)**: Apple Developer($99/년) + Mac/Xcode 필요. 현재 iOS는 사파리 '홈 화면에 추가'(이번 `appleWebApp` 메타로 standalone·상태바 정상)까지만 지원.
   3. **실기기 standalone QA**(`docs/app-packaging-readiness.md` §4): 설치 아이콘 화질, Kakao/Google/Naver OAuth 왕복 후 앱 복귀, 관심 종목 저장, 오프라인 폴백, 노치 기기에서 하단 내비가 홈 인디케이터를 가리지 않고 본문이 잘리지 않는지 육안 확인(코드 인셋은 반영 완료, 실기기 검증은 운영자 게이트).
 - **재확인**: 스토어 제출 0 · 서비스워커 0 · 유료 플랜 0 · 숨겨진 AI 0 · 외부 대시보드 변경 0. 변경은 전부 로컬 리포·로컬 프리뷰 한정. Vercel 반영은 별도 오너 push 단계.
+- **리뷰 회귀 수정(2026-07-02, 상단 노치 겹침)**: `statusBarStyle:"black-translucent"` + `viewportFit:"cover"`는 상태바/노치 영역까지 콘텐츠를 그리는데, `src/components/AppHeader.tsx`의 `sticky top-0` 상단바가 `env(safe-area-inset-top)`을 예약하지 않아 iOS 설치형 standalone에서 상단바가 상태바에 가려지던 문제. `<header>`에 `pt-[env(safe-area-inset-top)]` 추가 — 헤더 배경/블러가 상태바 영역을 채우고 콘텐츠는 인셋만큼 아래로 내려감. 인셋 0(데스크톱/논노치)에서 픽셀 불변. `scripts/check-app-packaging.mjs`에 `AppHeader.tsx`의 상단 인셋 단언 1건 추가(회귀 방지). `npm run build` 통과, 생성 CSS에 `padding-top:env(safe-area-inset-top)` 방출 확인.
 
 ### Task 125 — OrnScore 성능·신뢰성 패스 (`/watchlist` 타임아웃 가드 + 라우트 로딩 스켈레톤) (2026-07-02, Claude)
 - **범위**: 무료 한국어 베타(138종목)의 체감·로드 속도와 신뢰성 개선. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm **0**. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 변경 **3 소스**(`src/app/watchlist/page.tsx`·`src/app/watchlist/loading.tsx` 신규·`src/app/stock/[ticker]/loading.tsx` 신규) + docs.

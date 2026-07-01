@@ -62,7 +62,7 @@ export async function AppHeader() {
 
   return (
     <>
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
         <div className="px-3 md:px-4 py-2 md:py-2.5 flex items-center gap-2 md:gap-3">
           <MobileNav userEmail={userEmail} />
           <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-52">

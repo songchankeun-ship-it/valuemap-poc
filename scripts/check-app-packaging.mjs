@@ -75,6 +75,9 @@ includes("src/app/layout.tsx", "export const viewport", "Next viewport export");
 includes("src/app/layout.tsx", 'viewportFit: "cover"', "viewport-fit cover for safe-area env()");
 includes("src/app/layout.tsx", "themeColor", "theme-color meta");
 includes("src/app/layout.tsx", "appleWebApp", "iOS appleWebApp standalone config");
+// black-translucent status bar + viewport-fit cover draws content under the notch;
+// the sticky top app bar must reserve env(safe-area-inset-top) or iOS standalone clips it.
+includes("src/components/AppHeader.tsx", "pt-[env(safe-area-inset-top)]", "header top safe-area inset");
 
 includes("src/components/PwaInstallHelper.tsx", "beforeinstallprompt", "install prompt listener");
 includes("src/components/PwaInstallHelper.tsx", "appinstalled", "appinstalled listener");
