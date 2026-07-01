@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### App packaging prep — 스토어 제출 초안/검증 가드 최신화 (2026-07-01, Codex)
+- **상태**: PWA manifest·아이콘·설치 도우미·assetlinks 예시는 기존 작업으로 준비되어 있었고, 이번에는 앱 패키징 문서/자동 체크를 현재 공개 베타 상태와 동기화했다.
+- **수정**: `docs/app-store-submission-pack.md`를 무료 베타·유료 결제 없음·AI 공개 비노출·Kakao/Google/Naver 로그인 활성·현재 privacy 위탁 처리자(Supabase/Vercel/Resend/Kakao/Google/Naver)에 맞춤. `docs/app-packaging-readiness.md`에는 현 추천 경로(PWA 실기기 QA → Android TWA 우선, package id 후보 `com.ornscore.app`)를 추가. `docs/ornscore-owner-final-checklist.md`도 최신화.
+- **가드**: `scripts/check-app-packaging.mjs`가 이제 스토어 제출 초안의 낡은 `Naver는 준비 중`·`AI 분석 기록`·`Anthropic` 문구와 무결제/제공자 정합성을 함께 검사한다.
+- **검증**: `npm run app:check` 0. `WAIT public/.well-known/assetlinks.json` 1건은 정상 — 실제 Android package id와 서명 SHA-256이 생기기 전에는 생성하지 않는다.
+- **다음 게이트**: 오너 실기기 standalone OAuth 복귀 확인 → Android TWA 진행 결정 → Play Console 등록 → 실제 package id/SHA-256 확보 → `npm run app:assetlinks -- --package <패키지명> --fingerprint "<SHA-256>"` 후 배포/재검증.
+
 ### P0 flow feedback closeout — 공개 전 AI/날짜/관심종목 잔여 정리 (2026-07-01, Codex)
 - **입력**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_p0_flow_test_feedback_2026-07-01.md`.
 - **재확인**: 공개 배포본의 주요 목록/정책/로그인/상태 라우트는 `2026.06.30` 기준일을 노출. 종목 상세의 `2026-06-29`는 히스토리 배열의 과거 날짜이고, `/privacy`의 `2026-06-29`는 데이터 기준일이 아닌 정책 최종 갱신일이라 `2026-07-01`로 갱신.

@@ -23,6 +23,7 @@
 - [x] 상용 문구 보수성: `/pricing`(베타→Pro·가격 미확정), `/about`(스토어 미확정·투자 추천 아님), `/terms`·`/privacy`(현재 정책·국외이전 표) — Task 66·70 외, Task 87 재검증(매수/매도/수익보장 문구 0).
 - [x] 패키징 결정 가이드·assetlinks 예시(자리표시자·서빙 안 함) — Task 77.
 - [x] 스토어 등록 초안(Play/App Store 설명, 개인정보 답변, 스크린샷 후보, 리뷰 노트) — `docs/app-store-submission-pack.md`.
+- [x] 앱 패키징 제출 초안 최신화(2026-07-01): 무료 베타·유료 결제 없음·AI 공개 비노출·Kakao/Google/Naver 로그인 활성 상태와 `privacy` 위탁 처리 표를 맞춤. `npm run app:check`가 이 문서 드리프트를 잡는다.
 
 > Task 87 검증 결과: 위 화면 14개 라우트 HTTP 200, `/auth/callback`(code 없음) 307→`auth_callback_no_code`,
 > manifest `application/manifest+json`, Metrics 2.4 일치, 금칙어 0. **상용 문구는 보수적이며 추가 수정 불필요로 확인.**
@@ -67,9 +68,10 @@ AI는 이 항목들을 **만들 수 없다**(실기기·유료 계정·콘솔 �
 ## C. 다음 한 걸음 (권장 순서)
 
 1. **운영자**: B-1 실기기 QA 1회 — 특히 #4 OAuth 복귀(app-roadmap §5-1). 깨지면 콜백 보강을 다음 AI 작업 큐로.
-2. **운영자**: B-2 첫 스토어 결정 → 결정 시 서명 지문·package id 확보 → 예시 assetlinks를 실값으로 치환·배치.
-3. **운영자**: 스토어 등록을 시작하면 `docs/app-store-submission-pack.md`를 콘솔 입력값에 맞게 최종 검토하고 스크린샷을 캡처.
-4. **운영자/법무**: B-3 결제·약관·데이터 법무 확정 → 그 뒤 결제 게이트 연결(별도 AI 작업 가능).
+2. **운영자**: B-2 첫 스토어 결정. 현재 추천은 PWA 실기기 QA 후 Android TWA 우선이며, 패키지명 후보는 `com.ornscore.app`이다.
+3. **운영자**: Android TWA로 결정하면 Play Console 등록 → 실제 package id·서명 SHA-256 지문 확보 → 예시 assetlinks를 실값으로 치환·배치.
+4. **운영자**: 스토어 등록을 시작하면 `docs/app-store-submission-pack.md`를 콘솔 입력값에 맞게 최종 검토하고 스크린샷을 캡처.
+5. **운영자/법무**: B-3 결제·약관·데이터 법무 확정 → 그 뒤 결제 게이트 연결(별도 AI 작업 가능).
 
 > 이 문서는 스토어 출시를 약속하지 않는다. 모든 공개 문구는 PWA "홈 화면에 추가/설치" 표현만 사용하며,
 > App Store·Play 스토어 출시 여부는 실제 스토어 작업 착수 전까지 "미확정"으로만 표기한다.

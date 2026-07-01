@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-01 · [codex] app packaging prep — 스토어 제출 초안/검증 가드 최신화
+- **범위/판단**: 웹 공개 베타가 안정화된 뒤 앱 패키징 준비를 재개. 기존 PWA/아이콘/설치 도우미/assetlinks 예시는 이미 준비돼 있어, 이번 작업은 **스토어 제출 초안과 자동 패키징 체크를 현재 제품 상태에 맞게 동기화**하는 데 집중. 앱 동작·manifest·아이콘·서비스워커 정책·인증 코드·데이터/점수식·결제는 변경하지 않음.
+- **공식 기준 재확인**: Google Play Data safety/리뷰 준비, Apple App Store Connect 스크린샷/App Privacy/App Review 4.2 문서 링크를 `docs/app-store-submission-pack.md`에 2026-07-01 기준으로 명시. iOS 정식 래퍼는 단순 웹 래퍼 반려 리스크가 있어 PWA 실기기 QA → Android TWA 우선이 현재 추천 경로.
+- **수정 1 — 스토어 제출 초안 정합화**: `docs/app-store-submission-pack.md`를 무료 베타·유료 결제 없음·AI 공개 비노출·Kakao/Google/Naver 로그인 활성 상태에 맞춤. `Naver는 준비 중`, AI 분석 기록, Anthropic 위탁 처리자 흔적을 제거하고, Data safety/App Privacy 후보 항목을 공개 `/privacy`와 일치시킴. Android TWA 패키지명 후보 `com.ornscore.app`도 다음 액션에 기록.
+- **수정 2 — 결정 가이드/오너 체크리스트 최신화**: `docs/app-packaging-readiness.md`에 2026-07-01 현재 권장 경로(PWA 실기기 QA 후 Android TWA 우선)를 추가. `docs/ornscore-owner-final-checklist.md`에는 제출 초안 최신화 완료와 남은 운영자 게이트(실기기 OAuth, package id, SHA-256, Play Console)를 분리해 갱신.
+- **수정 3 — 자동 가드 강화**: `scripts/check-app-packaging.mjs`가 manifest/아이콘/PWA만 보지 않고, 스토어 제출 초안의 로그인 제공자·무결제·위탁 처리자·패키지명 후보·낡은 Naver/AI/Anthropic 문구도 검증하도록 확장.
+- **검증**: `npm run app:check` 0. 결과: PWA 아이콘/manifest/설치 도우미/오프라인 페이지/서비스워커 미등록/assetlinks 예시/스토어 제출 초안 전부 OK. `public/.well-known/assetlinks.json`은 실제 Android package id + 서명 SHA-256이 없으므로 `WAIT` 1건이 정상(지금 생성 금지).
+- **다음 오너 게이트**: 실기기 standalone OAuth 복귀 확인 → Android TWA 진행 결정 → Play Console 등록 → 실제 package id·서명 SHA-256 확보 → `npm run app:assetlinks -- --package <패키지명> --fingerprint "<SHA-256>"` → 배포 후 `app:check`.
+
 ## 2026-07-01 · [codex] P0 flow feedback closeout — 공개 전 AI/날짜/관심종목 잔여 정리
 - **입력**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_p0_flow_test_feedback_2026-07-01.md`. 공개 전 P0 실사용 플로우 재검수 결과를 현재 배포본과 대조.
 - **재확인 결과**: 최신 공개 배포 기준 `/`, `/stocks`, `/disclosures`, `/watchlist`, `/compare`, `/pricing`, `/terms`, `/status`, `/login`, `/backtest`는 모두 `2026.06.30` 기준일을 노출. `/stock/034730`·`/stock/000660`의 `2026-06-29`는 가격/점수 히스토리 배열 안의 과거 날짜이고, 현재 종목 상세도 `2026.06.30` 기준일을 함께 노출하므로 기준일 혼재 P0는 최신 배포에서 재현되지 않음. `/privacy`의 `2026-06-29`는 정책 최종 갱신일이라 데이터 기준일이 아니며, 이번 정책 문구 변경으로 `2026-07-01`로 갱신.

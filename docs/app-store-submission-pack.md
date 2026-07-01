@@ -1,12 +1,12 @@
 # 오른스코어 스토어 제출 준비 패키지
 
-마지막 갱신: 2026-06-28
+마지막 갱신: 2026-07-01
 
 ## 목적
 
 이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 확정하지 않는다. 현재 기준의 1순위는 PWA 운영, 다음 후보는 Android TWA다.
 
-공식 참고:
+공식 참고(2026-07-01 재확인):
 
 - [Google Play Console Help — preview assets](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en): feature graphic, screenshots, short description, videos.
 - [Google Play Console Help — Data safety form](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en): 앱 개인정보·보안 관행 제출.
@@ -25,10 +25,10 @@
 - 이용약관: `https://ornscore.com/terms`
 - 문의: `songchankeun@gmail.com`
 - 카테고리 후보: Finance
-- 로그인 방식: 이메일 매직링크, Kakao, Google. Naver는 준비 중으로 비활성.
+- 로그인 방식: 이메일 매직링크, Kakao, Google, Naver.
 - 서비스 성격: 한국 주식 데이터 탐색 도구. 투자 추천, 매수·매도 권유, 투자자문, 거래 체결 기능 없음.
 - 데이터 출처: KRX, DART, Naver Finance, yfinance 등 공개 데이터. 데이터 기준일과 한계는 서비스 내 고지.
-- 결제 상태: 현재 유료 결제 없음. Pro/Premium은 출시 예정·가격 미확정.
+- 결제 상태: 현재 유료 결제 없음. 스토어 등록 문구에는 확정 가격·자동갱신 구독·Pro/Premium 가격을 쓰지 않는다.
 
 ## Google Play 등록 초안
 
@@ -75,12 +75,13 @@
 
 최종 제출 전 Play Console 질문 문항에 맞춰 운영자가 다시 확인해야 한다.
 
-- 수집 데이터 후보: 이메일 주소, 이름/닉네임, 소셜 로그인 식별자, 관심 종목, 비교 목록, AI 분석 기록, 알림 설정, 접속 정보.
+- 수집 데이터 후보: 이메일 주소, 이름/닉네임, 프로필 사진(소셜 제공자가 전달하는 경우), 소셜 로그인 식별자, 관심 종목, 비교 목록, 알림 설정, 접속 정보.
 - 사용 목적: 계정 관리, 로그인, 관심 종목 동기화, 알림 발송, 서비스 품질 개선.
-- 공유/위탁 후보: Supabase, Vercel, Resend, Anthropic, Kakao, Google. `https://ornscore.com/privacy`의 위탁 처리 표와 일치해야 한다.
+- 공유/위탁 후보: Supabase, Vercel, Resend, Kakao, Google, Naver. `https://ornscore.com/privacy`의 위탁 처리 표와 일치해야 한다.
 - 결제 정보: 현재 앱 내 결제 없음.
 - 광고/추적: 현재 광고성 추적 목적 없음으로 운영자가 확인.
-- 삭제 요청: 회원 탈퇴/삭제 요청은 `songchankeun@gmail.com`으로 처리. 추후 콘솔의 데이터 삭제 URL 요구가 있으면 별도 페이지 또는 안내 URL을 추가한다.
+- 삭제 요청: 회원 탈퇴/삭제 요청은 `songchankeun@gmail.com`으로 처리. Play Console이 공개 데이터 삭제 URL을 요구하면 `/privacy` 또는 별도 삭제 안내 URL을 추가한 뒤 제출한다.
+- 주의: 공개 베타에서는 AI 분석 기능을 전면에 노출하지 않는다. AI 기능을 다시 공개하면 `privacy`와 Data safety/App Privacy 답변에 AI 처리 제공자와 보관 항목을 복구해야 한다.
 
 ## App Store 등록 초안
 
@@ -124,12 +125,12 @@
 최종 제출 전 App Store Connect의 질문 문항에 맞춰 운영자가 다시 확인해야 한다.
 
 - Contact Info: 이메일 주소, 이름/닉네임. 로그인·계정 식별·알림 발송 목적.
-- User Content 또는 Other User Content 후보: 관심 종목, 비교 목록, AI 분석 기록, 알림 설정. 사용자 계정 기능 제공 목적.
+- User Content 또는 Other User Content 후보: 관심 종목, 비교 목록, 알림 설정. 사용자 계정 기능 제공 목적.
 - Identifiers: 소셜 로그인 제공자 계정 식별자, Supabase 사용자 ID.
 - Usage Data: 접속 정보와 익명 통계. 서비스 품질 개선 목적.
 - Diagnostics 후보: IP, 브라우저 정보, 오류/접속 로그가 분석 제공자에 남을 수 있음.
 - Tracking: 현재 광고 추적 목적 사용 없음으로 운영자가 확인.
-- Third-party partners: Supabase, Vercel, Resend, Anthropic, Kakao, Google.
+- Third-party partners: Supabase, Vercel, Resend, Kakao, Google, Naver.
 
 ## 스크린샷 제작 지침
 
@@ -144,13 +145,13 @@
 - iOS App Store 래퍼는 단순 웹 래퍼로 보일 경우 4.2 Minimum Functionality 리스크가 있다. iOS 정식 제출은 PWA 홈 화면 추가 운영 이후, 푸시·딥링크·오프라인 같은 네이티브 가치가 필요할 때 검토한다.
 - Android TWA는 `assetlinks.json`의 패키지명·SHA-256 지문이 실제 앱 서명과 일치해야 주소창 없는 앱 경험이 된다.
 - 로그인 기능 심사를 위해 테스트 계정 또는 리뷰용 접근 방법을 준비해야 한다.
-- 개인정보/Data safety 답변은 실제 수집 항목과 외부 처리 제공자 변경 시 즉시 갱신해야 한다.
+- 개인정보/Data safety/App Privacy 답변은 실제 수집 항목과 외부 처리 제공자 변경 시 즉시 갱신해야 한다.
 - 유료 결제가 붙기 전까지 스토어 설명에 Pro/Premium 가격이나 자동갱신 구독을 확정적으로 쓰지 않는다.
 
 ## 다음 액션
 
 1. 운영자가 실기기 PWA 로그인 복귀를 확인한다.
-2. Android를 먼저 갈지 결정한다.
+2. Android TWA를 먼저 갈지 결정한다. 현재 권장 후보 패키지명은 `com.ornscore.app`이지만, Play Console 생성 전 운영자가 최종 확정한다.
 3. Android 진행 시 Play Console 등록, 패키지명, SHA-256 지문을 확보한다.
 4. 확보 후 `npm run app:assetlinks -- --package <패키지명> --fingerprint "<SHA-256>"`를 실행하고 `npm run app:check`를 통과시킨다.
 5. 스크린샷 5~7장을 캡처하고 이 문서의 등록 초안을 최종 문구로 다듬는다.
