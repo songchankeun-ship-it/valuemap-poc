@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### App packaging decision lock — Android TWA 우선 확정 (2026-07-01, Codex)
+- **제품 결정**: 오너와 함께 OrnScore 앱 1차 패키징 경로를 **Android TWA 우선**으로 확정. iOS는 홈 화면 추가 PWA로 유지하고, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
+- **패키지명 기본값**: `com.ornscore.app`. Play Console 앱 생성 직전 운영자가 최종 확인해야 하며, 실제 `public/.well-known/assetlinks.json`은 서명 SHA-256 확보 전까지 생성하지 않는다.
+- **반영 파일**: `docs/app-packaging-readiness.md`, `docs/app-store-submission-pack.md`, `docs/ornscore-owner-final-checklist.md`, `docs/app-roadmap.md`, `scripts/check-app-packaging.mjs`, `PROGRESS.md`.
+- **가드**: `npm run app:check`가 Android TWA 우선 결정·iOS 정식 래퍼 보류·`com.ornscore.app` assetlinks 명령·미결정 문구 재유입을 검사한다.
+- **다음 게이트**: 실기기 standalone OAuth 복귀 확인 → Play Console 등록 → package id 최종 확인·서명 SHA-256 확보 → `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"` → `npm run app:check`.
+
 ### App packaging prep — 스토어 제출 초안/검증 가드 최신화 (2026-07-01, Codex)
 - **상태**: PWA manifest·아이콘·설치 도우미·assetlinks 예시는 기존 작업으로 준비되어 있었고, 이번에는 앱 패키징 문서/자동 체크를 현재 공개 베타 상태와 동기화했다.
 - **수정**: `docs/app-store-submission-pack.md`를 무료 베타·유료 결제 없음·AI 공개 비노출·Kakao/Google/Naver 로그인 활성·현재 privacy 위탁 처리자(Supabase/Vercel/Resend/Kakao/Google/Naver)에 맞춤. `docs/app-packaging-readiness.md`에는 현 추천 경로(PWA 실기기 QA → Android TWA 우선, package id 후보 `com.ornscore.app`)를 추가. `docs/ornscore-owner-final-checklist.md`도 최신화.

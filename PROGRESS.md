@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-01 · [codex] app packaging decision lock — Android TWA 우선 확정
+- **제품 결정**: 오너와 함께 앱 1차 패키징 경로를 **Android TWA 우선**으로 확정. iOS는 당분간 홈 화면 추가 PWA로 유지하고, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다. Capacitor/네이티브 구조 도입은 현재 범위 밖.
+- **패키지명 기본값**: Android TWA package id는 `com.ornscore.app`을 기본값으로 잠금. 단, Play Console 앱 생성 직전 운영자가 최종 확인해야 하며, 실제 `assetlinks.json`은 서명 SHA-256 확보 전까지 생성하지 않는다.
+- **문서 반영**: `docs/app-packaging-readiness.md`의 "권장 경로"를 "제품 결정 — Android TWA 우선"으로 변경, `docs/app-store-submission-pack.md` 다음 액션을 Android TWA 진행 플로우로 고정, `docs/ornscore-owner-final-checklist.md` 첫 스토어 결정 항목을 완료 처리, `docs/app-roadmap.md`에 결정문 추가.
+- **자동 가드**: `scripts/check-app-packaging.mjs`가 Android TWA 우선 결정, iOS 정식 래퍼 보류, `com.ornscore.app` assetlinks 명령, 옛 "Android TWA를 먼저 갈지 결정"류 미결정 문구를 검증하도록 확장.
+- **다음 오너 액션**: 실기기 standalone OAuth 복귀 확인 → Play Console 등록 → `com.ornscore.app` 최종 확인 → 앱 서명 SHA-256 확보 → `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"` → `npm run app:check`.
+
 ## 2026-07-01 · [codex] app packaging prep — 스토어 제출 초안/검증 가드 최신화
 - **범위/판단**: 웹 공개 베타가 안정화된 뒤 앱 패키징 준비를 재개. 기존 PWA/아이콘/설치 도우미/assetlinks 예시는 이미 준비돼 있어, 이번 작업은 **스토어 제출 초안과 자동 패키징 체크를 현재 제품 상태에 맞게 동기화**하는 데 집중. 앱 동작·manifest·아이콘·서비스워커 정책·인증 코드·데이터/점수식·결제는 변경하지 않음.
 - **공식 기준 재확인**: Google Play Data safety/리뷰 준비, Apple App Store Connect 스크린샷/App Privacy/App Review 4.2 문서 링크를 `docs/app-store-submission-pack.md`에 2026-07-01 기준으로 명시. iOS 정식 래퍼는 단순 웹 래퍼 반려 리스크가 있어 PWA 실기기 QA → Android TWA 우선이 현재 추천 경로.

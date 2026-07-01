@@ -27,6 +27,8 @@
 
 권장 순서는 **PWA 우선 → Android TWA → iOS(홈 화면 추가 지금 / App Store 래퍼 나중) → Capacitor(레포가 네이티브 빌드 도구를 받아들일 때만)**.
 
+> 2026-07-01 제품 결정: 1차 스토어 패키징은 **Android TWA 우선**으로 진행한다. iOS는 당분간 홈 화면 추가 PWA로 유지하며, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다. Android 패키지명 기본값은 `com.ornscore.app`이다.
+
 ### 2-1. PWA 우선 (지금 — 추가 비용/계정 0)
 - 현재 경로. 사용자는 ornscore.com 접속 후 "홈 화면에 추가"로 앱처럼 사용.
 - **장점**: 별도 빌드·심사·스토어 계정 불필요. 배포는 기존 Vercel 그대로. 한 코드베이스.

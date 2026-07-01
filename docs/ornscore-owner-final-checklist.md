@@ -24,6 +24,7 @@
 - [x] 패키징 결정 가이드·assetlinks 예시(자리표시자·서빙 안 함) — Task 77.
 - [x] 스토어 등록 초안(Play/App Store 설명, 개인정보 답변, 스크린샷 후보, 리뷰 노트) — `docs/app-store-submission-pack.md`.
 - [x] 앱 패키징 제출 초안 최신화(2026-07-01): 무료 베타·유료 결제 없음·AI 공개 비노출·Kakao/Google/Naver 로그인 활성 상태와 `privacy` 위탁 처리 표를 맞춤. `npm run app:check`가 이 문서 드리프트를 잡는다.
+- [x] 앱 1차 패키징 경로 결정(2026-07-01): **Android TWA 우선**. iOS는 홈 화면 추가 PWA로 유지하고, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토.
 
 > Task 87 검증 결과: 위 화면 14개 라우트 HTTP 200, `/auth/callback`(code 없음) 307→`auth_callback_no_code`,
 > manifest `application/manifest+json`, Metrics 2.4 일치, 금칙어 0. **상용 문구는 보수적이며 추가 수정 불필요로 확인.**
@@ -50,8 +51,8 @@ AI는 이 항목들을 **만들 수 없다**(실기기·유료 계정·콘솔 �
 
 ### B-2. 계정·패키징·서명 — 유료/콘솔 (운영자 결정 + 결제)
 
-- [ ] **첫 스토어 결정**: PWA 유지 / Android TWA / iOS 래퍼 중 무엇을 먼저 갈지 (→ 결정 트리 `app-packaging-readiness.md` §1).
-- [ ] **package id(패키지명)**: TWA/래퍼의 실제 애플리케이션 ID 확정. 현재 예시는 자리표시자 `com.example.ornscore` (`docs/templates/assetlinks.example.json`) — **실값으로 교체 필요**.
+- [x] **첫 스토어 결정**: Android TWA 우선. iOS 정식 래퍼는 보류.
+- [ ] **package id(패키지명)**: 기본값은 `com.ornscore.app`. Play Console 앱 생성 직전 운영자가 최종 확인한다. 현재 예시는 자리표시자 `com.example.ornscore` (`docs/templates/assetlinks.example.json`) — **실값으로 교체 필요**.
 - [ ] **서명 SHA-256 지문(signing fingerprint)**: 실제 업로드/앱 서명 키의 SHA-256 지문 확보 → 예시의 `REPLACE_WITH_REAL_SHA256_FINGERPRINT` 교체 → **그 뒤에만** `public/.well-known/assetlinks.json`로 배치(그 전엔 생성 금지). 지문 불일치 시 TWA 주소창 노출, 키 분실 시 업데이트 불가.
 - [ ] **개발자 계정 결제**: Google Play Console $25(1회) / Apple Developer $99(연) — 선택한 스토어에 맞춰.
 - [x] **네이버 로그인 실동작**: 네이버 Developers 앱 + Supabase Custom OAuth2 provider `custom:naver` + Vercel `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` + 공개 웹 로그인 왕복 확인 완료. 남은 것은 실기기 standalone OAuth 복귀 확인.
@@ -68,10 +69,9 @@ AI는 이 항목들을 **만들 수 없다**(실기기·유료 계정·콘솔 �
 ## C. 다음 한 걸음 (권장 순서)
 
 1. **운영자**: B-1 실기기 QA 1회 — 특히 #4 OAuth 복귀(app-roadmap §5-1). 깨지면 콜백 보강을 다음 AI 작업 큐로.
-2. **운영자**: B-2 첫 스토어 결정. 현재 추천은 PWA 실기기 QA 후 Android TWA 우선이며, 패키지명 후보는 `com.ornscore.app`이다.
-3. **운영자**: Android TWA로 결정하면 Play Console 등록 → 실제 package id·서명 SHA-256 지문 확보 → 예시 assetlinks를 실값으로 치환·배치.
-4. **운영자**: 스토어 등록을 시작하면 `docs/app-store-submission-pack.md`를 콘솔 입력값에 맞게 최종 검토하고 스크린샷을 캡처.
-5. **운영자/법무**: B-3 결제·약관·데이터 법무 확정 → 그 뒤 결제 게이트 연결(별도 AI 작업 가능).
+2. **운영자**: Android TWA 진행을 위해 Play Console 등록 → `com.ornscore.app` 최종 확인 → 서명 SHA-256 지문 확보 → 예시 assetlinks를 실값으로 치환·배치.
+3. **운영자**: 스토어 등록을 시작하면 `docs/app-store-submission-pack.md`를 콘솔 입력값에 맞게 최종 검토하고 스크린샷을 캡처.
+4. **운영자/법무**: B-3 결제·약관·데이터 법무 확정 → 그 뒤 결제 게이트 연결(별도 AI 작업 가능).
 
 > 이 문서는 스토어 출시를 약속하지 않는다. 모든 공개 문구는 PWA "홈 화면에 추가/설치" 표현만 사용하며,
 > App Store·Play 스토어 출시 여부는 실제 스토어 작업 착수 전까지 "미확정"으로만 표기한다.

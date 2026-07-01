@@ -4,7 +4,7 @@
 
 ## 목적
 
-이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 확정하지 않는다. 현재 기준의 1순위는 PWA 운영, 다음 후보는 Android TWA다.
+이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 공개 약속하지 않는다. 2026-07-01 제품 결정 기준으로 1차 스토어 경로는 **Android TWA**이며, iOS 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
 
 공식 참고(2026-07-01 재확인):
 
@@ -142,7 +142,7 @@
 
 ## 제출 전 리스크 점검
 
-- iOS App Store 래퍼는 단순 웹 래퍼로 보일 경우 4.2 Minimum Functionality 리스크가 있다. iOS 정식 제출은 PWA 홈 화면 추가 운영 이후, 푸시·딥링크·오프라인 같은 네이티브 가치가 필요할 때 검토한다.
+- iOS App Store 래퍼는 단순 웹 래퍼로 보일 경우 4.2 Minimum Functionality 리스크가 있다. iOS 정식 제출은 Android TWA와 실사용 피드백 이후, 푸시·딥링크·오프라인 같은 네이티브 가치가 필요할 때 검토한다.
 - Android TWA는 `assetlinks.json`의 패키지명·SHA-256 지문이 실제 앱 서명과 일치해야 주소창 없는 앱 경험이 된다.
 - 로그인 기능 심사를 위해 테스트 계정 또는 리뷰용 접근 방법을 준비해야 한다.
 - 개인정보/Data safety/App Privacy 답변은 실제 수집 항목과 외부 처리 제공자 변경 시 즉시 갱신해야 한다.
@@ -151,7 +151,7 @@
 ## 다음 액션
 
 1. 운영자가 실기기 PWA 로그인 복귀를 확인한다.
-2. Android TWA를 먼저 갈지 결정한다. 현재 권장 후보 패키지명은 `com.ornscore.app`이지만, Play Console 생성 전 운영자가 최종 확정한다.
-3. Android 진행 시 Play Console 등록, 패키지명, SHA-256 지문을 확보한다.
-4. 확보 후 `npm run app:assetlinks -- --package <패키지명> --fingerprint "<SHA-256>"`를 실행하고 `npm run app:check`를 통과시킨다.
+2. Android TWA 1차 진행 결정은 완료. 패키지명 기본값은 `com.ornscore.app`이며, Play Console 생성 직전 최종 확인한다.
+3. Play Console 등록, 앱 생성, 서명 SHA-256 지문을 확보한다.
+4. 확보 후 `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"`를 실행하고 `npm run app:check`를 통과시킨다.
 5. 스크린샷 5~7장을 캡처하고 이 문서의 등록 초안을 최종 문구로 다듬는다.

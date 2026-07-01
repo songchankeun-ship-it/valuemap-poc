@@ -102,7 +102,15 @@ includes("docs/app-store-submission-pack.md", "마지막 갱신: 2026-07-01", "c
 includes("docs/app-store-submission-pack.md", "로그인 방식: 이메일 매직링크, Kakao, Google, Naver.", "active auth providers in store pack");
 includes("docs/app-store-submission-pack.md", "현재 유료 결제 없음", "no in-app payments in store pack");
 includes("docs/app-store-submission-pack.md", "Supabase, Vercel, Resend, Kakao, Google, Naver", "store privacy processors match public policy");
-includes("docs/app-store-submission-pack.md", "com.ornscore.app", "Android package id candidate documented");
+includes("docs/app-packaging-readiness.md", "제품 결정 — Android TWA 우선", "Android TWA first decision locked");
+includes("docs/app-packaging-readiness.md", "iOS 정식 래퍼는 보류", "iOS native wrapper deferred");
+includes("docs/app-store-submission-pack.md", "1차 스토어 경로는 **Android TWA**", "store pack uses Android TWA first path");
+includes("docs/app-store-submission-pack.md", "npm run app:assetlinks -- --package com.ornscore.app", "assetlinks command uses locked package id");
+includes("docs/ornscore-owner-final-checklist.md", "첫 스토어 결정**: Android TWA 우선", "owner checklist first store decision complete");
+includes("docs/app-roadmap.md", "1차 스토어 패키징은 **Android TWA 우선**", "roadmap decision lock");
+includes("docs/app-store-submission-pack.md", "com.ornscore.app", "Android package id documented");
+notIncludes("docs/app-store-submission-pack.md", "Android TWA를 먼저 갈지 결정", "undecided Android TWA wording");
+notIncludes("docs/app-packaging-readiness.md", "Android TWA (다음 후보)", "stale Android TWA candidate heading");
 notIncludes("docs/app-store-submission-pack.md", "Naver는 준비 중", "stale Naver-disabled wording");
 notIncludes("docs/app-store-submission-pack.md", "AI 분석 기록", "stale AI history data item");
 notIncludes("docs/app-store-submission-pack.md", "Anthropic", "stale Anthropic processor");
