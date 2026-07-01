@@ -42,6 +42,23 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 125 — OrnScore 성능·신뢰성 패스 (`/watchlist` 타임아웃 가드 + 라우트 로딩 스켈레톤) (2026-07-02, Claude)
+- **범위**: 무료 한국어 베타(138종목)의 체감·로드 속도와 신뢰성 개선. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm **0**. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 변경 **3 소스**(`src/app/watchlist/page.tsx`·`src/app/watchlist/loading.tsx` 신규·`src/app/stock/[ticker]/loading.tsx` 신규) + docs.
+- **신뢰성 — 마지막 미가드 요청 시점 원격 호출 봉인**: `watchlist/page.tsx`의 `getScoreChangesBatch(...)`가 유일하게 타임아웃 없이 Supabase를 요청 시점에 왕복하던 호출 → `today/page.tsx:45`·`stock/[ticker]/page.tsx:44` 와 동형의 로컬 `withTimeout` 헬퍼로 `withTimeout(getScoreChangesBatch(...), 4000, {} as Record<string, number>)` 래핑. 최악 TTFB를 4초로 캡하고 느리거나 실패 시 빈 델타로 graceful degrade(관심 종목 목록 자체는 무영향). 정상(캐시 적중) 시 미발화 → 동작·데이터 무변경.
+- **체감 성능 — 라우트 로딩 스켈레톤(additive)**: 요청 시점 원격 조회가 있는 두 라우트에 순수 표시용 `loading.tsx` 신규(데이터 패칭·상태·의존성 0). `watchlist/loading.tsx`(헤더 + 5카드 목록 흉내), `stock/[ticker]/loading.tsx`(브레드크럼 + 결론 히어로 + 지표/차트 영역 흉내). 스타일은 `StockPriceChartLazy` 등 기존 스켈레톤과 동일(`animate-pulse`·zinc 톤·다크 변형), 실제 레이아웃 높이 미러링으로 CLS 최소화. 문구는 중립(유료/AI 문구 유출 0). **`today/loading.tsx`는 의도적 미추가** — `/today`는 `revalidate=3600` ISR 캐시라 빠르고 `TodayContent` 레이아웃이 복잡해 스켈레톤 불일치 CLS 리스크가 이득보다 큼.
+- **빈/오류/모바일 6개 플로우 감사**: 홈·`/today`·`/stocks`·종목상세·`/compare`·`/login` — Task 110/124에서 이미 견고(빈 상태·`<noscript>` 폴백·try/catch·390px 가드) 확인, 재현 가능한 신규 갭 없음 → 추가 수정 0(스펙 커버리지 §O·최종점검 P1-1 근거).
+- **step-5 정적화 defer(문서화)**: `/stock/[ticker]`는 이미 `●` SSG(138 경로 프리렌더)이고 task-119 4초 가드로 최악 TTFB가 캡되어 있음. `getScoreHistory`를 클라 lazy fetch로 분리하는 정밀 정적화는 '근거' 탭의 렌더 콘텐츠/타이밍을 바꿀 수 있어(zero-visible-change 보장 불가) **연기**. 잔여 후속 리스크로 기록.
+- **검증 게이트(전부 통과)**:
+  - `npx tsc --noEmit` → **0** · `git diff --check` → CRLF 노이즈만(실오류 0).
+  - `npm run build` → **0**, 라우트 표 무변경(`/stock/[ticker]` 여전히 `●` SSG 138경로 189kB · `/watchlist` `ƒ` 168kB · `loading.tsx`는 라우트 항목 아닌 Suspense 경계만 추가).
+  - `PYTHONUTF8=1 python scripts/verify_metrics.py` → **138종목·오류 0·Metrics 2.4 정합·금칙 브랜드 0**.
+  - `npm run app:check` → **통과**(1 WAIT = `assetlinks.json` 미생성 = 기존 운영자 게이트, 회귀 아님).
+  - **런타임 perf**(로컬 prod **4455**, `npx next start`, `perf:check` 3샘플 median TTFB): 11라우트 전부 200·경고 0. **`/watchlist` total 7076ms(task-120 baseline)→4051ms**(4초 가드 캡), `/stock/034730`·`/stock/032830` ~4.08s(task-119 가드 유지), Category-A 8종 29~54ms(회귀 없음, baseline 41~84ms 대비 오히려 빠름). TTFB 열은 스트리밍 SSR 셸로 전 라우트 29~51ms.
+  - **스모크**(6플로우+watchlist: `/ /login /today /stocks /stock/034730 /compare /watchlist`): 전부 HTTP 200, 치명 마커(Application error/Hydration/TypeError/ReferenceError/Cannot read/Unhandled) **0**. SSR 한국어 정상("관심 종목" 렌더).
+  - 변경 3소스 U+FFFD/모지바케 **0**(Korean intact). 로컬 prod **4455** 리스너(PID 38128)만 `taskkill` · **AI Center 4310 무중단(종료 후 PID 26420 LISTENING 확인)**.
+- **남은 출시 리스크(운영자/후속)**: ① 무료 티어 Supabase 콜드 커넥션 고정비(환경 아티팩트, 프로덕션 동위치선 작음 — 인프라/오너 결정) ② Playwright 시각 게이트 미구성 → 데스크톱/390px 픽셀 육안은 운영자 수동 ③ 실기기 OAuth 왕복(매직링크·카카오)은 운영자 게이트 ④ step-5 `/stock/[ticker]` 완전 정적화(getScoreHistory 클라 분리) 연기 — 근거 탭 타이밍 검증 후 별도 착수 ⑤ 공시 전체 기간 수집·KRX 공식 업종코드 등 큰 데이터 작업은 스펙 커버리지 B/C절 유지.
+- **오너용 요약**: ✅ 성능·신뢰성 패스 — 관심 종목 페이지의 마지막 미가드 원격 호출을 4초 타임아웃으로 봉인(최악 로드 7.1s→4.1s), 느린 두 라우트에 즉시 표시되는 로딩 스켈레톤 추가(체감 속도·CLS 개선). 점수식·데이터·인증·env·스키마·신규 npm 0. 외부 사이트(Vercel) 반영은 별도 오너 push 단계.
+
 ### Task 124 — 무료 베타 출시 준비도 심층 QA + 공시 필터 빈 상태 복구 버튼 (2026-07-02, Claude)
 - **범위**: 무료 한국어 베타(138종목) 공개 표면 9개(홈·로그인·`/today`·`/stocks`·종목상세·비교·공시·모바일·빈/로딩/오류 상태) 심층 출시 준비도 QA. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지 확인 + 발견된 실사용 갭 1건에 안전한 additive 수정. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트·의존성 무변경, 신규 npm 0. 변경 **2 소스**(`src/lib/copy/disclosures.ts`·`src/components/DisclosureExplorer.tsx`)+docs.
 - **불변식 재검증(런타임+grep, 113~123 전환 완료 확인)**:

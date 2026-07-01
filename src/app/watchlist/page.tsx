@@ -18,6 +18,18 @@ interface RawSignal {
   disclosure?: { stock_code?: string };
 }
 
+/** 서버 SSR 원격 호출이 렌더를 막지 않도록 짧은 타임아웃과 경쟁시키고, 초과 시
+ *  폴백으로 넘어간다(today/page.tsx·stock/[ticker]/page.tsx 와 동일 패턴). 점수
+ *  델타는 목록의 보조 표시라, 원격(Supabase) 조회가 느리거나 실패하면 빈 델타로
+ *  graceful degrade 하고 관심 종목 목록 자체는 영향받지 않는다. 정상(특히 캐시
+ *  적중) 시에는 타임아웃 한참 전에 반환되어 동작 무변경. */
+async function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p.catch(() => fallback),
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+
 export default async function WatchlistPage() {
   const allStocks = getAllStocks().map((s) => ({
     ticker: s.ticker,
@@ -48,7 +60,11 @@ export default async function WatchlistPage() {
     themes: s.themes,
   }));
 
-  const tickerToDelta = await getScoreChangesBatch(allStocks.map((s) => s.ticker));
+  const tickerToDelta = await withTimeout(
+    getScoreChangesBatch(allStocks.map((s) => s.ticker)),
+    4000,
+    {} as Record<string, number>,
+  );
 
   // ticker → 최강 신호 매핑
   const signals = ((recentSignalsRaw as { signals?: RawSignal[] }).signals ?? []);

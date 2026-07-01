@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-02 · [claude] Task 125 — 성능·신뢰성 패스 (`/watchlist` 타임아웃 가드 + 라우트 로딩 스켈레톤)
+- **범위**: 무료 한국어 베타(138종목) 체감·로드 속도·신뢰성 개선. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 변경 3 소스(`src/app/watchlist/page.tsx`·`src/app/watchlist/loading.tsx` 신규·`src/app/stock/[ticker]/loading.tsx` 신규)+docs. 브랜치 `ai-center/task-125-ornscore-performance-and-reliability`(클린 시작).
+- **신뢰성**: `watchlist/page.tsx`의 유일한 미가드 요청 시점 원격 호출(`getScoreChangesBatch`)을 `today`/`stock/[ticker]` 동형 `withTimeout(..., 4000, {} as Record<string, number>)`로 봉인 → 최악 TTFB 4초 캡·느리거나 실패 시 빈 델타 graceful degrade(목록 무영향). 정상/캐시 적중 시 미발화(동작 무변경).
+- **체감 성능**: 요청 시점 원격 조회가 있는 2라우트에 순수 표시용 `loading.tsx` 신규(패칭·상태·의존성 0). 기존 스켈레톤 스타일(`animate-pulse`·zinc·다크) + 실 레이아웃 높이 미러링(CLS 최소화). `/today`는 ISR(`revalidate=3600`)+복잡 레이아웃이라 스켈레톤 의도적 미추가.
+- **감사(6플로우)**: 홈·`/today`·`/stocks`·상세·`/compare`·`/login` 빈/오류/모바일 상태 Task 110/124에서 이미 견고 확인, 신규 갭 0 → 수정 없음. step-5 `/stock/[ticker]` 완전 정적화는 근거 탭 타이밍 변경 리스크로 연기(문서화).
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `build` 0(라우트 표 무변경: `/stock/[ticker]` `●` SSG 138경로 189kB·`/watchlist` `ƒ` 168kB·`loading.tsx`=Suspense 경계) · `verify_metrics.py` 138종목·오류 0·Metrics 2.4·금칙 0 · `app:check` 통과(1 WAIT=assetlinks 기존 게이트) · `git diff --check` CRLF만 · 변경 3소스 U+FFFD 0.
+- **런타임 perf**(로컬 prod 4455·`next start`·`perf:check` 3샘플 median TTFB): 11라우트 200·경고 0. **`/watchlist` total 7076ms(task-120 baseline)→4051ms**(4초 가드 캡), `/stock/034730`·`/stock/032830` ~4.08s(task-119 가드), Category-A 8종 29~54ms(회귀 없음). TTFB 열 전 라우트 29~51ms(스트리밍 SSR 셸).
+- **perf baseline**(base=http://localhost:4455, 3 samples, median TTFB): /=51ms · /stocks=54ms · /stock/034730=43ms · /stock/032830=43ms · /login=29ms · /pricing=34ms · /status=45ms · /disclosures=46ms · /backtest=41ms · /watchlist=40ms · /compare=42ms (total: /watchlist=4051ms · /stock/034730=4081ms · /stock/032830=4068ms, 나머지 <65ms).
+- **스모크**: 6플로우+watchlist(`/ /login /today /stocks /stock/034730 /compare /watchlist`) 전부 200·치명 마커 0·SSR 한국어 정상. 로컬 prod 4455 리스너(PID 38128)만 taskkill·**AI Center 4310 무중단(PID 26420 LISTENING 확인)**.
+- **잔여 리스크(운영자/후속)**: 무료 티어 Supabase 콜드 커넥션 고정비(인프라/오너)·Playwright 시각 게이트 미구성(390px 육안 운영자)·실기기 OAuth 왕복(운영자)·step-5 정적화 연기·공시 전체 기간 수집/KRX 업종코드(큰 데이터). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-02 · [claude] Task 124 — 무료 베타 출시 준비도 심층 QA + 공시 필터 빈 상태 복구 버튼
 - **범위**: 무료 한국어 베타(138종목) 공개 표면 9개(홈·로그인·`/today`·`/stocks`·종목상세·비교·공시·모바일·빈/로딩/오류 상태) 심층 출시 준비도 QA. 불변식 유지 확인 + 실사용 갭 1건 안전 additive 수정. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트·의존성 무변경, 신규 npm 0. 변경 2 소스(`src/lib/copy/disclosures.ts`·`src/components/DisclosureExplorer.tsx`)+docs. 브랜치 `ai-center/task-124-ornscore-free-beta-launch-readiness-`(클린 시작).
 - **불변식 재검증(런타임+grep · 113~123 전환 완료 확인)**: `LanguageSwitcher` importer 0(미렌더)·홈 SSR `언어 전환/English` 0 → 한국어 전용. `AiAnalysisCard` 종목상세 미렌더(코드/API 보존, 진입점만 차단)·`/stock/034730` SSR `AI 분석 실행/Anthropic` 0. `/history` 내비 제거·`/pricing` 3개 내비 모두 "더보기(MORE)" 강등. 유료/Pro/Premium/구독/결제 = `pricing/terms/waitlist/features/auth`(내부) 한정·공개 누출 0. `/pricing` SSR "무료 베타" ×7·확정 가격 숫자 0.
