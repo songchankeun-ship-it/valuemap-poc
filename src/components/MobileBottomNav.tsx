@@ -36,7 +36,7 @@ export function MobileBottomNav() {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setMoreOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
           <div
-            className="absolute bottom-14 inset-x-0 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 rounded-t-2xl p-3 grid grid-cols-3 gap-2"
+            className="absolute bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))] inset-x-0 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 rounded-t-2xl p-3 grid grid-cols-3 gap-2"
             onClick={(e) => e.stopPropagation()}
           >
             {MORE.map(({ href, Icon, key }) => (
@@ -54,7 +54,7 @@ export function MobileBottomNav() {
         </div>
       ) : null}
 
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-14 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
         {PRIMARY.map(({ href, Icon, key }) => (
           <Link
             key={href}

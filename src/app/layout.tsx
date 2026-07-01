@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
@@ -45,6 +45,28 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
+  // iOS 홈 화면 설치(standalone) 시 상태바 스타일과 앱 제목. capable=true 로
+  // 사파리 '홈 화면에 추가' 시 전체화면 웹앱처럼 실행되고, black-translucent 로
+  // 노치/상태바 영역까지 콘텐츠가 채워지도록 한다(safe-area 패딩과 함께 사용).
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "오른스코어",
+  },
+};
+
+// Next 14 viewport export. themeColor 는 <meta name="theme-color"> 로 방출되어
+// 설치형 PWA/모바일 브라우저 UI 색을 라이트/다크에 맞춰 준다.
+// viewportFit:"cover" 는 노치 기기에서 env(safe-area-inset-*) 값을 활성화한다.
+// 접근성을 위해 maximumScale/userScalable 은 설정하지 않는다(확대 허용).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
 };
 
 // 사이트 전체 Organization + WebSite 구조화 데이터
@@ -121,7 +143,7 @@ export default function RootLayout({
             <AppHeader />
             <div className="flex">
               <Sidebar />
-              <main className="flex-1 min-w-0 pb-16 lg:pb-0">
+              <main className="flex-1 min-w-0 pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0">
                 <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
                 <AppFooter
                   globalAsOfLabel={dataStatus.globalAsOfLabel}

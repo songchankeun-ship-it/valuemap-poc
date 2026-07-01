@@ -42,6 +42,24 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 126 — OrnScore 앱 패키징 준비 (standalone viewport·theme-color·safe-area·iOS appleWebApp) (2026-07-02, Claude)
+- **범위**: 무료 한국어 베타(138종목)를 다음 앱 패키징 단계로 넘기기 위한 **로컬 안전 개선만**. 스토어 제출·외부 계정/대시보드 변경 **없음**, 서비스워커·유료 플랜·숨겨진 AI 분석 **미도입**. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm **0**. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
+- **변경 3소스 + 1스크립트 + docs**:
+  - `src/app/layout.tsx`: Next 14 **`viewport` export 신규** — `width:device-width, initialScale:1, viewportFit:"cover"`, `themeColor` 라이트/다크 2종(`#ffffff`/`#09090b`). `viewport-fit=cover`로 노치 기기의 `env(safe-area-inset-*)` 활성화. **`maximumScale`/`userScalable:"no"` 미설정**(확대 허용 — 접근성). 기존 `metadata`(icons·openGraph·robots·JSON-LD) 전부 보존한 채 **`appleWebApp` 추가**(`capable:true, statusBarStyle:"black-translucent", title:"오른스코어"`) → iOS 홈 화면 설치 시 상태바·앱 제목 정상.
+  - `src/app/layout.tsx` `<main>`: `pb-16` → `pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0` — 하단 고정 내비가 홈 인디케이터를 가릴 때 본문 하단 여백이 인셋만큼 추가로 확보. `lg:` 데스크톱 레이아웃 픽셀 불변(인셋 0 → 기존과 동일).
+  - `src/components/MobileBottomNav.tsx`: 고정 `<nav>` `h-14` → `h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]` (콘텐츠 높이 3.5rem 유지 + 인셋만큼 아래로 확장, `border-box`라 아이콘 영역 안 줄어듦). "더보기" 시트 `bottom-14` → `bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))]`로 내비 신장분만큼 상향. 인셋 0(데스크톱/논노치) → 모두 기존과 픽셀 동일.
+  - `scripts/check-app-packaging.mjs`: `layout.tsx`에 `export const viewport`·`viewportFit:"cover"`·`themeColor`·`appleWebApp` 존재 단언 4건 추가(오프라인·서버리스, standalone 속성 회귀 방지). `src/app/icon.svg`는 유효한 Next metadata 파일이라 **미변경**.
+- **검증 게이트(전부 통과)**:
+  - `npm run app:check` → **통과**(신규 4단언 OK 포함, 1 WAIT = `assetlinks.json` 미생성 = 기존 운영자 게이트, 회귀 아님).
+  - `npm run build` → **Compiled successfully**, 라우트 표 무변경. 생성 CSS 검증: `calc(3.5rem + env(safe-area-inset-bottom))`·`calc(4rem + env(...))`·`padding-bottom:env(safe-area-inset-bottom)` 모두 **연산자 공백 포함 유효 CSS**로 방출(Tailwind arbitrary value의 `_`→공백 변환 확인).
+  - `npm run lint` → 이 리포는 ESLint 미구성(`next lint`가 대화형 설정 프롬프트, eslint 의존성/config 없음) — **실사용 게이트 아님**. tsc는 build가 커버.
+  - **브라우저 체크**(로컬 prod `npm run start`, `curl`로 SSR head·에셋): `<meta name="theme-color">` 라이트/다크 2종·`viewport ... viewport-fit=cover`(maximum-scale 없음)·`apple-mobile-web-app-capable=yes`·`...-status-bar-style=black-translucent`·`...-title=오른스코어`·`apple-touch-icon`·`manifest` 링크 전부 방출 확인. 에셋 `/manifest.webmanifest /icon.svg /icon-192.png /icon-512.png /icon-512-maskable.png /apple-touch-icon.png` **전부 200(아이콘 404 0)**. 매니페스트 파싱: `display:standalone`, icons `any/192/512/512-maskable`, shortcuts `/today /stocks /disclosures` — **설치 가능**. 로컬 prod 리스너(PID 35364)만 포트 PID로 종료, AI Center 프로세스 무중단.
+- **⚠️ 운영자 조치 필요 (외부 유지 — 코드로 처리 불가)**:
+  1. **Android TWA(1차 경로)**: Google Play Console 등록($25 1회), 패키지 `com.ornscore.app`, **실서명 SHA-256 지문** 확보 → `npm run app:assetlinks -- --package com.ornscore.app --fingerprint <SHA256>`로 `public/.well-known/assetlinks.json` 생성(현재 미생성 = `app:check`의 유일한 WAIT). Bubblewrap/PWABuilder로 TWA 래핑.
+  2. **iOS App Store 래퍼 결정(보류)**: Apple Developer($99/년) + Mac/Xcode 필요. 현재 iOS는 사파리 '홈 화면에 추가'(이번 `appleWebApp` 메타로 standalone·상태바 정상)까지만 지원.
+  3. **실기기 standalone QA**(`docs/app-packaging-readiness.md` §4): 설치 아이콘 화질, Kakao/Google/Naver OAuth 왕복 후 앱 복귀, 관심 종목 저장, 오프라인 폴백, 노치 기기에서 하단 내비가 홈 인디케이터를 가리지 않고 본문이 잘리지 않는지 육안 확인(코드 인셋은 반영 완료, 실기기 검증은 운영자 게이트).
+- **재확인**: 스토어 제출 0 · 서비스워커 0 · 유료 플랜 0 · 숨겨진 AI 0 · 외부 대시보드 변경 0. 변경은 전부 로컬 리포·로컬 프리뷰 한정. Vercel 반영은 별도 오너 push 단계.
+
 ### Task 125 — OrnScore 성능·신뢰성 패스 (`/watchlist` 타임아웃 가드 + 라우트 로딩 스켈레톤) (2026-07-02, Claude)
 - **범위**: 무료 한국어 베타(138종목)의 체감·로드 속도와 신뢰성 개선. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm **0**. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 변경 **3 소스**(`src/app/watchlist/page.tsx`·`src/app/watchlist/loading.tsx` 신규·`src/app/stock/[ticker]/loading.tsx` 신규) + docs.
 - **신뢰성 — 마지막 미가드 요청 시점 원격 호출 봉인**: `watchlist/page.tsx`의 `getScoreChangesBatch(...)`가 유일하게 타임아웃 없이 Supabase를 요청 시점에 왕복하던 호출 → `today/page.tsx:45`·`stock/[ticker]/page.tsx:44` 와 동형의 로컬 `withTimeout` 헬퍼로 `withTimeout(getScoreChangesBatch(...), 4000, {} as Record<string, number>)` 래핑. 최악 TTFB를 4초로 캡하고 느리거나 실패 시 빈 델타로 graceful degrade(관심 종목 목록 자체는 무영향). 정상(캐시 적중) 시 미발화 → 동작·데이터 무변경.

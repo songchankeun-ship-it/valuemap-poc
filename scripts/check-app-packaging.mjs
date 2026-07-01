@@ -70,6 +70,11 @@ notIncludes("src/app/manifest.ts", "?ㅻ", "mojibake app label");
 
 includes("src/app/layout.tsx", "/apple-touch-icon.png", "apple-touch-icon metadata");
 includes("src/app/layout.tsx", "/icon-512.png", "existing JSON-LD/logo-safe icon path");
+// Standalone/PWA packaging properties — keep them from silently regressing.
+includes("src/app/layout.tsx", "export const viewport", "Next viewport export");
+includes("src/app/layout.tsx", 'viewportFit: "cover"', "viewport-fit cover for safe-area env()");
+includes("src/app/layout.tsx", "themeColor", "theme-color meta");
+includes("src/app/layout.tsx", "appleWebApp", "iOS appleWebApp standalone config");
 
 includes("src/components/PwaInstallHelper.tsx", "beforeinstallprompt", "install prompt listener");
 includes("src/components/PwaInstallHelper.tsx", "appinstalled", "appinstalled listener");
