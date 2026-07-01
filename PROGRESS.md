@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-01 · [codex] launch-copy cleanup — 무료 베타 공개 배포 전 유료 문구 잔여 제거
+- **범위/판단**: `main` 배포 후 공개 `ornscore.com` 핵심 라우트(`/`, `/stocks`, `/stock/034730`, `/login`, `/pricing`, `/status`, `/disclosures`, `/compare`, `/watchlist`)가 전부 HTTP 200임을 확인한 뒤, `/pricing` HTML 안에 남아 있던 `유료(Pro·Premium)` 법무 고지 1건을 무료 베타 v1 방향에 맞게 보수 수정. 점수식·`stocks.json`·인증/provider/env/결제·DB 스키마·라우트 구조 무변경, 신규 npm 0.
+- **수정**: `src/lib/copy/pricing.ts` 공통 고지에서 “유료(Pro·Premium) 기능도 …”를 “현재 유료 기능은 제공하지 않으며, 향후 기능을 확장하더라도 정보 확인·변화 알림·리서치 보조 범위”로 변경. 영문 고지도 같은 의미로 정리. 공개 표면이 “무료 베타·현재 유료 기능 미제공·비자문 데이터 도구” 톤을 유지하도록 맞춤.
+- **검증**: `git diff --check` 0(CRLF 경고만), `npx tsc --noEmit` 0, `npm run build` 0(176 static pages, `/pricing` 8.16kB), 소스 `/pricing` 관련 파일에서 `유료(Pro·Premium)`/`Paid (Pro · Premium)` 잔여 0. `main` push 후 공개 `/pricing` 잔여 문자열을 재확인한다. 출시 전 남은 오너 게이트는 실사용 로그인 재확인, 법무/데이터 소스 최종 판단, 앱스토어 제출 준비다.
+
 ## 2026-06-30 · [claude] task 120 — 성능 가드레일 (perf-check 타이밍 스크립트 + 예산/경고 임계 + 측정 체크리스트, 향후 회귀 방지)
 - **범위/판단**: task 118(클라 번들)·task 119(서버 TTFB/원격 지연) 패스의 **성능 발견을 가드레일로 고정**해 앞으로의 작업이 핵심 페이지를 다시 느리게 만들지 않도록 하는 경량 도구·문서화. **점수식·`stocks.json`·인증/provider/env/결제·DB 스키마 무변경**, 신규 npm **0**(Node 내장만), 시각/동작/라우트 의미 무변경. 무료 베타·한국어 전용·138종목·비자문·AI 비홍보 불변식 유지. 변경 **4파일**(`scripts/perf-check.mjs` 신규·`package.json` 스크립트 1줄·PROGRESS·AI_HANDOFF).
 - **세 가지 분리된 관심사**(가드레일이 항상 구분): (1) **클라이언트 번들 크기** — `npm run build` 라우트 표의 First Load JS(task 118: `/stock/[ticker]` 191→189kB, 최대 라우트). (2) **서버 TTFB** — 응답 헤더까지 시간(스크립트가 측정). (3) **원격 데이터 지연** — Category-B와 Category-A 라우트의 TTFB 차이(task 119: 종목상세의 요청 시점 Supabase `daily_scores` 왕복). 세 가지는 원인·해결책이 달라 별개로 추적.

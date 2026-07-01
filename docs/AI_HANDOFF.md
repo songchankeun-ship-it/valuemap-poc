@@ -42,6 +42,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Launch-copy cleanup — 무료 베타 공개 배포 전 유료 문구 잔여 제거 (2026-07-01, Codex)
+- **상태**: `main` 배포 후 공개 `ornscore.com` 핵심 라우트가 200 응답임을 확인했고, 출시 후보로 판단. 다만 `/pricing` 법무 고지에 남아 있던 `유료(Pro·Premium)` 문구가 무료 베타 v1 방향과 충돌할 수 있어 `src/lib/copy/pricing.ts`에서 현재 유료 기능 미제공·향후 확장 시에도 정보 확인/변화 알림/리서치 보조 범위라는 표현으로 정리.
+- **불변식**: 무료 베타·한국어 우선·138종목·비자문 데이터 도구·AI 비홍보 유지. 점수식, 생성 데이터, 인증/provider/env, 결제, DB 스키마, 라우트 구조, 신규 npm 의존성은 건드리지 않음.
+- **검증**: `git diff --check` 0(CRLF 경고만), `npx tsc --noEmit` 0, `npm run build` 0. 소스 `/pricing` 관련 파일에서 `유료(Pro·Premium)`/`Paid (Pro · Premium)` 잔여 0. `main` push 후 공개 `/pricing` 잔여 문자열을 재확인하면 된다. 이후 오너가 피드백/실사용 로그인/법무·데이터 소스 최종 판단을 이어가면 된다.
+
 ### Task 120 — 성능 가드레일 (perf-check 타이밍 스크립트 + 예산/경고 임계 + 측정 체크리스트) (2026-06-30, Claude)
 - **범위**: task 118(클라 번들)·119(서버 TTFB/원격 지연)의 성능 발견을 **가드레일로 고정** — 향후 작업이 핵심 페이지를 다시 느리게 만들지 않도록 경량 측정 도구·문서화. 점수식·`stocks.json`·인증/env/스키마/결제 무변경, 신규 npm 0(Node 내장만), 시각/동작/라우트 무변경, 불변식 유지. 변경 **4파일**(`scripts/perf-check.mjs` 신규·`package.json` 1줄·PROGRESS·AI_HANDOFF).
 - **세 관심사 분리(가드레일 핵심)**: (1) **클라 번들 크기** = `npm run build` 라우트 표 First Load JS(task 118: `/stock/[ticker]` 191→189kB·최대 라우트) — 스크립트 미측정. (2) **서버 TTFB** = 응답 헤더까지 시간(스크립트 측정). (3) **원격 데이터 지연** = Category-B−Category-A TTFB 차이(task 119: 종목상세 요청 시점 Supabase `daily_scores` 왕복; 무료 티어 연결 고정비 = 환경 아티팩트, 프로덕션선 작음). 원인·해결책이 달라 별개 추적.

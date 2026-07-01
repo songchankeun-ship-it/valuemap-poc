@@ -249,7 +249,7 @@ export const pricingCopy = {
     legalBody2: "입니다. 모든 점수와 신호는 종목을 더 빠르게 탐색하기 위한 ",
     legalStrong2: "참고 정보",
     legalBody3:
-      "이며, 매수·매도 추천이 아닙니다. 유료(Pro·Premium) 기능도 개별 종목 매수·매도 조언이 아니라 정보·변화 알림·리서치 보조를 제공합니다. ",
+      "이며, 매수·매도 추천이 아닙니다. 현재 유료 기능은 제공하지 않으며, 향후 기능을 확장하더라도 개별 종목 매수·매도 조언이 아니라 정보 확인·변화 알림·리서치 보조 범위로만 제공합니다. ",
     legalStrong3: "최종 투자 판단과 책임은 사용자 본인에게 있습니다.",
   },
   en: {
@@ -320,7 +320,7 @@ export const pricingCopy = {
     legalBody2: ". Every score and signal is ",
     legalStrong2: "reference information",
     legalBody3:
-      " to help you explore stocks faster, not a buy or sell recommendation. Paid (Pro · Premium) features also provide information, change alerts, and research support — not individual buy/sell advice. ",
+      " to help you explore stocks faster, not a buy or sell recommendation. No paid features are offered now; if functionality expands later, it will remain information, change alerts, and research support — not individual buy/sell advice. ",
     legalStrong3: "The final investment decision and responsibility rest with you.",
   },
 } as const satisfies Record<Locale, unknown>;
