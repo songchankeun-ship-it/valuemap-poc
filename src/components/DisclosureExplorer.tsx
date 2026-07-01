@@ -376,7 +376,18 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-12">{t.empty}</div>
+          <div className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-12 space-y-3">
+            <div>{t.empty}</div>
+            {filterType !== "all" ? (
+              <button
+                type="button"
+                onClick={() => setFilterType("all")}
+                className="text-xs px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"
+              >
+                {t.emptyReset}
+              </button>
+            ) : null}
+          </div>
         ) : (
           filtered.map((g) => {
             const meta = typeMetaOf(g.signalType);

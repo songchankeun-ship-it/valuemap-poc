@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-02 · [claude] Task 124 — 무료 베타 출시 준비도 심층 QA + 공시 필터 빈 상태 복구 버튼
+- **범위**: 무료 한국어 베타(138종목) 공개 표면 9개(홈·로그인·`/today`·`/stocks`·종목상세·비교·공시·모바일·빈/로딩/오류 상태) 심층 출시 준비도 QA. 불변식 유지 확인 + 실사용 갭 1건 안전 additive 수정. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트·의존성 무변경, 신규 npm 0. 변경 2 소스(`src/lib/copy/disclosures.ts`·`src/components/DisclosureExplorer.tsx`)+docs. 브랜치 `ai-center/task-124-ornscore-free-beta-launch-readiness-`(클린 시작).
+- **불변식 재검증(런타임+grep · 113~123 전환 완료 확인)**: `LanguageSwitcher` importer 0(미렌더)·홈 SSR `언어 전환/English` 0 → 한국어 전용. `AiAnalysisCard` 종목상세 미렌더(코드/API 보존, 진입점만 차단)·`/stock/034730` SSR `AI 분석 실행/Anthropic` 0. `/history` 내비 제거·`/pricing` 3개 내비 모두 "더보기(MORE)" 강등. 유료/Pro/Premium/구독/결제 = `pricing/terms/waitlist/features/auth`(내부) 한정·공개 누출 0. `/pricing` SSR "무료 베타" ×7·확정 가격 숫자 0.
+- **발견/수정(P2)**: 공시 탐색 필터 빈 상태가 `filterType !== "all"`(유형 선택 후 scope 전환 등으로 0건)일 때 복구 경로 없음(`/stocks`·`/watchlist`는 이미 복구 버튼 제공) → `DisclosureExplorer` 빈 상태에 **필터 해제(전체 신호 보기) 버튼** additive 추가(`filterType !== "all"`일 때만; 전체 피드 0건은 기존 문구 유지). `copy/disclosures.ts` ko/en `emptyReset` 신설. `setFilterType("all")` 기존 "전체" 버튼과 동일 동작 재사용 — 필터/정렬/카운트/신호 로직 무변경.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8, 138종목 오류 0건·금칙어 0·Metrics 2.4) 0 · `npm run build` 0(176 SSG·48 라우트, 라우트 표 무변경) · `npm run app:check` 0(WAIT assetlinks 1건=기존 운영자 외부 게이트) · `git diff --check` clean · 변경 2 소스 U+FFFD 0. `emptyReset` Korean 문자열이 `disclosures/page-*.js` 클라 청크 컴파일 확인.
+- **스모크(로컬 prod 4455·리스너 PID만 taskkill·AI Center 4310 PID 26420 무중단)**: 13개 라우트(/ /login /today /stocks /stock/034730 /stock/032830 /compare /disclosures /watchlist /pricing /about /status /backtest) 전부 200, 8개 주요 표면 치명 마커 0. `/status` 기준일 2026.07.01(일일 리프레시·status 정상)·Metrics 2.4 일관. `/compare` 빈 상태·`/disclosures` "최신 200건" 캡션 렌더.
+- **결론/다음**: 120+ 태스크 누적으로 이미 강건화 → 신규 실버그 0(빈/로딩/오류·모바일 가드 견고), 유일 실개선 = 공시 빈 상태 복구 버튼. 잔여(운영자 대기⑤): 실기기 카카오·구글·네이버 OAuth 왕복 + standalone 콜백, 데스크톱/390px 실 브라우저 육안, Playwright 시각 게이트 구성. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-01 · [codex] app packaging decision lock — Android TWA 우선 확정
 - **제품 결정**: 오너와 함께 앱 1차 패키징 경로를 **Android TWA 우선**으로 확정. iOS는 당분간 홈 화면 추가 PWA로 유지하고, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다. Capacitor/네이티브 구조 도입은 현재 범위 밖.
 - **패키지명 기본값**: Android TWA package id는 `com.ornscore.app`을 기본값으로 잠금. 단, Play Console 앱 생성 직전 운영자가 최종 확인해야 하며, 실제 `assetlinks.json`은 서명 SHA-256 확보 전까지 생성하지 않는다.

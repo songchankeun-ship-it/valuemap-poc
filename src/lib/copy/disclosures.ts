@@ -93,6 +93,7 @@ export const disclosureExplorerCopy = {
     watch: "관심",
     // 빈 상태
     empty: "해당 신호가 없습니다.",
+    emptyReset: "필터를 해제하고 전체 신호 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
       "자기주식 취득 결의": "주주환원·주가 안정 관련 이벤트. 취득 규모·소각 여부 확인 필요.",
@@ -157,6 +158,7 @@ export const disclosureExplorerCopy = {
     watchAdded: "In watchlist",
     watch: "Watch",
     empty: "No matching signals.",
+    emptyReset: "Clear filter and view all signals",
     descriptions: {
       "자기주식 취득 결의":
         "Shareholder-return / price-stability event. Confirm buyback size and whether shares will be cancelled.",

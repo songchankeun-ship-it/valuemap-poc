@@ -42,6 +42,19 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 124 — 무료 베타 출시 준비도 심층 QA + 공시 필터 빈 상태 복구 버튼 (2026-07-02, Claude)
+- **범위**: 무료 한국어 베타(138종목) 공개 표면 9개(홈·로그인·`/today`·`/stocks`·종목상세·비교·공시·모바일·빈/로딩/오류 상태) 심층 출시 준비도 QA. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지 확인 + 발견된 실사용 갭 1건에 안전한 additive 수정. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트·의존성 무변경, 신규 npm 0. 변경 **2 소스**(`src/lib/copy/disclosures.ts`·`src/components/DisclosureExplorer.tsx`)+docs.
+- **불변식 재검증(런타임+grep, 113~123 전환 완료 확인)**:
+  - `LanguageSwitcher` importer 0(헤더·모바일드로어 미렌더) · 홈 SSR에 `언어 전환/English` 0건 → 한국어 전용 유지.
+  - `AiAnalysisCard`는 종목상세에서 미렌더(코드/API는 보존, 공개 진입점만 차단) · `/stock/034730` SSR에 `AI 분석 실행/Anthropic` 0건.
+  - `/history` 내비 제거 · `/pricing`은 Sidebar·MobileNav·MobileBottomNav 모두 "더보기(MORE)" 그룹으로 강등(1차 내비 아님).
+  - 유료/Pro/Premium/구독/결제 문자열은 `pricing/terms/waitlist/features/pricing.ts/auth·providers`(내부 코멘트)에만 존재 — 공개 표면 누출 0. `/pricing` SSR "무료 베타" ×7·확정 가격 숫자(9,900/14,900/29,000) 0건.
+- **발견/수정(P2 실사용 갭)**: 공시 탐색(`/disclosures`)의 필터 빈 상태가 `filterType !== "all"`(특정 유형 선택 후 scope 전환 등으로 0건)일 때도 안내 문구만 노출하고 복구 경로가 없었음(`/stocks`·`/watchlist` 빈 상태는 이미 복구 버튼 제공). → `DisclosureExplorer` 빈 상태에 **필터 해제(전체 신호 보기) 버튼**을 additive 추가(`filterType !== "all"`일 때만; 전체 피드가 0건인 경우엔 기존 문구 유지). `copy/disclosures.ts` ko/en 양쪽에 `emptyReset` 키 신설. `setFilterType("all")`은 기존 "전체" 버튼과 동일 동작 재사용 — 필터/정렬/카운트/신호 로직 무변경.
+- **게이트(변경 트리 전수)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py`(138종목 오류 0건·금칙어 0·Metrics 2.4) 0 · `npm run build` 0(176 SSG·48 라우트, 라우트 표 무변경) · `npm run app:check` 0(WAIT assetlinks 1건은 기존 운영자 외부 게이트) · `git diff --check` clean · 변경 2 소스 U+FFFD 0(Korean intact). `emptyReset` Korean 문자열이 `disclosures/page-*.js` 클라 청크에 컴파일됨 확인.
+- **스모크(로컬 prod 4455, 리스너 PID만 taskkill·AI Center 4310 PID 26420 무중단 확인)**: 13개 라우트(`/ /login /today /stocks /stock/034730 /stock/032830 /compare /disclosures /watchlist /pricing /about /status /backtest`) 전부 200, 8개 주요 표면 치명 마커(Application error/Hydration/TypeError/ReferenceError/Cannot read/Unhandled) 0건. `/status` 기준일 `2026.07.01`(일일 리프레시 반영·status 정상)·Metrics 2.4 일관. `/compare` 빈 상태·`/disclosures` "최신 200건" 캡션 렌더.
+- **QA 결론**: 120+ 태스크 누적으로 이미 강건화된 코드베이스라 신규 실버그 0(빈/로딩/오류 상태·모바일 가드 모두 기존 처리 견고). 유일한 실개선 = 위 공시 빈 상태 복구 버튼. Playwright 미구성이라 데스크톱/390px **실 브라우저 픽셀 게이트는 운영자 육안 잔여**(대기⑤).
+- **다음 즉시 작업/운영자 게이트**: (1) 운영자 실기기 카카오·구글·네이버 OAuth 왕복 + standalone 콜백. (2) 데스크톱/390px 실 브라우저 육안(오버플로·콘솔 0). (3) Playwright 시각 게이트 구성(반복 잔여). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### App packaging decision lock — Android TWA 우선 확정 (2026-07-01, Codex)
 - **제품 결정**: 오너와 함께 OrnScore 앱 1차 패키징 경로를 **Android TWA 우선**으로 확정. iOS는 홈 화면 추가 PWA로 유지하고, App Store 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
 - **패키지명 기본값**: `com.ornscore.app`. Play Console 앱 생성 직전 운영자가 최종 확인해야 하며, 실제 `public/.well-known/assetlinks.json`은 서명 SHA-256 확보 전까지 생성하지 않는다.
