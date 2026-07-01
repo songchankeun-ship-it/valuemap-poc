@@ -58,7 +58,7 @@ export function HistoryClient() {
   }, []);
 
   async function handleDelete(id: string) {
-    if (!confirm("이 분석 기록을 삭제할까요?")) return;
+    if (!confirm("이 요약 기록을 삭제할까요?")) return;
     setRecords((prev) => prev.filter((r) => r.id !== id));
     await deleteAnalysis(id);
   }
@@ -71,9 +71,9 @@ export function HistoryClient() {
     return (
       <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-300 rounded-lg p-10 text-center">
         <Bot className="w-8 h-8 text-zinc-300 mx-auto mb-2" strokeWidth={1.5} />
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">아직 분석 기록이 없어요</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">아직 요약 기록이 없어요</p>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
-          종목 페이지에서 <strong>"AI 분석 실행"</strong>을 누르면 여기 자동 저장됩니다.
+          공개 베타에서는 요약 기록 기능을 전면에 노출하지 않습니다.
         </p>
         <Link
           href="/stocks"

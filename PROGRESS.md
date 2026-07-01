@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-01 · [codex] P0 flow feedback closeout — 공개 전 AI/날짜/관심종목 잔여 정리
+- **입력**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_p0_flow_test_feedback_2026-07-01.md`. 공개 전 P0 실사용 플로우 재검수 결과를 현재 배포본과 대조.
+- **재확인 결과**: 최신 공개 배포 기준 `/`, `/stocks`, `/disclosures`, `/watchlist`, `/compare`, `/pricing`, `/terms`, `/status`, `/login`, `/backtest`는 모두 `2026.06.30` 기준일을 노출. `/stock/034730`·`/stock/000660`의 `2026-06-29`는 가격/점수 히스토리 배열 안의 과거 날짜이고, 현재 종목 상세도 `2026.06.30` 기준일을 함께 노출하므로 기준일 혼재 P0는 최신 배포에서 재현되지 않음. `/privacy`의 `2026-06-29`는 정책 최종 갱신일이라 데이터 기준일이 아니며, 이번 정책 문구 변경으로 `2026-07-01`로 갱신.
+- **수정 1 — 공개 AI 문구 숨김 강화**: 로그인 혜택의 `AI 분석 기록 보관` → `알림 설정과 기록 보관`; `/history` 직접 접근 화면의 `AI 분석 기록` → `요약 기록`; 개인정보처리방침의 AI 분석 기록/Anthropic 처리자/국외이전 행 제거. 내부 API·숨겨둔 stock-detail AI 카피는 삭제하지 않고 공개 진입점/공개 법무 표면만 낮춤.
+- **수정 2 — 요금제 예상 가격/AI 흔적 완화**: `src/lib/pricing.ts`와 `src/lib/copy/pricing.ts`의 Free/Pro 포함 목록에서 AI 분석 한도 문구 제거, Pro/Premium 예상 가격 숫자(`9,900~14,900`, `29,000원대`)를 공개 파생 데이터에서 `검토 중 · 미확정`으로 축약. 공개 `/pricing`은 계속 무료 베타 단일 안내.
+- **수정 3 — 관심종목 loading/empty 동시 노출 방지**: `WatchlistClient`에 hydration guard를 추가해 서버 HTML/no-JS 상태에서 클라이언트 loading 문구가 먼저 렌더되지 않게 함. JS 비활성 환경은 `<noscript>` empty fallback만 보이고, JS 활성 환경은 hydration 뒤 loading → error/empty/items 중 하나만 표시.
+- **검증**: `git diff --check` 0(CRLF 경고만), `npx tsc --noEmit` 0, `npm run build` 0(176 static pages). 로컬 prod 4454에서 `/login`·`/privacy`·`/pricing`·`/watchlist`·`/history` 전부 200, 옛 AI 혜택/Anthropic/예상 가격/관심종목 loading SSR/옛 history AI 문구 0건.
+- **오너 직접 확인 필요**: 카카오/구글/네이버 OAuth 실제 계정 테스트, 로그인 후 `/watchlist`·`/compare`·`/settings/notifications` 접근/저장, 모바일 카카오톡 인앱 브라우저 콜백은 개발자가 대신 완료할 수 없는 계정·콘솔 게이트.
+
 ## 2026-07-01 · [codex] launch-copy cleanup — 무료 베타 공개 배포 전 유료 문구 잔여 제거
 - **범위/판단**: `main` 배포 후 공개 `ornscore.com` 핵심 라우트(`/`, `/stocks`, `/stock/034730`, `/login`, `/pricing`, `/status`, `/disclosures`, `/compare`, `/watchlist`)가 전부 HTTP 200임을 확인한 뒤, `/pricing` HTML 안에 남아 있던 `유료(Pro·Premium)` 법무 고지 1건을 무료 베타 v1 방향에 맞게 보수 수정. 점수식·`stocks.json`·인증/provider/env/결제·DB 스키마·라우트 구조 무변경, 신규 npm 0.
 - **수정**: `src/lib/copy/pricing.ts` 공통 고지에서 “유료(Pro·Premium) 기능도 …”를 “현재 유료 기능은 제공하지 않으며, 향후 기능을 확장하더라도 정보 확인·변화 알림·리서치 보조 범위”로 변경. 영문 고지도 같은 의미로 정리. 공개 표면이 “무료 베타·현재 유료 기능 미제공·비자문 데이터 도구” 톤을 유지하도록 맞춤.

@@ -99,8 +99,10 @@ export function WatchlistClient({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
     // 시크릿 모드·저장소 차단 환경에서 localStorage 접근이 예외를 던질 수 있어 방어
     try {
       const v = typeof window !== "undefined" ? localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY) : null;
@@ -187,6 +189,8 @@ export function WatchlistClient({
     for (const s of matchPool) if (matchesConfig(s, config)) n += 1;
     return n;
   }
+
+  if (!hydrated) return null;
 
   if (loading) {
     return (

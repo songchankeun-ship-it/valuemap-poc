@@ -6,7 +6,6 @@ import type { Locale } from "@/lib/i18n";
 import {
   FREE_COMPARE_LIMIT,
   FREE_WATCHLIST_LIMIT,
-  FREE_AI_LIMIT,
 } from "@/lib/limits";
 import { PLANS, COMPARE_ROWS, type CompareCell } from "@/lib/pricing";
 
@@ -67,7 +66,7 @@ const FREE_INCLUDES_EN = [
   "Explore 138 stocks + question-style presets",
   "Stock detail (grade · chart · beginner reading · disclosures)",
   `${FREE_WATCHLIST_LIMIT} watchlist items · ${FREE_COMPARE_LIMIT} comparisons`,
-  `${FREE_AI_LIMIT} AI analyses per month`,
+  "Data date, disclosure signals, and score-basis checks",
   "Watchlist disclosure & saved-condition alerts (free during beta · becomes Pro at launch)",
 ];
 
@@ -77,7 +76,7 @@ const PRO_INCLUDES_EN = [
   "Unlimited watchlist + expanded saved filters",
   "Long-term score-change history · sector comparison",
   "Detailed backtest report · weekly summary report email",
-  "More AI analyses than Free (exact volume shared at launch)",
+  "Expanded summary/report assistance (scope shared at launch)",
 ];
 
 const PREMIUM_INCLUDES_EN = [
@@ -96,10 +95,9 @@ const PLAN_INCLUDES_EN: Record<PlanId, string[]> = {
 };
 
 const PLAN_PRICE_LABEL_EN: Record<PlanId, string> = {
-  // 가격/숫자는 원형 유지(₩0 / 9,900~14,900 / 29,000) — "확정 아님" 문구만 영문화.
   free: "₩0",
-  pro: "Under review · pricing not finalized (est. ₩9,900–14,900/mo, not confirmed)",
-  premium: "Under review · pricing not finalized (est. ~₩29,000/mo, not confirmed)",
+  pro: "Under review · pricing not finalized",
+  premium: "Under review · pricing not finalized",
 };
 
 const PLAN_VALUELINE_EN: Record<PlanId, string> = {

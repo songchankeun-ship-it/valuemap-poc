@@ -265,7 +265,7 @@ export const loginCopy = {
     lead: (providers: string) =>
       `${providers}로 빠르게 시작하거나, 이메일로 로그인 링크를 받으세요.`,
     contexts: {
-      "/history": "분석 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
+      "/history": "요약 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
       "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
       "/compare": "비교 목록을 저장하려면 로그인하세요.",
       "/settings/notifications": "알림을 설정하려면 로그인하세요.",
@@ -291,7 +291,7 @@ export const loginCopy = {
     benefits: [
       "관심 종목을 여러 기기에서 이어보기",
       "비교 목록 영구 저장",
-      "AI 분석 기록 보관",
+      "알림 설정과 기록 보관",
       "관심 종목 공시 알림 (등록 시 · 무료)",
     ],
     loading: "로딩 중...",
@@ -318,7 +318,7 @@ export const loginCopy = {
     lead: (providers: string) =>
       `Start with ${providers}, or get a sign-in link by email.`,
     contexts: {
-      "/history": "Log in to view analysis history. You will return here after signing in.",
+      "/history": "Log in to view saved summaries. You will return here after signing in.",
       "/watchlist": "Log in to keep your watchlist synced across devices.",
       "/compare": "Log in to save comparison lists.",
       "/settings/notifications": "Log in to manage notifications.",
@@ -344,7 +344,7 @@ export const loginCopy = {
     benefits: [
       "Keep your watchlist across devices",
       "Save comparison lists",
-      "Keep AI analysis history",
+      "Save notification settings and records",
       "Get watchlist disclosure alerts when enabled",
     ],
     loading: "Loading...",

@@ -3,7 +3,7 @@ import { HistoryClient } from "@/components/HistoryClient";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
-  title: "분석 기록 — 오른스코어",
+  title: "요약 기록 — 오른스코어",
 };
 
 export default async function HistoryPage() {
@@ -21,18 +21,18 @@ export default async function HistoryPage() {
       <div className="max-w-3xl mx-auto px-3 md:px-4 py-8 md:py-12">
         <header className="mb-5">
           <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
-            AI 분석 기록 <span aria-hidden="true">🔒</span>
+            요약 기록 <span aria-hidden="true">🔒</span>
           </h1>
           <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400">
-            종목 페이지에서 받은 AI 분석과 메모를 한곳에 저장합니다. <strong>로그인 후 이용 가능</strong>합니다.
+            종목 페이지에서 저장한 요약과 메모를 한곳에 보관합니다. <strong>로그인 후 이용 가능</strong>합니다.
           </p>
           <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-            저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모.
+            저장 항목: 종목 · 질문 · 요약 응답 · 작성 메모.
           </p>
         </header>
         <div className="bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
-            로그인하면 받은 AI 분석이 자동 저장돼 여러 기기에서 이어볼 수 있어요.<br className="hidden md:block" />
+            로그인하면 저장한 요약을 여러 기기에서 이어볼 수 있어요.<br className="hidden md:block" />
             카카오 또는 이메일 매직링크로 30초면 시작할 수 있습니다.
           </p>
           <Link
@@ -49,12 +49,12 @@ export default async function HistoryPage() {
   return (
     <div className="max-w-3xl mx-auto px-0 md:px-4 py-4 md:py-8">
       <header className="mb-4 md:mb-6">
-        <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">AI 분석 기록</h1>
+        <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">요약 기록</h1>
         <p className="text-xs text-zinc-600 dark:text-zinc-400">
-          종목 페이지에서 받은 AI 분석이 자동으로 저장됩니다. 최근 50개까지 보관.
+          종목 페이지에서 저장한 요약이 자동으로 보관됩니다. 최근 50개까지 보관.
         </p>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-500 mt-1">
-          저장 항목: 분석한 종목 · 질문 · AI 응답 · 작성 메모.
+          저장 항목: 종목 · 질문 · 요약 응답 · 작성 메모.
         </p>
       </header>
       <HistoryClient />

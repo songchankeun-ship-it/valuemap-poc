@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### P0 flow feedback closeout — 공개 전 AI/날짜/관심종목 잔여 정리 (2026-07-01, Codex)
+- **입력**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_p0_flow_test_feedback_2026-07-01.md`.
+- **재확인**: 공개 배포본의 주요 목록/정책/로그인/상태 라우트는 `2026.06.30` 기준일을 노출. 종목 상세의 `2026-06-29`는 히스토리 배열의 과거 날짜이고, `/privacy`의 `2026-06-29`는 데이터 기준일이 아닌 정책 최종 갱신일이라 `2026-07-01`로 갱신.
+- **수정**: 로그인/기록/개인정보/요금제 공개 표면에서 AI 분석 홍보·Anthropic·예상 Pro/Premium 가격 숫자 흔적을 낮춤. `WatchlistClient`에는 hydration guard를 추가해 no-JS fallback과 클라이언트 loading 상태가 동시에 보이지 않게 함.
+- **검증**: `git diff --check` 0(CRLF 경고만), `npx tsc --noEmit` 0, `npm run build` 0. 로컬 prod 4454에서 `/login`·`/privacy`·`/pricing`·`/watchlist`·`/history` 200 및 옛 AI/Anthropic/예상 가격/loading SSR 문구 0건 확인.
+- **오너 게이트**: 카카오·구글·네이버 실제 OAuth 왕복, 로그인 후 `/watchlist`·`/compare`·`/settings/notifications`, 모바일 카카오톡 인앱 브라우저 콜백은 계정/콘솔 세션이 필요해 오너가 직접 확인해야 함. AI 기능을 다시 공개하면 개인정보처리방침의 AI/Anthropic 처리 고지를 복구해야 함.
+
 ### Launch-copy cleanup — 무료 베타 공개 배포 전 유료 문구 잔여 제거 (2026-07-01, Codex)
 - **상태**: `main` 배포 후 공개 `ornscore.com` 핵심 라우트가 200 응답임을 확인했고, 출시 후보로 판단. 다만 `/pricing` 법무 고지에 남아 있던 `유료(Pro·Premium)` 문구가 무료 베타 v1 방향과 충돌할 수 있어 `src/lib/copy/pricing.ts`에서 현재 유료 기능 미제공·향후 확장 시에도 정보 확인/변화 알림/리서치 보조 범위라는 표현으로 정리.
 - **불변식**: 무료 베타·한국어 우선·138종목·비자문 데이터 도구·AI 비홍보 유지. 점수식, 생성 데이터, 인증/provider/env, 결제, DB 스키마, 라우트 구조, 신규 npm 의존성은 건드리지 않음.

@@ -1,7 +1,7 @@
 // 요금제(Free/Pro/Premium) 정보 단일 출처 — 모든 요금제 화면 문구가 여기서 파생되게.
 // 실제 결제는 연결돼 있지 않다. Pro/Premium은 "준비 중(planned)"이며 가격은 전부 "미확정"이다.
 // 절대 단일 확정 금액으로 보이게 쓰지 않는다(priceConfirmed=false 유지). 출시 전 법무·사업 확정·공지 대상.
-import { FREE_COMPARE_LIMIT, FREE_WATCHLIST_LIMIT, FREE_AI_LIMIT } from "@/lib/limits";
+import { FREE_COMPARE_LIMIT, FREE_WATCHLIST_LIMIT } from "@/lib/limits";
 
 export type PlanStatus = "active" | "planned";
 
@@ -25,7 +25,7 @@ const FREE_INCLUDES = [
   "138개 종목 탐색 + 질문형 프리셋",
   "종목 상세(등급·차트·초보자 해석·공시)",
   `관심 종목 ${FREE_WATCHLIST_LIMIT}개 · 비교 ${FREE_COMPARE_LIMIT}개`,
-  `AI 분석 월 ${FREE_AI_LIMIT}회`,
+  "데이터 기준일·공시 신호·점수 근거 확인",
   "관심 종목 공시 알림 · 저장 조건 알림 (베타 무료 체험 · 정식 출시 시 Pro)",
 ];
 
@@ -36,7 +36,7 @@ const PRO_INCLUDES = [
   "관심 종목 무제한 + 저장 필터 확장",
   "장기 점수 변화 히스토리 · 업종 대비 비교",
   "백테스트 상세 리포트 · 주간 요약 리포트 메일",
-  "무료보다 많은 AI 분석 (구체 이용량은 출시 시 공개)",
+  "요약 리포트와 설명 보조 기능 확대 (구체 범위는 출시 시 공개)",
 ];
 
 // §11.4 / §19.1 Premium — 준비 중(미구현). 가격 미확정.
@@ -66,7 +66,7 @@ export const PLANS: Plan[] = [
     name: "Pro",
     status: "planned",
     // 단일 확정 금액 금지 — 범위 + "확정 아님" 명시.
-    priceLabel: "검토 중 · 미확정 (예상 월 9,900~14,900원, 확정 아님)",
+    priceLabel: "검토 중 · 미확정",
     priceConfirmed: false,
     tagline: "매번 직접 찾는 시간을 아끼고 변화를 놓치지 않도록 (준비 중)",
     valueLine:
@@ -77,7 +77,7 @@ export const PLANS: Plan[] = [
     id: "premium",
     name: "Premium",
     status: "planned",
-    priceLabel: "검토 중 · 미확정 (예상 월 29,000원대, 확정 아님)",
+    priceLabel: "검토 중 · 미확정",
     priceConfirmed: false,
     tagline: "리서치 보조를 더 깊게 — 대시보드·통계·내보내기 (준비 중)",
     valueLine:
