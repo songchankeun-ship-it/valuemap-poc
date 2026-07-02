@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -35,6 +35,8 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const { copy } = useLanguage();
+  const openButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // 드로어/백드롭을 document.body 로 포털해 헤더의 backdrop-blur(고정요소 컨테이닝 블록)
   // 밖으로 빼낸다. SSR 에서는 마운트 전이라 오버레이를 렌더하지 않는다(하이드레이션 안전).
@@ -56,6 +58,23 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
     return () => document.removeEventListener("keydown", onEsc);
   }, [open]);
 
+  // 드로어 열릴 때 포커스를 닫기 버튼으로 이동하고, 닫힐 때 메뉴 열기 버튼으로
+  // 되돌린다(키보드/스크린리더 사용자가 맥락을 잃지 않도록).
+  // 최초 마운트(open=false)에서는 포커스를 건드리지 않는다.
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (open) {
+      wasOpenRef.current = true;
+      // 포털 렌더 직후 포커스가 걸리도록 다음 프레임에서 실행
+      const id = requestAnimationFrame(() => closeButtonRef.current?.focus());
+      return () => cancelAnimationFrame(id);
+    }
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      openButtonRef.current?.focus();
+    }
+  }, [open]);
+
   async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -73,9 +92,12 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
   return (
     <>
       <button
+        ref={openButtonRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-label={copy.chrome.openMenu}
+        aria-haspopup="dialog"
+        aria-expanded={open}
         className="lg:hidden w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-zinc-700 dark:text-zinc-300"
       >
         <Menu className="w-5 h-5" strokeWidth={2} />
@@ -88,13 +110,19 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             className="lg:hidden fixed inset-0 bg-black/70 z-[60] backdrop-blur-sm"
             aria-hidden
           />
-          <div className="lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={copy.brand}
+            className="lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10"
+          >
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
                 <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="13" cy="15" r="7" stroke="white" strokeWidth="2.4"/><path d="M8 19L20 8" stroke="white" strokeWidth="2.4" strokeLinecap="round"/></svg></span>
                 <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{copy.brand}</span>
               </Link>
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={copy.chrome.closeMenu}

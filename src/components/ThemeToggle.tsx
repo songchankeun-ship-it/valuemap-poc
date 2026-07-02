@@ -46,6 +46,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
             type="button"
             onClick={() => setTheme(value)}
             aria-label={label}
+            aria-pressed={active}
             className={
               "flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition " +
               (active

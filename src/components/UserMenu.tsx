@@ -10,6 +10,7 @@ export function UserMenu({ email }: { email: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -20,6 +21,19 @@ export function UserMenu({ email }: { email: string }) {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
+
+  // Esc 로 메뉴를 닫고 포커스를 트리거 버튼으로 되돌린다(키보드 접근성).
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -33,22 +47,30 @@ export function UserMenu({ email }: { email: string }) {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center text-sm font-semibold hover:bg-blue-200 dark:hover:bg-blue-900 transition"
         aria-label="계정 메뉴"
+        aria-haspopup="menu"
+        aria-expanded={open}
       >
         {initial}
       </button>
 
       {open ? (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 py-1 z-50">
+        <div
+          role="menu"
+          aria-label="계정 메뉴"
+          className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 py-1 z-50"
+        >
           <div className="px-3 py-2 border-b border-zinc-100 dark:border-zinc-800">
             <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">로그인 됨</div>
             <div className="text-xs text-zinc-900 dark:text-zinc-100 font-medium truncate">{email}</div>
           </div>
           <Link
             href="/watchlist"
+            role="menuitem"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
@@ -57,6 +79,7 @@ export function UserMenu({ email }: { email: string }) {
           </Link>
           <Link
             href="/compare"
+            role="menuitem"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
@@ -65,6 +88,7 @@ export function UserMenu({ email }: { email: string }) {
           </Link>
           <Link
             href="/settings/notifications"
+            role="menuitem"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
@@ -74,6 +98,7 @@ export function UserMenu({ email }: { email: string }) {
           <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
           <button
             type="button"
+            role="menuitem"
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left"
           >

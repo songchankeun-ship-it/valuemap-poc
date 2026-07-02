@@ -36,12 +36,15 @@ export function MobileBottomNav() {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setMoreOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
           <div
+            role="menu"
+            aria-label={copy.nav.more}
             className="absolute bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))] inset-x-0 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 rounded-t-2xl p-3 grid grid-cols-3 gap-2"
             onClick={(e) => e.stopPropagation()}
           >
             {MORE.map(({ href, Icon, key }) => (
               <Link
                 key={href}
+                role="menuitem"
                 prefetch={false} href={href}
                 onClick={() => setMoreOpen(false)}
                 className={"flex flex-col items-center gap-1 py-3 rounded-lg text-[11px] " + (active(href) ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-600 dark:text-zinc-300")}
@@ -70,6 +73,8 @@ export function MobileBottomNav() {
           onClick={() => setMoreOpen((v) => !v)}
           className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (moreOpen ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
           aria-label={copy.nav.more}
+          aria-haspopup="menu"
+          aria-expanded={moreOpen}
         >
           {moreOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           <span className="max-w-full truncate px-0.5">{copy.nav.more}</span>

@@ -36,8 +36,11 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
 
   if (status === "done") {
     return (
-      <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg px-3 py-2.5">
-        <span>✓</span><span>{msg}</span>
+      <div
+        role="status"
+        className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg px-3 py-2.5"
+      >
+        <span aria-hidden>✓</span><span>{msg}</span>
       </div>
     );
   }
@@ -50,6 +53,8 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder={t.placeholder}
+        aria-label={t.placeholder}
+        aria-describedby={status === "error" ? "waitlist-error" : undefined}
         className="flex-1 min-w-[180px] px-3 py-2.5 text-sm border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500"
       />
       <button
@@ -59,7 +64,11 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
       >
         {status === "loading" ? t.submitting : t.submit}
       </button>
-      {status === "error" ? <p className="w-full text-xs text-rose-600">{msg}</p> : null}
+      {status === "error" ? (
+        <p id="waitlist-error" role="alert" className="w-full text-xs text-rose-600">
+          {msg}
+        </p>
+      ) : null}
     </form>
   );
 }

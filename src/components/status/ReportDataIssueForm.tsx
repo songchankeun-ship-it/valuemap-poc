@@ -72,7 +72,10 @@ export function ReportDataIssueForm({
 
   if (state === "ok") {
     return (
-      <div className="mt-3 rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/20 p-3 text-[13px] text-emerald-800 dark:text-emerald-300">
+      <div
+        role="status"
+        className="mt-3 rounded-md border border-emerald-200 dark:border-emerald-900 bg-emerald-50/70 dark:bg-emerald-950/20 p-3 text-[13px] text-emerald-800 dark:text-emerald-300"
+      >
         {t.successTitle}
       </div>
     );
@@ -110,6 +113,7 @@ export function ReportDataIssueForm({
           onChange={(e) => setMessage(e.target.value)}
           rows={3}
           placeholder={t.messagePlaceholder}
+          aria-describedby={state === "error" ? "report-data-issue-error" : undefined}
           className="w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-transparent px-2 py-2 text-sm text-zinc-900 dark:text-zinc-100"
         />
       </label>
@@ -124,7 +128,9 @@ export function ReportDataIssueForm({
         />
       </label>
       {state === "error" && (
-        <p className="text-[12px] text-red-700 dark:text-red-400">{errorMsg}</p>
+        <p id="report-data-issue-error" role="alert" className="text-[12px] text-red-700 dark:text-red-400">
+          {errorMsg}
+        </p>
       )}
       <div className="flex items-center gap-2">
         <button

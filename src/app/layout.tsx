@@ -138,12 +138,21 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
+        {/* 키보드 사용자가 헤더/사이드바를 건너뛰고 본문으로 바로 이동.
+         * body 의 첫 자식이라 Tab 첫 스톱이 된다. (SSR 한국어 고정) */}
+        <a href="#main-content" className="skip-link">
+          본문 바로가기
+        </a>
         <ThemeProvider>
           <LanguageProvider>
             <AppHeader />
             <div className="flex">
               <Sidebar />
-              <main className="flex-1 min-w-0 pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0">
+              <main
+                id="main-content"
+                tabIndex={-1}
+                className="flex-1 min-w-0 pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0 focus:outline-none"
+              >
                 <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
                 <AppFooter
                   globalAsOfLabel={dataStatus.globalAsOfLabel}

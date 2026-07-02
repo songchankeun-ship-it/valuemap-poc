@@ -138,6 +138,14 @@ export function GlobalSearch({ stocks, themes }: Props) {
         onFocus={() => setOpen(true)}
         onKeyDown={handleKeyDown}
         autoComplete="off"
+        role="combobox"
+        aria-label={copy.search.placeholder}
+        aria-expanded={open && results.length > 0}
+        aria-controls="global-search-listbox"
+        aria-autocomplete="list"
+        aria-activedescendant={
+          open && results.length > 0 ? "global-search-opt-" + selectedIndex : undefined
+        }
         suppressHydrationWarning
         className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-md text-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-500 focus:bg-white dark:focus:bg-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 transition"
       />
@@ -159,11 +167,17 @@ export function GlobalSearch({ stocks, themes }: Props) {
               {copy.search.empty}
             </div>
           ) : (
-            <ul>
+            <ul id="global-search-listbox" role="listbox" aria-label={copy.search.placeholder}>
               {results.map((result, i) => (
-                <li key={result.type === "stock" ? "s-" + result.ticker : "t-" + result.name}>
+                <li
+                  key={result.type === "stock" ? "s-" + result.ticker : "t-" + result.name}
+                  id={"global-search-opt-" + i}
+                  role="option"
+                  aria-selected={i === selectedIndex}
+                >
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => navigateToResult(result)}
                     onMouseEnter={() => setSelectedIndex(i)}
                     className={
@@ -200,7 +214,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
               ))}
             </ul>
           )}
-          <div className="px-3 py-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 flex items-center justify-between">
+          <div className="px-3 py-1.5 text-[10px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 flex items-center justify-between">
             <span>{copy.search.help}</span>
             <span>{results.length}{copy.search.countSuffix}</span>
           </div>
