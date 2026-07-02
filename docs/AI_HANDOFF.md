@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-02T16:58:34.534Z
+Last updated: 2026-07-02T17:11:51.143Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 147 - OrnScore stock detail trust and beginner explanation sweep
-- Run: 118
-- Status: completed
+- Task: 148 - OrnScore watchlist and alert preference local UX pass
+- Run: 119
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Quality gate error: tester process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 148 (continuation) — 저장 필터↔조건 알림 다리 정합 패스 (2026-07-03, Claude)
+- **배경**: 직전 커밋 `e53235a`로 item B/C(카카오 행 카피·인앱 프리뷰)·상단 "내 현황" 알림 CTA는 반영됐으나, AI Center Run 119 tester가 code 1로 종료돼 관리 블록 상태가 `failed`로 남음(개발 게이트는 통과였음). 재감사 결과 **저장한 필터 섹션에 조건 충족 알림으로 가는 경로가 빠져** 무료 기능 경로가 한 곳에서 끊겼다.
+- **변경 소스(1)**: `WatchlistClient.tsx` 저장한 필터 푸터에 **저장 필터 → 조건 충족 알림 다리** 1줄 추가 — `/settings/notifications`(조건 충족 알림) 내부 링크 + "지금은 이메일(임시·베타) · 카카오톡 준비 중" 일관 프레이밍. 텍스트만 추가(기존 44px/flex-wrap·`break-words` 안에서 래핑, 레이아웃 무변경). 압박·매수·매도·가격 단정 0.
+- **무변경 확인**: `alertPrefs.ts`(localStorage-only·무발송)·`features.ts`·이메일 cron·매직링크·점수식·`stocks.json`·의존성 그대로. 신규 npm 0. 카카오 프리뷰/채널/토글 코드에 fetch·외부 API 0(grep 확인) — 프리뷰 버튼은 내부 `/stock/{ticker}` 이동만.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF8) 138/0/금칙0/Metrics 2.4 · `npm run build` 0(138 SSG·라우트 표 무변경) · 변경 소스 U+FFFD 0·스캐폴딩 마커 0 · 톤 게이트 0. 로컬 prod 41499(리스너 PID만 taskkill·AI Center 4310 무중단): `/watchlist`·`/settings/notifications` 200, SSR에 카카오 채널 카피·"카카오톡 알림 미리보기"·"실제 발송된 메시지가 아닙니다"·"조건 충족 알림" 렌더. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 사용자).
 
 ### Task 148 — 관심 종목 + 알림 설정 로컬 UX 패스 (무발송 카카오 Stage 1) (2026-07-03, Claude)
 - **범위**: 관심 종목↔알림을 하나의 **일관된 무료 기능 경로**로 정리하는 로컬 UX 패스. 제3자 호출 0·계정/민감 설정·비밀값 0. 점수식·`stocks.json`·`features.ts`·인증·이메일 cron·매직링크·의존성 무변경, 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-148-ornscore-watchlist-and-alert-prefere`(클린 시작).

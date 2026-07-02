@@ -84,6 +84,7 @@ Task 144 시점 코드 기준. `file:line`은 감사 당시 위치(편집 시 �
 ### Stage 1 — 채널 선호 opt-in UI (로컬 UI/모델, 무발송)
 
 > **진행 상태 (Task 148, 2026-07-03)**: item B(카카오 행 카피)·item C(카카오 인앱 프리뷰) **로컬 완료**. item A(`alertPrefs` `{type,channel}` 확장)는 실발송 결정과 함께 착수하도록 **의도적으로 남김** — Task 148은 `alertPrefs`를 localStorage-only·무발송 그대로 유지했다.
+> **후속 정합 패스 (Task 148 continuation, 2026-07-03)**: `WatchlistClient.tsx` 저장한 필터 섹션에 **저장 필터 → 조건 충족 알림 다리** 1줄 추가(`/settings/notifications` 내부 링크·"지금은 이메일(임시·베타)·카카오톡 준비 중" 일관 프레이밍). 무발송·무네트워크·매매 문구 없음. 관심 종목↔알림 무료 경로가 상단 "내 현황" CTA에 이어 저장 필터 섹션에서도 연결된다.
 
 - **채널 선호 개념 UI** 〔🔧 잔여〕: `src/lib/alertPrefs.ts`의 현재 `Record<string, boolean>`(type→on)을 **`{type, channel}` 형태**로 확장하는 개념을 도입한다. 예: `ornscore_alert_prefs`를 `Record<string, { inapp?: boolean; email?: boolean; kakao?: boolean }>`로. **여전히 localStorage·여전히 무발송**(외부로 나가는 메시지 0). `alertCatalog`의 `id`와 키를 계속 일치시켜 실발송 파이프라인 출시 시 그대로 이전. *(Task 148 미착수 — 스키마 확장은 실발송 라이브 결정과 묶어 진행.)*
 - **`NotificationChannels` 카카오 행 상세 카피** 〔✅ Task 148 완료〕: `src/components/notifications/NotificationChannels.tsx` 카카오 행에 "준비 중" 배지 유지 + 라벨 아래 1줄 보조문 "카카오톡 알림을 우선 방향으로 준비 중 · 로그인 카카오(계정)와는 별개 · 아직 실제 발송 전이에요." 추가. 이메일 "사용 중" 상태·다른 채널 무변경.

@@ -445,9 +445,17 @@ export function WatchlistClient({
           </ul>
         )}
         {savedSearches.length > 0 ? (
-          <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-            충족 종목 수는 현재 점수 기준 참고 정보예요 · 종목을 누르면 종목 탐색에서 저장한 필터를 불러올 수 있어요 · 매수·매도 추천이 아닙니다.
-          </p>
+          <div className="mt-2 space-y-1">
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+              충족 종목 수는 현재 점수 기준 참고 정보예요 · 종목을 누르면 종목 탐색에서 저장한 필터를 불러올 수 있어요 · 매수·매도 추천이 아닙니다.
+            </p>
+            {/* 저장 필터 → 조건 충족 알림 다리(무료 기능 경로 일관 · 압박·매매 문구 없음) */}
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug break-words">
+              저장한 필터에 새 종목이 들어올 때 알림으로 받으려면{" "}
+              <Link href="/settings/notifications" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">알림 설정의 조건 충족 알림</Link>
+              에서 켜세요. 지금은 이메일로 동작해요(임시·베타) · 카카오톡 알림은 준비 중.
+            </p>
+          </div>
         ) : null}
       </section>
 
