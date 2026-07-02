@@ -37,6 +37,13 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Manual Notes
 
+### Task 129 — OrnScore 전문가/QA 피드백 배치 인테이크 템플릿 (docs-only) (2026-07-02, Claude)
+- **범위**: 미래 QA/전문가 리포트를 AI Center에 붙여넣으면 우선순위(P0/P1/P2)·카테고리·검증 게이트가 붙은 로컬 자동화 task 목록으로 바꾸는 **재사용 인테이크 템플릿** 신설. **문서만 변경**(신규 doc 1 + handoff/PROGRESS 갱신), 코드/런타임/UI 소스 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
+- **신규 파일 — `docs/ornscore-expert-feedback-intake-template.md`**: (0)목적·사용법(붙여넣기→triage→방출)+톤 규칙(비자문/데이터 신선도 고지/미확정)+다룬다/다루지 않는다, (1)참조 블록(handoff·scope·spec-coverage·qa-feedback·post-release-qa·PROGRESS를 중복 없이 링크), (2)**불변식 가드(rejection filter)** — 6개 불변식 중 하나라도 깨야 하는 피드백은 자동화 task로 만들지 않고 §8 운영자/범위 밖으로 라우팅(리포트발 scope creep 거절 근거), (3)Severity 루브릭(Task 48/127 재사용: P0 출시차단·P1 릴리스 전 필수(운영자 액션)·P2 개선 후보 + 배정 판단 1줄), (4)8-카테고리 분류표(금융문구안전·모바일레이아웃·데이터신뢰/날짜정합·인증로그인·앱준비도·성능·법무/개인정보·운영자전용외부 — 각 소유 문서/파일 + 검증 게이트 매핑), (5)task 프롬프트 구조(범위/불변식 유지/하드 제약/검증 게이트/완료 기준/비목표) + **거짓 승인 트리거 회피**(승인/배포완료/머지해도됨/ship-it 금지 표현 + 나쁜예↔좋은예 3쌍, '로컬 커밋만·push/릴리스 미수행' 관례), (6)게이트 명령 요약, (7)fill-in 배치 인테이크 표(원문→카테고리→severity→매핑→게이트→프롬프트→완료), (8)운영자 전용 외부 단계 버킷.
+- **게이트(문서 변경)**: 신규 doc + handoff + PROGRESS U+FFFD/모지바케 0(Korean intact) · `git status` 새 doc + handoff + PROGRESS만 변경(소스 0) · `npx tsc --noEmit` → 0(코드 무변경 재확인) · `git diff --check` → CRLF 노이즈만. 런타임/UI 무영향(소스 미변경).
+- **⚠️ 운영자/후속**: 이 템플릿은 절차·빈칸만 제공. 실제 리포트가 들어오면 표를 채워 §4 가드 통과 항목만 task로 방출하고, 불변식 위반·코드로 못 닫는 항목은 §8 운영자 버킷(실기기 OAuth·시각 게이트·assetlinks·스토어·결제·main push)으로 남긴다.
+- **오너용 요약**: ✅ 다음 전문가 피드백 루프를 위해 '리포트 붙여넣기 → 정렬된 자동화 task'로 바꾸는 한 장짜리 재사용 템플릿 추가(불변식 가드·severity·8카테고리·프롬프트 구조·거짓 승인 회피 포함). 코드/동작 변경 0, push/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 Add stable human notes below this managed block or in separate docs. The AI Dev Center will update only the managed block between the markers.
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 

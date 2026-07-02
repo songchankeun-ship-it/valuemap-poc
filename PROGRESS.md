@@ -1798,3 +1798,9 @@
 - **findings**: P0 0 · P1 1(실 브라우저 시각 게이트 부재 = Task 48 P1-VISUAL 승계, 운영자 육안) · P2 3(manifest 단일 theme_color 라이트 상단바 어둡게 · safe-area 좌우 미적용 가로/노치 · Category-B 라우트 로컬 ~4s Supabase 왕복 = 환경 아티팩트·회귀 아님).
 - **스모크 정리**: 로컬 prod 리스너 PID 11636만 taskkill, AI Center 4310(PID 26420) 무중단 확인. 신규 노트 U+FFFD 0.
 - **다음 소유자**: 운영자/제품 — 실기기 OAuth 왕복 + 데스크톱/390px 육안 게이트 + (선택) P2 폴리시. 잔여 커버리지(공시 파이프라인④/도메인 이메일⑤/EN i18n)는 spec-coverage 문서로 추적 유지. 푸시/릴리스 미수행(로컬 커밋만).
+
+## 2026-07-02 · [claude] Task 129 — OrnScore 전문가/QA 피드백 배치 인테이크 템플릿 (docs-only)
+- **Scope**: 미래 QA/전문가 리포트를 붙여넣으면 우선순위(P0/P1/P2)·카테고리·검증 게이트가 붙은 로컬 자동화 task 목록으로 바꾸는 재사용 템플릿 신설. 문서만 변경(신규 doc 1 + handoff/PROGRESS), 코드/런타임/UI 소스 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 브랜치 ai-center/task-129-ornscore-expert-feedback-batch-intak.
+- **산출물**: `docs/ornscore-expert-feedback-intake-template.md`(신규). 목적/사용법 + 톤 규칙 + 다룬다/다루지 않는다 + 참조 블록(중복 없이 링크) + 불변식 가드(rejection filter, scope creep 거절) + Severity 루브릭(Task 48/127 재사용) + 8-카테고리 분류표(소유 파일/게이트 매핑) + task 프롬프트 구조 + 거짓 승인 트리거 회피(나쁜예↔좋은예 3쌍) + fill-in 배치 인테이크 표 + 운영자 전용 외부 단계 버킷.
+- **게이트**: 신규 doc + handoff + PROGRESS U+FFFD 0(Korean intact) · git status 문서 3개만 변경(소스 0) · `npx tsc --noEmit` 0(코드 무변경 재확인) · `git diff --check` CRLF 노이즈만. 런타임/UI 무영향.
+- **다음 소유자**: 실제 리포트 유입 시 표를 채워 §4 가드 통과 항목만 task 방출, 불변식 위반·코드로 못 닫는 항목은 §8 운영자 버킷(실기기 OAuth·시각 게이트·assetlinks·스토어·결제·main push). 푸시/릴리스 미수행(로컬 커밋만).
