@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 145 — 모바일 리스팅 준비 팩(로컬 전용) + 메타데이터 갭 감사 (2026-07-03, Claude)
+- **범위**: 미래 모바일 스토어 등록을 **검토·준비하기 쉽게** 정리하는 로컬 전용 리뷰 계층. **외부 서비스 액션 0**(제출·업로드·계정/결제/로그인 제공자/원격 설정 무변경). 앱 소스 무변경(문서 전용). 스토어 정식 초안 원본은 `app-store-submission-pack.md` 유지(복사 아닌 링크 참조). 불변식(무료·한국어 전용·138종목·비자문·확정가/Pro 비홍보) 유지.
+- **신규 `docs/ornscore-mobile-listing-prep-pack.md`**: §1 현재 표면 감사(앱 이름·태그라인·privacy/terms·mailto·모바일 우선 가치, 각 `file:line` 근거 — `manifest.ts`/`layout.tsx`/`app-store-submission-pack.md`) · §2 정제 한국어 리스팅 카피 **6블록**(짧은 요약·긴 설명·기능 불릿·안전 고지·스크린샷 체크리스트[홈/탐색/상세/공시/비교/관심/소개, 세로 standalone·수익보장 문구 금지·출시 전 스토어 배지 금지]·오너 전용 다음 단계) · §3 PWA/메타데이터 로컬 감사표 · §4 수정 결정 · §5 검증.
+- **메타데이터 결정 = 문서화 전용(소스 미변경)**: 코드에 존재하는 필드(manifest id/name/short_name/description/standalone/portrait/shortcuts/4아이콘, layout apple-touch/appleWebApp/viewport/themeColor/openGraph/twitter)는 이미 정합. 남은 갭(OG/Twitter 공유 이미지 에셋·manifest `screenshots[]`·캡처 스크린샷)은 **전부 에셋 선행 필요 → ⑤ 오너/디자인 게이트**로 §3 표에 기록(코드 결함 아님, 자명 안전 무에셋 추가 없음).
+- **추적**: `ornscore-spec-coverage.md` §8 H §24 PWA 행에 Task 145 포인터(Task 72/77/128 스타일). 본 파일.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138/0/금칙0/Metrics 2.4 · `app:check` 통과 · 변경 문서 U+FFFD 0·스캐폴딩 마커 0·한국어 정상. 문서 전용이라 모바일/데스크톱 런타임·UI 영향 0(`<head>` 무변경).
+- **⚠️ 오너 게이트로 남음(⑤/④)**: 실기기 standalone 스크린샷 7종 캡처·OG/Twitter 공유 카드 이미지 제작·`screenshots[]` 채우기·스토어 등록 최종 다듬기·Data safety/App Privacy 재확인. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 144 — 카카오톡 알림 로컬 전용 제품 백로그 + 감사 + 이메일-우선 소프트닝 (2026-07-02, Claude)
 - **범위**: 오너의 카카오톡 알림 선호를 **외부 계정/민감 설정 무변경**으로 단계 백로그화. 카카오 채널/발신프로필/템플릿/대행사/env/시크릿 배치·제3자 API 호출·유료 약정 **0**. 점수식·`stocks.json`·인증/provider·DB 스키마·라우트·의존성·이메일 cron 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
 - **신규 `docs/ornscore-kakaotalk-alert-backlog.md`**: §0 가드레일 + **카카오 로그인(라이브)≠알림톡(미설정)** 구분 · §1 표면 감사(`file:line`·카카오 준비도) · §2 로컬 지금 vs 오너 전용 · §3 Stage 1~4(채널선호 opt-in UI[`alertPrefs`를 `{type,channel}`로 확장·여전히 localStorage 무발송]·`AlertEvent` 스키마[9종 카탈로그 매핑·dedupeKey·선호 영속화는 설계만]·한국어 비자문 알림톡 템플릿 초안[`#{변수}`+웹링크 버튼]·폴백[카카오→이메일 임시폴백→인앱, 이메일 cron 무변경]) · §4 오너 외부 설정 fill-in 빈칸 시트(값 없음·**건당 과금 단가는 오너 결정으로만**) · §5 검증. 방대 문서는 중복 대신 링크(`free-beta-v1-scope`·`auth-providers-setup`·`beta-launch-checklist`(g)·`android-twa-owner-checklist`).
