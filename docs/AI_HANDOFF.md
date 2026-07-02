@@ -42,6 +42,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 128 — OrnScore Android TWA 운영자 인테이크 체크리스트 + assetlinks 생성기 dry-run 가드 (2026-07-02, Claude)
+- **범위**: Android TWA Play 등재 **다음 한 걸음에 필요한 실제 값만 운영자가 채우게 하는 짧은 빈칸 시트** 신설 + 오프라인 검증 스크립트 강화. 외부 계정/대시보드/스토어 제출 **0**, 실 서명값·`public/.well-known/assetlinks.json` 생성 **0**. 런타임/UI 소스 **무변경**(docs + 오프라인 검증 스크립트 한정), 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
+- **문서 사실 재확인(현행 유지, 수정 아님)**: 패키지명 `com.ornscore.app`(submission-pack·app-packaging-final-checklist·owner-final-checklist), assetlinks 명령 `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"` → `scripts/generate-assetlinks.mjs` 매핑, `manifest.ts`(display standalone·start_url/·scope/·lang ko-KR·아이콘 192/512/512-maskable·shortcuts /today /stocks /disclosures), 정책 링크 `/privacy`·`/terms`. 실제 불일치 0건 → 침묵 편집 없음.
+- **신규 파일 — `docs/ornscore-android-twa-owner-checklist.md`**: 기존 방대한 문서와 분리된 **fill-in 인테이크 시트**. 6개 항목을 빈칸으로: ①Play Console 계정 준비도(생성/$25 결제 Y/N·개인 vs 조직·인증 상태) ②패키지명 확정(기본 `com.ornscore.app` 확인/변경, 출시 후 사실상 영구 명시) ③서명 SHA-256(앱 서명 키+업로드 키 **둘 다**, Play App Signing 시 앱 서명 키가 assetlinks에 들어감·32 콜론 hex 형식) ④스크린샷(Play 휴대폰 2~8장·최소 320px·16:9/9:16·주소창 없는 standalone/TWA 캡처) ⑤스토어 문구 상태(submission-pack 초안 최종 확정 Y/N) ⑥OAuth 콜백(Kakao/Google/Naver/Supabase가 프로덕션 `https://ornscore.com` 오리진 이미 커버 — TWA는 동일 웹 오리진 재사용이라 신규 콜백 URL 불필요임을 명시 + 실기기 standalone 복귀 §5-1 검증). 나머지 문서는 **중복 대신 링크**(readiness·submission-pack·owner-final-checklist·roadmap §5-1). handoff-back: 운영자가 package id + 실 SHA-256 채워 돌려주면 `npm run app:assetlinks -- --package <id> --fingerprint "<SHA-256>"` → `npm run app:check`.
+- **`scripts/check-app-packaging.mjs` 강화(오프라인·네트워크/계정 불필요, 기존 WAIT 동작 유지)**:
+  - `generate-assetlinks.mjs` `--dry-run`을 `spawnSync`로 실행 → 유효 형식 더미 지문(32 hex 바이트)에서 exit 0 + 파싱 가능한 JSON(package_name·지문 일치) 단언, 자리표시자 지문(`REPLACE_WITH_REAL_...`)에서 non-zero exit 단언, dry-run/자리표시자 실행이 `public/.well-known/assetlinks.json`을 만들지 않았음 재확인. → 생성기가 오프라인에서 조용히 회귀하지 못함.
+  - 신규 `docs/ornscore-android-twa-owner-checklist.md` 존재 + 잠금 패키지명 `com.ornscore.app` + assetlinks 명령 문자열 포함 드리프트 가드 2건 추가.
+- **게이트(전부 통과)**: `npm run app:check` → 통과(신규 생성기 3단언·문서 2단언 OK 포함, **여전히 1 WAIT** = `assetlinks.json` 미생성 = 기존 운영자 외부 게이트, 회귀 아님) · `npx tsc --noEmit` → 0 · `npm run build` → Compiled successfully, 176 SSG·`/stock/[ticker]` `●` 138경로 189kB, **라우트 표 무변경**. 런타임/UI 소스 무변경 → 모바일/데스크톱 렌더 영향 0. `public/.well-known/assetlinks.json`은 전 과정에서 **생성된 적 없음**(재확인).
+- **⚠️ 운영자 게이트로 남음(코드로 처리 불가)**: assetlinks 실값 생성·스토어 제출·Play Console 계정 결제·서명 키 생성. 운영자가 위 인테이크 시트 ②③(package id + 실 앱 서명 SHA-256)을 채워 돌려주면 다음 AI가 assetlinks 생성 → `app:check` 통과까지 이어감.
+- **오너용 요약**: ✅ Android TWA 다음 단계에 필요한 값만 채우는 한 장짜리 운영자 인테이크 시트 추가 + assetlinks 생성기가 오프라인 회귀하지 않도록 검증 스크립트 강화. 실 서명값·스토어 제출·외부 계정 변경 0. push/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 126 — OrnScore 앱 패키징 준비 (standalone viewport·theme-color·safe-area·iOS appleWebApp) (2026-07-02, Claude)
 - **범위**: 무료 한국어 베타(138종목)를 다음 앱 패키징 단계로 넘기기 위한 **로컬 안전 개선만**. 스토어 제출·외부 계정/대시보드 변경 **없음**, 서비스워커·유료 플랜·숨겨진 AI 분석 **미도입**. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm **0**. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
 - **변경 3소스 + 1스크립트 + docs**:

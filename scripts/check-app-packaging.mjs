@@ -94,6 +94,45 @@ const sourceFiles = [
 ];
 for (const path of sourceFiles) notIncludes(path, "serviceWorker.register", "service worker registration");
 
+// Exercise the assetlinks generator offline so it can't silently regress.
+// --dry-run must print parseable JSON and never touch public/.well-known.
+{
+  const gen = rel("scripts/generate-assetlinks.mjs");
+  const dummyFingerprint = new Array(32).fill("AB").join(":"); // 32 valid hex bytes
+  const dry = spawnSync(
+    process.execPath,
+    [gen, "--package", "com.ornscore.app", "--fingerprint", dummyFingerprint, "--dry-run"],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  let dryJsonOk = false;
+  try {
+    const parsed = JSON.parse(dry.stdout);
+    dryJsonOk =
+      parsed?.[0]?.target?.package_name === "com.ornscore.app" &&
+      parsed?.[0]?.target?.sha256_cert_fingerprints?.[0] === dummyFingerprint;
+  } catch {
+    dryJsonOk = false;
+  }
+  if (dry.status === 0 && dryJsonOk) pass("assetlinks generator --dry-run emits valid JSON, writes nothing");
+  else failure("assetlinks generator --dry-run did not emit valid JSON (exit 0 expected)");
+
+  // Placeholder fingerprint must be rejected (non-zero exit, nothing written).
+  const placeholder = spawnSync(
+    process.execPath,
+    [gen, "--package", "com.ornscore.app", "--fingerprint", "REPLACE_WITH_REAL_SHA256_FINGERPRINT"],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  if (placeholder.status !== 0) pass("assetlinks generator rejects placeholder fingerprint");
+  else failure("assetlinks generator accepted a placeholder fingerprint");
+
+  // The dry-run/placeholder exercises must never have created the real file.
+  if (existsSync(join(ROOT, "public", ".well-known", "assetlinks.json"))) {
+    failure("assetlinks generator wrote public/.well-known/assetlinks.json during dry-run check");
+  } else {
+    pass("assetlinks generator checks left public/.well-known absent");
+  }
+}
+
 const example = JSON.parse(read("docs/templates/assetlinks.example.json"));
 const exampleTarget = example?.[0]?.target;
 if (
@@ -117,6 +156,8 @@ includes("docs/app-store-submission-pack.md", "npm run app:assetlinks -- --packa
 includes("docs/ornscore-owner-final-checklist.md", "첫 스토어 결정**: Android TWA 우선", "owner checklist first store decision complete");
 includes("docs/app-roadmap.md", "1차 스토어 패키징은 **Android TWA 우선**", "roadmap decision lock");
 includes("docs/app-store-submission-pack.md", "com.ornscore.app", "Android package id documented");
+includes("docs/ornscore-android-twa-owner-checklist.md", "com.ornscore.app", "owner intake checklist locks package id");
+includes("docs/ornscore-android-twa-owner-checklist.md", "npm run app:assetlinks -- --package", "owner intake checklist keeps assetlinks handoff command");
 notIncludes("docs/app-store-submission-pack.md", "Android TWA를 먼저 갈지 결정", "undecided Android TWA wording");
 notIncludes("docs/app-packaging-readiness.md", "Android TWA (다음 후보)", "stale Android TWA candidate heading");
 notIncludes("docs/app-store-submission-pack.md", "Naver는 준비 중", "stale Naver-disabled wording");

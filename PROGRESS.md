@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-02 · [claude] Task 128 — Android TWA 운영자 인테이크 체크리스트 + assetlinks 생성기 dry-run 가드
+- **범위**: Android TWA Play 등재 **다음 한 걸음에 필요한 값만 운영자가 채우게 하는 짧은 빈칸 시트** 신설 + 오프라인 검증 스크립트 강화. 외부 계정/스토어 제출/실 서명값 **0**, `public/.well-known/assetlinks.json` 생성 **0**. 런타임/UI 소스 무변경(docs + 검증 스크립트 한정), 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-128-ornscore-android-twa-owner-checklist`(클린 시작).
+- **신규**: `docs/ornscore-android-twa-owner-checklist.md` — 6개 항목(Play Console 계정 준비도·패키지명 확정·서명 SHA-256(앱 서명 키+업로드 키)·스크린샷·스토어 문구 상태·OAuth 콜백)을 fill-in 빈칸으로. 기존 방대 문서(readiness·submission-pack·owner-final-checklist·roadmap §5-1)는 중복 대신 링크. handoff-back 명령(`npm run app:assetlinks ... → app:check`) 포함.
+- **스크립트 강화(`scripts/check-app-packaging.mjs`)**: `generate-assetlinks.mjs --dry-run`을 `spawnSync`로 실행해 유효 형식 지문 exit 0 + 파싱 JSON 단언, 자리표시자 지문 non-zero exit 단언, 실행 후 `public/.well-known` 미생성 재확인. 신규 인테이크 문서 존재 + 패키지명 `com.ornscore.app` + assetlinks 명령 문자열 드리프트 가드 2건 추가. 기존 WAIT 동작(실 assetlinks 미생성) 유지.
+- **게이트(전부 통과)**: `npm run app:check` 통과(신규 5단언 OK, **여전히 1 WAIT**=assetlinks 미생성=기존 운영자 게이트) · `npx tsc --noEmit` 0 · `npm run build` 0(176 SSG·`/stock/[ticker]` `●` 138경로 189kB, 라우트 표 무변경). `public/.well-known/assetlinks.json` 전 과정 미생성 재확인.
+- **남음(운영자 게이트)**: assetlinks 실값 생성·스토어 제출·Play Console 결제·서명 키 생성. 운영자가 package id + 실 SHA-256을 인테이크 시트에 채워 돌려주면 다음 AI가 이어감. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-02 · [claude] Task 125 — 성능·신뢰성 패스 (`/watchlist` 타임아웃 가드 + 라우트 로딩 스켈레톤)
 - **범위**: 무료 한국어 베타(138종목) 체감·로드 속도·신뢰성 개선. 점수식·`stocks.json`·인증/provider/env·DB 스키마·라우트 의미·`package.json` 의존성 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 변경 3 소스(`src/app/watchlist/page.tsx`·`src/app/watchlist/loading.tsx` 신규·`src/app/stock/[ticker]/loading.tsx` 신규)+docs. 브랜치 `ai-center/task-125-ornscore-performance-and-reliability`(클린 시작).
 - **신뢰성**: `watchlist/page.tsx`의 유일한 미가드 요청 시점 원격 호출(`getScoreChangesBatch`)을 `today`/`stock/[ticker]` 동형 `withTimeout(..., 4000, {} as Record<string, number>)`로 봉인 → 최악 TTFB 4초 캡·느리거나 실패 시 빈 델타 graceful degrade(목록 무영향). 정상/캐시 적중 시 미발화(동작 무변경).
