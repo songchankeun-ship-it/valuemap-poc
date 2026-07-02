@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Heart, ExternalLink, ArrowRight } from "lucide-react";
+import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { DisclosureSummaryCards } from "./disclosures/DisclosureSummaryCards";
 import { findGuideByLabel } from "@/lib/signalGuide";
@@ -190,6 +190,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   const [filterType, setFilterType] = useState<string>("all");
   // 분석 대상만 / 전체 시장 (설계서 §15 / [P1-4]). 기본은 '전체 시장' — 기존 동작 보존.
   const [scope, setScope] = useState<"universe" | "all">("all");
+  // '다시 시도' 시 이 값을 증가시켜 fetch effect를 재실행한다.
+  const [reloadKey, setReloadKey] = useState(0);
   const firstRender = useRef(true);
 
   useEffect(() => {
@@ -204,13 +206,20 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
       .then((r) => r.json())
       .then((j) => {
         if (!alive) return;
-        if (j.error) setError(j.error);
-        else setData(j);
+        // 원문 에러 메시지는 사용자에게 노출하지 않고 콘솔에만 남긴다.
+        if (j.error) {
+          console.error("[disclosures] API error:", j.error);
+          setError("error");
+        } else setData(j);
       })
-      .catch((e) => alive && setError((e as Error).message))
+      .catch((e) => {
+        if (!alive) return;
+        console.error("[disclosures] fetch failed:", e);
+        setError("error");
+      })
       .finally(() => alive && setLoading(false));
     return () => { alive = false; };
-  }, [days]);
+  }, [days, reloadKey]);
 
   if (loading) {
     return (
@@ -234,8 +243,20 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
   if (error || !data) {
     return (
-      <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg p-4 text-sm text-rose-700 dark:text-rose-400">
-        {t.errorPrefix}{error || t.errorUnknown}
+      <div className="bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-900 rounded-lg p-6 md:p-8 text-center">
+        <AlertTriangle className="w-8 h-8 text-rose-400 dark:text-rose-500 mx-auto mb-3" strokeWidth={1.5} aria-hidden="true" />
+        <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5 break-words">{t.errorTitle}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-words">{t.errorHelp}</p>
+        <div className="flex justify-center flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+          >
+            <RefreshCw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+            {t.errorRetry}
+          </button>
+        </div>
       </div>
     );
   }
@@ -376,16 +397,30 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-12 space-y-3">
-            <div>{t.empty}</div>
-            {filterType !== "all" ? (
-              <button
-                type="button"
-                onClick={() => setFilterType("all")}
-                className="text-xs px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"
-              >
-                {t.emptyReset}
-              </button>
+          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
+            <Inbox className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} aria-hidden="true" />
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-words">{t.empty}</p>
+            {filterType !== "all" || scope === "universe" ? (
+              <div className="flex justify-center flex-wrap gap-2">
+                {scope === "universe" ? (
+                  <button
+                    type="button"
+                    onClick={() => setScope("all")}
+                    className="inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                  >
+                    {t.emptyWidenScope}
+                  </button>
+                ) : null}
+                {filterType !== "all" ? (
+                  <button
+                    type="button"
+                    onClick={() => setFilterType("all")}
+                    className="inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                  >
+                    {t.emptyReset}
+                  </button>
+                ) : null}
+              </div>
             ) : null}
           </div>
         ) : (

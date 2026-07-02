@@ -205,7 +205,8 @@ export function WatchlistClient({
     return (
       <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center space-y-2">
         <div>관심 종목을 불러오지 못했어요.</div>
-        <button onClick={() => window.location.reload()} className="text-xs px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">다시 시도</button>
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">일시적인 문제일 수 있어요. 잠시 후 다시 시도해 주세요.</p>
+        <button onClick={() => window.location.reload()} className="inline-flex items-center justify-center min-h-[44px] text-xs px-3.5 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">다시 시도</button>
       </div>
     );
   }

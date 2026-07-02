@@ -42,6 +42,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 149 — 빈 상태·에러 카피 폴리시 (2026-07-03, Claude)
+- **범위**: OrnScore 전반의 빈 상태/에러 카피를 다듬어 미완성처럼 보이는 화면을 없애고 복구 경로를 명확히. 광범위 리디자인·제3자 서비스·중량 의존성 무변경. 브랜치 `ai-center/task-149-ornscore-empty-states-and-error-copy`.
+- **변경 소스(3)**: `DisclosureExplorer.tsx`(에러 → 재시도 복구 카드[`reloadKey` refetch·원문 에러 console 전용], 빈 상태 → 점선 카드+아이콘+`scope==="universe"` 시 "전체 시장까지 넓혀 보기" 버튼), `src/lib/copy/disclosures.ts`(ko/en `errorTitle`·`errorHelp`·`errorRetry`·`emptyWidenScope` 신규 + `errorUnknown` 완곡화), `WatchlistClient.tsx`(loadError 재시도 44px 탭 타깃 + 도움말 1줄). 나머지 빈 상태는 이미 정합 → 확인만.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF-8) 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(라우트 표 무변경) · 신규 ko/en 카피 청크 번들 존재 확인. 매수/매도/추천 토큰 0. 실기기 390px 육안은 운영자 잔여. 푸시 미수행(로컬 커밋만).
+
 ### Task 148 (continuation) — 저장 필터↔조건 알림 다리 정합 패스 (2026-07-03, Claude)
 - **배경**: 직전 커밋 `e53235a`로 item B/C(카카오 행 카피·인앱 프리뷰)·상단 "내 현황" 알림 CTA는 반영됐으나, AI Center Run 119 tester가 code 1로 종료돼 관리 블록 상태가 `failed`로 남음(개발 게이트는 통과였음). 재감사 결과 **저장한 필터 섹션에 조건 충족 알림으로 가는 경로가 빠져** 무료 기능 경로가 한 곳에서 끊겼다.
 - **변경 소스(1)**: `WatchlistClient.tsx` 저장한 필터 푸터에 **저장 필터 → 조건 충족 알림 다리** 1줄 추가 — `/settings/notifications`(조건 충족 알림) 내부 링크 + "지금은 이메일(임시·베타) · 카카오톡 준비 중" 일관 프레이밍. 텍스트만 추가(기존 44px/flex-wrap·`break-words` 안에서 래핑, 레이아웃 무변경). 압박·매수·매도·가격 단정 0.

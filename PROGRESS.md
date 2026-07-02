@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 149 — 빈 상태·에러 카피 폴리시 (공시 재시도/도움말 + 모바일 여백)
+- **범위**: 미완성처럼 보이는 화면 제거 + 복구 경로를 명확히. 광범위 리디자인·제3자 서비스·중량 의존성 무변경, 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-149-ornscore-empty-states-and-error-copy`.
+- **공시(`DisclosureExplorer.tsx`)**: (1) 에러 블록을 원시 에러 문자열 노출 대신 **복구 카드**(경고 아이콘 + `errorTitle`/`errorHelp` + `min-h-[44px]` "다시 시도" 버튼)로 교체. `reloadKey` state로 fetch effect 재실행, 원문 에러는 `console.error`에만. (2) 빈 상태를 앱 공통 점선 카드 패턴(아이콘+중앙 정렬)으로 통일 + `scope==="universe"`로 비면 "전체 시장까지 넓혀 보기"(`setScope("all")`) 버튼 추가, 기존 필터 해제 버튼 유지. 버튼 컨테이너 `flex-wrap gap-2`.
+- **카피(`src/lib/copy/disclosures.ts`, ko/en 동시)**: `errorTitle`·`errorHelp`·`errorRetry`·`emptyWidenScope` 신규 + `errorUnknown` 완곡화("일시적인 오류"). 비자문 톤(참고/확인) 유지, 매수/매도/추천 토큰 0.
+- **`WatchlistClient.tsx`**: loadError 재시도 버튼 탭 타깃 44px로 상향 + 도움말 1줄 추가(일시적 문제·잠시 후 재시도). 다른 빈 상태(Compare<2·Watchlist empty/loading·login 에러·Stocks no-match)는 이미 `flex-wrap`/`min-h-[44px]` 정합 — 확인만, 무변경.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(라우트 표 무변경) · 신규 ko/en 카피 문자열이 `.next/static/chunks/app/disclosures/*` 번들에 존재 확인(클라 스위치라 curl 불가 → 청크 grep).
+- **다음 소유자**: 실기기 육안(390px 에러 카드·빈 상태 줄바꿈)은 운영자 잔여. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 148 — 관심 종목 + 알림 설정 로컬 UX 패스 (무발송 카카오 Stage 1)
 - **범위**: 관심 종목↔알림을 하나의 **일관된 무료 기능 경로**로 느껴지게 하는 로컬 UX 패스. 제3자 서비스 호출 0·계정/민감 설정 변경 0·비밀값 저장 0. 점수식·`stocks.json`·`features.ts`·인증/provider·이메일 cron(`notify`·`evaluate-alerts`)·매직링크 문구·의존성 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 브랜치 `ai-center/task-148-ornscore-watchlist-and-alert-prefere`(클린 시작).
 - **코히런스 카피(§2)**: `WatchlistClient.tsx` 알림 CTA를 알림 *설정* 링크로 명확화("알림 설정 보기") + 하단 1줄 "관심 종목 공시·저장 필터 충족 알림은 지금 이메일로 동작해요(임시·베타). 카카오톡 알림은 준비 중이에요." → `settings/notifications` 상단 배너의 "지금 되는 것 vs 준비 중" 프레이밍과 일치. 기존 "매수·매도 추천이 아닙니다"/"참고 정보" 가드 전부 보존.

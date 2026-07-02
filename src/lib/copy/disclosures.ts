@@ -44,7 +44,10 @@ export const disclosureExplorerCopy = {
     // 로딩 / 에러
     loading: (days: number) => `최근 ${days}일 DART 공시를 불러오고 있습니다...`,
     errorPrefix: "공시 데이터를 가져오지 못했습니다: ",
-    errorUnknown: "알 수 없는 에러",
+    errorUnknown: "일시적인 오류",
+    errorTitle: "공시 데이터를 잠시 불러오지 못했어요",
+    errorHelp: "일시적인 네트워크 문제일 수 있어요. 잠시 후 다시 시도해 주세요.",
+    errorRetry: "다시 시도",
     // 헤더
     title: "공시 신호",
     within200: "최신 200건 내",
@@ -94,6 +97,7 @@ export const disclosureExplorerCopy = {
     // 빈 상태
     empty: "지금 조건에 맞는 신호가 없습니다.",
     emptyReset: "필터를 해제하고 전체 신호 보기",
+    emptyWidenScope: "전체 시장 공시까지 넓혀 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
       "자기주식 취득 결의": "주주환원·주가 안정 관련 이벤트. 취득 규모·소각 여부 확인 필요.",
@@ -116,7 +120,10 @@ export const disclosureExplorerCopy = {
   en: {
     loading: (days: number) => `Loading the last ${days} days of DART disclosures...`,
     errorPrefix: "Could not load disclosure data: ",
-    errorUnknown: "Unknown error",
+    errorUnknown: "A temporary error",
+    errorTitle: "We couldn't load disclosure data just now",
+    errorHelp: "This may be a temporary network issue. Please try again in a moment.",
+    errorRetry: "Try again",
     title: "Disclosure signals",
     within200: "Within latest 200",
     periodScopeBadge: "Not the full period · within latest 200",
@@ -159,6 +166,7 @@ export const disclosureExplorerCopy = {
     watch: "Watch",
     empty: "No signals match right now.",
     emptyReset: "Clear filter and view all signals",
+    emptyWidenScope: "Widen to whole-market disclosures",
     descriptions: {
       "자기주식 취득 결의":
         "Shareholder-return / price-stability event. Confirm buyback size and whether shares will be cancelled.",
