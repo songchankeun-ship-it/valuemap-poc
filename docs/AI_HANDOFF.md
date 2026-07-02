@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 154 — 전문가 피드백 인테이크 루프 드라이런 (문서 전용) (2026-07-03, Claude)
+- **범위**: `ornscore-expert-feedback-intake-template.md`(Task 129) 루프를 실제로 한 번 돌려 **미래 피드백 → messy 중복 없는 P0/P1/P2** 변환을 증명. 앱 소스·점수식·`stocks.json`·인증/provider/env·라우트·의존성·외부 서비스 무변경, 신규 npm 0. 실 신규 broad 백로그 생성 없음. 브랜치 `ai-center/task-154-ornscore-expert-feedback-loop-dry-ru`.
+- **신규 `docs/ornscore-expert-feedback-dry-run-2026-07-03.md`**: SAMPLE 리포트(기존 알려진 이슈 조립)로 §7 표 4행 완전 워크 — 거부(INV-5 목표가/매수후보) · P2 코드 task 방출 1건(공시 범위 문구·§5 6필드) · P1-VISUAL 운영자 버킷 라우팅 · 이미 완료 항목(STEP 번호 중복 Task 60/68) 중복 드롭. 실 방출 task 1건뿐.
+- **템플릿 additive 개선(2편집)**: 발견 갭 = §7 표가 dedup·운영자 분리를 강제하지 않음 → §7 표에 **"이미 추적/완료?(spec-coverage 대조)"·"운영자 전용?"** 두 칸 + 설명 1줄, §7-A에 방출 전 dedup·운영자 라우팅 규칙 2줄. priority/verification/safety는 이미 충분 → 무변경. 불변식 가드·§5-A 거짓 승인 회피·톤 규칙 보존.
+- **게이트**: `tsc --noEmit` 0(소스 무변경 증명·docs만) · `git diff --check` 실 whitespace 0(전역 CRLF만) · 신규/변경 문서 U+FFFD 0·한국어 정상. `build`/`app:check`/`perf:check` 불필요(앱 소스·라우트·`<head>` 무변경, 모바일/데스크톱 영향 0). 추적: `spec-coverage` §1 O.QA 행 Task 154 포인터, PROGRESS 본 항목. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 152 — 성능 가드레일: perf-check에 /today 추가 + 베이스라인 (2026-07-03, Claude)
 - **변경(1소스)**: `scripts/perf-check.mjs` `ROUTES`에 `{ path: "/today", cat: "B" }`를 `/stocks` 뒤에 추가(요청 시점 원격 4콜·각 4초 타임아웃 → `/stock/*`·`/watchlist`와 같은 Category B 9000ms 소프트버짓, 오탐 방지) + 하단 노트 Category-B 열거를 `(/stock/*, /today, /watchlist)`로 일치. 스레숄드/로직·라우트 코드 무변경, 신규 의존성 0.
 - **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF-8) 138/0/금칙0/Metrics 2.4 · `build` 0(**라우트 표 무변경**) · `app:check` 통과. 로컬 prod 4457(리스너 PID만 taskkill·**AI Center 4310 무중단**) `perf:check --samples 3` → **12 라우트 200·advisory 0·exit 0**, `/today` 4052ms(버짓 내). 베이스라인 블록은 `PROGRESS.md` Task 152 참조(절대 ms는 PC/네트워크마다 다름·상대 회귀만 의미). 푸시 미수행(로컬 커밋만).

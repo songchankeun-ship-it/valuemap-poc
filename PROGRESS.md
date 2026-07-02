@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 154 — OrnScore 전문가 피드백 인테이크 루프 드라이런 (문서 전용)
+- **범위**: `docs/ornscore-expert-feedback-intake-template.md`(Task 129) 루프를 한 번 돌려 **미래 피드백 한 편이 messy 중복 task 없이 P0/P1/P2로 변환됨**을 증명하는 문서/프로세스 패스. 앱 소스·점수식·`stocks.json`·인증/provider/env·라우트·의존성·외부 서비스 무변경, 신규 npm 0. 실 신규 broad 백로그 생성 없음. 브랜치 `ai-center/task-154-ornscore-expert-feedback-loop-dry-ru`(클린 시작).
+- **신규 `docs/ornscore-expert-feedback-dry-run-2026-07-03.md`**: SAMPLE 리포트(기존 알려진 이슈 조립)로 §7 표 4행 완전 워크 — **거부(INV-5 목표가/매수후보)** · **P2 코드 task 방출 1건(공시 범위 문구, §5 6필드)** · **P1-VISUAL 운영자 버킷 라우팅** · **이미 완료 항목(STEP 번호 중복, Task 60/68) 중복 드롭**. 4경로 시연 + "증명/갭" 5줄.
+- **템플릿 additive 개선(2편집)**: 발견 갭 = §7 표에 dedup·운영자 분리가 강제되지 않음 → `ornscore-expert-feedback-intake-template.md` §7 표에 **"이미 추적/완료?(spec-coverage 대조)"·"운영자 전용?"** 두 칸 추가(헤더+예시행+설명 1줄), §7-A에 방출 전 dedup·운영자 라우팅 규칙 2줄 추가. priority(§3/§7)·verification(§6/§7/§5)·safety(§2·§5-A·톤)는 이미 충분 → 무변경. 불변식 가드·톤 규칙 보존.
+- **게이트**: `npx tsc --noEmit` 0(소스 무변경 증명 — docs만 변경) · `git diff --check` 실 whitespace 오류 0(전역 CRLF 노이즈만) · 신규/변경 문서 U+FFFD 0·한국어 정상. `build`/`app:check`/`perf:check` 불필요(앱 소스·라우트·`<head>` 무변경). 모바일/데스크톱 영향 0.
+- **다음 소유자**: 방출 준비된 P2 공시 범위 문구 task는 별도 실행 결정. 실 릴리스·`main` 머지·외부 계정은 §8 운영자 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 152 — OrnScore 성능 가드레일: perf-check에 /today 추가 + 베이스라인 기록
 - **범위**: 반복 종목 탐색 속도를 지키는 **경량 로컬 가드레일** 보강. 점수식·`stocks.json`·제3자 서비스·라우트 코드 무변경, 신규 의존성 0. `scripts/perf-check.mjs` 라우트 목록에만 손댐(스레숄드/로직 무변경). 브랜치 `ai-center/task-152-ornscore-performance-budget-and-rout`.
 - **변경(1소스)**: `scripts/perf-check.mjs` — `ROUTES`에 `{ path: "/today", cat: "B" }`를 `/stocks` 바로 뒤(홈→today→stocks→상세 내비 순서)에 추가. `/today`는 요청 시점 원격 4콜(`getRecentSignals`/`getScoreChangesBatch`/`getMetricChangesBatch`/`getLatestStoredInsight`, 각 4초 타임아웃 가드)을 하므로 `/stock/*`·`/watchlist`와 같은 **Category B(9000ms 소프트버짓)** — ISR 콜드 재생성 샘플의 오탐 방지. 하단 안내 노트의 Category-B 열거를 `(/stock/*, /today, /watchlist)`로 일치. 그 외 로직/버짓 무변경.
