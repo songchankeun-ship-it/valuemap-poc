@@ -62,7 +62,7 @@ export function SignalGuideExpand({ guide, url }: { guide: SignalGuide; url?: st
           {/* 왜 중요한지 */}
           <div>
             <div className="text-[10px] font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">
-              왜 주목할 가치가 있는지
+              왜 확인해야 하는 신호인지
             </div>
             <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
               {guide.whyMatters}

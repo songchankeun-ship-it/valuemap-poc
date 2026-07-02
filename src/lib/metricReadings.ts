@@ -38,7 +38,7 @@ export function readMomentum(score: number): Reading {
     r.tone = "caution";
   } else if (score >= 60) {
     r.meaning = "최근 흐름이 양호합니다";
-    r.action = "추세는 살아 있지만 너무 늦지 않게 확인";
+    r.action = "추세는 이어지는 중 — 상승 원인·지속 가능성 확인";
     r.tone = "good";
   } else if (score >= 40) {
     r.meaning = "최근 흐름은 평이합니다";
