@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-02 · [claude] Task 135 — 무료 출시 스모크 + 전환 퍼널 QA (앱 소스 무변경)
+- **범위**: 무료 한국어 베타(138종목) 출시 후 집중 QA에 **전환 퍼널 각도**(로그인 진입·`next` 복귀·제공자·데이터 신뢰/안전 문구)를 추가. 앱 코드 무수정 QA. 점수식·`stocks.json`·인증/provider/env·시크릿·DB·라우트·의존성 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지. 브랜치 `ai-center/task-135-ornscore-free-launch-smoke-and-conve`(클린 시작·종료). Task 127 재기재 대신 참조.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8, 138종목·0오류·금칙 0·Metrics 2.4) · `npm run build` 0(`/stock/[ticker]` `●` 138 SSG, 라우트 표 무변경) · `npm run app:check` 통과(1 WAIT=assetlinks 기존 운영자 게이트). 로컬 prod 4456(리스너 PID만 taskkill·**AI Center 4310/PID 26420 무중단**) `perf:check` 11라우트 200·advisory 0.
+- **스모크**: 12 공개 경로(/ /today /stocks /stock/034730 /stock/032830 /watchlist /compare /login /disclosures /pricing /status /manifest.webmanifest) 12/12 200·치명 마커 0(원시 grep의 `Hydration` 1건은 `suppressHydrationWarning` 정상 prop, 정밀 재검 0).
+- **불변식 재확인(INV-1..6)**: 138종목(홈·manifest)·비자문 고지(홈·상세·요금제)·EN 토글 숨김(AppHeader/MobileNav 렌더 0)·AI 공개 숨김(상세/내비 0)·요금제 무료 베타 리드(SSR ×7·byte 1483 vs Pro 26058·확정가 0)·요금제 내비 강등(3 내비 모두 MORE). 요금제 톤 조건부·비확정 유지.
+- **전환 퍼널(신규 각도) 정상**: 헤더 `href="/login"`+"로그인"; 비로그인 `/watchlist` CTA `href="/login?next=%2Fwatchlist"`(복귀 next 보존)+혜택 문구+"관심 종목" 빈상태; `/login` 카카오·구글·네이버·이메일 매직링크("메일로 로그인 링크") 4종. 데이터 신뢰/안전 문구 grep(copy/*.ts·dataStatus·pricing): 수익·원금 보장/매수·매도 권유/"곧 유료·유료 확정" phrasing 0(매치는 전부 "추천이 아니다" 부정형).
+- **결과**: 신규 코드 결함 0 → **앱 소스 무변경**(Task 127과 동일 결론). 산출물=`docs/ornscore-free-launch-conversion-qa-2026-07-02.md`+PROGRESS+AI_HANDOFF. 잔여=실기기 OAuth·데스크톱/390px 시각 게이트(P1 운영자)·assetlinks(운영자 외부 게이트). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-02 · [claude] Task 128 — Android TWA 운영자 인테이크 체크리스트 + assetlinks 생성기 dry-run 가드
 - **범위**: Android TWA Play 등재 **다음 한 걸음에 필요한 값만 운영자가 채우게 하는 짧은 빈칸 시트** 신설 + 오프라인 검증 스크립트 강화. 외부 계정/스토어 제출/실 서명값 **0**, `public/.well-known/assetlinks.json` 생성 **0**. 런타임/UI 소스 무변경(docs + 검증 스크립트 한정), 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-128-ornscore-android-twa-owner-checklist`(클린 시작).
 - **신규**: `docs/ornscore-android-twa-owner-checklist.md` — 6개 항목(Play Console 계정 준비도·패키지명 확정·서명 SHA-256(앱 서명 키+업로드 키)·스크린샷·스토어 문구 상태·OAuth 콜백)을 fill-in 빈칸으로. 기존 방대 문서(readiness·submission-pack·owner-final-checklist·roadmap §5-1)는 중복 대신 링크. handoff-back 명령(`npm run app:assetlinks ... → app:check`) 포함.

@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 135 — 무료 출시 스모크 + 전환 퍼널 QA (앱 소스 무변경) (2026-07-02, Claude)
+- **범위**: 무료 한국어 베타(138종목) 출시 후 집중 QA + **전환 퍼널 각도**(로그인 진입·`next` 복귀·제공자·데이터 신뢰/안전 문구). 앱 코드 무수정. 점수식·`stocks.json`·인증/provider/env·시크릿·DB·라우트·의존성 무변경, 신규 npm 0. 불변식 유지. Task 127(`docs/ornscore-post-release-qa-2026-07-02.md`) 재기재 대신 참조.
+- **게이트 전부 통과**: `tsc` 0 · `verify_metrics.py` 138/0/금칙0/Metrics 2.4 · `build` 0(라우트 표 무변경·138 SSG) · `app:check` 통과(1 WAIT=assetlinks 기존 게이트) · 로컬 prod 4456 `perf:check` 11라우트 200·advisory 0. **AI Center 4310(PID 26420) 무중단**, 4456 리스너만 정리.
+- **스모크/불변식**: 12 공개 경로 200·치명 마커 0. INV-1..6 전부 유지(138·비자문·EN숨김·AI숨김·무료베타 리드·요금제 내비 강등). 요금제 톤 조건부·비확정.
+- **전환 퍼널 정상**: 헤더 로그인 진입 일관, `/watchlist` 비로그인 CTA가 `?next=%2Fwatchlist`로 복귀 보존, `/login` 카카오/구글/네이버/이메일 매직링크 4종. 과대약속·매수매도 권유·"곧 유료" phrasing 0.
+- **결과**: 신규 결함 0 → **앱 소스 무변경**(Task 127 동일 결론). 산출물=신규 QA 노트+PROGRESS+본 파일. 잔여(운영자)=실기기 OAuth·데스크톱/390px 시각 게이트(P1)·assetlinks. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 128 — OrnScore Android TWA 운영자 인테이크 체크리스트 + assetlinks 생성기 dry-run 가드 (2026-07-02, Claude)
 - **범위**: Android TWA Play 등재 **다음 한 걸음에 필요한 실제 값만 운영자가 채우게 하는 짧은 빈칸 시트** 신설 + 오프라인 검증 스크립트 강화. 외부 계정/대시보드/스토어 제출 **0**, 실 서명값·`public/.well-known/assetlinks.json` 생성 **0**. 런타임/UI 소스 **무변경**(docs + 오프라인 검증 스크립트 한정), 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
 - **문서 사실 재확인(현행 유지, 수정 아님)**: 패키지명 `com.ornscore.app`(submission-pack·app-packaging-final-checklist·owner-final-checklist), assetlinks 명령 `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"` → `scripts/generate-assetlinks.mjs` 매핑, `manifest.ts`(display standalone·start_url/·scope/·lang ko-KR·아이콘 192/512/512-maskable·shortcuts /today /stocks /disclosures), 정책 링크 `/privacy`·`/terms`. 실제 불일치 0건 → 침묵 편집 없음.
