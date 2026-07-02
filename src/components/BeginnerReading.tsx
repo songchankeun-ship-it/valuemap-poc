@@ -67,7 +67,7 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         </div>
         <div>
           <h2 className="text-sm md:text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
-          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.subheading}</p>
+          <p className="text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.subheading}</p>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         </div>
       </details>
 
-      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
+      <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-3 leading-relaxed">
         {t.disclaimer}
       </p>
     </section>

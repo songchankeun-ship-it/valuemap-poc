@@ -49,7 +49,7 @@ export const stockDetailCopy = {
       marketClose: "장마감",
       universe: "분석 대상",
       universeSuffix: "종목",
-      scoreCalc: "점수 계산",
+      scoreCalc: "점수 산출일",
       formulaVersion: "산식 버전",
     },
     sectorValue: {
@@ -163,7 +163,7 @@ export const conclusionHeroCopy = {
     nextToCheck: "다음으로 확인할 것",
     disclaimerMain: "매수·매도 추천이 아닌 탐색 우선순위입니다.",
     disclaimerSub:
-      "점수는 탐색 우선순위용 실험 지표이며, 향후 수익률을 의미하지 않습니다.",
+      "아직 실험 단계 지표라 향후 수익률을 의미하지 않아요 — 결정 전 공시·재무 근거를 함께 확인하세요.",
   },
   en: {
     suspectBanner:
@@ -171,7 +171,7 @@ export const conclusionHeroCopy = {
     nextToCheck: "What to check next",
     disclaimerMain: "A research priority, not a buy/sell recommendation.",
     disclaimerSub:
-      "The score is an experimental research-priority metric and does not imply future returns.",
+      "It's still an experimental metric and doesn't imply future returns — check the disclosures and financials before deciding.",
   },
 } as const satisfies Record<Locale, unknown>;
 

@@ -62,7 +62,7 @@ export function PriorityScoreCard({
           <ScoreGauge score={score} size={88} showLabel showOutOf />
         )}
 
-        <div className="min-w-0 space-y-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
+        <div className="min-w-0 space-y-1 text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.rankLabel} <span className="font-normal">{t.rankParen}</span></div>
           <div>{t.overallPrefix} <strong className="text-zinc-900 dark:text-zinc-100">{overallRank}</strong> / {poolN}{t.rankSuffix}</div>
           <div className="truncate">{t.sectorPrefix}({sector}) <strong className="text-zinc-900 dark:text-zinc-100">{sectorRank}</strong> / {sectorCount}{t.rankSuffix}</div>
