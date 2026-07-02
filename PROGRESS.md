@@ -1779,3 +1779,15 @@
 - **Smoke(로컬 prod 4431, 리스너 PID만 taskkill·AI Center 4310 PID 37328 무중단 확인)**: 10개 과제 라우트 전부 200. /stock/034730 SSR(ko) — 추세/거래활성도/밸류/위험조정·결론 히어로 렌더, 차트 스켈레톤(aria-busy+"주가 차트")이 SSR HTML에 존재(CLS 가드), 불변식 유지(AI 종합 분석/분석 기록 0·LanguageSwitcher 0·138 노출).
 - **Follow-up(동작 리스크라 미적용)**: (1) /watchlist 서버 Supabase 138-ticker 배치 쿼리 캐시/타임아웃/클라 이행 검토 (2) /stock getScoreHistory 타임아웃 가드 (3) GlobalSearch props themes 축소(검색 동작 의존이라 보류) (4) /compare·/disclosures 등 추가 below-fold 위젯 동일 패턴 지연.
 - **다음 소유자**: 운영자/제품 — 외부 사이트(Vercel) 반영은 별도 단계. 푸시/릴리스 미수행(로컬 커밋만).
+
+
+## 2026-07-02 · [claude] Task 127 — OrnScore 공개 사이트 릴리스 후 QA + 피드백 인테이크 준비
+- **Scope**: 릴리스 후 공개 사이트 읽기 전용 QA 패스 + 피드백 인테이크 노트 작성. 앱 소스 무수정(코드 결함 0 → 안전한 1줄 수정 후보 없어 무변경). 외부 릴리스/푸시/스토어/결제/외부계정 변경 0. 브랜치 ai-center/task-127-ornscore-public-site-post-release-qa(클린 시작, HEAD 8b1ecc8).
+- **산출물**: `docs/ornscore-post-release-qa-2026-07-02.md`(신규 — Task 48 `ornscore-qa-feedback.md` 미덮어씀). P0/P1/P2 분류 + 운영자 확인 항목 + 육안 체크리스트 + 다음 작업 제안.
+- **점검 경로(로컬 prod 4455, SSR/에셋)**: `/ /today /stocks /stock/034730 /watchlist /compare /login /disclosures /pricing /status /manifest.webmanifest` → 11/11 HTTP 200, 치명 마커 0(Application error/Hydration/TypeError/ReferenceError/Cannot read/Unhandled).
+- **무료 베타 불변식 6종 재확인(전부 유지)**: INV-1 138종목 명확(홈/og/manifest) · INV-2 비자문 고지(홈 "데이터 도구"·상세 "투자 추천 아님"·요금제 고지) · INV-3 한국어 전용(홈 SSR LanguageSwitcher/English/hreflang 0·AppHeader/MobileNav 렌더 0) · INV-4 AI 공개 숨김(상세 SSR "AI 분석 실행"/"Anthropic"/AiAnalysis 0·`src/app/stock/` AiAnalysisCard 사용 0·/history 내비 0) · INV-5 요금제 무료 베타·확정가(9,900/14,900/29,000) 0 · INV-6 요금제 내비 강등(Sidebar group:"more"·MobileBottomNav MORE 그룹). 로그인 진입 명확(헤더/watchlist "로그인" CTA, 제공자 카카오·구글·네이버·이메일).
+- **PWA 신호(실사용 수준)**: viewport `viewport-fit=cover`·`maximum-scale` 없음 · theme-color 라이트/다크 2종 · apple-mobile-web-app-* 3종 · manifest display:standalone·lang ko-KR·138 description·shortcuts 3·icons 192/512/512-maskable · 아이콘 5개(192/512/512-maskable/apple-touch/manifest) 전부 200(404 0) · safe-area-inset top/bottom CSS 존재.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(138 SSG·라우트 표 불변) · `app:check` 통과(assetlinks WAIT 1건 = 운영자 외부 게이트, 회귀 아님) · `perf:check`(base 4455) 11라우트 200·advisory 경고 0.
+- **findings**: P0 0 · P1 1(실 브라우저 시각 게이트 부재 = Task 48 P1-VISUAL 승계, 운영자 육안) · P2 3(manifest 단일 theme_color 라이트 상단바 어둡게 · safe-area 좌우 미적용 가로/노치 · Category-B 라우트 로컬 ~4s Supabase 왕복 = 환경 아티팩트·회귀 아님).
+- **스모크 정리**: 로컬 prod 리스너 PID 11636만 taskkill, AI Center 4310(PID 26420) 무중단 확인. 신규 노트 U+FFFD 0.
+- **다음 소유자**: 운영자/제품 — 실기기 OAuth 왕복 + 데스크톱/390px 육안 게이트 + (선택) P2 폴리시. 잔여 커버리지(공시 파이프라인④/도메인 이메일⑤/EN i18n)는 spec-coverage 문서로 추적 유지. 푸시/릴리스 미수행(로컬 커밋만).

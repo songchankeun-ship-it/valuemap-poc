@@ -1075,3 +1075,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Fix(`src/app/layout.tsx`, 기존 webdriver 가드 확장): `navigator.webdriver`일 때 head에 `<style>` 주입 — `*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;transition:none!important;}` 후 `return`(CDN 폰트 생략은 그대로 유지). blur·무한 애니메이션(animate-pulse/spin)·body color transition을 자동화에서만 무력화 → 캡처 즉시 안정. **실사용자(webdriver 미설정)는 blur·폰트·애니메이션 100% 그대로.** 데이터/점수/인증/manifest/PWA/i18n 무변경, 신규 npm 0.
 - Passed: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·전 라우트, BUILD_EXIT=0) · `git diff --check` clean · layout.tsx U+FFFD 0·Korean intact. 로컬 prod 포트 47733(`next start` 리스너 PID 35224만 taskkill, **4310 PID 37328 무중단**): 과제 15개 라우트(`/ /stocks /stock/034730 /watchlist /about /status /disclosures /backtest /pricing /compare /history /guide/metrics /terms /privacy /login`) 전부 200, 서빙 HTML(`/`)에 `backdrop-filter:none!important` 가드 존재.
 - Residual(운영자): 가드는 자동화 한정 시각 변화(헤더 blur 제거)일 뿐 캡처 정상화. 영구적으로 자동화 의존을 더 줄이려면 backdrop-filter를 전역적으로 줄이거나 Pretendard self-host 고려 — 발명/디자인 변경이라 미진행. 푸시/릴리스 미수행(로컬 커밋만).
+
+
+### Task 127 — OrnScore 공개 사이트 릴리스 후 QA + 피드백 인테이크 (2026-07-02, Claude)
+- **Scope**: 릴리스 후 공개 사이트 읽기 전용 QA 패스. 산출물 `docs/ornscore-post-release-qa-2026-07-02.md`(신규) + PROGRESS.md/AI_HANDOFF.md 갱신. 앱 소스 무수정(코드 결함 0). 외부 릴리스/푸시/스토어/결제/외부계정 변경 0. 시작 HEAD `8b1ecc8`(클린).
+- **findings 요약**: P0 **0** · P1 **1**(실 브라우저 데스크톱/390px 시각 게이트 부재 — Task 48 P1-VISUAL 승계, 운영자 육안) · P2 **3**(manifest 단일 theme_color · safe-area 좌우 미적용 · Category-B 로컬 ~4s Supabase 왕복=환경 아티팩트). 신규 코드 결함 0 → 안전한 1줄 수정 후보 없어 무변경.
+- **게이트**: `tsc` 0 · `verify_metrics.py`(UTF8) 138종목 0오류·금칙어 0·Metrics 2.4 · `build` 0(138 SSG·라우트 불변) · `app:check` 통과(assetlinks WAIT 1 = 운영자 게이트) · `perf:check`(4455) 11라우트 200·advisory 0.
+- **불변식 재확인(6종 유지)**: 138종목·비자문 고지·EN 토글 숨김·AI 공개 숨김(상세 AiAnalysisCard 0·/history 내비 0)·요금제 무료 베타(확정가 0)·요금제 내비 강등(more 그룹). 로그인 제공자 카카오/구글/네이버/이메일 노출.
+- **스모크**: 로컬 prod 4455 리스너 PID 11636만 taskkill, AI Center 4310(PID 26420) 무중단. 11개 공개 경로 200·치명 마커 0·아이콘 5개 200. 신규 노트 U+FFFD 0.
+- **남은 운영자 게이트**: 실기기 OAuth 왕복 · 데스크톱/390px 육안 시각 게이트(Playwright 미구성) · (선택) P2 폴리시 · assetlinks/스토어/결제(범위 밖). 푸시/릴리스 미수행(로컬 커밋만).
