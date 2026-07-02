@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 150 — 모바일 레이아웃 회귀 스윕 (관심 종목 헤더 다크모드 대비 수정)
+- **범위**: 모바일 폭(360/390/414px)에서 오버플로·잘린 컨트롤·비좁은 헤더·로그인/메뉴 상태를 훑어 컴포넌트 단위 소규모 수정만. 점수식·`stocks.json`·카피 문자열·언어 스위처(한국어 전용 베타 의도)·제3자 서비스 무변경, 신규 npm 0. 브랜치 `ai-center/task-150-ornscore-mobile-layout-regression-sw`.
+- **전수 점검(정합 확인·무변경)**: 공용 크롬 — `AppHeader`(sticky+`env(safe-area-inset-top)`·검색 `flex-1 min-w-0`·우측 클러스터 `shrink-0`)·`HeaderDataBar`(좌 `truncate min-w-0`/우 `shrink-0`)·`MobileNav`(포털 드로어·`body` 스크롤 락·백드롭 z-[60]/드로어 z-[61]·푸터 테마행 `flex-wrap`)·`MobileBottomNav`(`grid-cols-5`+`env(safe-area-inset-bottom)`·라벨 `truncate`)·`ThemeToggle`. 페이지 — 홈(`HomeHero`/`MarketSnapshotCards`/`StockCandidateCard`/`DisclosureSignalCard` 전부 `flex-wrap`·`min-h-[44px]`·다크 정합)·`StocksExplorer`(칩·모드탭·필터 드로어 `max-w-[90vw]`·표 `lg`만·모바일 카드)·종목 상세(`StockHeader` CTA `[&>*]:flex-1`+`flex-wrap`·`StockDetailActionButtons` `grid-cols-1 min-[380px]:grid-cols-2`·`MetricInsightCards`·`StockTabs` `overflow-x-auto`)·`TodayContent`(칩 전부 `flex-wrap`)·`DisclosureExplorer`(기간/스코프/타입 세그먼트 `flex-wrap`·44px)·`WatchlistClient`(빈 상태·알림 CTA·리스트 `min-w-0 truncate`)·`login`(OAuth/이메일 `min-h-[44px]`·계획 제공자 pill). → 신규 오버플로/잘림 갭 0.
+- **수정(1소스)**: `src/app/watchlist/page.tsx` 페이지 헤더 — `<h1>`/`<p>`가 `text-zinc-900`/`text-zinc-600`만 있고 `dark:` 미지정이라 다크모드에서 헤더 "관심 종목"+부제가 배경과 저대비로 사라짐(하위 `WatchlistClient`·타 전 페이지 헤더는 `dark:text-zinc-100`/`dark:text-zinc-400` 정합). → `dark:text-zinc-100`·`dark:text-zinc-400` 추가. 레이아웃/카피 무변경, 클래스만.
+- **관찰(무변경·후속)**: `StockTabs` 탭바 `sticky top-0 z-10`은 전역 `sticky top-0 z-40` 헤더와 top:0 충돌 가능성(스크롤 시 탭바가 헤더 뒤로) — 정확한 헤더 높이(헤더행+데이터바, 가변) 없이 오프셋 하드코딩은 취약해 이번 스코프(소규모·회귀 방지)에서 의도적 미변경, 오너/후속 판단으로 남김.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(라우트 표 무변경·`/watchlist` `ƒ` 168kB). 변경은 다크모드 대비 한정이라 데스크톱(`lg:`)·기존 라이트모드 무영향.
+- **다음 소유자**: 실기기 육안(360/390/414px, 특히 종목 상세 탭 sticky·다크모드 관심 종목 헤더). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 149 — 빈 상태·에러 카피 폴리시 (공시 재시도/도움말 + 모바일 여백)
 - **범위**: 미완성처럼 보이는 화면 제거 + 복구 경로를 명확히. 광범위 리디자인·제3자 서비스·중량 의존성 무변경, 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-149-ornscore-empty-states-and-error-copy`.
 - **공시(`DisclosureExplorer.tsx`)**: (1) 에러 블록을 원시 에러 문자열 노출 대신 **복구 카드**(경고 아이콘 + `errorTitle`/`errorHelp` + `min-h-[44px]` "다시 시도" 버튼)로 교체. `reloadKey` state로 fetch effect 재실행, 원문 에러는 `console.error`에만. (2) 빈 상태를 앱 공통 점선 카드 패턴(아이콘+중앙 정렬)으로 통일 + `scope==="universe"`로 비면 "전체 시장까지 넓혀 보기"(`setScope("all")`) 버튼 추가, 기존 필터 해제 버튼 유지. 버튼 컨테이너 `flex-wrap gap-2`.

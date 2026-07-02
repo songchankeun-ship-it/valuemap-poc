@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 150 — 모바일 레이아웃 회귀 스윕 (2026-07-03, Claude)
+- **범위**: 360/390/414px 모바일 폭 회귀 스윕(홈·stocks·종목상세·today·공시·관심종목·로그인 + 공용 크롬). 컴포넌트 단위 소규모 수정만·언어 스위처 미추가(한국어 전용 베타 의도)·카피/점수식/제3자 무변경. 브랜치 `ai-center/task-150-ornscore-mobile-layout-regression-sw`.
+- **결과**: 공용 크롬·전 페이지가 이미 모바일 하드닝(safe-area·`min-w-0`·`truncate`·`flex-wrap`·44px·`overflow-x-auto`·포털 드로어) → 신규 오버플로 갭 0. **수정 1소스**: `watchlist/page.tsx` 페이지 헤더 `text-zinc-900`/`text-zinc-600`에 `dark:` 미지정(다크모드 헤더 소실) → `dark:text-zinc-100`/`dark:text-zinc-400` 추가.
+- **관찰**: `StockTabs` 탭바 `sticky top-0`이 전역 헤더 `sticky top-0 z-40`와 충돌 가능 — 헤더 높이 가변으로 오프셋 하드코딩 취약, 이번 스코프 미변경(후속 판단).
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF-8) 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(라우트 표 무변경). 푸시 미수행(로컬 커밋만).
+
 ### Task 149 — 빈 상태·에러 카피 폴리시 (2026-07-03, Claude)
 - **범위**: OrnScore 전반의 빈 상태/에러 카피를 다듬어 미완성처럼 보이는 화면을 없애고 복구 경로를 명확히. 광범위 리디자인·제3자 서비스·중량 의존성 무변경. 브랜치 `ai-center/task-149-ornscore-empty-states-and-error-copy`.
 - **변경 소스(3)**: `DisclosureExplorer.tsx`(에러 → 재시도 복구 카드[`reloadKey` refetch·원문 에러 console 전용], 빈 상태 → 점선 카드+아이콘+`scope==="universe"` 시 "전체 시장까지 넓혀 보기" 버튼), `src/lib/copy/disclosures.ts`(ko/en `errorTitle`·`errorHelp`·`errorRetry`·`emptyWidenScope` 신규 + `errorUnknown` 완곡화), `WatchlistClient.tsx`(loadError 재시도 44px 탭 타깃 + 도움말 1줄). 나머지 빈 상태는 이미 정합 → 확인만.
