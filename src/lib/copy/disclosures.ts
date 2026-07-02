@@ -92,7 +92,7 @@ export const disclosureExplorerCopy = {
     watchAdded: "관심 등록됨",
     watch: "관심",
     // 빈 상태
-    empty: "해당 신호가 없습니다.",
+    empty: "지금 조건에 맞는 신호가 없습니다.",
     emptyReset: "필터를 해제하고 전체 신호 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
@@ -157,7 +157,7 @@ export const disclosureExplorerCopy = {
     watchAddAria: "Add to watchlist",
     watchAdded: "In watchlist",
     watch: "Watch",
-    empty: "No matching signals.",
+    empty: "No signals match right now.",
     emptyReset: "Clear filter and view all signals",
     descriptions: {
       "자기주식 취득 결의":

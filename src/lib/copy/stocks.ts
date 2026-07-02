@@ -105,7 +105,7 @@ export const stocksCopy = {
     // ── 결과 없음 ──
     emptyTitle: "조건에 맞는 종목이 없습니다.",
     emptyStrong: (label: string) => ({ pre: "", label, post: "이 강해 지금 범위에 드는 종목이 없습니다.", line2: "이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요." }),
-    emptyLoose: "조건을 조금 완화하면 더 많은 후보를 확인할 수 있습니다.",
+    emptyLoose: "필터를 조금 완화하거나 초기화하면 더 많은 후보를 볼 수 있습니다.",
     relaxStrongest: "가장 강한 조건 완화",
     viewAll: "전체 종목 보기",
 
@@ -386,7 +386,7 @@ export const stocksCopy = {
     // ── Empty ──
     emptyTitle: "No stocks match these conditions.",
     emptyStrong: (label: string) => ({ pre: "The ", label, post: " is strong, so no stocks fall in the current range.", line2: "Try relaxing just this condition, or reset everything and search again." }),
-    emptyLoose: "Relaxing the conditions a bit will surface more candidates.",
+    emptyLoose: "Relax or reset the filters to see more candidates.",
     relaxStrongest: "Relax strongest condition",
     viewAll: "View all stocks",
 

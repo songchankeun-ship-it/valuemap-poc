@@ -19,7 +19,7 @@ export const todayCopy = {
   ko: {
     // ── 페이지 헤더 ──
     eyebrow: "오늘",
-    headerDesc: "오늘 먼저 살펴볼 종목과 신호를 점수로 정리한 탐색 대시보드입니다.",
+    headerDesc: "오늘 먼저 살펴볼 종목과 신호를 점수로 정리한 탐색 대시보드입니다. 매수·매도 추천이 아니라 확인할 순서를 제안합니다.",
     closedNoticePrefix: "오늘은 휴장일입니다 — 가장 최근 거래일 ",
     closedNoticeSuffix: " 장마감 데이터를 보여드립니다.",
     stalePrefix: "자동 갱신이 지연되어 ",
@@ -144,7 +144,7 @@ export const todayCopy = {
   en: {
     // ── Page header ──
     eyebrow: "Today",
-    headerDesc: "A research dashboard that organizes today's stocks and signals to review first, by score.",
+    headerDesc: "A research dashboard that organizes today's stocks and signals to review first, by score. Not buy or sell advice — just a suggested order to check.",
     closedNoticePrefix: "The market is closed today — showing market-close data from the most recent trading day ",
     closedNoticeSuffix: ".",
     stalePrefix: "Automatic update is delayed, so we are showing the ",

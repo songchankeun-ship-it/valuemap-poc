@@ -148,7 +148,7 @@ export const commonCopy = {
 
 export const homeHeroCopy = {
   ko: {
-    badge: "오른스코어 · 베타",
+    badge: "오른스코어 · 무료 베타",
     dataPrefix: "데이터 기준",
     marketClose: "장마감",
     delayed: "갱신 지연",
@@ -160,7 +160,7 @@ export const homeHeroCopy = {
       "추세 · 거래활성도 · 밸류 · 위험조정 · 공시 신호를 한 화면에 정리해, 오늘 먼저 확인할 탐색 우선순위를 보여주는 데이터 도구입니다.",
     primaryCta: "오늘 후보 보기 →",
     secondaryCta: "지표 이해하기",
-    note: "오른스코어는 투자 추천이 아닌 데이터 기반 탐색 도구입니다.",
+    note: "오른스코어는 투자 추천이 아닌, 한국 주식 탐색·분석 무료 도구입니다.",
     stockSearch: "종목 직접 찾기 →",
     previewTitle: "오늘의 탐색 후보",
     previewFilter: "검증 보류 제외",
@@ -172,7 +172,7 @@ export const homeHeroCopy = {
     footerSuffix: "개 · 영업일 장마감 후 자동 갱신 · KRX · Naver · DART",
   },
   en: {
-    badge: "OrnScore · Beta",
+    badge: "OrnScore · Free beta",
     dataPrefix: "Data as of",
     marketClose: "market close",
     delayed: "delayed",
@@ -184,7 +184,7 @@ export const homeHeroCopy = {
       "Trend, trading activity, valuation, risk-adjusted momentum, and disclosure signals are organized into one research-first dashboard.",
     primaryCta: "View today's candidates →",
     secondaryCta: "Understand metrics",
-    note: "OrnScore is a data exploration tool, not investment advice.",
+    note: "OrnScore is a free Korean-stock research tool, not investment advice.",
     stockSearch: "Search stocks →",
     previewTitle: "Today's candidates",
     previewFilter: "Pending verification excluded",
@@ -206,17 +206,17 @@ export const welcomeOnboardingCopy = {
     steps: [
       {
         title: "오늘의 후보 종목 보기",
-        body: "네 지표가 우호적인 상위 5개 종목을 확인하세요.",
-        mobileBody: "네 지표가 우호적인 상위 5개 종목 확인",
+        body: "여러 지표가 두루 좋은 상위 5개 종목부터 살펴보세요.",
+        mobileBody: "여러 지표가 두루 좋은 상위 5개부터 확인",
       },
       {
-        title: "관심 종목 깊이 보기",
-        body: "점수 옆 (?)를 누르면 각 지표 의미를 알 수 있어요.",
-        mobileBody: "점수 옆 (?)를 누르면 각 지표 의미 보임",
+        title: "지표 의미 이해하기",
+        body: "점수 옆 (?)를 누르면 각 지표가 무슨 뜻인지 바로 볼 수 있어요.",
+        mobileBody: "점수 옆 (?)로 각 지표가 무슨 뜻인지 보기",
       },
       {
         title: "알림 받기 (선택)",
-        body: "관심 종목에 ❤ 등록하면 새 공시 신호 발생 시 이메일 발송.",
+        body: "관심 종목에 ❤를 누르면 새 공시 신호가 뜰 때 이메일로 알려드려요.",
         mobileBody: "관심 종목에 ❤ 등록 → 새 공시 신호 시 이메일",
       },
     ],
@@ -234,17 +234,17 @@ export const welcomeOnboardingCopy = {
     steps: [
       {
         title: "View today's candidates",
-        body: "Check the top 5 stocks with favorable metric patterns.",
-        mobileBody: "Check the top 5 stocks with favorable metrics",
+        body: "Start with the top 5 stocks that score well across metrics.",
+        mobileBody: "Start with the top 5 that score well overall",
       },
       {
-        title: "Research stocks in depth",
-        body: "Tap the (?) beside a score to understand each metric.",
-        mobileBody: "Use the (?) beside scores to understand metrics",
+        title: "Understand the metrics",
+        body: "Tap the (?) beside a score to see what each metric means.",
+        mobileBody: "Use the (?) beside scores to see what they mean",
       },
       {
         title: "Enable alerts (optional)",
-        body: "Save stocks to your watchlist to receive disclosure email alerts.",
+        body: "Tap ❤ on a stock to get an email when new disclosure signals appear.",
         mobileBody: "Save stocks → get email when new disclosure signals appear",
       },
     ],
@@ -261,9 +261,9 @@ export const loginCopy = {
     backHome: "홈으로",
     backPrevious: "이전 페이지로",
     title: "오른스코어 로그인",
-    emailOnlyLead: "이메일로 로그인 링크를 받으세요.",
+    emailOnlyLead: "로그인 없이도 탐색·분석은 그대로 쓸 수 있어요. 이메일로 로그인 링크를 받으세요.",
     lead: (providers: string) =>
-      `${providers}로 빠르게 시작하거나, 이메일로 로그인 링크를 받으세요.`,
+      `로그인 없이도 탐색·분석은 그대로 쓸 수 있어요. ${providers}로 시작하거나 이메일로 로그인 링크를 받으세요.`,
     contexts: {
       "/history": "요약 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
       "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
@@ -287,7 +287,7 @@ export const loginCopy = {
     getLink: "로그인 링크 받기",
     noAds: "로그인 링크 외에 광고성 메일은 보내지 않습니다.",
     noAdsSecond: "알림 메일도 사용자가 직접 설정할 때만 발송됩니다.",
-    benefitsTitle: "로그인하면 가능해요",
+    benefitsTitle: "로그인은 선택이에요 — 하면 이런 걸 무료로 쓸 수 있어요",
     benefits: [
       "관심 종목을 여러 기기에서 이어보기",
       "비교 목록 영구 저장",
@@ -314,9 +314,9 @@ export const loginCopy = {
     backHome: "Home",
     backPrevious: "Previous page",
     title: "Log in to OrnScore",
-    emailOnlyLead: "Get a sign-in link by email.",
+    emailOnlyLead: "Browsing and analysis stay open without login. Get a sign-in link by email.",
     lead: (providers: string) =>
-      `Start with ${providers}, or get a sign-in link by email.`,
+      `Browsing and analysis stay open without login. Start with ${providers}, or get a sign-in link by email.`,
     contexts: {
       "/history": "Log in to view saved summaries. You will return here after signing in.",
       "/watchlist": "Log in to keep your watchlist synced across devices.",
@@ -340,7 +340,7 @@ export const loginCopy = {
     getLink: "Get sign-in link",
     noAds: "We do not send promotional email just because you sign in.",
     noAdsSecond: "Notification email is sent only when you explicitly enable it.",
-    benefitsTitle: "With an account, you can",
+    benefitsTitle: "Login is optional — with a free account you can",
     benefits: [
       "Keep your watchlist across devices",
       "Save comparison lists",
