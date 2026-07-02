@@ -42,6 +42,10 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 152 — 성능 가드레일: perf-check에 /today 추가 + 베이스라인 (2026-07-03, Claude)
+- **변경(1소스)**: `scripts/perf-check.mjs` `ROUTES`에 `{ path: "/today", cat: "B" }`를 `/stocks` 뒤에 추가(요청 시점 원격 4콜·각 4초 타임아웃 → `/stock/*`·`/watchlist`와 같은 Category B 9000ms 소프트버짓, 오탐 방지) + 하단 노트 Category-B 열거를 `(/stock/*, /today, /watchlist)`로 일치. 스레숄드/로직·라우트 코드 무변경, 신규 의존성 0.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF-8) 138/0/금칙0/Metrics 2.4 · `build` 0(**라우트 표 무변경**) · `app:check` 통과. 로컬 prod 4457(리스너 PID만 taskkill·**AI Center 4310 무중단**) `perf:check --samples 3` → **12 라우트 200·advisory 0·exit 0**, `/today` 4052ms(버짓 내). 베이스라인 블록은 `PROGRESS.md` Task 152 참조(절대 ms는 PC/네트워크마다 다름·상대 회귀만 의미). 푸시 미수행(로컬 커밋만).
+
 ### Task 150 — 모바일 레이아웃 회귀 스윕 (2026-07-03, Claude)
 - **범위**: 360/390/414px 모바일 폭 회귀 스윕(홈·stocks·종목상세·today·공시·관심종목·로그인 + 공용 크롬). 컴포넌트 단위 소규모 수정만·언어 스위처 미추가(한국어 전용 베타 의도)·카피/점수식/제3자 무변경. 브랜치 `ai-center/task-150-ornscore-mobile-layout-regression-sw`.
 - **결과**: 공용 크롬·전 페이지가 이미 모바일 하드닝(safe-area·`min-w-0`·`truncate`·`flex-wrap`·44px·`overflow-x-auto`·포털 드로어) → 신규 오버플로 갭 0. **수정 1소스**: `watchlist/page.tsx` 페이지 헤더 `text-zinc-900`/`text-zinc-600`에 `dark:` 미지정(다크모드 헤더 소실) → `dark:text-zinc-100`/`dark:text-zinc-400` 추가.

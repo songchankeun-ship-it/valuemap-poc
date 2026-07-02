@@ -48,6 +48,7 @@ const B_BUDGET_MS = 9000;
 const ROUTES = [
   { path: "/", cat: "A" },
   { path: "/stocks", cat: "A" },
+  { path: "/today", cat: "B" },
   { path: "/stock/034730", cat: "B" },
   { path: "/stock/032830", cat: "B" },
   { path: "/login", cat: "A" },
@@ -174,7 +175,7 @@ async function main() {
     }
   }
   console.log("");
-  console.log("Note: Category-B routes (/stock/*, /watchlist) do a request-time Supabase round-trip.");
+  console.log("Note: Category-B routes (/stock/*, /today, /watchlist) do a request-time Supabase round-trip.");
   console.log("On a free-tier local->remote connection that round-trip is mostly fixed connection/");
   console.log("warm-up cost (environment artifact; small in production). The task-119 timeout guard");
   console.log("caps /stock/* at ~4-4.5s. A Category-B median far above that, or a Category-A route");
