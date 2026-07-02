@@ -6,6 +6,7 @@ import {
   AlertExampleCards,
   type AlertExampleData,
 } from "@/components/notifications/AlertExampleCards";
+import { KakaoAlertPreview } from "@/components/notifications/KakaoAlertPreview";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft, Heart, Mail, Info, LogIn } from "lucide-react";
@@ -192,6 +193,11 @@ export default async function NotificationSettingsPage() {
       {/* 4. 알림 예시 */}
       <div className="mb-4 md:mb-6">
         <AlertExampleCards data={exampleData} />
+      </div>
+
+      {/* 4-1. 카카오톡 알림 미리보기(정적·무발송) */}
+      <div className="mb-4 md:mb-6">
+        <KakaoAlertPreview data={exampleData} />
       </div>
 
       {/* 5. 알림 받으려면 */}

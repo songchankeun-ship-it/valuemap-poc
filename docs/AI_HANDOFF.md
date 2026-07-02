@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 148 — 관심 종목 + 알림 설정 로컬 UX 패스 (무발송 카카오 Stage 1) (2026-07-03, Claude)
+- **범위**: 관심 종목↔알림을 하나의 **일관된 무료 기능 경로**로 정리하는 로컬 UX 패스. 제3자 호출 0·계정/민감 설정·비밀값 0. 점수식·`stocks.json`·`features.ts`·인증·이메일 cron·매직링크·의존성 무변경, 신규 npm 0. 불변식 유지. 브랜치 `ai-center/task-148-ornscore-watchlist-and-alert-prefere`(클린 시작).
+- **변경 소스(4)**: `WatchlistClient.tsx`(알림 CTA "알림 설정 보기" + "지금 되는 것 vs 준비 중" 1줄), `NotificationChannels.tsx`(카카오 행 보조 카피 1줄·flex-col 재구성·이메일 상태 무변경), `KakaoAlertPreview.tsx`(**신규** — 카카오 말풍선 정적 프리뷰·`AlertExampleData` 재사용·무발송·"실제 발송된 메시지가 아닙니다" 고지·웹링크는 내부 `/stock/{ticker}`), `settings/notifications/page.tsx`(§4-1로 프리뷰 렌더).
+- **무발송 유지**: `alertPrefs.ts`는 localStorage-only·백엔드 미연결 그대로(채널맵 확장=실발송 결정과 함께 잔여, 백로그 Stage 1 item A). 카카오톡 실발송·발신프로필·템플릿 심사·대행사·건당 과금은 오너 게이트(백로그 §4).
+- **추적**: `ornscore-kakaotalk-alert-backlog.md` §1·§3 Stage 1(item B/C ✅ 로컬 완료·item A 잔여), `ornscore-spec-coverage.md` §7 Task 148 포인터, PROGRESS 본 항목.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF8) 138/0/금칙0/Metrics 2.4 · `build` 0(138 SSG·라우트 표 무변경) · 변경/신규 소스 U+FFFD 0·스캐폴딩 마커 0 · 톤 게이트 0(부정 고지만). 로컬 prod 41482(리스너 PID 35552만 taskkill·**AI Center 4310 무중단**): `/watchlist`·`/settings/notifications` 200, SSR에 카카오 채널 카피·"카카오톡 알림 미리보기"·"실제 발송된 메시지가 아닙니다" 렌더. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 145 — 모바일 리스팅 준비 팩(로컬 전용) + 메타데이터 갭 감사 (2026-07-03, Claude)
 - **범위**: 미래 모바일 스토어 등록을 **검토·준비하기 쉽게** 정리하는 로컬 전용 리뷰 계층. **외부 서비스 액션 0**(제출·업로드·계정/결제/로그인 제공자/원격 설정 무변경). 앱 소스 무변경(문서 전용). 스토어 정식 초안 원본은 `app-store-submission-pack.md` 유지(복사 아닌 링크 참조). 불변식(무료·한국어 전용·138종목·비자문·확정가/Pro 비홍보) 유지.
 - **신규 `docs/ornscore-mobile-listing-prep-pack.md`**: §1 현재 표면 감사(앱 이름·태그라인·privacy/terms·mailto·모바일 우선 가치, 각 `file:line` 근거 — `manifest.ts`/`layout.tsx`/`app-store-submission-pack.md`) · §2 정제 한국어 리스팅 카피 **6블록**(짧은 요약·긴 설명·기능 불릿·안전 고지·스크린샷 체크리스트[홈/탐색/상세/공시/비교/관심/소개, 세로 standalone·수익보장 문구 금지·출시 전 스토어 배지 금지]·오너 전용 다음 단계) · §3 PWA/메타데이터 로컬 감사표 · §4 수정 결정 · §5 검증.

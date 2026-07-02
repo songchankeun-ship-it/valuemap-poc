@@ -271,9 +271,13 @@ export function WatchlistClient({
             <span className="break-words">관심 종목·저장 필터 변화를 알림으로 받기</span>
           </span>
           <span className="shrink-0 inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">
-            설정 보기 <ArrowRight className="w-3.5 h-3.5" />
+            알림 설정 보기 <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </Link>
+        {/* 지금 되는 것 vs 준비 중 — 알림 설정 페이지와 같은 프레이밍(무료 기능 경로 일관) */}
+        <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+          관심 종목 공시·저장 필터 충족 알림은 지금 이메일로 동작해요(임시·베타). 카카오톡 알림은 준비 중이에요.
+        </p>
       </section>
 
       {/* 관심 종목 */}
