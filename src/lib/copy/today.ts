@@ -96,7 +96,7 @@ export const todayCopy = {
     rankRisers: "↑ 전일 대비 순위 상승 (5단계+)",
     bigMovers: "📊 점수 급변 종목",
     rankStepSuffix: "단계",
-    watchHint: "관심 종목으로 등록하면 이런 변화를 이메일로 받을 수 있어요 (설정 > 알림).",
+    watchHint: "관심 종목으로 등록하면 이런 변화를 알림으로 받을 수 있어요 (현재는 이메일 발송, 카카오톡 알림 준비 중 · 설정 > 알림).",
 
     // ── 체크리스트 ──
     checklistTitle: "후보를 볼 때 체크리스트",
@@ -221,7 +221,7 @@ export const todayCopy = {
     rankRisers: "↑ Rank up vs. previous day (5+ steps)",
     bigMovers: "📊 Large score change",
     rankStepSuffix: " steps",
-    watchHint: "Add to your watchlist to get these changes by email (Settings > Alerts).",
+    watchHint: "Add to your watchlist to get these changes by alert (email for now; KakaoTalk alerts in the works · Settings > Alerts).",
 
     // ── Checklist ──
     checklistTitle: "Checklist before reviewing candidates",

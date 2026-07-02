@@ -49,8 +49,8 @@ export const stocksCopy = {
     // ── prompt / confirm / alert ──
     promptSaveName: "이 검색 조건의 이름을 정해주세요 (예: 저PER 배당주)",
     promptAlertName: "알림 이름을 정해주세요 (예: 저PER 배당주 신규)",
-    confirmAlertLogin: "조건 알림은 로그인 후 이메일로 받을 수 있어요. 로그인하러 갈까요?",
-    alertCreated: "알림을 등록했어요. 조건에 새 종목이 들어오면 이메일로 알려드릴게요. (설정 > 알림에서 관리)",
+    confirmAlertLogin: "조건 알림은 로그인 후 받을 수 있어요 (현재는 이메일 발송, 카카오톡 알림 준비 중). 로그인하러 갈까요?",
+    alertCreated: "알림을 등록했어요. 조건에 새 종목이 들어오면 알려드릴게요 (현재는 이메일 발송, 카카오톡 알림 준비 중). (설정 > 알림에서 관리)",
     alertFailed: "등록에 실패했어요. 잠시 후 다시 시도해주세요.",
     confirmReset: "모든 조건을 초기화할까요?",
 
@@ -331,8 +331,8 @@ export const stocksCopy = {
     // ── prompt / confirm / alert ──
     promptSaveName: "Name this search (e.g., Low PER dividend stocks)",
     promptAlertName: "Name this alert (e.g., New low-PER dividend stocks)",
-    confirmAlertLogin: "Condition alerts are delivered by email after sign-in. Go sign in?",
-    alertCreated: "Alert saved. We'll email you when a new stock matches. (Manage in Settings > Alerts)",
+    confirmAlertLogin: "Condition alerts are delivered after sign-in (email for now; KakaoTalk alerts in the works). Go sign in?",
+    alertCreated: "Alert saved. We'll notify you when a new stock matches (email for now; KakaoTalk alerts in the works). (Manage in Settings > Alerts)",
     alertFailed: "Couldn't save. Please try again in a moment.",
     confirmReset: "Reset all conditions?",
 

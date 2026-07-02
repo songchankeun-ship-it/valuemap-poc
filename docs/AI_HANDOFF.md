@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 144 — 카카오톡 알림 로컬 전용 제품 백로그 + 감사 + 이메일-우선 소프트닝 (2026-07-02, Claude)
+- **범위**: 오너의 카카오톡 알림 선호를 **외부 계정/민감 설정 무변경**으로 단계 백로그화. 카카오 채널/발신프로필/템플릿/대행사/env/시크릿 배치·제3자 API 호출·유료 약정 **0**. 점수식·`stocks.json`·인증/provider·DB 스키마·라우트·의존성·이메일 cron 무변경, 신규 npm 0. 불변식(무료·한국어 전용·138종목·AI 공개 숨김·비자문·유료/Pro 비홍보) 유지.
+- **신규 `docs/ornscore-kakaotalk-alert-backlog.md`**: §0 가드레일 + **카카오 로그인(라이브)≠알림톡(미설정)** 구분 · §1 표면 감사(`file:line`·카카오 준비도) · §2 로컬 지금 vs 오너 전용 · §3 Stage 1~4(채널선호 opt-in UI[`alertPrefs`를 `{type,channel}`로 확장·여전히 localStorage 무발송]·`AlertEvent` 스키마[9종 카탈로그 매핑·dedupeKey·선호 영속화는 설계만]·한국어 비자문 알림톡 템플릿 초안[`#{변수}`+웹링크 버튼]·폴백[카카오→이메일 임시폴백→인앱, 이메일 cron 무변경]) · §4 오너 외부 설정 fill-in 빈칸 시트(값 없음·**건당 과금 단가는 오너 결정으로만**) · §5 검증. 방대 문서는 중복 대신 링크(`free-beta-v1-scope`·`auth-providers-setup`·`beta-launch-checklist`(g)·`android-twa-owner-checklist`).
+- **소프트닝(톤만·로직 무변경·ko/en)**: `copy/today.ts`(`watchHint`)·`copy/stocks.ts`(`confirmAlertLogin`·`alertCreated`)·`ConditionAlertsManager.tsx` 조건 알림 설명을 "현재는 이메일 발송, 카카오톡 알림 준비 중" 로드맵 톤으로. `settings/notifications` 배너·`alertCatalog.ts:85`는 이미 정합 → 무변경. 라이브 컨트롤 카드(`page.tsx:144`)는 현재 채널의 정확한 사실 + 상단 배너가 임시/베타로 프레이밍 → 유지(카카오 라이브 오해 소지 없음). `features.ts`·이메일 cron·매직링크·점수식 무변경.
+- **추적**: `ornscore-spec-coverage.md` §7·§5.4에 Task 144 포인터. PROGRESS·본 파일.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py` 138/0/금칙0/Metrics 2.4 · `build` 0(라우트 표 무변경) · `/settings/notifications` 200·SSR 한국어·카카오 채널 행 존재 · 변경 소스 U+FFFD 0 · 스캐폴딩 마커 0 · 톤 게이트 0. 모바일/데스크톱: docs 영향 0, 카피는 44px/flex-wrap 내 텍스트만·390px 불변(실 픽셀 육안 운영자 잔여⑤).
+- **⚠️ 오너 게이트로 남음**: 카카오 비즈니스 채널·발신프로필·알림톡 템플릿 심사·대행사(Solapi·NHN 등)·API 키 Vercel 배치·**건당 과금 단가**. §4 빈칸 시트를 채워 돌려주면 다음 AI가 `AlertEvent`→대행사 어댑터→폴백 순 발송 코드 착수. 실 키·단가·심사만 외부 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 135 — 무료 출시 스모크 + 전환 퍼널 QA (앱 소스 무변경) (2026-07-02, Claude)
 - **범위**: 무료 한국어 베타(138종목) 출시 후 집중 QA + **전환 퍼널 각도**(로그인 진입·`next` 복귀·제공자·데이터 신뢰/안전 문구). 앱 코드 무수정. 점수식·`stocks.json`·인증/provider/env·시크릿·DB·라우트·의존성 무변경, 신규 npm 0. 불변식 유지. Task 127(`docs/ornscore-post-release-qa-2026-07-02.md`) 재기재 대신 참조.
 - **게이트 전부 통과**: `tsc` 0 · `verify_metrics.py` 138/0/금칙0/Metrics 2.4 · `build` 0(라우트 표 무변경·138 SSG) · `app:check` 통과(1 WAIT=assetlinks 기존 게이트) · 로컬 prod 4456 `perf:check` 11라우트 200·advisory 0. **AI Center 4310(PID 26420) 무중단**, 4456 리스너만 정리.

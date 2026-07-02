@@ -49,7 +49,7 @@ export function ConditionAlertsManager() {
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">조건 충족 알림</h2>
       </div>
       <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-        종목 탐색에서 저장한 조건에 <strong>새 종목이 들어오면</strong> 이메일로 알려드려요. (영업일 1회 평가)
+        종목 탐색에서 저장한 조건에 <strong>새 종목이 들어오면</strong> 알려드려요. (현재는 이메일 발송, 카카오톡 알림 준비 중 · 영업일 1회 평가)
       </p>
 
       {loading ? (
