@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T16:44:00.285Z
+Last updated: 2026-07-03T17:03:17.971Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 196 - OrnScore saved-stock and recently-viewed habit loop polish
-- Run: 162
+- Task: 191 - OrnScore local observability naming and owner checklist
+- Run: 163
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -1324,3 +1324,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: 무료·한국어 전용 베타·138종목·비자문·확정가/Pro 비홍보 유지. 금칙어(매수·매도·추천·수익 보장·목표가) 신규 도입 0(문서 내 언급은 불변식 재확인 문장으로만, 소스 게이트 대상 아님).
 - **게이트(전부 통과)**: `tsc --noEmit` exit 0(앱 소스 무변경 재확인) · `verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · 신규/편집 마크다운 3파일 U+FFFD 0 · `git status` 문서만 변경(소스 0). build/smoke/perf 생략(앱 소스 무변경 → 직전 QA 결과 유효).
 - **남은 소유자**: 어느 베팅을 실제로 착수할지는 제품/오너 결정. #5 알림 라이브·#6 TWA는 오너 입력값(채널 계정·서명 지문·실기기) 선결. 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 191 — OrnScore 로컬 출시 관찰성 체크리스트 (2026-07-04, Claude)
+- **Scope**: 무료 한국어 베타를 외부에 노출한 뒤 **오너가 로컬에서 혼자 돌려볼** 관찰성 참고표. repo-local·읽기 전용 문서 + 트리비얼 하니스 1줄. 앱 UI·점수식·데이터·새 SDK 0. 브랜치 `ai-center/task-191-ornscore-local-observability-naming-`.
+- **산출물**: 신규 `docs/ornscore-launch-observability-checklist.md` — 4개 필수 절 + 완료 기준.
+  - **핵심 라우트 이름**: 공개 12(스모크 기본 7 + `--all` 5)·내부 `/admin/status`(noindex, 스모크 미포함 의도적)·API/cron 7(`report-data-issue`·`waitlist`·`quote/[ticker]`·`cron/{save-scores,daily-insight,notify,evaluate-alerts}`). 앵커/치명마커는 `route-smoke-checklist.md`로 위임(중복 0).
+  - **모니터링할 사용자 액션(추후)**: 검색/탐색·종목상세(recentViews)·관심추가(watchlist)·로그인/OAuth·오류신고·waitlist. **텔레메트리 소스 = 기존 `layout.tsx` Vercel Analytics + Speed Insights**(신규 SDK 0), 로컬 저장 액션은 경로 트래픽으로 근사(정직한 한계 명시).
+  - **헬스 신호**: `dataStatus.selfCheck`(universeCount·suspectCount·missingFinancialsCount·metricsVersionMatch·expected/actual)·`isDataStale`/`asOfBusinessDate`·cron 성공·`/status`(공개)vs`/admin/status`(내부)·`data_reports` 접수 건수. 발송률/전환 이벤트는 대기④로 명시(백로그 링크).
+  - **수동 리뷰 단계**: build→`next start -p 4455`→`smoke:check`(게이트·exit1)·`perf:check`(권고)·390px/≥1280px 육안 + 실기기 OAuth → `post-release-qa-2026-07-02.md` §7·§8 링크·포트 가드레일(3000/4310 금지·내 PID만 정리).
+- **하니스(트리비얼)**: `src/app/admin/status/page.tsx` 푸터 노트에 신규 체크리스트 링크 `<code>` 1줄 additive(기존 backlog 링크 옆). 레이아웃/타입/JSX 구조 무변경(문단 자동 래핑).
+- **크로스레퍼런스**: `docs/ornscore-spec-coverage.md` §O(QA 체크리스트) 행에 Task 191 포인터 1줄 append.
+- **불변식**: `public/data/*`·점수식·`compositeScore`/지표 산식·copy·cron/auth·`metricsVersion` 무변경. 문서 전용 + JSX 텍스트 1줄만.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG) · `smoke:check --all` 12/12 200(4455) · `/admin/status` 200 + 신규 링크 SSR 렌더 확인 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · 변경 3파일 U+FFFD 0. 리스너 PID 36380만 taskkill, **AI Center 4310 LISTENING 확인**(무중단).
+  - **참고**: `npm run lint`는 이 레포에 ESLint 설정/의존성이 없어 `next lint`가 대화형 초기화 프롬프트를 띄운다(가용 게이트 아님). 실 게이트는 tsc+verify_metrics+build+smoke(레포 관행) — ESLint 초기화는 범위 밖이라 미수행.
+- **남은 소유자**: 커스텀 이벤트·서버측 액션 집계·발송/전환 로그는 인증·영속 인프라 결정(대기④). 실기기 OAuth 왕복·390px 육안은 운영자 게이트(Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.

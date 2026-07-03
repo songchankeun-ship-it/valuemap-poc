@@ -68,7 +68,9 @@ export default async function AdminStatusPage() {
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           기준일 {dataStatus.globalAsOfLabel} · 산식 {dataStatus.metricsVersionLabel} · 공개 페이지는{" "}
           <Link href="/status" className="text-blue-600 dark:text-blue-400 underline">/status</Link>. 후속 항목은{" "}
-          <code className="text-[10px]">docs/ornscore-admin-status-backlog.md</code> 참조.
+          <code className="text-[10px]">docs/ornscore-admin-status-backlog.md</code> 참조.{" "}
+          관찰성 체크리스트는{" "}
+          <code className="text-[10px]">docs/ornscore-launch-observability-checklist.md</code>.
         </p>
       </header>
 
