@@ -44,6 +44,7 @@ export const homeCopy = {
     },
     topCandidate: {
       heading: "오늘 추가 확인 후보",
+      stepEyebrow: "그다음",
       tag: "종합점수 상위 · 검증 보류 제외",
       intro:
         "종합점수 상위 종목 중 검증 보류 종목을 제외해, 오늘 먼저 살펴볼 후보를 정리했습니다.",
@@ -68,6 +69,7 @@ export const homeCopy = {
     },
     disclosure: {
       heading: "오늘 먼저 볼 공시 신호",
+      stepEyebrow: "그다음 확인",
       viewAll: "전체 보기 →",
       introA: "자기주식, 보유 변동, 정정공시, 계약, 자금조달 관련 공시를 ",
       introStrong: "DART 최신 200건 내",
@@ -99,6 +101,10 @@ export const homeCopy = {
     myStocks: {
       heading: "내 종목 이어보기",
       sub: "관심·최근 본 종목",
+      stepEyebrow: "먼저 볼 것",
+      nextPrompt: "다음",
+      nextCandidates: "오늘의 후보",
+      nextDisclosures: "공시 신호",
       watchlistLabel: "관심",
       recentLabel: "최근 본",
       loading: "내 종목을 불러오는 중…",
@@ -176,6 +182,7 @@ export const homeCopy = {
     },
     topCandidate: {
       heading: "More candidates to check today",
+      stepEyebrow: "Next",
       tag: "Top composite · pending verification excluded",
       intro:
         "Top-composite stocks with pending-verification names removed, organized as candidates to look at first today.",
@@ -200,6 +207,7 @@ export const homeCopy = {
     },
     disclosure: {
       heading: "Disclosure signals to check first today",
+      stepEyebrow: "Then check",
       viewAll: "View all →",
       introA: "Treasury stock, holding changes, corrections, contracts, and financing disclosures are ",
       introStrong: "automatically classified within DART's latest 200 filings",
@@ -231,6 +239,10 @@ export const homeCopy = {
     myStocks: {
       heading: "Pick up where you left off",
       sub: "Watchlist · recently viewed",
+      stepEyebrow: "First check",
+      nextPrompt: "Next",
+      nextCandidates: "Today's candidates",
+      nextDisclosures: "Disclosure signals",
       watchlistLabel: "Watching",
       recentLabel: "Recent",
       loading: "Loading your stocks…",

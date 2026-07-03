@@ -96,10 +96,13 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
   return (
     <section>
       <div className="flex items-baseline justify-between gap-2 mb-2.5">
-        <h2 className="flex items-center gap-1.5 text-base font-semibold text-zinc-900 dark:text-zinc-100">
-          <Heart className="w-4 h-4 text-pink-600 dark:text-pink-500" fill="currentColor" />
-          {t.heading}
-        </h2>
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="shrink-0 text-[10px] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded px-1.5 py-0.5 whitespace-nowrap tabular-nums">1 · {t.stepEyebrow}</span>
+          <h2 className="flex items-center gap-1.5 text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+            <Heart className="w-4 h-4 text-pink-600 dark:text-pink-500 shrink-0" fill="currentColor" />
+            {t.heading}
+          </h2>
+        </div>
         {rows.length > 0 ? (
           <Link prefetch={false} href="/watchlist" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
             {t.viewAll}
@@ -166,6 +169,18 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
           ))}
         </ul>
       )}
+
+      {rows.length > 0 ? (
+        <div className="mt-2.5 flex items-center gap-x-3 gap-y-1 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span className="font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap">{t.nextPrompt}</span>
+          <Link prefetch={false} href="#today-candidates" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+            {t.nextCandidates} <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link prefetch={false} href="/disclosures" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+            {t.nextDisclosures} <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      ) : null}
     </section>
   );
 }

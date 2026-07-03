@@ -11,8 +11,11 @@ export function TopCandidateSection({ candidates }: { candidates: StockCandidate
   return (
     <section id="today-candidates" className="scroll-mt-20">
       <div className="flex items-baseline justify-between gap-2 mb-1">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.tag}</span>
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="shrink-0 text-[10px] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded px-1.5 py-0.5 whitespace-nowrap tabular-nums">2 · {t.stepEyebrow}</span>
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">{t.heading}</h2>
+        </div>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400 text-right shrink-0">{t.tag}</span>
       </div>
       <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1.5 leading-relaxed">
         {t.intro}

@@ -244,6 +244,26 @@ export function TodayContent(props: TodayContentProps) {
       {/* 1. 데이터 상태 바 (타 에이전트가 현지화) */}
       <TodayStatusBar />
 
+      {/* 1.5 오늘 확인 순서 — 재방문 스캔 순서(1·2·3) 안내 */}
+      <section aria-label={t.routine.title} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
+        <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">{t.routine.title}</div>
+        <ol className="flex flex-wrap gap-2">
+          {t.routine.items.map((item, i) => (
+            <li key={item.href}>
+              <Link
+                prefetch={false}
+                href={item.href}
+                className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-[12px] font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap"
+              >
+                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold tabular-nums shrink-0">{i + 1}</span>
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">{t.routine.note}</p>
+      </section>
+
       {/* 2. 시장 요약 KPI 카드 */}
       <MarketSnapshotCards
         totalCount={props.totalCount}

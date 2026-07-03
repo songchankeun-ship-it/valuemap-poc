@@ -10,6 +10,8 @@ export const disclosuresIntroCopy = {
   ko: {
     breadcrumbHome: "홈",
     breadcrumbCurrent: "공시 신호",
+    returnToday: "오늘 대시보드",
+    returnWatchlist: "관심 종목",
     limitedBadge: "제한 수집",
     title: "공시 신호",
     descLead: "최근 7일 코스피·코스닥 공시에서 자체 추출한 ",
@@ -24,6 +26,8 @@ export const disclosuresIntroCopy = {
   en: {
     breadcrumbHome: "Home",
     breadcrumbCurrent: "Disclosure signals",
+    returnToday: "Today",
+    returnWatchlist: "Watchlist",
     limitedBadge: "Limited collection",
     title: "Disclosure signals",
     descLead: "From the last 7 days of KOSPI·KOSDAQ disclosures, we extract ",

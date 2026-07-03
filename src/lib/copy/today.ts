@@ -26,6 +26,17 @@ export const todayCopy = {
     staleBold: "마지막 정상 데이터",
     staleSuffix: "를 보여드립니다 — 최신이 아닐 수 있어요.",
 
+    // ── 오늘 확인 순서(재방문 스캔 순서 안내) ──
+    routine: {
+      title: "오늘 확인 순서",
+      items: [
+        { label: "내 종목·관심 변화", href: "/watchlist" },
+        { label: "오늘의 Top3·신호", href: "#today-top3" },
+        { label: "공시 확인", href: "/disclosures" },
+      ],
+      note: "매수·매도 추천이 아니라 오늘 살펴볼 순서예요.",
+    },
+
     // ── 신호별 종목 섹션 ──
     signalsHeading: "신호별 종목",
     exploreAll: "전체 탐색 →",
@@ -150,6 +161,17 @@ export const todayCopy = {
     stalePrefix: "Automatic update is delayed, so we are showing the ",
     staleBold: "last good data",
     staleSuffix: " — it may not be the latest.",
+
+    // ── Today's check order (returning-user scan order) ──
+    routine: {
+      title: "Today's check order",
+      items: [
+        { label: "Your stocks & watchlist changes", href: "/watchlist" },
+        { label: "Today's Top 3 & signals", href: "#today-top3" },
+        { label: "Check disclosures", href: "/disclosures" },
+      ],
+      note: "Not buy or sell advice — just an order to look through today.",
+    },
 
     // ── Signal sections ──
     signalsHeading: "Stocks by signal",

@@ -14,8 +14,11 @@ export function DisclosureSignalSection({ signals, universeCount }: { signals: D
     return (
       <section>
         <div className="flex items-baseline justify-between gap-2 mb-2">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
-          <Link prefetch={false} href="/disclosures" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <span className="shrink-0 text-[10px] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded px-1.5 py-0.5 whitespace-nowrap tabular-nums">3 · {t.stepEyebrow}</span>
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">{t.heading}</h2>
+          </div>
+          <Link prefetch={false} href="/disclosures" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0">
             {t.viewAll}
           </Link>
         </div>
@@ -28,8 +31,11 @@ export function DisclosureSignalSection({ signals, universeCount }: { signals: D
   return (
     <section>
       <div className="flex items-baseline justify-between gap-2 mb-1">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
-        <Link prefetch={false} href="/disclosures" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="shrink-0 text-[10px] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded px-1.5 py-0.5 whitespace-nowrap tabular-nums">3 · {t.stepEyebrow}</span>
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">{t.heading}</h2>
+        </div>
+        <Link prefetch={false} href="/disclosures" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0">
           {t.viewAll}
         </Link>
       </div>

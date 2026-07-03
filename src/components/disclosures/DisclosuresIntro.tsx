@@ -14,10 +14,16 @@ export function DisclosuresIntroHeader() {
   const t = disclosuresIntroCopy[locale];
   return (
     <>
-      <nav className="text-xs text-gray-500 dark:text-zinc-400 flex items-center gap-1">
-        <Link href="/">{t.breadcrumbHome}</Link>
-        <span>›</span>
-        <span className="text-gray-900 dark:text-zinc-100">{t.breadcrumbCurrent}</span>
+      <nav className="text-xs text-gray-500 dark:text-zinc-400 flex items-center justify-between gap-x-3 gap-y-1 flex-wrap">
+        <span className="flex items-center gap-1 min-w-0">
+          <Link href="/" className="hover:text-gray-900 dark:hover:text-zinc-100">{t.breadcrumbHome}</Link>
+          <span>›</span>
+          <span className="text-gray-900 dark:text-zinc-100">{t.breadcrumbCurrent}</span>
+        </span>
+        <span className="flex items-center gap-3 shrink-0">
+          <Link href="/today" className="inline-flex items-center min-h-[44px] hover:text-blue-700 dark:hover:text-blue-400 whitespace-nowrap">← {t.returnToday}</Link>
+          <Link href="/watchlist" className="inline-flex items-center min-h-[44px] hover:text-blue-700 dark:hover:text-blue-400 whitespace-nowrap">{t.returnWatchlist}</Link>
+        </span>
       </nav>
 
       <header>

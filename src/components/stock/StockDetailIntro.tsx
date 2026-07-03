@@ -14,10 +14,16 @@ export function StockBreadcrumb({ name }: { name: string }) {
   const { locale } = useLanguage();
   const t = stockDetailCopy[locale];
   return (
-    <nav className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
-      <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-100">{t.breadcrumbHome}</Link><span>›</span>
-      <Link href="/stocks" className="hover:text-zinc-900 dark:hover:text-zinc-100">{t.breadcrumbStocks}</Link><span>›</span>
-      <span className="text-zinc-900 dark:text-zinc-100 truncate">{name}</span>
+    <nav className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 flex items-center justify-between gap-x-3 gap-y-1 flex-wrap">
+      <span className="flex items-center gap-1 min-w-0">
+        <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-100">{t.breadcrumbHome}</Link><span>›</span>
+        <Link href="/stocks" className="hover:text-zinc-900 dark:hover:text-zinc-100">{t.breadcrumbStocks}</Link><span>›</span>
+        <span className="text-zinc-900 dark:text-zinc-100 truncate">{name}</span>
+      </span>
+      <span className="flex items-center gap-3 shrink-0">
+        <Link href="/today" className="inline-flex items-center min-h-[44px] hover:text-blue-700 dark:hover:text-blue-400 whitespace-nowrap">← {t.returnToday}</Link>
+        <Link href="/watchlist" className="inline-flex items-center min-h-[44px] hover:text-blue-700 dark:hover:text-blue-400 whitespace-nowrap">{t.returnWatchlist}</Link>
+      </span>
     </nav>
   );
 }
