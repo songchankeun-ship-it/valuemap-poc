@@ -81,6 +81,8 @@ export const homeCopy = {
       policyC: "에서 범위를 바꿔 볼 수 있습니다.",
       footer:
         "공시 신호의 숫자는 호재/악재 점수가 아니라 분류 신뢰도입니다. 실제 영향은 원문 공시에서 직접 확인해야 합니다.",
+      emptyLine:
+        "오늘은 분석 대상 종목에서 새로 잡힌 공시 신호가 없습니다. 전체 시장 공시는 공시 신호 페이지에서 범위를 넓혀 볼 수 있어요.",
       outOfUniverse: "분석 대상 외",
       checkLabel: "확인 포인트",
       viewStock: "종목 보기",
@@ -93,6 +95,20 @@ export const homeCopy = {
         capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인 필요",
         default: "공시 원문에서 세부 내용 확인 필요",
       } as Record<string, string>,
+    },
+    myStocks: {
+      heading: "내 종목 이어보기",
+      sub: "관심·최근 본 종목",
+      watchlistLabel: "관심",
+      recentLabel: "최근 본",
+      loading: "내 종목을 불러오는 중…",
+      emptyLine: "아직 담아둔 관심 종목이 없어요. 종목을 살펴보다 눈에 띄는 종목을 담아두면, 다음 방문부터 여기서 바로 이어볼 수 있어요.",
+      emptyExplore: "종목 탐색",
+      emptyWatchlist: "관심 종목 페이지",
+      viewAll: "관심 종목 전체 →",
+      scoreLabel: "점수",
+      scoreAria: (n: number) => `종합점수 ${n}점`,
+      changeAria: (n: number) => `등락률 ${n >= 0 ? "+" : ""}${n.toFixed(2)}%`,
     },
     features: {
       heading: "오른스코어 핵심 기능",
@@ -197,6 +213,8 @@ export const homeCopy = {
       policyC: ".",
       footer:
         "The number on a disclosure signal is classification confidence, not a good/bad score. Check the actual impact directly in the original disclosure.",
+      emptyLine:
+        "No new disclosure signals came up in the analyzed stocks today. You can widen the scope to the whole market on the Disclosures page.",
       outOfUniverse: "Not in coverage",
       checkLabel: "What to check",
       viewStock: "View stock",
@@ -209,6 +227,20 @@ export const homeCopy = {
         capital_raise: "Check the issuance size and the purpose of the funds in the original.",
         default: "Check the details in the original disclosure.",
       } as Record<string, string>,
+    },
+    myStocks: {
+      heading: "Pick up where you left off",
+      sub: "Watchlist · recently viewed",
+      watchlistLabel: "Watching",
+      recentLabel: "Recent",
+      loading: "Loading your stocks…",
+      emptyLine: "You haven't saved any stocks yet. Add ones that catch your eye while exploring, and they'll be waiting right here on your next visit.",
+      emptyExplore: "Explore stocks",
+      emptyWatchlist: "Watchlist page",
+      viewAll: "All watchlist →",
+      scoreLabel: "Score",
+      scoreAria: (n: number) => `Composite score ${n}`,
+      changeAria: (n: number) => `Change ${n >= 0 ? "+" : ""}${n.toFixed(2)}%`,
     },
     features: {
       heading: "OrnScore core features",

@@ -9,7 +9,22 @@ import { homeCopy } from "@/lib/copy/home";
 export function DisclosureSignalSection({ signals, universeCount }: { signals: DisclosureSignalVM[]; universeCount?: number }) {
   const { locale } = useLanguage();
   const t = homeCopy[locale].disclosure;
-  if (signals.length === 0) return null;
+  if (signals.length === 0) {
+    // 조용한 날에도 섹션이 소리 없이 사라지지 않도록 차분한 빈 상태 카드로 대체(제목 유지 + 전체 보기 링크).
+    return (
+      <section>
+        <div className="flex items-baseline justify-between gap-2 mb-2">
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.heading}</h2>
+          <Link prefetch={false} href="/disclosures" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+            {t.viewAll}
+          </Link>
+        </div>
+        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 p-5 text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          {t.emptyLine}
+        </div>
+      </section>
+    );
+  }
   return (
     <section>
       <div className="flex items-baseline justify-between gap-2 mb-1">

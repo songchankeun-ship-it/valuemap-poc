@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 156 — 홈 대시보드 재방문 사용성 폴리시 (관심·최근 종목 진입점 + 공시 빈 상태) (2026-07-03, Claude)
+- **범위**: 홈(`/`)을 첫 방문 소개용이 아니라 매일 다시 쓰는 화면으로. 점수 로직·`stocks.json`·`score.ts` 무변경(설계서 준수). 브랜치 `ai-center/task-156-ornscore-repeated-use-home-dashboard`.
+- **신규 `src/components/home/MyStocksSection.tsx`** (`"use client"`): 관심 종목(우선)→최근 본 종목(중복 제거) 컴팩트 행(종목명·업종·종합점수·등락률 pill, `/stock/[ticker]` 링크). 마운트 전 `null`(하이드레이션 불일치 회피)·로딩 스켈레톤·시크릿 모드/저장소 차단 시 try/catch graceful·`watchlist-changed`/`recent-views-changed` 구독·8초 로딩 타임아웃. 첫 방문자에겐 압박 없는 차분한 빈 상태(관심 담기 유도, 매수/추천 표현 없음).
+- **`src/app/page.tsx`**: 이미 계산된 `realStockPool`에서 `poolLookup: Record<ticker,{name,sector,score,changePct}>` 파생(신규 점수 계산 0, `compositeOf`/`sectorOf` 재사용) → `MyStocksSection`에 prop 전달. 배치: `MarketSnapshotCards` 아래 · `TopCandidateSection` 위(재방문자는 내 맥락 먼저). 섹션 순서 = Hero→Snapshot→**MyStocks**→Candidates→Disclosures→Features→HowItWorks→Risk→Footer(소개 블록은 실행 블록 뒤로 이미 정렬됨, 유지).
+- **`src/components/home/DisclosureSignalSection.tsx`**: `signals.length===0`에서 `return null`(섹션이 조용히 사라짐) → 제목 유지 + 한 줄 안내 + `/disclosures` 링크의 차분한 빈 상태 카드로 교체.
+- **`src/lib/copy/home.ts`**: ko/en `myStocks` 카피 블록 신규(heading·sub·watchlist/recent 라벨·loading·empty·CTA·score/change aria) + `disclosure.emptyLine`. 전부 탐색·무료 프레이밍, 금칙어(매수/매도/추천/수익보장) 없음.
+- **게이트**: `verify_metrics.py` 오류 0·브랜드/금칙어 0·산식 버전 일치(Metrics 2.4) · `tsc --noEmit` clean · `next build` 성공(서버/클라 경계 정상). 추적: `spec-coverage` §5/§18 개인화 행 갱신. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 154 — 전문가 피드백 인테이크 루프 드라이런 (문서 전용) (2026-07-03, Claude)
 - **범위**: `ornscore-expert-feedback-intake-template.md`(Task 129) 루프를 실제로 한 번 돌려 **미래 피드백 → messy 중복 없는 P0/P1/P2** 변환을 증명. 앱 소스·점수식·`stocks.json`·인증/provider/env·라우트·의존성·외부 서비스 무변경, 신규 npm 0. 실 신규 broad 백로그 생성 없음. 브랜치 `ai-center/task-154-ornscore-expert-feedback-loop-dry-ru`.
 - **신규 `docs/ornscore-expert-feedback-dry-run-2026-07-03.md`**: SAMPLE 리포트(기존 알려진 이슈 조립)로 §7 표 4행 완전 워크 — 거부(INV-5 목표가/매수후보) · P2 코드 task 방출 1건(공시 범위 문구·§5 6필드) · P1-VISUAL 운영자 버킷 라우팅 · 이미 완료 항목(STEP 번호 중복 Task 60/68) 중복 드롭. 실 방출 task 1건뿐.

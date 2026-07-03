@@ -10,6 +10,7 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
 import { TopCandidateSection } from "@/components/home/TopCandidateSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
+import { MyStocksSection, type PoolEntry } from "@/components/home/MyStocksSection";
 import { DisclosureSignalSection } from "@/components/home/DisclosureSignalSection";
 import type { DisclosureSignalVM } from "@/components/home/DisclosureSignalCard";
 import { FeatureCards } from "@/components/home/FeatureCards";
@@ -112,6 +113,17 @@ export default async function HomePage() {
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
 
+  // ── 내 종목(관심·최근 본) 이어보기용 경량 룩업 — 이미 계산된 풀에서 파생(신규 점수 계산 없음) ──
+  const poolLookup: Record<string, PoolEntry> = {};
+  for (const s of realStockPool) {
+    poolLookup[s.ticker] = {
+      name: s.name,
+      sector: sectorOf(s.themes),
+      score: Math.round(compositeOf(s)),
+      changePct: s.changePct,
+    };
+  }
+
   // ── 오늘의 데이터 요약 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80 && !isSuspect(s)).length;
   const spikeCount = volumeSpikeCount(realStockPool);
@@ -179,6 +191,8 @@ export default async function HomePage() {
         volumeSpikeCount={spikeCount}
         signalCount={signalCount}
       />
+
+      <MyStocksSection lookup={poolLookup} />
 
       <TopCandidateSection candidates={candidates} />
 
