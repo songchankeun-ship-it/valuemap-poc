@@ -164,7 +164,22 @@ export function GlobalSearch({ stocks, themes }: Props) {
         <div className="absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50">
           {results.length === 0 ? (
             <div className="px-3 py-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-              {copy.search.empty}
+              <p>{copy.search.empty}</p>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+                {copy.search.emptyCoverageLine(stocks.length)}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  router.push("/stocks");
+                  setQuery("");
+                  setOpen(false);
+                  inputRef.current?.blur();
+                }}
+                className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {copy.search.emptyCoverageCta}
+              </button>
             </div>
           ) : (
             <ul id="global-search-listbox" role="listbox" aria-label={copy.search.placeholder}>
