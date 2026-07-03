@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
@@ -100,6 +100,9 @@ export function WatchlistClient({
   const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
   const [hydrated, setHydrated] = useState(false);
+  // 방금 제거한 종목 — 실수로 뺀 경우 되돌리기(5초 자동 소멸, compare와 동일 패턴)
+  const [undoStock, setUndoStock] = useState<{ ticker: string; name: string } | null>(null);
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setHydrated(true);
@@ -172,9 +175,29 @@ export function WatchlistClient({
     };
   }, []);
 
-  async function handleRemove(ticker: string) {
+  // 언마운트 시 대기 중인 되돌리기 타이머 해제
+  useEffect(() => {
+    return () => {
+      if (undoTimer.current) clearTimeout(undoTimer.current);
+    };
+  }, []);
+
+  async function handleRemove(ticker: string, name: string) {
     setWatchlist((prev) => prev.filter((i) => i.ticker !== ticker)); // 낙관적
     await removeFromWatchlist(ticker);
+    // 방금 뺀 종목을 잠시 보관해 되돌릴 수 있게 안내
+    setUndoStock({ ticker, name });
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    undoTimer.current = setTimeout(() => setUndoStock(null), 5000);
+  }
+
+  // 제거 되돌리기 — 같은 낙관적 setState·이벤트 흐름으로 다시 담기
+  async function undoRemove() {
+    const target = undoStock;
+    if (!target) return;
+    setUndoStock(null);
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    await addToWatchlist(target.ticker);
   }
 
   function clearRecent() {
@@ -275,9 +298,9 @@ export function WatchlistClient({
             알림 설정 보기 <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </Link>
-        {/* 지금 되는 것 vs 준비 중 — 알림 설정 페이지와 같은 프레이밍(무료 기능 경로 일관) */}
+        {/* 지금 되는 것 vs 준비 중 — 담기 자체는 로컬 추적, 알림은 이메일만 동작(정직 프레이밍) */}
         <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-          관심 종목 공시·저장 필터 충족 알림은 지금 이메일로 동작해요(임시·베타). 카카오톡 알림은 준비 중이에요.
+          관심 종목을 담으면 점수 변화·공시 신호를 이 화면에서 바로 추적해요(별도 알림 없이 로컬 기록). 공시·조건 충족을 메일로도 받으려면 알림 설정에서 이메일 알림을 켜세요(임시·베타). 카카오톡·푸시 알림은 준비 중이에요.
         </p>
       </section>
 
@@ -295,6 +318,22 @@ export function WatchlistClient({
             <div className="flex gap-0.5 text-[11px] bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
               <button type="button" onClick={() => changeView("simple")} className={"px-2.5 py-1 rounded-md transition " + (view === "simple" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>간단</button>
               <button type="button" onClick={() => changeView("analysis")} className={"px-2.5 py-1 rounded-md transition " + (view === "analysis" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>분석</button>
+            </div>
+          ) : null}
+        </div>
+
+        {/* 제거 되돌리기 — 실수로 뺀 종목을 다시 담기(aria-live로 변화 안내) */}
+        <div aria-live="polite">
+          {undoStock ? (
+            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 px-3 py-1.5 text-xs">
+              <span className="min-w-0 break-keep text-zinc-600 dark:text-zinc-300">{undoStock.name} 관심 종목에서 제거됨</span>
+              <button
+                type="button"
+                onClick={() => { void undoRemove(); }}
+                className="inline-flex items-center min-h-[44px] shrink-0 font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                실행 취소
+              </button>
             </div>
           ) : null}
         </div>
@@ -377,9 +416,9 @@ export function WatchlistClient({
                   </Link>
                   <button
                     type="button"
-                    onClick={() => handleRemove(item.ticker)}
-                    className="ml-2 p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition shrink-0"
-                    aria-label="관심 종목에서 제거"
+                    onClick={() => handleRemove(item.ticker, name)}
+                    className="ml-2 flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition shrink-0"
+                    aria-label={`${name} 관심 종목에서 제거`}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -454,7 +493,7 @@ export function WatchlistClient({
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug break-words">
               저장한 필터에 새 종목이 들어올 때 알림으로 받으려면{" "}
               <Link href="/settings/notifications" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">알림 설정의 조건 충족 알림</Link>
-              에서 켜세요. 지금은 이메일로 동작해요(임시·베타) · 카카오톡 알림은 준비 중.
+              에서 켜세요. 지금은 이메일로만 동작해요(임시·베타) · 카카오톡·푸시 알림은 준비 중.
             </p>
           </div>
         ) : null}

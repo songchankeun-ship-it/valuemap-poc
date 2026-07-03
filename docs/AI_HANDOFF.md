@@ -1167,3 +1167,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식 재확인(6종 유지)**: 138종목·비자문 고지·EN 토글 숨김·AI 공개 숨김(상세 AiAnalysisCard 0·/history 내비 0)·요금제 무료 베타(확정가 0)·요금제 내비 강등(more 그룹). 로그인 제공자 카카오/구글/네이버/이메일 노출.
 - **스모크**: 로컬 prod 4455 리스너 PID 11636만 taskkill, AI Center 4310(PID 26420) 무중단. 11개 공개 경로 200·치명 마커 0·아이콘 5개 200. 신규 노트 U+FFFD 0.
 - **남은 운영자 게이트**: 실기기 OAuth 왕복 · 데스크톱/390px 육안 시각 게이트(Playwright 미구성) · (선택) P2 폴리시 · assetlinks/스토어/결제(범위 밖). 푸시/릴리스 미수행(로컬 커밋만).
+
+
+### Task 160 — OrnScore 관심 종목 리텐션 루프 폴리시 (2026-07-03, Claude)
+- **Scope**: 알림 고급 기능 이전에도 "담기·재방문"이 가치 있게 느껴지도록 관심 종목 리텐션 루프 로컬 폴리시. 요청 하드 제약 준수 — repo-local 코드/문서만, 외부 알림 채널 미연결, 인증 제공자 설정 무변경. 브랜치 `ai-center/task-160-ornscore-watchlist-retention-loop-po`.
+- **파일(3)**:
+  - `src/components/AddToWatchlistButton.tsx`: 단일 `showToast`(추가만) → `toast: {kind:'added'|'removed'}` 분기. 추가 토스트 2.5s·`목록 보기 →`, 제거 토스트 5s·`실행 취소`(같은 낙관적 add 흐름으로 되돌리기). 토스트 영역을 상시 렌더 컨테이너(`aria-live="polite"`)로 승격 — 스크린리더가 변화 낭독. 모바일은 `bottom-[calc(3.5rem+env(safe-area-inset-bottom))]`로 `MobileBottomNav`(동일 높이·z-40) 위, 데스크톱 `lg:bottom-6`. 컨테이너 `pointer-events-none`+토스트 `pointer-events-auto`(빈 상태 클릭 차단 없음), 액션 44px, 언마운트 시 `toastTimer` 정리.
+  - `src/components/WatchlistClient.tsx`: 리스트 인라인 제거 `실행 취소`(5초 자동 소멸·compare와 동일 패턴, `aria-live`), 마지막 항목 제거 시에도 빈 상태 위에 노출. 제거 버튼 44px(`min-h/min-w-[44px]`)·`aria-label`에 종목명 포함. **정직 프레이밍 강화**(라이브 알림 배선 암시 0): "내 현황" 알림 서브카피 = "담으면 점수 변화·공시 신호를 이 화면에서 바로 추적(별도 알림 없이 로컬 기록) · 메일 알림은 이메일만 임시·베타 · 카카오톡·푸시 준비 중", 저장 필터 다리 문구 "이메일로만 동작 · 카카오톡·푸시 준비 중". view-toggle localStorage try/catch(시크릿·저장소 차단 graceful) 유지.
+  - `src/app/watchlist/page.tsx`: 헤더에 "담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적" 1줄 추가 후 기존 로그인/로컬 동기화 메시지 유지(`leading-relaxed break-words`). SSR 타임아웃·degrade·`<noscript>` 폴백 무변경.
+- **불변식**: 점수식/데이터(138종목)/인증 제공자/알림 cron 배선 무변경 · 제3자 호출 0 · 금칙어(`매수/매도/추천/수익 보장`) 0.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONIOENCODING=utf-8) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(138 SSG·전 라우트, `/watchlist` 9.39kB 빌드).
+- **모바일 확인**: 신규/변경 카피 390px `break-words`/`break-keep`/`flex-wrap` 래핑 · 빈 상태 CTA `flex-col sm:flex-row` 스택 · 토스트/버튼 44px.
+- **남은 소유자**: 그룹·메모·CSV(§8.2 신규 기능 ④) · 실기기 시각 게이트(운영자). 로컬 커밋만·푸시 미수행·main 무변경.
