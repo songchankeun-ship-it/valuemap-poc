@@ -50,6 +50,9 @@
 | 5 | `app/stock/[ticker]/page.tsx:64` | meta `모멘텀 … · 변동성조정 …` | `추세 … · 위험조정 …` |
 | 6 | `app/stock/[ticker]/page.tsx:242` | OG(Article) 동일 | `추세 … · 위험조정 …` |
 | 7 | `mockStockPool.ts:108,110` | 내부 `SORT_OPTIONS.label` `모멘텀 높은순`·`변동성조정 높은순` | `추세 높은순`·`위험조정 높은순`(내부 일관성) |
+| 8 | `components/ScoreTooltip.tsx:18` | 종합 툴팁 oneLine `모멘텀·거래활성도·밸류·변동성조정` | `추세·거래활성도·밸류·위험조정`(캐논 목록) |
+| 9 | `components/ScoreTooltip.tsx:23` | 지표 툴팁 title `모멘텀` | `추세 (모멘텀)`(글로서리 브리지) |
+| 10 | `components/ScoreTooltip.tsx:41` | 지표 툴팁 title `변동성조정 (Sharpe)` | `위험조정 (변동성조정)`(글로서리 브리지) |
 
 - `app/page.tsx:88` `keywords` 배열의 `모멘텀`·`밸류에이션`은 **SEO 키워드 → 유지**(설명 산문만 캐논 정렬).
 - #7 `SORT_OPTIONS.label`은 실제로 `SortKey` 타입 파생(`mockStockPool.ts:124`)에만 쓰이고 렌더되지 않음. 실 노출 정렬 라벨은 `copy/stocks.ts:66` `추세 높은순`(이미 캐논). 내부 문자열이나 혼동 방지 위해 함께 정렬.
@@ -61,7 +64,7 @@
 | `copy/metricsGuide.ts:103,133,184,187` · `copy/stocks.ts:262,267` | 글로서리 브리지 "추세 (모멘텀)"·"위험조정 (변동성조정)" → 유지 |
 | `about/page.tsx:28,31` | 교육용 브리지 "모멘텀(추세) … 변동성조정(위험 대비)" → 유지 |
 | `backtest/page.tsx:58,59` | 전략 설명 자체가 브리지 "모멘텀 점수 … (추세 추종)"·"변동성조정 점수 … (위험조정)" → 유지 |
-| `components/ScoreTooltip.tsx:18,23,41` | **미사용 컴포넌트**(import 0·`kind=` 사용처 0). 렌더 안 됨 → 비노출, 손대지 않음 |
+| ~~`components/ScoreTooltip.tsx:18,23,41`~~ | **정정(오분류였음)**: 실제로는 렌더됨 — `MetricStrip`·`stock/MetricInsightCards`(종목상세 page.tsx:325)·`stock/ScoreBasisBreakdown`(page.tsx:407)에서 `import`·`kind=` 사용. → Fix-now #8~#10으로 이동. |
 | `lib/prompts/theme-insight.ts`·`stock-analysis.ts` | AI 프롬프트 내부(AI 공개 숨김) → 유지 |
 | `lib/metrics.ts:28,85` | 코드 주석 → 유지 |
 
@@ -73,6 +76,7 @@
 
 ## 적용 요약
 
-- **Fix-now 7건**(모두 §3 지표 드리프트) 적용. copy 파일 변경 시 en 키 패리티 동시 반영(`satisfies Record<Locale>` 유지).
+- **Fix-now 10건**(모두 §3 지표 드리프트) 적용. copy 파일 변경 시 en 키 패리티 동시 반영(`satisfies Record<Locale>` 유지).
+- #8~#10은 재감사에서 `ScoreTooltip` 오분류(미사용→실제 렌더)를 바로잡아 종목상세 툴팁의 구용어(모멘텀·변동성조정)를 캐논/브리지로 정렬. `ScoreTooltip`은 하드코딩 문자열(로케일 미인지)이라 en 패리티 대상 아님.
 - 점수식·`public/data/*`·cron·auth·`direction`·반응형 클래스 무변경.
-- **Defer**: §1 유휴 토글은 현 상태(숨김+EN 보존)가 오너 결정과 정합 → 조치 없음. ScoreTooltip 미사용 컴포넌트 정리는 별도 판단(이번 스코프 외).
+- **Defer**: §1 유휴 토글은 현 상태(숨김+EN 보존)가 오너 결정과 정합 → 조치 없음.
