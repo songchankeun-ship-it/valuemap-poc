@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 166 — 오너 리뷰 패키지 (배치 144~165)
+- **범위**: 최근 완료된 자동화 배치(Task 144~165)를 오너가 한 번에 리뷰하고 **다음 실제 제품 우선순위**를 고르기 쉽게 종합. **문서 전용·앱 소스 무변경**(신규 기능·리팩터 0). 근거는 전부 레포 내부(`docs/AI_HANDOFF.md`·`docs/ornscore-spec-coverage.md`·`PROGRESS.md`·커밋). 브랜치 `ai-center/task-166-ornscore-owner-review-package-after-`.
+- **신규 `docs/ornscore-owner-review-2026-07-03.md`**: §1 이번 배치 요약 표(A 관심·알림·개인화 / B 탐색·비교·공시 / C 신뢰·재무 문구 / D 로그인·모바일·접근성 / E QA·성능·프로세스, 각 행 한 줄 변경+근거 문서) · §2 8도메인 오너 리뷰 체크리스트(UX·데이터 신뢰·모바일·로그인·관심·알림·성능·재무 문구, 각 항목 현재 상태+검증 명령/문서·운영자 잔여 명시) · §3 다음 로컬 제안(spec-coverage A절에서 이미 ③으로 태깅된 5건만: 필터 자연어 요약줄·압축 보기·5단계 신뢰 배지 라벨 정렬·산식 버전 빌드 게이트 CI·프리셋 예상 결과 수 카드 — 신규 투기 작업 0) · §4 운영자·법무 게이트(`ornscore-owner-final-checklist`·`app-packaging-readiness`·`legal-ai-commercial-readiness` 링크만·재서술 없음).
+- **게이트**: `npx tsc --noEmit` 0(소스 무변경 증명·docs만) · `python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4(앱 소스 무변경 증명) · `git diff --check` 실 whitespace 0(전역 CRLF만) · 신규/변경 문서 U+FFFD 0·금칙어(매수/매도/추천/수익 보장/목표가) 0. `build`/`smoke:check`/`perf:check` 불필요(앱 소스·라우트·`<head>` 무변경, 모바일/데스크톱 런타임 영향 0).
+- **추적**: `ornscore-spec-coverage.md` §1 O.QA 행 Task 166 포인터, `AI_HANDOFF.md` Manual Notes Task 166. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 164 — 라우트 스모크 체크리스트 자동화
 - **범위**: 로컬 QA를 기억에 덜 의존하고 빠르게. repo-local only, 신규 의존성 0, 앱 소스·데이터·점수식 무변경. 브랜치 `ai-center/task-164-ornscore-route-level-smoke-checklist`.
 - **신규 게이트 `scripts/smoke-check.mjs`**: 순수 Node ESM(`fetch`만, `node:*` 외 import 0, ASCII/영어 본문+한국어 앵커만). 이미 떠 있는 로컬 prod 서버에 핵심 7라우트(`/ /stocks /stock/034730 /today /disclosures /watchlist /login`)를 각 1회 fetch → (a) HTTP 200, (b) 치명 마커 0(`Application error`/`Hydration failed`(정밀 문구—`suppressHydrationWarning` 오탐 회피)/`Cannot read properties`/`ReferenceError:`/`Unhandled`/`Minified React error`), (c) 라우트별 콘텐츠 앵커 존재(`138`/`종목`/`상위`/`오늘`/`공시`/`관심`/`카카오`). `perf:check`(권고·항상 exit 0)와 달리 **진짜 게이트**: 실패 시 OK/FAIL 표+실패 상세+`exit 1`, 서버 미도달 시 `"is the local prod server running at <base>?"` 힌트. `--base`(기본 4455)·`SMOKE_BASE_URL` env, `--all`은 추가 공개 라우트(`/compare /pricing /status /backtest /manifest.webmanifest`) 덧붙여 과거 12라우트 패스 동등(기본은 유한 7라우트).

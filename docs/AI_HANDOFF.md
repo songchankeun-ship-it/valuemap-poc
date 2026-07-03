@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 166 — 오너 리뷰 패키지 (배치 144~165) (2026-07-03, Claude)
+- **범위**: 최근 자동화 배치(Task 144~165)를 오너가 한 번에 리뷰하고 다음 실제 우선순위를 고르기 쉽게 정리. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`AI_HANDOFF`·`ornscore-spec-coverage`·`PROGRESS`·커밋). 브랜치 `ai-center/task-166-ornscore-owner-review-package-after-`.
+- **산출물**: 신규 `docs/ornscore-owner-review-2026-07-03.md` — §1 배치 요약 표(A retention·B 탐색/비교/공시·C 신뢰/재무·D 로그인/모바일·E QA/성능), §2 8도메인 리뷰 체크리스트(UX·데이터 신뢰·모바일·로그인·관심·알림·성능·재무 문구, 각 상태+검증 명령/문서), §3 다음 로컬 제안(spec-coverage에 이미 ③으로 태깅된 5건만), §4 운영자·법무 게이트(원본 문서 링크만).
+- **게이트**: `tsc --noEmit` 0(소스 무변경 증명·docs만) · `verify_metrics.py` 138/오류0/금칙0/Metrics 2.4(앱 소스 무변경 증명) · `git diff --check` 실 whitespace 0(전역 CRLF만) · 신규/변경 문서 U+FFFD 0·금칙어 0. `build`/`smoke:check`/`perf:check` 불필요(앱 소스·라우트·`<head>` 무변경, 모바일/데스크톱 런타임 영향 0).
+- **추적**: `ornscore-spec-coverage.md` §1 O.QA 행 Task 166 포인터, `PROGRESS.md` 본 항목. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
+
 ### Task 164 — 라우트 스모크 체크리스트 자동화 (2026-07-03, Claude)
 - **범위**: 로컬 QA를 기억에 덜 의존하고 빠르게. repo-local only·신규 의존성 0·앱 소스/데이터/점수식 무변경. 브랜치 `ai-center/task-164-ornscore-route-level-smoke-checklist`.
 - **신규 게이트 `scripts/smoke-check.mjs`**(순수 Node ESM·`fetch`만·`node:*` 외 import 0): 이미 떠 있는 로컬 prod에 핵심 7라우트(`/ /stocks /stock/034730 /today /disclosures /watchlist /login`)를 각 1회 fetch → (a) 200, (b) 치명 마커 0(`Application error`/`Hydration failed`(정밀—`suppressHydrationWarning` 오탐 회피)/`Cannot read properties`/`ReferenceError:`/`Unhandled`/`Minified React error`), (c) 라우트별 콘텐츠 앵커(`138`/`종목`/`상위`/`오늘`/`공시`/`관심`/`카카오`). **진짜 게이트**(perf:check와 달리): 실패 시 OK/FAIL 표+`exit 1`, 서버 미도달 시 힌트. `--base`(기본 4455)·`SMOKE_BASE_URL`·`--all`(추가 5라우트로 12라우트 동등).
