@@ -33,9 +33,12 @@ export function MetricsSectionHeader({ poolN }: { poolN: number }) {
   const { locale } = useLanguage();
   const t = stockDetailCopy[locale].metricsSection;
   return (
-    <div className="flex items-baseline justify-between mb-3">
-      <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.title} <span className="text-[10px] font-normal text-zinc-400">{t.poolPrefix} {poolN} {t.poolSuffix}</span></div>
-      <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline">{t.guideLink}</Link>
+    <div className="mb-3">
+      <div className="flex items-baseline justify-between">
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.title} <span className="text-[10px] font-normal text-zinc-400">{t.poolPrefix} {poolN} {t.poolSuffix}</span></div>
+        <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline shrink-0">{t.guideLink}</Link>
+      </div>
+      <p className="mt-1 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.lead}</p>
     </div>
   );
 }

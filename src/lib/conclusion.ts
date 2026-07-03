@@ -44,20 +44,21 @@ export function classifyConclusion({ momentum, flow, value, vol, surge3m }: Conc
   else if (voDown) type = "변동성 주의 후보";
   else type = "균형형 우선 확인 후보";
 
-  // 한 줄 결론 — 강점/약점만 기술, 향후 가격 방향 예측 금지
+  // 한 줄 결론 — 강점/약점만 기술, 향후 가격 방향 예측 금지.
+  // 초보자가 '왜 확인 후보로 떴는지'를 이해하도록 강점이 목록에 올린 이유임을 함께 설명한다.
   let summary: string;
-  if (strong.length && weak.length) summary = `${strong.join("·")} 지표는 강하지만, ${weak.join("·")} 지표는 상대적으로 약한 상태입니다.`;
-  else if (strong.length) summary = `${strong.join("·")} 지표가 강하고 나머지는 중립권입니다.`;
-  else if (weak.length) summary = `두드러진 강점 지표 없이 ${weak.join("·")} 지표가 약한 상태입니다.`;
-  else summary = "네 지표 모두 중간대로, 두드러진 신호가 적은 상태입니다.";
+  if (strong.length && weak.length) summary = `${strong.join("·")} 지표는 강하지만 ${weak.join("·")} 지표는 약한 편이에요. 강점이 이 종목을 후보로 올린 이유이고, 약한 지표는 발목을 잡을 요인이 없는지 함께 확인할 부분이에요.`;
+  else if (strong.length) summary = `${strong.join("·")} 지표가 강하고 나머지는 중립권이에요. 이 강점이 종목이 눈에 띈 이유이니, 그 강점이 정당한지부터 확인해 보세요.`;
+  else if (weak.length) summary = `두드러진 강점 지표 없이 ${weak.join("·")} 지표가 약한 상태예요. 지금은 확인할 근거보다 지켜볼 요인이 더 많은 편이에요.`;
+  else summary = "네 지표 모두 중간대라 두드러진 신호가 적어요. 특정 강점보다는 공시·실적 같은 촉매가 생기는지 지켜볼 단계예요.";
 
-  // 주의점 — '확인' 톤만(공포·매도 언어 금지)
+  // 주의점 — '확인' 톤만(공포·매도 언어 금지). 무엇을 먼저 확인할지까지 안내한다.
   let riskNote: string;
-  if (surgeBig) riskNote = "최근 3개월 상승폭이 커서 급등 사유 확인이 먼저 필요합니다.";
-  else if (surgeWarm) riskNote = "최근 상승폭이 다소 커서 급등 사유 확인이 필요합니다.";
-  else if (voDown) riskNote = "위험조정 지표가 약해 변동성 확인이 필요합니다.";
-  else if (weak.includes("거래활성도")) riskNote = "거래활성도가 약해 시장 관심 지속 여부 확인이 필요합니다.";
-  else riskNote = "점수는 탐색 우선순위이므로 공시·실적을 함께 확인하세요.";
+  if (surgeBig) riskNote = "최근 3개월 상승폭이 커요 — 무엇 때문에 올랐는지(실적·뉴스·테마) 급등 사유부터 확인하세요.";
+  else if (surgeWarm) riskNote = "최근 상승폭이 다소 커요 — 급등 사유와 상승이 이어질 근거가 있는지 먼저 확인하세요.";
+  else if (voDown) riskNote = "위험조정 지표가 약해요 — 실제 주가 출렁임(변동성)과 최대낙폭을 함께 확인하세요.";
+  else if (weak.includes("거래활성도")) riskNote = "거래활성도가 약해요 — 시장 관심이 계속 이어지는지 거래량 흐름을 확인하세요.";
+  else riskNote = "점수는 탐색 우선순위일 뿐이에요 — 공시와 재무(실적)를 함께 확인한 뒤 판단하세요.";
 
   return { type, summary, riskNote };
 }

@@ -7,7 +7,6 @@ import {
   type Reading,
   type StockShape,
 } from "@/lib/metricReadings";
-import { StockDetailActionButtons } from "@/components/stock/StockDetailActionButtons";
 import { useLanguage } from "@/components/LanguageProvider";
 import { beginnerReadingCopy } from "@/lib/copy/stockDetail";
 
@@ -101,12 +100,6 @@ export function BeginnerReading({ s }: { s: StockShape }) {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* 다음으로 확인하기 — 초보자 해석 카드 안 직접 CTA (설계서 §9 / [P1-3]) */}
-      <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3 mb-3">
-        <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.nextTitle}</div>
-        <StockDetailActionButtons />
       </div>
 
       {/* 지표별 한 줄 해석 — 기본 접힘 */}

@@ -330,6 +330,17 @@ export default async function StockDetailPage({ params }: PageProps) {
         ]} />
       </section>
 
+      {/* 초보자 해석 — 점수 → 행동 가이드 번역. 기술적 위험/데이터 카드보다 먼저 두어 쉬운 설명이 앞장서게 함 */}
+      <BeginnerReading s={{
+        momentum: s.momentum,
+        flow: s.flow,
+        value: s.value,
+        vol: s.vol,
+        per: s.per,
+        pbr: s.pbr,
+        roe: s.roe,
+      }} />
+
       {/* 위험 상세 — 위험조정 점수와 별개로 실제 변동성·낙폭 (설계서 6.4) */}
       {vs && (vs.annualStd != null || vs.maxDrawdown != null) ? (
         <RiskDetailCard
@@ -348,17 +359,6 @@ export default async function StockDetailPage({ params }: PageProps) {
         scoreDate={globalAsOf}
         formulaVersion={dataStatus.metricsVersionLabel}
       />
-
-      {/* 초보자 해석 — 점수 → 행동 가이드 번역 */}
-      <BeginnerReading s={{
-        momentum: s.momentum,
-        flow: s.flow,
-        value: s.value,
-        vol: s.vol,
-        per: s.per,
-        pbr: s.pbr,
-        roe: s.roe,
-      }} />
 
       {/* 업종 대비 밸류 — 점수 산식(sectorValueScore) 무변경. 표시/문구만 SectorValueCard에서 분기 */}
       <SectorValueCard

@@ -27,6 +27,7 @@ export const stockDetailCopy = {
       poolPrefix: "전체",
       poolSuffix: "종목 대비",
       guideLink: "지표 가이드 →",
+      lead: "이 종목이 후보로 뜬 이유를 4개 지표로 나눠 봅니다 — 무엇이 강하고 무엇을 더 확인해야 하는지.",
     },
     riskDetail: {
       title: "위험 상세",
@@ -100,6 +101,7 @@ export const stockDetailCopy = {
       poolPrefix: "vs. all",
       poolSuffix: "stocks",
       guideLink: "Metrics guide →",
+      lead: "These 4 metrics break down why this stock was surfaced — what's strong and what to check further.",
     },
     riskDetail: {
       title: "Risk detail",
@@ -410,7 +412,6 @@ export const beginnerReadingCopy = {
     firstCheckTitle: "먼저 확인할 것",
     firstCheckHint: "— 순서대로",
     specialTitle: "이 종목에서 특히 볼 것",
-    nextTitle: "다음으로 확인하기",
     detailToggle: "지표별 상세 해석 펼치기 ▾",
     disclaimer:
       "⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.",
@@ -439,7 +440,6 @@ export const beginnerReadingCopy = {
     firstCheckTitle: "Check first",
     firstCheckHint: "— in order",
     specialTitle: "What to watch especially for this stock",
-    nextTitle: "What to check next",
     detailToggle: "Expand per-metric detail ▾",
     disclaimer:
       "⚠ This read is not a buy/sell recommendation. It's a guide that, from the score pattern, tells you what to check further.",
