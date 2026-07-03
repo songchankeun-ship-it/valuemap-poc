@@ -70,6 +70,11 @@ interface MetricsGuideCopy {
     sourcePrefix: string;
     body: (count: number) => string;
   };
+  glossary: {
+    title: string;
+    note: string;
+    items: readonly { term: string; def: string }[];
+  };
 }
 
 export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
@@ -87,9 +92,9 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
     reviewPoints: {
       title: "읽기 전 검토 포인트",
       items: (count: number) => [
-        "종합점수는 네 지표를 똑같은 비중으로 평균합니다. 추세 · 거래활성도 · 밸류 · 위험조정 4지표를 각각 25%씩 동일 가중으로 더해 평균한 값이라, 한 지표만 아주 높아도 나머지가 평범하면 종합점수는 중간대에 머뭅니다. 종목 상세의 점수 근거 보기에서 각 지표가 종합점수에 얼마나 기여했는지 확인할 수 있습니다.",
+        "종합 점수는 네 지표를 똑같은 비중으로 평균합니다. 추세 · 거래활성도 · 밸류 · 위험조정 4지표를 각각 25%씩 동일 가중으로 더해 평균한 값이라, 한 지표만 아주 높아도 나머지가 평범하면 종합 점수는 중간대에 머뭅니다. 종목 상세의 점수 근거 보기에서 각 지표가 종합 점수에 얼마나 기여했는지 확인할 수 있습니다.",
         "점수와 순위는 다릅니다. 점수는 0~100 절대값이고, 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 점수와 상대순위를 분리해 표시합니다.",
-        `밸류 점수의 기준에 주의하세요. 밸류는 전체 ${count}개 풀 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 업종 대비 밸류는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합점수에는 포함되지 않습니다.`,
+        `밸류 점수의 기준에 주의하세요. 밸류는 전체 ${count}개 풀 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 업종 대비 밸류는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합 점수에는 포함되지 않습니다.`,
       ],
     },
     metrics: [
@@ -154,7 +159,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
         "가격은 수정종가(액면분할·배당락 반영) 기준으로 계산합니다.",
         "결측·거래정지 구간은 가능한 데이터만 사용하고, 최소 관측치 미달 시 중립(50점)으로 처리합니다.",
         "무위험률은 연 3.5%를 단순 적용합니다 (정밀 기준일 보정은 추후 반영).",
-        `종합점수의 밸류는 전체 ${count}개 기준 분위입니다. 종목 상세의 업종 대비 밸류는 별도 참고 지표로, 종합점수에는 포함되지 않습니다.`,
+        `종합 점수의 밸류는 전체 ${count}개 기준 분위입니다. 종목 상세의 업종 대비 밸류는 별도 참고 지표로, 종합 점수에는 포함되지 않습니다.`,
         "점수는 실험 지표입니다 — 백테스트 검증이 진행 중이라 참고용입니다.",
       ],
       versionPrefix: "산식 버전: ",
@@ -170,6 +175,22 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       sourcePrefix: "데이터 출처:",
       body: (count: number) =>
         ` KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 보조 지표. ${count}개 종목. 영업일 마감 후 자동 갱신.`,
+    },
+    glossary: {
+      title: "용어 한눈에",
+      note: "화면 공간이 좁은 표 머리글·칩·배지에서는 ‘종합점수’처럼 붙여 쓰기도 하지만 뜻은 같습니다. 모든 용어는 참고 지표이며 매수·매도 신호가 아닙니다.",
+      items: [
+        { term: "종합 점수", def: "네 지표(추세·거래활성도·밸류·위험조정)를 각 25%씩 똑같이 평균한 값입니다. 어떤 종목을 더 볼지 정하는 참고 지표이며, 매수·매도 신호가 아닙니다." },
+        { term: "추세 (모멘텀)", def: "최근 1·3·6개월 수익률을 가중평균해 흐름의 강도를 본 지표입니다." },
+        { term: "거래활성도", def: "최근 거래량이 평소보다 얼마나 늘었는지로 시장 관심도를 본 지표입니다. 방향(상승·하락)을 뜻하지는 않습니다." },
+        { term: "밸류 (저평가)", def: "PER·PBR을 전체 종목과 견줘 상대적으로 싼 편인지 본 지표입니다." },
+        { term: "위험조정 (변동성조정)", def: "수익을 변동성으로 나눠, 흔들림 대비 성과가 어땠는지 본 지표입니다." },
+        { term: "데이터 기준일", def: "화면의 점수·가격이 어느 날짜 데이터를 기준으로 하는지 나타냅니다. 영업일 마감 후 갱신됩니다." },
+        { term: "공시 신호", def: "DART에 올라온 자기주식·보유 변동·정정·계약·증자 같은 공시를 분류해 보여주는 참고 정보입니다. 호재·악재를 단정하지 않습니다." },
+        { term: "관심 종목", def: "따로 저장해 두고 변화를 지켜보는 종목 목록입니다." },
+        { term: "비교", def: "고른 종목들의 점수·PER·PBR·수익률·위험을 나란히 놓고 살펴보는 기능입니다." },
+        { term: "주의", def: "호재·악재를 단정하는 게 아니라, 확인해 볼 한계나 유의점을 짚어 주는 안내입니다." },
+      ],
     },
   },
   en: {
@@ -269,6 +290,22 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       sourcePrefix: "Data sources:",
       body: (count: number) =>
         ` KRX daily close (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance supplementary metrics. ${count} stocks. Updated automatically after market close on business days.`,
+    },
+    glossary: {
+      title: "Glossary at a glance",
+      note: "In space-constrained tables, chips, and badges the Korean term may appear without a space, but the meaning is the same. Every term is a reference metric, not a buy or sell signal.",
+      items: [
+        { term: "Composite score", def: "The equal-weighted average (25% each) of the four metrics — trend, trading activity, valuation, and risk-adjusted. It's a reference for what to look at next, not a buy or sell signal." },
+        { term: "Trend (Momentum)", def: "A weighted average of recent 1-, 3-, and 6-month returns that gauges how strong the recent move is." },
+        { term: "Trading activity", def: "How much recent volume has risen versus usual, as a read on market interest. It does not imply direction (up or down)." },
+        { term: "Valuation (undervaluation)", def: "How cheap a stock looks on PER and PBR relative to the whole pool." },
+        { term: "Risk-adjusted (Volatility-adjusted)", def: "Return divided by volatility — how the payoff looked relative to the swings." },
+        { term: "Data as of", def: "The date the on-screen scores and prices are based on. Updated after market close on business days." },
+        { term: "Disclosure signals", def: "DART filings — treasury stock, holdings changes, corrections, contracts, capital raises — sorted for reference. It does not judge good or bad news." },
+        { term: "Watchlist", def: "A saved list of stocks you keep an eye on for changes." },
+        { term: "Compare", def: "View the scores, PER/PBR, returns, and risk of the stocks you pick side by side." },
+        { term: "Caution", def: "A note pointing out limits or things to check — not a verdict of good or bad news." },
+      ],
     },
   },
 };

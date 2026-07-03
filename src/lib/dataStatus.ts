@@ -170,7 +170,7 @@ export const domainStatuses: DomainStatus[] = [
 // ── 페이지별 제한 문구 단일 소스 (limits·knownLimits가 같은 문자열을 공유) ──
 const LIMIT_DISCLOSURE = "공시는 성능·비용을 위해 최신 200건 내에서만 분석합니다.";
 const LIMIT_BACKTEST =
-  "백테스트는 아이디어 검증용 시뮬레이션이며 현재 종합점수의 성과 검증 결과가 아닙니다.";
+  "백테스트는 아이디어 검증용 시뮬레이션이며 현재 종합 점수의 성과 검증 결과가 아닙니다.";
 
 /** 운영자·사용자가 한눈에 보는 "알려진 제한" 항목 (이미 문서화된 사실만 모음). */
 export interface KnownLimit {

@@ -166,7 +166,7 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
         <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">← 홈으로</Link>
         <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과입니다 · 현재 종합점수 검증 결과는 아닙니다.
+          과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과입니다 · 현재 종합 점수 검증 결과는 아닙니다.
         </p>
         <div className="mt-3">
           <BacktestLimitBadges />

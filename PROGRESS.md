@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 175 — 라우트 카피 일관성 & 용어집 커버리지
+- **범위**: score/freshness/comparison/disclosure/watchlist/caution 용어를 앱 전반에서 일관되게. 하드 제약 — repo-local 코드/문서만·비즈니스 로직 무변경·카피 간결. 브랜치 `ai-center/task-175-ornscore-route-copy-consistency-and-`.
+- **표준 용어**: 프로즈=`종합 점수` 정본, 공간 좁은 표 머리글·정렬·칩·배지는 컴팩트 `종합점수` 유지(표 래핑 회귀 방지·글로서리에 예외 명시). `관심 종목`·`데이터 기준일`·`비교`·`공시 신호`·`주의`. 전 용어 비자문(매수·매도 신호 아님).
+- **변경 파일(카피 문자열만)**:
+  - `src/lib/copy/metricsGuide.ts` — 신규 `glossary`(ko/en 키 패리티, 10항목) + 컴팩트 예외 note. 기존 프로즈 `종합점수`→`종합 점수`.
+  - `src/components/guide/MetricsGuideContent.tsx` — `#glossary` 정의 리스트 섹션 + nav 점프 링크(신규 라우트 0).
+  - `src/lib/copy/{home,today,stockDetail}.ts`·`dataStatus.ts`·`BacktestClient.tsx` — 완전한 문장 프로즈만 `종합점수`→`종합 점수`(칩/캡션/aria/표 범례/배지/코멘트/LLM 프롬프트는 컴팩트 유지).
+  - `src/app/privacy/page.tsx` — 표시 문구 `관심종목`→`관심 종목`(2곳, 법적 의미·저장키 무변경).
+- **의도적 미변경**: `alertCatalog.ts`의 `관심종목`=`AlertCategory` 식별자(표시 라벨은 이미 `관심 종목`으로 매핑)·`stocks.ts`(표/정렬/칩 컴팩트 존). `주의사항`은 src 라우트 카피에 부재.
+- **게이트(전부 통과)**: `tsc --noEmit` 0(글로서리 ko/en 패리티) · `verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `build` 0(138 SSG) · `smoke-check --all` 12/12 200 · `/guide/metrics`·`/privacy` 200(SSR 확인) · 변경 8파일 U+FFFD 0.
+- **다음 소유자**: 실기기 390px 육안(용어집 줄바꿈)·EN 언어 토글 확인=운영자 게이트. 로컬 커밋만·푸시 미수행·main 무변경.
+
 ## 2026-07-03 · [claude] Task 173 — OrnScore 모바일 인터랙션 밀도 튜닝
 - **범위**: 모바일(~390px)에서 헤더·카드·배지·필터·종목상세·비교·관심이 덜 답답하되 정보 밀도 유지. 하드 제약 — repo-local 코드만·컴포넌트 단위·리버서블·데이터/로직 무변경. 브랜치 `ai-center/task-173-ornscore-mobile-interaction-density-`.
 - **방법**: 4개 병렬 감사 서브에이전트로 line:className 밀도 문제 매핑 → 실제 답답한 지점만 편집(섹션 헤더 gap 미세조정 등 마진 노이즈 제외).

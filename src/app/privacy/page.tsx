@@ -59,7 +59,7 @@ export default function PrivacyPage() {
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5. 위탁 처리 (Processors)</h2>
           <p>서비스 제공을 위해 다음 외부 서비스를 이용합니다. 각 서비스는 자체 개인정보처리방침을 따르며, 아래 링크에서 확인할 수 있습니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심종목·비교 목록·알림 설정 / 목적: 인증·데이터 저장 — <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심 종목·비교 목록·알림 설정 / 목적: 인증·데이터 저장 — <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>호스팅 제공자 — Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계 — <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송 — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시) — <a href="https://policy.kakao.com/ko/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 <tr className="border-b border-zinc-100 dark:border-zinc-800">
                   <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Supabase</td>
                   <td className="py-2 pr-3 whitespace-nowrap">일본</td>
-                  <td className="py-2 pr-3">이메일·계정 식별자·관심종목·비교 목록·알림 설정</td>
+                  <td className="py-2 pr-3">이메일·계정 식별자·관심 종목·비교 목록·알림 설정</td>
                   <td className="py-2 pr-3">인증·데이터 저장</td>
                   <td className="py-2 pr-3">회원가입·서비스 이용 시</td>
                   <td className="py-2 pr-3 whitespace-nowrap">탈퇴 시까지</td>

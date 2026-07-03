@@ -54,6 +54,7 @@ export function MetricsGuideContent({
         {metrics.map((m) => (
           <Link key={m.id} href={"#" + m.id} className="text-blue-700 dark:text-blue-400 hover:underline">{m.name}</Link>
         ))}
+        <Link href="#glossary" className="text-blue-700 dark:text-blue-400 hover:underline">{t.glossary.title}</Link>
       </nav>
 
       <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-4">
@@ -119,6 +120,19 @@ export function MetricsGuideContent({
           <li>· <strong className="text-zinc-900 dark:text-zinc-100">{t.commonBasis.versionPrefix}{metricsVersionLabel}</strong>{metricsEffectiveDate ? <span className="text-zinc-500 dark:text-zinc-400">{t.commonBasis.appliedPrefix}{metricsEffectiveDate}</span> : null}{t.commonBasis.samePolicy} <Link href="/guide/metrics/changelog" className="text-blue-700 dark:text-blue-400 hover:underline">{t.commonBasis.changelogLink}</Link></li>
           <li>· {t.commonBasis.codeIntro}<a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a>{t.commonBasis.codeGenerator}<a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a>{t.commonBasis.codeReference}<strong>{t.composite.noteStrong}</strong>{t.commonBasis.codeNote}</li>
         </ul>
+      </section>
+
+      <section id="glossary" className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5 scroll-mt-24">
+        <h2 className="text-lg font-semibold mb-2 text-zinc-900 dark:text-zinc-100">{t.glossary.title}</h2>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed mb-3">{t.glossary.note}</p>
+        <dl className="space-y-2.5">
+          {t.glossary.items.map((g) => (
+            <div key={g.term} className="text-xs leading-relaxed sm:grid sm:grid-cols-[9rem_1fr] sm:gap-3">
+              <dt className="font-semibold text-zinc-900 dark:text-zinc-100">{g.term}</dt>
+              <dd className="text-zinc-600 dark:text-zinc-400 mt-0.5 sm:mt-0">{g.def}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">

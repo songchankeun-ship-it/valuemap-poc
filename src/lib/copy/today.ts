@@ -116,7 +116,7 @@ export const todayCopy = {
       { before: "종목 상세와 ", strong: "DART 원문 공시", after: "를 직접 확인했나요?" },
       { before: "최근 단기 급등 여부와 ", strong: "상승 원인·지속 가능성", after: "을 살펴봤나요?" },
       { before: "저평가(저PER·저PBR)라면 ", strong: "그럴 만한 이유", after: "가 있는지 점검했나요?" },
-      { before: "종합점수는 등급이 아니라 ", strong: "탐색 우선순위", after: "일 뿐임을 기억했나요?" },
+      { before: "종합 점수는 등급이 아니라 ", strong: "탐색 우선순위", after: "일 뿐임을 기억했나요?" },
       { before: "분산과 비중은 ", strong: "스스로", after: " 결정했나요?" },
     ],
     checklistNote: "이 체크리스트는 학습용 안내이며 특정 종목의 매수·매도를 권하지 않습니다.",

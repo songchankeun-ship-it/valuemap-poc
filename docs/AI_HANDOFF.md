@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T09:08:24.583Z
+Last updated: 2026-07-03T09:11:50.568Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 174 - OrnScore desktop scanability and table rhythm pass
-- Run: 150
-- Status: completed
+- Task: 175 - OrnScore route copy consistency and glossary pass
+- Run: 151
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -1256,3 +1256,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·점수식·`compositeScore`/지표 산식·copy(`src/lib/copy/*`·i18n)·cron/auth·`metricsVersion` 무변경. 모든 diff는 className/layout 한정 → 트리비얼 리버서블. 모바일(<768px) 무영향(`md:`-스코프이거나 미세·비파괴 additive: 제브라·구분선·배지 weight).
 - **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138종목 위반 0(cp949 콘솔의 ✅ print만 트레이스백=베이스라인과 동일, 검증 통과) · `git diff` 전량 className+한글 주석 1줄, 데이터/산식/`t.*`/금칙어 미변경 확인.
 - **남은 소유자**: ≥1024px 데스크톱(/stocks 표·카드·/compare·/disclosures·/stock/[ticker]) 및 <768px 육안 시각 게이트(Playwright 미구성=운영자). 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 175 — 라우트 카피 일관성 & 용어집 커버리지 (2026-07-03, Claude)
+- **Scope**: score/freshness/comparison/disclosure/watchlist/caution 용어를 앱 전반에서 일관되게. repo-local 코드/문서만·비즈니스 로직 무변경·카피 간결 유지. 브랜치 `ai-center/task-175-ornscore-route-copy-consistency-and-`.
+- **표준 용어(비자문·매수/매도 신호 아님 유지)**: 프로즈=`종합 점수`(띄어쓰기) 정본, 공간 좁은 표 머리글·정렬 라벨·칩·배지는 컴팩트 `종합점수` 유지(표 래핑 회귀 방지). `관심 종목`·`데이터 기준일`/`기준일`·`비교`·`공시 신호`/`공시`·`주의`. EN: Composite score / Watchlist / Data as of / Compare / Disclosure signals / Caution.
+- **변경(카피 문자열만, 로직/데이터 무변경)**:
+  - `src/lib/copy/metricsGuide.ts` — 신규 `glossary`(ko/en 키 패리티, 10항목: 종합 점수·추세·거래활성도·밸류·위험조정·데이터 기준일·공시 신호·관심 종목·비교·주의) + 컴팩트 예외 note. 기존 프로즈 `종합점수`→`종합 점수`(reviewPoints·commonBasis).
+  - `src/components/guide/MetricsGuideContent.tsx` — `#glossary` 섹션(정의 리스트) 렌더 + nav 점프 링크. 신규 라우트 0·앵커/색상 클래스 무변경.
+  - `src/lib/copy/{home,today,stockDetail}.ts`·`src/lib/dataStatus.ts`·`src/components/BacktestClient.tsx` — 완전한 문장 프로즈의 `종합점수`→`종합 점수`(칩/캡션/aria/표 범례/배지/코멘트/LLM 프롬프트는 컴팩트 유지).
+  - `src/app/privacy/page.tsx` — 표시 문구 `관심종목`→`관심 종목`(2곳, 법적 의미 무변경). 저장키·식별자 무변경.
+- **의도적 미변경**: `src/lib/alertCatalog.ts`의 `관심종목`(7) = `AlertCategory` 타입/enum/정렬 배열/레코드 **키**(식별자)이며 표시 라벨은 이미 `ALERT_CATEGORY_LABEL`에서 `관심 종목`으로 매핑 → 식별자라 손대지 않음. `src/lib/copy/stocks.ts`(표/정렬/칩/카운트 요약)는 컴팩트 존으로 유지. `주의사항`은 src 라우트 카피에 부재(변경 없음).
+- **게이트(전부 통과)**: `tsc --noEmit` 0(ko/en 글로서리 키 패리티 포함) · `verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG) · `smoke-check --all` 12/12 200 · `/guide/metrics` 200(용어집 SSR 렌더 확인)·`/privacy` 200(띄어쓰기 반영) · 변경 6+2파일 U+FFFD 0 · src `관심종목` 잔여=alertCatalog 식별자만.
+- **남은 소유자**: 실기기 390px 육안(용어집 줄바꿈)·EN 언어 토글 확인은 운영자 게이트(언어 전환 클라이언트). 로컬 커밋만·푸시 미수행·main 무변경.

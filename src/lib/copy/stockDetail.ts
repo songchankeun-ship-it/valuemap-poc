@@ -59,7 +59,7 @@ export const stockDetailCopy = {
       titlePrefix: "업종 대비 밸류 ·",
       diffNote: "(위 밸류 점수와 기준 다름)",
       bridgeNote:
-        "이 값은 PER·PBR 기준 업종 내 밸류 위치이며, 아래 ‘같은 업종 비교’의 종합점수 순위와는 다릅니다.",
+        "이 값은 PER·PBR 기준 업종 내 밸류 위치이며, 아래 ‘같은 업종 비교’의 종합 점수 순위와는 다릅니다.",
       peerDescBefore: "같은 업종",
       peerDescMid: "곳(본인 포함) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체",
       peerDescAfter: "종목 풀 기준",
@@ -388,11 +388,11 @@ export const sectorComparisonCopy = {
     currentTag: "현재",
     legend: "열 순서: 순위 · 종목 · 종합점수(막대) · PER · 등락%",
     basisNote:
-      "같은 업종 종목을 실험 지표인 종합점수 순으로 정렬한 탐색 우선순위 화면이며, 매수·매도 신호가 아닙니다.",
-    sampleBefore: "종합점수 상위",
+      "같은 업종 종목을 실험 지표인 종합 점수 순으로 정렬한 탐색 우선순위 화면이며, 매수·매도 신호가 아닙니다.",
+    sampleBefore: "종합 점수 상위",
     sampleMid: "곳 — 같은 업종",
     sampleAfter:
-      "곳(본인 포함) 중. 종합점수는 탐색 우선순위용 실험 지표입니다.",
+      "곳(본인 포함) 중. 종합 점수는 탐색 우선순위용 실험 지표입니다.",
     classNote:
       "업종 분류는 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.",
   },
