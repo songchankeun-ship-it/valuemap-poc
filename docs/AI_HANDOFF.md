@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 177 — OrnScore 로컬 릴리스 근거 팩 (2026-07-03, Claude)
+- **범위**: 오너가 "외부 피드백 노출 go/no-go"를 로컬 근거만으로 판단하도록 완료 자동화·점검 라우트·남은 리스크·오너 결정을 한 문서에 종합. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`ornscore-owner-review-2026-07-03`·`ornscore-spec-coverage`·`ornscore-route-smoke-checklist`·`ornscore-post-release-qa-2026-07-02`·`ornscore-owner-final-checklist`·`AI_HANDOFF`·커밋). 브랜치 `ai-center/task-177-ornscore-local-release-evidence-pack`.
+- **산출물**: 신규 `docs/ornscore-local-release-evidence-2026-07-03.md` — (a) 판단 프레임(A 치명결함 없음=GO / B 문구·불변식 안전=GO / C 실기기·시각·법무=오너 게이트), (b) 오너 리뷰 이후 자동화 167~176 요약 표(144~165는 owner-review 링크로 위임), (c) 스모크 7라우트+수동 11라우트 점검 링크, (d) 남은 리스크 ③/④/⑤ 7건(생존편향·KRX 업종·관리자판·알림 라이브·공시 전기간·커버리지·결제/법무) 링크, (e) 오너 최종 체크리스트 B절 링크, (f) 9도메인(모바일·데스크톱·로그인·관심·비교·공시·종목상세·성능·재무문구) 로컬 릴리스 체크리스트, (g) 검증 명령 게이트/권고 구분.
+- **게이트**: `tsc --noEmit` 0(소스 무변경 증명·docs만) · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4(앱 소스 무변경 증명) · 신규/변경 문서 U+FFFD 0·금칙어 신규 0. `build`/`smoke:check`/`perf:check`는 앱 소스·라우트·`<head>` 무변경이라 불필요(직전 QA 결과 유효).
+- **추적**: `ornscore-spec-coverage.md` §1 O.QA 행 Task 177 포인터, `PROGRESS.md` 본 항목. 푸시/릴리스/외부 발행 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
+
 ### Task 172 — 로그아웃→로그인 연속성 폴리시 (2026-07-03, Claude)
 - **범위**: 저장·관심·계정 게이트 동작이 로그아웃→로그인 전환에서 끊기지 않게. repo-local UI/카피만, **제공자 설정·비공개 설정·`redirectTo`·콜백 무변경·신규 제공자 0**. `providers.ts`·`auth/callback/route.ts`·`returnPath.ts` READ-ONLY(무변경). 브랜치 `ai-center/task-172-ornscore-logged-out-to-logged-in-con`.
 - **변경 파일(3 소스 + i18n)**: `src/lib/i18n.ts`(`commonCopy.{ko,en}.auth.syncLocalNote` + `loginCopy.{ko,en}.contextFallback` 신규·양 로케일 키 패리티), `src/components/AddToWatchlistButton.tsx`(클라이언트 전용 `getUser()` 로그인 판별·기본 로그아웃-미확인이라 정적 종목 페이지에 서버 인증 안 끌어들임 → 로그아웃 확인 시에만 '추가됨' 토스트에 "이 기기에 저장됨·로그인 시 이어짐" 2번째 줄+`next`=현재경로 로그인 링크), `src/components/WatchlistClient.tsx`(`!isLoggedIn && watchlist.length>0`이면 관심 섹션 상단 부드러운 정보 배너 = `syncLocalNote`+`syncCta`→`/login?next=/watchlist`), `src/app/login/page.tsx`(`contextMsg` 선택만: 매칭 없어도 `next!=="/"`면 `contextFallback` — `/stock/…` 등에서 온 로그인 안내).

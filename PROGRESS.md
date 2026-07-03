@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 177 — OrnScore 로컬 릴리스 근거 팩
+- **범위**: 오너가 "외부(전문가/베타) 피드백 노출 go/no-go"를 로컬 근거만으로 판단하도록 완료 자동화·점검 라우트·남은 리스크·오너 전용 결정을 한 문서에 종합. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부 문서/커밋에서만 인용(이미 있는 내용은 재서술 대신 링크). 브랜치 `ai-center/task-177-ornscore-local-release-evidence-pack`.
+- **산출물**: 신규 `docs/ornscore-local-release-evidence-2026-07-03.md` — (a) 판단 프레임(A 치명결함=GO/B 문구·불변식=GO/C 실기기·법무=오너 게이트), (b) 오너 리뷰 이후 자동화 167~176 요약 표(144~165는 `ornscore-owner-review-2026-07-03.md` 링크), (c) 스모크 7 + 수동 11 라우트 점검 링크, (d) 남은 리스크 ③/④/⑤ 7건(생존편향·KRX 업종·관리자판·알림 라이브·공시 전기간·커버리지·결제/법무), (e) 오너 최종 체크리스트 B절, (f) 9도메인(모바일·데스크톱·로그인·관심·비교·공시·종목상세·성능·재무문구) 로컬 릴리스 체크리스트, (g) 검증 명령 게이트/권고.
+- **불변식**: `stocks.json`·점수식·`direction`·인증·알림 배선·`metricsVersion` 무변경. 앱 소스 diff 0(docs만).
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · 신규/변경 문서 U+FFFD 0·금칙어 신규 0. `build`/`smoke`/`perf`는 앱 소스 무변경이라 불필요(직전 QA 결과 유효).
+- **추적**: `ornscore-spec-coverage.md` §1 O.QA 행 + `AI_HANDOFF.md` Task 177. 로컬 커밋만·푸시/릴리스/외부 발행 미수행(푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 176 — OrnScore 회복 탄력적 폴백 상태
 - **범위**: 결측·지연·제한 데이터 상태를 의도적·신뢰감 있게. 하드 제약 — repo-local 코드만·소스 데이터/점수식 무변경·전면 리라이트 금지. CSS/카피/i18n 한정. 브랜치 `ai-center/task-176-ornscore-resilient-fallback-states-p`.
 - **감사(대부분 keep-as-is)**: `DisclosureExplorer`(에러 AlertTriangle+rose·빈 Inbox+완화) · `StocksExplorer`(빈·검색0건) · `WatchlistClient`(로딩→빈·로그인동기화·noscript) · `CompareClient` 빈 · `AiAnalysisCard` 에러 · `ScoreHistoryChart` <10회 · `SectorComparison` 저표본 → 이미 의도적 프레이밍 → 무변경(churn·EN 패리티 리스크 회피). 애매/사고성 카피 미발견 → 문구 무변경.
