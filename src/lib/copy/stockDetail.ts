@@ -485,7 +485,7 @@ export const stockDisclosuresCopy = {
     collectedUnknown: "수집 시각 미상",
     emptyTitle: "최근 90일간 접수된 DART 공시가 없습니다.",
     emptySub:
-      "공시가 없다는 것은 호재도 악재도 아닙니다 — 단지 이 기간에 보고된 주요 공시가 없었다는 뜻이에요.",
+      "공시가 없다는 것은 좋은 신호도 나쁜 신호도 아닙니다 — 단지 이 기간에 보고된 주요 공시가 없었다는 뜻이에요.",
     autoClassified: "유형 자동분류",
     dirBuy: "장내매수 단서",
     dirSell: "장내매도·처분 단서",

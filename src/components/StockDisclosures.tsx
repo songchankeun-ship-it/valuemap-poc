@@ -178,7 +178,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
               {signalEntries.map((entry) => (
                 <span
                   key={entry[0]}
-                  className={"text-[11px] px-2 py-0.5 rounded " + getBadgeClass(entry[0])}
+                  className={"text-[11px] px-2 py-0.5 rounded min-w-0 break-words " + getBadgeClass(entry[0])}
                 >
                   {entry[0]} {entry[1]}
                 </span>
@@ -206,10 +206,10 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                     onClick={() => openExternal(d.url)}
                     className="w-full text-left -mx-2 px-2 py-1 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 active:bg-zinc-100 dark:active:bg-zinc-800 transition"
                   >
-                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-0.5 tabular-nums">
-                      {d.rcept_dt.slice(0, 4)}-{d.rcept_dt.slice(4, 6)}-{d.rcept_dt.slice(6, 8)} · {d.flr_nm}
+                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-0.5 tabular-nums break-words">
+                      {d.rcept_dt.slice(0, 4)}.{d.rcept_dt.slice(4, 6)}.{d.rcept_dt.slice(6, 8)} · {d.flr_nm}
                     </div>
-                    <div className="text-xs text-zinc-800 dark:text-zinc-200">{d.report_nm}</div>
+                    <div className="text-xs text-zinc-800 dark:text-zinc-200 break-words">{d.report_nm}</div>
                     {d.signal ? (
                       <>
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">

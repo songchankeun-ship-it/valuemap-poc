@@ -83,12 +83,12 @@ export const disclosureExplorerCopy = {
     countUnit: (n: number) => `${n}건`,
     submitted: "제출",
     checkLabel: "확인할 것",
-    cautionLabel: "주의:",
+    cautionLabel: "주의",
     viewSource: "원문 보기",
     viewStock: "종목 보기",
     notInUniverse: "분석 대상 외 · DART 원문만",
-    descFallback: "원문과 시세 반응 함께 확인 권장.",
-    cautionFallback: "원문에서 세부 수치·맥락 확인 필요.",
+    descFallback: "원문과 시세 반응을 함께 확인해 보세요.",
+    cautionFallback: "원문에서 세부 수치와 맥락을 확인해야 합니다.",
     // 관심(워치리스트) 토글
     watchRemoveAria: "관심 종목에서 제거",
     watchAddAria: "관심 종목에 추가",
@@ -100,18 +100,18 @@ export const disclosureExplorerCopy = {
     emptyWidenScope: "전체 시장 공시까지 넓혀 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
-      "자기주식 취득 결의": "주주환원·주가 안정 관련 이벤트. 취득 규모·소각 여부 확인 필요.",
-      "임원·주요주주 보유 변동": "주요 주주·임원 지분 변화. 매수·매도 방향 원문 확인 필요.",
-      "정정공시": "기존 공시 내용 변경 확인 필요.",
-      "단일판매·공급계약": "계약 규모의 매출 영향 확인 필요.",
-      "유상증자 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
-      "전환사채 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
-      "신주인수권부사채 발행": "희석·자금조달 구조(용도·규모·가격) 확인 필요.",
+      "자기주식 취득 결의": "주주환원·주가 안정과 관련된 공시입니다. 취득 규모와 소각 여부를 확인하세요.",
+      "임원·주요주주 보유 변동": "주요 주주·임원의 지분이 변동됐습니다. 매수·매도 방향을 원문에서 확인하세요.",
+      "정정공시": "기존 공시 내용이 바뀌었습니다. 무엇이 정정됐는지 확인하세요.",
+      "단일판매·공급계약": "규모가 큰 단일 계약입니다. 매출에 미치는 영향을 확인하세요.",
+      "유상증자 발행": "지분 희석과 자금 조달 관련 공시입니다. 용도·규모·가격을 확인하세요.",
+      "전환사채 발행": "지분 희석과 자금 조달 관련 공시입니다. 용도·규모·가격을 확인하세요.",
+      "신주인수권부사채 발행": "지분 희석과 자금 조달 관련 공시입니다. 용도·규모·가격을 확인하세요.",
     } as Record<string, string>,
     // 타입별 주의 폴백(키=signalType 판별자 → 유지)
     cautionFallbackByType: {
       treasury_buy: "취득 결의일 뿐 실제 매입은 천천히 진행되며, 소각 여부에 따라 의미가 달라집니다.",
-      insider_buy: "여기 표시되는 '분류 신뢰도(자동분류 확신도)'는 호재 점수가 아니라 보고서를 맞게 분류했다는 확신 정도입니다. 매수/매도 방향은 DART 원문에서 확인하세요.",
+      insider_buy: "표시된 '분류 신뢰도(자동분류 확신도)'는 매수 신호가 아니라 보고서를 맞게 분류했다는 확신 정도이므로, 매수·매도 방향은 DART 원문에서 확인하세요.",
       correction: "정정이 잦은 회사는 공시 신뢰도가 떨어질 수 있어 종목 자체 신뢰도 점검이 필요합니다.",
       single_contract: "'계약 금액 = 이익'으로 단순 환산하지 마세요. 마진·거래처 정보가 빠질 수 있습니다.",
       capital_raise: "CB·신주인수권은 향후 주식 전환 시 잠재 매물이 될 수 있습니다.",
@@ -154,7 +154,7 @@ export const disclosureExplorerCopy = {
     countUnit: (n: number) => `${n}`,
     submitted: "filed",
     checkLabel: "Check",
-    cautionLabel: "Note:",
+    cautionLabel: "Note",
     viewSource: "View source",
     viewStock: "View stock",
     notInUniverse: "Outside analyzed set · DART source only",
@@ -169,20 +169,20 @@ export const disclosureExplorerCopy = {
     emptyWidenScope: "Widen to whole-market disclosures",
     descriptions: {
       "자기주식 취득 결의":
-        "Shareholder-return / price-stability event. Confirm buyback size and whether shares will be cancelled.",
+        "This is a shareholder-return / price-stability event. Confirm the buyback size and whether shares will be cancelled.",
       "임원·주요주주 보유 변동":
-        "Change in major shareholder / insider holdings. Confirm buy or sell direction in the source.",
-      "정정공시": "A change to a prior disclosure — confirm what was revised.",
-      "단일판매·공급계약": "Confirm the contract's impact on revenue.",
-      "유상증자 발행": "Confirm the dilution / financing structure (purpose, size, price).",
-      "전환사채 발행": "Confirm the dilution / financing structure (purpose, size, price).",
-      "신주인수권부사채 발행": "Confirm the dilution / financing structure (purpose, size, price).",
+        "Major shareholder / insider holdings changed. Confirm the buy or sell direction in the source.",
+      "정정공시": "A prior disclosure was changed. Confirm what was revised.",
+      "단일판매·공급계약": "This is a large single contract. Confirm its impact on revenue.",
+      "유상증자 발행": "This is a dilution / financing disclosure. Confirm the structure (purpose, size, price).",
+      "전환사채 발행": "This is a dilution / financing disclosure. Confirm the structure (purpose, size, price).",
+      "신주인수권부사채 발행": "This is a dilution / financing disclosure. Confirm the structure (purpose, size, price).",
     } as Record<string, string>,
     cautionFallbackByType: {
       treasury_buy:
         "This is only a buyback resolution; actual purchases proceed gradually, and the meaning depends on whether shares are cancelled.",
       insider_buy:
-        "The 'classification confidence (auto-classification certainty)' shown here is not a positivity score but how sure we are the report was categorized correctly. Confirm the buy/sell direction in the DART source.",
+        "The classification confidence shown here is not a buy signal but how sure we are the report was categorized correctly, so confirm the buy/sell direction in the DART source.",
       correction:
         "Companies that correct often may have lower disclosure reliability, so check the stock's own reliability.",
       single_contract:
@@ -199,12 +199,12 @@ export const disclosureSummaryCopy = {
     recentCount: (days: number, count: number) => `최근 ${days}일 · ${count}건`,
     noEvents: "이벤트 없음",
     bottomNote: (days: number, total: number) =>
-      `최근 ${days}일 공시를 5개 유형으로 자동 분류한 결과 · 전체 ${total}건. 호재/악재 판단이 아닌 분류입니다.`,
+      `최근 ${days}일 공시를 5개 유형으로 자동 분류한 결과입니다 · 전체 ${total}건. 좋고 나쁨을 판단한 것이 아니라 유형만 나눈 분류입니다.`,
   },
   en: {
     recentCount: (days: number, count: number) => `Last ${days}d · ${count}`,
     noEvents: "No events",
     bottomNote: (days: number, total: number) =>
-      `Auto-classified the last ${days} days of disclosures into 5 types · ${total} total. This is classification, not a positive/negative judgment.`,
+      `Auto-classified the last ${days} days of disclosures into 5 types · ${total} total. This is a type classification, not a good/bad judgment.`,
   },
 } as const satisfies Record<Locale, unknown>;

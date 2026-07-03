@@ -80,7 +80,7 @@ export const homeCopy = {
       policyLink: "공시 신호 페이지",
       policyC: "에서 범위를 바꿔 볼 수 있습니다.",
       footer:
-        "공시 신호의 숫자는 호재/악재 점수가 아니라 분류 신뢰도입니다. 실제 영향은 원문 공시에서 직접 확인해야 합니다.",
+        "공시 신호의 숫자는 좋고 나쁨을 가리는 점수가 아니라 분류 신뢰도입니다. 실제 영향은 원문 공시에서 직접 확인해야 합니다.",
       emptyLine:
         "오늘은 분석 대상 종목에서 새로 잡힌 공시 신호가 없습니다. 전체 시장 공시는 공시 신호 페이지에서 범위를 넓혀 볼 수 있어요.",
       outOfUniverse: "분석 대상 외",
@@ -88,12 +88,12 @@ export const homeCopy = {
       viewStock: "종목 보기",
       dartOriginal: "DART 원문 ↗",
       check: {
-        treasury_buy: "자기주식 취득 규모와 목적을 원문에서 확인 필요",
-        insider_buy: "보유 변동의 매수·매도 방향과 규모는 본문 확인 필요",
-        correction: "정정 사유와 변경된 수치를 원문에서 확인 필요",
-        single_contract: "계약 규모와 직전 매출 대비 비율을 원문에서 확인 필요",
-        capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인 필요",
-        default: "공시 원문에서 세부 내용 확인 필요",
+        treasury_buy: "자기주식 취득 규모와 목적을 원문에서 확인하세요.",
+        insider_buy: "보유 변동의 매수·매도 방향과 규모를 본문에서 확인하세요.",
+        correction: "정정 사유와 변경된 수치를 원문에서 확인하세요.",
+        single_contract: "계약 규모와 직전 매출 대비 비율을 원문에서 확인하세요.",
+        capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인하세요.",
+        default: "공시 원문에서 세부 내용을 확인하세요.",
       } as Record<string, string>,
     },
     myStocks: {
