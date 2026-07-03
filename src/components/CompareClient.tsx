@@ -14,6 +14,7 @@ import { getRecentViews } from "@/lib/recentViews";
 import { sectorOf } from "@/lib/sector";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { StockSearchBox } from "@/components/StockSearchBox";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 interface RecommendedSet {
   label: string;
@@ -319,7 +320,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     key={set.label}
                     type="button"
                     onClick={() => { void addSet(set.tickers); }}
-                    className="w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition"
+                    className={`w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition ${FOCUS_RING}`}
                   >
                     <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">{set.label} <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500">{set.tickers.length}종목</span></div>
                     {!set.label.includes(" vs ") ? (
@@ -343,7 +344,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                       key={r.ticker}
                       type="button"
                       onClick={() => { void tryAdd(r.ticker); }}
-                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                      className={`text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
                     >
                       + {r.name}
                     </button>
@@ -365,7 +366,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                       type="button"
                       onClick={() => { void tryAdd(s.ticker); }}
                       disabled={tickers.includes(s.ticker)}
-                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition disabled:opacity-40 disabled:hover:border-zinc-200"
+                      className={`text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-zinc-200 ${FOCUS_RING}`}
                     >
                       {tickers.includes(s.ticker) ? "✓ " : "+ "}{s.name}
                     </button>
@@ -384,7 +385,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                       key={w.ticker}
                       type="button"
                       onClick={() => { void tryAdd(w.ticker); }}
-                      className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                      className={`text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
                     >
                       + {w.name}
                     </button>
@@ -401,7 +402,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
 
           {/* 4) 업종·테마로 종목 탐색 */}
           <div className="pt-1">
-            <Link href="/stocks" prefetch={false} className="inline-flex items-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition">
+            <Link href="/stocks" prefetch={false} className={`inline-flex items-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}>
               업종·테마로 종목 탐색 →
             </Link>
           </div>
@@ -486,7 +487,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
               <button
                 onClick={() => remove(s.ticker)}
                 aria-label="비교에서 제거"
-                className="absolute top-1.5 right-1.5 p-1.5 rounded-md text-zinc-400 dark:text-zinc-500 hover:bg-red-50 hover:text-red-600 transition"
+                className={`absolute top-1.5 right-1.5 p-1.5 rounded-md text-zinc-400 dark:text-zinc-500 hover:bg-red-50 hover:text-red-600 transition ${FOCUS_RING}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />

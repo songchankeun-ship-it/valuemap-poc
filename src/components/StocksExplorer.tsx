@@ -10,6 +10,7 @@ import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResul
 import { useLanguage } from "@/components/LanguageProvider";
 import { stocksCopy } from "@/lib/copy/stocks";
 import type { Locale } from "@/lib/i18n";
+import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
 
 interface Stock {
   ticker: string;
@@ -738,7 +739,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
               <button type="button" onClick={() => setSelectedThemes(new Set())} className="text-[10px] text-blue-700 hover:underline">{t.themeClear}</button>
             ) : null}
           </div>
-          <input type="search" placeholder={t.themeSearchPlaceholder} value={themeQuery} onChange={(e) => setThemeQuery(e.target.value)} className="w-full mb-2 px-2 py-1.5 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded focus:outline-none focus:border-blue-500" />
+          <input type="search" placeholder={t.themeSearchPlaceholder} value={themeQuery} onChange={(e) => setThemeQuery(e.target.value)} className={`w-full mb-2 px-2 py-1.5 text-xs border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded ${INPUT_FOCUS}`} />
           {!themeQuery && !showAllThemes ? (<div className="text-[10px] text-zinc-500 mb-1.5">{t.popularThemes(popularThemes.length)}</div>) : null}
           <div className="max-h-44 overflow-y-auto space-y-0.5 border border-zinc-200 dark:border-zinc-700 rounded p-2 bg-white dark:bg-zinc-900">
             {visibleThemes.length === 0 ? (<div className="text-[11px] text-zinc-400 text-center py-3">{t.noTheme}</div>) : (
@@ -757,7 +758,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <button type="button" onClick={() => setShowAllThemes(false)} className="mt-2 text-[11px] text-blue-700 hover:underline">{t.showPopularThemes}</button>
           ) : null}
         </div>
-        <button type="button" onClick={resetFilters} className="w-full px-3 py-2 text-xs border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">{t.resetAllFilters}</button>
+        <button type="button" onClick={resetFilters} className={`w-full px-3 py-2 text-xs border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 transition ${FOCUS_RING}`}>{t.resetAllFilters}</button>
       </div>
     );
   }
@@ -778,7 +779,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
               <button
                 type="button"
                 onClick={qualityFilterOn ? viewAllStocks : backToDefaultView}
-                className="text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap"
+                className={`text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap ${FOCUS_RING}`}
               >
                 {qualityFilterOn ? t.viewAllToggle(total) : t.backToDefaultToggle}
               </button>
@@ -1051,12 +1052,12 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                 )}
                 <div className="flex gap-2 justify-center mt-4 flex-wrap">
                   {sc ? (
-                    <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.relaxStrongest}</button>
+                    <button type="button" onClick={sc.relax} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.relaxStrongest}</button>
                   ) : null}
                   {searchOnly ? (
-                    <button type="button" onClick={() => setQuery("")} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.clearSearch}</button>
+                    <button type="button" onClick={() => setQuery("")} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.clearSearch}</button>
                   ) : null}
-                  <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">{t.backToDefaultReset}</button>
+                  <button type="button" onClick={resetFilters} className={`text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px] ${FOCUS_RING}`}>{t.backToDefaultReset}</button>
                 </div>
               </div>
             );
@@ -1085,8 +1086,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             </div>
             <div className="flex-1 overflow-y-auto p-4"><FilterPanel /></div>
             <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 shrink-0 grid grid-cols-2 gap-2">
-              <button type="button" onClick={resetFilters} className="px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 min-h-[44px]">{t.reset}</button>
-              <button type="button" onClick={() => setDrawerOpen(false)} className="px-3 py-2 text-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded hover:bg-zinc-800 min-h-[44px]">{t.closeDrawerView(sorted.length)}</button>
+              <button type="button" onClick={resetFilters} className={`px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-700 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800 min-h-[44px] ${FOCUS_RING}`}>{t.reset}</button>
+              <button type="button" onClick={() => setDrawerOpen(false)} className={`px-3 py-2 text-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded hover:bg-zinc-800 min-h-[44px] ${FOCUS_RING}`}>{t.closeDrawerView(sorted.length)}</button>
             </div>
           </div>
         </>

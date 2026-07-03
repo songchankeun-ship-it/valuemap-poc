@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { waitlistCopy } from "@/lib/copy/pricing";
+import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
 
 export function WaitlistForm({ source = "pricing" }: { source?: string }) {
   const { locale } = useLanguage();
@@ -55,12 +56,12 @@ export function WaitlistForm({ source = "pricing" }: { source?: string }) {
         placeholder={t.placeholder}
         aria-label={t.placeholder}
         aria-describedby={status === "error" ? "waitlist-error" : undefined}
-        className="flex-1 min-w-[180px] px-3 py-2.5 text-sm border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500"
+        className={`flex-1 min-w-[180px] px-3 py-2.5 min-h-[44px] text-sm border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg ${INPUT_FOCUS}`}
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 shrink-0"
+        className={`px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 disabled:cursor-not-allowed shrink-0 ${FOCUS_RING}`}
       >
         {status === "loading" ? t.submitting : t.submit}
       </button>

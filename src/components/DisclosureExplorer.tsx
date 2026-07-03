@@ -9,6 +9,7 @@ import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
 import { addToWatchlist, removeFromWatchlist, isInWatchlist } from "@/lib/watchlist";
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosureExplorerCopy } from "@/lib/copy/disclosures";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 type ExplorerCopy = (typeof disclosureExplorerCopy)[keyof typeof disclosureExplorerCopy];
 
@@ -112,7 +113,7 @@ function WatchlistToggle({ code, t }: { code: string; t: ExplorerCopy }) {
       onClick={toggle}
       disabled={loading}
       aria-label={added ? t.watchRemoveAria : t.watchAddAria}
-      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium border transition disabled:opacity-50 " +
+      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium border transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " +
         (added
           ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
           : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-300 hover:text-pink-600 dark:hover:text-pink-400")}
@@ -251,7 +252,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           <button
             type="button"
             onClick={() => setReloadKey((k) => k + 1)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+            className={`inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}
           >
             <RefreshCw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
             {t.errorRetry}
@@ -301,7 +302,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               key={d}
               type="button"
               onClick={() => setDays(d)}
-              className={"px-3 py-1.5 text-xs rounded-md border transition " +
+              className={"px-3 py-1.5 text-xs rounded-md border transition " + FOCUS_RING + " " +
                 (days === d
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                   : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
@@ -335,7 +336,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     type="button"
                     onClick={() => setScope(opt.key)}
                     aria-pressed={active}
-                    className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " +
+                    className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " + FOCUS_RING + " " +
                       (active
                         ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600"
                         : "bg-transparent text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100")}
@@ -361,7 +362,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           <button
             type="button"
             onClick={() => setFilterType("all")}
-            className={"text-[11px] px-2.5 py-1 rounded-full border transition " +
+            className={"text-[11px] px-2.5 py-1 rounded-full border transition " + FOCUS_RING + " " +
               (filterType === "all"
                 ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                 : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
@@ -378,7 +379,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 type="button"
                 onClick={() => setFilterType(type)}
                 disabled={count === 0}
-                className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " +
+                className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " + FOCUS_RING + " " +
                   (active
                     ? meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder + " font-semibold"
                     : count === 0
@@ -406,7 +407,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <button
                     type="button"
                     onClick={() => setScope("all")}
-                    className="inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+                    className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ${FOCUS_RING}`}
                   >
                     {t.emptyWidenScope}
                   </button>
@@ -415,7 +416,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <button
                     type="button"
                     onClick={() => setFilterType("all")}
-                    className="inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                    className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
                   >
                     {t.emptyReset}
                   </button>
@@ -493,7 +494,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <button
                     type="button"
                     onClick={() => openExternal(g.representative.disclosure.url)}
-                    className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition"
+                    className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition ${FOCUS_RING}`}
                   >
                     {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                   </button>
@@ -502,7 +503,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                       <button
                         type="button"
                         onClick={() => goToStock(g.stock_code!)}
-                        className="inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition"
+                        className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
                       >
                         {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                       </button>

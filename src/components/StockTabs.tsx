@@ -3,6 +3,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDetailCopy } from "@/lib/copy/stockDetail";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 type TabLabelKey = keyof (typeof stockDetailCopy)["ko"]["tabs"];
 
@@ -56,7 +57,7 @@ export function StockTabs({ tabs }: { tabs: StockTab[] }) {
             type="button"
             onClick={() => select(t.id)}
             className={
-              "shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 -mb-px transition " +
+              "shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 -mb-px transition " + FOCUS_RING + " " +
               (active === t.id
                 ? "border-blue-600 text-zinc-900 dark:text-zinc-100"
                 : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200")

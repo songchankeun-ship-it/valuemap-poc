@@ -8,6 +8,7 @@ import {
   isInCompare,
   COMPARE_MAX,
 } from "@/lib/compare";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 interface Props {
   ticker: string;
@@ -72,7 +73,7 @@ export function AddToCompareButton({ ticker, name }: Props) {
         type="button"
         onClick={toggle}
         disabled={loading}
-        className={"inline-flex items-center px-3.5 py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 " + (
+        className={"inline-flex items-center px-3.5 py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " + (
           inBasket
             ? "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 text-blue-700 dark:text-blue-300"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-300 hover:text-blue-600 dark:hover:border-blue-700 dark:hover:text-blue-400"

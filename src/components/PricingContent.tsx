@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import { pricingCopy } from "@/lib/copy/pricing";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 // 무료 베타 안내 페이지(/pricing). v1 결정(무료 베타)에 따라 공개 화면에서는
 // Pro/Premium 비교·가격 미확정·전환 안내·waitlist를 노출하지 않는다.
@@ -47,7 +48,7 @@ export function PricingContent() {
         <div className="mt-5">
           <Link
             href="/today"
-            className="block text-center px-4 py-2.5 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+            className={`flex items-center justify-center text-center px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}
           >
             {fb.cta}
           </Link>

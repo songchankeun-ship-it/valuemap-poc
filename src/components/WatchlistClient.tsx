@@ -15,6 +15,7 @@ import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/l
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -255,7 +256,7 @@ export function WatchlistClient({
       <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center space-y-2">
         <div>관심 종목을 불러오지 못했어요.</div>
         <p className="text-xs text-zinc-400 dark:text-zinc-500">일시적인 문제일 수 있어요. 잠시 후 다시 시도해 주세요.</p>
-        <button onClick={() => window.location.reload()} className="inline-flex items-center justify-center min-h-[44px] text-xs px-3.5 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">다시 시도</button>
+        <button onClick={() => window.location.reload()} className={`inline-flex items-center justify-center min-h-[44px] text-xs px-3.5 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}>다시 시도</button>
       </div>
     );
   }
@@ -375,10 +376,10 @@ export function WatchlistClient({
               <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
-              <Link href="/stocks" className="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition">
+              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}>
                 종목 탐색하러 가기 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-              <Link href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition">
+              <Link href="/today" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
                 오늘의 후보 보기
               </Link>
             </div>
