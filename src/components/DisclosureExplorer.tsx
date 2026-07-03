@@ -451,7 +451,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     </span>
                   ) : null}
                   {g.count > 1 ? (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium tabular-nums bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
                       {g.hasRevision ? t.revisionIncluded : ""}{t.countUnit(g.count)}
                     </span>
                   ) : null}

@@ -555,7 +555,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
           <table className="w-full text-xs" style={{ minWidth: stocks.length > 2 ? `${100 + stocks.length * 80}px` : "auto" }}>
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900">항목</th>
+                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">항목</th>
                 {stocks.map((s) => (
                   <th key={s.ticker} className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
                 ))}
@@ -567,7 +567,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                 const best = better === "low" ? Math.min(...vals.filter((v) => v > 0)) : Math.max(...vals);
                 return (
                   <tr key={key} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900">{label}</td>
+                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</td>
                     {stocks.map((s) => {
                       const v = s[key];
                       const isBest = v === best && stocks.length > 1;
@@ -593,7 +593,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
           <table className="w-full text-xs" style={{ minWidth: stocks.length > 2 ? `${100 + stocks.length * 80}px` : "auto" }}>
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900">기간</th>
+                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">기간</th>
                 {stocks.map((s) => (
                   <th key={s.ticker} className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
                 ))}
@@ -605,7 +605,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                 const best = nums.length > 0 ? Math.max(...nums) : undefined;
                 return (
                   <tr key={k} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900">{label}</td>
+                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</td>
                     {stocks.map((s) => {
                       const v = s.returns?.[k];
                       const has = typeof v === "number";

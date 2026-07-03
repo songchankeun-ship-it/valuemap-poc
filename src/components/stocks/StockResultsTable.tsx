@@ -70,8 +70,10 @@ function ScoreHeatCell({ score, lead }: { score: number; lead?: boolean }) {
   );
 }
 
-const TH = "px-2.5 py-2 font-semibold text-zinc-500 dark:text-zinc-400 whitespace-nowrap";
-const TD = "px-2.5 py-2 align-middle whitespace-nowrap";
+const TH = "px-2.5 py-2.5 font-semibold text-zinc-500 dark:text-zinc-400 whitespace-nowrap";
+const TD = "px-2.5 py-2.5 align-middle whitespace-nowrap";
+// 종합점수 열 왼쪽 구분선 — 이름/가격 그룹과 4지표 히트맵 블록을 시각적으로 분리(표시 전용).
+const SEP = " border-l border-zinc-200/80 dark:border-zinc-800";
 
 export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
   const { locale } = useLanguage();
@@ -85,7 +87,7 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
             <th className={TH}>{t.table.sector}</th>
             <th className={TH + " text-right"}>{t.table.price}</th>
             <th className={TH + " text-right"}>{t.table.change}</th>
-            <th className={TH + " text-center"}>{t.table.composite}</th>
+            <th className={TH + " text-center" + SEP}>{t.table.composite}</th>
             <th className={TH + " text-center"}>{t.table.momentum}</th>
             <th className={TH + " text-center"}>{t.table.flow}</th>
             <th className={TH + " text-center"}>{t.table.value}</th>
@@ -100,7 +102,7 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
             const chips = [...strengths.slice(0, 1), ...warnings.slice(0, 1)];
             const up = s.changePct >= 0;
             return (
-              <tr key={s.ticker} className="border-b border-zinc-100 dark:border-zinc-800/60 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition">
+              <tr key={s.ticker} className="border-b border-zinc-100 dark:border-zinc-800/60 even:bg-zinc-50/50 dark:even:bg-zinc-900/30 hover:bg-blue-50/50 dark:hover:bg-zinc-800/50 transition">
                 <td className={TD}>
                   <Link prefetch={false} href={"/stock/" + s.ticker} className="group inline-flex flex-col">
                     <span className="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400">{s.name}</span>
@@ -112,7 +114,7 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
                 <td className={TD + " text-right tabular-nums " + (up ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
                   {up ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
                 </td>
-                <td className={TD + " text-center"}><ScoreHeatCell score={s.compositeScore || 0} lead /></td>
+                <td className={TD + " text-center" + SEP}><ScoreHeatCell score={s.compositeScore || 0} lead /></td>
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.momentum} /></td>
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.flow} /></td>
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.value} /></td>

@@ -196,10 +196,10 @@ export function FinancialsSection({
   ];
   return (
     <>
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-2.5">
         {cells.map((m) => (
           <div key={m.l} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md p-2.5 md:p-3">
-            <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-0.5">{m.l}</div>
+            <div className="text-[10px] md:text-[11px] text-zinc-500 dark:text-zinc-400 mb-1">{m.l}</div>
             <div className="text-base md:text-lg font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{m.v}</div>
           </div>
         ))}

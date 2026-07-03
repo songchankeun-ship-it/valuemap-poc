@@ -123,7 +123,7 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | Phase 1. 디자인 시스템(컬러·버튼·카드·배지·게이지) | ① | `components/ui/`(MetricBar·MetricChip·ScoreBadge·ScoreGauge)·`scoreColor.ts` |
 | Phase 2. 홈 리뉴얼 | ① | `components/home/*`(§5와 동일, #5 home redesign 큐) |
 | Phase 3. 오늘 페이지 | ① | `components/today/*`(TodayStatusBar·TodayTopSection·SignalSection) |
-| Phase 4. 종목 탐색 | ① | `StocksExplorer.tsx`·`stocks/StockResultsTable.tsx`(#36) |
+| Phase 4. 종목 탐색 | ① | `StocksExplorer.tsx`·`stocks/StockResultsTable.tsx`(#36). **Task 174(데스크톱 스캔성·표 리듬)**: className만으로 밀집 데스크톱 화면 반복 스캔성 개선 — 결과표 제브라 스트라이핑+종합점수 열 왼쪽 구분선+행 상하 패딩 통일+파란 hover(`StockResultsTable`), 카드 강점/주의 라벨 데스크톱 정렬(`StocksExplorer` md:min-w), 비교표 sticky 라벨 열 세로 구분선(`CompareClient` 재무·수익률), 공시 건수 배지 weight/tabular-nums 통일(`DisclosureExplorer`), 종목상세 재무 그리드 gap·라벨 간격(`StockDetailIntro`). 점수식/데이터/copy/`t.*`/금칙어 무변경·CSS-only·모바일(<768px) 무영향(md:·additive). `MetricInsightCards`는 이미 기준 충족→무변경. 실 브라우저 게이트는 운영자(⑤) |
 | Phase 5. 종목 상세 | ① | `components/stock/*`(§6과 동일, 결론 카드 큐) |
 | Phase 6. 공시 신호 카드 피드 | ① | `disclosures/DisclosureSummaryCards`·`DisclosureExplorer`(#26) |
 | Phase 7. 백테스트 | ① | `backtest/*`(#27) |

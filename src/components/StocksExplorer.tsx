@@ -589,7 +589,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             <div className="flex flex-col gap-1 mt-2">
               {strengths.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">{t.card.strength}</span>
+                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0 md:min-w-[2.75rem]">{t.card.strength}</span>
                   {strengths.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900">{label}</span>
                   ))}
@@ -597,7 +597,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
               ) : null}
               {warnings.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0">{t.card.warning}</span>
+                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0 md:min-w-[2.75rem]">{t.card.warning}</span>
                   {warnings.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">{label}</span>
                   ))}

@@ -1242,3 +1242,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·점수식/`compare.ts`/`matchConfig.ts`·copy(`src/lib/copy/*`·i18n)·cron/notify·auth·`metricsVersion` 무변경. 모든 diff는 className/layout 한정 → 트리비얼 리버서블. ko/en 문자열 무변경(래핑/여백만).
 - **게이트**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·전 라우트 표 불변, `/stocks` 19.6kB·`/watchlist` 9.68kB·`/stock/[ticker]` 26.4kB) · `scripts/smoke-check.mjs` 7/7 라우트 200(SMOKE GATE PASSED) · `git diff` 7파일 8삽입/8삭제 전부 className 스페이싱, 한글 주석(주의·확인 필요 등) mojibake 0.
 - **남은 소유자**: 실기기/390px 육안 시각 게이트(Playwright 미구성=운영자). 로컬 커밋만·푸시 미수행·main 무변경.
+
+
+### Task 174 — OrnScore 데스크톱 스캔성 & 표/리스트 리듬 (2026-07-03, Claude)
+- **Scope**: 종목 리스트·밀집 데스크톱 화면을 반복해서 훑기 쉽게. 요청 하드 제약 준수 — repo-local 코드만·className 한정·기존 디자인 방향 유지·점수 결과 무변경·전면 리디자인 금지. 브랜치 `ai-center/task-174-ornscore-desktop-scanability-and-tab`.
+- **파일(5) — className만 변경(구조·prop·copy·`t.*`·로직·데이터 무변경)**:
+  - `src/components/stocks/StockResultsTable.tsx`(데스크톱 전용 표): 행 제브라 스트라이핑(`even:bg-zinc-50/50 dark:even:bg-zinc-900/30`)+파란 hover(`hover:bg-blue-50/50`, 제브라 위 레이어)로 행 리듬 강화, `TH/TD` 상하 패딩 `py-2`→`py-2.5` 통일, 종합점수 열 왼쪽 구분선(`SEP=border-l`)으로 이름/가격 그룹과 4지표 히트맵 블록 분리. `ScoreHeatCell`·`deriveSignals`·행 데이터 무변경.
+  - `src/components/StocksExplorer.tsx` `renderCards()`: 강점/주의 라벨 데스크톱 정렬(`md:min-w-[2.75rem]`)로 칩 시작 x 일치 → 카드 내부 세로 리듬 일관. 필터 로직·`matchesConfig`·헤더/카운트 무변경.
+  - `src/components/CompareClient.tsx`: 재무·수익률 표의 sticky 라벨 열(항목/기간)에 세로 구분선(`border-r`) 추가 → 라벨 열과 숫자 열 분리(sticky와 호환). emerald best-value·`SCORE_KEYS`/`FUND_ROWS`·`ScrollX`·한글 라벨/suffix 무변경.
+  - `src/components/DisclosureExplorer.tsx`: 공시 건수 배지에 `font-medium tabular-nums` 추가 → 타입·방향 배지와 weight 통일·건수 정렬. `groupSignals`·counts·scope·copy·5색 토큰·`aria-pressed`/`role=group` 무변경.
+  - `src/components/stock/StockDetailIntro.tsx` `FinancialsSection`: 재무 2/4열 그리드 `gap-2`→`gap-2 md:gap-2.5`, 라벨-값 간격 `mb-0.5`→`mb-1`로 라벨/값 리듬 정렬. `t.*` 라벨·단위(배/%)·"상위 X%" 무변경.
+  - **무변경(이미 기준 충족)**: `src/components/stock/MetricInsightCards.tsx` — 그리드 `gap-2.5 sm:gap-3`·`flex-col gap-2`·전 숫자 `tabular-nums`가 이미 이번 패스 리듬 표준과 정합 → 무의미한 churn 회피 위해 손대지 않음.
+- **불변식**: `public/data/*`·점수식·`compositeScore`/지표 산식·copy(`src/lib/copy/*`·i18n)·cron/auth·`metricsVersion` 무변경. 모든 diff는 className/layout 한정 → 트리비얼 리버서블. 모바일(<768px) 무영향(`md:`-스코프이거나 미세·비파괴 additive: 제브라·구분선·배지 weight).
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138종목 위반 0(cp949 콘솔의 ✅ print만 트레이스백=베이스라인과 동일, 검증 통과) · `git diff` 전량 className+한글 주석 1줄, 데이터/산식/`t.*`/금칙어 미변경 확인.
+- **남은 소유자**: ≥1024px 데스크톱(/stocks 표·카드·/compare·/disclosures·/stock/[ticker]) 및 <768px 육안 시각 게이트(Playwright 미구성=운영자). 로컬 커밋만·푸시 미수행·main 무변경.
