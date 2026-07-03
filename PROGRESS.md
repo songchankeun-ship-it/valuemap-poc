@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-04 · [claude] Task 196 — OrnScore 저장·최근 본 종목 재방문 큐 + 상대시각 유틸 통일
+- **범위**: 두·세 번째 방문에서 저장·최근 본 종목이 유용하도록(모바일 우선) 리텐션 경로 강화. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-196-ornscore-saved-stock-and-recently-vi`.
+- **변경**:
+  - `src/lib/recentViews.ts` — `RecentView.viewedAt` 타입 `string`→`number` 교정(`RecentViewTracker`가 `Date.now()` 숫자로 기록하는 것과 일치, 기존 불일치 버그). `getRecentViews` 읽기 시 `viewedAt`을 숫자/레거시 ISO 문자열 모두 `number`(ms)로 정규화(`Number`→`Date.parse`)하고 `ticker`/`name` 문자열 아님·비유한값 항목 드롭. 레거시 키(`valuemap_recent_views`) 폴백·`slice(0,10)` 캡·쓰기 형식(`RecentViewTracker`) 무변경.
+  - `src/lib/format.ts` — 공통 `fmtRelativeTime(input, {locale, absolute})` 추가(Invalid Date→`—` 방어, ko `방금 전`/`N분·시간·일 전`, en `just now`/`Nm·Nh·Nd ago`, 7일+ `toLocaleDateString` 폴백 `md`=월/일·`ymd`=연/월/일). 상대시각 표기를 한곳으로 통일.
+  - `src/components/WatchlistClient.tsx`·`src/components/HistoryClient.tsx` — 각자의 로컬 `formatTime` 삭제하고 `fmtRelativeTime` 채택(Watchlist=`md`+`useLanguage` locale, History=`ymd` 기본 ko). ko 렌더 출력 바이트 동일(무회귀), en은 이제 현지화.
+  - `src/components/home/MyStocksSection.tsx` — `Row`에 `viewedAt?` 추가하고 최근 본 소스 행에만 실어, 해당 서브라인을 업종 대신 `최근 본 · N분 전`으로 표시(관심 종목 행은 업종 그대로). 중립 톤(매수·매도·추천 문구 0)·`mounted` 하이드레이션 가드·저장소 예외 try/catch·44px 유지.
+- **불변식**: 점수식·`public/data/*`·cron·auth·`direction`·`metricsVersion` 무변경. 데이터/점수 로직 손대지 않음(표시·타입만).
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONIOENCODING=utf-8) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG 유지) · `next start`+`smoke:check --all` 12/12 200(`/`·`/watchlist` 포함) · 편집 5 소스 한글 U+FFFD 0.
+- **남은 소유자**: 390px 실기기 육안·EN 토글 실확인은 운영자 게이트. 로컬 커밋만·푸시/main 무변경(푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 189 — OrnScore 한국어 우선 출시 카피 정리 패스
 - **범위**: 무료 한국어 베타 공개 표면 감사(혼재 언어 UI·유휴 언어 컨트롤·지표 용어 드리프트·첫 방문자 문구) + 안전 소규모 카피 수정. 근거 `ornscore-free-beta-v1-scope.md` §3~4. 브랜치 `ai-center/task-189-ornscore-korean-first-launch-copy-cl`. 선행 크래시 런(157, codex)은 `AI_HANDOFF` 자동 헤더만 남김(부분 편집 0).
 - **감사 산출물**: 신규 `docs/ornscore-korean-first-copy-cleanup-2026-07-03.md`. 결론 — §1 KO/EN 토글 이미 숨김(`LanguageSwitcher` import 0·`DEFAULT_LOCALE="ko"`·EN 데이터 보존→유지), §2 혼재 언어 진짜 누수 0(‘STEP n’=Task 60 의도 디자인 토큰), §3 드리프트 Fix-now 7건, §4 첫 방문자 문구 어색 0.

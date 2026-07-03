@@ -8,20 +8,7 @@ import {
   deleteAnalysis,
   type AnalysisRecord,
 } from "@/lib/aiHistory";
-
-function formatTime(iso: string): string {
-  const date = new Date(iso);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const min = Math.floor(diff / 60000);
-  if (min < 1) return "방금 전";
-  if (min < 60) return `${min}분 전`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}시간 전`;
-  const day = Math.floor(hr / 24);
-  if (day < 7) return `${day}일 전`;
-  return date.toLocaleDateString("ko-KR", { year: "numeric", month: "short", day: "numeric" });
-}
+import { fmtRelativeTime } from "@/lib/format";
 
 function scoreColor(score: number): string {
   if (score >= 70) return "text-emerald-600";
@@ -138,7 +125,7 @@ export function HistoryClient() {
             <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                {formatTime(r.createdAt)}
+                {fmtRelativeTime(r.createdAt, { absolute: "ymd" })}
               </span>
               {r.source ? (
                 <span className="px-1.5 py-0.5 bg-zinc-100 rounded text-zinc-600 dark:text-zinc-400 text-[10px]">

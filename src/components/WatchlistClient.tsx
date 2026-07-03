@@ -15,25 +15,12 @@ import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/l
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
+import { fmtRelativeTime } from "@/lib/format";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
 const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
-
-function formatTime(iso: string): string {
-  const date = new Date(iso);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const min = Math.floor(diff / 60000);
-  if (min < 1) return "방금 전";
-  if (min < 60) return `${min}분 전`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}시간 전`;
-  const day = Math.floor(hr / 24);
-  if (day < 7) return `${day}일 전`;
-  return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
-}
 
 const CAP_LABELS: Record<string, string> = { large: "대형주", mid: "중형주", small: "소형주" };
 
@@ -442,7 +429,7 @@ export function WatchlistClient({
                           </>
                         ) : null}
                         <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                        <span>추가 {formatTime(item.addedAt)}</span>
+                        <span>추가 {fmtRelativeTime(item.addedAt, { locale, absolute: "md" })}</span>
                       </div>
                       {view === "analysis" && info ? (
                         <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1.5">
@@ -587,7 +574,7 @@ export function WatchlistClient({
                       {item.name}
                     </div>
                     <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                      {item.ticker} · {formatTime(item.viewedAt)}
+                      {item.ticker} · {fmtRelativeTime(item.viewedAt, { locale, absolute: "md" })}
                     </div>
                   </div>
                   <ArrowRight className="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />

@@ -42,6 +42,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 196 — OrnScore 저장·최근 본 종목 재방문 큐 + 상대시각 유틸 통일 (2026-07-04, Claude)
+- **범위**: 두·세 번째 방문(특히 모바일)에서 저장·최근 본 종목·다음 행동 큐가 유용하도록 리텐션 경로 강화. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-196-ornscore-saved-stock-and-recently-vi`.
+- **변경**:
+  - `src/lib/recentViews.ts` — `RecentView.viewedAt` 타입을 `string`→`number`로 교정(작성자 `RecentViewTracker`가 `Date.now()` 숫자로 기록하던 것과 불일치하던 버그). `getRecentViews`가 읽을 때 숫자/레거시 ISO 문자열을 모두 `number`(ms)로 정규화하고 형식이 깨진·비유한 항목은 드롭. 레거시 키 폴백·10개 캡·쓰기 형식은 그대로.
+  - `src/lib/format.ts` — 공통 `fmtRelativeTime(input, {locale, absolute})` 추가(Invalid Date 방어, ko/en 상대시각, 7일 이상은 `md`/`ymd` 절대일자 폴백). 상대시각 포맷을 단일 소스로 통일.
+  - `src/components/WatchlistClient.tsx`·`HistoryClient.tsx` — 중복된 로컬 `formatTime` 제거하고 `fmtRelativeTime` 채택(ko 출력 바이트 동일, en 현지화 추가).
+  - `src/components/home/MyStocksSection.tsx` — 홈 재방문 큐: 최근 본 종목 행에 "최근 본 · N분 전"을 표시(관심 종목 행은 업종 유지). 중립 톤·하이드레이션 가드·저장소 try/catch·44px 유지.
+- **불변식 / 안전**: 점수·데이터(`public/data/*`)·`direction`·인증·cron·`metricsVersion` **무변경**. 표시·타입 정리만.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138/0/0(금칙0·Metrics 2.4) · `npm run build` 0(138 SSG 유지) · `smoke:check --all` 12/12 200 · 편집 5파일 U+FFFD 0. 실기기 390px 육안·EN 토글 실확인은 운영자 게이트. 로컬 커밋만·푸시는 오너.
+
 ### Task 190 — OrnScore 검색 미리보기·페이지 메타데이터 하드닝 (2026-07-04, Claude)
 - **범위**: 공개 페이지 title/description/공유 미리보기(OG·Twitter)/canonical/robots 일관성 강화. 재무 문구는 신중하게(수익·급등·추천·성과 약속 금지), OrnScore 레포 로컬 한정, 소규모 검증 가능한 변경. 브랜치 `ai-center/task-190-ornscore-search-preview-and-page-met`.
 - **변경(메타데이터)**:

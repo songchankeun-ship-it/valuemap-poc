@@ -7,6 +7,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { homeCopy } from "@/lib/copy/home";
 import { getWatchlist } from "@/lib/watchlist";
 import { getRecentViews } from "@/lib/recentViews";
+import { fmtRelativeTime } from "@/lib/format";
 
 // 홈 대시보드의 재방문 개인화 진입점 — 관심 종목·최근 본 종목을 컴팩트 행으로 이어보게 한다.
 // 서버/마운트 전에는 null(하이드레이션 불일치 방지), 로딩 중 스켈레톤, 데이터 없으면 차분한 빈 상태.
@@ -22,6 +23,8 @@ export interface PoolEntry {
 type Row = {
   ticker: string;
   source: "watchlist" | "recent";
+  // 최근 본 종목 행에만 실린다(관심 종목 행은 업종을 그대로 표시). ms 타임스탬프.
+  viewedAt?: number;
 } & PoolEntry;
 
 export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> }) {
@@ -63,7 +66,7 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
           const entry = lookup[rv.ticker];
           if (!entry) continue;
           seen.add(rv.ticker);
-          next.push({ ticker: rv.ticker, source: "recent", ...entry });
+          next.push({ ticker: rv.ticker, source: "recent", viewedAt: rv.viewedAt, ...entry });
         }
       } catch {
         // 최근 본 종목 조회 실패 — 있는 데이터만 사용
@@ -150,7 +153,9 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
                     {r.name}
                   </span>
                   <span className="block text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                    {r.source === "watchlist" ? t.watchlistLabel : t.recentLabel} · {r.sector}
+                    {r.source === "recent" && r.viewedAt !== undefined
+                      ? `${t.recentLabel} · ${fmtRelativeTime(r.viewedAt, { locale, absolute: "md" })}`
+                      : `${r.source === "watchlist" ? t.watchlistLabel : t.recentLabel} · ${r.sector}`}
                   </span>
                 </span>
                 <span className="shrink-0 text-right">
