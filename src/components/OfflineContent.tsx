@@ -22,12 +22,24 @@ export function OfflineContent() {
         </p>
       </div>
 
-      <Link
-        href="/"
-        className="inline-flex items-center justify-center mt-6 min-h-[44px] px-5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium"
-      >
-        {t.homeButton}
-      </Link>
+      <div className="mt-6 flex gap-2 justify-center flex-wrap">
+        <button
+          type="button"
+          onClick={() => {
+            // 재연결 후 현재 화면을 다시 불러온다. SSR/무window 환경에선 안전하게 무시.
+            if (typeof window !== "undefined") window.location.reload();
+          }}
+          className="inline-flex items-center justify-center min-h-[44px] px-5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium"
+        >
+          {t.retryButton}
+        </button>
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center min-h-[44px] px-5 rounded-md bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 text-sm font-medium"
+        >
+          {t.homeButton}
+        </Link>
+      </div>
     </div>
   );
 }

@@ -429,6 +429,7 @@ export const offlineCopy = {
     addBodyStrong: "홈 화면에 추가",
     addBodyAfter:
       "(iOS: 공유 → 홈 화면에 추가 / Android: 메뉴 → 앱 설치)를 선택하면 앱처럼 실행할 수 있어요.",
+    retryButton: "다시 시도",
     homeButton: "홈으로 돌아가기",
   },
   en: {
@@ -440,6 +441,29 @@ export const offlineCopy = {
     addBodyStrong: "Add to Home Screen",
     addBodyAfter:
       " (iOS: Share → Add to Home Screen / Android: Menu → Install app) to launch it like an app.",
+    retryButton: "Try again",
     homeButton: "Back to home",
+  },
+} as const satisfies Record<Locale, unknown>;
+
+// ── error.tsx (route-segment 에러 바운더리 폴백) ──
+// 렌더/데이터 표시 중 예기치 못한 예외가 던져졌을 때의 안내. 데이터 자체는 안전하며
+// 일시적 표시 오류임을 차분히 전달한다. 매수/매도/추천/수익 등 금칙 표현 없음(시스템 상태 안내만).
+export const errorCopy = {
+  ko: {
+    title: "일시적인 문제가 발생했어요",
+    body1: "데이터는 안전하며, 화면을 그리는 중 일시적인 오류가 발생했어요.",
+    body2: "잠시 후 다시 시도하면 대부분 정상적으로 표시됩니다.",
+    retry: "다시 시도",
+    goHome: "홈으로",
+    persistHint: "문제가 계속되면 잠시 후 다시 시도하거나 새로고침해주세요.",
+  },
+  en: {
+    title: "Something went wrong for a moment",
+    body1: "Your data is safe — this is a temporary error while rendering the screen.",
+    body2: "Trying again in a moment usually resolves it.",
+    retry: "Try again",
+    goHome: "Home",
+    persistHint: "If it keeps happening, please try again shortly or refresh the page.",
   },
 } as const satisfies Record<Locale, unknown>;

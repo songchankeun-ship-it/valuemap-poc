@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T17:03:17.971Z
+Last updated: 2026-07-03T17:18:48.447Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 191 - OrnScore local observability naming and owner checklist
-- Run: 163
+- Task: 192 - OrnScore error and offline fallback UX pass
+- Run: 164
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 192 — OrnScore 에러 바운더리·오프라인 재시도 폴백 (2026-07-04, Claude)
+- **범위**: 네트워크 실패·예외·오프라인 시 빈 화면 없이 차분한 한국어 안내와 재시도 경로 제공. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-192-ornscore-error-and-offline-fallback-`.
+- **변경**:
+  - `src/app/error.tsx`(신규) — Next.js route-segment 에러 바운더리. 루트 layout 안에서 렌더되어 `LanguageProvider`/`ThemeProvider` 컨텍스트 사용. `useEffect`에서 `console.error`(로컬 관측)+`<ErrorContent reset={reset} />`.
+  - `src/components/ErrorContent.tsx`(신규, `"use client"`) — `NotFoundContent` 미러. AlertTriangle 카드·`다시 시도`(→`reset()`, 44px)·`홈으로`(`<Link href="/">`)·`persistHint`. `dark:` 변형 전면. 점수/데이터/`direction` 로직 없음(표시 전용).
+  - `src/app/global-error.tsx`(신규, `"use client"`) — 루트 layout까지 대체하는 최후 바운더리라 자체 `<html lang="ko"><body>` 렌더·컨텍스트 무의존·한국어 고정 카피(⚠️ 카드·`다시 시도`/`홈으로`·44px·`dark:`).
+  - `src/components/OfflineContent.tsx` — `다시 시도` 버튼 추가(→`window.location.reload()`, `typeof window` SSR 가드) `홈으로 돌아가기` 옆에 배치. 서비스워커/`navigator.onLine` 로직은 Task 72/77 오너·에셋 게이트로 남김(무변경).
+  - `src/lib/i18n.ts` — `errorCopy`(ko/en) 신규 블록 + `offlineCopy.retryButton`(ko `다시 시도`/en `Try again`) 추가. 전부 중립 시스템 상태 카피(금칙 표현 없음).
+- **불변식 / 안전**: 점수·데이터(`public/data/*`)·`direction`·인증·cron·`metricsVersion` **무변경**. 표시·i18n·에러 바운더리만.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138/0/0(금칙0·Metrics 2.4) · `npm run build` 0 · `smoke:check --all` 12/12 200 · `/offline` SSR 한국어("네트워크가 필요해요")+`다시 시도` 버튼 확인. 에러 바운더리는 예외 발생 시에만 트립되므로 런타임 육안 검증은 빌드/타입 성공+오프라인 스팟체크로 한정(⑤). 로컬 커밋만·푸시는 오너.
 
 ### Task 196 — OrnScore 저장·최근 본 종목 재방문 큐 + 상대시각 유틸 통일 (2026-07-04, Claude)
 - **범위**: 두·세 번째 방문(특히 모바일)에서 저장·최근 본 종목·다음 행동 큐가 유용하도록 리텐션 경로 강화. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-196-ornscore-saved-stock-and-recently-vi`.
