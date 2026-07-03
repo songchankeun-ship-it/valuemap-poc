@@ -36,6 +36,30 @@ ms = [s["momentum"] for s in stocks if isinstance(s.get("momentum"), (int, float
 if ms and max(ms) > 99.6:
     errors.append(f"momentum max {max(ms)} > 99.6 — 백분위 아님(선형 잔존). compute_metrics 재실행 필요")
 
+# ===== 유니버스 무결성 가드 (task 195) =====
+# 중복 티커/종목명·필수 필드 결측은 순위·표시(/universe, /today)를 조용히 오염시키므로 배포 차단.
+# 위 errors 목록에 합류시켜 기존 '오류 M건' 요약·단일 sys.exit 게이트가 그대로 커버한다.
+from collections import Counter as _Counter
+for tk, cnt in _Counter(s.get("ticker") for s in stocks).items():
+    if cnt > 1:
+        errors.append(f"티커 중복 {tk!r} — {cnt}건 (순위·링크 충돌)")
+for nm, cnt in _Counter(s.get("name") for s in stocks).items():
+    if cnt > 1:
+        errors.append(f"종목명 중복 {nm!r} — {cnt}건")
+for s in stocks:
+    tk = s.get("ticker")
+    if not s.get("name"):
+        errors.append(f"{tk} name 결측")
+    if not s.get("market"):
+        errors.append(f"{tk} market 결측")
+    th = s.get("themes")
+    if not (isinstance(th, list) and len(th) > 0):
+        errors.append(f"{tk} themes 결측(빈 배열/누락)")
+    for fld in ("currentPrice", "marketCap"):
+        v = s.get(fld)
+        if not (isinstance(v, (int, float)) and v > 0):
+            errors.append(f"{tk} {fld} 비정상({v})")
+
 print(f"검사 {len(stocks)}종목 · 오류 {len(errors)}건")
 for e in errors[:25]:
     print("  ❌", e)

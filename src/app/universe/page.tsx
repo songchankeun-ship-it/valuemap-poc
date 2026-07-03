@@ -2,6 +2,7 @@ import Link from "next/link";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
+import { isSuspect } from "@/lib/dataQuality";
 import { dataStatus } from "@/lib/dataStatus";
 
 const universeDescription =
@@ -105,23 +106,48 @@ export default function UniversePage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((s, i) => (
-                <tr key={s.ticker} className="border-t border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
-                  <td className="py-1.5 px-3 tabular-nums text-zinc-500 dark:text-zinc-400">{i + 1}</td>
-                  <td className="py-1.5 px-3">
-                    <Link href={"/stock/" + s.ticker} className="text-blue-700 dark:text-blue-400 hover:underline font-medium">
-                      {s.name}
-                    </Link>
+              {rows.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-10 px-3 text-center">
+                    <div className="mx-auto max-w-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4 text-sm text-zinc-500 dark:text-zinc-400">
+                      데이터 준비 중입니다. 최신 종목 목록을 불러오지 못했습니다 — 잠시 후 다시 확인해 주세요.
+                    </div>
                   </td>
-                  <td className="py-1.5 px-3 tabular-nums font-mono text-zinc-500 dark:text-zinc-400">{s.ticker}</td>
-                  <td className="py-1.5 px-3 text-zinc-500 dark:text-zinc-400">{s.market ?? "—"}</td>
-                  <td className="py-1.5 px-3 text-zinc-500 dark:text-zinc-400">{sectorOf(s.themes)}</td>
-                  <td className="py-1.5 px-3 text-right tabular-nums font-semibold text-zinc-800 dark:text-zinc-200">{Math.round(compositeOf(s))}</td>
                 </tr>
-              ))}
+              ) : (
+                rows.map((s, i) => {
+                  const suspect = isSuspect(s);
+                  const sector = sectorOf(s.themes);
+                  return (
+                    <tr key={s.ticker} className="border-t border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
+                      <td className="py-1.5 px-3 tabular-nums text-zinc-500 dark:text-zinc-400">{i + 1}</td>
+                      <td className="py-1.5 px-3">
+                        <Link href={"/stock/" + s.ticker} className="text-blue-700 dark:text-blue-400 hover:underline font-medium">
+                          {s.name}
+                        </Link>
+                        {suspect && (
+                          <span className="ml-1.5 inline-block rounded px-1 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 align-middle">
+                            검증보류
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1.5 px-3 tabular-nums font-mono text-zinc-500 dark:text-zinc-400">{s.ticker}</td>
+                      <td className="py-1.5 px-3 text-zinc-500 dark:text-zinc-400">{s.market ?? "—"}</td>
+                      <td className="py-1.5 px-3 text-zinc-500 dark:text-zinc-400">{sector === "기타" ? "기타(미분류)" : sector}</td>
+                      <td className={"py-1.5 px-3 text-right tabular-nums font-semibold " + (suspect ? "text-zinc-400 dark:text-zinc-600" : "text-zinc-800 dark:text-zinc-200")}>
+                        {Math.round(compositeOf(s))}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
+        <p className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 break-keep">
+          업종은 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.
+          <span className="text-amber-700 dark:text-amber-400"> 검증보류</span>는 재무 지표가 극단값이라 점수 신뢰도가 낮은 종목으로, 오늘·상위 목록에서는 제외되며 여기서는 참고용으로만 회색 표시합니다.
+        </p>
       </section>
     </div>
   );
