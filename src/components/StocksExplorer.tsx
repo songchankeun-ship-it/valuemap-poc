@@ -661,6 +661,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   function FilterPanel() {
     return (
       <div className="space-y-5">
+        {/* 필터 조절 중 실시간 예상 결과 수 — 스크롤해도 상단 고정(데스크톱 사이드바·모바일 드로어 공용) */}
+        <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-1 px-4 pt-3 pb-2 bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-b border-zinc-100 dark:border-zinc-800">
+          <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">
+            {t.filterLiveCount(sorted.length, total).a}
+            <span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.filterLiveCount(sorted.length, total).b}</span>
+          </span>
+        </div>
         <div>
           <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300 block mb-2">{t.labelMarket}</label>
           <div className="grid grid-cols-3 gap-1.5">
@@ -810,7 +817,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       <section>
         <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 mb-3">{t.questionDesc}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{t.questionDesc}</p>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1 mb-3 leading-snug">{t.entryPointsHint}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
@@ -1002,10 +1010,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug">{describeConditions()}</p>
           </div>
-          <div className="flex gap-1.5 shrink-0">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCond}</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">{t.alertCondShort}</button>
-            <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>{t.reset}</button>
+          <div className="flex gap-1.5 shrink-0 flex-wrap">
+            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap">{t.saveCond}</button>
+            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap">{t.alertCondShort}</button>
+            <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition whitespace-nowrap " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>{t.reset}</button>
           </div>
         </div>
       </section>
@@ -1026,20 +1034,27 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
         <div className="space-y-2">
           {sorted.length === 0 ? (() => {
             const sc = strongestConstraint();
+            // 필터 제약은 없는데 검색어만 있어 0건 → 검색 실패로 안내(철자 확인·검색어 지우기)
+            const searchOnly = !sc && !!query.trim();
             return (
               <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4">
-                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{t.emptyTitle}</div>
+                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 break-words">{searchOnly ? t.emptySearchTitle(query.trim()) : t.emptyTitle}</div>
                 {sc ? (() => {
                   const es = t.emptyStrong(sc.label);
                   return (
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">{es.pre}<strong className="text-zinc-700 dark:text-zinc-200">{es.label}</strong>{es.post}<br className="hidden sm:block" />{es.line2}</p>
                   );
-                })() : (
+                })() : searchOnly ? (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">{t.emptySearchHint}</p>
+                ) : (
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">{t.emptyLoose}</p>
                 )}
                 <div className="flex gap-2 justify-center mt-4 flex-wrap">
                   {sc ? (
                     <button type="button" onClick={sc.relax} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.relaxStrongest}</button>
+                  ) : null}
+                  {searchOnly ? (
+                    <button type="button" onClick={() => setQuery("")} className="text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px]">{t.clearSearch}</button>
                   ) : null}
                   <button type="button" onClick={resetFilters} className="text-xs px-3 py-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition min-h-[44px]">{t.backToDefaultReset}</button>
                 </div>

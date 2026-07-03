@@ -29,6 +29,8 @@ export const stocksCopy = {
     // ── 질문형 프리셋 섹션 ──
     questionHeading: "어떤 종목을 찾고 있나요?",
     questionDesc: "어려운 지표명을 몰라도 질문을 고르면 조건이 자동으로 적용됩니다.",
+    // 세 가지 시작점을 한 줄로 구분(초보자 길잡이)
+    entryPointsHint: "질문형 프리셋으로 시작 · 빠른 프리셋으로 지표로 좁히기 · 상세 필터로 직접 조절",
     expectedResults: (n: number) => ({ a: "예상 결과 ", b: `${n}개` }),
     cautionPrefix: "⚠ ",
 
@@ -106,6 +108,10 @@ export const stocksCopy = {
     emptyTitle: "조건에 맞는 종목이 없습니다.",
     emptyStrong: (label: string) => ({ pre: "", label, post: "이 강해 지금 범위에 드는 종목이 없습니다.", line2: "이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요." }),
     emptyLoose: "필터를 조금 완화하거나 초기화하면 더 많은 후보를 볼 수 있습니다.",
+    // 검색어만 있고 결과가 없을 때(철자 확인·검색어 지우기 유도)
+    emptySearchTitle: (query: string) => `‘${query}’에 맞는 종목이 없어요.`,
+    emptySearchHint: "종목명·코드 철자를 확인하거나 검색어를 지워보세요.",
+    clearSearch: "검색어 지우기",
     relaxStrongest: "가장 강한 조건 완화",
     viewAll: "전체 종목 보기",
 
@@ -114,6 +120,8 @@ export const stocksCopy = {
 
     // ── 상세 필터 패널 ──
     filterDetailTitle: "상세 필터",
+    // 필터 조절 중 실시간 예상 결과 수(패널 상단 고정)
+    filterLiveCount: (n: number, total: number) => ({ a: `예상 결과 ${n}개 `, b: `/ 전체 ${total}개` }),
     closeDrawerView: (n: number) => `${n}개 보기`,
     labelMarket: "시장",
     labelMarketCap: "시가총액",
@@ -311,6 +319,8 @@ export const stocksCopy = {
     // ── Question presets ──
     questionHeading: "What kind of stock are you looking for?",
     questionDesc: "No need to know the metric names — pick a question and the filters apply automatically.",
+    // Three entry points, one line (beginner orientation)
+    entryPointsHint: "Start with a question preset · narrow by metric with quick presets · fine-tune with detailed filters",
     expectedResults: (n: number) => ({ a: "Expected results ", b: `${n}` }),
     cautionPrefix: "⚠ ",
 
@@ -387,6 +397,10 @@ export const stocksCopy = {
     emptyTitle: "No stocks match these conditions.",
     emptyStrong: (label: string) => ({ pre: "The ", label, post: " is strong, so no stocks fall in the current range.", line2: "Try relaxing just this condition, or reset everything and search again." }),
     emptyLoose: "Relax or reset the filters to see more candidates.",
+    // Query typed but nothing matches (check spelling / clear search)
+    emptySearchTitle: (query: string) => `No stocks match ‘${query}’.`,
+    emptySearchHint: "Check the spelling of the name or ticker, or clear the search.",
+    clearSearch: "Clear search",
     relaxStrongest: "Relax strongest condition",
     viewAll: "View all stocks",
 
@@ -395,6 +409,8 @@ export const stocksCopy = {
 
     // ── Detailed filter panel ──
     filterDetailTitle: "Detailed filters",
+    // Live expected result count while adjusting filters (pinned at panel top)
+    filterLiveCount: (n: number, total: number) => ({ a: `Expected ${n} `, b: `/ ${total} total` }),
     closeDrawerView: (n: number) => `View ${n}`,
     labelMarket: "Market",
     labelMarketCap: "Market cap",
