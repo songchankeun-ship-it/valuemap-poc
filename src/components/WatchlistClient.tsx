@@ -13,6 +13,8 @@ import {
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
+import { useLanguage } from "@/components/LanguageProvider";
+import { commonCopy } from "@/lib/i18n";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -93,6 +95,8 @@ export function WatchlistClient({
   tickerToDelta?: Record<string, number>;
   isLoggedIn?: boolean;
 }) {
+  const { locale } = useLanguage();
+  const authCopy = commonCopy[locale].auth;
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
@@ -358,7 +362,7 @@ export function WatchlistClient({
             </div>
             {!isLoggedIn ? (
               <Link href="/login?next=/watchlist" className="mt-3 inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                로그인하고 여러 기기에서 동기화하기 <ArrowRight className="w-3 h-3" />
+                {authCopy.syncCta} <ArrowRight className="w-3 h-3" />
               </Link>
             ) : null}
             <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">

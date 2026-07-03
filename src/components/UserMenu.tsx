@@ -2,13 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LogOut, Heart, GitCompare, Bell } from "lucide-react";
+import { LogOut, Heart, GitCompare, Bell, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/components/LanguageProvider";
+import { commonCopy } from "@/lib/i18n";
 
 export function UserMenu({ email }: { email: string }) {
   const [open, setOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+  const { locale } = useLanguage();
+  const copy = commonCopy[locale].auth;
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -36,9 +41,12 @@ export function UserMenu({ email }: { email: string }) {
   }, [open]);
 
   async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
     setOpen(false);
+    setIsLoggingOut(false);
     router.refresh();
   }
 
@@ -51,7 +59,7 @@ export function UserMenu({ email }: { email: string }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center text-sm font-semibold hover:bg-blue-200 dark:hover:bg-blue-900 transition"
-        aria-label="계정 메뉴"
+        aria-label={copy.accountMenu}
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -61,11 +69,11 @@ export function UserMenu({ email }: { email: string }) {
       {open ? (
         <div
           role="menu"
-          aria-label="계정 메뉴"
+          aria-label={copy.accountMenu}
           className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 py-1 z-50"
         >
           <div className="px-3 py-2 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">로그인 됨</div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">{copy.loggedIn}</div>
             <div className="text-xs text-zinc-900 dark:text-zinc-100 font-medium truncate">{email}</div>
           </div>
           <Link
@@ -75,7 +83,7 @@ export function UserMenu({ email }: { email: string }) {
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <Heart className="w-4 h-4" />
-            관심 종목
+            {copy.menuWatchlist}
           </Link>
           <Link
             href="/compare"
@@ -84,7 +92,7 @@ export function UserMenu({ email }: { email: string }) {
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <GitCompare className="w-4 h-4" />
-            비교 목록
+            {copy.menuCompare}
           </Link>
           <Link
             href="/settings/notifications"
@@ -93,17 +101,19 @@ export function UserMenu({ email }: { email: string }) {
             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <Bell className="w-4 h-4" />
-            알림 설정
+            {copy.menuNotifications}
           </Link>
           <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
           <button
             type="button"
             role="menuitem"
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left"
+            disabled={isLoggingOut}
+            aria-busy={isLoggingOut}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <LogOut className="w-4 h-4" />
-            로그아웃
+            {isLoggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+            {isLoggingOut ? copy.loggingOut : copy.logout}
           </button>
         </div>
       ) : null}

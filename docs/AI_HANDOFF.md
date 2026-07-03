@@ -1179,3 +1179,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONIOENCODING=utf-8) 138종목 0오류·금칙어 0·Metrics 2.4 · `npm run build` 0(138 SSG·전 라우트, `/watchlist` 9.39kB 빌드).
 - **모바일 확인**: 신규/변경 카피 390px `break-words`/`break-keep`/`flex-wrap` 래핑 · 빈 상태 CTA `flex-col sm:flex-row` 스택 · 토스트/버튼 44px.
 - **남은 소유자**: 그룹·메모·CSV(§8.2 신규 기능 ④) · 실기기 시각 게이트(운영자). 로컬 커밋만·푸시 미수행·main 무변경.
+
+
+### Task 161 — OrnScore 로그인 + 계정 신뢰 표면 폴리시 (2026-07-03, Claude)
+- **Scope**: 로그인이 모바일/데스크톱에서 믿음직하고 이해하기 쉽게. 요청 하드 제약 준수 — repo-local UI/카피만, 제공자 콘솔/비공개 설정 무변경, 신규 로그인 제공자 0. 브랜치 `ai-center/task-161-ornscore-login-and-account-confidenc`.
+- **파일(5)**:
+  - `src/lib/i18n.ts`: `commonCopy.{ko,en}.auth`에 계정 키 추가 — `accountMenu`(aria-label)·`menuWatchlist`·`menuCompare`·`menuNotifications`·`loggingOut`·`syncCta`·`welcomeToast{title,body,close}`. `legalAnd` 값에 공백을 내장(ko `"과 "` / en `" and "`)해 한 템플릿으로 두 로케일 모두 자연스러운 조사·간격(한글 "이용약관과 개인정보처리방침에" 붙여쓰기 복원). `as const satisfies Record<Locale, unknown>` 유지 → tsc가 양 로케일 동기 강제.
+  - `src/app/login/page.tsx`: 하드코딩 `locale === "ko" ? ... : ...` 2블록(동의 문구·광고 안 보냄 문구)을 `copy.legal*`·`copy.noAds/noAdsSecond` 키로 단일화(`<Link href="/terms|/privacy">`·스타일 동일). OAuth 버튼·이메일 제출 버튼에 `aria-busy`+`Loader2 animate-spin` 인라인 스피너(활성 버튼만), `disabled:opacity-60 disabled:cursor-not-allowed`로 비활성 시각화, 이메일 버튼 44px min-h. `friendlyAuthError`/`safeInternalPath`/`signInWithOtp`/`signInWithOAuth`/`redirectTo` 로직 무변경.
+  - `src/components/UserMenu.tsx`: `useLanguage()` 소비자로 전환, 하드코딩 문구 전부 `commonCopy[locale].auth.*`로. `isLoggingOut` 상태 추가 — `signOut()` 진행 중 로그아웃 버튼 disable+스피너+`loggingOut` 라벨(더블클릭 방지), `router.refresh()`·Esc/외부클릭·`role=menu/menuitem`·`aria-haspopup/expanded` 유지.
+  - `src/components/WelcomeToast.tsx`: `useLanguage()`+`welcomeToast` 카피로 전환(title/body/close aria-label). Suspense·5s 자동 소멸·`history.replaceState` URL 정리 무변경.
+  - `src/components/WatchlistClient.tsx`: 로그아웃 상태 동기화 CTA 링크를 `authCopy.syncCta` 키로(로컬 로그인 진입점 신뢰 문구 로케일화). 나머지 로직 무변경.
+- **불변식**: 제공자 `enabled` 플래그·Supabase/콘솔 설정·인증 호출/리다이렉트 로직 무변경 · 신규 제공자 0 · 금칙어(`매수/매도/추천/수익 보장`) 0(추가 카피 전수 확인, 기존 부정형 고지만 잔존).
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138종목 위반 0(cp949 콘솔의 ✅ 이모지 print만 트레이스백, 검증 통과) · `npm run build` 0(138 SSG·전 라우트, `/login` 5.74kB) · EN/KO 신규 문구 클라이언트 청크(`563-*.js`)에 번들 확인(언어 전환 클라이언트 사이드). `next lint`는 이 repo에 ESLint 미구성(대화형 설정 프롬프트) = 기존 상태·회귀 아님.
+- **QA**: 로그인 동의 템플릿 렌더 ko "계속하면 이용약관과 개인정보처리방침에 동의하게 됩니다."·en "By continuing, you agree to the Terms and Privacy Policy." SSR 기본 한국어 유지, EN은 클라이언트 토글.
+- **남은 소유자**: WatchlistClient 전체 i18n(현재 syncCta 1줄만 로케일화·나머지 한국어 하드코딩 = EN i18n 잔여 커버리지 추적) · 실기기 OAuth 왕복·390px/데스크톱 육안 시각 게이트(운영자). 로컬 커밋만·푸시 미수행·main 무변경.

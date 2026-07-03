@@ -12,7 +12,7 @@ import { safeInternalPath } from "@/lib/auth/returnPath";
 import { loginCopy, type Locale } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
 import Link from "next/link";
-import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bell } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bell, Loader2 } from "lucide-react";
 
 // 인증 오류 코드/메시지를 사람이 읽을 한국어로 변환.
 // - 콜백 실패(auth_callback_failed) → URL 의 ?error= 로 들어옴
@@ -174,31 +174,38 @@ function LoginForm() {
                       type="button"
                       onClick={() => handleOAuthLogin(p.id)}
                       disabled={oauthBusy || emailBusy}
-                      className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold transition ${p.brandClasses}`}
+                      aria-busy={isRedirecting}
+                      className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${p.brandClasses}`}
                     >
-                      {p.id === "kakao" ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                          <path d="M12 3C6.48 3 2 6.48 2 10.84c0 2.74 1.86 5.16 4.66 6.55-.21.79-.76 2.84-.87 3.28-.13.55.2.55.42.4.17-.11 2.66-1.8 3.74-2.53.66.09 1.34.14 2.05.14 5.52 0 10-3.48 10-7.84S17.52 3 12 3z" />
-                        </svg>
-                      ) : null}
-                      {p.id === "google" ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
-                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
-                          <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
-                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
-                        </svg>
-                      ) : null}
-                      {p.id === "custom:naver" ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                          <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
-                        </svg>
-                      ) : null}
-                      {p.id === "apple" ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                          <path d="M16.36 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.18-1.15 2.34-.69 1-1.41 1.99-2.55 2.01-1.11.02-1.47-.66-2.75-.66-1.27 0-1.67.64-2.72.68-1.09.04-1.92-1.08-2.62-2.08-1.42-2.05-2.51-5.79-1.05-8.32.72-1.25 2.02-2.05 3.43-2.07 1.08-.02 2.1.73 2.75.73.66 0 1.89-.9 3.19-.77.54.02 2.06.22 3.04 1.64-.08.05-1.81 1.06-1.79 3.16M14.28 5.39c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.54.62-1.01 1.61-.88 2.56.93.07 1.88-.47 2.46-1.16" />
-                        </svg>
-                      ) : null}
+                      {isRedirecting ? (
+                        <Loader2 className="w-[18px] h-[18px] animate-spin" aria-hidden />
+                      ) : (
+                        <>
+                          {p.id === "kakao" ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                              <path d="M12 3C6.48 3 2 6.48 2 10.84c0 2.74 1.86 5.16 4.66 6.55-.21.79-.76 2.84-.87 3.28-.13.55.2.55.42.4.17-.11 2.66-1.8 3.74-2.53.66.09 1.34.14 2.05.14 5.52 0 10-3.48 10-7.84S17.52 3 12 3z" />
+                            </svg>
+                          ) : null}
+                          {p.id === "google" ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+                              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+                              <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z" />
+                              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+                            </svg>
+                          ) : null}
+                          {p.id === "custom:naver" ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                              <path d="M16.27 12.84 7.46 0H0v24h7.73V11.16L16.54 24H24V0h-7.73v12.84z" />
+                            </svg>
+                          ) : null}
+                          {p.id === "apple" ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                              <path d="M16.36 12.78c.02 2.5 2.19 3.33 2.21 3.34-.02.06-.35 1.18-1.15 2.34-.69 1-1.41 1.99-2.55 2.01-1.11.02-1.47-.66-2.75-.66-1.27 0-1.67.64-2.72.68-1.09.04-1.92-1.08-2.62-2.08-1.42-2.05-2.51-5.79-1.05-8.32.72-1.25 2.02-2.05 3.43-2.07 1.08-.02 2.1.73 2.75.73.66 0 1.89-.9 3.19-.77.54.02 2.06.22 3.04 1.64-.08.05-1.81 1.06-1.79 3.16M14.28 5.39c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.54.62-1.01 1.61-.88 2.56.93.07 1.88-.47 2.46-1.16" />
+                            </svg>
+                          ) : null}
+                        </>
+                      )}
                       {isRedirecting ? providerCopy.redirecting : providerCopy.label}
                     </button>
                   );
@@ -227,15 +234,7 @@ function LoginForm() {
                 ))}
 
                 <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center leading-relaxed">
-                  {locale === "ko" ? (
-                    <>
-                      계속하면 <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">이용약관</Link>과 <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>에 동의하게 됩니다.
-                    </>
-                  ) : (
-                    <>
-                      {copy.legalPrefix} <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalTerms}</Link> {copy.legalAnd} <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalPrivacy}</Link>{copy.legalSuffix}
-                    </>
-                  )}
+                  {copy.legalPrefix} <Link href="/terms" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalTerms}</Link>{copy.legalAnd}<Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">{copy.legalPrivacy}</Link>{copy.legalSuffix}
                 </p>
 
                 <div className="flex items-center gap-3 my-1">
@@ -279,23 +278,16 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={emailBusy || oauthBusy}
-                className="w-full px-4 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                aria-busy={emailBusy}
+                className="w-full flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
+                {emailBusy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : null}
                 {emailBusy ? copy.sending : copy.getLink}
               </button>
 
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-center leading-relaxed">
-                {locale === "ko" ? (
-                  <>
-                    로그인 링크 외에 <strong>광고성 메일은 보내지 않습니다</strong>.<br />
-                    알림 메일도 사용자가 직접 설정할 때만 발송됩니다.
-                  </>
-                ) : (
-                  <>
-                    <strong>{copy.noAds}</strong><br />
-                    {copy.noAdsSecond}
-                  </>
-                )}
+                <strong>{copy.noAds}</strong><br />
+                {copy.noAdsSecond}
               </p>
             </form>
           </div>

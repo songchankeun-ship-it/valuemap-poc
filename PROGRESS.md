@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 161 — OrnScore 로그인 + 계정 신뢰 표면 폴리시
+- **범위**: 로그인이 모바일/데스크톱에서 믿음직·이해하기 쉽게. repo-local UI/카피만, 제공자 콘솔/비공개 설정 무변경, 신규 로그인 제공자 0. 브랜치 `ai-center/task-161-ornscore-login-and-account-confidenc`. **5소스**: `i18n.ts`·`login/page.tsx`·`UserMenu.tsx`·`WelcomeToast.tsx`·`WatchlistClient.tsx`.
+- **i18n 계정 카피(신규)**: `commonCopy.{ko,en}.auth`에 `accountMenu`·`menuWatchlist`·`menuCompare`·`menuNotifications`·`loggingOut`·`syncCta`·`welcomeToast{title,body,close}` 추가. `legalAnd` 값에 간격 내장(ko `"과 "`/en `" and "`)해 하나의 동의-문구 템플릿이 두 로케일 모두 자연스러운 조사·간격(한글 "이용약관과 개인정보처리방침에" 붙여쓰기)으로 렌더. `as const satisfies Record<Locale, unknown>` 유지 → tsc가 양 로케일 완전성 강제.
+- **로그인 페이지**: 하드코딩 `locale === "ko" ? ... : ...` 2블록(동의·"광고성 메일 안 보냄")을 `copy.legal*`·`copy.noAds/noAdsSecond` 키로 단일화(약관/개인정보 `<Link>`·스타일 동일). OAuth·이메일 버튼에 `aria-busy`+`Loader2 animate-spin` 스피너(활성 버튼만), `disabled:opacity-60 disabled:cursor-not-allowed` 비활성 시각화, 이메일 버튼 44px min-h. 인증 호출/`redirectTo`/`friendlyAuthError`/`safeInternalPath`/`sent`·error 로직 무변경(표현만).
+- **UserMenu**: `useLanguage()` 소비자화·전 문구 `auth.*` 키. `isLoggingOut` 상태 — `signOut()` 진행 중 로그아웃 disable+스피너+`loggingOut` 라벨(더블클릭 방지), `router.refresh()`·Esc/외부클릭·`role=menu/menuitem`·`aria-haspopup/expanded` 유지.
+- **WelcomeToast**: `useLanguage()`+`welcomeToast` 카피(title/body/close aria-label). Suspense·5s 자동소멸·`history.replaceState` URL 정리 무변경.
+- **WatchlistClient**: 로그아웃 상태 동기화 CTA를 `authCopy.syncCta` 키로 로케일화(나머지 컴포넌트는 한국어 하드코딩 유지 = EN i18n 잔여).
+- **게이트**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목 위반 0(cp949 콘솔 ✅ print 트레이스백만·검증 통과) · `npm run build` 0(138 SSG·전 라우트 `/login` 5.74kB) · EN/KO 신규 문구 클라이언트 청크 번들 확인. (`npm run lint`은 이 레포 ESLint 미설정 = 대화형 프롬프트·회귀 아님, build가 검증.) 금칙어(`매수/매도/추천/수익 보장`) 0.
+- **다음 소유자**: WatchlistClient 전체 i18n·실기기 OAuth 왕복·390px/데스크톱 육안 게이트(운영자). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 158 — OrnScore 비교 플로우 폴리시 (결과 화면 편집 가능화)
 - **범위**: 비교(compare)가 종목 선택 전·후 모두 완성된 도구로 느껴지게. 광범위 리디자인·점수식·`stocks.json`·`compare.ts` API·제3자 서비스 무변경, 신규 npm 0. 브랜치 `ai-center/task-158-ornscore-compare-flow-useful-start-p`. **1소스 변경**: `src/components/CompareClient.tsx`.
 - **결과 화면 바스켓 관리(신규)**: 기존엔 2개 이상이면 종목을 더 담을 방법이 결과 화면에 없었음 → 상단에 경량 "바스켓 관리" 섹션 추가. 슬롯 카운터(`{n}개 담음 · {남은}개 더 담을 수 있어요`) + 컴팩트 `StockSearchBox` + 최근/오늘Top5/관심을 합쳐 중복 제거한 빠른추가 칩(최대 6개). 4개(`COMPARE_MAX`) 도달 시 입력 숨김 + "하나를 빼면 다른 종목을 담을 수 있어요" 안내.
