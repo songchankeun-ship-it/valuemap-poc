@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-04 · [claude] Task 193 — OrnScore 로컬 스모크 커버리지 확장
+- **범위**: 런칭 핵심 라우트·공통 사용자 플로우의 유지보수 가능한 로컬 스모크 커버리지 확장. 취약한 스냅샷 대신 작고 견고한 검사·비로그인 플로우 포함. OrnScore 레포 로컬 한정·additive·신규 의존성 0. 브랜치 `ai-center/task-193-ornscore-local-smoke-coverage-expans`.
+- **변경**:
+  - `scripts/smoke-check.mjs` — 라우트별 optional `expectStatus`(기본 200) 추가, 상태 단언을 `status !== (route.expectStatus ?? 200)`으로(하위호환: 기존 라우트 전부 암묵 200 유지). `--all` 세트 12→23 확장:
+    - 추가 공개 라우트 7: `/about`(서비스 소개)·`/guide/metrics`(지표 가이드)·`/guide/metrics/changelog`(산식 변경 이력, 정적 `<h1>`)·`/universe`(분석 대상)·`/terms`(이용약관)·`/privacy`(개인정보처리방침)·`/theme/battery`(2차전지, `mockData` 실존 슬러그).
+    - 부정/폴백 2: `/__no_such_route__`(하드 404·앵커 `찾을 수 없습니다`) + `/stock/000000`(SSG `notFound()`→200+not-found 본문 **소프트 404**, 상태 대신 본문+무크래시 검증).
+    - 비로그인 플로우 2: `/history`·`/settings/notifications`(리다이렉트/에러 없이 200으로 `로그인` CTA 렌더).
+  - `docs/ornscore-route-smoke-checklist.md` — `--all` 추가 검사 표 + "부정/폴백 검사(404·무효 티커)" + "비로그인 플로우" 서브섹션 추가(`expectStatus` 시맨틱·소프트 404 설명·기본 7 유한 유지 재확인).
+- **발견(코드 결함 아님)**: 무효 티커는 SSG `generateStaticParams` 라우트의 온디맨드 `notFound()` 렌더라 Next 14가 HTTP 200+not-found 본문(소프트 404)으로 내려줌(`000000/999999/ZZZZZZ` 안정 재현). 진짜 404 상태는 `/__no_such_route__`가 커버.
+- **불변식**: 앱 소스·점수식·`public/data/*`·cron·auth·`direction`·`metricsVersion` 무변경(스모크 스크립트+문서 전용).
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONIOENCODING=utf-8) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0 · 로컬 prod(포트 4456; 4455는 기존 리스너라 미점유) `smoke:check --all` 23/23 OK·기본 `smoke:check` 7/7 무변경 · 편집 소스/문서 U+FFFD 0. 포트 정리: 내가 띄운 4456 PID만 taskkill, AI Center 4310 LISTENING 유지.
+- **남은 소유자**: 실 브라우저 픽셀/OAuth 왕복은 운영자 게이트(불변). 로컬 커밋만·푸시/main 무변경(푸시는 오너).
+
 ## 2026-07-04 · [claude] Task 196 — OrnScore 저장·최근 본 종목 재방문 큐 + 상대시각 유틸 통일
 - **범위**: 두·세 번째 방문에서 저장·최근 본 종목이 유용하도록(모바일 우선) 리텐션 경로 강화. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-196-ornscore-saved-stock-and-recently-vi`.
 - **변경**:

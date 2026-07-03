@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T17:49:05.297Z
+Last updated: 2026-07-03T18:02:50.006Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 198 - OrnScore mobile viewport regression follow-up pass
-- Run: 166
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: 193 - OrnScore local smoke coverage expansion for launch routes
+- Run: 167
+- Status: failed
+- Agent: codex
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 193 — OrnScore 로컬 스모크 커버리지 확장 (2026-07-04, Claude)
+- **범위**: 런칭 핵심 라우트·공통 사용자 플로우의 유지보수 가능한 로컬 스모크 커버리지 확장. 취약한 스냅샷 대신 작고 견고한 검사 선호, 비로그인 플로우 포함. OrnScore 레포 로컬 한정·additive·신규 의존성 0. 브랜치 `ai-center/task-193-ornscore-local-smoke-coverage-expans`.
+- **변경**:
+  - `scripts/smoke-check.mjs` — 라우트별 optional `expectStatus`(기본 200) 추가, 상태 단언을 `status !== (route.expectStatus ?? 200)`으로(하위호환: 기존 라우트 전부 암묵 200). `--all` 세트를 12→23으로 확장:
+    - **추가 공개 라우트 7**: `/about`(서비스 소개)·`/guide/metrics`(지표 가이드)·`/guide/metrics/changelog`(산식 변경 이력)·`/universe`(분석 대상)·`/terms`(이용약관)·`/privacy`(개인정보처리방침)·`/theme/battery`(2차전지, `mockData` 실존 슬러그).
+    - **부정/폴백 2**: `/__no_such_route__`(하드 404, 앵커 `찾을 수 없습니다`) + `/stock/000000`(SSG `notFound()`가 200+not-found 본문으로 내려주는 **소프트 404** — 상태 대신 본문+무크래시 검증).
+    - **비로그인 플로우 2**: `/history`·`/settings/notifications`가 리다이렉트/에러 없이 200으로 `로그인` CTA 렌더(보호 라우트 graceful degrade).
+  - `docs/ornscore-route-smoke-checklist.md` — `--all` 추가 검사 표 + "부정/폴백 검사(404·무효 티커)" + "비로그인 플로우" 서브섹션 추가, `expectStatus` 시맨틱·소프트 404 설명, 기본 게이트가 유한 7로 유지됨 재확인.
+  - `docs/ornscore-spec-coverage.md` — §O(QA) 행에 Task 193 항목 추가.
+- **발견(코드 결함 아님)**: 무효 티커(`/stock/000000`)는 SSG `generateStaticParams` 라우트의 온디맨드 `notFound()` 렌더라 Next 14가 HTTP 200 + not-found 본문(**소프트 404**)으로 내려준다. `000000/999999/ZZZZZZ`에서 안정 재현 확인. 진짜 404 상태는 매칭 라우트가 없는 `/__no_such_route__`가 커버. 기본 게이트(7)는 무변경.
+- **게이트**: tsc 0 · verify_metrics 138/0/0(데이터 무변경) · build 0 · 로컬 prod(포트 4456, 4455는 기존 리스너라 미점유) `--all` 23/23 OK · 기본 7/7 무변경. 포트 정리: 내가 띄운 4456 PID만 taskkill, AI Center 4310 LISTENING 유지. 앱 소스/점수식/데이터/`direction` 무변경(스크립트+문서 전용).
 
 ### Task 192 — OrnScore 에러 바운더리·오프라인 재시도 폴백 (2026-07-04, Claude)
 - **범위**: 네트워크 실패·예외·오프라인 시 빈 화면 없이 차분한 한국어 안내와 재시도 경로 제공. OrnScore 레포 로컬 한정·소규모 검증 가능한 변경. 브랜치 `ai-center/task-192-ornscore-error-and-offline-fallback-`.
