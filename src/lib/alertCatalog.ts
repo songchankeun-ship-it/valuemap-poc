@@ -44,7 +44,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "watchlist_score_surge",
     label: "관심 종목 종합 점수 급변",
     description:
-      "관심 종목의 종합 점수가 전일 대비 크게 움직이면 변화 사실만 알려드려요. 점수는 탐색 우선순위용 참고 지표이며 매수·매도 신호가 아닙니다.",
+      "관심 종목의 종합 점수가 전일 대비 크게 움직이면 변화 사실만 알려드려요. 점수는 탐색 우선순위용 참고 지표이며 매수·매도 신호가 아닙니다. (준비 중 · 아직 발송 전)",
     category: "관심종목",
     status: "preview",
     connectsTo: "관심 종목",
@@ -54,7 +54,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "watchlist_flow_surge",
     label: "관심 종목 거래활성도 급증",
     description:
-      "관심 종목의 최근 거래대금이 평소보다 눈에 띄게 늘면 알려드려요. 관심이 몰리고 있다는 참고 신호로, 방향(상승/하락)을 뜻하지는 않습니다.",
+      "관심 종목의 최근 거래대금이 평소보다 눈에 띄게 늘면 알려드려요. 관심이 몰리고 있다는 참고 신호로, 방향(상승/하락)을 뜻하지는 않습니다. (준비 중 · 아직 발송 전)",
     category: "관심종목",
     status: "preview",
     connectsTo: "관심 종목",
@@ -64,7 +64,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "watchlist_overheat",
     label: "관심 종목 과열 주의 발생",
     description:
-      "관심 종목이 단기 급변동·과열 구간에 들어가면 '주의해서 확인하라'는 의미로 알려드려요. 회피·매도 권유가 아니라 변동성 점검용 안내입니다.",
+      "관심 종목이 단기 급변동·과열 구간에 들어가면 '주의해서 확인하라'는 의미로 알려드려요. 회피·매도 권유가 아니라 변동성 점검용 안내입니다. (준비 중 · 아직 발송 전)",
     category: "관심종목",
     status: "preview",
     connectsTo: "관심 종목",
@@ -73,7 +73,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "score_enter_80",
     label: "종합 점수 80점 이상 진입",
     description:
-      "탐색 대상 종목이 종합 점수 80점 구간에 새로 들어오면 후보로 살펴볼 수 있게 알려드려요. 점수는 참고 지표이며 매수 추천이 아닙니다.",
+      "탐색 대상 종목이 종합 점수 80점 구간에 새로 들어오면 후보로 살펴볼 수 있게 알려드려요. 점수는 참고 지표이며 매수 추천이 아닙니다. (준비 중 · 아직 발송 전)",
     category: "점수",
     status: "preview",
     connectsTo: "—",
@@ -91,7 +91,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "disclosure_importance_80",
     label: "공시 중요도 80점 이상 발생",
     description:
-      "중요도가 높게 분류된 공시가 올라오면 먼저 확인하도록 알려드려요. 중요도는 자동 분류 참고값이고, 호재·악재를 단정하지 않습니다.",
+      "중요도가 높게 분류된 공시가 올라오면 먼저 확인하도록 알려드려요. 중요도는 자동 분류 참고값이고, 호재·악재를 단정하지 않습니다. (준비 중 · 아직 발송 전)",
     category: "공시",
     status: "preview",
     connectsTo: "—",
@@ -100,7 +100,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "sector_rank_change",
     label: "업종 내 순위 변화",
     description:
-      "관심 종목의 같은 업종 안 상대 순위가 의미 있게 바뀌면 알려드려요. 업종 비교 표본이 적을 수 있어 참고용으로만 봅니다.",
+      "관심 종목의 같은 업종 안 상대 순위가 의미 있게 바뀌면 알려드려요. 업종 비교 표본이 적을 수 있어 참고용으로만 봅니다. (준비 중 · 아직 발송 전)",
     category: "업종",
     status: "preview",
     connectsTo: "관심 종목",
@@ -109,7 +109,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "backtest_match",
     label: "백테스트 조건 충족 종목 발생",
     description:
-      "실험 백테스트 전략의 조건에 새로 부합하는 종목이 생기면 알려드려요. 백테스트는 과거 가정 기반 실험이며 미래 수익을 보장하지 않습니다.",
+      "실험 백테스트 전략의 조건에 새로 부합하는 종목이 생기면 알려드려요. 백테스트는 과거 가정 기반 실험이며 미래 수익을 보장하지 않습니다. (준비 중 · 아직 발송 전)",
     category: "필터",
     status: "preview",
     connectsTo: "저장 필터",

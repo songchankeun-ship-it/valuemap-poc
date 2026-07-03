@@ -38,13 +38,13 @@ Task 144 시점 코드 기준. `file:line`은 감사 당시 위치(편집 시 �
 
 | 표면 | 위치 (file:line) | 현재 상태 | 카카오 준비도 |
 |---|---|---|---|
-| 알림 종류 카탈로그(9종 단일 소스) | `src/lib/alertCatalog.ts:32-117` | 라이브 2종(`watchlist_disclosure`·`saved_filter_match`) + 미리보기 7종. status `live`/`preview`. | 🔧 Stage 2에서 `AlertEvent` 스키마의 `type` 소스로 재사용 |
+| 알림 종류 카탈로그(9종 단일 소스) | `src/lib/alertCatalog.ts:32-117` | 라이브 2종(`watchlist_disclosure`·`saved_filter_match`) + 미리보기 7종. status `live`/`preview`. | 🔧 Stage 2에서 `AlertEvent` 스키마의 `type` 소스로 재사용 · ✅ **Task 171**: 미리보기 7종 `description`에 "(준비 중 · 아직 발송 전)" 정직 큐 추가(배지 없이 문자열만 읽어도 정직). 라이브 2종·`id`/`status`/`connectsTo`·카테고리·`AlertRow` 배지 로직 무변경 |
 | └ 저장 필터 알림 설명 | `src/lib/alertCatalog.ts:85` | "현재는 임시로 이메일 발송, 카카오톡 알림은 준비 중" | ✅ 이미 소프트닝됨(Task 113 후속) |
 | 미리보기 토글 저장(무발송) | `src/lib/alertPrefs.ts:13,16,40-48` | `localStorage` `Record<string,boolean>`. 발송 파이프라인 미연결(의도적). | 🔧 **Stage 1 잔여**(Task 148에서 의도적 미변경) — `{type, channel}` 확장은 실발송 결정과 함께 착수. Task 148은 localStorage-only·무발송 상태를 그대로 유지(백엔드 미연결 확인) |
 | 기능 플래그 | `src/lib/features.ts:5,7,9` | `watchlistDisclosureAlert`/`conditionAlert` active·free, `advancedAlerts` planned/pro | ✅ 내부 플래그(공개 약속 아님). **무변경** |
 | 알림 채널 현황 | `src/components/notifications/NotificationChannels.tsx:13-19` | 이메일=live, 웹·텔레그램·**카카오 알림톡**·앱푸시=preparing(`:17`) | ✅ **Task 148 로컬 완료** — 카카오 행에 "우선 방향 준비 중 · 로그인 카카오(계정)와는 별개 · 아직 실제 발송 전" 보조 카피 1줄 추가(준비 중 배지·이메일 사용 중 상태 무변경) |
 | 알림 종류 UI(라이브/미리보기 행·토글) | `src/components/notifications/AlertTypeCatalog.tsx:66-108` | 라이브="사용 중·이메일" 배지, 미리보기=준비 중+로컬 토글 | ✅ 정직 표시. 유지 |
-| 알림 예시 카드(형식 미리보기) | `src/components/notifications/AlertExampleCards.tsx` | 실데이터 형식 예시 + "투자 추천 아님" 푸터(`:31`) | ✅ **Task 148 로컬 완료** — 이 형식/고지 패턴을 재사용해 `KakaoAlertPreview.tsx`(카카오 말풍선 정적 프리뷰) 신설, `settings/notifications`에 렌더. 무발송·`AlertExampleData` 재사용 |
+| 알림 예시 카드(형식 미리보기) | `src/components/notifications/AlertExampleCards.tsx` | 실데이터 형식 예시 + "투자 추천 아님" 푸터(`:31`) | ✅ **Task 148 로컬 완료** — 이 형식/고지 패턴을 재사용해 `KakaoAlertPreview.tsx`(카카오 말풍선 정적 프리뷰) 신설, `settings/notifications`에 렌더. 무발송·`AlertExampleData` 재사용 · ✅ **Task 171**: 섹션 인트로를 라이브(관심 종목 공시=이메일 동작)와 미리보기(아직 발송 전) 구분 문구로 조정 + 점수 급변·거래활성도(미리보기) 카드에 "준비 중" 태그 추가(공시=live 카드는 "예시"만 유지). `grid`/`break-words`/44px·`AlertExampleData`·"※ 투자 추천 아님" 푸터 무변경(표시 전용) |
 | 인앱 알림 on/off | `src/components/NotificationToggle.tsx` · `src/lib/notifications.ts` | Supabase `notification_preferences.enabled` | ✅ 유지(발송 게이트) |
 | 조건 알림 관리 | `src/components/ConditionAlertsManager.tsx:52` | "…새 종목이 들어오면 알려드려요. (현재는 이메일 발송, 카카오톡 알림 준비 중 · 영업일 1회 평가)" | ☑ 소프트닝(이번 Task 144) |
 | 조건 알림 저장소 | `src/lib/conditionAlerts.ts` | Supabase `condition_alerts`(config·active·last_match) | 🔧 Stage 2 채널 선호 확장(설계만) |
@@ -85,6 +85,7 @@ Task 144 시점 코드 기준. `file:line`은 감사 당시 위치(편집 시 �
 
 > **진행 상태 (Task 148, 2026-07-03)**: item B(카카오 행 카피)·item C(카카오 인앱 프리뷰) **로컬 완료**. item A(`alertPrefs` `{type,channel}` 확장)는 실발송 결정과 함께 착수하도록 **의도적으로 남김** — Task 148은 `alertPrefs`를 localStorage-only·무발송 그대로 유지했다.
 > **후속 정합 패스 (Task 148 continuation, 2026-07-03)**: `WatchlistClient.tsx` 저장한 필터 섹션에 **저장 필터 → 조건 충족 알림 다리** 1줄 추가(`/settings/notifications` 내부 링크·"지금은 이메일(임시·베타)·카카오톡 준비 중" 일관 프레이밍). 무발송·무네트워크·매매 문구 없음. 관심 종목↔알림 무료 경로가 상단 "내 현황" CTA에 이어 저장 필터 섹션에서도 연결된다.
+> **정직성 폴리시 패스 (Task 171, 2026-07-03)**: 미리보기 종류가 "이미 발송 중"으로 읽힐 소지를 로컬에서만 정리. (1) `AlertExampleCards.tsx` 인트로를 라이브(관심 종목 공시=이메일)와 미리보기(아직 발송 전) 구분 문구로 조정 + 미리보기 카드(점수 급변·거래활성도)에 "준비 중" 태그 추가(공시=live는 "예시"만). (2) `alertCatalog.ts` 미리보기 7종 `description` 끝에 "(준비 중 · 아직 발송 전)" 정직 큐(배지 없이 문자열만 읽어도 정직). 감사 결과 `copy/today.ts`·`copy/stocks.ts`(ko/en)·`WatchlistClient.tsx`·`ConditionAlertsManager.tsx`·`NotificationChannels.tsx`·`KakaoAlertPreview.tsx`·설정 페이지 배너는 이미 "이메일 임시·베타 / 카카오톡 준비 중"·EN 패리티("email for now; KakaoTalk alerts in the works")로 정합 → 무변경. 외부 채널·발신·`cron/notify`·`evaluate-alerts`·`features.ts`·`alertPrefs` 배선·`.env` 무변경. 무발송·제3자 호출 0. 오너 게이트(§4)·외부 항목 전부 ⛔ 유지.
 
 - **채널 선호 개념 UI** 〔🔧 잔여〕: `src/lib/alertPrefs.ts`의 현재 `Record<string, boolean>`(type→on)을 **`{type, channel}` 형태**로 확장하는 개념을 도입한다. 예: `ornscore_alert_prefs`를 `Record<string, { inapp?: boolean; email?: boolean; kakao?: boolean }>`로. **여전히 localStorage·여전히 무발송**(외부로 나가는 메시지 0). `alertCatalog`의 `id`와 키를 계속 일치시켜 실발송 파이프라인 출시 시 그대로 이전. *(Task 148 미착수 — 스키마 확장은 실발송 라이브 결정과 묶어 진행.)*
 - **`NotificationChannels` 카카오 행 상세 카피** 〔✅ Task 148 완료〕: `src/components/notifications/NotificationChannels.tsx` 카카오 행에 "준비 중" 배지 유지 + 라벨 아래 1줄 보조문 "카카오톡 알림을 우선 방향으로 준비 중 · 로그인 카카오(계정)와는 별개 · 아직 실제 발송 전이에요." 추가. 이메일 "사용 중" 상태·다른 채널 무변경.

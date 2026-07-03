@@ -1,4 +1,4 @@
-import { FileText, TrendingUp, Activity } from "lucide-react";
+import { FileText, TrendingUp, Activity, Clock3 } from "lucide-react";
 
 // 알림이 실제로 어떻게 보일지 형식을 보여주는 예시 카드(설계서 §7.4 형식).
 // 순수 표시 컴포넌트 — 값은 서버에서 실제 데이터(최근 공시 신호·점수 변화·거래활성도)로 채워 넘긴다.
@@ -34,10 +34,13 @@ function ExampleShell({
   icon,
   title,
   children,
+  preparing = false,
 }: {
   icon: React.ReactNode;
   title: string;
   children: React.ReactNode;
+  /** 아직 발송 전인 종류(미리보기)면 '준비 중' 태그를 추가로 붙인다. 실제 발송(live)은 '예시'만. */
+  preparing?: boolean;
 }) {
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 min-w-0">
@@ -49,6 +52,12 @@ function ExampleShell({
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
           예시
         </span>
+        {preparing ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30">
+            <Clock3 className="w-3 h-3" />
+            준비 중
+          </span>
+        ) : null}
       </div>
       <div className="text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed break-words">{children}</div>
       <p className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800 text-[11px] text-zinc-400 dark:text-zinc-500 break-words">
@@ -64,7 +73,8 @@ export function AlertExampleCards({ data }: { data: AlertExampleData }) {
     <div>
       <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">알림 예시</h2>
       <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
-        알림이 도착하면 이런 형식으로 보여요. 아래는 최근 데이터로 만든 형식 예시이며, 실제 발송된 메시지가 아닙니다.
+        알림이 도착하면 이런 형식으로 보여요. 아래는 최근 데이터로 만든 형식 예시이며, <strong>실제 발송된 메시지가 아닙니다</strong>.
+        관심 종목 공시 알림만 지금 이메일로 동작하고, <span className="text-amber-700 dark:text-amber-400">준비 중</span> 표시가 붙은 종류는 아직 발송 전이에요.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {disclosure ? (
@@ -84,7 +94,7 @@ export function AlertExampleCards({ data }: { data: AlertExampleData }) {
         ) : null}
 
         {scoreSurge ? (
-          <ExampleShell icon={<TrendingUp className="w-3.5 h-3.5" />} title="관심 종목 종합 점수 급변">
+          <ExampleShell icon={<TrendingUp className="w-3.5 h-3.5" />} title="관심 종목 종합 점수 급변" preparing>
             <div className="font-semibold">
               {scoreSurge.name}{" "}
               <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">{scoreSurge.ticker}</span>
@@ -103,7 +113,7 @@ export function AlertExampleCards({ data }: { data: AlertExampleData }) {
         ) : null}
 
         {flowSurge ? (
-          <ExampleShell icon={<Activity className="w-3.5 h-3.5" />} title="관심 종목 거래활성도 급증">
+          <ExampleShell icon={<Activity className="w-3.5 h-3.5" />} title="관심 종목 거래활성도 급증" preparing>
             <div className="font-semibold">
               {flowSurge.name}{" "}
               <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">{flowSurge.ticker}</span>
