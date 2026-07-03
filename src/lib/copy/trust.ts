@@ -17,7 +17,7 @@ export const trustModalCopy = {
     secStatus: "상태",
     secLimits: "제한",
     secNotice: "투자 고지",
-    priceBasis: "가격·점수 기준",
+    priceBasis: "가격·점수 기준일",
     metricsApplied: "적용",
     metricsDesc: "현재 운영 중인 지표 계산식 버전입니다.",
     marketClose: "장마감",
@@ -42,7 +42,7 @@ export const trustModalCopy = {
 /** 앱 헤더 하단 데이터 상태 바 + 종목 수 칩. */
 export const headerBarCopy = {
   ko: {
-    dataBasis: "데이터 기준",
+    dataBasis: "데이터 기준일",
     marketClose: "장마감",
     preparing: "데이터 준비 중",
     bizDaysAgo: (n: number) => `· ${n}영업일 전`,

@@ -47,7 +47,7 @@ export function DataStatusBadge({
   const t = TONE[tone];
   return (
     <span
-      className={"inline-flex items-center gap-1 tabular-nums " + t.text + " " + className}
+      className={"inline-flex items-center gap-1 tabular-nums whitespace-nowrap " + t.text + " " + className}
     >
       <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + t.dot} aria-hidden="true" />
       <span>{label}</span>
@@ -66,7 +66,7 @@ export function AsOfDateBadge({
   className?: string;
 }) {
   return (
-    <span className={"inline-flex items-center gap-1 " + className}>
+    <span className={"inline-flex items-center gap-1 whitespace-nowrap " + className}>
       <strong className="tabular-nums text-zinc-900 dark:text-zinc-100 font-medium">{label}</strong>
       {suffix ? <span className="text-zinc-500 dark:text-zinc-500">{suffix}</span> : null}
     </span>

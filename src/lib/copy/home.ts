@@ -171,7 +171,7 @@ export const homeCopy = {
         total: { title: "Analyzed stocks", sub: "Based on real data" },
         strong: { title: "Composite 80+ candidates", sub: "Strengths across several metrics" },
         spike: { title: "Trading-activity spikes", sub: "More trading interest than usual" },
-        signal: { title: "Disclosure signals", sub: "DART · within latest 200 · signal basis" },
+        signal: { title: "Disclosure signals", sub: "DART · within latest 200 filings · signal basis" },
       },
     },
     topCandidate: {
@@ -202,7 +202,7 @@ export const homeCopy = {
       heading: "Disclosure signals to check first today",
       viewAll: "View all →",
       introA: "Treasury stock, holding changes, corrections, contracts, and financing disclosures are ",
-      introStrong: "automatically classified within DART's latest 200",
+      introStrong: "automatically classified within DART's latest 200 filings",
       introB: " into signals worth checking.",
       policyLabel: "Display policy",
       policyA: "The home page first shows only disclosures for the ",

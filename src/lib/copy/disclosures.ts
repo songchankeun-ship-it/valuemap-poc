@@ -125,10 +125,10 @@ export const disclosureExplorerCopy = {
     errorHelp: "This may be a temporary network issue. Please try again in a moment.",
     errorRetry: "Try again",
     title: "Disclosure signals",
-    within200: "Within latest 200",
-    periodScopeBadge: "Not the full period · within latest 200",
+    within200: "Within latest 200 filings",
+    periodScopeBadge: "Not the full period · within latest 200 filings",
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
-      `Last ${days} days · ${signalCount} signals within latest 200 · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
+      `Last ${days} days · ${signalCount} signals within latest 200 filings · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
     collectedAt: "Collected as of",
     collectedAtUnknown: "Collection time unknown",
     sourceSample: "Sample data",

@@ -47,7 +47,7 @@ export const DATA_STATUS_META: Record<
   },
   limited: {
     label: "제한 수집",
-    meaning: "공시는 최신 200건까지만 분석합니다.",
+    meaning: "공시는 최신 200건 내에서만 분석합니다.",
     tone: "limited",
   },
   error: {
@@ -152,7 +152,7 @@ export const domainStatuses: DomainStatus[] = [
     status: "limited",
     statusLabel: DATA_STATUS_META.limited.label,
     meaning: DATA_STATUS_META.limited.meaning,
-    detail: "DART · 최근 7일 · 최신 200건 분석",
+    detail: "DART · 최근 7일 · 최신 200건 내",
   },
   {
     key: "metrics",
@@ -168,7 +168,7 @@ export const domainStatuses: DomainStatus[] = [
 ];
 
 // ── 페이지별 제한 문구 단일 소스 (limits·knownLimits가 같은 문자열을 공유) ──
-const LIMIT_DISCLOSURE = "공시는 성능·비용을 위해 최신 200건까지만 분석합니다.";
+const LIMIT_DISCLOSURE = "공시는 성능·비용을 위해 최신 200건 내에서만 분석합니다.";
 const LIMIT_BACKTEST =
   "백테스트는 아이디어 검증용 시뮬레이션이며 현재 종합점수의 성과 검증 결과가 아닙니다.";
 
@@ -345,7 +345,7 @@ const DATA_STATUS_META_EN: Record<DataStatusKind, { label: string; meaning: stri
   normal: { label: "Data normal", meaning: "Key data is up to date as of the reference date." },
   partial: { label: "Partial delay", meaning: "Financial data for some stocks may not be current." },
   delayed: { label: "Update delayed", meaning: "Price data is from the previous business day." },
-  limited: { label: "Limited collection", meaning: "Disclosures are analyzed for the latest 200 filings only." },
+  limited: { label: "Limited collection", meaning: "Disclosures are analyzed only within the latest 200 filings." },
   error: { label: "Check needed", meaning: "Some data could not be generated and needs review." },
 };
 
@@ -357,7 +357,7 @@ const DATA_SOURCES_EN_USAGE: Record<string, string> = {
 };
 
 const LIMIT_DISCLOSURE_EN =
-  "For performance and cost, disclosures are analyzed for the latest 200 filings only.";
+  "For performance and cost, disclosures are analyzed only within the latest 200 filings.";
 const LIMIT_BACKTEST_EN =
   "Backtests are idea-validation simulations, not a performance verification of the current composite score.";
 
@@ -424,7 +424,7 @@ const domainStatusesEn: DomainStatus[] = [
     status: "limited",
     statusLabel: DATA_STATUS_META_EN.limited.label,
     meaning: DATA_STATUS_META_EN.limited.meaning,
-    detail: "DART · last 7 days · latest 200 filings",
+    detail: "DART · last 7 days · within the latest 200 filings",
   },
   {
     key: "metrics",
