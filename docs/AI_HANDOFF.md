@@ -1285,3 +1285,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·`stocks.json`·점수식·`direction`/지표 산출·cron/auth·`metricsVersion` 무변경. 기존 카피 키/문구 무변경(신규 키만 추가). 모든 diff는 className/markup/i18n 한정.
 - **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG·`/offline` 프리렌더) · 변경/신규 6파일 U+FFFD 0 · `next start -p 3100` curl SSR: `/offline`·`/nonexistent` 한국어 기본 렌더(각 "네트워크가 필요해요"·"페이지를 찾을 수 없습니다"), `.next/static/chunks`에 EN("You're offline"·"Page not found") + KO 문자열 동거 → 언어 토글 렌더 확인. 리스너 PID 6940만 taskkill(AI Center 무중단).
 - **남은 소유자**: 실 브라우저 다크모드 육안(not-found)·EN 언어 토글 실확인은 운영자 게이트(언어 전환 클라이언트·Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 178 — OrnScore 다음 제품 베팅 숏리스트 (2026-07-03, Claude, docs-only)
+- **Scope**: 폴리시 웨이브(167~177) 이후 "다음에 손댈 한 단계 큰 방향"을 오너가 고르기 쉽게 숏리스트로 정리. **문서 전용·소스/코드 무변경·스캐폴드 0**. 근거는 전부 레포 내부 설계서 항목으로 링크만(재서술 없음). 브랜치 `ai-center/task-178-ornscore-next-product-bet-shortlist`.
+- **산출물**: 신규 `docs/ornscore-next-product-bets-2026-07-03.md` — 6개 베팅을 (사용자 가치×차별성÷오너 게이트 의존)로 랭크: ①관심 그룹/메모/CSV(spec §2 8.2) ②데이터 설명가능성·점수 근거 심화/공시 중요도/이벤트 스터디(§2 5.1·6.2·6.4) ③공시 전체 기간 수집 파이프라인(§1 D 19.2) ④커버리지 138→500(§2 10) ⑤알림 라이브 발송(§2 5.4·7 + 카카오 백로그) ⑥Android TWA 래퍼(app-packaging-readiness·android-twa-owner-checklist). 각 베팅=Effort(S/M/L)·Risk·오너 전용 의존(④/⑤ + 게이트 명시)·**지금 가능한 ③ 첫 로컬 작업**(설계/표시 노트, 스캐폴드 아님)·근거 링크. 추천=#1 관심 고도화(오너 게이트 최얕음)+#2 점수 근거 심화 병행. 근시일 ③ 큐(owner-review §3·spec §A)를 **대체하지 않는 참고 레이어**로 명시.
+- **크로스레퍼런스(append-only 1줄씩)**: `docs/ornscore-spec-coverage.md` 요약 말미에 베팅 숏리스트 포인터 1줄 · `AI_HANDOFF`/`PROGRESS` Task 178 항목.
+- **불변식**: 무료·한국어 전용 베타·138종목·비자문·확정가/Pro 비홍보 유지. 금칙어(매수·매도·추천·수익 보장·목표가) 신규 도입 0(문서 내 언급은 불변식 재확인 문장으로만, 소스 게이트 대상 아님).
+- **게이트(전부 통과)**: `tsc --noEmit` exit 0(앱 소스 무변경 재확인) · `verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · 신규/편집 마크다운 3파일 U+FFFD 0 · `git status` 문서만 변경(소스 0). build/smoke/perf 생략(앱 소스 무변경 → 직전 QA 결과 유효).
+- **남은 소유자**: 어느 베팅을 실제로 착수할지는 제품/오너 결정. #5 알림 라이브·#6 TWA는 오너 입력값(채널 계정·서명 지문·실기기) 선결. 로컬 커밋만·푸시 미수행·main 무변경.
