@@ -58,6 +58,7 @@ export const commonCopy = {
       menuNotifications: "알림 설정",
       loggingOut: "로그아웃 중...",
       syncCta: "로그인하고 여러 기기에서 동기화하기",
+      syncLocalNote: "관심 종목은 지금 이 기기에 저장돼 있어요. 로그인하면 다른 기기에서도 이어집니다.",
       welcomeToast: {
         title: "로그인 완료!",
         body: "관심 종목과 비교 목록이 자동 동기화됩니다.",
@@ -133,6 +134,7 @@ export const commonCopy = {
       menuNotifications: "Notification settings",
       loggingOut: "Signing out...",
       syncCta: "Log in to sync across your devices",
+      syncLocalNote: "Your watchlist is saved on this device for now. Log in to carry it over to your other devices.",
       welcomeToast: {
         title: "You're signed in!",
         body: "Your watchlist and comparison list now sync automatically.",
@@ -300,6 +302,7 @@ export const loginCopy = {
       "/compare": "비교 목록을 저장하려면 로그인하세요.",
       "/settings/notifications": "알림을 설정하려면 로그인하세요.",
     },
+    contextFallback: "로그인하면 저장한 관심 종목·탐색 상태가 그대로 유지되고, 로그인 후 보던 화면으로 다시 돌아갑니다.",
     sentTitle: "로그인 링크를 보냈어요",
     sentBodyPrefix: "",
     sentBodySuffix: "로 메일을 발송했습니다. 메일함에서 링크를 클릭하면 자동으로 로그인됩니다.",
@@ -353,6 +356,7 @@ export const loginCopy = {
       "/compare": "Log in to save comparison lists.",
       "/settings/notifications": "Log in to manage notifications.",
     },
+    contextFallback: "Log in to keep your saved watchlist and exploration state, and you'll return to where you were.",
     sentTitle: "Sign-in link sent",
     sentBodyPrefix: "We sent an email to ",
     sentBodySuffix: ". Click the link in your inbox to sign in automatically.",

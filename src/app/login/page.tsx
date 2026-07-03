@@ -56,7 +56,11 @@ function LoginForm() {
   // next 는 URL 에서 온 조작 가능 입력 → 내부 경로만 허용(open-redirect 방지).
   // 뒤로가기 링크·OAuth/이메일 redirectTo 모두 이 정규화된 값에서 파생된다.
   const next = safeInternalPath(searchParams.get("next"));
-  const contextMsg = (copy.contexts as Record<string, string>)[next];
+  // 정확히 매칭되는 컨텍스트 안내가 있으면 그것을, 없더라도 내부 경로에서 온 로그인(예: /stock/…)
+  // 이면 일반 안내로 "상태 보존 + 원래 화면 복귀"를 알린다. 루트(/)에서 온 경우만 안내 생략.
+  const contextMsg =
+    (copy.contexts as Record<string, string>)[next] ??
+    (next !== "/" ? copy.contextFallback : undefined);
 
   const providers = enabledOAuthProviders();
   // "설정 필요"로만 노출하는 제공자(네이버 등) — env/콘솔 설정 전에는 클릭 불가.

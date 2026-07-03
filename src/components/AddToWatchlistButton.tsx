@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart } from "lucide-react";
 import {
   addToWatchlist,
   removeFromWatchlist,
   isInWatchlist,
 } from "@/lib/watchlist";
+import { createClient } from "@/lib/supabase/client";
+import { safeInternalPath } from "@/lib/auth/returnPath";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 type Toast = { kind: "added" } | { kind: "removed" } | null;
@@ -22,7 +25,13 @@ export function AddToWatchlistButton({
   const [isAdded, setIsAdded] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [loading, setLoading] = useState(true);
+  // 로그아웃이 "확인된" 경우에만 true. 기본값 false로 두어 확인 전까지는 아무것도 새로 렌더하지
+  // 않는다(정적 생성되는 종목 페이지에 서버 인증을 끌어들이지 않기 위함 — 클라이언트에서만 판별).
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pathname = usePathname();
+  // 로그인 후 원래 종목 페이지로 복귀 — next 는 내부 경로만 허용(open-redirect 방지).
+  const loginHref = `/login?next=${encodeURIComponent(safeInternalPath(pathname))}`;
 
   // 초기 상태 로드
   useEffect(() => {
@@ -37,6 +46,23 @@ export function AddToWatchlistButton({
       mounted = false;
     };
   }, [ticker]);
+
+  // 로그인 여부 확인(클라이언트 전용) — watchlist.ts 와 동일하게 getUser 사용.
+  // 확인 전에는 isLoggedOut=false 라 로그아웃 안내가 뜨지 않는다.
+  useEffect(() => {
+    let mounted = true;
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => {
+        if (mounted) setIsLoggedOut(!data.user);
+      })
+      .catch(() => {
+        // 인증 상태를 확인할 수 없으면 안내를 노출하지 않는다(보수적).
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // 외부 변경 감지
   useEffect(() => {
@@ -111,15 +137,29 @@ export function AddToWatchlistButton({
       >
         {toast ? (
           toast.kind === "added" ? (
-            <div className="pointer-events-auto bg-zinc-900 text-white text-sm px-4 py-2.5 rounded-lg shadow-lg flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <Heart className="w-4 h-4 text-pink-400 shrink-0" fill="currentColor" />
-              <span className="break-keep">{name} 관심 종목 추가됨</span>
-              <Link
-                href="/watchlist"
-                className="inline-flex items-center min-h-[44px] text-pink-300 hover:text-pink-200 font-medium"
-              >
-                목록 보기 →
-              </Link>
+            <div className="pointer-events-auto bg-zinc-900 text-white text-sm px-4 py-2.5 rounded-lg shadow-lg flex flex-col items-center gap-1">
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+                <Heart className="w-4 h-4 text-pink-400 shrink-0" fill="currentColor" />
+                <span className="break-keep">{name} 관심 종목 추가됨</span>
+                <Link
+                  href="/watchlist"
+                  className="inline-flex items-center min-h-[44px] text-pink-300 hover:text-pink-200 font-medium"
+                >
+                  목록 보기 →
+                </Link>
+              </div>
+              {/* 로그아웃이 확인된 경우에만 — 이 기기 저장·로그인 시 이어짐을 조용히 안내 */}
+              {isLoggedOut ? (
+                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-400">
+                  <span className="break-keep">이 기기에 저장됨 · 로그인하면 다른 기기에서도 이어집니다</span>
+                  <Link
+                    href={loginHref}
+                    className="inline-flex items-center min-h-[44px] text-blue-300 hover:text-blue-200 font-medium"
+                  >
+                    로그인 →
+                  </Link>
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className="pointer-events-auto bg-zinc-900 text-white text-sm px-4 py-2.5 rounded-lg shadow-lg flex flex-wrap items-center justify-center gap-x-2 gap-y-1">

@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 172 — 로그아웃→로그인 연속성 폴리시 (2026-07-03, Claude)
+- **범위**: 저장·관심·계정 게이트 동작이 로그아웃→로그인 전환에서 끊기지 않게. repo-local UI/카피만, **제공자 설정·비공개 설정·`redirectTo`·콜백 무변경·신규 제공자 0**. `providers.ts`·`auth/callback/route.ts`·`returnPath.ts` READ-ONLY(무변경). 브랜치 `ai-center/task-172-ornscore-logged-out-to-logged-in-con`.
+- **변경 파일(3 소스 + i18n)**: `src/lib/i18n.ts`(`commonCopy.{ko,en}.auth.syncLocalNote` + `loginCopy.{ko,en}.contextFallback` 신규·양 로케일 키 패리티), `src/components/AddToWatchlistButton.tsx`(클라이언트 전용 `getUser()` 로그인 판별·기본 로그아웃-미확인이라 정적 종목 페이지에 서버 인증 안 끌어들임 → 로그아웃 확인 시에만 '추가됨' 토스트에 "이 기기에 저장됨·로그인 시 이어짐" 2번째 줄+`next`=현재경로 로그인 링크), `src/components/WatchlistClient.tsx`(`!isLoggedIn && watchlist.length>0`이면 관심 섹션 상단 부드러운 정보 배너 = `syncLocalNote`+`syncCta`→`/login?next=/watchlist`), `src/app/login/page.tsx`(`contextMsg` 선택만: 매칭 없어도 `next!=="/"`면 `contextFallback` — `/stock/…` 등에서 온 로그인 안내).
+- **핵심**: 기존 토스트 타이밍·실행취소·`aria-live`·44px·flex-wrap 보존. 빈 상태 `syncCta`·목록/델타 로직 무변경. 제공자 렌더·`friendlyAuthError`·핸들러·`redirectTo` 무변경. 전부 중립 톤(매수/매도/추천/수익 보장 없음).
+- **게이트**: `tsc --noEmit` 0(ko/en 키 패리티) · `verify_metrics.py`(UTF-8) 138/오류0/금칙0/Metrics 2.4 · `smoke-check.mjs` 7/7 OK(4455) · `/login`·`?next=/watchlist`·`?next=/stock/005930` 각 200 · 신규 문구 U+FFFD 0. 로그인 페이지는 클라 렌더라 curl SSR엔 스켈레톤만(문구는 청크/육안). 실기기 390px 육안·로그인 실왕복·EN 토글은 운영자 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+- **추적**: `PROGRESS.md` 본 항목.
+
 ### Task 169 — 업종·피어 맥락 명료화 패스 (2026-07-03, Claude)
 - **범위**: 종목 상세·비교 화면에서 "업종/피어 비교의 기준"이 무엇인지 초보자가 오해하지 않도록 라벨·빈 상태·설명 문구만 보강. **점수 산식·소스 데이터 무변경**(표시 버그 없음). 브랜치 `ai-center/task-169-ornscore-sector-and-peer-context-cla`.
 - **변경 파일(5)**: `src/lib/copy/stockDetail.ts`(sectorComparisonCopy: legend를 열 순서 명시로 교체 + `basisNote` 신규 / sectorValue: `bridgeNote` 신규 — ko·en 키 동일), `src/components/stock/SectorComparison.tsx`(라벨형 legend + basisNote 렌더, flex-wrap/break-keep), `src/components/stock/StockDetailIntro.tsx`(SectorValueCard has-score 분기에 bridgeNote — 두 '업종' 섹션 구분), `src/components/CompareClient.tsx`(자체 지표 4종 비교 기준 캡션 + 기본 카드 하단 업종=내부 분류 각주 + 추천 세트 '같은 업종' 태그), `src/app/compare/page.tsx`(헤더 서브카피에 비교 기준 명시).

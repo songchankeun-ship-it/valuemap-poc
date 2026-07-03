@@ -349,6 +349,21 @@ export function WatchlistClient({
           ) : null}
         </div>
 
+        {/* 로그아웃 상태에서 관심 종목이 이미 있을 때 — 이 기기 저장·로그인 시 이어짐 안내(부드러운 정보 배너, 압박·닫기 없음) */}
+        {!isLoggedIn && watchlist.length > 0 ? (
+          <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 text-xs">
+            <span className="min-w-0 break-words text-blue-800 dark:text-blue-300 leading-snug">
+              {authCopy.syncLocalNote}
+            </span>
+            <Link
+              href="/login?next=/watchlist"
+              className="inline-flex items-center gap-1 shrink-0 font-medium text-blue-700 dark:text-blue-400 hover:underline"
+            >
+              {authCopy.syncCta} <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        ) : null}
+
         {/* 제거 되돌리기 — 실수로 뺀 종목을 다시 담기(aria-live로 변화 안내) */}
         <div aria-live="polite">
           {undoStock ? (

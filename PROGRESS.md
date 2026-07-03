@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 172 — 로그아웃→로그인 연속성 폴리시
+- **범위**: 저장·관심 담기·계정 게이트 동작이 로그아웃 상태에서 로그인으로 넘어갈 때 끊기지 않고 자연스럽게 느껴지게. repo-local UI/카피만, **제공자 설정·비공개 설정·`redirectTo`·콜백 로직 무변경·신규 로그인 제공자 0**. `providers.ts`·`auth/callback/route.ts`·`returnPath.ts`는 READ-ONLY로 취급(무변경). 브랜치 `ai-center/task-172-ornscore-logged-out-to-logged-in-con`.
+- **변경 파일(3 소스 + i18n)**:
+  - `src/lib/i18n.ts` — `commonCopy.{ko,en}.auth.syncLocalNote` 신규(관심 종목이 이 기기에 저장돼 있고 로그인 시 다른 기기로 이어짐) + `loginCopy.{ko,en}.contextFallback` 신규(내부 경로에서 온 로그인 일반 안내: 저장 상태 유지·원래 화면 복귀). `as const satisfies Record<Locale, unknown>` 유지 → tsc가 양 로케일 완전성 강제.
+  - `src/components/AddToWatchlistButton.tsx` — 클라이언트 전용 로그인 판별(`createClient().auth.getUser()`, 마운트 가드, 기본 `isLoggedOut=false`라 확인 전엔 아무것도 새로 렌더 안 함 → 정적 생성 종목 페이지에 서버 인증 안 끌어들임). **로그아웃 확인된 경우에만** '관심 종목 추가됨' 토스트에 조용한 2번째 줄("이 기기에 저장됨 · 로그인하면 다른 기기에서도 이어집니다" + `next`=현재 경로(`usePathname()`+`safeInternalPath`)로 로그인 링크) 추가. 기존 토스트 타이밍(추가 2.5s/제거 5s)·실행취소·`aria-live`·44px·flex-wrap 보존.
+  - `src/components/WatchlistClient.tsx` — `!isLoggedIn && watchlist.length > 0`일 때 관심 종목 섹션 상단에 부드러운(닫기·압박 없는) 정보 배너: `authCopy.syncLocalNote` + `authCopy.syncCta`(`/login?next=/watchlist`). 빈 상태 `syncCta`(기존)·목록·실행취소·점수 델타 로직 무변경. flex-wrap/break-words로 390px 대응.
+  - `src/app/login/page.tsx` — `contextMsg` 선택만 변경: 정확 매칭 컨텍스트가 없어도 `next !== "/"`면 `contextFallback` 사용(예: `/stock/…`에서 온 로그인). 제공자 렌더·`friendlyAuthError`·이메일/OAuth 핸들러·`redirectTo` 무변경.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0(ko/en 키 패리티) · `PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙어0·Metrics 2.4(매수/매도/추천/수익 보장 신규 도입 0) · `node scripts/smoke-check.mjs` 7/7 OK(로컬 prod 4455) · `/login`·`/login?next=/watchlist`·`/login?next=/stock/005930` 각 200. 신규 문구 U+FFFD/모지바케 0(grep 확인).
+- **다음 소유자**: 실기기 육안(390px에서 토스트 2번째 줄·배너 줄바꿈, 로그아웃↔로그인 실제 왕복, EN 토글로 로그인 페이지·관심 배너 문구 확인)은 헤드리스 미수행 → 운영자 게이트. 로그인 페이지는 클라이언트 렌더(useSearchParams Suspense)라 curl SSR엔 스켈레톤만 → 문구는 청크 번들/육안으로 확인. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 169 — 업종·피어 맥락 명료화 패스
 - **범위**: 종목 상세·비교 화면에서 "무엇을 무엇과 비교하는지"의 기준을 초보자가 오해하지 않게 라벨·빈 상태·설명 문구만 보강. **점수 산식·소스 데이터 무변경**(표시 버그 없음). repo-local·신규 의존성 0. 브랜치 `ai-center/task-169-ornscore-sector-and-peer-context-cla`.
 - **`stockDetail.ts` 카피(ko·en 키 패리티)**: `sectorComparisonCopy.legend`를 배지/막대 요약에서 **열 순서 명시**("순위 · 종목 · 종합점수(막대) · PER · 등락%")로 교체 + `basisNote` 신규(같은 업종을 실험 지표 종합점수 순 정렬한 탐색 우선순위·매수/매도 신호 아님). `sectorValue.bridgeNote` 신규 — '업종 대비 밸류'(PER/PBR 위치)와 아래 '같은 업종 비교'(종합점수 순위)가 다른 기준임을 한 줄로 구분.
