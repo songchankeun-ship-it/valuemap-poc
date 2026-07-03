@@ -58,6 +58,8 @@ export const stockDetailCopy = {
     sectorValue: {
       titlePrefix: "업종 대비 밸류 ·",
       diffNote: "(위 밸류 점수와 기준 다름)",
+      bridgeNote:
+        "이 값은 PER·PBR 기준 업종 내 밸류 위치이며, 아래 ‘같은 업종 비교’의 종합점수 순위와는 다릅니다.",
       peerDescBefore: "같은 업종",
       peerDescMid: "곳(본인 포함) 중 PER·PBR 상대 위치 · 위 4지표 밸류는 전체",
       peerDescAfter: "종목 풀 기준",
@@ -134,6 +136,8 @@ export const stockDetailCopy = {
     sectorValue: {
       titlePrefix: "Value vs. sector ·",
       diffNote: "(different basis from the Value score above)",
+      bridgeNote:
+        "This is the PER/PBR valuation position within the sector — distinct from the composite-score ranking in ‘Same-sector compare’ below.",
       peerDescBefore: "Relative PER/PBR position among",
       peerDescMid: "sector peers (this stock included) · the 4-metric Value above is based on the full pool of",
       peerDescAfter: "stocks ",
@@ -382,7 +386,9 @@ export const sectorComparisonCopy = {
     emptySub:
       "분석 풀에 같은 업종 종목이 1곳뿐이라 상대 비교를 표시할 수 없어요.",
     currentTag: "현재",
-    legend: "막대 = 종합점수 · 배지 = 업종 순위 · PER/등락 보조",
+    legend: "열 순서: 순위 · 종목 · 종합점수(막대) · PER · 등락%",
+    basisNote:
+      "같은 업종 종목을 실험 지표인 종합점수 순으로 정렬한 탐색 우선순위 화면이며, 매수·매도 신호가 아닙니다.",
     sampleBefore: "종합점수 상위",
     sampleMid: "곳 — 같은 업종",
     sampleAfter:
@@ -397,7 +403,9 @@ export const sectorComparisonCopy = {
     emptySub:
       "Only one stock in this sector is in the analysis pool, so a relative comparison can't be shown.",
     currentTag: "This",
-    legend: "Bar = composite score · badge = sector rank · PER/change as support",
+    legend: "Columns: rank · stock · composite score (bar) · PER · change%",
+    basisNote:
+      "This ranks same-sector stocks by the experimental composite score as a research-priority view — not a buy/sell signal.",
     sampleBefore: "Top",
     sampleMid: "by composite score among",
     sampleAfter:

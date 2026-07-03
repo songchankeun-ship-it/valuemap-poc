@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 169 — 업종·피어 맥락 명료화 패스
+- **범위**: 종목 상세·비교 화면에서 "무엇을 무엇과 비교하는지"의 기준을 초보자가 오해하지 않게 라벨·빈 상태·설명 문구만 보강. **점수 산식·소스 데이터 무변경**(표시 버그 없음). repo-local·신규 의존성 0. 브랜치 `ai-center/task-169-ornscore-sector-and-peer-context-cla`.
+- **`stockDetail.ts` 카피(ko·en 키 패리티)**: `sectorComparisonCopy.legend`를 배지/막대 요약에서 **열 순서 명시**("순위 · 종목 · 종합점수(막대) · PER · 등락%")로 교체 + `basisNote` 신규(같은 업종을 실험 지표 종합점수 순 정렬한 탐색 우선순위·매수/매도 신호 아님). `sectorValue.bridgeNote` 신규 — '업종 대비 밸류'(PER/PBR 위치)와 아래 '같은 업종 비교'(종합점수 순위)가 다른 기준임을 한 줄로 구분.
+- **컴포넌트 렌더**: `SectorComparison.tsx` — 라벨형 legend를 flex-wrap+break-keep로, classNote 위에 basisNote 렌더(sectorCount≥2 분기). `StockDetailIntro.tsx` `SectorValueCard` — has-score 분기(정상·저표본 공통)에 bridgeNote 렌더(빈 분기는 유지). `CompareClient.tsx` — 자체 지표 4종 헤더 아래 비교 기준 캡션 + 기본 카드 하단 "업종=오른스코어 내부 분류·KRX와 다를 수 있음" 각주(classNote 문구 미러) + 추천 세트 중 " vs " 없는(동업종) 세트에 '같은 업종' 태그. `compare/page.tsx` — 헤더 서브카피에 비교 기준(자체 지표 4종+재무+수익률·탐색용) 명시.
+- **게이트**: `npx tsc --noEmit` 0(ko/en satisfies 패리티) · `PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 성공(/compare·/stock/[ticker] 컴파일) · `git diff --stat` 5파일만(`sector.ts`·`score.ts`·`public/data/*` 무변경 확인). 390px overflow 방지 break-keep. 전 문구 중립(매수/매도/추천/목표가 0).
+- **다음 소유자**: 실기기 390px 육안(두 업종 섹션 구분·태그 줄바꿈·EN 토글)은 헤드리스 미수행 → 운영자 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 166 — 오너 리뷰 패키지 (배치 144~165)
 - **범위**: 최근 완료된 자동화 배치(Task 144~165)를 오너가 한 번에 리뷰하고 **다음 실제 제품 우선순위**를 고르기 쉽게 종합. **문서 전용·앱 소스 무변경**(신규 기능·리팩터 0). 근거는 전부 레포 내부(`docs/AI_HANDOFF.md`·`docs/ornscore-spec-coverage.md`·`PROGRESS.md`·커밋). 브랜치 `ai-center/task-166-ornscore-owner-review-package-after-`.
 - **신규 `docs/ornscore-owner-review-2026-07-03.md`**: §1 이번 배치 요약 표(A 관심·알림·개인화 / B 탐색·비교·공시 / C 신뢰·재무 문구 / D 로그인·모바일·접근성 / E QA·성능·프로세스, 각 행 한 줄 변경+근거 문서) · §2 8도메인 오너 리뷰 체크리스트(UX·데이터 신뢰·모바일·로그인·관심·알림·성능·재무 문구, 각 항목 현재 상태+검증 명령/문서·운영자 잔여 명시) · §3 다음 로컬 제안(spec-coverage A절에서 이미 ③으로 태깅된 5건만: 필터 자연어 요약줄·압축 보기·5단계 신뢰 배지 라벨 정렬·산식 버전 빌드 게이트 CI·프리셋 예상 결과 수 카드 — 신규 투기 작업 0) · §4 운영자·법무 게이트(`ornscore-owner-final-checklist`·`app-packaging-readiness`·`legal-ai-commercial-readiness` 링크만·재서술 없음).

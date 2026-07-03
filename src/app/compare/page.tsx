@@ -114,7 +114,7 @@ export default function ComparePage() {
         <h1 className="text-xl font-medium mb-1">종목 비교</h1>
         <p className="text-sm text-gray-500 dark:text-zinc-400">
           종목 페이지에서 "비교에 추가" 한 종목들을 나란히 봅니다.
-          자체 지표 4종 + 재무 + 수익률.
+          비교 기준은 자체 지표 4종 + 재무 + 수익률이며, 탐색용입니다.
         </p>
       </header>
 

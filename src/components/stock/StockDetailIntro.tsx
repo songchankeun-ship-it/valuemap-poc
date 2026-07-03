@@ -159,6 +159,7 @@ export function SectorValueCard({
       <div className="min-w-0">
         <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>{t.titlePrefix} {sectorName} <span className={"font-normal " + (lowSample ? "text-zinc-400 dark:text-zinc-500" : "text-cyan-700/70 dark:text-cyan-400/70")}>{t.diffNote}</span></div>
         <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.peerDescBefore} {peers}{t.peerDescMid} {poolN}{t.peerDescAfter}({Math.round(valueScore)}{t.peerDescPoint}</div>
+        <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.bridgeNote}</div>
         {lowSample ? (
           <div className="text-[10px] font-medium text-amber-600 dark:text-amber-400 mt-1">{t.lowSample}</div>
         ) : null}

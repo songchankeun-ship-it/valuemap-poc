@@ -322,7 +322,12 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     onClick={() => { void addSet(set.tickers); }}
                     className={`w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition ${FOCUS_RING}`}
                   >
-                    <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">{set.label} <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500">{set.tickers.length}종목</span></div>
+                    <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">
+                      {set.label} <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500">{set.tickers.length}종목</span>
+                      {!set.label.includes(" vs ") ? (
+                        <span className="ml-1 align-middle text-[9px] font-medium px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">같은 업종</span>
+                      ) : null}
+                    </div>
                     {!set.label.includes(" vs ") ? (
                       <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">{set.names.join(" · ")}</div>
                     ) : null}
@@ -507,10 +512,12 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
           );
         })}
       </ScrollX>
+      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 -mt-1 break-keep">각 카드의 업종은 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.</p>
 
       {/* 자체 지표 비교 */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 md:p-5 shadow-soft">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">자체 지표 4종</h3>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">자체 지표 4종</h3>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-3 md:mb-4 break-keep">오른스코어의 실험 단계 탐색 우선순위 점수를 나란히 놓고 본 것이며, 매수·매도 추천이 아닙니다.</p>
         <div className="space-y-3">
           {SCORE_KEYS.map(({ key, label, color }) => {
             const max = Math.max(...stocks.map((s) => s[key]));

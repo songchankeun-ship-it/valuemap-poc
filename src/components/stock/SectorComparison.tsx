@@ -75,10 +75,11 @@ export function SectorComparison({
               })}
             </ul>
           </div>
-          <div className="flex items-center gap-2 mt-2 text-[10px] text-zinc-400 dark:text-zinc-500">
-            <span className="shrink-0">{t.legend}</span>
+          <div className="flex flex-wrap items-center gap-x-2 mt-2 text-[10px] text-zinc-400 dark:text-zinc-500">
+            <span className="break-keep">{t.legend}</span>
           </div>
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">{t.sampleBefore} {Math.min(6, sectorCount)} {t.sampleMid} {sectorCount} {t.sampleAfter}</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.basisNote}</p>
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.classNote}</p>
         </>
       )}

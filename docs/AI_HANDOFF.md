@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 168 - OrnScore daily routine flow polish
-- Run: 144
+- Task: 169 - OrnScore sector & peer context clarity pass
+- Run: 145
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 169 — 업종·피어 맥락 명료화 패스 (2026-07-03, Claude)
+- **범위**: 종목 상세·비교 화면에서 "업종/피어 비교의 기준"이 무엇인지 초보자가 오해하지 않도록 라벨·빈 상태·설명 문구만 보강. **점수 산식·소스 데이터 무변경**(표시 버그 없음). 브랜치 `ai-center/task-169-ornscore-sector-and-peer-context-cla`.
+- **변경 파일(5)**: `src/lib/copy/stockDetail.ts`(sectorComparisonCopy: legend를 열 순서 명시로 교체 + `basisNote` 신규 / sectorValue: `bridgeNote` 신규 — ko·en 키 동일), `src/components/stock/SectorComparison.tsx`(라벨형 legend + basisNote 렌더, flex-wrap/break-keep), `src/components/stock/StockDetailIntro.tsx`(SectorValueCard has-score 분기에 bridgeNote — 두 '업종' 섹션 구분), `src/components/CompareClient.tsx`(자체 지표 4종 비교 기준 캡션 + 기본 카드 하단 업종=내부 분류 각주 + 추천 세트 '같은 업종' 태그), `src/app/compare/page.tsx`(헤더 서브카피에 비교 기준 명시).
+- **핵심**: 종목 상세의 인접한 두 업종 섹션('업종 대비 밸류'=PER/PBR 위치 vs '같은 업종 비교'=종합점수 순위)이 서로 다른 기준임을 bridgeNote로 명시. 비교 화면의 업종 라벨이 KRX 공식과 다를 수 있음을 classNote와 동일 문구로 안내. 전부 중립 톤(매수/매도/추천/목표가 없음).
+- **게이트**: `tsc --noEmit` 0(ko/en satisfies 키 패리티 확인) · `npm run build` 성공(/compare·/stock/[ticker] 컴파일) · `verify_metrics.py` 138/오류0/금칙0/Metrics 2.4 · `git diff --stat` 5파일만, `sector.ts`·`score.ts`·`public/data/*` 무변경 확인. 390px overflow 방지 위해 break-keep 사용.
+- **추적**: `PROGRESS.md` 본 항목. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만·푸시는 오너).
 
 ### Task 166 — 오너 리뷰 패키지 (배치 144~165) (2026-07-03, Claude)
 - **범위**: 최근 자동화 배치(Task 144~165)를 오너가 한 번에 리뷰하고 다음 실제 우선순위를 고르기 쉽게 정리. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`AI_HANDOFF`·`ornscore-spec-coverage`·`PROGRESS`·커밋). 브랜치 `ai-center/task-166-ornscore-owner-review-package-after-`.
