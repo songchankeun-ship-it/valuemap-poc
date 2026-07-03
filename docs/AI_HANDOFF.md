@@ -42,6 +42,19 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 190 — OrnScore 검색 미리보기·페이지 메타데이터 하드닝 (2026-07-04, Claude)
+- **범위**: 공개 페이지 title/description/공유 미리보기(OG·Twitter)/canonical/robots 일관성 강화. 재무 문구는 신중하게(수익·급등·추천·성과 약속 금지), OrnScore 레포 로컬 한정, 소규모 검증 가능한 변경. 브랜치 `ai-center/task-190-ornscore-search-preview-and-page-met`.
+- **변경(메타데이터)**:
+  - `app/theme/[slug]/page.tsx` — 신규 `generateMetadata`: 404→"테마를 찾을 수 없습니다 — 오른스코어", 정상 title "{테마} 테마 종목 — 오른스코어" + 중립 데이터 프레이밍 description("테마는 데이터 분류이며 투자 추천이 아닙니다") + OG(website)/Twitter/`canonical:/theme/{slug}`.
+  - `app/stock/[ticker]/page.tsx` — 기존 `generateMetadata`에 `alternates.canonical:/stock/{ticker}` 추가(not-found 브랜치 무변경).
+  - 정적 공유 페이지 OG+Twitter+canonical 추가(상대경로·`metadataBase` 해석): `about`·`today`·`disclosures`·`backtest`·`pricing`·`guide/metrics`·`compare`·`universe`. `today` description 개선("오늘 자체 알고리즘이 발견한 종목들"→"오늘 자체 지표 상위·변동 종목과 DART 공시 신호를 한 화면에서 살펴보세요").
+  - `app/stocks/page.tsx` — 두 브랜치 모두 OG/Twitter 추가, canonical은 **기본(?theme 없음) 브랜치에만**(테마 브랜치는 중복 URL 정규화 회피로 canonical 생략). 기본 description `138`→`dataMetadata.count`로 파생.
+  - robots noindex 추가: `watchlist`·`history`·`settings/notifications`(`admin/status`는 이미 noindex 확인). `login/page.tsx`는 `"use client"`라 metadata 불가 → `offline`/`not-found` 패턴대로 서버 `page.tsx`(metadata+title "로그인 — 오른스코어"+noindex) + `LoginContent.tsx`("use client" 분리)로 분할.
+- **공유 이미지 회귀 발견·수정(중요)**: 루트 `app/opengraph-image.tsx`(오너 브랜드 카드)가 파일 컨벤션으로 전 라우트에 `og:image` 상속을 주는데, 중첩 라우트에서 `openGraph` 객체를 새로 정의하면 상속이 **끊겨** 미리보기 이미지가 사라짐(SSR로 확인: `/about`=이미지 없음 vs 미편집 `/terms`=있음). → 편집한 모든 정적/테마 페이지 `openGraph.images:["/opengraph-image"]`로 **기존 사이트 공용 카드 유지**(신규 이미지 생성·발명 아님). `stock/[ticker]`는 자체 `opengraph-image.tsx`가 있어 무영향.
+- **불변식**: 점수식·`public/data/*`·cron·auth·`direction`·`metricsVersion` 무변경. `page.tsx`(홈)·루트 `layout.tsx` OG/canonical 무변경(이미 정합). 금칙어 신규 0. 신규 OG **이미지 에셋 생성 0**(기존 카드 재사용).
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(176 SSG·`theme/[slug]`·`stock/[ticker]` 전 params 생성) · `next start -p 3100`+`smoke:check` 7/7 200(신규 분할 `/login` 포함) · SSR `<head>` 스팟체크: `/theme/battery`·`/stock/005930`·`/today`·`/pricing`·`/about` title·og:*·twitter:*·canonical·og:image 한국어·정확, 테마 stocks 브랜치 canonical 0(의도), private 4페이지 robots `noindex, nofollow` · 편집/신규 16파일 U+FFFD 0.
+- **남은 소유자(⑤ 오너/디자인 게이트)**: 페이지별 **맞춤 공유 카드 이미지** 제작은 여전히 오너/디자인 게이트(현재 전 페이지 공용 브랜드 카드 사용, 코드 결함 아님 — Task 145 §3와 동일 결론). 로컬 커밋만·푸시/main 무변경.
+
 ### Task 189 — OrnScore 한국어 우선 출시 카피 정리 패스 (2026-07-03, Claude)
 - **범위**: 무료 한국어 베타 공개 표면의 (1) 혼재 언어 UI, (2) 유휴 언어 컨트롤, (3) 지표 용어 드리프트, (4) 첫 방문자 문구 어색함 감사 + 안전한 소규모 카피 수정. 근거 결정 `ornscore-free-beta-v1-scope.md` §3~4(한국어 전용·EN 내부 보존). 브랜치 `ai-center/task-189-ornscore-korean-first-launch-copy-cl`. 선행 크래시 런(157, codex)은 `AI_HANDOFF` 자동 헤더만 남김(부분 코드 편집 0).
 - **감사 산출물**: 신규 `docs/ornscore-korean-first-copy-cleanup-2026-07-03.md` — §1 유휴 KO/EN 토글=이미 숨김(`LanguageSwitcher` import 0·`DEFAULT_LOCALE="ko"`, EN 데이터 보존) → 조치 없음, §2 혼재 언어 누수 0(‘STEP n’은 Task 60 의도 디자인 토큰), §3 지표 드리프트 Fix-now 7건 + Keep(브리지·미사용 `ScoreTooltip`·AI 프롬프트·주석), §4 첫 방문자 문구 어색 0.

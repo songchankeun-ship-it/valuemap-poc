@@ -6,9 +6,28 @@ import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 import { dataStatus } from "@/lib/dataStatus";
 
+const backtestDescription =
+  "실데이터 기반 가격 신호 전략 검증. 누적수익률·MDD·Sharpe·알파 공개.";
+
 export const metadata = {
   title: "백테스트 — 오른스코어",
-  description: "실데이터 기반 가격 신호 전략 검증. 누적수익률·MDD·Sharpe·알파 공개.",
+  description: backtestDescription,
+  openGraph: {
+    title: "백테스트 — 오른스코어",
+    description: backtestDescription,
+    url: "/backtest",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "백테스트 — 오른스코어",
+    description: backtestDescription,
+  },
+  alternates: { canonical: "/backtest" },
 };
 
 // backtest-result.json 은 mock(준비 중) 또는 실데이터 두 형태일 수 있음.

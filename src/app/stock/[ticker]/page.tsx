@@ -78,6 +78,7 @@ export async function generateMetadata({ params }: PageProps) {
       title,
       description,
     },
+    alternates: { canonical: `/stock/${ticker}` },
   };
 }
 

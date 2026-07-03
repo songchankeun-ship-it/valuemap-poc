@@ -17,6 +17,7 @@ import { getScoreChangesBatch } from "@/lib/scoreHistory";
 
 export const metadata = {
   title: "알림 설정 — 오른스코어",
+  robots: { index: false, follow: false },
 };
 
 interface RawSignal {

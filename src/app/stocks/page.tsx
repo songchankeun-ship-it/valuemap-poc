@@ -12,14 +12,51 @@ interface PageProps {
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const { theme } = await searchParams;
   if (theme) {
+    const themedTitle = `${theme} 관련 종목 — 오른스코어`;
+    const themedDescription = `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`;
+    // 테마별 URL 은 canonical 을 지정하지 않아 중복 URL 정규화를 피하고,
+    // 기본(?theme 없음) URL 만 색인 대상 canonical 로 둔다.
     return {
-      title: `${theme} 관련 종목 — 오른스코어`,
-      description: `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`,
+      title: themedTitle,
+      description: themedDescription,
+      openGraph: {
+        title: themedTitle,
+        description: themedDescription,
+        url: `/stocks?theme=${encodeURIComponent(theme)}`,
+        siteName: "오른스코어",
+        locale: "ko_KR",
+        type: "website",
+        // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+        images: ["/opengraph-image"],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: themedTitle,
+        description: themedDescription,
+      },
     };
   }
+  const title = "종목 탐색 — 오른스코어";
+  const description = `${dataMetadata.count}개 종목을 자체 지표 4종으로 정렬·필터링`;
   return {
-    title: "종목 탐색 — 오른스코어",
-    description: "138개 종목을 자체 지표 4종으로 정렬·필터링",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "/stocks",
+      siteName: "오른스코어",
+      locale: "ko_KR",
+      type: "website",
+      // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+      images: ["/opengraph-image"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    alternates: { canonical: "/stocks" },
   };
 }
 

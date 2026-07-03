@@ -8,6 +8,35 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const theme = getThemeBySlug(slug);
+  if (!theme) return { title: "테마를 찾을 수 없습니다 — 오른스코어" };
+  const title = `${theme.name} 테마 종목 — 오른스코어`;
+  // 테마는 데이터 분류(그룹)일 뿐 투자 추천이 아니다 — 수익/급등/추천 표현 금지.
+  const description = `${theme.name} 테마로 분류된 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 살펴보세요. 테마는 데이터 분류이며 투자 추천이 아닙니다.`;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/theme/${slug}`,
+      siteName: "오른스코어",
+      locale: "ko_KR",
+      type: "website",
+      // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+      images: ["/opengraph-image"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    alternates: { canonical: `/theme/${slug}` },
+  };
+}
+
 export default async function ThemeDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const theme = getThemeBySlug(slug);

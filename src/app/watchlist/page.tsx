@@ -9,6 +9,7 @@ import { realStockPool } from "@/lib/realStocks";
 
 export const metadata = {
   title: "관심 종목 — 오른스코어",
+  robots: { index: false, follow: false },
 };
 
 interface RawSignal {

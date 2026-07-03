@@ -6,9 +6,27 @@ import { isSuspect } from "@/lib/dataQuality";
 import { sectorOf } from "@/lib/sector";
 import { CompareClient } from "@/components/CompareClient";
 
+const compareDescription = "선택한 종목들의 지표·재무 데이터를 한눈에 비교.";
+
 export const metadata = {
   title: "종목 비교 — 오른스코어",
-  description: "선택한 종목들의 지표·재무 데이터를 한눈에 비교.",
+  description: compareDescription,
+  openGraph: {
+    title: "종목 비교 — 오른스코어",
+    description: compareDescription,
+    url: "/compare",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "종목 비교 — 오른스코어",
+    description: compareDescription,
+  },
+  alternates: { canonical: "/compare" },
 };
 
 export default function ComparePage() {

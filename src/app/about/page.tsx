@@ -6,6 +6,23 @@ import PwaInstallHelper from "@/components/PwaInstallHelper";
 export const metadata = {
   title: "서비스 소개 — 오른스코어",
   description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+  openGraph: {
+    title: "서비스 소개 — 오른스코어",
+    description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+    url: "/about",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 를 정의하면 루트 opengraph-image.tsx 상속이 끊기므로,
+    // 기존 사이트 공용 공유 카드(브랜드 이미지)를 명시해 미리보기 이미지를 유지한다.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "서비스 소개 — 오른스코어",
+    description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+  },
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

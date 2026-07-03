@@ -49,9 +49,28 @@ async function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T
   ]);
 }
 
+const todayDescription =
+  "오늘 자체 지표 상위·변동 종목과 DART 공시 신호를 한 화면에서 살펴보세요.";
+
 export const metadata = {
   title: "오늘 — 오른스코어",
-  description: "오늘 자체 알고리즘이 발견한 종목들",
+  description: todayDescription,
+  openGraph: {
+    title: "오늘 — 오른스코어",
+    description: todayDescription,
+    url: "/today",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "오늘 — 오른스코어",
+    description: todayDescription,
+  },
+  alternates: { canonical: "/today" },
 };
 
 export const revalidate = 3600;

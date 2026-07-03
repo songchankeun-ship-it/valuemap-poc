@@ -4,10 +4,28 @@ import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 import { dataStatus } from "@/lib/dataStatus";
 
+const universeDescription =
+  "오른스코어가 분석하는 한국 주식 전체 목록과 선정 기준, 데이터 기준일, 한계를 공개합니다.";
+
 export const metadata = {
   title: "분석 대상 종목 — 오른스코어",
-  description:
-    "오른스코어가 분석하는 한국 주식 전체 목록과 선정 기준, 데이터 기준일, 한계를 공개합니다.",
+  description: universeDescription,
+  openGraph: {
+    title: "분석 대상 종목 — 오른스코어",
+    description: universeDescription,
+    url: "/universe",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "분석 대상 종목 — 오른스코어",
+    description: universeDescription,
+  },
+  alternates: { canonical: "/universe" },
 };
 
 export const revalidate = 3600;
