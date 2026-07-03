@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T04:43:05.125Z
+Last updated: 2026-07-03T04:45:25.678Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 163 - OrnScore loading and skeleton state polish
-- Run: 138
-- Status: completed
+- Task: 164 - OrnScore route level smoke checklist automation pass
+- Run: 139
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 164 — 라우트 스모크 체크리스트 자동화 (2026-07-03, Claude)
+- **범위**: 로컬 QA를 기억에 덜 의존하고 빠르게. repo-local only·신규 의존성 0·앱 소스/데이터/점수식 무변경. 브랜치 `ai-center/task-164-ornscore-route-level-smoke-checklist`.
+- **신규 게이트 `scripts/smoke-check.mjs`**(순수 Node ESM·`fetch`만·`node:*` 외 import 0): 이미 떠 있는 로컬 prod에 핵심 7라우트(`/ /stocks /stock/034730 /today /disclosures /watchlist /login`)를 각 1회 fetch → (a) 200, (b) 치명 마커 0(`Application error`/`Hydration failed`(정밀—`suppressHydrationWarning` 오탐 회피)/`Cannot read properties`/`ReferenceError:`/`Unhandled`/`Minified React error`), (c) 라우트별 콘텐츠 앵커(`138`/`종목`/`상위`/`오늘`/`공시`/`관심`/`카카오`). **진짜 게이트**(perf:check와 달리): 실패 시 OK/FAIL 표+`exit 1`, 서버 미도달 시 힌트. `--base`(기본 4455)·`SMOKE_BASE_URL`·`--all`(추가 5라우트로 12라우트 동등).
+- **`package.json`** `smoke:check` 1줄만 추가(deps/lock 무변경). **신규 문서** `docs/ornscore-route-smoke-checklist.md`(실행법·앵커·마커·포트 가드레일; 390px/OAuth는 post-release §7/§8 교차링크).
+- **검증**: `tsc` 0 · `build` 0(138 SSG·라우트 표 무변경) · 로컬 prod **4455**(리스너 PID 10096만 `taskkill`·**AI Center 4310(PID 32452) 무중단·종료 후 LISTENING 재확인**): 7/7 OK·exit 0, `--all` 12/12 OK, 잘못된 포트→FAIL·힌트·exit 1. `git diff --check` 0·U+FFFD 0. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
 
 ### Task 163 — 로딩·스켈레톤·느린상태 폴리시 (2026-07-03, Claude)
 - **범위**: 느린 순간을 "고장"이 아니라 "의도된 로딩"으로. repo-local UI만·데이터 패칭 계약/점수식/`stocks.json`/제3자 무변경·신규 npm 0. 스코프 7영역(홈·종목탐색·종목상세·오늘·공시·관심·로그인). 브랜치 `ai-center/task-163-ornscore-loading-and-skeleton-state-`.

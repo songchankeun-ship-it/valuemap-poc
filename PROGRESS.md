@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 164 — 라우트 스모크 체크리스트 자동화
+- **범위**: 로컬 QA를 기억에 덜 의존하고 빠르게. repo-local only, 신규 의존성 0, 앱 소스·데이터·점수식 무변경. 브랜치 `ai-center/task-164-ornscore-route-level-smoke-checklist`.
+- **신규 게이트 `scripts/smoke-check.mjs`**: 순수 Node ESM(`fetch`만, `node:*` 외 import 0, ASCII/영어 본문+한국어 앵커만). 이미 떠 있는 로컬 prod 서버에 핵심 7라우트(`/ /stocks /stock/034730 /today /disclosures /watchlist /login`)를 각 1회 fetch → (a) HTTP 200, (b) 치명 마커 0(`Application error`/`Hydration failed`(정밀 문구—`suppressHydrationWarning` 오탐 회피)/`Cannot read properties`/`ReferenceError:`/`Unhandled`/`Minified React error`), (c) 라우트별 콘텐츠 앵커 존재(`138`/`종목`/`상위`/`오늘`/`공시`/`관심`/`카카오`). `perf:check`(권고·항상 exit 0)와 달리 **진짜 게이트**: 실패 시 OK/FAIL 표+실패 상세+`exit 1`, 서버 미도달 시 `"is the local prod server running at <base>?"` 힌트. `--base`(기본 4455)·`SMOKE_BASE_URL` env, `--all`은 추가 공개 라우트(`/compare /pricing /status /backtest /manifest.webmanifest`) 덧붙여 과거 12라우트 패스 동등(기본은 유한 7라우트).
+- **`package.json`**: `"smoke:check": "node scripts/smoke-check.mjs"` 1줄만 추가(dependencies/lock 무변경).
+- **신규 문서 `docs/ornscore-route-smoke-checklist.md`**(한국어): 실행법(build→전용 포트 start→smoke:check), 7라우트·앵커 증명, 치명 마커·`suppressHydrationWarning` 캐비엇, 포트 4310 무중단 가드레일. 헤드리스가 못 잡는 390px/OAuth는 `ornscore-post-release-qa-2026-07-02.md` §7/§8 교차 링크(중복 미기재).
+- **검증(end-to-end)**: `npx tsc --noEmit` 0 · `npm run build` 0(138 SSG·라우트 표 무변경) · 로컬 prod **4455**(리스너 PID 10096만 `taskkill`·**AI Center 4310(PID 32452) 무중단·종료 후 LISTENING 재확인**): 7/7 OK·exit 0, `--all` 12/12 OK, 잘못된 포트(4999)→7 FAIL·힌트·exit 1 확인. `git diff --check` 0(CRLF 경고만)·신규/변경 파일 U+FFFD 0. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 163 — OrnScore 로딩·스켈레톤·느린상태 폴리시
 - **범위**: 느린 순간이 "고장"이 아니라 "의도된 로딩"으로 느껴지게. repo-local UI만, 데이터 패칭 계약·점수식·`stocks.json`·제3자 서비스 무변경, 신규 npm 0. 브랜치 `ai-center/task-163-ornscore-loading-and-skeleton-state-`. **스코프 7영역**: 홈·종목탐색·종목상세·오늘·공시·관심·로그인.
 - **라우트 SSR 스켈레톤 4종 신규**: `src/app/loading.tsx`(홈)·`stocks/loading.tsx`·`today/loading.tsx`·`disclosures/loading.tsx`. 각 실제 페이지 상단 스캐폴드(헤더+주요 카드/그리드/목록)를 모바일·`md:` 양쪽에서 흉내 → CLS 최소화. 순수 JSX(데이터/상태/import 0), `aria-busy`+한국어 `aria-label`. 기존 `stock/[ticker]/loading.tsx`·`watchlist/loading.tsx`와 합쳐 스코프 6영역 SSR 스켈레톤 표준화(공통 토큰 `animate-pulse`·zinc·다크 변형).

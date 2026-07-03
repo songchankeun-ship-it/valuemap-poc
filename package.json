@@ -10,6 +10,7 @@
     "app:check": "node scripts/check-app-packaging.mjs",
     "app:assetlinks": "node scripts/generate-assetlinks.mjs",
     "perf:check": "node scripts/perf-check.mjs",
+    "smoke:check": "node scripts/smoke-check.mjs",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
