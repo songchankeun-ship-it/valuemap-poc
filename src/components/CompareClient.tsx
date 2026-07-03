@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   getCompareList,
   addToCompare,
   removeFromCompare,
   clearCompare,
+  COMPARE_MAX,
 } from "@/lib/compare";
 import { getWatchlist } from "@/lib/watchlist";
 import { getRecentViews } from "@/lib/recentViews";
@@ -89,6 +90,12 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
   const [mounted, setMounted] = useState(false);
   const [watchlist, setWatchlist] = useState<Array<{ ticker: string; name: string }>>([]);
   const [recentViews, setRecentViews] = useState<Array<{ ticker: string; name: string }>>([]);
+  // 담기/빼기 피드백 — 최대 초과, 이미 담음 등 안내(3초 자동 소멸)
+  const [notice, setNotice] = useState<string>("");
+  // 마지막으로 뺀 종목 — 실수로 뺀 경우 되돌리기(5초 자동 소멸)
+  const [undoStock, setUndoStock] = useState<{ ticker: string; name: string } | null>(null);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -155,16 +162,59 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
     };
   }, []);
 
+  // 타이머 정리 — 언마운트 시 대기 중인 자동 소멸 타이머를 해제
+  useEffect(() => {
+    return () => {
+      if (noticeTimer.current) clearTimeout(noticeTimer.current);
+      if (undoTimer.current) clearTimeout(undoTimer.current);
+    };
+  }, []);
+
+  function flashNotice(msg: string) {
+    setNotice(msg);
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    noticeTimer.current = setTimeout(() => setNotice(""), 3000);
+  }
+
+  // 모든 담기 동작의 공통 경로 — 상한 초과/중복이면 조용히 안내만 띄운다.
+  async function tryAdd(ticker: string) {
+    const res = await addToCompare(ticker);
+    if (!res.ok && res.reason === "max") {
+      flashNotice(`비교는 최대 ${COMPARE_MAX}개까지 담을 수 있어요 — 하나를 빼고 추가하세요`);
+    } else if (res.ok && res.reason === "already") {
+      flashNotice("이미 담은 종목이에요");
+    }
+  }
+
   async function remove(ticker: string) {
+    const name = stockMap[ticker]?.name ?? ticker;
     setTickers((prev) => prev.filter((t) => t !== ticker));
     await removeFromCompare(ticker);
+    // 방금 뺀 종목을 되돌릴 수 있게 잠시 보관
+    setUndoStock({ ticker, name });
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    undoTimer.current = setTimeout(() => setUndoStock(null), 5000);
+  }
+
+  async function undoRemove() {
+    const target = undoStock;
+    if (!target) return;
+    setUndoStock(null);
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    await addToCompare(target.ticker);
   }
 
   // 추천 세트 추가 — addToCompare가 매번 현재 목록을 읽으므로 순차 호출로 4개 상한을 지킨다.
   async function addSet(setTickers: string[]) {
+    let hitMax = false;
     for (const t of setTickers) {
-      await addToCompare(t);
+      const res = await addToCompare(t);
+      if (!res.ok && res.reason === "max") {
+        hitMax = true;
+        break;
+      }
     }
+    if (hitMax) flashNotice(`최대 ${COMPARE_MAX}개까지 담을 수 있어 일부만 추가됐어요`);
   }
 
   async function clearAll() {
@@ -188,12 +238,35 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
     .map((t) => stockMap[t])
     .filter((s): s is CompareStock => Boolean(s));
 
+  // 빠른 추가 후보 — 이미 담은 종목은 제외. 두 화면(빈 상태·결과)에서 공용으로 쓴다.
+  const watchlistAddable = watchlist.filter((w) => !tickers.includes(w.ticker));
+  // 최근 본 종목 — 이미 담은 종목은 제외. 실제 방문 기록이 1개 이상일 때만 노출(빈/가짜 칩 없음)
+  const recentAddable = recentViews.filter((r) => !tickers.includes(r.ticker));
+  const top5Addable = top5.filter((s) => !tickers.includes(s.ticker));
+
+  // 담기/빼기 피드백 영역 — 두 화면에서 동일하게 렌더(안내 + 되돌리기)
+  const feedbackRegion =
+    notice || undoStock ? (
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" aria-live="polite">
+        {undoStock ? (
+          <span className="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-300 min-w-0">
+            <span className="truncate max-w-[180px]">{undoStock.name}을(를) 뺐어요</span>
+            <button
+              type="button"
+              onClick={() => { void undoRemove(); }}
+              className="font-semibold text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+            >
+              실행 취소
+            </button>
+          </span>
+        ) : null}
+        {notice ? <span className="text-zinc-500 dark:text-zinc-400 truncate min-w-0">{notice}</span> : null}
+      </div>
+    ) : null;
+
   // 비교는 최소 2개부터 의미가 있으므로, 2개 미만이면 시작 화면을 보여준다.
   if (stocks.length < 2) {
     const selected = stocks[0]; // 0개 또는 1개
-    const watchlistAddable = watchlist.filter((w) => !tickers.includes(w.ticker));
-    // 최근 본 종목 — 이미 담은 종목은 제외. 실제 방문 기록이 1개 이상일 때만 노출(빈/가짜 칩 없음)
-    const recentAddable = recentViews.filter((r) => !tickers.includes(r.ticker));
     return (
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-8">
         <div className="text-center mb-5">
@@ -205,11 +278,13 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
         </div>
 
         <div className="max-w-2xl mx-auto space-y-5">
+          {feedbackRegion ? <div>{feedbackRegion}</div> : null}
+
           {/* 1) 직접 검색하기 — 빈 상태의 첫 행동(유일하게 강조한 박스) */}
           <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3.5">
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목명 또는 코드 검색</div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 4개까지 담아 비교할 수 있어요.</p>
-            <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void addToCompare(t); }} placeholder="예: 삼성전자, 005930" />
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 {COMPARE_MAX}개까지 담아 비교할 수 있어요.</p>
+            <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void tryAdd(t); }} placeholder="예: 삼성전자, 005930" />
           </div>
 
           {/* 선택 칩 + 최소 2개 안내 — 1개 선택 시 */}
@@ -267,7 +342,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     <button
                       key={r.ticker}
                       type="button"
-                      onClick={() => { void addToCompare(r.ticker); }}
+                      onClick={() => { void tryAdd(r.ticker); }}
                       className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
                     >
                       + {r.name}
@@ -288,7 +363,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     <button
                       key={s.ticker}
                       type="button"
-                      onClick={() => { void addToCompare(s.ticker); }}
+                      onClick={() => { void tryAdd(s.ticker); }}
                       disabled={tickers.includes(s.ticker)}
                       className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition disabled:opacity-40 disabled:hover:border-zinc-200"
                     >
@@ -308,7 +383,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                     <button
                       key={w.ticker}
                       type="button"
-                      onClick={() => { void addToCompare(w.ticker); }}
+                      onClick={() => { void tryAdd(w.ticker); }}
                       className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
                     >
                       + {w.name}
@@ -335,6 +410,19 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
     );
   }
 
+  const canAddMore = stocks.length < COMPARE_MAX;
+  // 결과 화면 빠른 추가 후보 — 최근·Top5·관심을 합치고 중복 제거(칩 과다 방지 위해 6개까지)
+  const quickAdd: Array<{ ticker: string; name: string }> = [];
+  {
+    const seen = new Set<string>(tickers);
+    for (const item of [...recentAddable, ...top5Addable, ...watchlistAddable]) {
+      if (seen.has(item.ticker)) continue;
+      seen.add(item.ticker);
+      quickAdd.push(item);
+      if (quickAdd.length >= 6) break;
+    }
+  }
+
   return (
     <div className="space-y-3 md:space-y-4">
       {/* Header bar */}
@@ -345,6 +433,43 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
           <button onClick={clearAll} className="text-zinc-500 dark:text-zinc-400 hover:text-red-600 transition">모두 비우기</button>
         </div>
       </div>
+
+      {/* 바스켓 관리 — 결과 화면에서도 종목을 더 담거나 잘못 담은 종목을 되돌릴 수 있게 */}
+      <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-3 md:p-3.5 space-y-2.5">
+        {canAddMore ? (
+          <>
+            <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              <strong className="text-zinc-800 dark:text-zinc-200">{stocks.length}개 담음</strong> · {COMPARE_MAX - stocks.length}개 더 담을 수 있어요
+            </div>
+            <div className="max-w-sm">
+              <StockSearchBox
+                stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))}
+                onPick={(t) => { void tryAdd(t); }}
+                placeholder="종목 추가 — 예: 삼성전자, 005930"
+              />
+            </div>
+            {quickAdd.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {quickAdd.map((q) => (
+                  <button
+                    key={q.ticker}
+                    type="button"
+                    onClick={() => { void tryAdd(q.ticker); }}
+                    className="text-xs px-3 py-1.5 min-h-[44px] rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition"
+                  >
+                    + {q.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            최대 {COMPARE_MAX}개까지 담았어요 · 하나를 빼면 다른 종목을 담을 수 있어요
+          </div>
+        )}
+        {feedbackRegion}
+      </section>
 
       {stocks.length > 2 ? (
         <p className="md:hidden text-[11px] text-zinc-400 dark:text-zinc-500 -mt-2">← 가로로 스크롤하세요 →</p>

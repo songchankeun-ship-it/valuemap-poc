@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 158 — 비교 플로우 폴리시 (결과 화면 편집 가능화) (2026-07-03, Claude)
+- **범위**: 비교(compare)가 선택 전·후 모두 완성된 도구로 느껴지게. 광범위 리디자인·점수식·`stocks.json`·`compare.ts` API·제3자 서비스 무변경, 신규 npm 0. **1소스**: `src/components/CompareClient.tsx`. 브랜치 `ai-center/task-158-ornscore-compare-flow-useful-start-p`.
+- **결과 화면 바스켓 관리(신규)**: 2개 이상 선택 후에도 종목을 더 담을 수 있게 상단에 경량 "바스켓 관리" 섹션 — 슬롯 카운터(`{n}개 담음 · {남은}개 더`) + 컴팩트 `StockSearchBox` + 최근/Top5/관심 병합·중복제거 빠른추가 칩(최대 6). `COMPARE_MAX` 도달 시 입력 숨김 + 안내.
+- **공통 담기 경로 `tryAdd`**: 두 화면 모든 담기를 라우팅 → 상한초과/중복 3초 안내(중립 문구). `addSet`도 루프 중 상한 감지 → 부분추가 안내.
+- **실수 복구**: `remove` 후 5초간 두 화면 공용 `feedbackRegion`(`aria-live`)에 "실행 취소" 노출 → `addToCompare` 복원. 결과 카드 ×·빈 상태 칩 × 모두 적용.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138·오류0·금칙어0·Metrics 2.4 · `next build` 0(138p, `/compare` `ƒ`). 로컬 prod 3100 `/compare` 200·seed 200(자기 PID만 taskkill). lint는 레포 ESLint 미설정(대화형 프롬프트, 회귀 아님). 추적: `spec-coverage` §26~27 F행. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 156 — 홈 대시보드 재방문 사용성 폴리시 (관심·최근 종목 진입점 + 공시 빈 상태) (2026-07-03, Claude)
 - **범위**: 홈(`/`)을 첫 방문 소개용이 아니라 매일 다시 쓰는 화면으로. 점수 로직·`stocks.json`·`score.ts` 무변경(설계서 준수). 브랜치 `ai-center/task-156-ornscore-repeated-use-home-dashboard`.
 - **신규 `src/components/home/MyStocksSection.tsx`** (`"use client"`): 관심 종목(우선)→최근 본 종목(중복 제거) 컴팩트 행(종목명·업종·종합점수·등락률 pill, `/stock/[ticker]` 링크). 마운트 전 `null`(하이드레이션 불일치 회피)·로딩 스켈레톤·시크릿 모드/저장소 차단 시 try/catch graceful·`watchlist-changed`/`recent-views-changed` 구독·8초 로딩 타임아웃. 첫 방문자에겐 압박 없는 차분한 빈 상태(관심 담기 유도, 매수/추천 표현 없음).

@@ -52,7 +52,7 @@
 | D. 공시 기간 전체 수집(§19.2 권장안) | ④ [개발] | 전체 기간 DART pagination 수집·저장 = 별도 파이프라인. 현재는 임시안(최신 200건 고지)로 충족. **Task 93**: Pro 관심 종목 공시 알림이 "최신 200건 일반 피드"에 의존하지 않도록(종목 단위 DART 조회 + 영속 커서) 구현 준비 설계 노트를 `ornscore-beta-launch-checklist.md` (g)에 추가 |
 | D. 홈↔공시 숫자 동기화(§20) | ① | `recentSignals.ts`·`api/disclosures/recent` signalCount 클램프, 샘플 폴백 교정(#35) |
 | E. 백테스트 제목·고지·리밸런싱 문구(§22~25) | ① | `BacktestClient.tsx` "실험 전략", `BacktestRiskNotice.tsx`, 3날짜 분리, 리밸런싱 "추천 아님"(#27·#35) |
-| F. 비교 빈 상태 개선(§26~27) | ① | `compare/page.tsx`·`CompareClient.tsx` 추천 세트·최근 본 종목·오늘 Top5·관심·검색·업종(#36·#41) |
+| F. 비교 빈 상태 개선(§26~27) | ① | `compare/page.tsx`·`CompareClient.tsx` 추천 세트·최근 본 종목·오늘 Top5·관심·검색·업종(#36·#41). **Task 158**: 결과 화면도 편집 가능하게 — 상단 "바스켓 관리" 섹션(슬롯 카운터 `{n}개 담음·{남은}개 더`, 컴팩트 `StockSearchBox`+최근/Top5/관심 중복제거 빠른추가 칩, 4개 도달 시 입력 숨김·안내), 모든 담기를 공통 `tryAdd`로 라우팅(상한초과/중복 3초 안내), 잘못 담은 종목 `remove` 후 5초 "실행 취소"(두 화면 공용 `feedbackRegion`, `aria-live`). `compare.ts`/점수식/데이터 무변경 |
 | G. 상단/모바일 메뉴 단순화(§28) | ① | `Sidebar`·`MobileNav`·`MobileBottomNav` 1차 5메뉴+더보기, 모바일 4셀(#36) |
 | H. 종목 탐색 검색 우선·프리셋·필터(§29~31) | ① | `StocksExplorer.tsx` 검색 우선·질문형 프리셋·접힘 상세 필터·칩(#36). 추가 감각화는 §7. 참고 |
 | I. 점수/순위 표현 분리(§32~33) | ① | `stock/MetricInsightCards.tsx`·`PriorityScoreCard` "점수 v/100" + "전체 상대순위" + "상위 X%" + "해석:"(#34) |

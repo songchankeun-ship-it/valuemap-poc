@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 158 — OrnScore 비교 플로우 폴리시 (결과 화면 편집 가능화)
+- **범위**: 비교(compare)가 종목 선택 전·후 모두 완성된 도구로 느껴지게. 광범위 리디자인·점수식·`stocks.json`·`compare.ts` API·제3자 서비스 무변경, 신규 npm 0. 브랜치 `ai-center/task-158-ornscore-compare-flow-useful-start-p`. **1소스 변경**: `src/components/CompareClient.tsx`.
+- **결과 화면 바스켓 관리(신규)**: 기존엔 2개 이상이면 종목을 더 담을 방법이 결과 화면에 없었음 → 상단에 경량 "바스켓 관리" 섹션 추가. 슬롯 카운터(`{n}개 담음 · {남은}개 더 담을 수 있어요`) + 컴팩트 `StockSearchBox` + 최근/오늘Top5/관심을 합쳐 중복 제거한 빠른추가 칩(최대 6개). 4개(`COMPARE_MAX`) 도달 시 입력 숨김 + "하나를 빼면 다른 종목을 담을 수 있어요" 안내.
+- **공통 담기 경로 `tryAdd`**: 빈 상태·결과 화면의 모든 담기(검색 onPick·최근·Top5·관심·빠른추가 칩)를 `tryAdd`로 라우팅 → 상한 초과 시 `"비교는 최대 4개까지 담을 수 있어요 — 하나를 빼고 추가하세요"`, 중복 시 `"이미 담은 종목이에요"` 3초 자동소멸 안내. `addSet`(추천 세트)도 루프 중 상한 감지 → `"최대 4개까지 담을 수 있어 일부만 추가됐어요"`.
+- **실수 복구(되돌리기)**: `remove`가 방금 뺀 `{ticker,name}`을 5초간 보관 → 두 화면 공용 `feedbackRegion`(`aria-live="polite"`)에 "…을(를) 뺐어요 · **실행 취소**" 노출, 클릭 시 `addToCompare`로 복원. 결과 카드 × 버튼과 빈 상태 선택 칩 × 모두 적용.
+- **파생 공용화**: `watchlistAddable`/`recentAddable`/`top5Addable`을 두 렌더 분기 이전으로 호이스트해 재사용. 타이머는 `useRef`로 보관·언마운트 시 해제. 문구는 매수/매도/추천 토큰 0(중립).
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(138페이지, `/compare` `ƒ`). 로컬 prod 3100에서 `/compare` 200·`/compare?stocks=005930,000660,000270` 200(자기 PID만 taskkill). (`npm run lint`은 이 레포에 ESLint 미설정으로 대화형 셋업 프롬프트 — 회귀 아님, build가 검증.)
+- **다음 소유자**: 실기기 육안(390px에서 바스켓 관리 바 줄바꿈·되돌리기 문구 truncate). 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 154 — OrnScore 전문가 피드백 인테이크 루프 드라이런 (문서 전용)
 - **범위**: `docs/ornscore-expert-feedback-intake-template.md`(Task 129) 루프를 한 번 돌려 **미래 피드백 한 편이 messy 중복 task 없이 P0/P1/P2로 변환됨**을 증명하는 문서/프로세스 패스. 앱 소스·점수식·`stocks.json`·인증/provider/env·라우트·의존성·외부 서비스 무변경, 신규 npm 0. 실 신규 broad 백로그 생성 없음. 브랜치 `ai-center/task-154-ornscore-expert-feedback-loop-dry-ru`(클린 시작).
 - **신규 `docs/ornscore-expert-feedback-dry-run-2026-07-03.md`**: SAMPLE 리포트(기존 알려진 이슈 조립)로 §7 표 4행 완전 워크 — **거부(INV-5 목표가/매수후보)** · **P2 코드 task 방출 1건(공시 범위 문구, §5 6필드)** · **P1-VISUAL 운영자 버킷 라우팅** · **이미 완료 항목(STEP 번호 중복, Task 60/68) 중복 드롭**. 4경로 시연 + "증명/갭" 5줄.
