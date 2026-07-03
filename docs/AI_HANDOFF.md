@@ -42,6 +42,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 194 — OrnScore 오너 리뷰 패키지 178~198 + go/no-go (2026-07-04, Claude, docs-only)
+- **범위**: 오너가 배치 178~198을 한 번에 리뷰하도록 종합 — 무엇이 바뀌었나/무엇을 수동 검증하나/남은 출시 리스크/한국어 무료 베타 go/no-go. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`AI_HANDOFF`·`ornscore-spec-coverage`·`PROGRESS`·커밋 해시). 앞선 두 패키지(144~165=`ornscore-owner-review-2026-07-03`·167~176=`ornscore-local-release-evidence-2026-07-03`)는 링크로만 이어붙임. 브랜치 `ai-center/task-194-ornscore-owner-review-package-and-go`.
+- **산출물**: 신규 `docs/ornscore-owner-review-2026-07-04.md` —
+  - §1 5테마 배치 요약 표(개인화·리텐션[196]·탐색공시[195]·신뢰데이터문구[189·197]·로그인모바일[192·198]·QA게이트메타[178·190·191·193]). task별 성격(docs/source)·한 줄 변경·근거(커밋 or 문서). 실제 작업 태스크는 178·189·190·191·192·193·195·196·197·198(179~188·194는 미사용 번호) 명시. 실질 코드 교정은 196 `recentViews.viewedAt` 타입 버그·190 OG 상속 회귀 2건뿐이라고 정직 요약.
+  - §2 9도메인 수동 검증 체크리스트(모바일·데스크톱·로그인·관심·비교·공시·종목상세·성능·재무 문구) — `local-release-evidence` (f)절 레이아웃 재사용, 신규 태스크(192 에러바운더리·193 --all 23라우트·195 유니버스 무결성·196 상대시각·197 교육 카피·198 모바일뷰포트)로 각 항목 갱신(검증 명령/`file:line`/앵커).
+  - §3 3축 go/no-go(A 치명결함 없음·B 문구/불변식 안전·C 실기기/시각/법무) — A·B 로컬 GO, C 오너 게이트. **비파괴 외부/베타 노출 GO·스토어 출시+결제는 오너 결정 뒤**로 명시.
+  - §4 남은 리스크 + 오너·법무 게이트 — spec-coverage §B/§C·owner-final-checklist·app-packaging-readiness·legal-ai-commercial-readiness·data-source-commercial-risk·kakaotalk-alert-backlog·next-product-bets 링크만(신규 리스크 발명 0).
+- **크로스레퍼런스(append-only)**: `docs/ornscore-spec-coverage.md` §O(QA) 행에 Task 194 포인터 1줄 append. 앞선 dated 스냅샷 문서(`local-release-evidence-2026-07-03`)는 신규 doc이 역방향으로 링크해 타임라인이 이어지므로 **무변경(churn 회피)**.
+- **불변식**: `public/data/*`·점수식·`compositeScore`/지표 산식·copy·cron/auth·`direction`·`metricsVersion` 무변경. 앱 소스·스크립트 0줄 변경(문서 2파일: 신규 owner-review + spec-coverage 1줄).
+- **게이트**: `tsc --noEmit` 0(앱 소스 무변경 재확인) · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · 신규/편집 .md 2파일 U+FFFD 0 · `git status` 문서만 변경(소스 0). build/smoke는 직전 QA(Task 193 `--all` 23/23·build 0) 결과 유효 — 문서 전용이라 재실행 생략(Task 166·177·178 docs-only 관행 동일).
+- **남은 소유자**: go/no-go C축(실기기 390px 육안·OAuth 왕복·`StockTabs` sticky 오프셋·결제/법무)은 운영자·법무 게이트. 어느 ④/⑤를 실제 착수할지는 제품/오너 결정. 로컬 커밋만·푸시 미수행·main 무변경.
+
 ### Task 193 — OrnScore 로컬 스모크 커버리지 확장 (2026-07-04, Claude)
 - **범위**: 런칭 핵심 라우트·공통 사용자 플로우의 유지보수 가능한 로컬 스모크 커버리지 확장. 취약한 스냅샷 대신 작고 견고한 검사 선호, 비로그인 플로우 포함. OrnScore 레포 로컬 한정·additive·신규 의존성 0. 브랜치 `ai-center/task-193-ornscore-local-smoke-coverage-expans`.
 - **변경**:
