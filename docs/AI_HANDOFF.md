@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T12:00:25.949Z
+Last updated: 2026-07-03T14:30:17.874Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 178 - OrnScore next product bet shortlist
-- Run: 155
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: 189 - OrnScore Korean-first launch copy cleanup pass
+- Run: 157
+- Status: failed
+- Agent: codex
+- Note: Development process exited with code 1073807364
 
 ## Next Agent Checklist
 
@@ -41,6 +41,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### Task 189 — OrnScore 한국어 우선 출시 카피 정리 패스 (2026-07-03, Claude)
+- **범위**: 무료 한국어 베타 공개 표면의 (1) 혼재 언어 UI, (2) 유휴 언어 컨트롤, (3) 지표 용어 드리프트, (4) 첫 방문자 문구 어색함 감사 + 안전한 소규모 카피 수정. 근거 결정 `ornscore-free-beta-v1-scope.md` §3~4(한국어 전용·EN 내부 보존). 브랜치 `ai-center/task-189-ornscore-korean-first-launch-copy-cl`. 선행 크래시 런(157, codex)은 `AI_HANDOFF` 자동 헤더만 남김(부분 코드 편집 0).
+- **감사 산출물**: 신규 `docs/ornscore-korean-first-copy-cleanup-2026-07-03.md` — §1 유휴 KO/EN 토글=이미 숨김(`LanguageSwitcher` import 0·`DEFAULT_LOCALE="ko"`, EN 데이터 보존) → 조치 없음, §2 혼재 언어 누수 0(‘STEP n’은 Task 60 의도 디자인 토큰), §3 지표 드리프트 Fix-now 7건 + Keep(브리지·미사용 `ScoreTooltip`·AI 프롬프트·주석), §4 첫 방문자 문구 어색 0.
+- **변경(Fix-now 7, 캐논 지표 라벨 추세·거래활성도·밸류·위험조정 정렬)**: `app/theme/[slug]/page.tsx`(레이더 라벨 모멘텀→추세·변동성→위험조정) · `app/page.tsx`(meta+OG desc) · `app/stock/[ticker]/page.tsx`(meta+OG/Article desc) · `lib/mockStockPool.ts`(내부 `SORT_OPTIONS.label`, 실 노출 라벨은 `copy/stocks.ts` 이미 캐논). `keywords` SEO 배열·글로서리 브리지("추세 (모멘텀)")·`about`·`backtest` 전략 브리지는 의도 유지.
+- **불변식**: 점수식·`public/data/*`·cron·auth·`direction`·`metricsVersion`·반응형(`sm:`/`md:`) 무변경. 편집 파일 en 키 twin 없음 → 패리티 영향 0.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG) · `next start`+`smoke:check` 7/7 200 · 홈 SSR `LanguageSwitcher`/`hreflang`/`lang=en` 0·`html lang="ko"`·‘추세’ 렌더 · 편집 4 소스 U+FFFD 0.
+- **남은 소유자**: 390px 실기기 육안·EN 재개 결정은 운영자 게이트. 미사용 `ScoreTooltip` 컴포넌트 정리는 별도 스코프(defer). 로컬 커밋만·푸시/ main 무변경.
 
 ### Task 177 — OrnScore 로컬 릴리스 근거 팩 (2026-07-03, Claude)
 - **범위**: 오너가 "외부 피드백 노출 go/no-go"를 로컬 근거만으로 판단하도록 완료 자동화·점검 라우트·남은 리스크·오너 결정을 한 문서에 종합. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`ornscore-owner-review-2026-07-03`·`ornscore-spec-coverage`·`ornscore-route-smoke-checklist`·`ornscore-post-release-qa-2026-07-02`·`ornscore-owner-final-checklist`·`AI_HANDOFF`·커밋). 브랜치 `ai-center/task-177-ornscore-local-release-evidence-pack`.

@@ -105,9 +105,9 @@ export const validStockPool = mockStockPool.filter((s) => s.currentPrice > 0);
 export const SORT_OPTIONS = [
   { key: "compositeDesc",     label: "종합점수 높은순", sorter: (a: MockStock, b: MockStock) => composite(b) - composite(a) },
   { key: "valueDesc",         label: "밸류 높은순 (저평가)",   sorter: (a: MockStock, b: MockStock) => b.value - a.value },
-  { key: "momentumDesc",      label: "모멘텀 높은순",   sorter: (a: MockStock, b: MockStock) => b.momentum - a.momentum },
+  { key: "momentumDesc",      label: "추세 높은순",   sorter: (a: MockStock, b: MockStock) => b.momentum - a.momentum },
   { key: "flowDesc",          label: "거래활성도 높은순", sorter: (a: MockStock, b: MockStock) => b.flow - a.flow },
-  { key: "volAdjustedDesc",   label: "변동성조정 높은순", sorter: (a: MockStock, b: MockStock) => b.vol - a.vol },
+  { key: "volAdjustedDesc",   label: "위험조정 높은순", sorter: (a: MockStock, b: MockStock) => b.vol - a.vol },
   { key: "neglectDesc",       label: "소외 점수 높은순", sorter: (a: MockStock, b: MockStock) => b.neglectScore - a.neglectScore },
   { key: "changeDesc",        label: "등락률 높은순", sorter: (a: MockStock, b: MockStock) => b.changePct - a.changePct },
   { key: "changeAsc",         label: "등락률 낮은순", sorter: (a: MockStock, b: MockStock) => a.changePct - b.changePct },

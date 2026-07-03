@@ -84,12 +84,12 @@ function riskKindOf(s: { value: number; vol: number }, r3m: number | null): Risk
 
 export const metadata = {
   title: "오른스코어 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
-  description: "코스피·코스닥 138개 종목의 모멘텀·거래활성도·밸류에이션·변동성을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
+  description: "코스피·코스닥 138개 종목의 추세·거래활성도·밸류·위험조정을 한 화면에서 비교하세요. PER·PBR·ROE·배당수익률·DART 공시 신호까지 — 종목 탐색 시간을 줄이는 데이터 도구.",
   keywords: ["한국주식", "테마주", "종목분석", "코스피", "코스닥", "PER", "PBR", "ROE", "배당주", "공시", "DART", "퀀트", "밸류에이션", "모멘텀"],
   authors: [{ name: "필로소디" }],
   openGraph: {
     title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "138개 종목의 모멘텀·거래활성도·밸류에이션·변동성·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
+    description: "138개 종목의 추세·거래활성도·밸류·위험조정·공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
     url: "https://ornscore.com",
     siteName: "오른스코어",
     locale: "ko_KR",

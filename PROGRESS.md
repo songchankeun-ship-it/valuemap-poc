@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 189 — OrnScore 한국어 우선 출시 카피 정리 패스
+- **범위**: 무료 한국어 베타 공개 표면 감사(혼재 언어 UI·유휴 언어 컨트롤·지표 용어 드리프트·첫 방문자 문구) + 안전 소규모 카피 수정. 근거 `ornscore-free-beta-v1-scope.md` §3~4. 브랜치 `ai-center/task-189-ornscore-korean-first-launch-copy-cl`. 선행 크래시 런(157, codex)은 `AI_HANDOFF` 자동 헤더만 남김(부분 편집 0).
+- **감사 산출물**: 신규 `docs/ornscore-korean-first-copy-cleanup-2026-07-03.md`. 결론 — §1 KO/EN 토글 이미 숨김(`LanguageSwitcher` import 0·`DEFAULT_LOCALE="ko"`·EN 데이터 보존→유지), §2 혼재 언어 진짜 누수 0(‘STEP n’=Task 60 의도 디자인 토큰), §3 드리프트 Fix-now 7건, §4 첫 방문자 문구 어색 0.
+- **변경(Fix-now 7 = 캐논 라벨 추세·거래활성도·밸류·위험조정 정렬)**: `app/theme/[slug]/page.tsx` 레이더 라벨(모멘텀→추세·변동성→위험조정), `app/page.tsx` meta+OG desc, `app/stock/[ticker]/page.tsx` meta+Article desc, `lib/mockStockPool.ts` 내부 `SORT_OPTIONS.label`(실 노출 라벨은 `copy/stocks.ts` 이미 캐논). Keep: `keywords` SEO 배열·글로서리 브리지("추세 (모멘텀)")·`about`·`backtest` 전략 브리지·미사용 `ScoreTooltip`·AI 프롬프트·코드 주석.
+- **불변식**: 점수식·`public/data/*`·cron·auth·`direction`·`metricsVersion`·반응형 클래스 무변경. 편집 파일에 en 키 twin 없음 → i18n 패리티 영향 0.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG) · `next start`+`smoke:check` 7/7 200 · 홈 SSR `LanguageSwitcher`/`hreflang`/`lang=en` 0·`html lang="ko"`·‘추세’ 렌더 확인 · 편집 4 소스 U+FFFD 0.
+- **남은 소유자**: 390px 실기기 육안·EN 재개 결정은 운영자 게이트. 미사용 `ScoreTooltip` 정리는 별도 스코프(defer). 로컬 커밋만·푸시/main 무변경(푸시는 오너).
+
 ## 2026-07-03 · [claude] Task 178 — OrnScore 다음 제품 베팅 숏리스트 (docs-only)
 - **범위**: 폴리시 웨이브(167~177) 이후 다음에 손댈 "한 단계 큰 방향"을 오너가 고르도록 숏리스트로 정리. **문서 전용·앱 소스/코드 무변경·스캐폴드 0**. 근거는 레포 내부 설계서 항목 링크만(재서술 없음). 브랜치 `ai-center/task-178-ornscore-next-product-bet-shortlist`.
 - **산출물**: 신규 `docs/ornscore-next-product-bets-2026-07-03.md` — 6베팅을 (사용자 가치×차별성÷오너 게이트)로 랭크: ①관심 그룹/메모/CSV ②데이터 설명가능성(점수 근거 심화·공시 중요도·이벤트 스터디) ③공시 전체 기간 수집 파이프라인 ④커버리지 138→500 ⑤알림 라이브 발송 ⑥Android TWA 래퍼. 각 행=Effort(S/M/L)·Risk·오너 전용 의존(④/⑤+게이트)·**지금 가능한 ③ 첫 로컬 작업**(설계/표시 노트)·근거 링크. 추천=#1 관심 고도화+#2 점수 근거 심화. 근시일 ③ 큐(owner-review §3·spec §A) 대체 아님(참고 레이어).

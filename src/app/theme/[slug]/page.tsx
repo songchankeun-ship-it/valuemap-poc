@@ -188,7 +188,7 @@ function RadarChart({
         strokeWidth="1.5"
       />
       <text x={cx} y={cy - r - 10} textAnchor="middle" fontSize="10" fill="currentColor">
-        모멘텀 {momentum}
+        추세 {momentum}
       </text>
       <text x={cx + r + 12} y={cy + 4} fontSize="10" fill="currentColor">
         거래활성도 {flow}
@@ -197,7 +197,7 @@ function RadarChart({
         밸류 {value}
       </text>
       <text x={cx - r - 12} y={cy + 4} textAnchor="end" fontSize="10" fill="currentColor">
-        변동성 {vol}
+        위험조정 {vol}
       </text>
     </svg>
   );
