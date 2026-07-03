@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDisclosuresCopy } from "@/lib/copy/stockDetail";
 import type { Locale } from "@/lib/i18n";
@@ -131,18 +131,23 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
   }
 
   if (error || !data) {
+    // 에러 표현은 DisclosureExplorer 오류 카드와 동일한 시각 언어(경고 아이콘 + rose 테두리 + 다시 시도).
+    // 원문 에러 메시지는 노출하지 않고 안내 문구(t.loadError)만 보여준다. 다시 시도는 reloadKey만 증가.
     return (
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t.title}</div>
-        <div className="text-sm text-rose-600 mb-3">{error || t.loadError}</div>
-        <button
-          type="button"
-          onClick={() => setReloadKey((k) => k + 1)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-md text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
-        >
-          <RefreshCw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-          {t.loadRetry}
-        </button>
+      <div className="bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-900 rounded-lg p-4">
+        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">{t.title}</div>
+        <div className="text-center py-4">
+          <AlertTriangle className="w-8 h-8 text-rose-400 dark:text-rose-500 mx-auto mb-3" strokeWidth={1.5} aria-hidden="true" />
+          <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-4 leading-relaxed">{t.loadError}</p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-md text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+          >
+            <RefreshCw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+            {t.loadRetry}
+          </button>
+        </div>
       </div>
     );
   }

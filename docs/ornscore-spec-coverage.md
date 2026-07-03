@@ -130,6 +130,7 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | 5.3 등락 색 정책(상승=red/하락=blue) 전역 고정 | ②/③ | 화면별 적용됨. 전역 토큰(#F6F8FB 등 라이트 토큰)·역할 색 완전 고정은 미도입 → ③ |
 | 15. 모바일 카드형 재구성 | ① | 종목/공시/백테스트 카드형(#26·#27·#36) |
 | 20.4 로딩 스켈레톤 | ✅ (task 163) | 홈·종목탐색·오늘·공시 라우트 `loading.tsx` 추가 + 종목상세/관심(기존) → 스코프 6영역 SSR 스켈레톤 표준화. 클라이언트: History/Watchlist 스켈레톤화, 공시 상세 다시시도 버튼, 로그인 텍스트리스 스켈레톤, DisclosureExplorer 다크 변형·AiAnalysis 스피너 일관화 |
+| 20.4 폴백 상태(결측·에러·오프라인·404) | ✅ (task 176) | **Task 176(회복 탄력적 폴백)**: `not-found.tsx` 다크모드 판독성 버그 수정(전 색상 `dark:` 변형·버튼 44px)+i18n, `offline/page.tsx` i18n(둘 다 `metadata` 서버 래퍼 + `"use client"` 자식 `NotFoundContent`/`OfflineContent`), `i18n.ts` `notFoundCopy`/`offlineCopy` 신규, `StockDisclosures` 에러 브랜치를 `DisclosureExplorer`와 시각 정렬(AlertTriangle+rose 카드+`t.loadError`/`t.loadRetry`). 나머지 폴백 표면(DisclosureExplorer 빈/에러·Stocks 검색0건·Watchlist·Compare·AiAnalysis·ScoreHistory<10·Sector 저표본)은 이미 의도적 프레이밍 → keep-as-is. CSS/카피/i18n 한정·데이터/점수/`direction` 무변경. 실 브라우저 다크모드·EN 토글 육안은 운영자(⑤) |
 | 라이트 모드 전역 토큰 도입 | ④ [제품] | 현재 다크 기준. 라이트/디자인 토큰 전면 전환은 큰 디자인 결정(범위 외로 남겨둠) |
 
 # 5. 홈 첫 화면 개편 설계서 (`ornscore_home_redesign_spec_v1.md`)

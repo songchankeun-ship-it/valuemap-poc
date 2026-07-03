@@ -1268,3 +1268,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **의도적 미변경**: `src/lib/alertCatalog.ts`의 `관심종목`(7) = `AlertCategory` 타입/enum/정렬 배열/레코드 **키**(식별자)이며 표시 라벨은 이미 `ALERT_CATEGORY_LABEL`에서 `관심 종목`으로 매핑 → 식별자라 손대지 않음. `src/lib/copy/stocks.ts`(표/정렬/칩/카운트 요약)는 컴팩트 존으로 유지. `주의사항`은 src 라우트 카피에 부재(변경 없음).
 - **게이트(전부 통과)**: `tsc --noEmit` 0(ko/en 글로서리 키 패리티 포함) · `verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG) · `smoke-check --all` 12/12 200 · `/guide/metrics` 200(용어집 SSR 렌더 확인)·`/privacy` 200(띄어쓰기 반영) · 변경 6+2파일 U+FFFD 0 · src `관심종목` 잔여=alertCatalog 식별자만.
 - **남은 소유자**: 실기기 390px 육안(용어집 줄바꿈)·EN 언어 토글 확인은 운영자 게이트(언어 전환 클라이언트). 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 176 — OrnScore 회복 탄력적 폴백 상태 (2026-07-03, Claude)
+- **Scope**: 결측·지연·제한 데이터 상태를 의도적이고 신뢰할 수 있게. repo-local 코드만·소스 데이터/점수식 무변경·전면 리라이트 금지. CSS/카피/i18n 한정. 브랜치 `ai-center/task-176-ornscore-resilient-fallback-states-p`.
+- **폴백 표면 감사(대부분 keep-as-is)**: `DisclosureExplorer`(에러=AlertTriangle+rose 카드+다시시도·빈=Inbox+범위 넓히기/필터 해제) · `StocksExplorer`(빈·검색 0건 완화) · `WatchlistClient`(로딩→빈·로그인 동기화·noscript) · `CompareClient` 빈 · `AiAnalysisCard` 에러 · `ScoreHistoryChart` <10회 · `SectorComparison` 저표본 — 전부 이미 의도적 프레이밍 → 무변경(불필요 churn·EN 패리티 리스크 회피). 카피는 이미 "추후 데이터 축적 후 제공"·"좋은 신호도 나쁜 신호도 아님" 톤 → 애매/사고성 상태 미발견 → 문구 무변경.
+- **변경(2건 실질 폴리시 + i18n)**:
+  - **not-found 다크모드 버그 수정**: `src/app/not-found.tsx`가 `text-zinc-900`·`bg-white` 등 라이트 전용 색만 써 기본 다크 테마에서 판독성 저하 → 전 색상에 `dark:` 변형(`offline/page.tsx` 토큰과 정렬), 버튼 44px 탭타깃. "종목 탐색"/"홈으로" 복구 링크 보존.
+  - **not-found·offline i18n**: `src/lib/i18n.ts`에 `notFoundCopy`·`offlineCopy`(ko/en `satisfies Record<Locale,...>`, `loginCopy` 옆) 추가. 두 페이지를 `metadata`(서버) 얇은 래퍼 + `"use client"` 자식(`NotFoundContent.tsx`·`OfflineContent.tsx`, `useLanguage()`)으로 분리 — `metadata`는 클라 컴포넌트에 못 두므로. 브랜드 "오른스코어"·"138개 종목" 프레이밍 보존, 금칙어 0.
+  - **에러 상태 시각 일관성**: `src/components/StockDisclosures.tsx` 에러 브랜치를 `DisclosureExplorer` 패턴과 정렬(AlertTriangle 아이콘 + rose 테두리 카드 + `t.loadError`/`t.loadRetry` 다시시도, `import`에 AlertTriangle 추가). 원문 에러 메시지 미노출·다시시도는 `reloadKey`만 증가(fetch 로직 무변경).
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`direction`/지표 산출·cron/auth·`metricsVersion` 무변경. 기존 카피 키/문구 무변경(신규 키만 추가). 모든 diff는 className/markup/i18n 한정.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG·`/offline` 프리렌더) · 변경/신규 6파일 U+FFFD 0 · `next start -p 3100` curl SSR: `/offline`·`/nonexistent` 한국어 기본 렌더(각 "네트워크가 필요해요"·"페이지를 찾을 수 없습니다"), `.next/static/chunks`에 EN("You're offline"·"Page not found") + KO 문자열 동거 → 언어 토글 렌더 확인. 리스너 PID 6940만 taskkill(AI Center 무중단).
+- **남은 소유자**: 실 브라우저 다크모드 육안(not-found)·EN 언어 토글 실확인은 운영자 게이트(언어 전환 클라이언트·Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.

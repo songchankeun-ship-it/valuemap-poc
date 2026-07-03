@@ -398,3 +398,48 @@ export const loginCopy = {
     },
   },
 } as const satisfies Record<Locale, unknown>;
+
+// ── not-found.tsx (404) ──
+// 없는 경로/분석 풀(138종목) 밖 종목일 때의 폴백. 매수/매도/추천/수익 표현 없음.
+export const notFoundCopy = {
+  ko: {
+    title: "페이지를 찾을 수 없습니다",
+    body1: "존재하지 않거나 분석 풀(138개 종목)에 포함되지 않은 종목일 수 있어요.",
+    body2: "URL을 다시 확인하거나 종목 탐색에서 검색해보세요.",
+    browseStocks: "종목 탐색",
+    goHome: "홈으로",
+  },
+  en: {
+    title: "Page not found",
+    body1: "This may be a page that doesn't exist, or a stock outside the analysis pool (138 stocks).",
+    body2: "Check the URL again, or search from stock explorer.",
+    browseStocks: "Browse stocks",
+    goHome: "Home",
+  },
+} as const satisfies Record<Locale, unknown>;
+
+// ── offline/page.tsx (네트워크 필요 안내 · 설계서 PART H §24) ──
+export const offlineCopy = {
+  ko: {
+    title: "네트워크가 필요해요",
+    body: "오른스코어의 점수·공시·재무 데이터는 최신 상태를 불러오기 위해 인터넷 연결이 필요합니다. 연결을 확인한 뒤 다시 시도해주세요.",
+    hint: "일부 화면은 마지막으로 저장된 데이터가 잠시 보일 수 있으나, 실제 기준일·시세와 다를 수 있습니다.",
+    addTitle: "홈 화면에 추가",
+    addBodyBefore: "모바일 브라우저 메뉴에서 ",
+    addBodyStrong: "홈 화면에 추가",
+    addBodyAfter:
+      "(iOS: 공유 → 홈 화면에 추가 / Android: 메뉴 → 앱 설치)를 선택하면 앱처럼 실행할 수 있어요.",
+    homeButton: "홈으로 돌아가기",
+  },
+  en: {
+    title: "You're offline",
+    body: "OrnScore's score, disclosure, and financial data need an internet connection to load the latest state. Check your connection and try again.",
+    hint: "Some screens may briefly show the last saved data, which can differ from the actual as-of date and prices.",
+    addTitle: "Add to home screen",
+    addBodyBefore: "In your mobile browser menu, choose ",
+    addBodyStrong: "Add to Home Screen",
+    addBodyAfter:
+      " (iOS: Share → Add to Home Screen / Android: Menu → Install app) to launch it like an app.",
+    homeButton: "Back to home",
+  },
+} as const satisfies Record<Locale, unknown>;

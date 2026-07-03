@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 176 — OrnScore 회복 탄력적 폴백 상태
+- **범위**: 결측·지연·제한 데이터 상태를 의도적·신뢰감 있게. 하드 제약 — repo-local 코드만·소스 데이터/점수식 무변경·전면 리라이트 금지. CSS/카피/i18n 한정. 브랜치 `ai-center/task-176-ornscore-resilient-fallback-states-p`.
+- **감사(대부분 keep-as-is)**: `DisclosureExplorer`(에러 AlertTriangle+rose·빈 Inbox+완화) · `StocksExplorer`(빈·검색0건) · `WatchlistClient`(로딩→빈·로그인동기화·noscript) · `CompareClient` 빈 · `AiAnalysisCard` 에러 · `ScoreHistoryChart` <10회 · `SectorComparison` 저표본 → 이미 의도적 프레이밍 → 무변경(churn·EN 패리티 리스크 회피). 애매/사고성 카피 미발견 → 문구 무변경.
+- **변경**:
+  - `src/app/not-found.tsx` 다크모드 판독성 버그 수정(전 색상 `dark:` 변형·버튼 44px) + i18n. `src/app/offline/page.tsx` i18n. 둘 다 `metadata`(서버 얇은 래퍼) + `"use client"` 자식(`NotFoundContent.tsx`·`OfflineContent.tsx`)으로 분리.
+  - `src/lib/i18n.ts` — `notFoundCopy`·`offlineCopy`(ko/en, `satisfies Record<Locale,...>`) 추가. "오른스코어"·"138개 종목" 프레이밍·금칙어 0 보존.
+  - `src/components/StockDisclosures.tsx` 에러 브랜치를 `DisclosureExplorer`와 시각 정렬(AlertTriangle+rose 카드+`t.loadError`/`t.loadRetry`). fetch/데이터 무변경·다시시도는 `reloadKey`만.
+- **불변식**: `stocks.json`·점수식·`direction`/지표 산출·기존 카피 키·cron/auth·`metricsVersion` 무변경. diff는 className/markup/i18n 한정.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(138 SSG·`/offline`) · 변경/신규 6파일 U+FFFD 0 · `next start` curl SSR `/offline`·`/nonexistent` 한국어 기본 렌더 · 청크에 EN+KO 문자열 동거(토글 렌더 확인).
+- **남은 소유자**: 실 브라우저 다크모드 육안·EN 토글 실확인은 운영자 게이트. 로컬 커밋만·푸시 미수행·main 무변경.
+
 ## 2026-07-03 · [claude] Task 175 — 라우트 카피 일관성 & 용어집 커버리지
 - **범위**: score/freshness/comparison/disclosure/watchlist/caution 용어를 앱 전반에서 일관되게. 하드 제약 — repo-local 코드/문서만·비즈니스 로직 무변경·카피 간결. 브랜치 `ai-center/task-175-ornscore-route-copy-consistency-and-`.
 - **표준 용어**: 프로즈=`종합 점수` 정본, 공간 좁은 표 머리글·정렬·칩·배지는 컴팩트 `종합점수` 유지(표 래핑 회귀 방지·글로서리에 예외 명시). `관심 종목`·`데이터 기준일`·`비교`·`공시 신호`·`주의`. 전 용어 비자문(매수·매도 신호 아님).
