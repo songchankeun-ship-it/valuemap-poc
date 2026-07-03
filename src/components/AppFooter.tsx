@@ -41,6 +41,9 @@ export function AppFooter({
       <span>·</span>
       <span>{copy.footer.disclaimer}</span>
       <span>·</span>
+      <Link href="/about" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+        {copy.footer.about}
+      </Link>
       <Link href="/pricing" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
         {copy.footer.pricing}
       </Link>

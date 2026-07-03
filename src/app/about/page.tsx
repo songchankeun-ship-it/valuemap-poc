@@ -5,7 +5,7 @@ import PwaInstallHelper from "@/components/PwaInstallHelper";
 
 export const metadata = {
   title: "서비스 소개 — 오른스코어",
-  description: "오른스코어이 누구를, 어떤 목적으로 만들어진 도구인지.",
+  description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
 };
 
 export default function AboutPage() {
