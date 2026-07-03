@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDisclosuresCopy } from "@/lib/copy/stockDetail";
 import type { Locale } from "@/lib/i18n";
@@ -90,6 +91,8 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // '다시 시도' 시 이 값을 증가시켜 fetch effect를 재실행한다(DisclosureExplorer와 동일 패턴).
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -111,7 +114,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
     return () => {
       alive = false;
     };
-  }, [ticker]);
+  }, [ticker, reloadKey]);
 
   if (loading) {
     return (
@@ -131,7 +134,15 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
     return (
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
         <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t.title}</div>
-        <div className="text-sm text-rose-600">{error || t.loadError}</div>
+        <div className="text-sm text-rose-600 mb-3">{error || t.loadError}</div>
+        <button
+          type="button"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-md text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+        >
+          <RefreshCw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+          {t.loadRetry}
+        </button>
       </div>
     );
   }

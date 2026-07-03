@@ -319,9 +319,40 @@ function LoginForm() {
   );
 }
 
+// 로케일 컨텍스트가 안정되기 전 잠깐 보이는 Suspense 폴백 — 텍스트 없이(i18n 회피)
+// LoginForm 과 동일한 컨테이너/카드 높이를 흉내 내 레이아웃 이동(CLS)을 줄인다.
+function LoginSkeleton() {
+  return (
+    <div className="max-w-md mx-auto px-3 md:px-4 py-6 md:py-12" aria-busy="true" aria-label="로그인 화면 불러오는 중">
+      {/* 뒤로가기 링크 자리 */}
+      <div className="h-4 w-24 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-6" />
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 md:p-8">
+        {/* 제목 + 리드 */}
+        <div className="h-7 w-40 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-2" />
+        <div className="h-4 w-56 max-w-full rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-5" />
+        {/* 소셜 로그인 버튼 자리 */}
+        <div className="space-y-2 mb-4">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-11 rounded-md bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+          ))}
+        </div>
+        {/* 이메일 입력 + 제출 버튼 자리 */}
+        <div className="h-11 rounded-md bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-4" />
+        <div className="h-11 rounded-md bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+        {/* 혜택 목록 자리 */}
+        <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-2.5">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-4 w-3/4 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="max-w-md mx-auto px-4 py-12 text-sm text-zinc-500">Loading...</div>}>
+    <Suspense fallback={<LoginSkeleton />}>
       <LoginForm />
     </Suspense>
   );

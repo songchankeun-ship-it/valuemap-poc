@@ -231,9 +231,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-              <div className="h-4 w-1/3 bg-zinc-200 rounded mb-2 animate-pulse" />
-              <div className="h-3 w-1/4 bg-zinc-100 rounded mb-2 animate-pulse" />
-              <div className="h-3 w-2/3 bg-zinc-100 rounded animate-pulse" />
+              <div className="h-4 w-1/3 bg-zinc-200 dark:bg-zinc-800 rounded mb-2 animate-pulse" />
+              <div className="h-3 w-1/4 bg-zinc-100 dark:bg-zinc-800/60 rounded mb-2 animate-pulse" />
+              <div className="h-3 w-2/3 bg-zinc-100 dark:bg-zinc-800/60 rounded animate-pulse" />
             </div>
           ))}
         </div>

@@ -221,9 +221,31 @@ export function WatchlistClient({
 
   if (loading) {
     return (
-      <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center space-y-1">
-        <div>관심 종목을 불러오는 중...</div>
-        <p className="text-xs text-zinc-400 dark:text-zinc-500">잠시 후에도 비어 있으면 종목 상세에서 ‘관심 종목’을 눌러 추가해 보세요.</p>
+      <div className="space-y-8" aria-busy="true" aria-label="관심 종목 불러오는 중">
+        {/* 내 현황 요약 카드 자리 */}
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+          <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-3" />
+          <div className="flex items-stretch gap-2 flex-wrap">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="flex-1 min-w-[90px] h-14 rounded-lg bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+            ))}
+          </div>
+        </section>
+        {/* 관심 종목 목록 자리 */}
+        <section>
+          <div className="h-5 w-28 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-4" />
+          <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
+            {[0, 1, 2, 3].map((i) => (
+              <li key={i} className="flex items-center justify-between px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <div className="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-2" />
+                  <div className="h-3 w-24 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+                </div>
+                <div className="h-6 w-6 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse shrink-0" />
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     );
   }

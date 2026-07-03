@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 163 — OrnScore 로딩·스켈레톤·느린상태 폴리시
+- **범위**: 느린 순간이 "고장"이 아니라 "의도된 로딩"으로 느껴지게. repo-local UI만, 데이터 패칭 계약·점수식·`stocks.json`·제3자 서비스 무변경, 신규 npm 0. 브랜치 `ai-center/task-163-ornscore-loading-and-skeleton-state-`. **스코프 7영역**: 홈·종목탐색·종목상세·오늘·공시·관심·로그인.
+- **라우트 SSR 스켈레톤 4종 신규**: `src/app/loading.tsx`(홈)·`stocks/loading.tsx`·`today/loading.tsx`·`disclosures/loading.tsx`. 각 실제 페이지 상단 스캐폴드(헤더+주요 카드/그리드/목록)를 모바일·`md:` 양쪽에서 흉내 → CLS 최소화. 순수 JSX(데이터/상태/import 0), `aria-busy`+한국어 `aria-label`. 기존 `stock/[ticker]/loading.tsx`·`watchlist/loading.tsx`와 합쳐 스코프 6영역 SSR 스켈레톤 표준화(공통 토큰 `animate-pulse`·zinc·다크 변형).
+- **클라이언트 스켈레톤/재시도**: `StockDisclosures.tsx` — `reloadKey` 상태 추가(DisclosureExplorer 패턴), 에러 분기에 `RefreshCw` 아이콘 44px 다시시도 버튼(`loadRetry` 카피 ko `"다시 시도"`/en `"Retry"` 신규, fetch URL `?days=90&limit=20` 무변경). `HistoryClient.tsx`·`WatchlistClient.tsx` — 맨 텍스트 로딩을 실제 레이아웃(기록 카드 3장 / 내현황 카드+목록 4행) 흉내 스켈레톤으로 교체(기존 8s 타임아웃·`loadError` 재시도 분기·`getWatchlist`/`listSavedSearches` 호출 무변경). `login/page.tsx` — Suspense 폴백 `<div>Loading...</div>`를 텍스트리스 `LoginSkeleton`(동일 `max-w-md` 컨테이너, 로케일 안정 전 렌더라 i18n 회피)으로 교체.
+- **일관성 폴리시**: `DisclosureExplorer.tsx` 스켈레톤 바에 누락 `dark:` 변형 추가(다른 스켈레톤과 다크 정합). `AiAnalysisCard.tsx` 실행 버튼 `btnRunning` 앞에 `Loader2 animate-spin` 스피너(로그인 버튼과 스피너 일관). 로직/API 무변경.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류 0·금칙어 0·Metrics 2.4 · `npm run build` 0(전 라우트 컴파일, 신규 4 `loading.tsx` Suspense 경계·로그인 스켈레톤 포함). 편집/신규 파일 금칙어(`매수/매도/추천/수익 보장/목표가`) 신규 도입 0(기존 부정형 면책 문구만). (`npm run lint`은 이 레포 ESLint 미설정 = 대화형 프롬프트, build가 검증.)
+- **다음 소유자**: 실기기 네트워크 스로틀 육안(390px/데스크톱에서 각 스켈레톤 CLS·44px 탭타깃)은 헤드리스 환경 미수행 → 운영자 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ## 2026-07-03 · [claude] Task 161 — OrnScore 로그인 + 계정 신뢰 표면 폴리시
 - **범위**: 로그인이 모바일/데스크톱에서 믿음직·이해하기 쉽게. repo-local UI/카피만, 제공자 콘솔/비공개 설정 무변경, 신규 로그인 제공자 0. 브랜치 `ai-center/task-161-ornscore-login-and-account-confidenc`. **5소스**: `i18n.ts`·`login/page.tsx`·`UserMenu.tsx`·`WelcomeToast.tsx`·`WatchlistClient.tsx`.
 - **i18n 계정 카피(신규)**: `commonCopy.{ko,en}.auth`에 `accountMenu`·`menuWatchlist`·`menuCompare`·`menuNotifications`·`loggingOut`·`syncCta`·`welcomeToast{title,body,close}` 추가. `legalAnd` 값에 간격 내장(ko `"과 "`/en `" and "`)해 하나의 동의-문구 템플릿이 두 로케일 모두 자연스러운 조사·간격(한글 "이용약관과 개인정보처리방침에" 붙여쓰기)으로 렌더. `as const satisfies Record<Locale, unknown>` 유지 → tsc가 양 로케일 완전성 강제.

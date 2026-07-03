@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { saveAnalysis } from "@/lib/aiHistory";
-import { Bot, AlertTriangle } from "lucide-react";
+import { Bot, AlertTriangle, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { aiAnalysisCardCopy } from "@/lib/copy/stockDetail";
 
@@ -104,8 +104,9 @@ export function AiAnalysisCard({ ticker, name }: { ticker: string; name?: string
         <button
           onClick={runAnalysis}
           disabled={loading || !consented}
-          className="w-full py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 disabled:cursor-not-allowed transition"
+          className="w-full flex items-center justify-center gap-2 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 disabled:cursor-not-allowed transition"
         >
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
           {loading ? t.btnRunning : !consented ? t.btnNeedConsent : t.btnRun}
         </button>
       </div>

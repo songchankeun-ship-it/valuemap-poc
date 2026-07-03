@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 163 — 로딩·스켈레톤·느린상태 폴리시 (2026-07-03, Claude)
+- **범위**: 느린 순간을 "고장"이 아니라 "의도된 로딩"으로. repo-local UI만·데이터 패칭 계약/점수식/`stocks.json`/제3자 무변경·신규 npm 0. 스코프 7영역(홈·종목탐색·종목상세·오늘·공시·관심·로그인). 브랜치 `ai-center/task-163-ornscore-loading-and-skeleton-state-`.
+- **라우트 SSR 스켈레톤 4종 신규**: `app/loading.tsx`(홈)·`stocks/loading.tsx`·`today/loading.tsx`·`disclosures/loading.tsx` — 실제 상단 스캐폴드(헤더+주요 카드/그리드/목록) 모바일·`md:` 흉내로 CLS 최소화, 순수 JSX(import 0)·`aria-busy`+한국어 `aria-label`. 기존 `stock/[ticker]`·`watchlist` `loading.tsx`와 합쳐 6영역 SSR 스켈레톤 표준화(공통 `animate-pulse`·zinc·다크 토큰).
+- **클라이언트**: `StockDisclosures.tsx` `reloadKey`+`RefreshCw` 44px 다시시도 버튼(`loadRetry` ko"다시 시도"/en"Retry" 신규·fetch `?days=90&limit=20` 무변경). `HistoryClient`·`WatchlistClient` 맨텍스트 로딩→실레이아웃 흉내 스켈레톤(8s 타임아웃·`loadError` 분기·`getWatchlist`/`listSavedSearches` 무변경). `login/page.tsx` Suspense 폴백 `Loading...`→텍스트리스 `LoginSkeleton`(로케일 안정 전 렌더라 i18n 회피). `DisclosureExplorer` 스켈레톤 `dark:` 변형 보강·`AiAnalysisCard` 실행버튼 `Loader2` 스피너 일관.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(UTF-8) 138/오류0/금칙0/Metrics 2.4 · `next build` 0(신규 4 `loading.tsx`·로그인 스켈레톤 포함 전 라우트 컴파일). 편집/신규 파일 금칙어(매수/매도/추천/수익보장/목표가) 신규 도입 0. lint는 레포 ESLint 미설정(대화형 프롬프트, build가 검증). 추적: `spec-coverage` §20.4 ✅. 실기기 네트워크 스로틀 육안(390px/데스크톱 CLS·44px)은 헤드리스 미수행 → 운영자 게이트. 푸시/릴리스 미수행(task 브랜치 로컬 커밋만).
+
 ### Task 158 — 비교 플로우 폴리시 (결과 화면 편집 가능화) (2026-07-03, Claude)
 - **범위**: 비교(compare)가 선택 전·후 모두 완성된 도구로 느껴지게. 광범위 리디자인·점수식·`stocks.json`·`compare.ts` API·제3자 서비스 무변경, 신규 npm 0. **1소스**: `src/components/CompareClient.tsx`. 브랜치 `ai-center/task-158-ornscore-compare-flow-useful-start-p`.
 - **결과 화면 바스켓 관리(신규)**: 2개 이상 선택 후에도 종목을 더 담을 수 있게 상단에 경량 "바스켓 관리" 섹션 — 슬롯 카운터(`{n}개 담음 · {남은}개 더`) + 컴팩트 `StockSearchBox` + 최근/Top5/관심 병합·중복제거 빠른추가 칩(최대 6). `COMPARE_MAX` 도달 시 입력 숨김 + 안내.

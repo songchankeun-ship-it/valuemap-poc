@@ -64,7 +64,23 @@ export function HistoryClient() {
   }
 
   if (loading) {
-    return <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center">불러오는 중...</div>;
+    return (
+      <ul className="space-y-3" aria-busy="true" aria-label="요약 기록 불러오는 중">
+        {[0, 1, 2].map((i) => (
+          <li key={i} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex-1 min-w-0">
+                <div className="h-3 w-16 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-2" />
+                <div className="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+              </div>
+              <div className="h-8 w-10 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse shrink-0" />
+            </div>
+            <div className="h-3 w-full rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-2" />
+            <div className="h-3 w-2/3 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   if (records.length === 0) {
