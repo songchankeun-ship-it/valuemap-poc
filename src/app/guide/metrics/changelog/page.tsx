@@ -1,9 +1,28 @@
 import Link from "next/link";
 import { dataStatus } from "@/lib/dataStatus";
 
+const changelogDescription =
+  "오른스코어 지표 산식의 버전·적용일·변경 요약을 투명하게 기록합니다.";
+
 export const metadata = {
   title: "산식 변경 이력 — 오른스코어",
-  description: "오른스코어 지표 산식의 버전·적용일·변경 요약을 투명하게 기록합니다.",
+  description: changelogDescription,
+  openGraph: {
+    title: "산식 변경 이력 — 오른스코어",
+    description: changelogDescription,
+    url: "/guide/metrics/changelog",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "산식 변경 이력 — 오른스코어",
+    description: changelogDescription,
+  },
+  alternates: { canonical: "/guide/metrics/changelog" },
 };
 
 export const revalidate = 3600;

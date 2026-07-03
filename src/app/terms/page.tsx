@@ -1,8 +1,28 @@
 import Link from "next/link";
 import { LegalEnSummary } from "@/components/legal/LegalEnSummary";
 
+const termsDescription =
+  "오른스코어 이용약관. 서비스 이용 조건과 책임의 한계, 지적재산권 등 이용자와 운영자의 권리·의무를 안내합니다.";
+
 export const metadata = {
   title: "이용약관 — 오른스코어",
+  description: termsDescription,
+  openGraph: {
+    title: "이용약관 — 오른스코어",
+    description: termsDescription,
+    url: "/terms",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "이용약관 — 오른스코어",
+    description: termsDescription,
+  },
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

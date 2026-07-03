@@ -2,6 +2,9 @@ import Link from "next/link";
 
 export const metadata = {
   title: "블로그 (준비 중) — 오른스코어",
+  description: "오른스코어 블로그는 준비 중입니다. 시장 인사이트와 분석 글을 곧 게시할 예정입니다.",
+  // 준비 중 플레이스홀더 — 색인에서 제외하고 링크만 따르도록 한다.
+  robots: { index: false, follow: true },
 };
 
 export default function BlogPage() {

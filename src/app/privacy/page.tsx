@@ -1,8 +1,28 @@
 import Link from "next/link";
 import { LegalEnSummary } from "@/components/legal/LegalEnSummary";
 
+const privacyDescription =
+  "오른스코어 개인정보처리방침. 수집·이용·보관 항목과 위탁·국외 이전, 이용자의 권리를 안내합니다.";
+
 export const metadata = {
   title: "개인정보처리방침 — 오른스코어",
+  description: privacyDescription,
+  openGraph: {
+    title: "개인정보처리방침 — 오른스코어",
+    description: privacyDescription,
+    url: "/privacy",
+    siteName: "오른스코어",
+    locale: "ko_KR",
+    type: "website",
+    // 페이지별 openGraph 정의 시 루트 opengraph-image 상속이 끊기므로 공용 공유 카드를 유지.
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "개인정보처리방침 — 오른스코어",
+    description: privacyDescription,
+  },
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {
