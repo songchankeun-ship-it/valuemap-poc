@@ -199,6 +199,8 @@ export const priorityScoreCardCopy = {
     requiredDataPrefix: "필수 데이터",
     suspectPill: "이상값 점검 중 · 임시 점수",
     passPill: "이상값 점검 통과",
+    confidenceGloss:
+      "‘필수 데이터’는 점수 계산에 필요한 값이 얼마나 채워졌는지, ‘이상값 점검’은 가격 데이터에 튀는 값이 없는지 자동 확인한 결과예요. 점검 중인 종목은 임시 점수라 공식 후보·순위에서 빠집니다.",
   },
   en: {
     title: "Research priority",
@@ -212,6 +214,8 @@ export const priorityScoreCardCopy = {
     requiredDataPrefix: "Required data",
     suspectPill: "Outlier check in progress · provisional score",
     passPill: "Passed outlier check",
+    confidenceGloss:
+      "‘Required data’ is how much of the values needed to compute the score are filled in; ‘outlier check’ is an automated check for spikes in the price data. Stocks still under check carry a provisional score and are left out of official candidates and rankings.",
   },
 } as const satisfies Record<Locale, unknown>;
 
@@ -426,7 +430,7 @@ export const beginnerReadingCopy = {
     specialTitle: "이 종목에서 특히 볼 것",
     detailToggle: "지표별 상세 해석 펼치기 ▾",
     disclaimer:
-      "⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.",
+      "⚠ 이 해석은 매수·매도 추천이 아닙니다. 점수가 높아도 저평가나 수익을 보장하는 게 아니라, 어떤 종목을 더 자세히 볼지 정하는 탐색 우선순위예요 — 점수 패턴을 보고 무엇을 더 확인할지 알려드리는 가이드입니다.",
     steps: [
       {
         step: "점수부터 본다",
@@ -454,7 +458,7 @@ export const beginnerReadingCopy = {
     specialTitle: "What to watch especially for this stock",
     detailToggle: "Expand per-metric detail ▾",
     disclaimer:
-      "⚠ This read is not a buy/sell recommendation. It's a guide that, from the score pattern, tells you what to check further.",
+      "⚠ This read is not a buy/sell recommendation. A high score doesn't guarantee undervaluation or returns — it's a research priority for which stocks to look at more closely. From the score pattern, it tells you what to check further.",
     steps: [
       {
         step: "Start with the score",

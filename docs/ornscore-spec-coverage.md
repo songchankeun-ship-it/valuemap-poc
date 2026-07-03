@@ -152,12 +152,12 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 |---|---|---|
 | 5~6. StockConclusionHero 구조 | ① | `components/stock/StockConclusionHero.tsx`(StockHeader·PriorityScoreCard·ConclusionSummaryCard·StrengthWarningPanel·NextActionButtons) |
 | 6.3 현재 결론 카드(종목 유형 자동 분류) | ① | `lib/conclusion.ts` `classifyConclusion()`(저평가+추세·과열 주의·균형형 등) |
-| 6.2 탐색 우선도 카드(점수·순위·완성도) | ① | `stock/PriorityScoreCard.tsx`(점수/100·전체/업종 순위·데이터 배지)(#34) |
+| 6.2 탐색 우선도 카드(점수·순위·완성도) | ① | `stock/PriorityScoreCard.tsx`(점수/100·전체/업종 순위·데이터 배지)(#34). **Task 197(교육·주의 명료화, copy-only)**: `priorityScoreCardCopy.confidenceGloss`(ko/en) 신설 → 배지 행 아래 추가형 1줄로 "필수 데이터=점수 계산에 필요한 값 충족도·이상값 점검=가격 튐 자동 확인·점검 중=임시 점수라 공식 후보·순위 제외" 풀이. 배지 로직·점수·`metricsVersion` 무변경 |
 | 6.4 강점/주의 분리 | ① | `stock/`(StrengthWarningPanel 또는 page 분기)·`metricReadings.ts` |
 | 6.5 다음 확인 액션 버튼 | ① | `stock/NextActionButtons.tsx`(공시·재무·점수근거·업종비교) |
 | 7. 위험 경고 분리(급등/과열/변동성 단계) | ① | page riskNote·급등 위험 캡션(#33·#34) |
 | 8. 지표 요약 미니 바(상위 %) | ① | `stock/MetricInsightCards.tsx` 상위 X% 막대(#34) |
-| 9. 초보자용 결론 문장 | ① | `BeginnerReading.tsx`(유형별 확인 항목) |
+| 9. 초보자용 결론 문장 | ① | `BeginnerReading.tsx`(유형별 확인 항목). **Task 197(점수 한계 정합, copy-only)**: `beginnerReadingCopy.disclaimer`(ko/en)에 "점수가 높아도 저평가·수익 보장이 아닌 탐색 우선순위" 절 추가 → `conclusionHeroCopy.disclaimerSub`·`scoreBasisCopy.footer` 프레이밍과 일치. 점수식·데이터 무변경 |
 | 10. 상단 탭 구조(요약/차트/재무/공시/점수근거/업종) | ① | `StockTabs.tsx`·섹션 앵커 |
 | 11. 모바일 압축 레이아웃 | ② | #38 390px 소스 점검(StockHeader·PriorityScoreCard 가드). **Task 173(모바일 인터랙션 밀도 튜닝)**: className 여백/래핑만으로 종목상세·관심·홈 카드 답답함 완화 — 탭 44px 탭타깃(`StockTabs` py-3 sm:py-2.5), 4지표 카드 패딩/gap(`MetricInsightCards` p-3 sm:p-4·gap-2.5 sm:gap-3), 액션 버튼 gap(`StockDetailActionButtons` sm:gap-3), 관심 분석 셀 모바일 2×2(`WatchlistClient` grid-cols-2 sm:grid-cols-4), 초보자/주의/체크 박스 패딩(BeginnerReading·StockCandidateCard·DisclosureSignalCard). 데이터/copy/로직 무변경·CSS-only 리버서블. 실 브라우저 게이트는 운영자(⑤) |
 | 3차: 결론 문장 고도화·맞춤 문구·비교 후보 자동 추천 | ③/④ | 현재 규칙 기반. 관심종목 기반 맞춤·자동 추천은 후속 |

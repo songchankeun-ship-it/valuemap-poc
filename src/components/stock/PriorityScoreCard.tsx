@@ -87,6 +87,9 @@ export function PriorityScoreCard({
           </>
         ) : null}
       </div>
+
+      {/* 배지 용어 초보자 풀이 — 필수 데이터·이상값 점검이 무엇인지 한 줄로(설계서 §6.2 데이터 신뢰). 점수/데이터 무변경, 표시 전용. */}
+      <p className="mt-2 text-[10px] leading-snug text-zinc-500 dark:text-zinc-400">{t.confidenceGloss}</p>
     </div>
   );
 }

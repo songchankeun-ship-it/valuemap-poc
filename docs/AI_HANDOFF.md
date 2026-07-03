@@ -1349,3 +1349,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(전부 통과)**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG) · `smoke:check --all` 12/12 200(4455) · `/admin/status` 200 + 신규 링크 SSR 렌더 확인 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · 변경 3파일 U+FFFD 0. 리스너 PID 36380만 taskkill, **AI Center 4310 LISTENING 확인**(무중단).
   - **참고**: `npm run lint`는 이 레포에 ESLint 설정/의존성이 없어 `next lint`가 대화형 초기화 프롬프트를 띄운다(가용 게이트 아님). 실 게이트는 tsc+verify_metrics+build+smoke(레포 관행) — ESLint 초기화는 범위 밖이라 미수행.
 - **남은 소유자**: 커스텀 이벤트·서버측 액션 집계·발송/전환 로그는 인증·영속 인프라 결정(대기④). 실기기 OAuth 왕복·390px 육안은 운영자 게이트(Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 197 — OrnScore 투자 초보자 교육·주의 카드 명료화 (2026-07-04, Claude)
+- **Scope**: 종목 상세의 교육·주의 표면 4개 테마(점수 한계·공시 맥락·밸류 불확실성·데이터 신뢰)를 초보자가 "막힌 느낌 없이" 이해하도록 카피 다듬기. **copy-only** — `src/lib/copy/stockDetail.ts` 단일 소스 객체 + 추가형 JSX 1줄만. 점수식·데이터·`direction`·`metricsVersion` 무변경. 브랜치 `ai-center/task-197-ornscore-investor-education-caution-`.
+- **감사 결과(4테마)**: (i) 점수 한계·(iv) 데이터 신뢰만 실제 공백, (ii) 공시 맥락·(iii) 밸류 불확실성은 이미 정합 → 무편집(불필요 churn 회피).
+  - (ii) `stockDisclosuresCopy.scopeNote`가 이미 "전체 공시 이력이 아닙니다" 명시. `/disclosures`의 "최신 200건"과 종목 상세 "90일·20건"은 서로 다른 쿼리·다른 페이지(기지의 P2 비오류) → 무편집.
+  - (iii) `metricInsightCardsCopy.valueNote`·`sectorValue.lowSample`·`sectorComparisonCopy.classNote` 상호 정합(전체 풀 기준·소표본 참고·KRX 내부 분류) → 무편집.
+- **변경(copy-only 2건 + i18n)**:
+  - **(iv) 데이터 신뢰 풀이 신설**: `priorityScoreCardCopy.confidenceGloss`(ko/en) — "필수 데이터=점수 계산에 필요한 값이 얼마나 채워졌는지, 이상값 점검=가격 데이터에 튀는 값 자동 확인, 점검 중 종목은 임시 점수라 공식 후보·순위 제외" 한 줄. `PriorityScoreCard.tsx` 배지 행 아래 추가형 `<p className="mt-2 text-[10px] ...">` 1줄(정상·suspect 공통, 390px 무영향). 기존 배지("필수 데이터 N%"/"이상값 점검 통과·중"/"Metrics 2.4")는 뜻만 풀이, 로직·표시 무변경.
+  - **(i) 점수 한계 정합**: `beginnerReadingCopy.disclaimer`(ko/en)에 "점수가 높아도 저평가나 수익을 보장하는 게 아니라 탐색 우선순위" 절 추가 — `conclusionHeroCopy.disclaimerSub`("향후 수익률을 의미하지 않아요")·`scoreBasisCopy.footer`("탐색 우선순위") 프레이밍과 일치. 초보자 카드에서 명시적으로 보강.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`direction`·cron/auth·`metricsVersion` 무변경. 기존 copy 키는 문구만 확장(신규 키 `confidenceGloss` 추가), 금칙어 신규 도입 0(부정문 프레이밍 유지).
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(SSG) · `smoke:check --base http://localhost:4455 --all` 12/12 200 · SSR 스팟체크: 정상(005930) "이상값 점검 통과"+신규 풀이+강화 disclaimer, suspect(247540, PER 364≥300) "이상값 점검 중"+"점검 중인 종목은 임시 점수" 풀이 렌더 확인. 리스너 PID 31908만 taskkill.
+- **남은 소유자**: EN 언어 토글 실확인·실기기 390px 육안은 운영자 게이트(언어 전환 클라이언트·Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.
