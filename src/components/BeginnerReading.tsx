@@ -109,7 +109,7 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         {readings.map((r) => (
           <div
             key={r.label}
-            className={"border rounded-md p-2.5 " + toneStyles[r.tone]}
+            className={"border rounded-md p-3 " + toneStyles[r.tone]}
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm">{r.emoji}</span>

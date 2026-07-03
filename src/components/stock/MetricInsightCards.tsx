@@ -49,7 +49,7 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
   const t = metricInsightCardsCopy[locale];
   const metricLabels = stockDetailCopy[locale].metricLabels;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
       {metrics.map((m) => {
         const v = Math.max(0, Math.min(100, Math.round(m.score)));
         const c = scoreColorOf(v);
@@ -60,7 +60,7 @@ export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
         return (
           <div
             key={m.kind}
-            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 flex flex-col gap-2"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 sm:p-4 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">

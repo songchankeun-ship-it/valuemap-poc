@@ -86,7 +86,7 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
       </div>
 
       {/* 주의 — 확인 필요 문구 (경고 마커로 강점과 명확 분리) */}
-      <div className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-2.5 py-2">
+      <div className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-3 py-2.5">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-bold shrink-0 mt-px" aria-hidden="true">!</span>
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t.topCandidate.caution}</div>

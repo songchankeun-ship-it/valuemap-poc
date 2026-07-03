@@ -19,7 +19,7 @@ export function StockDetailActionButtons() {
   ] as const;
   return (
     <nav aria-label={t.navAriaLabel} className="w-full">
-      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-3">
         {ACTIONS.map(({ label, Icon, href }) => (
           <a
             key={href}

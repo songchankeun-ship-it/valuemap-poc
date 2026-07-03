@@ -1225,3 +1225,20 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트**: `tsc --noEmit` 0 · `verify_metrics.py` 138종목 위반 0(cp949 콘솔의 ✅ 이모지 print만 트레이스백, 검증 통과) · `npm run build` 0(138 SSG·전 라우트, `/login` 5.74kB) · EN/KO 신규 문구 클라이언트 청크(`563-*.js`)에 번들 확인(언어 전환 클라이언트 사이드). `next lint`는 이 repo에 ESLint 미구성(대화형 설정 프롬프트) = 기존 상태·회귀 아님.
 - **QA**: 로그인 동의 템플릿 렌더 ko "계속하면 이용약관과 개인정보처리방침에 동의하게 됩니다."·en "By continuing, you agree to the Terms and Privacy Policy." SSR 기본 한국어 유지, EN은 클라이언트 토글.
 - **남은 소유자**: WatchlistClient 전체 i18n(현재 syncCta 1줄만 로케일화·나머지 한국어 하드코딩 = EN i18n 잔여 커버리지 추적) · 실기기 OAuth 왕복·390px/데스크톱 육안 시각 게이트(운영자). 로컬 커밋만·푸시 미수행·main 무변경.
+
+
+### Task 173 — OrnScore 모바일 인터랙션 밀도 튜닝 (2026-07-03, Claude)
+- **Scope**: 모바일 폭(~390px)에서 헤더·카드·배지·필터·종목 상세·비교·관심 표면이 덜 답답하게 느껴지되 정보 밀도는 유지. 요청 하드 제약 준수 — repo-local 코드만·컴포넌트 단위·되돌리기 쉬운 변경·데이터/로직 무변경. 브랜치 `ai-center/task-173-ornscore-mobile-interaction-density-`.
+- **접근**: 병렬 감사(4개 서브에이전트로 헤더/nav·home/today 카드·종목 상세·필터/비교/관심 밀도 문제를 line:className 근거로 매핑) → 실제로 답답한 지점만 타깃 편집. 섹션 헤더 gap 미세 조정 등 마진 노이즈는 의도적으로 제외.
+- **파일(7) — className 여백/래핑 유틸만 변경(구조·prop·copy·로직 무변경)**:
+  - `src/components/StockTabs.tsx`: 탭 버튼 `py-2.5` → `py-3 sm:py-2.5`(모바일 44px 탭타깃 확보, 데스크톱 밀도 유지). `FOCUS_RING`·sticky·overflow-x 보존.
+  - `src/components/stock/MetricInsightCards.tsx`: 4지표 카드 그리드 `gap-2` → `gap-2.5 sm:gap-3`, 카드 인테리어 `p-3` → `p-3 sm:p-4`(1열 모바일에서 카드 간·내부 숨통).
+  - `src/components/stock/StockDetailActionButtons.tsx`(=NextActionButtons): 액션 버튼 그리드 `gap-2` → `gap-2 sm:gap-3`. 기존 `min-h-[44px]`·grid 래핑·aria 보존.
+  - `src/components/WatchlistClient.tsx`: 분석 뷰 4지표 셀 `grid-cols-4 gap-1.5` → `grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1.5`(390px 4열 ~84px 셀 압박 → 모바일 2×2, 4지표 전부 유지·데스크톱 4열 복원).
+  - `src/components/BeginnerReading.tsx`: 지표 해석 카드 `p-2.5` → `p-3`(아이콘+2줄 텍스트 박스 여백).
+  - `src/components/home/StockCandidateCard.tsx`: 주의(경고) 박스 `px-2.5 py-2` → `px-3 py-2.5`.
+  - `src/components/home/DisclosureSignalCard.tsx`: 체크포인트 박스 `px-2.5 py-2` → `px-3 py-2.5`.
+- **감사했으나 무변경(이미 적정)**: `StocksExplorer` FilterPanel(`space-y-5`/`space-y-4 pt-4` 이미 여유·필터 칩 컴팩트가 의도) · `CompareClient` 바스켓 quickAdd(이미 `flex-wrap gap-1.5`+44px) · `WatchlistClient` 간단/분석 세그먼트 토글(의도적 컴팩트 컨트롤) · `AppHeader`/`HeaderDataBar`(390px 실오버플로 미확인·truncate 가드) · `MobileBottomNav`(고정 높이·truncate 안전) · 전역 배지(`ScoreBadge`/`MetricChip` 패딩 변경은 다표면 파급이라 보류).
+- **불변식**: `public/data/*`·점수식/`compare.ts`/`matchConfig.ts`·copy(`src/lib/copy/*`·i18n)·cron/notify·auth·`metricsVersion` 무변경. 모든 diff는 className/layout 한정 → 트리비얼 리버서블. ko/en 문자열 무변경(래핑/여백만).
+- **게이트**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·전 라우트 표 불변, `/stocks` 19.6kB·`/watchlist` 9.68kB·`/stock/[ticker]` 26.4kB) · `scripts/smoke-check.mjs` 7/7 라우트 200(SMOKE GATE PASSED) · `git diff` 7파일 8삽입/8삭제 전부 className 스페이싱, 한글 주석(주의·확인 필요 등) mojibake 0.
+- **남은 소유자**: 실기기/390px 육안 시각 게이트(Playwright 미구성=운영자). 로컬 커밋만·푸시 미수행·main 무변경.

@@ -41,7 +41,7 @@ export function DisclosureSignalCard({ s }: { s: DisclosureSignalVM }) {
       <div className="text-[14px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">{s.corpName}</div>
       <p className="text-[12px] text-zinc-600 dark:text-zinc-400 mt-0.5 line-clamp-2 leading-snug">{s.reportNm}</p>
 
-      <div className="mt-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950/40 px-2.5 py-2">
+      <div className="mt-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5">
         <div className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 mb-0.5">{t.checkLabel}</div>
         <p className="text-[11px] leading-snug text-zinc-700 dark:text-zinc-300">{checkPoint}</p>
       </div>

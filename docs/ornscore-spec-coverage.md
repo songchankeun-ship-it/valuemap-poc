@@ -158,7 +158,7 @@ Phase 1~7. 디자인 큐(#14~#27)가 이 문서를 타깃으로 진행됨.
 | 8. 지표 요약 미니 바(상위 %) | ① | `stock/MetricInsightCards.tsx` 상위 X% 막대(#34) |
 | 9. 초보자용 결론 문장 | ① | `BeginnerReading.tsx`(유형별 확인 항목) |
 | 10. 상단 탭 구조(요약/차트/재무/공시/점수근거/업종) | ① | `StockTabs.tsx`·섹션 앵커 |
-| 11. 모바일 압축 레이아웃 | ② | #38 390px 소스 점검(StockHeader·PriorityScoreCard 가드). 실 브라우저 게이트는 운영자(⑤) |
+| 11. 모바일 압축 레이아웃 | ② | #38 390px 소스 점검(StockHeader·PriorityScoreCard 가드). **Task 173(모바일 인터랙션 밀도 튜닝)**: className 여백/래핑만으로 종목상세·관심·홈 카드 답답함 완화 — 탭 44px 탭타깃(`StockTabs` py-3 sm:py-2.5), 4지표 카드 패딩/gap(`MetricInsightCards` p-3 sm:p-4·gap-2.5 sm:gap-3), 액션 버튼 gap(`StockDetailActionButtons` sm:gap-3), 관심 분석 셀 모바일 2×2(`WatchlistClient` grid-cols-2 sm:grid-cols-4), 초보자/주의/체크 박스 패딩(BeginnerReading·StockCandidateCard·DisclosureSignalCard). 데이터/copy/로직 무변경·CSS-only 리버서블. 실 브라우저 게이트는 운영자(⑤) |
 | 3차: 결론 문장 고도화·맞춤 문구·비교 후보 자동 추천 | ③/④ | 현재 규칙 기반. 관심종목 기반 맞춤·자동 추천은 후속 |
 
 # 7. 종목 탐색 필터 UI 감각화 설계서 (`ornscore_stock_filter_ui_spec_v1.md`)

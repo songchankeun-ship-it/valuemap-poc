@@ -445,7 +445,7 @@ export function WatchlistClient({
                         <span>추가 {formatTime(item.addedAt)}</span>
                       </div>
                       {view === "analysis" && info ? (
-                        <div className="mt-2 grid grid-cols-4 gap-1.5">
+                        <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1.5">
                           {([["추세", info.momentum], ["거래", info.flow], ["밸류", info.value], ["위험", info.vol]] as const).map(([l, v]) => (
                             <div key={l} className="bg-zinc-50 dark:bg-zinc-800/50 rounded px-1.5 py-1 text-center">
                               <div className="text-[9px] text-zinc-400 dark:text-zinc-500">{l}</div>

@@ -1,5 +1,21 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-03 · [claude] Task 173 — OrnScore 모바일 인터랙션 밀도 튜닝
+- **범위**: 모바일(~390px)에서 헤더·카드·배지·필터·종목상세·비교·관심이 덜 답답하되 정보 밀도 유지. 하드 제약 — repo-local 코드만·컴포넌트 단위·리버서블·데이터/로직 무변경. 브랜치 `ai-center/task-173-ornscore-mobile-interaction-density-`.
+- **방법**: 4개 병렬 감사 서브에이전트로 line:className 밀도 문제 매핑 → 실제 답답한 지점만 편집(섹션 헤더 gap 미세조정 등 마진 노이즈 제외).
+- **변경 파일(7) — className 여백/래핑 유틸만**:
+  - `StockTabs.tsx` 탭 버튼 `py-2.5`→`py-3 sm:py-2.5`(모바일 44px 탭타깃, FOCUS_RING 보존).
+  - `stock/MetricInsightCards.tsx` 4지표 카드 그리드 `gap-2`→`gap-2.5 sm:gap-3`·카드 `p-3`→`p-3 sm:p-4`.
+  - `stock/StockDetailActionButtons.tsx` 액션 버튼 그리드 `gap-2`→`gap-2 sm:gap-3`(min-h-44px 보존).
+  - `WatchlistClient.tsx` 분석 뷰 지표 셀 `grid-cols-4 gap-1.5`→`grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1.5`(모바일 2×2, 4지표 전부 유지).
+  - `BeginnerReading.tsx` 지표 해석 카드 `p-2.5`→`p-3`.
+  - `home/StockCandidateCard.tsx` 주의 박스 `px-2.5 py-2`→`px-3 py-2.5`.
+  - `home/DisclosureSignalCard.tsx` 체크 박스 `px-2.5 py-2`→`px-3 py-2.5`.
+- **감사 후 무변경(이미 적정)**: `StocksExplorer` FilterPanel(space-y-5 여유)·`CompareClient` quickAdd(flex-wrap+44px)·관심 세그먼트 토글(의도적 컴팩트)·`AppHeader`/`HeaderDataBar`(truncate 가드)·`MobileBottomNav`(고정 높이)·전역 배지(다표면 파급 보류).
+- **불변식**: `public/data/*`·점수식/compare.ts/matchConfig.ts·copy/i18n·cron/notify·auth·metricsVersion 무변경. diff 전부 className/layout 한정·ko/en 문자열 무변경.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `npm run build` 0(138 SSG·라우트 표 불변) · `smoke-check.mjs` 7/7 200 · `git diff` 7파일 8+/8- 전부 스페이싱 유틸·한글 주석 mojibake 0.
+- **다음 소유자**: 실기기/390px 육안 시각 게이트(Playwright 미구성=운영자). 로컬 커밋만·푸시 미수행·main 무변경.
+
 ## 2026-07-03 · [claude] Task 172 — 로그아웃→로그인 연속성 폴리시
 - **범위**: 저장·관심 담기·계정 게이트 동작이 로그아웃 상태에서 로그인으로 넘어갈 때 끊기지 않고 자연스럽게 느껴지게. repo-local UI/카피만, **제공자 설정·비공개 설정·`redirectTo`·콜백 로직 무변경·신규 로그인 제공자 0**. `providers.ts`·`auth/callback/route.ts`·`returnPath.ts`는 READ-ONLY로 취급(무변경). 브랜치 `ai-center/task-172-ornscore-logged-out-to-logged-in-con`.
 - **변경 파일(3 소스 + i18n)**:
