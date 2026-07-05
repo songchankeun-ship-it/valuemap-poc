@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-05T17:45:11.150Z
+Last updated: 2026-07-05T17:55:50.154Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 220 - OrnScore release rollback and monitoring notes
-- Run: 177
+- Task: 221 - OrnScore watchlist groups memo CSV spec
+- Run: 178
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
