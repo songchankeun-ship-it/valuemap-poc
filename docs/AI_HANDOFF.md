@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 215 — OrnScore 로컬 릴리스 핸드오프 팩 (2026-07-06, Claude, docs-only)
+- **범위**: 현재 릴리스 통합 브랜치를 오너/다음 에이전트가 채팅 기록 없이 이어받아 배포까지 갈 수 있도록 로컬 핸드오프 팩 작성. **문서 전용·앱 소스/데이터/점수식 무변경**. 외부 서비스 액션 미수행. 브랜치 `ai-center/task-215-ornscore-local-branch-sync-guard-and`.
+- **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 102` → origin/main에 HEAD가 놓친 커밋 0 = **지금 통합할 상류 데이터 없음(no integration needed)**. `git merge-base --is-ancestor origin/main HEAD` 참. codex 통합 브랜치 `codex/ornscore-main-data-integration-20260705` tip == HEAD `dbb24e0`. 최신 데이터 커밋 `1ca2401`(2026-07-03). 향후 origin/main의 `public/data/*`-only daily 커밋은 안전한 병합 후보로만 기록(이 태스크에서 병합 안 함).
+- **변경(문서 3파일)**: 신규 [`docs/ornscore-local-release-handoff-2026-07-06.md`](./ornscore-local-release-handoff-2026-07-06.md) — 무료 베타 v1 불변식 배너·프리핸드오프 체크리스트·브랜치 통합 권고·배포 후 캐시버스트 라우트 8개(`/ /status /about /pricing /stocks /stock/005930 /login /watchlist`)·오너 게이트 4개·롤백 노트·다음 액션 한 줄. `PROGRESS.md`/이 파일 이 항목. 근거는 재서술 대신 레포 내부 링크(owner-review 07-04·local-release-evidence 07-03·route-smoke-checklist).
+- **불변식**: `public/data/*`(count 138·asOf 20260703·metricsVersion 2.4)·점수식·copy·cron/auth·`direction` 무변경. 앱 소스·스크립트 0줄.
+- **게이트**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · 신규/편집 `.md` U+FFFD 0 · `git diff --check` 클린. build/smoke/perf는 앱 소스 무변경이라 재실행 생략(Task 166·177·178·194 docs-only 관행; 직전 2026-07-06 codex QA 유효).
+- **다음 액션(오너)**: 오너가 실기기 390px·OAuth 왕복·Android `assetlinks.json` 실지문·법무/결제 4게이트를 통과시킨 뒤 이 브랜치로 main 반영·배포하고 캐시버스트 라우트 재확인. push/deploy/외부 액션은 전부 오너. 로컬 커밋만·미push.
+
 ### 2026-07-06 — Codex release gate and main handoff readiness
 - **What changed**: Updated `scripts/check-app-packaging.mjs` so the packaging gate follows the current offline-page split (`src/app/offline/page.tsx` -> `OfflineContent` -> `offlineCopy`) instead of looking for Korean guidance copy directly in `page.tsx`. Runtime app behavior, stock data, metrics, and scoring were not changed.
 - **Verification**: `git fetch origin` then `origin/main...HEAD = 0 101`; `npx tsc --noEmit` 0; `python scripts/verify_metrics.py` 138 stocks, 0 errors, 0 forbidden-copy hits, Metrics 2.4; `npm run app:check` passed with 1 external WAIT for real Android `assetlinks.json`; `npm run build` 0; `npm run smoke:check -- --base http://localhost:4458 --all` 23/23 OK; `npm run perf:check -- --base http://localhost:4458` 0 advisory warnings.
