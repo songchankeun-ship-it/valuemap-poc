@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 216 — 캐시버스트 라우트 검증 헬퍼 (2026-07-06, Claude)
+- **범위**: 배포 후 수동으로 돌리던 캐시버스트 라우트 점검(이 파일/handoff §4·`ornscore-route-smoke-checklist`)을 **기억에 의존하지 않는 재사용 로컬 헬퍼**로 자동화. 브랜치 `ai-center/task-216-ornscore-cache-busted-route-verifica`. 앱 소스/데이터/점수식/카피 무변경, 신규 npm 의존성 0, 빌드 스텝 0.
+- **변경**: 신규 `scripts/verify-routes.mjs`(순수 Node ESM, `fetch`만). 6개 공개 라우트(`/ /status /about /pricing /stocks /stock/005930`)를 `?v=<ts>` + `no-cache`로 요청해 상태 200·치명 마커 0·**로컬 `stocks.json`에서 파생한 데이터 기준일**·콘텐츠 앵커·stale 유료 카피(`요금제`/`기능 비교`) 부재·KO/EN 토글 부재(`hreflang`/`lang="en"`/`LanguageSwitcher` 없음 + `lang="ko"`)를 단언. 실패·미접속 시 `exit 1`. `package.json`에 `verify:routes` 스크립트 1줄 추가. 사용: `npm run verify:routes -- --base http://localhost:<port>`(로컬) 또는 `--base https://<배포-URL>`(배포 후 재확인). `VERIFY_BASE_URL` 환경변수·`--data <path>` 오버라이드 지원.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0 · `npm run verify:routes -- --base http://localhost:4461` 6/6 OK(date `2026.07.03`) · 음성 확인(잘못된 날짜/미접속 포트 → `exit 1`) · `npm run smoke:check --all` 23/23 · `git diff --check` 클린 · U+FFFD 0. 포트: 4461 내 PID만 종료·AI Center 4310 유지.
+- **다음 액션(오너)**: main 반영·재배포 후 `npm run verify:routes -- --base https://<배포-URL>`로 §4 라우트를 라이브 CDN 캐시버스트로 재확인. 배포 데이터 기준일이 로컬과 다르면 이 헬퍼가 FAIL로 잡음. push/deploy/외부 액션은 전부 오너.
+
 ### Task 215 — OrnScore 로컬 릴리스 핸드오프 팩 (2026-07-06, Claude, docs-only)
 - **범위**: 현재 릴리스 통합 브랜치를 오너/다음 에이전트가 채팅 기록 없이 이어받아 배포까지 갈 수 있도록 로컬 핸드오프 팩 작성. **문서 전용·앱 소스/데이터/점수식 무변경**. 외부 서비스 액션 미수행. 브랜치 `ai-center/task-215-ornscore-local-branch-sync-guard-and`.
 - **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 102` → origin/main에 HEAD가 놓친 커밋 0 = **지금 통합할 상류 데이터 없음(no integration needed)**. `git merge-base --is-ancestor origin/main HEAD` 참. codex 통합 브랜치 `codex/ornscore-main-data-integration-20260705` tip == HEAD `dbb24e0`. 최신 데이터 커밋 `1ca2401`(2026-07-03). 향후 origin/main의 `public/data/*`-only daily 커밋은 안전한 병합 후보로만 기록(이 태스크에서 병합 안 함).

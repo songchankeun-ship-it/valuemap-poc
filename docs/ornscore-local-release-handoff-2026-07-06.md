@@ -71,6 +71,8 @@
 
 기대값: **`2026.07.03`/`07.03(금)` 데이터** · `베타 안내` 표시 · KO/EN 토글 미노출 · `/pricing` "지금은 무료 베타예요" · stale `요금제` 문구 미노출 · 콘솔 에러 0.
 
+> **자동화(Task 216):** 이 §4 점검의 앞 6개 대표 라우트(`/ /status /about /pricing /stocks /stock/005930`)는 `npm run verify:routes -- --base https://<배포-URL>`로 자동 재확인할 수 있다. `scripts/verify-routes.mjs`가 `?v=<ts>`+`no-cache`로 요청해 상태·**로컬 `stocks.json`에서 파생한 기준일**·무료 베타 프레이밍·stale `요금제`/`기능 비교` 부재·KO/EN 토글 부재를 단언하고, 하나라도 어긋나면 `exit 1`. 로컬 프리뷰는 `--base http://localhost:<고유고포트>`. **배포된 데이터 기준일이 로컬과 일치할 때만 초록색**이라 stale 배포를 잡는다. 근거: [`docs/ornscore-route-smoke-checklist.md`](./ornscore-route-smoke-checklist.md).
+
 - [ ] `/` — 홈, 오늘 데이터 기준일 `2026.07.03`, `베타 안내`
 - [ ] `/status` — 데이터/시스템 상태, `2026.07.03`
 - [ ] `/about` — 서비스 소개, 무료 베타 프레이밍

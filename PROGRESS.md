@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [claude] Task 216 — 캐시버스트 라우트 검증 헬퍼 (의존성 0)
+- **범위**: 배포 후 수동으로 돌리던 "사이트 새로고침 캐시버스트 라우트 점검"(handoff §4)을 **기억에 의존하지 않는 재사용 로컬 헬퍼**로 자동화. 브랜치 `ai-center/task-216-ornscore-cache-busted-route-verifica`(codex 통합 라인 포함, tip 유지). 앱 소스/데이터/점수식/카피 무변경, 신규 npm 의존성 0, 빌드 스텝 추가 0.
+- **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 104` → origin/main에 HEAD가 놓친 커밋 0(통합할 상류 없음). 캐리포워드 라인 그대로 이어감.
+- **변경(신규 1 + 편집 4)**:
+  - 신규 `scripts/verify-routes.mjs` — 순수 Node ESM(`node:fs`/`node:path`/`node:url` + 전역 `fetch`만). `--base <url>`(기본 `http://localhost:4461`, 환경변수 `VERIFY_BASE_URL`, 플래그 우선) + `--data <path>`(기본 레포 `public/data/stocks.json`). 기대 데이터 기준일을 **로컬 데이터에서 파생**(`realStocks.ts`의 `deriveBusinessDate` 미러 → `YYYY.MM.DD`, 파생 불가 시 즉시 실패). 요청마다 캐시버스트(`?v=<Date.now()>`, 기존 쿼리 처리) + `cache-control:no-cache`·`pragma:no-cache`·`expires:0`·`redirect:manual`. 6개 대표 공개 라우트(`/ /status /about /pricing /stocks /stock/005930`)에 대해 (a)상태 200 (b)치명 마커 0 (c)데이터 기준일·콘텐츠 앵커 존재 (d)stale 유료 카피(`요금제`/`기능 비교`) 부재 (e)KO/EN 토글 부재(`hreflang`/`lang="en"`/`LanguageSwitcher` 없음 + `lang="ko"` 존재)를 단언. 라우트별 OK/FAIL 표 + 실패 사유 출력, 하나라도 실패·서버 미접속 시 `exit 1`, 전부 통과 시 `exit 0`.
+  - `package.json` — 관례(`smoke:check`/`perf:check`) 따라 `"verify:routes": "node scripts/verify-routes.mjs"` 1줄만 추가.
+  - `docs/ornscore-route-smoke-checklist.md`·`docs/ornscore-local-release-handoff-2026-07-06.md` §4 — 이 헬퍼를 수동 체크리스트의 **자동화 형태**로 상호 링크.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0 · 로컬 prod(`npx next start -p 4461`)에서 `npm run verify:routes -- --base http://localhost:4461` **6/6 OK**(expectedDate `2026.07.03`) · 음성 확인: `--data`에 잘못된 날짜(20250101) → `/`·`/status` FAIL·`exit 1`, 미접속 포트 → `exit 1` · 회귀 확인 `npm run smoke:check -- --base http://localhost:4461 --all` 23/23 OK · `git diff --check` 클린 · 신규/편집 파일 U+FFFD 0. 포트 안전: 4461 내 PID만 종료, AI Center 4310 LISTENING 유지.
+- **다음 액션(오너)**: 오너가 이 브랜치로 main 반영·Vercel 재배포 후 `npm run verify:routes -- --base https://<배포-URL>`로 §4 캐시버스트 라우트를 라이브 CDN에 대해 재확인. 이 헬퍼는 **배포된 데이터 기준일이 로컬 `stocks.json`과 일치할 때만** 초록색(그래서 stale 배포를 잡음). push/deploy/외부 액션은 전부 오너.
+
 ## 2026-07-06 · [claude] Task 215 — OrnScore 로컬 릴리스 핸드오프 팩 (docs-only)
 - **범위**: 현재 릴리스 통합 브랜치를 오너/다음 에이전트가 채팅 기록 없이 이어받아 배포까지 갈 수 있도록 로컬 핸드오프 팩을 작성. **문서 전용·앱 소스/데이터/점수식 무변경**. 외부 서비스 액션 미수행. 브랜치 `ai-center/task-215-ornscore-local-branch-sync-guard-and`.
 - **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 102` → **origin/main에 HEAD가 놓친 커밋 0 = 지금 통합할 상류 데이터 없음**. `git merge-base --is-ancestor origin/main HEAD` 참(origin/main이 HEAD 조상). codex 통합 브랜치 `codex/ornscore-main-data-integration-20260705` tip == HEAD `dbb24e0`. 최신 데이터 커밋 `1ca2401`(2026-07-03 refresh). 향후 origin/main의 `public/data/*`-only daily 커밋은 안전한 병합 후보로만 기록(이 태스크에서 병합 안 함).

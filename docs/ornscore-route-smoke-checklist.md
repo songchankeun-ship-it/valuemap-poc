@@ -4,6 +4,8 @@
 
 > `perf:check`(권고·항상 exit 0)와 다르게 이건 **진짜 게이트**: 하나라도 실패하면 `exit 1`.
 
+> **관련 자동화:** 배포 후 "사이트 새로고침 캐시버스트 라우트 점검"(`ornscore-local-release-handoff-2026-07-06.md` §4)의 **자동화 형태**는 `npm run verify:routes`(`scripts/verify-routes.mjs`)다. 이건 6개 대표 공개 라우트를 `?v=<ts>`+`no-cache`로 요청해 상태·**로컬 데이터에서 파생한 기준일**·무료 베타 프레이밍·stale 유료 카피(`요금제`) 부재·KO/EN 토글 부재를 단언하고, stale 날짜/카피/라우트에 `exit 1`. 로컬은 `--base http://localhost:<port>`, 배포 후 재확인은 `--base https://<배포-URL>`로 같은 검사를 라이브 CDN에 돌린다. (이 스모크 게이트는 SSR 콘텐츠 앵커 중심, `verify:routes`는 캐시버스트·기준일·프레이밍 중심 — 상호 보완.)
+
 ---
 
 ## 실행 방법
