@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 220 — OrnScore 사이트 새로고침 모니터링 + 롤백 노트 (2026-07-06, Claude, docs-only)
+- **범위**: 릴리스 라인을 **되돌릴 수 있고 관찰 가능하게** 만드는 첫 노트 — 오너가 외부 사이트를 새로고침한 직후 (1)즉시 확인 (2)롤백 판단 (3)PROGRESS 캡처를 한 문서에 고정. 브랜치 `ai-center/task-220-ornscore-release-rollback-and-monito`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 스크립트 미추가**(자동 관찰성은 기존 `verify:routes`+`smoke:check --all`로 충분 → 과설계 회피).
+- **상류 판정(read-only)**: `git fetch origin`·`git rev-list --left-right --count origin/main...HEAD = 0 112`(HEAD 112 앞·0 뒤). codex 통합 라인 `codex/ornscore-main-data-integration-20260705`(`dbb24e0`)는 HEAD에 포함되나 HEAD 아님(215~219 전진). 로컬 커밋만·미push·미배포.
+- **파일**: 신규 `docs/ornscore-site-refresh-monitoring-rollback-2026-07-06.md`(§0 불변식 배너+상류 노트·§1 새로고침 직후 즉시 확인[자동 `verify:routes` 6라우트→`smoke:check --all` 23라우트→수동 하드리로드 패스+오너 제공 URL 슬롯]·§2 롤백 트리거→액션 표+안전 롤백 노트[Vercel promote 또는 `git revert -m 1 <merge-sha>`, `public/data/*`·점수식·`direction`·`metricsVersion` 무접촉]·§3 PROGRESS 캡처 목록·§4 남은 오너 승인·§5 신규 스크립트 미추가 근거). 편집 `docs/ornscore-spec-coverage.md` §O에 Task 220 포인터 1줄. 편집 `PROGRESS.md`·이 파일.
+- **불변식**: 138·`asOfBusinessDate 20260703`(표기 `2026.07.03`)·`metricsVersion 2.4`·KO 전용·AI 숨김·`/pricing` "지금은 무료 베타예요"·금칙어 0 — 무변경(문서에서 stale/재부상 회귀 감시 대상으로 명문화만).
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · 신규/편집 4 .md U+FFFD 0 · `git diff --check` 클린. 문서 전용이라 build/smoke/perf 생략(Task 215·219 관행) — 직전 초록 = 2026-07-06 codex smoke 23/23.
+- **다음 액션(오너)**: §4 승인(배포/새로고침·URL 제공) 후 배포 URL로 §1.1→§1.2→§1.3 실행, `exit 1`·§2.1 트리거 시 §2.2 안전 절차(promote/revert)로 롤백 결정, §3 목록대로 `PROGRESS.md` 기록. push/deploy/promote/revert·OAuth 왕복은 오너 몫.
+
 ### Task 219 — OrnScore 실기기 390px 릴리스 QA 런북 (2026-07-06, Claude, docs-only)
 - **범위**: 남은 실기기 390px 오너 게이트(⑤)를 **오너가 무엇을 볼지 묻지 않고 실행**할 수 있게 라우트별 육안 런북으로 고정. 브랜치 `ai-center/task-219-ornscore-real-device-local-release-q`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 브라우저/DOM 스크립트 미추가**(SSR 자동검증은 기존 `smoke:check --all`+`verify:routes`로 충분 → 과설계 회피).
 - **상류 판정(read-only)**: `git fetch origin`·`git rev-list --left-right --count origin/main...HEAD = 0 110`(HEAD 110 앞·0 뒤). 통합 라인 `codex/ornscore-main-data-integration-20260705` HEAD 아님(215~218 전진). 로컬 커밋만·미push.
