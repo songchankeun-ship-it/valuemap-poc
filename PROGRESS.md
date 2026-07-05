@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [claude] Task 219 — OrnScore 실기기 390px 릴리스 QA 런북
+- **범위**: 남은 실기기 390px 오너 게이트를 **묻지 않고 실행 가능**하게 — 무료 베타 공개 전 오너가 실 모바일(390×844)에서 혼자 통과시키는 라우트별 육안 체크리스트를 신설. 브랜치 `ai-center/task-219-ornscore-real-device-local-release-q`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경, 신규 npm 의존성 0, 빌드 스텝 0, **신규 브라우저/DOM 스크립트 추가 안 함**(과설계 회피 — SSR 자동검증은 기존 `smoke:check --all`+`verify:routes`가 커버).
+- **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 110` → HEAD가 origin/main보다 110 앞·0 뒤(놓친 커밋 0). codex 통합 라인 `codex/ornscore-main-data-integration-20260705`는 브랜치로 잔존하나 HEAD 아님(Task 215~218로 전진). 로컬 커밋만·미push.
+- **소스 진실 확인(문서 드리프트 방지)**: `StockTabs.tsx:53` 탭 바 `sticky top-0 z-10` · `AppHeader.tsx:65` 헤더 `sticky top-0 z-40` → 스크롤 시 탭 바 헤더 뒤 가려짐(occlusion) 재확인. `dataStatus.ts` 기준일 표기 `YYYY.MM.DD`(`20260703`→`2026.07.03`). `public/data/stocks.json` = `count 138 · asOfBusinessDate 20260703 · metricsVersion 2.4` 불변식 확인.
+- **산출물**: 신규 `docs/ornscore-real-device-390px-qa-2026-07-06.md` — §0 무료 베타 불변식 배너(138·`2026.07.03`·KO 전용·AI 숨김·`/pricing` "지금은 무료 베타예요"·금칙어 0)·§1 자동 프리-패스(build→`npx next start -p 4464`→`smoke:check --all` 23/23→`verify:routes`, 초록 베이스라인부터 육안 시작)·§2 실기기 셋업(실 390px폰 또는 DevTools 390×844·다크/라이트·콘솔)·§3 **7라우트 표**(`/`·`/stocks`·`/stock/005930`·`/status`·`/pricing`·`/login?next=/watchlist`·`/watchlist`) 각 [기대 화면 한국어 앵커 / 모바일 레이아웃 리스크 / 합격·불합격 노트]·§3 고위험 `StockTabs.tsx:53` sticky occlusion **A(헤더높이+safe-area 오프셋)/B(sticky 제거) 오너 실기기 결정**·§4 완료 기준·§5 신규 스크립트 미추가 결정 근거·§6 교차 참조(post-release §7/§8·mobile-viewport-followup·local-release-handoff §5·launch-observability·route-smoke-checklist).
+- **크로스레퍼런스(append-only)**: `docs/ornscore-spec-coverage.md` §O(QA 체크리스트) 행에 Task 219 포인터 1줄 append.
+- **게이트(문서 스케일, 전부 통과)**: `npx tsc --noEmit` 0(앱 소스 무변경 재확인) · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · 신규/편집 3파일 U+FFFD 0 · `git diff --check` 클린. 문서 전용이라 build/smoke/perf 생략(레포 관행) — 직전 초록 게이트 = 2026-07-06 codex 라인 smoke 23/23 유효.
+- **다음 액션(오너 게이트)**: 오너가 §1 자동 프리-패스를 먼저 돌려 초록 확인 → 신규 문서대로 390px 실기기 육안(7라우트·다크/라이트) 1회 → `/stock/005930`의 StockTabs sticky를 실기기에서 A/B 결정(후속 로컬 task로 반영 가능). push/deploy/외부 서비스는 전부 오너.
+
 ## 2026-07-06 · [claude] Task 218 — Android assetlinks 외부 WAIT → 오너 실행 체크리스트
 - **범위**: `app:check`의 유일한 외부 `WAIT`(Android `assetlinks.json` 미생성)를 **가짜 라이브 파일 없이** 오너가 따라할 수 있는 한 장짜리 실행 키트로 전환. 브랜치 `ai-center/task-218-ornscore-android-assetlinks-owner-ch`. 앱 소스/데이터/점수식/카피 무변경, 신규 npm 의존성 0, 빌드 스텝 0. `public/.well-known/assetlinks.json` **생성 안 함**(실 지문 확보 전까지 오너 게이트 유지).
 - **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 108` → origin/main에 HEAD가 놓친 커밋 0. codex 통합 라인 `codex/ornscore-main-data-integration-20260705`는 더 이상 HEAD 아님(Task 215~217로 전진). 로컬 커밋만·미push.

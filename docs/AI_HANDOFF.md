@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 219 — OrnScore 실기기 390px 릴리스 QA 런북 (2026-07-06, Claude, docs-only)
+- **범위**: 남은 실기기 390px 오너 게이트(⑤)를 **오너가 무엇을 볼지 묻지 않고 실행**할 수 있게 라우트별 육안 런북으로 고정. 브랜치 `ai-center/task-219-ornscore-real-device-local-release-q`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 브라우저/DOM 스크립트 미추가**(SSR 자동검증은 기존 `smoke:check --all`+`verify:routes`로 충분 → 과설계 회피).
+- **상류 판정(read-only)**: `git fetch origin`·`git rev-list --left-right --count origin/main...HEAD = 0 110`(HEAD 110 앞·0 뒤). 통합 라인 `codex/ornscore-main-data-integration-20260705` HEAD 아님(215~218 전진). 로컬 커밋만·미push.
+- **파일**: 신규 `docs/ornscore-real-device-390px-qa-2026-07-06.md`(§0 불변식 배너·§1 자동 프리-패스 build→`next start -p 4464`→smoke:check --all→verify:routes·§2 실기기 셋업 390×844 다크/라이트·§3 7라우트 표[`/`·`/stocks`·`/stock/005930`·`/status`·`/pricing`·`/login?next=/watchlist`·`/watchlist`] 기대화면/모바일리스크/합격칸 + 고위험 `StockTabs.tsx:53` sticky occlusion A/B 오너 결정·§4 완료기준·§5 스크립트 미추가 근거·§6 교차참조). 편집 `docs/ornscore-spec-coverage.md` §O에 Task 219 포인터 1줄. 편집 `PROGRESS.md`·이 파일.
+- **불변식**: 138·`asOfBusinessDate 20260703`(표기 `2026.07.03`)·`metricsVersion 2.4`·KO 전용·AI 숨김·`/pricing` "지금은 무료 베타예요"·금칙어 0 — 무변경(문서에서 회귀 감시 대상으로 명문화만).
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · 신규/편집 3 .md U+FFFD 0 · `git diff --check` 클린. 문서 전용이라 build/smoke/perf 생략(레포 관행) — 직전 초록 = 2026-07-06 codex smoke 23/23.
+- **다음 액션(오너)**: §1 자동 프리-패스로 초록 확인 후 390px 실기기 육안(7라우트·다크/라이트) 1회 → `/stock/005930` StockTabs sticky를 on-device로 A(오프셋)/B(제거) 결정. push/deploy는 오너 몫.
+
 ### Task 217 — OAuth 로컬 프리플라이트 (2026-07-06, Claude, 제출 없음·콘솔 무접촉)
 - **범위**: OAuth 릴리스 리스크를 **레포 내부에서 판정 가능한 부분**만 자동화/문서화하고 **실제 로그인 왕복은 오너 게이트로 분리**. 제공자 제출·계정 입력·계정 생성·외부 콘솔 변경 없음. 브랜치 `ai-center/task-217-ornscore-oauth-local-preflight-no-ac`. 앱 소스/데이터/점수식/`direction`/auth 플로우 무변경, npm 의존성 0, 빌드 스텝 0.
 - **상류·통합 라인**: `git fetch origin` 후 `origin/main...HEAD = 0 106`(상류 누락 0). 통합 브랜치 `codex/ornscore-main-data-integration-20260705`(`dbb24e0`)는 더 이상 HEAD 아님 — 이 브랜치가 Task 215·216으로 `7d4e609`까지 전진. 로컬 커밋만·미push.
