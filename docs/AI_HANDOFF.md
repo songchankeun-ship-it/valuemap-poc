@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-05T23:44:34.9667147+09:00
+Last updated: 2026-07-06T00:32:47.6352492+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore main daily data integration and operational verification
+- Task: OrnScore release gate and main handoff readiness
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Created `codex/ornscore-main-data-integration-20260705` from the Task 194 work branch, merged `origin/main` daily refresh commits `d901841` and `1ca2401` without conflicts, and verified tsc, metrics, build, smoke --all 23/23, plus representative public routes showing 2026.07.03 and `베타 안내`.
+- Note: On `codex/ornscore-main-data-integration-20260705`, fetched origin and confirmed `origin/main...HEAD = 0 101`; fixed the stale app-packaging offline-page assertion; passed tsc, verify_metrics, app:check (1 external assetlinks wait), build, smoke --all 23/23, perf 0 warnings, and 390px browser checks for core routes.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex release gate and main handoff readiness
+- **What changed**: Updated `scripts/check-app-packaging.mjs` so the packaging gate follows the current offline-page split (`src/app/offline/page.tsx` -> `OfflineContent` -> `offlineCopy`) instead of looking for Korean guidance copy directly in `page.tsx`. Runtime app behavior, stock data, metrics, and scoring were not changed.
+- **Verification**: `git fetch origin` then `origin/main...HEAD = 0 101`; `npx tsc --noEmit` 0; `python scripts/verify_metrics.py` 138 stocks, 0 errors, 0 forbidden-copy hits, Metrics 2.4; `npm run app:check` passed with 1 external WAIT for real Android `assetlinks.json`; `npm run build` 0; `npm run smoke:check -- --base http://localhost:4458 --all` 23/23 OK; `npm run perf:check -- --base http://localhost:4458` 0 advisory warnings.
+- **390px browser read**: `/`, `/stocks`, `/stock/005930`, `/status`, `/pricing`, `/login`, `/watchlist` at 390x844 had no horizontal overflow and no console errors. Visible state stayed Korean/free-beta: `베타 안내` present, `KO/EN` toggle hidden, `/pricing` headline "지금은 무료 베타예요". `/login?next=/watchlist` rendered previous-page context plus email/Kakao/Google/Naver entry points without submitting OAuth.
+- **Still owner-gated**: Not pushed or deployed. Remaining gates are real-device 390px visual pass, actual OAuth round trip, real Android SHA-256 assetlinks generation, and legal/payment approval. After those, merge/deploy this branch and cache-bust recheck public routes.
 
 ### 2026-07-05 — Codex main daily data integration checkpoint
 - **What changed**: Created `codex/ornscore-main-data-integration-20260705` from `ai-center/task-194-ornscore-owner-review-package-and-go`, then merged `origin/main` daily refresh commits `d901841` and `1ca2401` cleanly. This preserves the local UI/copy/QA improvement line while bringing in the 2026-07-03 public data refresh.

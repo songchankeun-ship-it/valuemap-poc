@@ -84,7 +84,9 @@ includes("src/components/PwaInstallHelper.tsx", "appinstalled", "appinstalled li
 includes("src/components/PwaInstallHelper.tsx", "display-mode: standalone", "standalone detection");
 includes("src/components/PwaInstallHelper.tsx", "navigator", "iOS standalone fallback");
 
-includes("src/app/offline/page.tsx", "네트워크가 필요해요", "offline guidance page");
+includes("src/app/offline/page.tsx", "OfflineContent", "offline guidance page component");
+includes("src/components/OfflineContent.tsx", "offlineCopy", "offline guidance uses localized copy");
+includes("src/lib/i18n.ts", "네트워크가 필요해요", "offline guidance copy");
 
 const sourceFiles = [
   "src/app/layout.tsx",

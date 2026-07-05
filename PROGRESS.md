@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] OrnScore 릴리스 게이트·main 반영 전 최종 점검
+- **범위**: `codex/ornscore-main-data-integration-20260705` 기준으로 main 반영 전 운영 QA 게이트를 실행. `git fetch origin` 후 `origin/main...HEAD = 0 101`로 main의 daily data 누락 없음 확인.
+- **변경**: `scripts/check-app-packaging.mjs` 1곳 수정. Task 192에서 `/offline`이 서버 `page.tsx` + 클라이언트 `OfflineContent` + `offlineCopy` 구조로 분리됐는데, 패키징 체크가 여전히 `page.tsx` 안의 고정 문구를 찾아 거짓 실패를 내던 것을 현재 구조에 맞게 교정했다. 앱 런타임·데이터·점수식 무변경.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run app:check` 0(단, 실제 Android SHA-256 `assetlinks.json`은 외부 오너 게이트로 WAIT 1) · `npm run build` 0(176 static pages) · 로컬 prod `npm run smoke:check -- --base http://localhost:4458 --all` 23/23 OK · `npm run perf:check -- --base http://localhost:4458` 0 advisory warnings.
+- **390px 브라우저 점검**: `/`, `/stocks`, `/stock/005930`, `/status`, `/pricing`, `/login`, `/watchlist`를 390x844 viewport에서 확인. 가로 오버플로우 없음, 콘솔 에러 없음, `베타 안내` 표시, `KO/EN` 토글 미노출. `/pricing`은 "지금은 무료 베타예요" 기준, `/login?next=/watchlist`는 이전 페이지 문맥·이메일 링크·카카오/구글/네이버 진입 버튼 렌더 확인(실제 OAuth 제출은 하지 않음).
+- **운영 카피 확인**: `/`, `/status`, `/about`, `/pricing`, `/stocks`, `/stock/005930`, `/login`, `/watchlist` 모두 `2026.07.03`/`07.03(금)` 데이터 기준 표시. `/pricing` 및 주요 공개 라우트에서 stale `요금제` 문구 미노출.
+- **perf baseline**: base=http://localhost:4458, 3 samples, median TTFB: `/`=42ms · `/stocks`=42ms · `/today`=41ms · `/stock/034730`=21ms · `/stock/032830`=24ms · `/login`=39ms · `/pricing`=47ms · `/status`=25ms · `/disclosures`=32ms · `/backtest`=48ms · `/watchlist`=58ms · `/compare`=60ms.
+- **다음에 바로 실행할 작업**: 오너가 실제 기기 390px 육안, OAuth 왕복 로그인, Android `assetlinks.json` 실서명 지문, 법무/결제 게이트를 확인한다. 이 4개가 끝나면 이 브랜치로 main 반영·배포를 진행하고 배포 후 cache-busted 공개 라우트 재확인.
+
 ## 2026-07-05 · [codex] OrnScore main daily data 통합·운영 기준 검증
 - **범위**: Task 194 최신 로컬 작업 브랜치 위에 `origin/main`의 daily data refresh 커밋 2개(`d901841`, `1ca2401`)를 병합해, 공개 main의 2026-07-03 데이터와 로컬의 UI/카피/QA 개선 99커밋을 한 브랜치에 통합. 브랜치 `codex/ornscore-main-data-integration-20260705`.
 - **판단**: 앞선 공개 사이트 확인에서 날짜/네비가 낡아 보인 것은 cache-busted 직접 확인 기준으로 재현되지 않았고, 실제 꼬임은 “다운그레이드”가 아니라 `origin/main` daily refresh 2커밋과 로컬 개선 브랜치 99커밋이 서로 갈라진 상태였음. 이번 브랜치는 두 흐름을 충돌 없이 합쳤다.
