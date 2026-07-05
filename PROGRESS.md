@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [claude] Task 221 — OrnScore 관심 그룹·메모·CSV 문서 우선 설계서 + 다음 큐
+- **범위**: 릴리스 준비 노트(Task 215~220) 이후 **다음 제품 베팅을 착수 전에 설계서로 확정** — 다음 제품 베팅 숏리스트 **#1(관심 종목 고도화: 그룹·메모·CSV)** 을 구현 없이 스펙화하고 릴리스 게이트 이후 착수할 **첫 로컬 슬라이스**를 지정. 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 코드/스캐폴드 0**(설계만).
+- **상류 판정(read-only, 병합 안 함)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 114`(HEAD 114 앞·0 뒤·상류 누락 0). codex 통합 라인 `codex/ornscore-main-data-integration-20260705`는 브랜치로 잔존하나 **더 이상 HEAD 아님**(Task 215~220으로 `38cbba4`까지 전진). 로컬 커밋만·미push·미배포.
+- **소스 진실 확인**: `src/lib/watchlist.ts`(이중 저장 `localStorage`↔Supabase `watchlists`·`ornscore_watchlist`+레거시 폴백·`watchlist-changed` 이벤트·`WatchlistItem{ticker,addedAt}`)·`savedSearches.ts`(`crypto.randomUUID`·`slice(0,30)` 캡·`saved_searches` config JSON — 그룹/메모가 재사용할 표준)·`recentViews.ts`(10 캡)·`WatchlistClient.tsx`(하이드레이션 가드·실행취소·44px). `Grep`로 **CSV 유틸 부재 확인**.
+- **산출물**: 신규 `docs/ornscore-watchlist-groups-memo-csv-spec.md` — §0 무료 KO 베타 불변식+로컬 우선/프라이버시 배너·§1 현 상태 감사·§2 데이터 모델(그룹 `{id,name}`+아이템 `groupId`·메모 500자·이중 저장/캡/이벤트 재사용)·§3 CSV 컬럼 계약(`ticker,name,group,note,addedAt,compositeScore`·표시용 스냅샷·비자문)·§4 MVP(반출 전용+인라인 그룹+메모)/후속(가져오기·rename·동기화) 분리·§5 프라이버시 리스크(클라이언트 Blob 다운로드만·UTF-8 BOM·CSV 수식 인젝션 방역·PII 유도 0·금칙어 리뷰)·§6 **첫 슬라이스=CSV 반출 전용(Effort S·오너 게이트 0)**·§7 검증 게이트·§8 교차참조.
+- **크로스레퍼런스(append-only)**: `docs/ornscore-spec-coverage.md` §2 8.2 행에 Task 221 포인터 1줄 append(Task 160/196 스타일). 편집 `PROGRESS.md`·`docs/AI_HANDOFF.md`.
+- **게이트(문서 스케일, 전부 통과)**: `npx tsc --noEmit` 0(앱 소스 무변경 재확인) · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · 신규/편집 `.md` U+FFFD 0 · `git diff --check` 클린. 문서 전용이라 build/smoke 생략(Task 215·219·220 관행) — 직전 초록 = 2026-07-06 codex smoke 23/23.
+- **다음 액션(개발, 릴리스 게이트 이후)**: 설계서 **§6 첫 슬라이스 = 관심 종목 CSV 반출 전용**(`src/lib/watchlistCsv.ts` 순수 유틸 + `WatchlistClient` 내보내기 버튼·§5 방역·BOM)을 다음 로컬 task로 구현. 그룹/메모 스키마·Supabase 마이그레이션은 그 다음. push/deploy/Supabase DDL은 오너 몫.
+
 ## 2026-07-06 · [claude] Task 220 — OrnScore 사이트 새로고침 모니터링 + 롤백 노트
 - **범위**: 릴리스 라인을 **되돌릴 수 있고(reversible) 관찰 가능하게(observable)** 만드는 첫 노트 — 오너가 외부 사이트를 새로고침한 **직후** 무엇을 즉시 확인하고, 언제 롤백하며, 무엇을 `PROGRESS.md`에 남길지를 한 문서에 고정. 브랜치 `ai-center/task-220-ornscore-release-rollback-and-monito`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 의존성 0·빌드 스텝 0·**신규 스크립트 미추가**(과설계 회피 — 자동 관찰성은 기존 `verify:routes`+`smoke:check --all`로 충분).
 - **상류 판정(read-only, 병합 안 함)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 112` → origin/main에 HEAD가 놓친 커밋 0(통합할 상류 없음)·HEAD 112 앞. codex 통합 라인 `codex/ornscore-main-data-integration-20260705`(tip `dbb24e0`)는 HEAD에 **포함되나**(`merge-base --is-ancestor` 참) 더 이상 HEAD 아님 — 이 브랜치가 Task 215~219로 `5784bb6`까지 전진. 로컬 커밋만·미push·미배포.

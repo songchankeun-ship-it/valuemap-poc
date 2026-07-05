@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 221 — OrnScore 관심 그룹·메모·CSV 문서 우선 설계서 (2026-07-06, Claude, docs-only)
+- **범위**: 릴리스 준비 노트(215~220) 이후 **다음 제품 베팅을 착수 전 설계서로 확정** — 다음 제품 베팅 #1(관심 종목 고도화: 그룹·메모·CSV)을 구현 없이 스펙화하고 릴리스 게이트 이후 착수할 첫 로컬 슬라이스를 지정. 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·신규 코드/스캐폴드 0.
+- **상류 판정(read-only)**: `git fetch origin`·`git rev-list --left-right --count origin/main...HEAD = 0 114`(HEAD 114 앞·0 뒤). 통합 라인 `codex/ornscore-main-data-integration-20260705` HEAD 아님(215~220 전진, `38cbba4`). 로컬 커밋만·미push.
+- **파일**: 신규 `docs/ornscore-watchlist-groups-memo-csv-spec.md`(§0 불변식+로컬 우선/프라이버시 배너·§1 현 상태 감사[CSV 유틸 부재]·§2 데이터 모델[`savedSearches.ts` 이중 저장·`crypto.randomUUID`·캡·`*-changed` 재사용 — 그룹 `{id,name}`+`groupId`·메모 500자]·§3 CSV 컬럼 계약 `ticker,name,group,note,addedAt,compositeScore`·§4 MVP/후속 분리·§5 프라이버시 리스크[Blob 다운로드만·UTF-8 BOM·수식 인젝션 방역·PII 0·금칙어 리뷰]·§6 첫 슬라이스=CSV 반출 전용(S)·§7 게이트·§8 교차참조). 편집 `docs/ornscore-spec-coverage.md` §2 8.2에 Task 221 포인터 1줄. 편집 `PROGRESS.md`·이 파일.
+- **불변식**: 138·`asOfBusinessDate 20260703`(표기 `2026.07.03`)·`metricsVersion 2.4`·KO 전용·AI 숨김·비자문(매수/매도/추천/수익 보장/목표가 신규 0) — 무변경. CSV `compositeScore`는 표시용 스냅샷(매매 신호 아님)으로 명문화.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · 신규/편집 `.md` U+FFFD 0 · `git diff --check` 클린. 문서 전용이라 build/smoke 생략(215·219·220 관행) — 직전 초록 = 2026-07-06 codex smoke 23/23.
+- **다음 액션(개발, 릴리스 게이트 이후)**: §6 첫 슬라이스 = **관심 종목 CSV 반출 전용**(`src/lib/watchlistCsv.ts` 순수 유틸 + `WatchlistClient` 내보내기 버튼·§5 방역·BOM)을 다음 로컬 task로 구현. 그룹/메모 스키마·Supabase `watchlist_groups`/`group_id`/`note` 마이그레이션은 그 다음(오너 게이트). push/deploy/Supabase DDL은 오너 몫.
+
 ### Task 220 — OrnScore 사이트 새로고침 모니터링 + 롤백 노트 (2026-07-06, Claude, docs-only)
 - **범위**: 릴리스 라인을 **되돌릴 수 있고 관찰 가능하게** 만드는 첫 노트 — 오너가 외부 사이트를 새로고침한 직후 (1)즉시 확인 (2)롤백 판단 (3)PROGRESS 캡처를 한 문서에 고정. 브랜치 `ai-center/task-220-ornscore-release-rollback-and-monito`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 스크립트 미추가**(자동 관찰성은 기존 `verify:routes`+`smoke:check --all`로 충분 → 과설계 회피).
 - **상류 판정(read-only)**: `git fetch origin`·`git rev-list --left-right --count origin/main...HEAD = 0 112`(HEAD 112 앞·0 뒤). codex 통합 라인 `codex/ornscore-main-data-integration-20260705`(`dbb24e0`)는 HEAD에 포함되나 HEAD 아님(215~219 전진). 로컬 커밋만·미push·미배포.
