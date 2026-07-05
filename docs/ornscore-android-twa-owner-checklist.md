@@ -44,6 +44,9 @@
 > Play App Signing(구글이 앱 서명 키 관리)을 켜면 **assetlinks에 넣어야 하는 값은 "앱 서명 키(app-signing key)"의 지문**이다(업로드 키 지문이 아님).
 > 두 값 모두 Play Console → 설정 → 앱 무결성(App integrity) / 앱 서명에서 확인된다. 아래 둘 다 적어두면 혼동을 막는다.
 > 형식은 **콜론으로 구분된 32개의 16진수 바이트**(예: `AA:BB:...:99`, 총 32덩어리)여야 생성기가 받는다.
+>
+> 📌 **지문 획득 → 생성 → 검증까지의 단계별 실행법(step-by-step how-to)** → `docs/ornscore-android-assetlinks-owner-kit.md`
+> (Play Console 앱 서명 키 복사 경로·`keytool` 명령·값 정규화·`--dry-run`·`app:check` 통과 확인).
 
 - [ ] Play App Signing 사용?  → **Y(권장·기본) / N**: ______
 - 앱 서명 키(app-signing key) SHA-256  ← **assetlinks에 들어갈 값**:

@@ -25,6 +25,17 @@ const packageName = arg("--package") ?? process.env.ORNSCORE_ANDROID_PACKAGE;
 const fingerprint = (arg("--fingerprint") ?? process.env.ORNSCORE_ANDROID_SHA256 ?? "").toUpperCase();
 const dryRun = process.argv.includes("--dry-run");
 
+// Reject the well-known placeholders outright with a pointer to the how-to kit,
+// so a template value can never be mistaken for a real signing fingerprint.
+if (fingerprint === "REPLACE_WITH_REAL_SHA256_FINGERPRINT" || packageName === "com.example.ornscore") {
+  console.error(
+    "FAIL placeholder values are not real. The SHA-256 must come from the Play Console " +
+      "app-signing key or `keytool` on the real keystore.\n" +
+      "See docs/ornscore-android-assetlinks-owner-kit.md",
+  );
+  process.exit(1);
+}
+
 const packageOk = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName ?? "");
 const fingerprintOk = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(fingerprint);
 

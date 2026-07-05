@@ -32,6 +32,8 @@ node scripts/generate-assetlinks.mjs --package com.ornscore.app --fingerprint "A
 npm run app:check
 ```
 
+> 지문 획득 → 생성 → 검증까지의 단계별 실행법은 `docs/ornscore-android-assetlinks-owner-kit.md` 참조.
+
 ## 운영자가 직접 확인할 것
 
 - 휴대폰에서 `https://ornscore.com` 접속 후 홈 화면에 추가.

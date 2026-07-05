@@ -83,6 +83,7 @@
 - 이 파일은 **예시일 뿐 서빙되지 않는다.** `package_name`·`sha256_cert_fingerprints`는 **명백한 자리표시자**(`com.example.ornscore` / `REPLACE_WITH_REAL_SHA256_FINGERPRINT`)라 그대로는 동작하지 않는다.
 - **실제 파일은 `public/.well-known/assetlinks.json`에**, **실제 서명 키 지문이 생긴 뒤에만** 배치한다. 그 전엔 `public/.well-known/`을 만들지 않는다(가짜 서명값으로 도메인-앱 관계 파일을 두지 않는다 — app-roadmap §2-2 / §3 참조).
 - 배치 절차(요약): Play Console 서명 키 SHA-256 지문 확보 → 예시의 자리표시자를 실 지문/실 패키지명으로 치환 → `public/.well-known/assetlinks.json`으로 복사 → 배포 후 `https://ornscore.com/.well-known/assetlinks.json` 200·내용 확인 → TWA 빌드에서 도메인 검증 통과(주소창 숨김) 확인.
+- 단계별 실행법(step-by-step how-to): `docs/ornscore-android-assetlinks-owner-kit.md` — SHA-256 획득 경로(`keytool`/Play Console 앱 서명 키)·정규화·`--dry-run`·`app:check` 통과 확인까지.
 
 ---
 

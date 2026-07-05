@@ -160,6 +160,8 @@ includes("docs/app-roadmap.md", "1차 스토어 패키징은 **Android TWA 우�
 includes("docs/app-store-submission-pack.md", "com.ornscore.app", "Android package id documented");
 includes("docs/ornscore-android-twa-owner-checklist.md", "com.ornscore.app", "owner intake checklist locks package id");
 includes("docs/ornscore-android-twa-owner-checklist.md", "npm run app:assetlinks -- --package", "owner intake checklist keeps assetlinks handoff command");
+includes("docs/ornscore-android-assetlinks-owner-kit.md", "keytool -list -v", "assetlinks kit documents keytool fingerprint step");
+includes("docs/ornscore-android-assetlinks-owner-kit.md", "npm run app:assetlinks -- --package com.ornscore.app --fingerprint", "assetlinks kit documents generate command");
 notIncludes("docs/app-store-submission-pack.md", "Android TWA를 먼저 갈지 결정", "undecided Android TWA wording");
 notIncludes("docs/app-packaging-readiness.md", "Android TWA (다음 후보)", "stale Android TWA candidate heading");
 notIncludes("docs/app-store-submission-pack.md", "Naver는 준비 중", "stale Naver-disabled wording");

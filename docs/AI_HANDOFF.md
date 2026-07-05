@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 217 - OrnScore OAuth local preflight no-account check
-- Run: 174
+- Task: 218 - OrnScore Android assetlinks owner checklist (external WAIT documented)
+- Run: 175
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: New docs/ornscore-android-assetlinks-owner-kit.md turns the single app:check external WAIT into an owner run-book (SHA-256 via Play Console app-signing key or keytool -> normalize -> npm run app:assetlinks --dry-run then real -> app:check 0 waiting -> deploy-verify). generate-assetlinks.mjs now hard-rejects the known placeholders with a pointer to the kit; check-app-packaging.mjs guards the kit's core steps. public/.well-known/assetlinks.json intentionally NOT created. Gates: tsc 0, verify_metrics 138/Metrics 2.4, app:check still passes with "1 external gate waiting", build 0, diff --check clean. Owner next action: obtain real app-signing SHA-256 -> run app:assetlinks -> app:check -> deploy-verify.
 
 ## Next Agent Checklist
 

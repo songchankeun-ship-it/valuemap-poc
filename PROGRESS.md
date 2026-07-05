@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [claude] Task 218 — Android assetlinks 외부 WAIT → 오너 실행 체크리스트
+- **범위**: `app:check`의 유일한 외부 `WAIT`(Android `assetlinks.json` 미생성)를 **가짜 라이브 파일 없이** 오너가 따라할 수 있는 한 장짜리 실행 키트로 전환. 브랜치 `ai-center/task-218-ornscore-android-assetlinks-owner-ch`. 앱 소스/데이터/점수식/카피 무변경, 신규 npm 의존성 0, 빌드 스텝 0. `public/.well-known/assetlinks.json` **생성 안 함**(실 지문 확보 전까지 오너 게이트 유지).
+- **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 108` → origin/main에 HEAD가 놓친 커밋 0. codex 통합 라인 `codex/ornscore-main-data-integration-20260705`는 더 이상 HEAD 아님(Task 215~217로 전진). 로컬 커밋만·미push.
+- **변경(신규 1 + 편집 5)**:
+  - 신규 `docs/ornscore-android-assetlinks-owner-kit.md` — SHA-256 획득 3경로((a)Play Console 앱 무결성→앱 서명 키 지문[업로드 키 아님] (b)`keytool -list -v -keystore <경로> -alias <별칭>`의 `SHA256:` 줄 (c)Bubblewrap/PWABuilder) → 32바이트 콜론·대문자 정규화 → `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<실제>"`(`--dry-run` 먼저) → `app:check` `0 external gates waiting` → 배포 후 `https://ornscore.com/.well-known/assetlinks.json` 200·주소창 숨김. **자리표시자 vs 실값 가드** 섹션(`REPLACE_WITH_REAL_...`·더미 `AB:AB:...`·`com.example.ornscore`는 실값 아님).
+  - 편집 `docs/ornscore-android-twa-owner-checklist.md` §3 + `docs/app-packaging-final-checklist.md` + `docs/app-packaging-readiness.md` §3 — 각 1줄로 키트를 "단계별 실행법"으로 상호 링크(`check-app-packaging.mjs`가 단언하는 기존 문자열 무변경).
+  - 편집 `scripts/generate-assetlinks.mjs` — `fingerprint===REPLACE_WITH_REAL_SHA256_FINGERPRINT` 또는 `packageName===com.example.ornscore`일 때 키트를 가리키는 타깃 에러 + 비영(非零) 종료(기존 자리표시자 거부·`--dry-run` 유효 JSON 단언 유지).
+  - 편집 `scripts/check-app-packaging.mjs` — 키트의 핵심 단계(`keytool -list -v`, 생성 명령)를 `includes`로 회귀 가드. WAIT 분기·pass 라인 무변경.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run app:check` **여전히 통과·`1 external gate waiting`**(WAIT 문서화 유지) · `npm run build` 0 · 음성 확인: 자리표시자 패키지+더미 지문 → 새 타깃 에러·`exit 1`·파일 미생성 · `git diff --check` 클린 · 신규/편집 파일 U+FFFD 0. 앱 라우트 소스 무변경이라 smoke 생략(docs/scripts-only; 직전 Task 217 smoke 23/23 유효). 포트 무기동(4310 무접촉).
+- **다음 액션(오너 게이트, 남은 유일한 실값 단계)**: 실제 앱 서명 키 SHA-256 확보 → `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<실제>"` → `npm run app:check`(`0 external gates waiting`) → 배포 후 라이브 assetlinks 200·TWA 주소창 숨김 확인. 상세는 `docs/ornscore-android-assetlinks-owner-kit.md`. push/deploy/콘솔은 전부 오너.
+
 ## 2026-07-06 · [claude] Task 217 — OAuth 로컬 프리플라이트 (제출 없음·콘솔 무접촉)
 - **범위**: OAuth 릴리스 리스크 중 **레포 내부에서 판정 가능한 부분**만 자동화/문서화하고, **실제 로그인 왕복은 오너 게이트로 명확히 분리**. 실제 제공자 제출·계정 입력·계정 생성·외부 콘솔 변경 일절 없음. 브랜치 `ai-center/task-217-ornscore-oauth-local-preflight-no-ac`. 앱 소스/데이터/점수식/`direction`/auth 플로우 무변경, 신규 npm 의존성 0, 빌드 스텝 0.
 - **상류 판정(read-only)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 106` → origin/main에 HEAD가 놓친 커밋 0(통합할 상류 없음). **통합 라인 주의**: codex 통합 브랜치 `codex/ornscore-main-data-integration-20260705`(tip `dbb24e0`)는 더 이상 HEAD가 아님 — 이 태스크 브랜치가 Task 215·216 커밋으로 그 위(`7d4e609`)까지 전진. 로컬 커밋만·미push.
