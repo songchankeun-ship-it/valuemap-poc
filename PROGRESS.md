@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-05 · [codex] OrnScore main daily data 통합·운영 기준 검증
+- **범위**: Task 194 최신 로컬 작업 브랜치 위에 `origin/main`의 daily data refresh 커밋 2개(`d901841`, `1ca2401`)를 병합해, 공개 main의 2026-07-03 데이터와 로컬의 UI/카피/QA 개선 99커밋을 한 브랜치에 통합. 브랜치 `codex/ornscore-main-data-integration-20260705`.
+- **판단**: 앞선 공개 사이트 확인에서 날짜/네비가 낡아 보인 것은 cache-busted 직접 확인 기준으로 재현되지 않았고, 실제 꼬임은 “다운그레이드”가 아니라 `origin/main` daily refresh 2커밋과 로컬 개선 브랜치 99커밋이 서로 갈라진 상태였음. 이번 브랜치는 두 흐름을 충돌 없이 합쳤다.
+- **변경**: merge commit으로 `public/data/*` 최신 장마감 데이터만 대량 반영. 앱 소스·카피·QA 스크립트 개선은 Task 194 계열 상태를 보존. 수동 코드 편집 없음.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(176 static pages) · 로컬 prod `npm run smoke:check -- --base http://localhost:4457 --all` 23/23 OK · `/`, `/status`, `/about`, `/pricing`, `/stocks` 200 및 `2026.07.03`/`베타 안내` 표시, stale `요금제`/`KO EN` 미표시.
+- **다음에 바로 실행할 작업**: main 반영·배포 전 오너가 390px 실기기/OAuth 왕복/법무·결제 게이트를 최종 확인한다. main 반영이 필요하면 이 통합 브랜치 기준으로 진행하고, 배포 후 같은 5개 공개 라우트를 cache-busted로 재확인한다.
+
 ## 2026-07-04 · [claude] Task 194 — OrnScore 오너 리뷰 패키지 178~198 + go/no-go (docs-only)
 - **범위**: 오너가 배치 178~198을 한 번에 리뷰하도록 종합(무엇이 바뀌었나/수동 검증/남은 리스크/한국어 무료 베타 go/no-go). **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부. 앞선 두 패키지(144~165·167~176)는 링크로만 이어붙임. 브랜치 `ai-center/task-194-ornscore-owner-review-package-and-go`.
 - **변경(문서 2파일)**:

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-03T21:31:29.924Z
+Last updated: 2026-07-05T23:44:34.9667147+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 194 - OrnScore owner review package and go-no-go checklist
-- Run: 169
+- Task: OrnScore main daily data integration and operational verification
+- Run: manual Codex session
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: Created `codex/ornscore-main-data-integration-20260705` from the Task 194 work branch, merged `origin/main` daily refresh commits `d901841` and `1ca2401` without conflicts, and verified tsc, metrics, build, smoke --all 23/23, plus representative public routes showing 2026.07.03 and `베타 안내`.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-05 — Codex main daily data integration checkpoint
+- **What changed**: Created `codex/ornscore-main-data-integration-20260705` from `ai-center/task-194-ornscore-owner-review-package-and-go`, then merged `origin/main` daily refresh commits `d901841` and `1ca2401` cleanly. This preserves the local UI/copy/QA improvement line while bringing in the 2026-07-03 public data refresh.
+- **Operational read**: The issue was not a downgrade; `origin/main` and the local work branch had diverged. Public cache-busted route checks did not reproduce stale `요금제`/`KO EN` copy, and local integrated checks showed `/`, `/status`, `/about`, `/pricing`, and `/stocks` on `2026.07.03` with `베타 안내`.
+- **Verification**: `npx tsc --noEmit` 0; `python scripts/verify_metrics.py` 138 stocks, 0 errors, 0 forbidden-copy hits, Metrics 2.4; `npm run build` 0; `npm run smoke:check -- --base http://localhost:4457 --all` 23/23 OK.
+- **Still owner-gated**: Do not treat this as pushed/deployed. Before main/public release, owner should confirm 390px real-device visual pass, OAuth round trip, and legal/payment gates, then cache-bust recheck the same public routes after deploy.
 
 ### Task 194 — OrnScore 오너 리뷰 패키지 178~198 + go/no-go (2026-07-04, Claude, docs-only)
 - **범위**: 오너가 배치 178~198을 한 번에 리뷰하도록 종합 — 무엇이 바뀌었나/무엇을 수동 검증하나/남은 출시 리스크/한국어 무료 베타 go/no-go. **문서 전용·앱 소스 무변경**. 근거는 전부 레포 내부(`AI_HANDOFF`·`ornscore-spec-coverage`·`PROGRESS`·커밋 해시). 앞선 두 패키지(144~165=`ornscore-owner-review-2026-07-03`·167~176=`ornscore-local-release-evidence-2026-07-03`)는 링크로만 이어붙임. 브랜치 `ai-center/task-194-ornscore-owner-review-package-and-go`.
