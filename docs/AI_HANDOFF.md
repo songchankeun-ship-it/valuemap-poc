@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### Task 217 — OAuth 로컬 프리플라이트 (2026-07-06, Claude, 제출 없음·콘솔 무접촉)
+- **범위**: OAuth 릴리스 리스크를 **레포 내부에서 판정 가능한 부분**만 자동화/문서화하고 **실제 로그인 왕복은 오너 게이트로 분리**. 제공자 제출·계정 입력·계정 생성·외부 콘솔 변경 없음. 브랜치 `ai-center/task-217-ornscore-oauth-local-preflight-no-ac`. 앱 소스/데이터/점수식/`direction`/auth 플로우 무변경, npm 의존성 0, 빌드 스텝 0.
+- **상류·통합 라인**: `git fetch origin` 후 `origin/main...HEAD = 0 106`(상류 누락 0). 통합 브랜치 `codex/ornscore-main-data-integration-20260705`(`dbb24e0`)는 더 이상 HEAD 아님 — 이 브랜치가 Task 215·216으로 `7d4e609`까지 전진. 로컬 커밋만·미push.
+- **감사 결과(불일치 0)**: `login/page.tsx`·`LoginContent.tsx`·`lib/auth/providers.ts`·`returnPath.ts`·`auth/callback/route.ts`·`i18n.ts loginCopy` 전수 감사. 라벨 드리프트 없음(UI가 i18n 카피 사용), 활성/예정 provider id 전부 i18n+SVG 커버, 콜백이 `safeInternalPath`+`welcome=1`. **핵심**: `/login`이 Dynamic(`ƒ`) 라우트라 폼·문맥·에러가 전부 SSR HTML에 렌더 → `fetch` 게이트로 검증 가능(헤드리스 불요). 코드 수정 불필요.
+- **변경**: 신규 [`scripts/verify-login-preflight.mjs`](../scripts/verify-login-preflight.mjs)(순수 Node `fetch`, 5개 `/login` 상태 SSR-안정 단언, 실패·미접속 `exit 1`, **비공개 값 출력 0**), 신규 [`docs/ornscore-oauth-preflight-checklist.md`](./ornscore-oauth-preflight-checklist.md)(레포 내부 A1~A10 vs 오너 게이트 B1~B6 분리), `package.json`에 `verify:login-preflight` 1줄.
+- **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0 · `smoke:check -- --base http://localhost:4463 --all` 23/23(`/login`·`/watchlist` 포함) · `verify:login-preflight -- --base http://localhost:4463` **5/5 OK·exit 0** · 음성 확인 `--login-path /about` → 200이나 콘텐츠 단언 전부 FAIL·**exit 1**(게이트 실패 가능 증명) · `git diff --check` 클린 · U+FFFD 0. 포트: 4463 PID만 종료·AI Center 4310 유지.
+- **오너 수동 테스트(OAuth 왕복 = 오너 게이트)**: (1) 실 `/login` 카카오·구글 왕복, (2) 네이버는 Supabase Custom OAuth `custom:naver`+Naver Developers 설정 후 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`로 켠 뒤 왕복, (3) 매직링크 이메일 실수신, (4) `/auth/callback`이 `next`(예 `/watchlist`)로 `welcome=1`과 복귀. 상세 `docs/ornscore-oauth-preflight-checklist.md` §B. push/deploy/콘솔은 전부 오너.
+- **다음 액션(오너)**: 배포 스택에서 `verify:login-preflight`로 SSR 계약 재확인 → B1~B6 실브라우저 왕복 1회 통과 = OAuth 릴리스 리스크 해소.
+
 ### Task 216 — 캐시버스트 라우트 검증 헬퍼 (2026-07-06, Claude)
 - **범위**: 배포 후 수동으로 돌리던 캐시버스트 라우트 점검(이 파일/handoff §4·`ornscore-route-smoke-checklist`)을 **기억에 의존하지 않는 재사용 로컬 헬퍼**로 자동화. 브랜치 `ai-center/task-216-ornscore-cache-busted-route-verifica`. 앱 소스/데이터/점수식/카피 무변경, 신규 npm 의존성 0, 빌드 스텝 0.
 - **변경**: 신규 `scripts/verify-routes.mjs`(순수 Node ESM, `fetch`만). 6개 공개 라우트(`/ /status /about /pricing /stocks /stock/005930`)를 `?v=<ts>` + `no-cache`로 요청해 상태 200·치명 마커 0·**로컬 `stocks.json`에서 파생한 데이터 기준일**·콘텐츠 앵커·stale 유료 카피(`요금제`/`기능 비교`) 부재·KO/EN 토글 부재(`hreflang`/`lang="en"`/`LanguageSwitcher` 없음 + `lang="ko"`)를 단언. 실패·미접속 시 `exit 1`. `package.json`에 `verify:routes` 스크립트 1줄 추가. 사용: `npm run verify:routes -- --base http://localhost:<port>`(로컬) 또는 `--base https://<배포-URL>`(배포 후 재확인). `VERIFY_BASE_URL` 환경변수·`--data <path>` 오버라이드 지원.

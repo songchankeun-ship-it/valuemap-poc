@@ -12,6 +12,7 @@
     "perf:check": "node scripts/perf-check.mjs",
     "smoke:check": "node scripts/smoke-check.mjs",
     "verify:routes": "node scripts/verify-routes.mjs",
+    "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
