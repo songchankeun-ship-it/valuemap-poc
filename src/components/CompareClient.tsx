@@ -15,6 +15,7 @@ import { sectorOf } from "@/lib/sector";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { BarChart3, CheckCircle2 } from "lucide-react";
 
 interface RecommendedSet {
   label: string;
@@ -53,6 +54,13 @@ const FUND_ROWS: Array<{ key: "per" | "pbr" | "roe" | "dividendYield"; label: st
   { key: "pbr",           label: "PBR",   suffix: "배",  better: "low" },
   { key: "roe",           label: "ROE",   suffix: "%",   better: "high" },
   { key: "dividendYield", label: "배당", suffix: "%",   better: "high" },
+];
+
+const COMPARE_EMPTY_PREVIEW = [
+  "종합 점수 차이",
+  "추세/밸류/위험조정 강점 비교",
+  "PER/PBR/ROE 차이",
+  "수익률과 테마 차이",
 ];
 
 // 모바일에서 가로 스크롤 wrapper. 데스크톱에선 그냥 grid.
@@ -269,9 +277,11 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
   if (stocks.length < 2) {
     const selected = stocks[0]; // 0개 또는 1개
     return (
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-8">
-        <div className="text-center mb-5">
-          <div className="text-2xl md:text-3xl mb-2">📊</div>
+      <section className="py-2 md:py-4">
+        <div className="max-w-2xl mx-auto text-center mb-5">
+          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300">
+            <BarChart3 className="w-5 h-5" strokeWidth={1.8} />
+          </div>
           <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">비교할 종목을 선택하세요</h2>
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
             <strong className="text-zinc-700 dark:text-zinc-300">최소 2개 · 최대 4개</strong>를 고르면 종합 점수 · PER/PBR/ROE · 수익률 · 위험을 나란히 비교합니다.
@@ -286,6 +296,21 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목명 또는 코드 검색</div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 {COMPARE_MAX}개까지 담아 비교할 수 있어요.</p>
             <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void tryAdd(t); }} placeholder="예: 삼성전자, 005930" />
+          </div>
+
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3.5">
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">비교하면 이런 걸 볼 수 있어요</div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {COMPARE_EMPTY_PREVIEW.map((item) => (
+                <div key={item} className="flex items-start gap-2 text-xs text-zinc-600 dark:text-zinc-300 leading-snug">
+                  <CheckCircle2 className="mt-0.5 w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={1.8} />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug">
+              최근 공시 신호는 관심 종목과 공시 화면에서 이어서 확인할 수 있어요.
+            </p>
           </div>
 
           {/* 선택 칩 + 최소 2개 안내 — 1개 선택 시 */}

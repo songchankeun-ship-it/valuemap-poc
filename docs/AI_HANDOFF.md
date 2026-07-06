@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T20:05:31.4977650+09:00
+Last updated: 2026-07-06T20:22:02.5023117+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore backtest top risk-summary strengthening
+- Task: OrnScore empty-state screen design improvements
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued the design/UX reaudit P1 work. Backtest now shows a "read first" risk summary before the big return KPIs, explicitly saying the backtest is not performance guarantee, then summarizing CAGR, MDD, and Sharpe-vs-benchmark. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. SSR extraction confirmed the risk-first copy and glossary-style labels.
+- Note: Continued the design/UX reaudit P1 work. Watchlist empty state now leads with "아직 담은 종목이 없어요.", puts "오늘 후보에서 담기" first, keeps direct search as a supporting action, and lowers login/local-storage guidance to bottom copy. Compare empty state now says users can start by search, keeps direct search as the first action, and adds a preview of what comparison shows without promising a disclosure comparison table that is not implemented. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. HTML extraction confirmed the new SSR fallback copy. In-app browser attach still timed out; local prod port 4473 was stopped and temp logs removed.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex empty-state screen design improvements
+- **Source**: External report 3-6 and 3-7: watchlist and comparison empty states should feel more polished, explain the value quickly, and offer direct next actions.
+- **Changes**: `WatchlistClient` now uses `아직 담은 종목이 없어요.` and explains that today's candidates can be saved to watch score changes and disclosure signals in one place. Primary CTA is `오늘 후보에서 담기`; secondary is `종목 직접 찾기`; inline search remains as `바로 검색해서 담기`; login/local-only guidance is bottom supporting copy. `/watchlist` noscript fallback mirrors the same message. `CompareClient` keeps direct stock search as the first empty-state action, adds `비교하면 이런 걸 볼 수 있어요` with implemented comparison surfaces, and avoids overpromising disclosure comparison by pointing users to watchlist/disclosure pages for recent filing signals. `/compare` header and noscript fallback now also acknowledge direct search.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; `npm run build` 0; `git diff --check` clean; touched-file U+FFFD scan clean; local prod on 4473 `verify:routes` 9/9 and `smoke:check --all` 23/23. SSR/HTML extraction confirmed `/watchlist` fallback contains `아직 담은 종목이 없어요`, `오늘 후보에서 담기`, and `종목 직접 찾기`; `/compare` fallback contains `종합 점수 차이`.
+- **Limit**: In-app browser client-render verification could not complete because the webview attach timed out again. No Playwright dependency was installed. Server port 4473 and temp logs were cleaned up.
+- **Next**: Continue with design tokens/component rules documentation, unless owner reprioritizes another report slice.
 
 ### 2026-07-06 — Codex backtest top risk-summary strengthening
 - **Source**: External report 3-5: backtest return numbers were visually likely to dominate before users read the risk context.

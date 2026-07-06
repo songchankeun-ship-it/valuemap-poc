@@ -131,7 +131,7 @@ export default function ComparePage() {
       <header>
         <h1 className="text-xl font-medium mb-1">종목 비교</h1>
         <p className="text-sm text-gray-500 dark:text-zinc-400">
-          종목 페이지에서 "비교에 추가" 한 종목들을 나란히 봅니다.
+          검색하거나 종목 페이지에서 "비교에 추가" 한 종목들을 나란히 봅니다.
           비교 기준은 자체 지표 4종 + 재무 + 수익률이며, 탐색용입니다.
         </p>
       </header>
@@ -144,12 +144,17 @@ export default function ComparePage() {
           <div className="text-2xl mb-2">📊</div>
           <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">비교할 종목이 아직 없습니다</h2>
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed mb-4">
-            종목 상세에서 ‘비교에 추가’를 누르거나, 아래에서 종목을 찾아 담아보세요.
+            종목 탐색에서 직접 찾거나 오늘 후보에서 담아보세요.
             <strong className="text-zinc-700 dark:text-zinc-300"> 최소 2개 · 최대 4개</strong>를 고르면 나란히 비교합니다.
           </p>
+          <div className="mb-4 grid gap-1.5 sm:grid-cols-2 max-w-md mx-auto text-left">
+            {["종합 점수 차이", "추세/밸류/위험조정 강점 비교", "PER/PBR/ROE 차이", "수익률과 테마 차이"].map((item) => (
+              <div key={item} className="text-xs text-zinc-600 dark:text-zinc-300">✓ {item}</div>
+            ))}
+          </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
             <a href="/stocks" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold">
-              종목 찾기
+              종목 직접 찾기
             </a>
             <a href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium">
               오늘 후보에서 고르기
