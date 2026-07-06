@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T20:22:02.5023117+09:00
+Last updated: 2026-07-06T21:12:16.7772604+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore empty-state screen design improvements
+- Task: OrnScore design tokens and component rules documentation
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued the design/UX reaudit P1 work. Watchlist empty state now leads with "아직 담은 종목이 없어요.", puts "오늘 후보에서 담기" first, keeps direct search as a supporting action, and lowers login/local-storage guidance to bottom copy. Compare empty state now says users can start by search, keeps direct search as the first action, and adds a preview of what comparison shows without promising a disclosure comparison table that is not implemented. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. HTML extraction confirmed the new SSR fallback copy. In-app browser attach still timed out; local prod port 4473 was stopped and temp logs removed.
+- Note: Continued the design/UX reaudit P1 work. Added docs/ornscore-design-tokens-component-rules-2026-07-06.md to pin the current color, typography, spacing, card, CTA, badge, empty-state, and copy rules against the actual token sources in globals.css, tailwind.config.ts, controlStyles.ts, trust badges, score/metric primitives, and disclosureType metadata. Updated spec coverage to point to this rules doc while keeping full brand/palette overhaul as a product decision. Docs-only; no UI, data, scoring, or copy source changes.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex design tokens and component rules documentation
+- **Source**: External report sections 4-5 and the weekly task list item "디자인 토큰/컴포넌트 규칙 문서화".
+- **Changes**: Added `docs/ornscore-design-tokens-component-rules-2026-07-06.md`. The document records the current canonical token sources (`globals.css`, `tailwind.config.ts`, `controlStyles.ts`, trust badges, `ScoreGauge`, `MetricChip`, `disclosureType`), and fixes rules for base surfaces, finance colors, typography, radius/spacing, responsive behavior, stock/disclosure/backtest/empty-state card order, CTA/input/chip patterns, badge semantics, copy tone, and future extraction candidates. Updated `docs/ornscore-spec-coverage.md` so the design-token row points to this rules doc while leaving a full brand/palette overhaul as a product-level decision.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; touched-file U+FFFD scan clean; `git diff --check` clean. Build/smoke skipped because this was docs-only with no runtime files changed.
+- **Next**: The design/UX reaudit weekly work items 1-6 are now covered through documentation. Good next candidates are Task 221 §6 watchlist CSV export or the older "종목 탐색 필터 감각화 마감" small-product queue.
 
 ### 2026-07-06 — Codex empty-state screen design improvements
 - **Source**: External report 3-6 and 3-7: watchlist and comparison empty states should feel more polished, explain the value quickly, and offer direct next actions.

@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] 디자인 토큰·컴포넌트 규칙 문서화
+- **범위**: 디자인/UX 재검수 4~5장 및 `이번 주 안에 하면 좋은 작업` 6번. 런타임 UI 변경 없이 현재 코드의 색·타입·카드·버튼·배지·빈 상태 규칙을 문서로 고정. 소스 UI/데이터/점수식/copy source 무변경, 신규 npm 0.
+- **산출물**: 신규 `docs/ornscore-design-tokens-component-rules-2026-07-06.md`. 현재 토큰 소스(`globals.css`, `tailwind.config.ts`, `controlStyles.ts`, `trust/badges.tsx`, `ScoreGauge`, `MetricChip`, `disclosureType`)를 명시하고, 색상 의미(상승/하락 색 제한, 공시 타입 중립색), 타입 스케일, radius/spacing, 카드 순서(종목 후보·상세 상단·공시·백테스트·빈 상태), CTA/입력/칩 규칙, 배지/카피 규칙, 추출 후보(`EmptyStatePanel`, `ActionButton`, `DataBasisInline`, `DisclosureCardShell`, `ScoreSummaryCard`)와 지연 후보를 정리.
+- **크로스레퍼런스**: `docs/ornscore-spec-coverage.md`의 라이트/디자인 토큰 항목에 이번 문서 링크를 추가. 현재 운영 규칙은 완료로 고정하되 브랜드 리뉴얼/팔레트 전면 교체는 여전히 제품 결정(④)으로 남김.
+- **게이트(문서 스케일, 전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · 신규/편집 문서 U+FFFD 0 · `git diff --check` 클린. 앱 소스 무변경이라 build/smoke 생략.
+- **다음 액션**: 설계서의 "이번 주 안에 하면 좋은 작업" 1~6은 문서화까지 마감. 다음은 제품 큐에서 관심 종목 CSV 반출 전용 슬라이스(Task 221 §6) 또는 탐색 필터 감각화 마감 중 하나를 고르는 것이 자연스러움.
+
 ## 2026-07-06 · [codex] 빈 상태 화면 디자인 개선
 - **범위**: 디자인/UX 재검수 3-6/3-7 다섯 번째 슬라이스. `/watchlist`와 `/compare`의 빈 상태를 첫 방문자가 다음 행동을 고르기 쉽게 정리. 관심/비교 저장 로직·점수·데이터·검색 컴포넌트 동작 무변경, 신규 npm 0.
 - **변경**: 관심 종목 빈 상태를 `아직 담은 종목이 없어요.` 중심의 부드러운 문구로 바꾸고, `오늘 후보에서 담기`를 primary CTA, `종목 직접 찾기`를 secondary CTA로 재배치. 직접 검색은 `바로 검색해서 담기` 보조 행동으로 유지하고, 로그인/로컬 저장 안내는 카드 하단 supporting copy로 낮춤. `/watchlist` noscript fallback도 같은 문구/CTA 순서로 맞춤.
