@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T11:50:49.8139999+09:00
+Last updated: 2026-07-06T11:59:40.7622079+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore design/UX reaudit P0 visible-date guard and login cleanup
+- Task: OrnScore home candidate card density reduction
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Read external report `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md`. Public visible text now shows 2026.07.03 and no visible 2026.06.30/AI markers on checked routes. Strengthened `verify:routes` to 9 visible-text routes and cleaned login benefits to 3 non-AI items. Gates passed: tsc, public verify:routes 9/9, verify_metrics 138/0/0, build, local verify:routes 9/9, login preflight 5/5, smoke --all 23/23.
+- Note: Continued the design/UX reaudit P1 work. Home candidate cards now remove price/day-change/3M/4-metric bar detail and keep score, two strengths, one "check first" item, and the stock CTA. Gates passed: tsc, verify_metrics 138/0/0, build, local verify:routes 9/9, smoke --all 23/23. In-app browser visual check was attempted twice but the webview attach timed out.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex home candidate density reduction
+- **Source**: External report P1-1 and page feedback 3-1: home candidate cards were too dense for a "simple finance app" first pass.
+- **Changes**: `src/components/home/StockCandidateCard.tsx` no longer renders the price/day-change/3M line or the four `MetricBar` details on home cards. It keeps the rank, name, sector/ticker, smaller 72px score ring, two strength chips, one `먼저 확인할 것` risk sentence, and the stock detail CTA. `src/lib/copy/home.ts` shortens the top-candidate intro/rank note and adds ko/en `firstCheck`.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; `npm run build` 0; `git diff --check` clean; local prod on 4469 `verify:routes` 9/9 and `smoke:check --all` 23/23. SSR extraction confirmed the candidate section renders the compressed strength/check-first flow and no `3M` marker.
+- **Limit**: In-app browser visual verification was attempted twice but failed with a webview attach timeout; no alternate browser surface was used. Server port 4469 was stopped and temp logs removed.
+- **Next**: Continue with stock-detail top summary redesign from the same report: make the current conclusion/good points/check points more dominant, while lowering data-quality/Metrics badges into a quieter trust area.
 
 ### 2026-07-06 — Codex design/UX reaudit P0 checkpoint
 - **Source**: External report `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md`.

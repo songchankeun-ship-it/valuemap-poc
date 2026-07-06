@@ -47,15 +47,16 @@ export const homeCopy = {
       stepEyebrow: "그다음",
       tag: "종합점수 상위 · 검증 보류 제외",
       intro:
-        "종합 점수 상위 종목 중 검증 보류 종목을 제외해, 오늘 먼저 살펴볼 후보를 정리했습니다.",
+        "검증 보류 종목은 빼고, 오늘 먼저 살펴볼 후보만 추렸어요.",
       rankCriteria:
-        "여기 번호는 오늘 후보 목록(검증 보류 제외) 안의 표시 순서입니다. 종목 상세의 '전체 상대순위(전체 138종목 기준)'와는 의미가 다를 수 있습니다.",
+        "번호는 오늘 후보 안의 표시 순서예요. 상세의 전체 상대순위와는 다를 수 있습니다.",
       rankBadgeAria: (n: number) => `오늘 후보 순위 ${n}위`,
       empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
       footer:
         "여러 지표에서 상대적으로 강점이 확인된 종목입니다. 점수가 높다고 매수 추천을 의미하지 않으며, 원문 공시와 재무를 함께 확인해야 합니다.",
       strength: "강점",
       caution: "주의",
+      firstCheck: "먼저 확인할 것",
       viewStock: "종목 보기 →",
       risk: {
         surgeXl: "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요",
@@ -185,15 +186,16 @@ export const homeCopy = {
       stepEyebrow: "Next",
       tag: "Top composite · pending verification excluded",
       intro:
-        "Top-composite stocks with pending-verification names removed, organized as candidates to look at first today.",
+        "Pending-verification names are removed, leaving the candidates to check first today.",
       rankCriteria:
-        "These numbers are the display order within today's candidate list (pending-verification names excluded). They can mean something different from the “overall relative rank (out of all 138 stocks)” shown on each stock's detail page.",
+        "Numbers are the order within today's candidates, and can differ from the overall rank on each detail page.",
       rankBadgeAria: (n: number) => `Today's candidate rank #${n}`,
       empty: "Candidate data is being prepared. Please check back shortly.",
       footer:
         "These stocks show relative strength across several metrics. A high score is not a buy recommendation — always check the original disclosures and financials too.",
       strength: "Strengths",
       caution: "Caution",
+      firstCheck: "Check first",
       viewStock: "View stock →",
       risk: {
         surgeXl: "The recent rise is very large — check the reason for the surge and whether it is overheated.",

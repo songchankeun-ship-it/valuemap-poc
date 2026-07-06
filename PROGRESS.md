@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] 홈 후보 카드 정보량 축소
+- **범위**: 디자인/UX 재검수 P1-1/3-1의 첫 슬라이스. 홈 `오늘 추가 확인 후보` 카드에서 가격·일간 등락·3M 수익률·4지표 막대 상세를 제거하고, 홈에서는 `종목명/업종/티커 → 점수 링 → 강점 2개 → 먼저 확인할 것 1개 → 종목 보기`만 남김. 점수식·후보 선정·데이터·랭킹 로직 무변경, 신규 npm 0.
+- **변경**: `src/components/home/StockCandidateCard.tsx`에서 `MetricBar` 상세 블록과 가격/등락/3M 라인을 제거, 점수 링을 84px→72px로 축소, 주의 라벨을 `먼저 확인할 것`으로 바꿔 카드 목적을 행동 중심으로 전환. `src/lib/copy/home.ts`의 후보 섹션 intro/rankCriteria를 짧은 해요체로 줄이고 `firstCheck` 카피 추가(ko/en).
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(176 static pages) · `git diff --check` 클린 · 로컬 prod `verify:routes -- --base http://localhost:4469` 9/9 OK · `smoke:check -- --base http://localhost:4469 --all` 23/23 OK. SSR 섹션 추출에서 후보 카드가 `강점`/`먼저 확인할 것` 중심으로 렌더되고 `3M`은 미노출 확인.
+- **제한/다음 액션**: 인앱 브라우저가 webview attach 타임아웃으로 두 번 실패해 픽셀 스크린샷 검증은 못 함(서버는 정리 완료). 다음 슬라이스는 종목 상세 상단 요약 카드 리디자인: 상단에 `현재 결론/좋은 점/확인할 점`을 더 강하게, 데이터 품질·Metrics 배지는 하단 신뢰 영역으로 낮추는 방향.
+
 ## 2026-07-06 · [codex] 디자인/UX 재검수 P0 visible-date 가드 + 로그인 혜택 정리
 - **범위**: 외부 재검수 리포트 `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md` 기준으로 공개 배포 직후 P0/P1 초입을 확인. 브랜치 `codex/ornscore-design-ux-reaudit-p0-20260706`. 공개 visible text 기준 `/`, `/stocks`, `/stock/005930`, `/login?next=/watchlist`, `/watchlist`, `/compare`, `/status` 모두 `2026.07.03` 노출·`2026.06.30` 미노출·AI/Anthropic 미노출로 P0 날짜/AI 표면은 배포 후 해소 확인.
 - **변경**: `scripts/verify-routes.mjs`를 보이는 텍스트 기준으로 강화(script/style/noscript 제거 후 검사). 대표 라우트를 6개에서 9개로 확장(`/login?next=/watchlist`, `/watchlist`, `/compare` 추가), `/stocks`·`/stock/005930`에도 기준일 필수화, visible `2026.06.30`/`2026-06-30`/`20260630` 및 `AI 분석`/`AI 분석 기록`/`Anthropic` 노출을 실패로 처리. 가격 히스토리 JSON 안의 과거 날짜가 visible 기준일 검사를 통과시키거나 오탐시키는 문제를 막음.
