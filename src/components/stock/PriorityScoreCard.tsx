@@ -48,10 +48,10 @@ export function PriorityScoreCard({
   const { locale } = useLanguage();
   const t = priorityScoreCardCopy[locale];
   return (
-    <div className={"rounded-xl border bg-white dark:bg-zinc-900 p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-200 dark:border-zinc-800")}>
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{t.title}</div>
+    <div className={"rounded-2xl border bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 p-4 md:p-5 shadow-lg shadow-zinc-950/10 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-200")}>
+      <div className="text-[11px] font-semibold uppercase text-zinc-400 dark:text-zinc-500">{t.title}</div>
 
-      <div className="mt-2 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3">
         {suspect ? (
           <div className="flex items-baseline gap-1 shrink-0">
             <span className="text-3xl md:text-4xl font-bold leading-none tabular-nums text-zinc-400 dark:text-zinc-500">{score}</span>
@@ -59,25 +59,25 @@ export function PriorityScoreCard({
             <span className="text-amber-600 dark:text-amber-400 text-base" aria-hidden="true"> ⚠</span>
           </div>
         ) : (
-          <ScoreGauge score={score} size={76} showLabel showOutOf />
+          <ScoreGauge score={score} size={118} showLabel showOutOf />
         )}
 
-        <div className="min-w-0 flex-1 space-y-2 text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
+        <div className="min-w-0 flex-1 space-y-2 text-[11px] text-zinc-300 dark:text-zinc-600 tabular-nums">
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-100 dark:border-zinc-800 px-2 py-1.5">
+            <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-2">
               <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.overallPrefix}</div>
-              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{overallRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {poolN}{t.rankSuffix}</span></div>
+              <div className="text-base font-black text-white dark:text-zinc-950">{overallRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {poolN}{t.rankSuffix}</span></div>
             </div>
-            <div className="rounded-lg bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-100 dark:border-zinc-800 px-2 py-1.5">
+            <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-2">
               <div className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">{sector}</div>
-              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{sectorRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {sectorCount}{t.rankSuffix}</span></div>
+              <div className="text-base font-black text-white dark:text-zinc-950">{sectorRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {sectorCount}{t.rankSuffix}</span></div>
             </div>
           </div>
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scopeNote(poolN)}</div>
         </div>
       </div>
 
-      <div className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-2">
+      <div className="mt-4 border-t border-white/10 dark:border-zinc-200 pt-3">
         <div className="mb-1 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">{t.trustLabel}</div>
         <div role="list" aria-label={t.badgeAriaLabel} className="flex flex-wrap items-center gap-1.5 text-[10px] tabular-nums">
           <DataStatusPill>{t.requiredDataPrefix} {completeness}%</DataStatusPill>

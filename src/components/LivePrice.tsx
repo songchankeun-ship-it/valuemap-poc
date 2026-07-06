@@ -56,13 +56,13 @@ export function LivePrice({
 
   return (
     <div className="flex items-baseline gap-2 flex-wrap">
-      <span className="text-xl md:text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">
+      <span className="text-2xl md:text-3xl font-black tabular-nums text-zinc-950 dark:text-zinc-50">
         {Math.round(price).toLocaleString()}
         <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400 ml-0.5">원</span>
       </span>
       <span
         className={
-          "text-sm font-medium tabular-nums " +
+          "text-base font-bold tabular-nums " +
           (pct >= 0
             ? "text-red-600 dark:text-red-400"
             : "text-blue-600 dark:text-blue-400")

@@ -27,16 +27,16 @@ export function ConclusionSummaryCard({
   const goodItems = strengths.length > 0 ? strengths : [t.strengthEmpty];
   const checkItems = warnings.length > 0 ? warnings : [t.warningEmpty];
   return (
-    <div className="rounded-xl border border-blue-100 dark:border-blue-950 bg-white dark:bg-zinc-900 p-4 md:p-5 shadow-sm">
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400">{t.title}</div>
-      <div className="mt-1 text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug break-keep">
+    <div className="rounded-2xl border border-blue-100 dark:border-blue-950 bg-white/95 dark:bg-zinc-950/70 p-5 md:p-6 shadow-sm">
+      <div className="text-[11px] font-semibold uppercase text-blue-700 dark:text-blue-400">{t.title}</div>
+      <div className="mt-1 text-2xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 leading-tight break-keep">
         {suspect ? <span className="text-amber-600 dark:text-amber-400">{t.suspectPrefix}</span> : null}
         {type}
       </div>
-      <p className="mt-1.5 text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{summary}</p>
+      <p className="mt-2 text-sm md:text-[15px] text-zinc-700 dark:text-zinc-300 leading-relaxed">{summary}</p>
 
-      <div className="mt-3 grid gap-2 md:grid-cols-2">
-        <div className="rounded-lg border border-emerald-100 dark:border-emerald-950 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-2.5">
+      <div className="mt-4 grid gap-2 md:grid-cols-2">
+        <div className="rounded-xl border border-emerald-100 dark:border-emerald-950 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-3">
           <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">{t.goodPoints}</div>
           <ul className="space-y-1">
             {goodItems.map((item) => (
@@ -48,7 +48,7 @@ export function ConclusionSummaryCard({
           </ul>
         </div>
 
-        <div className="rounded-lg border border-amber-100 dark:border-amber-950 bg-amber-50/70 dark:bg-amber-950/20 px-3 py-2.5">
+        <div className="rounded-xl border border-amber-100 dark:border-amber-950 bg-amber-50/70 dark:bg-amber-950/20 px-3 py-3">
           <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-1.5">{t.checkPoints}</div>
           <ul className="space-y-1">
             {checkItems.map((item) => (
@@ -61,7 +61,7 @@ export function ConclusionSummaryCard({
         </div>
       </div>
 
-      <div className="mt-3 flex items-start gap-1.5 text-[11px] md:text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-950/30 border border-zinc-200 dark:border-zinc-800 rounded-md px-2.5 py-2">
+      <div className="mt-4 flex items-start gap-1.5 text-[11px] md:text-xs text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2.5">
         <span aria-hidden="true" className="shrink-0">⚠</span>
         <span className="leading-snug"><strong className="font-semibold">{t.firstCheck}</strong> — {riskNote}</span>
       </div>

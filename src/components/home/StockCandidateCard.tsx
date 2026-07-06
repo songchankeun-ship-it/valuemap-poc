@@ -26,12 +26,19 @@ export interface StockCandidate {
 
 // 오늘 추가 확인 후보 카드 — 홈에서는 "점수 → 강점 → 먼저 확인할 것"만 남기고,
 // 가격/4지표 상세는 종목 상세에서 보게 해 첫 화면의 판단 밀도를 낮춘다.
-export function StockCandidateCard({ c }: { c: StockCandidate }) {
+export function StockCandidateCard({ c, featured = false }: { c: StockCandidate; featured?: boolean }) {
   const { locale } = useLanguage();
   const t = homeCopy[locale];
   const labels = t.metricLabels;
+  const cardClass = featured
+    ? "flex flex-col rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 md:p-6 shadow-lg shadow-zinc-900/5 hover:border-blue-400 dark:hover:border-blue-700 transition"
+    : "flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-md transition";
+  const nameClass = featured
+    ? "text-2xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 truncate"
+    : "text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate";
+  const gaugeSize = featured ? 116 : 72;
   return (
-    <div className="flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-md transition">
+    <div className={cardClass}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -40,7 +47,7 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
               title={t.topCandidate.rankBadgeAria(c.rank)}
               aria-label={t.topCandidate.rankBadgeAria(c.rank)}
             >{c.rank}</span>
-            <span className="text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate">{c.name}</span>
+            <span className={nameClass}>{c.name}</span>
           </div>
           <div className="flex items-center gap-1.5 mt-1 text-[11px] text-zinc-500 dark:text-zinc-400 flex-wrap">
             <span className="truncate">{c.sector}</span>
@@ -48,7 +55,7 @@ export function StockCandidateCard({ c }: { c: StockCandidate }) {
             <span className="font-mono tabular-nums">{c.ticker}</span>
           </div>
         </div>
-        <ScoreGauge score={c.score} size={72} showLabel showOutOf={false} />
+        <ScoreGauge score={c.score} size={gaugeSize} showLabel showOutOf={featured} />
       </div>
 
       <div className="mt-3.5 flex items-start gap-1.5">

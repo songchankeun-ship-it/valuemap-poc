@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T21:42:48.8423015+09:00
+Last updated: 2026-07-06T22:35:26.2916265+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore design/UX reaudit main deployment
+- Task: OrnScore visual redesign pass for home and stock detail
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Owner approved deployment. Merged the latest origin/main daily refresh (0131651) into the design/UX reaudit branch, fast-forwarded main to 7e5b24f, and pushed origin/main. Public ornscore.com verified after push: cache-busted route gate 9/9 with expected visible date 2026.07.06 and full smoke gate 23/23. Local pre-push gates also passed: tsc, metrics 138/0/0 Metrics 2.4, app:check with only Android assetlinks external WAIT, build, route gate, smoke --all, login preflight, and git diff --check.
+- Note: Continued after owner said the prior deployment did not visibly change enough. Created branch codex/ornscore-visual-redesign-home-detail-20260706 and made a more visible UI pass: home hero changed to a brighter analysis-board layout with larger typography and dark preview board, today's candidates now feature a larger rank-1 card with a secondary rail, and stock detail top now uses a full-width analysis board with larger stock header, price, conclusion, and score rail. No scoring/data logic changed. Verified tsc, metrics 138/0/0 Metrics 2.4, app:check with only Android assetlinks WAIT, build, route gate 9/9, smoke --all 23/23, git diff --check, and browser screenshots for desktop/mobile home and stock detail with no horizontal overflow or console errors. Local preview is running at http://localhost:4476.
 
 ## Next Agent Checklist
 

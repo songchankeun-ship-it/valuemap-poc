@@ -2154,3 +2154,10 @@
 - **공개 배포 확인**: `https://ornscore.com`에서 cache-busted `verify:routes` 9/9 통과(expected date `2026.07.06`), public `smoke:check --all` 23/23 통과.
 - **남은 외부 게이트**: Android `/.well-known/assetlinks.json`은 실제 Android package + SHA-256 fingerprint 확정 전까지 WAIT 상태. OAuth provider round-trip은 owner/live-service gate.
 - **다음에 바로 실행할 작업**: 설계서 순서상 Task 221의 첫 구현 슬라이스인 관심종목 CSV export 전용 유틸(`src/lib/watchlistCsv.ts`)과 `WatchlistClient` 내보내기 버튼을 추가하고, BOM/CSV escaping/금칙어/로컬+Supabase watchlist 양쪽 기준을 검증.
+## 2026-07-06 · [codex] 시각 체감형 리디자인 1차
+- **범위**: 사용자가 "디자인이 크게 변하지 않았다"고 피드백한 뒤, 홈 첫 화면과 종목 상세 상단을 실제로 눈에 띄게 바꾸는 1차 패스 진행. 데이터, 점수 산식, 후보 선정, 공시 로직은 변경하지 않음.
+- **홈 변경**: `HomeHero`를 어두운 박스형 히어로에서 밝은 분석 보드 + 어두운 후보 미리보기 보드로 재구성. 제목/CTA/게이지/KPI 대비를 키우고 lucide 아이콘을 CTA/KPI에 적용. `TopCandidateSection`은 1위 후보를 큰 카드로, 나머지를 보조 레일로 나누고 `StockCandidateCard`에 `featured` 상태를 추가.
+- **종목 상세 변경**: `StockConclusionHero`를 전체 폭 분석 보드로 변경하고, `StockHeader`, `LivePrice`, `ConclusionSummaryCard`, `PriorityScoreCard`의 타이포/카드 대비/점수 게이지 크기를 키움. 상단에서 종목명, 가격, 결론, 탐색 우선도, 순위가 더 크게 보이도록 조정.
+- **디자인 규칙 반영**: 전역 `letter-spacing`을 0으로 맞춤. 새 CTA에는 lucide 아이콘을 사용했고, 데스크톱/모바일에서 가로 오버플로가 없도록 확인.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4, `npm run app:check` 0(Android assetlinks WAIT 1 only), `npm run build` 0, `git diff --check` clean, local prod 4476 `verify:routes` 9/9, `smoke:check --all` 23/23. 인앱 브라우저 캡처로 desktop home/candidates, desktop stock detail, mobile 390px home/stock detail 확인: horizontal overflow 0, console error 0.
+- **다음에 바로 실행할 작업**: 사용자가 OK하면 이 브랜치를 main에 배포. 추가 시각 개선을 더 한다면 온보딩 박스/시장 스냅샷/하단 섹션까지 같은 톤으로 정리해 첫 화면 전체 일관성을 맞춘다.
