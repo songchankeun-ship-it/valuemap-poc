@@ -15,11 +15,11 @@ const ITEMS = [
   // 1차 메뉴 — 핵심 기능
   { href: "/today", Icon: CalendarDays, key: "today", group: "" },
   { href: "/stocks", Icon: Search, key: "stocks", group: "" },
+  { href: "/watchlist", Icon: Heart, key: "watchlist", group: "" },
   { href: "/disclosures", Icon: Megaphone, key: "disclosures", group: "" },
-  { href: "/backtest", Icon: FlaskConical, key: "backtest", group: "" },
   // 더보기 — 보조 기능
-  { href: "/watchlist", Icon: Heart, key: "watchlist", group: "more" },
   { href: "/compare", Icon: GitCompare, key: "compare", group: "more" },
+  { href: "/backtest", Icon: FlaskConical, key: "backtest", group: "more" },
   { href: "/pricing", Icon: CreditCard, key: "pricing", group: "more" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide", group: "more" },
   { href: "/about", Icon: Info, key: "about", group: "more" },

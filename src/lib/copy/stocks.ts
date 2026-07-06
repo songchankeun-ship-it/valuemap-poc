@@ -1,5 +1,5 @@
 /**
- * 다국어 v2 — /stocks (종목 탐색) 화면의 "크롬"(UI 라벨/버튼/안내) 문구.
+ * 다국어 v2 — /stocks (발견) 화면의 "크롬"(UI 라벨/버튼/안내) 문구.
  * ko = 현재 한국어 그대로(동작 불변), en = 보수적·비자문(non-advisory) 번역.
  * 종목명/티커/업종/테마/출처/숫자 등 데이터값은 절대 번역하지 않는다(소스 그대로).
  */
@@ -8,7 +8,7 @@ import type { Locale } from "@/lib/i18n";
 export const stocksCopy = {
   ko: {
     // ── 페이지 헤더 ──
-    headerTitle: "오늘 확인할 종목 찾기",
+    headerTitle: "발견",
     matchCount: (n: number, total: number) => ({ a: `현재 표시 ${n}개 `, b: `/ 전체 ${total}개` }),
     // 기본 품질 필터(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
     qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 적용 중: ${shown}개 `, b: `/ 전체 ${total}개` }),

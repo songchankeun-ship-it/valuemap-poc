@@ -43,21 +43,22 @@ export const homeCopy = {
       },
     },
     topCandidate: {
-      heading: "오늘 추가 확인 후보",
-      stepEyebrow: "그다음",
-      tag: "종합점수 상위 · 검증 보류 제외",
+      heading: "오늘 먼저 볼 후보",
+      stepEyebrow: "먼저 볼 것",
+      tag: "3개만 먼저",
       intro:
-        "검증 보류 종목은 빼고, 오늘 먼저 살펴볼 후보만 추렸어요.",
+        "점수와 거래활성도, 공시 신호를 함께 보고 먼저 확인할 후보를 추렸어요.",
       rankCriteria:
-        "번호는 오늘 후보 안의 표시 순서예요. 상세의 전체 상대순위와는 다를 수 있습니다.",
+        "번호는 오늘 후보 안의 표시 순서예요. 매수·매도 추천이 아니라 확인 순서입니다.",
       rankBadgeAria: (n: number) => `오늘 후보 순위 ${n}위`,
       empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
       footer:
-        "여러 지표에서 상대적으로 강점이 확인된 종목입니다. 점수가 높다고 매수 추천을 의미하지 않으며, 원문 공시와 재무를 함께 확인해야 합니다.",
+        "후보는 탐색 우선순위입니다. 점수만 보지 말고 공시와 재무를 함께 확인하세요.",
       strength: "강점",
       caution: "주의",
       firstCheck: "먼저 확인할 것",
-      viewStock: "종목 보기 →",
+      viewStock: "종목 보기",
+      checkpoints: ["최근 공시 원문", "실적·재무 변화"],
       risk: {
         surgeXl: "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요",
         surgeL: "단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요",
@@ -120,7 +121,7 @@ export const homeCopy = {
     },
     features: {
       heading: "오른스코어 핵심 기능",
-      sub: "점수 · 공시 · 백테스트",
+      sub: "점수 · 공시 · 실험실",
       cards: {
         today: {
           title: "오늘의 후보",
@@ -135,10 +136,10 @@ export const homeCopy = {
           cta: "신호 보기",
         },
         backtest: {
-          title: "백테스트",
-          body: "수익률뿐 아니라 MDD, Sharpe 등 위험 지표까지 함께 확인합니다.",
-          stat: "위험 지표 포함",
-          cta: "결과 보기",
+          title: "실험실",
+          body: "백테스트는 현재 점수 검증이 아니라 과거 조건을 단순 적용한 참고 시뮬레이션입니다.",
+          stat: "참고용 시뮬레이션",
+          cta: "실험실 보기",
         },
       },
     },
@@ -183,21 +184,22 @@ export const homeCopy = {
       },
     },
     topCandidate: {
-      heading: "More candidates to check today",
-      stepEyebrow: "Next",
-      tag: "Top composite · pending verification excluded",
+      heading: "Candidates to check first today",
+      stepEyebrow: "First check",
+      tag: "Top 3 first",
       intro:
-        "Pending-verification names are removed, leaving the candidates to check first today.",
+        "Candidates are narrowed using scores, trading activity, and disclosure signals.",
       rankCriteria:
-        "Numbers are the order within today's candidates, and can differ from the overall rank on each detail page.",
+        "Numbers are today's check order. This is not a buy or sell recommendation.",
       rankBadgeAria: (n: number) => `Today's candidate rank #${n}`,
       empty: "Candidate data is being prepared. Please check back shortly.",
       footer:
-        "These stocks show relative strength across several metrics. A high score is not a buy recommendation — always check the original disclosures and financials too.",
+        "Candidates are research priorities. Check disclosures and financials before making any decision.",
       strength: "Strengths",
       caution: "Caution",
       firstCheck: "Check first",
-      viewStock: "View stock →",
+      viewStock: "View stock",
+      checkpoints: ["Recent disclosures", "Financial changes"],
       risk: {
         surgeXl: "The recent rise is very large — check the reason for the surge and whether it is overheated.",
         surgeL: "The short-term rise is large — check the reason for the surge and its volatility.",
@@ -260,7 +262,7 @@ export const homeCopy = {
     },
     features: {
       heading: "OrnScore core features",
-      sub: "Scores · disclosures · backtest",
+      sub: "Scores · disclosures · lab",
       cards: {
         today: {
           title: "Today's candidates",
@@ -275,10 +277,10 @@ export const homeCopy = {
           cta: "View signals",
         },
         backtest: {
-          title: "Backtest",
-          body: "Check not only returns but also risk metrics such as MDD and Sharpe.",
-          stat: "Includes risk metrics",
-          cta: "View results",
+          title: "Lab",
+          body: "Backtests are reference simulations using past conditions, not validation of today's score.",
+          stat: "Reference simulation",
+          cta: "Open lab",
         },
       },
     },

@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-07 · [codex] Sprint 1 IA + 홈 첫 화면 브리핑 정리
+- **범위**: 첨부된 `ORNScore 디자인/UX 대공사 개발 지시서`의 Sprint 1/P0 첫 묶음. 데이터·점수식·후보 선정·공시 수집 로직은 그대로 두고 IA, 홈 첫 화면, 후보 카드, 데이터 상태 노출 강도만 정리. 브랜치 `codex/ornscore-sprint1-ia-home-20260707`.
+- **IA 변경**: 모바일 하단 탭을 `오늘/발견/관심/공시/더보기` 순서로 고정. 데스크톱/모바일 드로어의 1차 메뉴도 `오늘/발견/관심/공시`로 줄이고, 비교·실험실(백테스트)·서비스 안내·도움말·서비스 소개는 더보기 그룹으로 이동. `/stocks` 사용자-facing 명칭은 `발견`으로 변경.
+- **홈 변경**: 큰 소개형 히어로를 짧은 일일 브리핑으로 축소하고, 첫 섹션을 `오늘 먼저 볼 후보` 3개로 이동. 첫 방문 온보딩은 후보 뒤로 내림. 후보 카드는 가격/등락·종합 점수·한 줄 요약·강점 1개·먼저 확인할 것·체크포인트 2개·`종목 보기/관심/비교` CTA를 포함하되, 관심/비교는 compact 아이콘 버튼으로 줄여 모바일 390px 첫 화면에 1위 카드가 하단 탭 위까지 완전히 들어오게 조정.
+- **데이터 상태**: 헤더 하단 데이터 상태 바를 작은 pill 형태로 축소하고 기존 상세 모달 접근은 유지. 홈 하단 기능 카드의 `백테스트` 노출도 `실험실` 톤으로 낮춤.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `npm run app:check` 0(Android assetlinks 외부 WAIT 1 only) · `npm run build` 0(176 static pages) · `git diff --check` clean · local prod 4477 `verify:routes` 9/9 · `verify:login-preflight` 5/5 · `smoke:check --all` 23/23. 인앱 브라우저 390x844 확인: 하단 탭 `오늘/발견/관심/공시/더보기`, horizontal overflow 0, 1위 후보 카드 bottom 732 < bottom nav top 788. 데스크톱 1280x800 확인: 백테스트는 1차 메뉴에서 빠지고 `더보기 > 실험실`.
+- **다음에 바로 실행할 작업**: Sprint 2로 넘어가 `/stocks` 발견 화면의 질문형 프리셋을 지시서 문구에 맞춰 강화하고, 상세 필터를 모바일 바텀시트 중심으로 정리. 가능하면 최근 검색/최근 본 종목 진입점도 함께 연결.
+
 ## 2026-07-06 · [codex] 디자인 토큰·컴포넌트 규칙 문서화
 - **범위**: 디자인/UX 재검수 4~5장 및 `이번 주 안에 하면 좋은 작업` 6번. 런타임 UI 변경 없이 현재 코드의 색·타입·카드·버튼·배지·빈 상태 규칙을 문서로 고정. 소스 UI/데이터/점수식/copy source 무변경, 신규 npm 0.
 - **산출물**: 신규 `docs/ornscore-design-tokens-component-rules-2026-07-06.md`. 현재 토큰 소스(`globals.css`, `tailwind.config.ts`, `controlStyles.ts`, `trust/badges.tsx`, `ScoreGauge`, `MetricChip`, `disclosureType`)를 명시하고, 색상 의미(상승/하락 색 제한, 공시 타입 중립색), 타입 스케일, radius/spacing, 카드 순서(종목 후보·상세 상단·공시·백테스트·빈 상태), CTA/입력/칩 규칙, 배지/카피 규칙, 추출 후보(`EmptyStatePanel`, `ActionButton`, `DataBasisInline`, `DisclosureCardShell`, `ScoreSummaryCard`)와 지연 후보를 정리.

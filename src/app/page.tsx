@@ -108,7 +108,7 @@ export const metadata = {
 export default async function HomePage() {
   const recentSig = await getRecentSignals(7);
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
-  const top5 = pickTopStocks(5);
+  const topCandidates = pickTopStocks(3);
   const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? [], universeTickers);
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
@@ -130,7 +130,7 @@ export default async function HomePage() {
   const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
 
   // ── 후보 카드 뷰모델 ──
-  const candidates: StockCandidate[] = top5.map((s, i) => {
+  const candidates: StockCandidate[] = topCandidates.map((s, i) => {
     const r3m = typeof s.returns?.r3m === "number" ? s.returns.r3m : null;
     return {
       rank: i + 1,
@@ -173,8 +173,6 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5 md:space-y-7">
-      <WelcomeOnboarding />
-
       <HomeHero
         dataAsOf={dataAsOf}
         dataStale={dataStale}
@@ -185,18 +183,20 @@ export default async function HomePage() {
         previewCandidates={candidates.slice(0, 3)}
       />
 
+      <TopCandidateSection candidates={candidates} />
+
+      <WelcomeOnboarding />
+
+      <MyStocksSection lookup={poolLookup} />
+
+      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
+
       <MarketSnapshotCards
         totalCount={dataMetadata.count}
         strongCount={strongCount}
         volumeSpikeCount={spikeCount}
         signalCount={signalCount}
       />
-
-      <MyStocksSection lookup={poolLookup} />
-
-      <TopCandidateSection candidates={candidates} />
-
-      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
 
       <FeatureCards strongCount={strongCount} signalCount={signalCount} />
 

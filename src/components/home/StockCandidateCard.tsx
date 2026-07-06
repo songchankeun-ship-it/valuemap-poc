@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { AddToCompareButton } from "@/components/AddToCompareButton";
+import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { MetricChip } from "@/components/ui/MetricChip";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -30,13 +33,23 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
   const { locale } = useLanguage();
   const t = homeCopy[locale];
   const labels = t.metricLabels;
+  const leadMetric = c.metrics[0];
+  const summary = leadMetric
+    ? locale === "ko"
+      ? `${labels[leadMetric.key]} 점수가 눈에 띄어 먼저 확인할 후보입니다.`
+      : `${labels[leadMetric.key]} stands out as the first thing to review.`
+    : locale === "ko"
+      ? "여러 지표를 함께 확인할 후보입니다."
+      : "This candidate is worth checking across several metrics.";
+  const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
+  const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
   const cardClass = featured
-    ? "flex flex-col rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 md:p-6 shadow-lg shadow-zinc-900/5 hover:border-blue-400 dark:hover:border-blue-700 transition"
+    ? "flex flex-col rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 md:p-6 shadow-lg shadow-zinc-900/5 hover:border-blue-400 dark:hover:border-blue-700 transition"
     : "flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-md transition";
   const nameClass = featured
-    ? "text-2xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 truncate"
+    ? "text-xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 truncate"
     : "text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate";
-  const gaugeSize = featured ? 116 : 72;
+  const gaugeSize = featured ? 76 : 72;
   return (
     <div className={cardClass}>
       <div className="flex items-start justify-between gap-3">
@@ -54,23 +67,31 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
             <span>·</span>
             <span className="font-mono tabular-nums">{c.ticker}</span>
           </div>
+          <div className="mt-2 flex items-center gap-2 text-[12px]">
+            <span className="font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{c.priceLabel}</span>
+            <span className={"font-semibold tabular-nums " + changeTone}>{changeLabel}</span>
+          </div>
         </div>
         <ScoreGauge score={c.score} size={gaugeSize} showLabel showOutOf={featured} />
       </div>
 
-      <div className="mt-3.5 flex items-start gap-1.5">
+      <p className="mt-2 text-[13px] leading-relaxed text-zinc-700 dark:text-zinc-300">
+        {summary}
+      </p>
+
+      <div className="mt-2.5 flex items-start gap-1.5">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-[9px] font-bold shrink-0 mt-0.5" aria-hidden="true">✓</span>
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">{t.topCandidate.strength}</div>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {c.metrics.map((m) => (
+            {c.metrics.slice(0, 1).map((m) => (
               <MetricChip key={m.key} label={labels[m.key]} value={String(m.value)} tone="strong" />
             ))}
           </div>
         </div>
       </div>
 
-      <div className="mt-3 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-3 py-2.5">
+      <div className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-3 py-2">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-bold shrink-0 mt-px" aria-hidden="true">!</span>
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t.topCandidate.firstCheck}</div>
@@ -78,13 +99,27 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         </div>
       </div>
 
+      <div className="mt-2.5 grid grid-cols-2 gap-2">
+        {t.topCandidate.checkpoints.map((checkpoint, index) => (
+          <div key={checkpoint} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-2.5 py-1.5 text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{index + 1}. </span>
+            {checkpoint}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-auto pt-3 flex flex-wrap items-center gap-2">
       <Link
         prefetch={false}
         href={"/stock/" + c.ticker}
-        className="mt-3.5 text-center px-3 py-2 min-h-[44px] inline-flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 hover:border-blue-400 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+        className="text-center px-3.5 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       >
         {t.topCandidate.viewStock}
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
+        <AddToWatchlistButton ticker={c.ticker} name={c.name} compact />
+        <AddToCompareButton ticker={c.ticker} name={c.name} compact />
+      </div>
     </div>
   );
 }

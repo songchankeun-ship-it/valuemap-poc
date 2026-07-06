@@ -10,8 +10,8 @@ import { useLanguage } from "./LanguageProvider";
 const PRIMARY = [
   { href: "/today", Icon: CalendarDays, key: "today" },
   { href: "/stocks", Icon: Search, key: "stocks" },
-  { href: "/disclosures", Icon: Megaphone, key: "disclosures" },
   { href: "/watchlist", Icon: Heart, key: "watchlist" },
+  { href: "/disclosures", Icon: Megaphone, key: "disclosures" },
 ] satisfies Array<{ href: string; Icon: LucideIcon; key: NavKey }>;
 
 const MORE = [

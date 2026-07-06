@@ -9,7 +9,7 @@ export const stockDetailCopy = {
   ko: {
     // ── page.tsx (서버 → StockDetailIntro 클라이언트 자식) ──
     breadcrumbHome: "홈",
-    breadcrumbStocks: "종목 탐색",
+    breadcrumbStocks: "발견",
     returnToday: "오늘 대시보드",
     returnWatchlist: "관심 종목",
     tabs: {

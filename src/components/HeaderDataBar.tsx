@@ -35,27 +35,27 @@ export function HeaderDataBar({
     <div
       className={
         isStale
-          ? "bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900"
-          : "bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800"
+          ? "bg-white dark:bg-zinc-950 border-b border-amber-100 dark:border-amber-900/60"
+          : "bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900"
       }
     >
-      <div className="px-3 md:px-4 py-1.5 flex items-center justify-between gap-2 text-[10px] md:text-[11px]">
+      <div className="px-3 md:px-4 py-1 flex items-center justify-end text-[10px] md:text-[11px]">
         <div
           className={
-            "flex items-center gap-1.5 md:gap-2 min-w-0 " +
-            (isStale ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-400")
+            "inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 shadow-sm " +
+            (isStale
+              ? "border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200"
+              : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300")
           }
         >
-          <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-green-500")} />
-          <span className="truncate">
+          <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (isStale ? "bg-amber-500" : "bg-emerald-500")} />
+          <span className="min-w-0 truncate">
             {hasData ? (
               <>
-                {/* 모바일: 짧고 명확한 형태 */}
                 <span className="sm:hidden">
                   <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDateShort}</strong>
                   <span className="ml-1 text-zinc-500 dark:text-zinc-500">{t.marketClose}</span>
                 </span>
-                {/* 데스크톱: 단일 기준일만 */}
                 <span className="hidden sm:inline">
                   {t.dataBasis}{" "}
                   <strong className={"tabular-nums " + (isStale ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
@@ -67,11 +67,10 @@ export function HeaderDataBar({
               <span className="text-zinc-500 dark:text-zinc-500">{t.preparing}</span>
             )}
           </span>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · yfinance · DART</span>
+          <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">·</span>
+          <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · DART</span>
           <span className="hidden sm:inline-flex"><MetricsVersionBadge label={metricsVersionLabel} /></span>
-          <LocalizedDataTrustModal statusByLocale={statusByLocale} />
+          <LocalizedDataTrustModal statusByLocale={statusByLocale} triggerClassName="bg-white/70 dark:bg-zinc-950/60 border-zinc-200 dark:border-zinc-700" />
         </div>
       </div>
     </div>

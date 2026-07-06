@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T22:41:30.0869438+09:00
+Last updated: 2026-07-07T00:43:50.0014465+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore visual redesign pass for home and stock detail
+- Task: OrnScore Sprint 1 IA and home first-screen brief
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Owner approved the visual redesign and said to deploy. Fast-forwarded main to d1b0950 and pushed origin/main. Public ornscore.com updated after Vercel/CDN refresh; cache-busted HTML confirmed new home and stock-detail UI markers, then public route gate 9/9 and smoke --all 23/23 passed. The deployed change is a visible UI pass: brighter home analysis board, dark candidate preview board, featured rank-1 candidate card, and full-width stock-detail analysis board with larger stock header, price, conclusion, and score rail. No scoring/data logic changed. Android assetlinks remains the only app:check external WAIT.
+- Note: Implemented the first slice from the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. Mobile bottom nav is now `오늘/발견/관심/공시/더보기`; desktop/mobile drawer primary IA is `오늘/발견/관심/공시` with compare/lab/service/help/about under More. Home is now a compact daily brief followed immediately by 3 candidate cards; onboarding moved below candidates; candidate cards include price/change, score, one strength, first-check warning, two checkpoints, and view/watch/compare CTAs with compact icon actions. Header data status is a small pill with existing modal retained. No data/scoring/disclosure logic changed. Gates passed: tsc, verify_metrics, app:check (assetlinks external WAIT only), build, diff check, local route verify 9/9, login preflight 5/5, smoke --all 23/23, in-app browser 390x844 and 1280x800 layout checks. Next: Sprint 2 `/stocks` Discover question presets + mobile bottom-sheet filters + recent search/recent viewed entry points.
 
 ## Next Agent Checklist
 
