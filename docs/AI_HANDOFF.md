@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T22:35:26.2916265+09:00
+Last updated: 2026-07-06T22:41:30.0869438+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -25,7 +25,7 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued after owner said the prior deployment did not visibly change enough. Created branch codex/ornscore-visual-redesign-home-detail-20260706 and made a more visible UI pass: home hero changed to a brighter analysis-board layout with larger typography and dark preview board, today's candidates now feature a larger rank-1 card with a secondary rail, and stock detail top now uses a full-width analysis board with larger stock header, price, conclusion, and score rail. No scoring/data logic changed. Verified tsc, metrics 138/0/0 Metrics 2.4, app:check with only Android assetlinks WAIT, build, route gate 9/9, smoke --all 23/23, git diff --check, and browser screenshots for desktop/mobile home and stock detail with no horizontal overflow or console errors. Local preview is running at http://localhost:4476.
+- Note: Owner approved the visual redesign and said to deploy. Fast-forwarded main to d1b0950 and pushed origin/main. Public ornscore.com updated after Vercel/CDN refresh; cache-busted HTML confirmed new home and stock-detail UI markers, then public route gate 9/9 and smoke --all 23/23 passed. The deployed change is a visible UI pass: brighter home analysis board, dark candidate preview board, featured rank-1 candidate card, and full-width stock-detail analysis board with larger stock header, price, conclusion, and score rail. No scoring/data logic changed. Android assetlinks remains the only app:check external WAIT.
 
 ## Next Agent Checklist
 

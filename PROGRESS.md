@@ -2154,6 +2154,12 @@
 - **공개 배포 확인**: `https://ornscore.com`에서 cache-busted `verify:routes` 9/9 통과(expected date `2026.07.06`), public `smoke:check --all` 23/23 통과.
 - **남은 외부 게이트**: Android `/.well-known/assetlinks.json`은 실제 Android package + SHA-256 fingerprint 확정 전까지 WAIT 상태. OAuth provider round-trip은 owner/live-service gate.
 - **다음에 바로 실행할 작업**: 설계서 순서상 Task 221의 첫 구현 슬라이스인 관심종목 CSV export 전용 유틸(`src/lib/watchlistCsv.ts`)과 `WatchlistClient` 내보내기 버튼을 추가하고, BOM/CSV escaping/금칙어/로컬+Supabase watchlist 양쪽 기준을 검증.
+## 2026-07-06 · [codex] 시각 체감형 리디자인 main 배포
+- **배포**: 사용자가 화면 확인 후 "괜찮은거같다. 배포가자"로 승인. `codex/ornscore-visual-redesign-home-detail-20260706`의 `d1b0950`을 `main`으로 fast-forward하고 `origin/main`에 push.
+- **공개 반영 확인**: Vercel/CDN 반영 대기 후 `https://ornscore.com` cache-busted HTML에서 새 home/stock-detail UI 마커 확인. 이후 public `verify:routes` 9/9(expected date `2026.07.06`) 및 public `smoke:check --all` 23/23 통과.
+- **남은 외부 게이트**: Android `assetlinks.json` WAIT는 기존과 동일. 점수/데이터/후보 선정 로직 변경 없음.
+- **다음에 바로 실행할 작업**: 추가 시각 개선을 계속하면 온보딩 박스, 시장 스냅샷, 하단 섹션까지 이번 톤으로 통일. 기능 작업으로 돌아가면 Task 221 관심종목 CSV export 첫 구현.
+
 ## 2026-07-06 · [codex] 시각 체감형 리디자인 1차
 - **범위**: 사용자가 "디자인이 크게 변하지 않았다"고 피드백한 뒤, 홈 첫 화면과 종목 상세 상단을 실제로 눈에 띄게 바꾸는 1차 패스 진행. 데이터, 점수 산식, 후보 선정, 공시 로직은 변경하지 않음.
 - **홈 변경**: `HomeHero`를 어두운 박스형 히어로에서 밝은 분석 보드 + 어두운 후보 미리보기 보드로 재구성. 제목/CTA/게이지/KPI 대비를 키우고 lucide 아이콘을 CTA/KPI에 적용. `TopCandidateSection`은 1위 후보를 큰 카드로, 나머지를 보조 레일로 나누고 `StockCandidateCard`에 `featured` 상태를 추가.
