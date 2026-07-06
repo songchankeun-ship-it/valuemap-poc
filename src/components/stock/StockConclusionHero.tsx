@@ -6,7 +6,6 @@ import { conclusionHeroCopy } from "@/lib/copy/stockDetail";
 import { StockHeader } from "./StockHeader";
 import { PriorityScoreCard } from "./PriorityScoreCard";
 import { ConclusionSummaryCard } from "./ConclusionSummaryCard";
-import { StrengthWarningPanel } from "./StrengthWarningPanel";
 import { StockDetailActionButtons } from "./StockDetailActionButtons";
 
 export interface HeroRiskAlert {
@@ -17,7 +16,7 @@ export interface HeroRiskAlert {
 
 /**
  * 종목 상세 상단 결론 카드 영역(설계서 §4·§14).
- * 모바일 순서: 종목명/현재가 → 탐색 우선도 → 현재 결론 → 강점/주의 → 다음 확인 버튼 → 고지.
+ * 모바일 순서: 종목명/현재가 → 현재 결론/좋은 점/확인할 점 → 점수·순위 → 다음 확인 버튼 → 고지.
  * 위험 경고(급등/과열)는 점수 카드와 분리해 별도 바로 노출.
  */
 export function StockConclusionHero({
@@ -89,7 +88,15 @@ export function StockConclusionHero({
         </div>
       ) : null}
 
-      <div className="grid gap-3 md:grid-cols-[minmax(0,17rem)_1fr]">
+      <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_18rem]">
+        <ConclusionSummaryCard
+          type={conclusion.type}
+          summary={conclusion.summary}
+          riskNote={conclusion.riskNote}
+          suspect={suspect}
+          strengths={strengths}
+          warnings={warnings}
+        />
         <PriorityScoreCard
           score={score}
           overallRank={overallRank}
@@ -101,10 +108,7 @@ export function StockConclusionHero({
           metricsVersion={metricsVersion}
           suspect={suspect}
         />
-        <ConclusionSummaryCard type={conclusion.type} summary={conclusion.summary} riskNote={conclusion.riskNote} suspect={suspect} />
       </div>
-
-      <StrengthWarningPanel strengths={strengths} warnings={warnings} />
 
       <div>
         <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-1.5">{t.nextToCheck}</div>

@@ -196,6 +196,7 @@ export const priorityScoreCardCopy = {
     rankSuffix: "위",
     scopeNote: (n: number) => `전체 ${n}종목 기준 상대순위 · 홈 후보 순위와 다를 수 있음`,
     badgeAriaLabel: "데이터 상태 배지",
+    trustLabel: "데이터 신뢰",
     requiredDataPrefix: "필수 데이터",
     suspectPill: "이상값 점검 중 · 임시 점수",
     passPill: "이상값 점검 통과",
@@ -211,6 +212,7 @@ export const priorityScoreCardCopy = {
     rankSuffix: "",
     scopeNote: (n: number) => `Relative rank across all ${n} stocks · may differ from the home candidate order`,
     badgeAriaLabel: "Data status badges",
+    trustLabel: "Data trust",
     requiredDataPrefix: "Required data",
     suspectPill: "Outlier check in progress · provisional score",
     passPill: "Passed outlier check",
@@ -222,27 +224,21 @@ export const priorityScoreCardCopy = {
 // ── ConclusionSummaryCard ──
 export const conclusionSummaryCardCopy = {
   ko: {
-    title: "현재 결론",
+    title: "현재 이 종목은",
     suspectPrefix: "데이터 검증 중 · 임시 점수 — ",
-  },
-  en: {
-    title: "Current read",
-    suspectPrefix: "Data under review · provisional score — ",
-  },
-} as const satisfies Record<Locale, unknown>;
-
-// ── StrengthWarningPanel ──
-export const strengthWarningPanelCopy = {
-  ko: {
-    strengthTitle: "강점",
+    goodPoints: "좋은 점",
+    checkPoints: "확인할 점",
+    firstCheck: "먼저 확인",
     strengthEmpty: "뚜렷한 강점 지표가 없습니다.",
-    warningTitle: "주의 · 확인 필요",
     warningEmpty: "특이 주의 신호 없음.",
   },
   en: {
-    strengthTitle: "Strengths",
+    title: "Right now, this stock is",
+    suspectPrefix: "Data under review · provisional score — ",
+    goodPoints: "Good points",
+    checkPoints: "Check points",
+    firstCheck: "Check first",
     strengthEmpty: "No standout strength metric.",
-    warningTitle: "Caution · to check",
     warningEmpty: "No notable caution signal.",
   },
 } as const satisfies Record<Locale, unknown>;

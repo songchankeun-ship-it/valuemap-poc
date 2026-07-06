@@ -224,8 +224,8 @@ export default async function StockDetailPage({ params }: PageProps) {
   const conclusion = classifyConclusion({ momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol, surge3m });
   const heroStrengths = reason.strengths.map((x) => x.metric);
   const heroWarnings: string[] = reason.cautions.map((x) => x.metric + " 약함");
-  if (surge3m !== null && surge3m >= 80) heroWarnings.push("최근 3개월 급등 — 급등 사유 확인 필요");
-  else if (surge3m !== null && surge3m >= 50) heroWarnings.push("최근 상승폭 큼 — 급등 사유 확인");
+  // 급등/상승폭 확대는 별도 riskAlert와 "먼저 확인" 문장으로 강조한다.
+  // 확인할 점 목록에는 지표 약점만 남겨 상단 요약의 반복을 줄인다.
   const riskAlert: HeroRiskAlert | null =
     surge3m !== null && surge3m >= 80
       ? { level: "high", label: "변동성 확대", text: `최근 63거래일(약 3개월) +${Math.round(surge3m)}%. 최근 상승폭이 커 변동성이 확대될 수 있습니다. 급등 원인과 지속 가능성을 확인하세요.` }

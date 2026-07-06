@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] 종목 상세 상단 요약 카드 리디자인
+- **범위**: 디자인/UX 재검수 P1-1/3-3 두 번째 슬라이스. 종목 상세 상단에서 `현재 결론`을 주 카드로 올리고, `좋은 점`/`확인할 점`/`먼저 확인`을 한 카드 안에 묶음. 점수식·후보 선정·데이터·순위 계산 무변경, 신규 npm 0.
+- **변경**: `StockConclusionHero`의 모바일/데스크톱 순서를 `종목명/가격 → 현재 결론/좋은 점/확인할 점 → 점수·순위 → 다음 확인`으로 변경. `ConclusionSummaryCard`에 강점/확인 목록을 통합하고, `PriorityScoreCard`는 76px 점수 링+전체/업종 순위+하단 `데이터 신뢰` 배지로 축소. 급등/상승폭 문구는 `riskAlert`와 `먼저 확인`에만 남겨 `확인할 점` 반복을 제거. 미사용 `StrengthWarningPanel`/전용 copy 삭제.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(176 static pages) · `git diff --check` 클린 · 로컬 prod `verify:routes -- --base http://localhost:4470` 9/9 OK · `smoke:check -- --base http://localhost:4470 --all` 23/23 OK. `/stock/005930` SSR 추출에서 `좋은 점=추세/위험조정`, `확인할 점=거래활성도 약함/밸류 약함`, `먼저 확인` 급등 문장, `데이터 신뢰` 배지 확인.
+- **제한/다음 액션**: 인앱 브라우저 attach 문제로 픽셀 스크린샷 검증은 수행하지 못함. 다음 슬라이스는 설계서 순서상 공시 카드 시각 체계 정리가 자연스러움.
+
 ## 2026-07-06 · [codex] 홈 후보 카드 정보량 축소
 - **범위**: 디자인/UX 재검수 P1-1/3-1의 첫 슬라이스. 홈 `오늘 추가 확인 후보` 카드에서 가격·일간 등락·3M 수익률·4지표 막대 상세를 제거하고, 홈에서는 `종목명/업종/티커 → 점수 링 → 강점 2개 → 먼저 확인할 것 1개 → 종목 보기`만 남김. 점수식·후보 선정·데이터·랭킹 로직 무변경, 신규 npm 0.
 - **변경**: `src/components/home/StockCandidateCard.tsx`에서 `MetricBar` 상세 블록과 가격/등락/3M 라인을 제거, 점수 링을 84px→72px로 축소, 주의 라벨을 `먼저 확인할 것`으로 바꿔 카드 목적을 행동 중심으로 전환. `src/lib/copy/home.ts`의 후보 섹션 intro/rankCriteria를 짧은 해요체로 줄이고 `firstCheck` 카피 추가(ko/en).
