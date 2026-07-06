@@ -2146,3 +2146,11 @@
 - **산출물**: `docs/ornscore-expert-feedback-intake-template.md`(신규). 목적/사용법 + 톤 규칙 + 다룬다/다루지 않는다 + 참조 블록(중복 없이 링크) + 불변식 가드(rejection filter, scope creep 거절) + Severity 루브릭(Task 48/127 재사용) + 8-카테고리 분류표(소유 파일/게이트 매핑) + task 프롬프트 구조 + 거짓 승인 트리거 회피(나쁜예↔좋은예 3쌍) + fill-in 배치 인테이크 표 + 운영자 전용 외부 단계 버킷.
 - **게이트**: 신규 doc + handoff + PROGRESS U+FFFD 0(Korean intact) · git status 문서 3개만 변경(소스 0) · `npx tsc --noEmit` 0(코드 무변경 재확인) · `git diff --check` CRLF 노이즈만. 런타임/UI 무영향.
 - **다음 소유자**: 실제 리포트 유입 시 표를 채워 §4 가드 통과 항목만 task 방출, 불변식 위반·코드로 못 닫는 항목은 §8 운영자 버킷(실기기 OAuth·시각 게이트·assetlinks·스토어·결제·main push). 푸시/릴리스 미수행(로컬 커밋만).
+
+## 2026-07-06 · [codex] OrnScore design/UX main 배포 완료
+- **범위**: 사용자가 `일단 배포하자` 및 후속 승인으로 main 반영을 명시. design/UX 재검수 작업 7커밋과 최신 일일 데이터 갱신을 함께 운영 기준으로 배포.
+- **브랜치/데이터**: `origin/main`의 daily refresh `0131651`을 design/UX 브랜치에 먼저 병합한 뒤, 검증된 HEAD `7e5b24f`를 `main`으로 fast-forward하고 `origin/main`에 push. 데이터 기준은 `asOfBusinessDate 20260706`, visible date `2026.07.06`, Metrics 2.4, 138 stocks.
+- **로컬 pre-push 게이트**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4, `npm run app:check` 0(Android assetlinks external WAIT 1 only), `npm run build` 0, `git diff --check` clean, local prod 4474 `verify:routes` 9/9, `smoke:check --all` 23/23, `verify:login-preflight` 5/5.
+- **공개 배포 확인**: `https://ornscore.com`에서 cache-busted `verify:routes` 9/9 통과(expected date `2026.07.06`), public `smoke:check --all` 23/23 통과.
+- **남은 외부 게이트**: Android `/.well-known/assetlinks.json`은 실제 Android package + SHA-256 fingerprint 확정 전까지 WAIT 상태. OAuth provider round-trip은 owner/live-service gate.
+- **다음에 바로 실행할 작업**: 설계서 순서상 Task 221의 첫 구현 슬라이스인 관심종목 CSV export 전용 유틸(`src/lib/watchlistCsv.ts`)과 `WatchlistClient` 내보내기 버튼을 추가하고, BOM/CSV escaping/금칙어/로컬+Supabase watchlist 양쪽 기준을 검증.

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T21:12:16.7772604+09:00
+Last updated: 2026-07-06T21:42:48.8423015+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore design tokens and component rules documentation
+- Task: OrnScore design/UX reaudit main deployment
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued the design/UX reaudit P1 work. Added docs/ornscore-design-tokens-component-rules-2026-07-06.md to pin the current color, typography, spacing, card, CTA, badge, empty-state, and copy rules against the actual token sources in globals.css, tailwind.config.ts, controlStyles.ts, trust badges, score/metric primitives, and disclosureType metadata. Updated spec coverage to point to this rules doc while keeping full brand/palette overhaul as a product decision. Docs-only; no UI, data, scoring, or copy source changes.
+- Note: Owner approved deployment. Merged the latest origin/main daily refresh (0131651) into the design/UX reaudit branch, fast-forwarded main to 7e5b24f, and pushed origin/main. Public ornscore.com verified after push: cache-busted route gate 9/9 with expected visible date 2026.07.06 and full smoke gate 23/23. Local pre-push gates also passed: tsc, metrics 138/0/0 Metrics 2.4, app:check with only Android assetlinks external WAIT, build, route gate, smoke --all, login preflight, and git diff --check.
 
 ## Next Agent Checklist
 
