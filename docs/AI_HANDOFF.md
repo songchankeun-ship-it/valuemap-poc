@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-05T17:55:50.154Z
+Last updated: 2026-07-06T10:39:20.6898790+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 221 - OrnScore watchlist groups memo CSV spec
-- Run: 178
+- Task: OrnScore main deployment approval and pre-push gate
+- Run: manual Codex session
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: User explicitly approved deployment. Current branch `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` is fast-forwardable over `origin/main` (`origin/main...HEAD = 0 116`). Pre-push gates passed: tsc, verify_metrics 138/0/0, app:check with only external Android assetlinks WAIT, build, smoke --all 23/23, local verify:routes 6/6, login preflight 5/5, perf 0 warnings, and 390px browser checks.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex deployment approval checkpoint
+- **Decision**: Owner said "일단 배포하자"; treat this as explicit approval to fast-forward main and push the current OrnScore release line.
+- **Branch state**: `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` contains `origin/main` and is 116 commits ahead. No working-tree changes before this checkpoint doc edit.
+- **Pre-push verification**: tsc 0, metrics 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4, app packaging check passed with only external Android assetlinks WAIT, build 0, smoke --all 23/23, local cache-busted routes 6/6, local login SSR preflight 5/5, perf 0 warnings, 390x844 route browser checks no overflow/no console errors.
+- **Post-push gate**: After main push/Vercel refresh, run cache-busted public route verification again. Actual OAuth provider round-trip and Android assetlinks remain owner/live-service gates.
 
 ### Task 221 — OrnScore 관심 그룹·메모·CSV 문서 우선 설계서 (2026-07-06, Claude, docs-only)
 - **범위**: 릴리스 준비 노트(215~220) 이후 **다음 제품 베팅을 착수 전 설계서로 확정** — 다음 제품 베팅 #1(관심 종목 고도화: 그룹·메모·CSV)을 구현 없이 스펙화하고 릴리스 게이트 이후 착수할 첫 로컬 슬라이스를 지정. 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·신규 코드/스캐폴드 0.

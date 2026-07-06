@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] OrnScore main 배포 승인·pre-push 게이트
+- **범위**: 사용자가 "일단 배포하자"로 main 반영/공개 배포를 명시 승인. 현재 배포 후보 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` 기준으로 `git fetch origin` 후 `origin/main...HEAD = 0 116`, `origin/main`이 HEAD의 조상임을 확인해 fast-forward 가능 상태로 판정.
+- **pre-push 게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run app:check` 0(실 Android `assetlinks.json`은 외부 지문 게이트로 WAIT 1) · `npm run build` 0(176 static pages) · 로컬 prod `smoke:check --all` 23/23 OK · `verify:routes -- --base http://localhost:4459` 6/6 OK · `verify:login-preflight -- --base http://localhost:4459` 5/5 OK · `perf:check` 0 advisory warnings.
+- **직접 확인**: 390x844 브라우저에서 `/`, `/stocks`, `/stock/005930`, `/status`, `/pricing`, `/login?next=/watchlist`, `/watchlist` 가로 오버플로우 0·콘솔 에러 0·`베타 안내`/한국어 전용 상태 OK. 공개 `https://ornscore.com`의 6개 대표 라우트도 cache-busted `verify:routes` 통과(배포 전 기준).
+- **남은 배포 후 확인**: main fast-forward 후 `origin/main` push, Vercel 반영 대기, 공개 `verify:routes`/로그인 상태 재확인. 공개 Android `/.well-known/assetlinks.json`은 404 상태라 Android 앱 링크는 배포와 별도 오너 SHA-256 지문 게이트.
+
 ## 2026-07-06 · [claude] Task 221 — OrnScore 관심 그룹·메모·CSV 문서 우선 설계서 + 다음 큐
 - **범위**: 릴리스 준비 노트(Task 215~220) 이후 **다음 제품 베팅을 착수 전에 설계서로 확정** — 다음 제품 베팅 숏리스트 **#1(관심 종목 고도화: 그룹·메모·CSV)** 을 구현 없이 스펙화하고 릴리스 게이트 이후 착수할 **첫 로컬 슬라이스**를 지정. 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·**신규 코드/스캐폴드 0**(설계만).
 - **상류 판정(read-only, 병합 안 함)**: `git fetch origin` 후 `git rev-list --left-right --count origin/main...HEAD = 0 114`(HEAD 114 앞·0 뒤·상류 누락 0). codex 통합 라인 `codex/ornscore-main-data-integration-20260705`는 브랜치로 잔존하나 **더 이상 HEAD 아님**(Task 215~220으로 `38cbba4`까지 전진). 로컬 커밋만·미push·미배포.
