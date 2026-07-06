@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-06 · [codex] 디자인/UX 재검수 P0 visible-date 가드 + 로그인 혜택 정리
+- **범위**: 외부 재검수 리포트 `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md` 기준으로 공개 배포 직후 P0/P1 초입을 확인. 브랜치 `codex/ornscore-design-ux-reaudit-p0-20260706`. 공개 visible text 기준 `/`, `/stocks`, `/stock/005930`, `/login?next=/watchlist`, `/watchlist`, `/compare`, `/status` 모두 `2026.07.03` 노출·`2026.06.30` 미노출·AI/Anthropic 미노출로 P0 날짜/AI 표면은 배포 후 해소 확인.
+- **변경**: `scripts/verify-routes.mjs`를 보이는 텍스트 기준으로 강화(script/style/noscript 제거 후 검사). 대표 라우트를 6개에서 9개로 확장(`/login?next=/watchlist`, `/watchlist`, `/compare` 추가), `/stocks`·`/stock/005930`에도 기준일 필수화, visible `2026.06.30`/`2026-06-30`/`20260630` 및 `AI 분석`/`AI 분석 기록`/`Anthropic` 노출을 실패로 처리. 가격 히스토리 JSON 안의 과거 날짜가 visible 기준일 검사를 통과시키거나 오탐시키는 문제를 막음.
+- **로그인 UX**: `src/lib/i18n.ts`와 `src/app/login/LoginContent.tsx`에서 로그인 혜택을 리포트 권장처럼 3개로 축소: 관심 종목 여러 기기 이어보기, 비교 목록 저장하기, 관심 종목 공시 알림 받기. `Bot` 아이콘/기록 보관 뉘앙스를 제거해 AI 숨김 정책과 정렬.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · 공개 `npm run verify:routes -- --base https://ornscore.com` 9/9 OK · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · `npm run build` 0(176 static pages) · 로컬 prod `verify:routes -- --base http://localhost:4468` 9/9 OK · `verify:login-preflight -- --base http://localhost:4468` 5/5 OK · `smoke:check -- --base http://localhost:4468 --all` 23/23 OK · 로그인 HTML 직접 확인: 새 3혜택 true, `AI 분석 기록`/`AI 분석`/`Anthropic` false.
+- **다음 액션**: 이번 리포트의 P1 본 작업은 홈 후보 카드 정보량 축소와 종목 상세 상단 요약 카드 리디자인이 1순위. 모바일 하단 네비는 이미 `오늘/종목찾기/공시/관심 + 더보기` 구조라 추가 변경 전 390px 실기기에서 밀도만 확인.
+
 ## 2026-07-06 · [codex] OrnScore main 배포 승인·pre-push 게이트
 - **범위**: 사용자가 "일단 배포하자"로 main 반영/공개 배포를 명시 승인. 현재 배포 후보 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` 기준으로 `git fetch origin` 후 `origin/main...HEAD = 0 116`, `origin/main`이 HEAD의 조상임을 확인해 fast-forward 가능 상태로 판정.
 - **pre-push 게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `npm run app:check` 0(실 Android `assetlinks.json`은 외부 지문 게이트로 WAIT 1) · `npm run build` 0(176 static pages) · 로컬 prod `smoke:check --all` 23/23 OK · `verify:routes -- --base http://localhost:4459` 6/6 OK · `verify:login-preflight -- --base http://localhost:4459` 5/5 OK · `perf:check` 0 advisory warnings.

@@ -320,12 +320,11 @@ export const loginCopy = {
     getLink: "로그인 링크 받기",
     noAds: "로그인 링크 외에 광고성 메일은 보내지 않습니다.",
     noAdsSecond: "알림 메일도 사용자가 직접 설정할 때만 발송됩니다.",
-    benefitsTitle: "로그인은 선택이에요 — 하면 이런 걸 무료로 쓸 수 있어요",
+    benefitsTitle: "로그인하면 가능해요",
     benefits: [
       "관심 종목을 여러 기기에서 이어보기",
-      "비교 목록 영구 저장",
-      "알림 설정과 기록 보관",
-      "관심 종목 공시 알림 (등록 시 · 무료)",
+      "비교 목록 저장하기",
+      "관심 종목 공시 알림 받기",
     ],
     loading: "로딩 중...",
     providers: {
@@ -374,11 +373,10 @@ export const loginCopy = {
     getLink: "Get sign-in link",
     noAds: "We do not send promotional email just because you sign in.",
     noAdsSecond: "Notification email is sent only when you explicitly enable it.",
-    benefitsTitle: "Login is optional — with a free account you can",
+    benefitsTitle: "With login, you can",
     benefits: [
       "Keep your watchlist across devices",
       "Save comparison lists",
-      "Save notification settings and records",
       "Get watchlist disclosure alerts when enabled",
     ],
     loading: "Loading...",

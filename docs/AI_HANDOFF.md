@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T10:39:20.6898790+09:00
+Last updated: 2026-07-06T11:50:49.8139999+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore main deployment approval and pre-push gate
+- Task: OrnScore design/UX reaudit P0 visible-date guard and login cleanup
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: User explicitly approved deployment. Current branch `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` is fast-forwardable over `origin/main` (`origin/main...HEAD = 0 116`). Pre-push gates passed: tsc, verify_metrics 138/0/0, app:check with only external Android assetlinks WAIT, build, smoke --all 23/23, local verify:routes 6/6, login preflight 5/5, perf 0 warnings, and 390px browser checks.
+- Note: Read external report `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md`. Public visible text now shows 2026.07.03 and no visible 2026.06.30/AI markers on checked routes. Strengthened `verify:routes` to 9 visible-text routes and cleaned login benefits to 3 non-AI items. Gates passed: tsc, public verify:routes 9/9, verify_metrics 138/0/0, build, local verify:routes 9/9, login preflight 5/5, smoke --all 23/23.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex design/UX reaudit P0 checkpoint
+- **Source**: External report `C:\Users\dongy\OneDrive\바탕 화면\ornscore_design_ux_reaudit_2026-07-06.md`.
+- **Finding**: After the main deployment, the report's P0 date mismatch is not visible on the live checked routes. Public visible text for `/`, `/stocks`, `/stock/005930`, `/login?next=/watchlist`, `/watchlist`, `/compare`, `/status` showed `2026.07.03` and did not show visible `2026.06.30`; the earlier stock-detail 06.30 hit appears to come from embedded price-history data, not the visible badge. AI/Anthropic text was not visible on those routes.
+- **Changes**: `scripts/verify-routes.mjs` now strips scripts/styles/noscript before content/date assertions, checks 9 routes, requires visible dates on stocks/detail/login/watchlist/compare, and fails on visible stale 06.30 or hidden-AI markers. Login benefits were reduced to three visible items: cross-device watchlist, saved comparison lists, and watchlist disclosure alerts; the Bot icon and "records" wording were removed.
+- **Verification**: `npx tsc --noEmit` 0; public `npm run verify:routes -- --base https://ornscore.com` 9/9; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; `npm run build` 0; local prod `verify:routes` 9/9, `verify:login-preflight` 5/5, `smoke:check --all` 23/23. Local server on 4468 was stopped afterward.
+- **Next**: P1 product work should start with home candidate card density reduction and stock-detail top summary redesign. Mobile bottom nav already matches the report's core structure (`today/stocks/disclosures/watchlist + more`); validate density on a 390px device before changing it again.
 
 ### 2026-07-06 — Codex deployment approval checkpoint
 - **Decision**: Owner said "일단 배포하자"; treat this as explicit approval to fast-forward main and push the current OrnScore release line.

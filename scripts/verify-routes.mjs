@@ -12,6 +12,8 @@
 //   (d) stale copy is ABSENT (no paid-plan-first "요금제"/plan-table framing),
 //   (e) no public KO/EN toggle (no hreflang / lang="en" / LanguageSwitcher; SSR
 //       document routes SHOULD carry lang="ko").
+// It evaluates date/content assertions against visible text (scripts/styles removed)
+// so embedded price-history dates cannot hide a stale visible badge.
 //
 // The expected data date is derived from the LOCAL data source (public/data/stocks.json,
 // mirroring src/lib/realStocks.ts deriveBusinessDate) so the check never depends on
@@ -103,9 +105,27 @@ const CRITICAL_MARKERS = [
 // public v1 is Korean-only (DEFAULT_LOCALE="ko"); an EN toggle would surface as an
 // hreflang alternate, an en <html lang>, or a LanguageSwitcher control.
 const TOGGLE_MARKERS = ["hreflang", 'lang="en"', "LanguageSwitcher"];
+const STALE_VISIBLE_DATE_MARKERS = ["2026.06.30", "2026-06-30", "20260630"];
+const HIDDEN_AI_VISIBLE_MARKERS = ["AI 분석", "AI 분석 기록", "Anthropic"];
+
+function visibleText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 // --- routes -----------------------------------------------------------------
-// The six representative public routes from the task scope = the automated form of
+// The representative public routes from the task scope = the automated form of
 // the release-handoff §4 cache-busted checklist. Each states the CURRENT expected
 // visible state; a stale date/copy or a resurrected paid-first framing flips it FAIL.
 //   expectDate     : derived YYYY.MM.DD must be present (staleness guard).
@@ -146,6 +166,7 @@ const ROUTES = [
   },
   {
     path: "/stocks",
+    expectDate: true,
     mustContain: [
       { text: "종목", why: "explorer renders stock/preset content" },
       { text: "138", why: "explorer states the 138-stock universe" },
@@ -153,10 +174,29 @@ const ROUTES = [
   },
   {
     path: "/stock/005930",
+    expectDate: true,
     mustContain: [
       { text: "삼성전자", why: "detail renders the requested stock (005930) name" },
       { text: "상위", why: "detail shows the percentile / rank ('상위 X%') block" },
     ],
+  },
+  {
+    path: "/login?next=/watchlist",
+    expectDate: true,
+    mustContain: [
+      { text: "로그인", why: "login page renders its sign-in form" },
+      { text: "관심 종목", why: "login page preserves the watchlist return context" },
+    ],
+  },
+  {
+    path: "/watchlist",
+    expectDate: true,
+    mustContain: [{ text: "관심 종목", why: "watchlist page renders its core state" }],
+  },
+  {
+    path: "/compare",
+    expectDate: true,
+    mustContain: [{ text: "비교", why: "compare page renders its core state" }],
   },
 ];
 
@@ -192,6 +232,7 @@ async function checkRoute(route) {
   }
 
   const reasons = [];
+  const visibleBody = visibleText(body);
 
   // (a) status
   const status = res.status;
@@ -203,19 +244,25 @@ async function checkRoute(route) {
   if (hits.length) reasons.push(`critical marker(s): ${hits.join(", ")}`);
 
   // (c) expected data date present (staleness guard)
-  if (route.expectDate && !body.includes(EXPECTED_DATE)) {
+  if (route.expectDate && !visibleBody.includes(EXPECTED_DATE)) {
     reasons.push(`missing expected data date "${EXPECTED_DATE}" (stale or wrong data source?)`);
+  }
+  if (route.expectDate) {
+    const staleVisibleDates = STALE_VISIBLE_DATE_MARKERS.filter((m) => visibleBody.includes(m));
+    if (staleVisibleDates.length) reasons.push(`stale visible data date(s): ${staleVisibleDates.join(", ")}`);
   }
 
   // (c) positive content anchors
   for (const anchor of route.mustContain ?? []) {
-    if (!body.includes(anchor.text)) reasons.push(`missing "${anchor.text}" (${anchor.why})`);
+    if (!visibleBody.includes(anchor.text)) reasons.push(`missing "${anchor.text}" (${anchor.why})`);
   }
 
   // (d) stale copy absent
   for (const anti of route.mustNotContain ?? []) {
-    if (body.includes(anti.text)) reasons.push(`stale copy present "${anti.text}" (${anti.why})`);
+    if (visibleBody.includes(anti.text)) reasons.push(`stale copy present "${anti.text}" (${anti.why})`);
   }
+  const hiddenAiHits = HIDDEN_AI_VISIBLE_MARKERS.filter((m) => visibleBody.includes(m));
+  if (hiddenAiHits.length) reasons.push(`hidden-AI visible marker(s): ${hiddenAiHits.join(", ")}`);
 
   // (e) no KO/EN toggle
   if (route.noToggle !== false) {

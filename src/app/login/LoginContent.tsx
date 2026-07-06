@@ -12,7 +12,7 @@ import { safeInternalPath } from "@/lib/auth/returnPath";
 import { loginCopy, type Locale } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
 import Link from "next/link";
-import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bot, Bell, Loader2 } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Heart, GitCompare, Bell, Loader2 } from "lucide-react";
 
 // 인증 오류 코드/메시지를 사람이 읽을 한국어로 변환.
 // - 콜백 실패(auth_callback_failed) → URL 의 ?error= 로 들어옴
@@ -309,12 +309,8 @@ function LoginForm() {
               <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[1]}</div>
             </li>
             <li className="flex items-start gap-2.5">
-              <Bot className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[2]}</div>
-            </li>
-            <li className="flex items-start gap-2.5">
               <Bell className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[3]}</div>
+              <div className="text-xs text-zinc-600 dark:text-zinc-400">{copy.benefits[2]}</div>
             </li>
           </ul>
         </div>
@@ -345,7 +341,7 @@ function LoginSkeleton() {
         <div className="h-11 rounded-md bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
         {/* 혜택 목록 자리 */}
         <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800 space-y-2.5">
-          {[0, 1, 2, 3].map((i) => (
+          {[0, 1, 2].map((i) => (
             <div key={i} className="h-4 w-3/4 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
           ))}
         </div>
