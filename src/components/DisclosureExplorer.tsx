@@ -431,61 +431,67 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             const desc = t.descriptions[g.signalLabel] || t.descFallback;
             const guide = findGuideByLabel(g.signalLabel);
             const checkLine = guide?.checkPoints?.[0] ?? null;
+            const checkPoint = checkLine ?? desc;
             const cautionLine = firstSentence(
               guide?.cautionNote ?? t.cautionFallbackByType[g.signalType] ?? t.cautionFallback,
             );
             const dt = g.rcept_dt_latest;
             const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
             return (
-              <div key={g.key} className={"bg-white dark:bg-zinc-900 border-l-4 border-y border-r rounded-lg p-3 md:p-4 transition hover:shadow-sm " + meta.cardBorder}>
-                {/* 상단: 타입 아이콘 + 텍스트 배지 + 방향/건수 */}
-                <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-                  <span className={"inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded font-medium border " + meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder}>
-                    <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
-                    {meta.label} · {t.autoClassified}
-                  </span>
-                  {g.representative.direction ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />
-                      {directionLabel(g.representative.direction, t)}
+              <div key={g.key} className={"bg-white dark:bg-zinc-900 border rounded-lg p-3 md:p-4 transition hover:shadow-sm " + meta.cardBorder}>
+                {/* 상단: 공시 유형 / 제출일 / 자동분류 */}
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <span className={"inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded font-medium border " + meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder}>
+                      <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+                      {meta.label} · {t.autoClassified}
                     </span>
-                  ) : null}
-                  {g.count > 1 ? (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium tabular-nums bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                      {g.hasRevision ? t.revisionIncluded : ""}{t.countUnit(g.count)}
-                    </span>
-                  ) : null}
+                    {g.representative.direction ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />
+                        {directionLabel(g.representative.direction, t)}
+                      </span>
+                    ) : null}
+                    {g.count > 1 ? (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium tabular-nums bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                        {g.hasRevision ? t.revisionIncluded : ""}{t.countUnit(g.count)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0">{date} {t.submitted}</span>
                 </div>
 
-                {/* 종목명 · 코드 · 제출일 */}
-                <div className="flex items-baseline gap-2 flex-wrap mb-1.5 min-w-0">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
-                  {g.stock_code ? (
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
-                  ) : null}
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{date} {t.submitted}</span>
-                  {g.representative.disclosure.flr_nm ? (
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {g.representative.disclosure.flr_nm}</span>
-                  ) : null}
+                {/* 회사명 / 공시명 */}
+                <div className="mb-2 min-w-0">
+                  <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
+                    {g.stock_code ? (
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
+                    ) : null}
+                    {g.representative.disclosure.flr_nm ? (
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {g.representative.disclosure.flr_nm}</span>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 text-sm font-medium text-zinc-800 dark:text-zinc-200 leading-snug break-words line-clamp-2">
+                    {g.representative.disclosure.report_nm}
+                  </p>
                 </div>
 
-                {/* 한 줄 의미 */}
-                <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-1.5 leading-relaxed break-words">{desc}</p>
+                {/* 자동분류 보조 해석 */}
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words">{desc}</p>
                 {g.representative.note && g.representative.note !== desc ? (
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1.5 leading-relaxed break-words">{g.representative.note}</p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words line-clamp-2">{g.representative.note}</p>
                 ) : null}
 
                 {/* 확인할 것 — 중립 확인 포인트 */}
-                {checkLine ? (
-                  <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-2 leading-relaxed">
-                    <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>
-                    <span className="break-words">{checkLine}</span>
-                  </div>
-                ) : null}
+                <div className="flex gap-1.5 text-[11px] text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-2 leading-relaxed">
+                  <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>
+                  <span className="break-words">{checkPoint}</span>
+                </div>
 
                 {/* 주의 — 호재/악재 단정이 아닌 한계·유의점 (확인할 것과 시각적으로 분리) */}
-                <div className="flex gap-1.5 text-[11px] text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
-                  <span className="font-semibold text-amber-700 dark:text-amber-400 shrink-0">{t.cautionLabel}</span>
+                <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+                  <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.cautionLabel}</span>
                   <span className="break-words">{cautionLine}</span>
                 </div>
 

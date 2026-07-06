@@ -86,6 +86,7 @@ export const homeCopy = {
         "공시 신호의 숫자는 좋고 나쁨을 가리는 점수가 아니라 분류 신뢰도입니다. 실제 영향은 원문 공시에서 직접 확인해야 합니다.",
       emptyLine:
         "오늘은 분석 대상 종목에서 새로 잡힌 공시 신호가 없습니다. 전체 시장 공시는 공시 신호 페이지에서 범위를 넓혀 볼 수 있어요.",
+      autoClassified: "자동분류",
       outOfUniverse: "분석 대상 외",
       checkLabel: "확인 포인트",
       viewStock: "종목 보기",
@@ -225,6 +226,7 @@ export const homeCopy = {
         "The number on a disclosure signal is classification confidence, not a good/bad score. Check the actual impact directly in the original disclosure.",
       emptyLine:
         "No new disclosure signals came up in the analyzed stocks today. You can widen the scope to the whole market on the Disclosures page.",
+      autoClassified: "Auto-classified",
       outOfUniverse: "Not in coverage",
       checkLabel: "What to check",
       viewStock: "View stock",

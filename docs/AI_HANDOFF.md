@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T12:24:22.7716230+09:00
+Last updated: 2026-07-06T19:51:32.2971727+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore stock-detail top summary redesign
+- Task: OrnScore disclosure-card visual hierarchy cleanup
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued the design/UX reaudit P1 work. Stock detail now leads with the current conclusion plus good points, check points, and first-check risk note; score/rank/data trust moved to a quieter secondary card. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. In-app browser pixel check was not completed because the webview attach issue remains.
+- Note: Continued the design/UX reaudit P1 work. Disclosure type colors were neutralized, and home/disclosures/stock-detail disclosure cards now follow type/date/classification -> company/report -> check point -> DART source. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. HTML extraction confirmed home and /disclosures expose auto-classification/check/DART-source flow without good/bad valence text.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex disclosure-card visual hierarchy cleanup
+- **Source**: External report P1-1, 5-1, and 5-3: disclosure cards should be easier to scan and should not use type colors that look like bullish/bearish signals.
+- **Changes**: `src/lib/disclosureType.ts` now uses neutral slate/zinc tones for all disclosure types; labels and icons carry the type meaning. Home `DisclosureSignalCard` uses the shared type meta, shows `자동분류`, stock code, check point, and explicit DART-source action icons. `/disclosures` cards now put the filing type/date/classification first, then company/report name, then check point, then DART/source actions; caution text was lowered to neutral supporting copy. `StockDisclosures` keeps the compact timeline but shows the same type/date -> report -> check -> DART source flow. `DisclosureSummaryCards` no longer paints active type cards with large type-color surfaces.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; `npm run build` 0; `git diff --check` clean; local prod on 4471 `verify:routes` 9/9 and `smoke:check --all` 23/23. HTML extraction confirmed home disclosure cards expose `자동분류`, `확인 포인트`, and `DART 원문`; `/disclosures` exposes auto-classification/check/source flow and does not expose `호재`/`악재`.
+- **Limit**: In-app browser pixel verification was not completed. The stock-detail disclosure tab is lazy-loaded client content, so the component was verified by code/build rather than SSR text extraction. Server port 4471 should be stopped before ending the session.
+- **Next**: Continue in report order with backtest top risk-summary strengthening, unless owner reprioritizes another P1 slice.
 
 ### 2026-07-06 — Codex stock-detail top summary redesign
 - **Source**: External report P1-1 and page feedback 3-3: stock-detail top area was too score/data-heavy before the user saw the actual conclusion.

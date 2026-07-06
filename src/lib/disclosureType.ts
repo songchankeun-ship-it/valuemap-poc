@@ -1,6 +1,6 @@
 // 공시 타입별 단일 소스 — 색상/아이콘/라벨/톤을 한 곳에서 정의한다.
-// 설계서 §10.4 색상 규칙: 자사주=초록 · 보유변동=보라 · 대형계약=청록 · 손익정정=주황 · 유증/CB=빨강.
-// 접근성(§20.7): 색은 항상 텍스트 라벨/도트와 함께 쓴다(색만으로 의미 전달 금지).
+// 2026-07-06 디자인 재검수: 공시 유형 색은 주가 상승/하락처럼 읽히지 않도록 중립색 위주로 쓴다.
+// 접근성: 색은 항상 텍스트 라벨/도트와 함께 쓴다(색만으로 의미 전달 금지).
 // 비자문 원칙: 호재/악재 단정 없이 '분류'만 한다.
 
 import {
@@ -36,70 +36,66 @@ export const DISCLOSURE_TYPE_ORDER = [
 ] as const;
 
 const META: Record<string, DisclosureTypeMeta> = {
-  // 자사주 = 초록
+  // 공시 유형은 모두 중립톤. 의미 구분은 색보다 라벨/아이콘/확인 포인트가 맡는다.
   treasury_buy: {
     key: "treasury_buy",
     label: "자사주",
     shortLabel: "자사주",
     Icon: Landmark,
     iconName: "Landmark",
-    badgeBg: "bg-green-50 dark:bg-green-950/30",
-    badgeText: "text-green-700 dark:text-green-400",
-    badgeBorder: "border-green-200 dark:border-green-900",
-    dot: "bg-green-500",
-    cardBorder: "border-green-200 dark:border-green-900",
+    badgeBg: "bg-slate-50 dark:bg-slate-900/50",
+    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBorder: "border-slate-200 dark:border-slate-700",
+    dot: "bg-slate-400",
+    cardBorder: "border-zinc-200 dark:border-zinc-800",
   },
-  // 보유변동 = 보라
   insider_buy: {
     key: "insider_buy",
     label: "보유 변동",
     shortLabel: "보유변동",
     Icon: Users,
     iconName: "Users",
-    badgeBg: "bg-purple-50 dark:bg-purple-950/30",
-    badgeText: "text-purple-700 dark:text-purple-400",
-    badgeBorder: "border-purple-200 dark:border-purple-900",
-    dot: "bg-purple-500",
-    cardBorder: "border-purple-200 dark:border-purple-900",
+    badgeBg: "bg-slate-50 dark:bg-slate-900/50",
+    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBorder: "border-slate-200 dark:border-slate-700",
+    dot: "bg-zinc-400",
+    cardBorder: "border-zinc-200 dark:border-zinc-800",
   },
-  // 대형계약 = 청록(teal)
   single_contract: {
     key: "single_contract",
     label: "대형 계약",
     shortLabel: "대형계약",
     Icon: Handshake,
     iconName: "Handshake",
-    badgeBg: "bg-teal-50 dark:bg-teal-950/30",
-    badgeText: "text-teal-700 dark:text-teal-400",
-    badgeBorder: "border-teal-200 dark:border-teal-900",
-    dot: "bg-teal-500",
-    cardBorder: "border-teal-200 dark:border-teal-900",
+    badgeBg: "bg-slate-50 dark:bg-slate-900/50",
+    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBorder: "border-slate-200 dark:border-slate-700",
+    dot: "bg-neutral-400",
+    cardBorder: "border-zinc-200 dark:border-zinc-800",
   },
-  // 손익정정 = 주황(amber)
   correction: {
     key: "correction",
     label: "손익 정정",
     shortLabel: "정정",
     Icon: PencilLine,
     iconName: "PencilLine",
-    badgeBg: "bg-amber-50 dark:bg-amber-950/30",
-    badgeText: "text-amber-700 dark:text-amber-400",
-    badgeBorder: "border-amber-200 dark:border-amber-900",
-    dot: "bg-amber-500",
-    cardBorder: "border-amber-200 dark:border-amber-900",
+    badgeBg: "bg-slate-50 dark:bg-slate-900/50",
+    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBorder: "border-slate-200 dark:border-slate-700",
+    dot: "bg-stone-400",
+    cardBorder: "border-zinc-200 dark:border-zinc-800",
   },
-  // 유증/CB = 빨강(red)
   capital_raise: {
     key: "capital_raise",
     label: "유증/CB",
     shortLabel: "유증/CB",
     Icon: Banknote,
     iconName: "Banknote",
-    badgeBg: "bg-red-50 dark:bg-red-950/30",
-    badgeText: "text-red-700 dark:text-red-400",
-    badgeBorder: "border-red-200 dark:border-red-900",
-    dot: "bg-red-500",
-    cardBorder: "border-red-200 dark:border-red-900",
+    badgeBg: "bg-slate-50 dark:bg-slate-900/50",
+    badgeText: "text-slate-700 dark:text-slate-300",
+    badgeBorder: "border-slate-200 dark:border-slate-700",
+    dot: "bg-gray-400",
+    cardBorder: "border-zinc-200 dark:border-zinc-800",
   },
 };
 

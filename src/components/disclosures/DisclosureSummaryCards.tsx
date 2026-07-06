@@ -2,7 +2,7 @@
 
 // 공시 신호 상단 요약 대시보드(설계서 §10.2~§10.4).
 // 타입별 카드를 항상 5개 노출 — 0건이면 muted 상태로 '검사했으나 이벤트 없음'을 보인다.
-// 색은 disclosureType 단일 소스에서만 가져오고, 항상 텍스트 라벨/아이콘과 함께 쓴다(§20.7).
+// 타입별 색 면적은 줄이고, 텍스트 라벨/아이콘/숫자 농도로만 구분한다.
 // 비자문: 호재/악재 표현 없이 'N건'·'이벤트 없음' 같은 사실만 표기.
 
 import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
@@ -32,7 +32,7 @@ export function DisclosureSummaryCards({ counts, days, total }: DisclosureSummar
               className={
                 "rounded-lg border p-3 flex flex-col gap-1.5 transition " +
                 (active
-                  ? meta.badgeBg + " " + meta.badgeBorder
+                  ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
                   : "bg-zinc-50 dark:bg-zinc-900/40 border-zinc-200 dark:border-zinc-800")
               }
             >

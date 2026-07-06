@@ -503,6 +503,8 @@ export const stockDisclosuresCopy = {
     dirBuy: "장내매수 단서",
     dirSell: "장내매도·처분 단서",
     dirCheck: "방향 확인 필요",
+    checkLabel: "확인",
+    dartOriginal: "DART 원문",
   },
   en: {
     title: "DART disclosures",
@@ -530,6 +532,8 @@ export const stockDisclosuresCopy = {
     dirBuy: "on-market buy clue",
     dirSell: "on-market sell/disposal clue",
     dirCheck: "direction to confirm",
+    checkLabel: "Check",
+    dartOriginal: "DART source",
   },
 } as const satisfies Record<Locale, unknown>;
 
