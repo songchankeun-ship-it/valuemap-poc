@@ -80,6 +80,65 @@ function upDownTone(x: number) {
   return x >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
 }
 
+function sharpeComparison(m: StratMetrics) {
+  if (m.benchmarkSharpe === undefined) return "Sharpe 비교값 없음";
+  const diff = m.sharpe - m.benchmarkSharpe;
+  if (Math.abs(diff) < 0.05) return "Sharpe는 벤치와 비슷함";
+  return diff > 0 ? "Sharpe는 벤치보다 높음" : "Sharpe는 벤치보다 낮음";
+}
+
+function BacktestTopRiskSummary({
+  metrics,
+  benchmarkLabel,
+}: {
+  metrics: StratMetrics;
+  benchmarkLabel: string;
+}) {
+  return (
+    <section className="rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50/70 dark:bg-amber-950/25 p-4" aria-label="백테스트 먼저 읽을 요약">
+      <div className="flex items-start gap-3">
+        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/80 dark:bg-zinc-900/70 border border-amber-200 dark:border-amber-800 shrink-0">
+          <ShieldAlert className="w-4 h-4 text-amber-700 dark:text-amber-300" strokeWidth={1.8} aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 mb-1">먼저 읽기</div>
+          <h2 className="text-lg font-bold text-zinc-950 dark:text-zinc-50 leading-snug">
+            이 백테스트는 성과 보장이 아니에요.
+          </h2>
+          <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            가격 기반 실험 전략을 과거 데이터로 돌려본 결과예요. 현재 종합 점수나 미래 수익률을 검증한 결과가 아닙니다.
+          </p>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
+          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="매년 같은 비율로 불어났다고 가정한 평균 수익률">
+            수익 · 연복리 수익률(CAGR)
+          </div>
+          <div className={"mt-1 text-lg font-bold tabular-nums " + upDownTone(metrics.cagr)}>{pct(metrics.cagr)}</div>
+        </div>
+        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
+          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="기간 중 고점 대비 가장 크게 빠졌던 낙폭">
+            위험 · 최대낙폭(MDD)
+          </div>
+          <div className="mt-1 text-lg font-bold tabular-nums text-rose-600 dark:text-rose-400">{pct(metrics.maxDrawdown)}</div>
+        </div>
+        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
+          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="수익률을 변동성으로 나눠 본 위험조정 성과">
+            비교 · 위험조정
+          </div>
+          <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{sharpeComparison(metrics)}</div>
+          {metrics.benchmarkSharpe !== undefined ? (
+            <div className="mt-0.5 text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
+              전략 {metrics.sharpe.toFixed(2)} · {benchmarkLabel} {metrics.benchmarkSharpe.toFixed(2)}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function EquityChart({ data }: { data: EquityPoint[] }) {
   const W = 720;
   const H = 280;
@@ -136,15 +195,17 @@ function KpiCell({
   value,
   valueTone,
   benchLabel,
+  title,
 }: {
   label: string;
   value: string;
   valueTone?: string;
   benchLabel?: string;
+  title?: string;
 }) {
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
-      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{label}</div>
+      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep" title={title}>{label}</div>
       <div className={"text-lg font-bold tabular-nums " + (valueTone || "text-zinc-900 dark:text-zinc-100")}>{value}</div>
       {benchLabel ? (
         <div className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums mt-0.5">{benchLabel}</div>
@@ -191,6 +252,8 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
         ))}
       </div>
 
+      <BacktestTopRiskSummary metrics={m} benchmarkLabel={data.benchmarkLabel} />
+
       {/* 상단 요약 근처에 백테스트 기준일 vs 현재 데이터 차이 배지(재검수 P2-5) — 하단 3날짜 블록과 별개로 한 번 더 강조 */}
       <div className="flex">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-300">
@@ -206,7 +269,12 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
             <h2 className="text-xs font-semibold text-zinc-700 dark:text-zinc-200">수익</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <KpiCell label="CAGR (연복리)" value={pct(m.cagr)} valueTone={upDownTone(m.cagr)} />
+            <KpiCell
+              label="연복리 수익률(CAGR)"
+              value={pct(m.cagr)}
+              valueTone={upDownTone(m.cagr)}
+              title="매년 같은 비율로 불어났다고 가정한 평균 수익률"
+            />
             <KpiCell
               label="총수익률"
               value={pct(m.totalReturn)}
@@ -224,15 +292,17 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <KpiCell
-              label="MDD (최대낙폭)"
+              label="최대낙폭(MDD)"
               value={pct(m.maxDrawdown)}
               valueTone="text-rose-600 dark:text-rose-400"
               benchLabel={m.benchmarkMdd !== undefined ? `벤치 ${pct(m.benchmarkMdd)}` : undefined}
+              title="기간 중 고점 대비 가장 크게 빠졌던 낙폭"
             />
             <KpiCell
-              label="Sharpe (위험조정)"
+              label="위험조정 성과(Sharpe)"
               value={m.sharpe.toFixed(2)}
               benchLabel={m.benchmarkSharpe !== undefined ? `벤치 ${m.benchmarkSharpe.toFixed(2)}` : undefined}
+              title="수익률을 변동성으로 나눠 본 위험조정 성과"
             />
             <KpiCell label="승률 (월)" value={(m.winRate * 100).toFixed(0) + "%"} />
           </div>

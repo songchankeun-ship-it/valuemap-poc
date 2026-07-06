@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-06T19:51:32.2971727+09:00
+Last updated: 2026-07-06T20:05:31.4977650+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore disclosure-card visual hierarchy cleanup
+- Task: OrnScore backtest top risk-summary strengthening
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Continued the design/UX reaudit P1 work. Disclosure type colors were neutralized, and home/disclosures/stock-detail disclosure cards now follow type/date/classification -> company/report -> check point -> DART source. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. HTML extraction confirmed home and /disclosures expose auto-classification/check/DART-source flow without good/bad valence text.
+- Note: Continued the design/UX reaudit P1 work. Backtest now shows a "read first" risk summary before the big return KPIs, explicitly saying the backtest is not performance guarantee, then summarizing CAGR, MDD, and Sharpe-vs-benchmark. Gates passed: tsc, verify_metrics 138/0/0, build, diff check, local verify:routes 9/9, smoke --all 23/23. SSR extraction confirmed the risk-first copy and glossary-style labels.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-06 — Codex backtest top risk-summary strengthening
+- **Source**: External report 3-5: backtest return numbers were visually likely to dominate before users read the risk context.
+- **Changes**: `BacktestClient` now renders a strategy-aware `먼저 읽기` summary card before the KPI blocks. It leads with `이 백테스트는 성과 보장이 아니에요`, then states this is a price-based historical simulation, then summarizes `수익 · 연복리 수익률(CAGR)`, `위험 · 최대낙폭(MDD)`, and `비교 · 위험조정` with Sharpe vs benchmark. Existing KPI labels were changed from abbreviated labels to `연복리 수익률(CAGR)`, `최대낙폭(MDD)`, and `위험조정 성과(Sharpe)`, with short `title` explanations. Backtest data, calculations, charts, and route behavior were not changed.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4; `npm run build` 0; `git diff --check` clean; local prod on 4472 `verify:routes` 9/9 and `smoke:check --all` 23/23. SSR extraction for `/backtest` confirmed `성과 보장이 아니에요`, `연복리 수익률(CAGR)`, `최대낙폭(MDD)`, `Sharpe는 벤치보다 낮음`, and `미래 수익률을 검증한 결과가 아닙니다`.
+- **Limit**: In-app browser pixel verification was not completed. Server port 4472 should be stopped before ending the session.
+- **Next**: Continue in report order with empty-state screen design improvements, unless owner reprioritizes another P1 slice.
 
 ### 2026-07-06 — Codex disclosure-card visual hierarchy cleanup
 - **Source**: External report P1-1, 5-1, and 5-3: disclosure cards should be easier to scan and should not use type colors that look like bullish/bearish signals.
