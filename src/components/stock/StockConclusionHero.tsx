@@ -4,7 +4,7 @@ import { type ReactNode } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { conclusionHeroCopy } from "@/lib/copy/stockDetail";
 import { StockHeader } from "./StockHeader";
-import { PriorityScoreCard } from "./PriorityScoreCard";
+import { PriorityScoreCard, type PrioritySignal } from "./PriorityScoreCard";
 import { ConclusionSummaryCard } from "./ConclusionSummaryCard";
 import { StockDetailActionButtons } from "./StockDetailActionButtons";
 
@@ -39,6 +39,8 @@ export function StockConclusionHero({
   strengths,
   warnings,
   riskAlert,
+  leadStrength,
+  leadCheck,
 }: {
   sector: string;
   name: string;
@@ -59,6 +61,8 @@ export function StockConclusionHero({
   strengths: string[];
   warnings: string[];
   riskAlert: HeroRiskAlert | null;
+  leadStrength: PrioritySignal;
+  leadCheck: PrioritySignal;
 }) {
   const { locale } = useLanguage();
   const t = conclusionHeroCopy[locale];
@@ -107,6 +111,8 @@ export function StockConclusionHero({
           completeness={completeness}
           metricsVersion={metricsVersion}
           suspect={suspect}
+          leadStrength={leadStrength}
+          leadCheck={leadCheck}
         />
       </div>
 

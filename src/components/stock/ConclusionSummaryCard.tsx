@@ -26,6 +26,10 @@ export function ConclusionSummaryCard({
   const t = conclusionSummaryCardCopy[locale];
   const goodItems = strengths.length > 0 ? strengths : [t.strengthEmpty];
   const checkItems = warnings.length > 0 ? warnings : [t.warningEmpty];
+  const visibleGoodItems = goodItems.slice(0, 1);
+  const visibleCheckItems = checkItems.slice(0, 1);
+  const extraGoodCount = Math.max(0, strengths.length - visibleGoodItems.length);
+  const extraCheckCount = Math.max(0, warnings.length - visibleCheckItems.length);
   return (
     <div className="rounded-2xl border border-blue-100 dark:border-blue-950 bg-white/95 dark:bg-zinc-950/70 p-5 md:p-6 shadow-sm">
       <div className="text-[11px] font-semibold uppercase text-blue-700 dark:text-blue-400">{t.title}</div>
@@ -39,24 +43,30 @@ export function ConclusionSummaryCard({
         <div className="rounded-xl border border-emerald-100 dark:border-emerald-950 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-3">
           <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">{t.goodPoints}</div>
           <ul className="space-y-1">
-            {goodItems.map((item) => (
+            {visibleGoodItems.map((item) => (
               <li key={item} className="flex items-start gap-1.5 text-xs leading-snug text-emerald-800 dark:text-emerald-200">
                 <span aria-hidden="true" className="shrink-0">✓</span>
                 <span>{item}</span>
               </li>
             ))}
+            {extraGoodCount > 0 ? (
+              <li className="text-[10px] text-emerald-700/80 dark:text-emerald-300/80">{t.moreSignals(extraGoodCount)}</li>
+            ) : null}
           </ul>
         </div>
 
         <div className="rounded-xl border border-amber-100 dark:border-amber-950 bg-amber-50/70 dark:bg-amber-950/20 px-3 py-3">
           <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-1.5">{t.checkPoints}</div>
           <ul className="space-y-1">
-            {checkItems.map((item) => (
+            {visibleCheckItems.map((item) => (
               <li key={item} className="flex items-start gap-1.5 text-xs leading-snug text-amber-800 dark:text-amber-300">
                 <span aria-hidden="true" className="shrink-0">!</span>
                 <span>{item}</span>
               </li>
             ))}
+            {extraCheckCount > 0 ? (
+              <li className="text-[10px] text-amber-700/80 dark:text-amber-300/80">{t.moreSignals(extraCheckCount)}</li>
+            ) : null}
           </ul>
         </div>
       </div>

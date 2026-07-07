@@ -88,6 +88,14 @@ interface ReasonV2 {
   interpretation: string;
 }
 
+interface RecentChangeItem {
+  label: string;
+  value: string;
+  hint: string;
+  tone?: "good" | "bad" | "neutral";
+  href?: string;
+}
+
 function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 {
   const metrics = [
     { metric: "추세", score: m },
@@ -114,6 +122,58 @@ function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 
     interpretation = "전반적으로 중립~약세 흐름. 추가 분석 권장.";
   }
   return { strengths, cautions, interpretation };
+}
+
+function signedNumber(value: number | null, digits = 0): string {
+  if (value === null || !Number.isFinite(value)) return "—";
+  const fixed = digits === 0 ? String(Math.round(value)) : value.toFixed(digits);
+  return value > 0 ? "+" + fixed : fixed;
+}
+
+function signedPct(value: number | null): string {
+  if (value === null || !Number.isFinite(value)) return "—";
+  return signedNumber(value, 1) + "%";
+}
+
+function toneOf(value: number | null, neutralBand = 0.5): "good" | "bad" | "neutral" {
+  if (value === null || !Number.isFinite(value) || Math.abs(value) < neutralBand) return "neutral";
+  return value > 0 ? "good" : "bad";
+}
+
+function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
+  const toneClass = {
+    good: "text-emerald-700 dark:text-emerald-300",
+    bad: "text-rose-700 dark:text-rose-300",
+    neutral: "text-zinc-800 dark:text-zinc-200",
+  } as const;
+  return (
+    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 md:p-4">
+      <div className="flex items-baseline justify-between gap-3 flex-wrap mb-3">
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 변화</h2>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">점수·거래활성도·가격 흐름을 먼저 확인할 수 있게 요약했어요.</p>
+        </div>
+        <a href="#basis" className="text-[11px] font-medium text-blue-700 dark:text-blue-400 hover:underline">변화 근거 보기</a>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        {items.map((item) => {
+          const body = (
+            <>
+              <div className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{item.label}</div>
+              <div className={"mt-0.5 text-lg font-bold tabular-nums " + toneClass[item.tone ?? "neutral"]}>{item.value}</div>
+              <div className="mt-1 text-[10px] leading-snug text-zinc-500 dark:text-zinc-400">{item.hint}</div>
+            </>
+          );
+          const className = "block h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5 hover:border-blue-300 dark:hover:border-blue-800 transition";
+          return item.href ? (
+            <a key={item.label} href={item.href} className={className}>{body}</a>
+          ) : (
+            <div key={item.label} className={className}>{body}</div>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 export default async function StockDetailPage({ params }: PageProps) {
@@ -222,8 +282,52 @@ export default async function StockDetailPage({ params }: PageProps) {
   // ── 상단 결론 카드(StockConclusionHero) 입력값 ──────────────────────
   const suspect = dataWarnings.length > 0;
   const conclusion = classifyConclusion({ momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol, surge3m });
-  const heroStrengths = reason.strengths.map((x) => x.metric);
-  const heroWarnings: string[] = reason.cautions.map((x) => x.metric + " 약함");
+  const metricSignals = [
+    { metric: "추세", score: s.momentum },
+    { metric: "거래활성도", score: s.flow },
+    { metric: "밸류", score: s.value },
+    { metric: "위험조정", score: s.vol },
+  ];
+  const sortedStrengths = [...reason.strengths].sort((a, b) => b.score - a.score);
+  const sortedCautions = [...reason.cautions].sort((a, b) => a.score - b.score);
+  const strongestMetric = [...metricSignals].sort((a, b) => b.score - a.score)[0]!;
+  const weakestMetric = [...metricSignals].sort((a, b) => a.score - b.score)[0]!;
+  const leadStrength = sortedStrengths[0] ?? strongestMetric;
+  const leadCheck = sortedCautions[0] ?? weakestMetric;
+  const leadStrengthSignal = { label: leadStrength.metric, score: leadStrength.score };
+  const leadCheckSignal = { label: leadCheck.metric, score: leadCheck.score };
+  const heroStrengths = sortedStrengths.map((x) => x.metric);
+  const heroWarnings: string[] = sortedCautions.map((x) => x.metric + " 약함");
+  const prevScorePoint = scoreHistory.length >= 2 ? scoreHistory[scoreHistory.length - 2] : null;
+  const scoreDelta = prevScorePoint ? composite - Math.round(compositeOf(prevScorePoint)) : null;
+  const flowDelta = prevScorePoint ? s.flow - prevScorePoint.flow : null;
+  const recentChangeItems: RecentChangeItem[] = [
+    {
+      label: "종합 점수",
+      value: signedNumber(scoreDelta),
+      hint: prevScorePoint ? `${prevScorePoint.date.slice(5)} 대비` : "점수 이력 부족",
+      tone: toneOf(scoreDelta),
+    },
+    {
+      label: "거래활성도",
+      value: signedNumber(flowDelta),
+      hint: prevScorePoint ? "최근 관심 변화 확인" : "점수 이력 부족",
+      tone: toneOf(flowDelta),
+    },
+    {
+      label: "3개월 수익률",
+      value: signedPct(surge3m),
+      hint: surge3m === null ? "가격 이력 부족" : "상승폭이 크면 사유 확인",
+      tone: toneOf(surge3m, 1),
+    },
+    {
+      label: "최근 공시",
+      value: "공시 탭",
+      hint: "원문과 확인 포인트 보기",
+      tone: "neutral",
+      href: "#disclosures",
+    },
+  ];
   // 급등/상승폭 확대는 별도 riskAlert와 "먼저 확인" 문장으로 강조한다.
   // 확인할 점 목록에는 지표 약점만 남겨 상단 요약의 반복을 줄인다.
   const riskAlert: HeroRiskAlert | null =
@@ -306,7 +410,11 @@ export default async function StockDetailPage({ params }: PageProps) {
         strengths={heroStrengths}
         warnings={heroWarnings}
         riskAlert={riskAlert}
+        leadStrength={leadStrengthSignal}
+        leadCheck={leadCheckSignal}
       />
+
+      <RecentChangeSummary items={recentChangeItems} />
 
       <StockTabs
         tabs={[

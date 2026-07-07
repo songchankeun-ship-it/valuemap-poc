@@ -189,6 +189,8 @@ export const conclusionHeroCopy = {
 export const priorityScoreCardCopy = {
   ko: {
     title: "탐색 우선도",
+    leadStrength: "대표 강점",
+    leadCheck: "먼저 볼 지표",
     rankLabel: "상대순위",
     rankParen: "(점수와 별개)",
     overallPrefix: "전체",
@@ -205,6 +207,8 @@ export const priorityScoreCardCopy = {
   },
   en: {
     title: "Research priority",
+    leadStrength: "Top strength",
+    leadCheck: "Check first",
     rankLabel: "Relative rank",
     rankParen: "(separate from the score)",
     overallPrefix: "Overall",
@@ -231,6 +235,7 @@ export const conclusionSummaryCardCopy = {
     firstCheck: "먼저 확인",
     strengthEmpty: "뚜렷한 강점 지표가 없습니다.",
     warningEmpty: "특이 주의 신호 없음.",
+    moreSignals: (n: number) => `외 ${n}개는 지표 상세에서 확인`,
   },
   en: {
     title: "Right now, this stock is",
@@ -240,6 +245,7 @@ export const conclusionSummaryCardCopy = {
     firstCheck: "Check first",
     strengthEmpty: "No standout strength metric.",
     warningEmpty: "No notable caution signal.",
+    moreSignals: (n: number) => `${n} more in metric detail`,
   },
 } as const satisfies Record<Locale, unknown>;
 

@@ -5,6 +5,11 @@ import type { ReactNode } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { priorityScoreCardCopy } from "@/lib/copy/stockDetail";
 
+export interface PrioritySignal {
+  label: string;
+  score: number;
+}
+
 function DataStatusPill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "good" | "warn" }) {
   const toneClass =
     tone === "good"
@@ -34,6 +39,8 @@ export function PriorityScoreCard({
   completeness,
   metricsVersion,
   suspect,
+  leadStrength,
+  leadCheck,
 }: {
   score: number;
   overallRank: number;
@@ -44,6 +51,8 @@ export function PriorityScoreCard({
   completeness: number;
   metricsVersion?: string | null;
   suspect: boolean;
+  leadStrength: PrioritySignal;
+  leadCheck: PrioritySignal;
 }) {
   const { locale } = useLanguage();
   const t = priorityScoreCardCopy[locale];
@@ -59,7 +68,7 @@ export function PriorityScoreCard({
             <span className="text-amber-600 dark:text-amber-400 text-base" aria-hidden="true"> ⚠</span>
           </div>
         ) : (
-          <ScoreGauge score={score} size={118} showLabel showOutOf />
+          <ScoreGauge score={score} size={96} showLabel showOutOf />
         )}
 
         <div className="min-w-0 flex-1 space-y-2 text-[11px] text-zinc-300 dark:text-zinc-600 tabular-nums">
@@ -74,6 +83,23 @@ export function PriorityScoreCard({
             </div>
           </div>
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scopeNote(poolN)}</div>
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+        <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-2">
+          <div className="text-[10px] text-emerald-200 dark:text-emerald-700 font-medium">{t.leadStrength}</div>
+          <div className="mt-0.5 flex items-baseline justify-between gap-2">
+            <span className="truncate text-white dark:text-zinc-950 font-semibold">{leadStrength.label}</span>
+            <span className="shrink-0 tabular-nums text-emerald-100 dark:text-emerald-700 font-bold">{Math.round(leadStrength.score)}</span>
+          </div>
+        </div>
+        <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 py-2">
+          <div className="text-[10px] text-amber-200 dark:text-amber-700 font-medium">{t.leadCheck}</div>
+          <div className="mt-0.5 flex items-baseline justify-between gap-2">
+            <span className="truncate text-white dark:text-zinc-950 font-semibold">{leadCheck.label}</span>
+            <span className="shrink-0 tabular-nums text-amber-100 dark:text-amber-700 font-bold">{Math.round(leadCheck.score)}</span>
+          </div>
         </div>
       </div>
 

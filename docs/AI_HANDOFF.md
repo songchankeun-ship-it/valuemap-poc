@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T09:20:48.5286353+09:00
+Last updated: 2026-07-07T10:35:56.3904560+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore Sprint 2 Discover entry flow
+- Task: OrnScore Sprint 3 stock-detail representative signals
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Implemented the second slice from the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. `/stocks` is now centered on five beginner question presets (`싸 보이는 종목`, `최근 관심이 늘어난 종목`, `흐름이 강한 종목`, `배당/안정형 종목`, `숨은 소형주`) with lucide icons and existing filter configs. Added search-under quick entry chips for watchlist, recent searches (localStorage on Enter/blur), recent viewed stocks, and representative high-score candidates. Mobile detailed filters now open as a bottom sheet with dialog semantics, internal scroll, and persistent reset/view actions. No data/scoring/disclosure logic changed. Gates passed: `npx tsc --noEmit`, `verify_metrics.py`, `npm run app:check` (assetlinks external WAIT only), `npm run build`, local route verify 9/9 on port 4461, `smoke:check --all` 23/23, `git diff --check`, U+FFFD scan, and in-app browser 390x844 + 1280x900 layout checks with console errors 0. A current local prod server is running at `http://localhost:4461`. Next: Sprint 3 from guide section 5, re-check `/stock/[ticker]` detail top flow (`현재 해석`/strength/weakness/first checks), reduce default score exposure to composite + one strength + one weakness, and add/review recent-change and compare prompts.
+- Note: Continued the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. First updated the existing heartbeat automation `overnight-ornscore-work-queue-runner` so future automatic runs start from commit `b185a97 [codex] improve Discover entry flow` and continue with Sprint 3+ instead of the stale Sprint 2 prompt. Implemented Sprint 3 stock-detail first slice: the top `현재 이 종목은` card now shows only one representative good point and one representative check point, with extra signals demoted to `외 n개는 지표 상세에서 확인`; the `탐색 우선도` card now shows composite score plus `대표 강점` and `먼저 볼 지표`; `/stock/[ticker]` now has a `최근 변화` summary below the hero using existing scoreHistory/priceHistory to show score delta, trading-activity delta, 3-month return, and a disclosure-tab link. No data/scoring/disclosure collection logic changed. Gates passed: `npx tsc --noEmit`, `verify_metrics.py`, `npm run build`, local route verify 9/9 on port 4461, `smoke:check --all` 23/23, `git diff --check`, U+FFFD scan, and in-app browser 390x844 + 1280x900 checks with horizontal overflow none and console errors 0. Next: Sprint 3 follow-up, compress the stock-detail summary tab so the price chart / 4-metric detail / beginner reading / data basis / sector compare order better matches guide section 5, preferably by making 4-metric detail a `representative signal -> expand detail` flow.
 
 ## Next Agent Checklist
 
