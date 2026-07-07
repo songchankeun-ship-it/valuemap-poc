@@ -6,7 +6,7 @@ import { StocksExplorer } from "@/components/StocksExplorer";
 export const revalidate = 3600;
 
 interface PageProps {
-  searchParams: Promise<{ theme?: string }>;
+  searchParams: Promise<{ theme?: string; q?: string }>;
 }
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
@@ -61,7 +61,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
 }
 
 export default async function StocksPage({ searchParams }: PageProps) {
-  const { theme } = await searchParams;
+  const { theme, q } = await searchParams;
   const stocks = realStockPool.map((s) => ({
     ticker: s.ticker,
     name: s.name,
@@ -90,6 +90,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
       stocks={stocks}
       allThemes={themes}
       initialThemes={initialThemes}
+      initialQuery={typeof q === "string" ? q : ""}
       totalCount={stocks.length}
       asOf={formatBizDateLong(dataMetadata.asOfBusinessDate)}
       metricsVersion={dataMetadata.metricsVersion}

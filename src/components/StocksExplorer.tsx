@@ -42,6 +42,7 @@ interface Props {
   stocks: Stock[];
   allThemes: string[];
   initialThemes?: string[];
+  initialQuery?: string;
   totalCount?: number;
   asOf?: string;
   metricsVersion?: string;
@@ -247,11 +248,11 @@ function badgesFromConfig(c: PresetConfig, t: StocksCopyT): string[] {
   return b;
 }
 
-export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, asOf, metricsVersion, dataStale }: Props) {
+export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery, totalCount, asOf, metricsVersion, dataStale }: Props) {
   const { locale } = useLanguage();
   const t = stocksCopy[locale];
   const total = totalCount ?? stocks.length;
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery ?? "");
   const [sortKey, setSortKey] = useState<SortKey>("compositeScore");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [minComposite, setMinComposite] = useState(0);

@@ -94,10 +94,7 @@ export default async function WatchlistPage() {
       <header className="mb-4 md:mb-6">
         <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">관심 종목</h1>
         <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed break-words">
-          담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요.{" "}
-          {isLoggedIn
-            ? "로그인 됨 — 여러 기기에서 같은 목록이 보입니다."
-            : "현재는 이 브라우저에만 저장됩니다. 로그인하면 여러 기기에서 이어볼 수 있어요."}
+          담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요. 오늘의 변화부터 훑고, 정렬·비교로 이어보세요.
         </p>
       </header>
       <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />

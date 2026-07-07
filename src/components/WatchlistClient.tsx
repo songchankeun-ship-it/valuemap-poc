@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -10,6 +10,7 @@ import {
   removeFromWatchlist,
   type WatchlistItem,
 } from "@/lib/watchlist";
+import { addToCompare, COMPARE_MAX } from "@/lib/compare";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
@@ -21,6 +22,28 @@ import { FOCUS_RING } from "@/components/ui/controlStyles";
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
 const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
+const SORT_KEY = "ornscore_watchlist_sort";
+// StocksExplorer가 저장하는 최근 검색어 키를 그대로 읽어(표시 전용) 루틴 화면에서 재검색으로 잇는다.
+const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
+
+type SortKey = "recent" | "change" | "score" | "name";
+const SORT_LABELS: Record<SortKey, string> = {
+  recent: "최신순",
+  change: "변화순",
+  score: "점수순",
+  name: "가나다순",
+};
+const SORT_ORDER: SortKey[] = ["recent", "change", "score", "name"];
+
+function readRecentSearches(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(RECENT_SEARCH_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string").slice(0, 6) : [];
+  } catch {
+    return [];
+  }
+}
 
 const CAP_LABELS: Record<string, string> = { large: "대형주", mid: "중형주", small: "소형주" };
 
@@ -87,14 +110,19 @@ export function WatchlistClient({
   const authCopy = commonCopy[locale].auth;
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [recent, setRecent] = useState<RecentView[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
+  const [sort, setSort] = useState<SortKey>("recent");
   const [hydrated, setHydrated] = useState(false);
   // 방금 제거한 종목 — 실수로 뺀 경우 되돌리기(5초 자동 소멸, compare와 동일 패턴)
   const [undoStock, setUndoStock] = useState<{ ticker: string; name: string } | null>(null);
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 비교함 담기 피드백(3초 자동 소멸) — aria-live로 변화 안내, 담기 로직은 compare.ts 그대로
+  const [compareNotice, setCompareNotice] = useState<string | null>(null);
+  const compareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setHydrated(true);
@@ -105,7 +133,25 @@ export function WatchlistClient({
     } catch {
       // 저장소 사용 불가 — 기본 보기(simple) 유지
     }
+    try {
+      const s = typeof window !== "undefined" ? localStorage.getItem(SORT_KEY) : null;
+      if (s === "recent" || s === "change" || s === "score" || s === "name") setSort(s);
+    } catch {
+      // 저장소 사용 불가 — 기본 정렬(recent) 유지
+    }
+    setRecentSearches(readRecentSearches());
   }, []);
+
+  function changeSort(s: SortKey) {
+    setSort(s);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(SORT_KEY, s);
+      } catch {
+        // 저장 실패 — 이번 세션에는 정렬이 반영되지만 새로고침 시 복원되지 않음
+      }
+    }
+  }
 
   function changeView(v: "simple" | "analysis") {
     setView(v);
@@ -167,12 +213,28 @@ export function WatchlistClient({
     };
   }, []);
 
-  // 언마운트 시 대기 중인 되돌리기 타이머 해제
+  // 언마운트 시 대기 중인 되돌리기·비교 안내 타이머 해제
   useEffect(() => {
     return () => {
       if (undoTimer.current) clearTimeout(undoTimer.current);
+      if (compareTimer.current) clearTimeout(compareTimer.current);
     };
   }, []);
+
+  // 비교함에 담기 — compare.ts의 저장/제한 로직을 그대로 쓰고 결과만 안내(중복·최대치 정직 피드백)
+  async function handleAddCompare(name: string, ticker: string) {
+    const res = await addToCompare(ticker);
+    const msg = res.ok
+      ? res.reason === "already"
+        ? `${name}은(는) 이미 비교함에 있어요.`
+        : `${name}을(를) 비교함에 담았어요.`
+      : res.reason === "max"
+        ? `비교함은 최대 ${COMPARE_MAX}개까지 담을 수 있어요.`
+        : "비교함에 담지 못했어요. 잠시 후 다시 시도해 주세요.";
+    setCompareNotice(msg);
+    if (compareTimer.current) clearTimeout(compareTimer.current);
+    compareTimer.current = setTimeout(() => setCompareNotice(null), 3000);
+  }
 
   async function handleRemove(ticker: string, name: string) {
     setWatchlist((prev) => prev.filter((i) => i.ticker !== ticker)); // 낙관적
@@ -282,6 +344,29 @@ export function WatchlistClient({
     })
     .slice(0, 3);
 
+  // 관심 종목 목록 정렬(표시 전용 · watchlist.ts 저장 순서는 건드리지 않음)
+  const sortedWatchlist = [...watchlist].sort((a, b) => {
+    if (sort === "recent") return b.addedAt.localeCompare(a.addedAt); // ISO 문자열 → 최신 추가 우선
+    if (sort === "change") {
+      const da = Math.abs(Math.round(tickerToDelta[a.ticker] ?? 0));
+      const db = Math.abs(Math.round(tickerToDelta[b.ticker] ?? 0));
+      if (db !== da) return db - da;
+      return (tickerToSignal[b.ticker]?.strength ?? 0) - (tickerToSignal[a.ticker]?.strength ?? 0);
+    }
+    if (sort === "score") {
+      const sa = allStocks.find((s) => s.ticker === a.ticker)?.compositeScore ?? -1;
+      const sb = allStocks.find((s) => s.ticker === b.ticker)?.compositeScore ?? -1;
+      return sb - sa;
+    }
+    // name — 가나다순(한글 로케일 비교)
+    const na = allStocks.find((s) => s.ticker === a.ticker)?.name ?? a.ticker;
+    const nb = allStocks.find((s) => s.ticker === b.ticker)?.name ?? b.ticker;
+    return na.localeCompare(nb, "ko");
+  });
+
+  // 관심 종목 비교하기 CTA — 담아둔 종목 앞에서부터 최대 COMPARE_MAX개를 비교 화면에 시드
+  const compareSeed = sortedWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
+
   const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
 
   return (
@@ -342,7 +427,7 @@ export function WatchlistClient({
 
       {/* 관심 종목 */}
       <section>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
             <Heart className="w-4 h-4 text-pink-600" fill="currentColor" />
             관심 종목
@@ -358,8 +443,30 @@ export function WatchlistClient({
           ) : null}
         </div>
 
-        {/* 로그아웃 상태에서 관심 종목이 이미 있을 때 — 이 기기 저장·로그인 시 이어짐 안내(부드러운 정보 배너, 압박·닫기 없음) */}
-        {!isLoggedIn && watchlist.length > 0 ? (
+        {/* 정렬 — 담아둔 종목을 오늘의 관심사대로 1탭 재배열(표시 전용, 저장 순서 무변경) */}
+        {watchlist.length > 1 ? (
+          <div className="mb-3 flex items-center gap-2 overflow-x-auto -mx-0.5 px-0.5 pb-0.5">
+            <span className="flex shrink-0 items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <ArrowUpDown className="w-3.5 h-3.5" />정렬
+            </span>
+            <div className="flex shrink-0 gap-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 p-0.5">
+              {SORT_ORDER.map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => changeSort(k)}
+                  aria-pressed={sort === k}
+                  className={"min-h-[44px] px-3 rounded-md text-xs font-medium whitespace-nowrap transition " + (sort === k ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm" : "text-zinc-500 dark:text-zinc-400")}
+                >
+                  {SORT_LABELS[k]}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* 로그인 전/후 저장 안내 — 상태별 한 문장으로 통일(비로그인=이 기기 저장·로그인 시 이어짐, 로그인=다기기, 압박·팝업 없음) */}
+        {!isLoggedIn ? (
           <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 text-xs">
             <span className="min-w-0 break-words text-blue-800 dark:text-blue-300 leading-snug">
               {authCopy.syncLocalNote}
@@ -371,7 +478,23 @@ export function WatchlistClient({
               {authCopy.syncCta} <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
+        ) : watchlist.length > 0 ? (
+          <p className="mb-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+            로그인 됨 · 여러 기기에서 같은 관심 종목을 이어봐요.
+          </p>
         ) : null}
+
+        {/* 비교함 담기 피드백 — aria-live로 결과만 안내(3초) */}
+        <div aria-live="polite">
+          {compareNotice ? (
+            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 px-3 py-1.5 text-xs">
+              <span className="min-w-0 break-keep text-zinc-600 dark:text-zinc-300">{compareNotice}</span>
+              <Link href="/compare" className="inline-flex items-center gap-1 min-h-[44px] shrink-0 font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                비교함 보기 <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          ) : null}
+        </div>
 
         {/* 제거 되돌리기 — 실수로 뺀 종목을 다시 담기(aria-live로 변화 안내) */}
         <div aria-live="polite">
@@ -459,22 +582,10 @@ export function WatchlistClient({
                 <Link key={t} href={"/stock/" + t} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-400 dark:hover:border-pink-600 transition">{n}</Link>
               ))}
             </div>
-            <p className="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug">
-              {isLoggedIn ? (
-                "로그인 상태라 여러 기기에서 같은 관심 종목을 이어볼 수 있어요."
-              ) : (
-                <>
-                  현재는 이 브라우저에만 저장돼요.{" "}
-                  <Link href="/login?next=/watchlist" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                    {authCopy.syncCta}
-                  </Link>
-                </>
-              )}
-            </p>
           </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
-            {watchlist.map((item) => {
+            {sortedWatchlist.map((item) => {
               const info = allStocks.find((s) => s.ticker === item.ticker);
               const name = info?.name ?? item.ticker;
               const signal = tickerToSignal[item.ticker];
@@ -518,19 +629,45 @@ export function WatchlistClient({
                       ) : null}
                     </div>
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(item.ticker, name)}
-                    className="ml-2 flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition shrink-0"
-                    aria-label={`${name} 관심 종목에서 제거`}
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                  <div className="ml-2 flex shrink-0 items-center">
+                    <button
+                      type="button"
+                      onClick={() => { void handleAddCompare(name, item.ticker); }}
+                      className="flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 dark:text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                      aria-label={`${name} 비교함에 담기`}
+                      title="비교함에 담기"
+                    >
+                      <Scale className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(item.ticker, name)}
+                      className="flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition"
+                      aria-label={`${name} 관심 종목에서 제거`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </li>
               );
             })}
           </ul>
         )}
+
+        {/* 관심 종목 비교하기 — 담아둔 종목 앞에서부터 최대 N개를 한 번에 비교 화면에 시드(1탭 이동) */}
+        {watchlist.length > 1 ? (
+          <div className="mt-3">
+            <Link
+              href={`/compare?stocks=${compareSeed.join(",")}`}
+              className={`flex items-center justify-center gap-1.5 w-full min-h-[44px] px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+            >
+              <Scale className="w-4 h-4" /> 관심 종목 비교하기
+            </Link>
+            <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+              앞에서부터 최대 {COMPARE_MAX}개를 비교 화면에 담아요 · 비교는 참고용이며 매수·매도 추천이 아닙니다.
+            </p>
+          </div>
+        ) : null}
       </section>
 
       {/* 저장한 필터 */}
@@ -659,6 +796,30 @@ export function WatchlistClient({
           </ul>
         )}
       </section>
+
+      {/* 최근 검색 — 탐색에서 저장된 검색어를 그대로 눌러 재검색으로 잇기(표시 전용, 있을 때만) */}
+      {recentSearches.length > 0 ? (
+        <section>
+          <div className="mb-2 flex items-center gap-2">
+            <Search className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">최근 검색</h2>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {recentSearches.map((term) => (
+              <Link
+                key={term}
+                href={`/stocks?q=${encodeURIComponent(term)}`}
+                className="inline-flex items-center gap-1 min-h-[36px] px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition"
+              >
+                <Search className="w-3 h-3" />{term}
+              </Link>
+            ))}
+          </div>
+          <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+            종목 탐색에서 검색한 내용이 이 기기에 저장돼요 · 누르면 탐색 화면에서 같은 검색으로 이어져요.
+          </p>
+        </section>
+      ) : null}
     </div>
   );
 }
