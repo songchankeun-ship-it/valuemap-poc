@@ -502,6 +502,7 @@ export const stockDisclosuresCopy = {
     summaryDisclosuresUnit: "건",
     summarySignals: "신호",
     summarySignalsUnit: "건",
+    scopeShort: "최근 수집분 기준 · 전체 이력은 DART에서 확인",
     scopeNote:
       "최근 90일 내 최신 공시 일부입니다(최대 20건 수집 · 10건 표시) · 전체 공시 이력이 아닙니다.",
     collectedPrefix: "수집 기준",
@@ -531,6 +532,7 @@ export const stockDisclosuresCopy = {
     summaryDisclosuresUnit: "",
     summarySignals: "signals",
     summarySignalsUnit: "",
+    scopeShort: "Recent collected subset · full history on DART",
     scopeNote:
       "A subset of recent disclosures within the last 90 days (up to 20 collected · 10 shown) · not the full disclosure history.",
     collectedPrefix: "Collected",
@@ -616,5 +618,22 @@ export const aiAnalysisCardCopy = {
     rerun: "Run again",
     bottomDisclaimer:
       "This analysis is for general information and educational purposes and is not investment advice. Prices, financials, and metrics may include simulated data; actual trading is your own responsibility.",
+  },
+} as const satisfies Record<Locale, unknown>;
+
+// ── CompareTray (설계서 5-8: 종목 상세 하단 비교 유도) ──
+// 비교함에 담긴 종목 수를 반영만 하고 /compare로 연결한다. 담기/빼기 로직은 재구현하지 않는다.
+export const compareTrayCopy = {
+  ko: {
+    ariaLabel: "비교함 바로가기",
+    basketPrefix: "비교함",
+    hint: "발견·관심에서 종목을 더 담아 비교",
+    cta: "비교하기",
+  },
+  en: {
+    ariaLabel: "Go to comparison",
+    basketPrefix: "Compare",
+    hint: "Add more from Discover or Watchlist to compare",
+    cta: "Compare",
   },
 } as const satisfies Record<Locale, unknown>;

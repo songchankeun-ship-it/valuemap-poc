@@ -21,6 +21,7 @@ import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks
 import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
+import { CompareTray } from "@/components/stock/CompareTray";
 import { classifyConclusion } from "@/lib/conclusion";
 import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
 import { buildScoreBasis } from "@/lib/scoreBasis";
@@ -530,6 +531,9 @@ export default async function StockDetailPage({ params }: PageProps) {
         ]}
       />
 
+      {/* 설계서 5-8: 비교함에 종목이 담겨 있을 때만 뜨는 비교 유도 트레이. 담기 로직은 히어로의
+          '비교 추가'가 소유하고, 이 트레이는 상태 반영 + /compare 이동만 담당(중복 CTA 방지). */}
+      <CompareTray />
     </div>
   );
 }

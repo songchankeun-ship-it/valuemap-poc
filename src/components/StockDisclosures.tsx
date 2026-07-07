@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, ExternalLink, RefreshCw } from "lucide-react";
+import { AlertTriangle, ExternalLink, Info, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDisclosuresCopy } from "@/lib/copy/stockDetail";
 import type { Locale } from "@/lib/i18n";
@@ -166,9 +166,14 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           {t.summaryPrefix} · {t.summaryDisclosures} {data.count}{t.summaryDisclosuresUnit} · {t.summarySignals} {data.signalCount}{t.summarySignalsUnit}
         </span>
       </div>
-      {/* 수집 범위 고지 — 전체 공시 이력처럼 오해되지 않게 상시 노출 */}
-      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-2 leading-relaxed">
-        {t.scopeNote}
+      {/* 수집 범위 고지 — 과하지 않게 한 줄 요약. 상세(수집·표시 건수)는 title 툴팁으로 이동.
+          전체 공시 이력이 아니며 원문은 DART에서 확인한다는 의도(설계서 18-4)는 유지. */}
+      <p
+        className="flex items-start gap-1 text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-2 leading-relaxed"
+        title={t.scopeNote}
+      >
+        <Info className="w-3 h-3 mt-[1px] shrink-0" strokeWidth={2} aria-hidden="true" />
+        <span>{t.scopeShort}</span>
       </p>
       {(() => {
         const when = fmtKST(data.fetchedAt);

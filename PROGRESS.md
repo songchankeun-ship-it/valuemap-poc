@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-07 · [codex] Sprint 3C 종목 상세 공시 고지 완화·비교 유도 트레이·CTA 정리
+- **범위**: 설계서 5-7(공시 섹션)·5-8(비교 유도) 슬라이스. 종목 상세 하단의 최근 공시 요약 고지를 과하지 않게 줄이고, 비교함 상태를 반영하는 sticky 트레이를 추가. 데이터 수집·DART 호출·scoring 로직은 무변경(표시/문구/신규 표시용 컴포넌트만).
+- **공시 고지 완화(5-7)**: `StockDisclosures.tsx`의 상시 노출 전체 문장 `scopeNote`를 아이콘 한 줄 요약(`scopeShort` = "최근 수집분 기준 · 전체 이력은 DART에서 확인")으로 교체하고, 상세(수집·표시 건수, 90일 범위) 문구는 `title` 툴팁으로 이동. 행 순서(유형·자동분류+날짜 → 공시명 → 제출인 → 확인 → DART 원문), fetch, 빈 상태, 수집 기준(collectedPrefix) 줄, DART 원문 링크(18-4 원문 확인 의도)는 무변경. copy는 `stockDisclosuresCopy`에 `scopeShort` ko/en 추가(금칙어 0).
+- **비교 유도 트레이(5-8)**: 신규 클라이언트 컴포넌트 `src/components/stock/CompareTray.tsx`. `getCompareList()`/`COMPARE_MAX`를 읽고 `compare-basket-changed`·`ornscore:compare-updated`·`valuemap:compare-updated` 이벤트를 구독(CompareBadge와 동일 패턴). count 0에서 시작 → SSR/CSR 모두 처음엔 null이라 하이드레이션 불일치 없음. 비교함에 1개 이상 담겼을 때만 "비교함 N/4" + primary `비교하기`(→`/compare`) + 보조 힌트를 sticky pill로 노출. 담기/빼기 로직은 재구현하지 않고 상태 반영 + 링크만. 위치는 모바일에서 `bottom-[calc(3.5rem + safe-area + 0.75rem)]`로 하단 탭 위, 데스크톱 `bottom-6`, z-30(토스트 z-[100]·하단 탭 z-40 아래). 보일 때 흐름 여백(h-16)으로 마지막 콘텐츠 가림 방지. `page.tsx` 루트 하단에 1회 마운트. copy `compareTrayCopy` ko/en 추가.
+- **CTA 우선순위 정리(과제 요건)**: 히어로의 `비교 추가`(AddToCompareButton=비교함에 담기)와 트레이의 `비교하기`(→/compare 이동)는 역할이 달라 경쟁하지 않음(담기 vs 이동). 스택된 두 개의 primary "비교하기" 없음. `다음으로 확인할 것` 앵커 CTA(공시/재무/점수 근거/업종 비교)는 무변경 — StockTabs hashchange 탭 이동 회귀 없음.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(138 stock SSG) · local prod 4468 `verify:routes -- --base` 9/9(/stock/005930 기준일 2026.07.06 유지) · `smoke:check --all` 23/23 · 변경/신규 4파일 U+FFFD 0. 빌드 청크(`page-*.js`)에 `scopeShort` ko/en, `compareTrayCopy` `비교하기`/`비교함`/`Compare`/`Go to comparison` ko·en 문자열 동거 확인(언어 토글 렌더 보장). 로컬 prod 4468 서버·임시 로그 정리 완료.
+- **제한**: 인앱 브라우저/Playwright 픽셀 캡처는 이 환경에서 미수행(webview attach 불가) — 구조·CSS(하단 탭 위 오프셋·z-index·하이드레이션 null 시작)·빌드 청크 문자열로 검증. 실기기 390x844/데스크톱 육안 + EN 클라이언트 토글 확인은 운영자 게이트로 남김.
+- **다음에 바로 실행할 작업**: 설계서 6장 관심종목 화면 개편(6-4 구조·6-2 비로그인 안내·정렬/그룹) 또는 5-5 지표 `?` 툴팁 정리. 트레이는 현재 종목 상세 전용 — 필요 시 발견/관심 화면에도 노출할지는 후속 결정.
+
 ## 2026-07-07 · [codex] Sprint 3B 종목 상세 요약 탭 압축·지표 상세 접힘
 - **범위**: 설계서 5장(5-3/5-4) 종목 상세 후속 슬라이스. 요약 탭 첫 화면을 히어로의 대표 신호(종합점수 + 대표 강점 + 먼저 볼 지표 + 현재 해석 + 최근 변화) 중심으로 두고, 4지표 상세·전체/업종 순위·산식은 기본 접힘으로 낮춤. 점수식·데이터 조회·공시 수집 로직 무변경.
 - **요약 탭 재정렬**: 순서를 `주가 차트 → 초보자 해석(현재 해석·먼저 확인할 것) → 지표 상세 접힘 → 데이터 기준`으로 변경. `초보자 해석`을 차트 바로 뒤로 승격해 핵심 해석 카드가 먼저 읽히게 함.
