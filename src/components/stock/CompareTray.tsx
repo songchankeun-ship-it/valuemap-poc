@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, GitCompare } from "lucide-react";
-import { getCompareList, COMPARE_MAX } from "@/lib/compare";
+import { getCompareList, clearCompare, COMPARE_MAX } from "@/lib/compare";
 import { useLanguage } from "@/components/LanguageProvider";
 import { compareTrayCopy } from "@/lib/copy/stockDetail";
 
@@ -38,6 +38,13 @@ export function CompareTray() {
     };
   }, []);
 
+  // 비우기 — 결과 화면 '모두 비우기'와 동일하게 확인 후 비교함을 초기화한다.
+  // 실제 비우기/브로드캐스트는 compare.ts가 소유하고, count는 basket-changed 이벤트로 갱신된다.
+  function reset() {
+    if (!confirm("비교함을 모두 비울까요?")) return;
+    void clearCompare();
+  }
+
   if (count === 0) return null;
 
   return (
@@ -49,20 +56,27 @@ export function CompareTray() {
         aria-label={t.ariaLabel}
         className="fixed right-3 z-30 bottom-[calc(3.5rem_+_env(safe-area-inset-bottom)_+_0.75rem)] lg:bottom-6"
       >
-        <div className="flex items-center gap-3 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-3 py-2 shadow-lg max-w-[calc(100vw-1.5rem)]">
+        <div className="flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-3 py-2 shadow-lg max-w-[calc(100vw-1.5rem)]">
           <div className="flex items-center gap-1.5 min-w-0">
             <GitCompare className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
             <span className="text-xs font-medium text-zinc-700 dark:text-zinc-200 tabular-nums whitespace-nowrap">
               {t.basketPrefix} {count}/{COMPARE_MAX}
             </span>
-            <span className="hidden sm:inline text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
+            <span className="hidden md:inline text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
               {t.hint}
             </span>
           </div>
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center shrink-0 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 dark:hover:text-rose-400 px-3 min-h-[44px] text-xs font-medium whitespace-nowrap transition"
+          >
+            {t.reset}
+          </button>
           <Link
             href="/compare"
             prefetch={false}
-            className="inline-flex items-center gap-1 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 text-xs font-semibold transition"
+            className="inline-flex items-center gap-1 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 text-white px-3 min-h-[44px] text-xs font-semibold whitespace-nowrap transition"
           >
             {t.cta}
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />

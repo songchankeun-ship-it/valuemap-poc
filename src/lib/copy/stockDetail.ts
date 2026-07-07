@@ -627,13 +627,15 @@ export const compareTrayCopy = {
   ko: {
     ariaLabel: "비교함 바로가기",
     basketPrefix: "비교함",
-    hint: "발견·관심에서 종목을 더 담아 비교",
-    cta: "비교하기",
+    hint: "담은 종목을 비교 화면에서 나란히 봐요",
+    cta: "비교 시작하기",
+    reset: "초기화",
   },
   en: {
     ariaLabel: "Go to comparison",
     basketPrefix: "Compare",
-    hint: "Add more from Discover or Watchlist to compare",
-    cta: "Compare",
+    hint: "See the stocks you added side by side",
+    cta: "Start compare",
+    reset: "Reset",
   },
 } as const satisfies Record<Locale, unknown>;

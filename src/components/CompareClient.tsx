@@ -253,6 +253,19 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
   const recentAddable = recentViews.filter((r) => !tickers.includes(r.ticker));
   const top5Addable = top5.filter((s) => !tickers.includes(s.ticker));
 
+  // 원클릭 예시 비교 — 관심 3종목을 우선 담고, 없으면 오늘 후보 3종으로 폴백한다.
+  // 이미 담은 종목을 뺀 담을 수 있는 수가 2개 미만이면(눌러도 비교 불가) 아래에서 버튼을 숨긴다.
+  const quickCompareWatchlist = watchlist.slice(0, 3).map((w) => w.ticker).filter((t) => !tickers.includes(t));
+  const quickCompareTop5 = top5.slice(0, 3).map((s) => s.ticker).filter((t) => !tickers.includes(t));
+  const quickCompare =
+    watchlist.length >= 3 && quickCompareWatchlist.length >= 2
+      ? { tickers: quickCompareWatchlist, label: "내 관심 3종목 비교하기" }
+      : quickCompareTop5.length >= 2
+        ? { tickers: quickCompareTop5, label: "오늘 후보 3종 비교하기" }
+        : quickCompareWatchlist.length >= 2
+          ? { tickers: quickCompareWatchlist, label: "내 관심 3종목 비교하기" }
+          : null;
+
   // 담기/빼기 피드백 영역 — 두 화면에서 동일하게 렌더(안내 + 되돌리기)
   const feedbackRegion =
     notice || undoStock ? (
@@ -331,6 +344,25 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
                 </span>
               </div>
               <p className="text-xs text-blue-700 dark:text-blue-300 mt-2 font-medium">비교하려면 1개 더 선택하세요 (최소 2개 · 최대 4개)</p>
+            </div>
+          ) : null}
+
+          {/* 예시로 바로 비교 체험 — 추천 세트 위에 한 줄 안내 + 관심/후보 원클릭 진입(비자문 문구) */}
+          {recommendedSets.length > 0 || quickCompare ? (
+            <div className="space-y-2.5">
+              <div>
+                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">예시로 바로 비교를 체험해 보세요</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">무엇을 나란히 볼 수 있는지 한 번에 확인해요.</p>
+              </div>
+              {quickCompare ? (
+                <button
+                  type="button"
+                  onClick={() => { void addSet(quickCompare.tickers); }}
+                  className={`inline-flex items-center justify-center gap-1 w-full sm:w-auto px-4 py-2.5 min-h-[44px] rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition ${FOCUS_RING}`}
+                >
+                  {quickCompare.label} →
+                </button>
+              ) : null}
             </div>
           ) : null}
 
