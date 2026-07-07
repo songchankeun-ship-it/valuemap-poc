@@ -7,6 +7,7 @@ import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 import { fmtWon } from "@/lib/format";
 import { volumeSpikeCount, VOLUME_SPIKE_RATIO, VOLUME_SPIKE_FLOW } from "@/lib/homeSnapshot";
+import type { MetricKey } from "@/lib/copy/home";
 import { TodayContent } from "@/components/today/TodayContent";
 import type {
   TodayStockRaw,
@@ -145,6 +146,25 @@ export default async function TodayPage() {
     returns: s.returns,
   });
 
+  // ── 후보 카드 "왜 후보인지" 근거용 — 강한 지표의 전체 풀 상대순위(홈과 동일 산식, 점수 계산 무변경) ──
+  const poolN = realStockPool.length;
+  const metricVal = (p: { momentum: number; flow: number; value: number; vol: number }, key: MetricKey): number =>
+    key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol;
+  const metricRank = (val: number, key: MetricKey): number =>
+    realStockPool.filter((p) => metricVal(p, key) > val).length + 1;
+  const metricTopPct = (val: number, key: MetricKey): number =>
+    Math.max(1, Math.round(((realStockPool.filter((p) => metricVal(p, key) > val).length + 1) / poolN) * 100));
+  const leadOf = (s: { momentum: number; flow: number; value: number; vol: number }) => {
+    const keys: MetricKey[] = ["momentum", "flow", "value", "vol"];
+    let bestKey: MetricKey | null = null;
+    let best = -Infinity;
+    for (const k of keys) {
+      const v = metricVal(s, k);
+      if (Number.isFinite(v) && v > best) { best = v; bestKey = k; }
+    }
+    return bestKey ? { key: bestKey, rank: metricRank(best, bestKey), topPct: metricTopPct(best, bestKey) } : null;
+  };
+
   // ── 오늘의 Top 3 후보(카드 표시값 + note 빌더용 원시값) ──
   const top3Raw: TodayTopRaw[] = top3.map((s, i) => {
     const r3m = typeof s.returns?.r3m === "number" ? s.returns.r3m : null;
@@ -165,6 +185,7 @@ export default async function TodayPage() {
       },
       value: s.value,
       vol: s.vol,
+      lead: leadOf(s),
     };
   });
 

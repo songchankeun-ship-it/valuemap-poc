@@ -19,10 +19,13 @@ export function AddToWatchlistButton({
   ticker,
   name,
   compact = false,
+  label,
 }: {
   ticker: string;
   name: string;
   compact?: boolean;
+  /** compact이어도 짧은 텍스트 라벨(예: "담기")을 노출하고 싶을 때. 미지정 시 아이콘 전용. */
+  label?: string;
 }) {
   const [isAdded, setIsAdded] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
@@ -116,7 +119,7 @@ export function AddToWatchlistButton({
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className={`inline-flex items-center ${compact ? "justify-center w-11 px-0" : "gap-1.5 px-3.5"} py-2.5 min-h-[44px] rounded-md border text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed ${FOCUS_RING} ${
+        className={`inline-flex items-center ${compact && !label ? "justify-center w-11 px-0" : compact ? "gap-1 px-3" : "gap-1.5 px-3.5"} py-2.5 min-h-[44px] rounded-md border text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed ${FOCUS_RING} ${
           isAdded
             ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
@@ -128,10 +131,10 @@ export function AddToWatchlistButton({
           fill={isAdded ? "currentColor" : "none"}
           strokeWidth={isAdded ? 0 : 1.8}
         />
-        {compact ? (
+        {compact && !label ? (
           <span className="sr-only">{isAdded ? "관심 등록됨" : "관심 종목"}</span>
         ) : (
-          <span>{isAdded ? "관심 등록됨" : "관심 종목"}</span>
+          <span className="truncate">{label ?? (isAdded ? "관심 등록됨" : "관심 종목")}</span>
         )}
       </button>
 

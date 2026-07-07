@@ -15,9 +15,11 @@ interface Props {
   ticker: string;
   name: string;
   compact?: boolean;
+  /** compact이어도 짧은 텍스트 라벨(예: "비교")을 노출하고 싶을 때. 미지정 시 아이콘 전용. */
+  label?: string;
 }
 
-export function AddToCompareButton({ ticker, name, compact = false }: Props) {
+export function AddToCompareButton({ ticker, name, compact = false, label }: Props) {
   const [inBasket, setInBasket] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; show: boolean }>({ msg: "", show: false });
@@ -75,16 +77,18 @@ export function AddToCompareButton({ ticker, name, compact = false }: Props) {
         type="button"
         onClick={toggle}
         disabled={loading}
-        className={"inline-flex items-center " + (compact ? "justify-center w-11 px-0" : "px-3.5") + " py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " + (
+        className={"inline-flex items-center " + (compact && !label ? "justify-center w-11 px-0" : compact ? "gap-1 px-3" : "px-3.5") + " py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " + (
           inBasket
             ? "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 text-blue-700 dark:text-blue-300"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-300 hover:text-blue-600 dark:hover:border-blue-700 dark:hover:text-blue-400"
         )}
         title={name + " 비교 바스켓 " + (inBasket ? "제거" : "추가")}
       >
-        <GitCompare className="h-4 w-4" aria-hidden="true" />
-        {compact ? (
+        <GitCompare className="h-4 w-4 shrink-0" aria-hidden="true" />
+        {compact && !label ? (
           <span className="sr-only">{inBasket ? "비교에서 빼기" : "비교에 추가"}</span>
+        ) : compact ? (
+          <span className="truncate">{label}</span>
         ) : (
           <span className="ml-1.5">{inBasket ? "✓ 비교에서 빼기" : "+ 비교에 추가"}</span>
         )}

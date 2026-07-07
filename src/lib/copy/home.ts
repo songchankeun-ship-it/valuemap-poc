@@ -53,11 +53,25 @@ export const homeCopy = {
       rankBadgeAria: (n: number) => `오늘 후보 순위 ${n}위`,
       empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
       footer:
-        "후보는 탐색 우선순위입니다. 점수만 보지 말고 공시와 재무를 함께 확인하세요.",
+        "점수는 탐색 우선순위입니다. 공시와 재무를 함께 확인하세요.",
       strength: "강점",
       caution: "주의",
       firstCheck: "먼저 확인할 것",
-      viewStock: "종목 보기",
+      viewStock: "상세 보기",
+      ctaCompare: "비교",
+      ctaSave: "담기",
+      // 카드별 "왜 후보인지" 근거 — 강한 지표의 전체 풀 상대순위로 종목마다 다르게(점수 계산 없음, 표시 파생).
+      reason: (label: string, rank: number, topPct: number) =>
+        `${label} 점수 상위 ${rank}위(상위 ${topPct}%)로 후보에 올랐어요.`,
+      noReason: "데이터가 준비 중이라 근거를 아직 표시할 수 없어요.",
+      guide: {
+        heading: "무엇부터 보면 될까요?",
+        steps: [
+          { title: "근거 확인", body: "카드 근거와 상세로 왜 후보인지 봐요." },
+          { title: "비교", body: "관심 가는 후보를 담아 나란히 비교해요." },
+          { title: "담기", body: "관심에 담으면 변화를 이어서 확인해요." },
+        ],
+      },
       checkpoints: ["최근 공시 원문", "실적·재무 변화"],
       risk: {
         surgeXl: "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요",
@@ -66,7 +80,7 @@ export const homeCopy = {
         surge: "최근 상승폭이 커서 급등 사유 확인 필요",
         volHigh: "변동성이 큰 편이라 비중·시점 분할 검토 필요",
         valueLow: "밸류 지표가 낮아 고평가 여부 원문 재무 확인 필요",
-        default: "점수 근거가 된 지표와 원문 공시·재무를 함께 확인 필요",
+        default: "점수를 만든 지표가 원문에서도 확인되는지 함께 보세요.",
       } as Record<RiskKind, string>,
     },
     disclosure: {
@@ -194,11 +208,25 @@ export const homeCopy = {
       rankBadgeAria: (n: number) => `Today's candidate rank #${n}`,
       empty: "Candidate data is being prepared. Please check back shortly.",
       footer:
-        "Candidates are research priorities. Check disclosures and financials before making any decision.",
+        "Scores are a research priority, not advice. Check disclosures and financials too.",
       strength: "Strengths",
       caution: "Caution",
       firstCheck: "Check first",
-      viewStock: "View stock",
+      viewStock: "View details",
+      ctaCompare: "Compare",
+      ctaSave: "Save",
+      // Per-card reason — differentiated by the strongest metric's rank within the full pool (display-only, no scoring).
+      reason: (label: string, rank: number, topPct: number) =>
+        `Ranked #${rank} in ${label} (top ${topPct}%) among analyzed stocks.`,
+      noReason: "Evidence isn't available yet while data is being prepared.",
+      guide: {
+        heading: "Where to start?",
+        steps: [
+          { title: "Check the basis", body: "See why it's a candidate via the card and detail." },
+          { title: "Compare", body: "Add candidates you like and compare side by side." },
+          { title: "Save", body: "Save to your watchlist to keep tracking changes." },
+        ],
+      },
       checkpoints: ["Recent disclosures", "Financial changes"],
       risk: {
         surgeXl: "The recent rise is very large — check the reason for the surge and whether it is overheated.",
@@ -207,7 +235,7 @@ export const homeCopy = {
         surge: "The recent rise is large — check the reason behind the surge.",
         volHigh: "Volatility is high — consider splitting position size and timing.",
         valueLow: "The value metric is low — check the original financials for possible overvaluation.",
-        default: "Check the metrics behind the score together with the original disclosures and financials.",
+        default: "Check that the metrics behind the score hold up in the original filings.",
       } as Record<RiskKind, string>,
     },
     disclosure: {

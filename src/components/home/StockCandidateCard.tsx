@@ -7,7 +7,7 @@ import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { MetricChip } from "@/components/ui/MetricChip";
 import { useLanguage } from "@/components/LanguageProvider";
-import { homeCopy, type StrongMetric, type RiskKind } from "@/lib/copy/home";
+import { homeCopy, type StrongMetric, type RiskKind, type MetricKey } from "@/lib/copy/home";
 
 export interface StockCandidate {
   rank: number;
@@ -20,6 +20,8 @@ export interface StockCandidate {
   score: number;
   /** 강점 라벨(강한 지표 2개) — key+값만, 라벨은 로케일별 렌더. */
   metrics: StrongMetric[];
+  /** "왜 후보인지" 근거 — 가장 강한 지표의 전체 풀 상대순위(없으면 null → noReason 폴백). */
+  lead: { key: MetricKey; rank: number; topPct: number } | null;
   /** 4지표 점수 — 막대 시각화용. */
   m: { momentum: number; flow: number; value: number; vol: number };
   /** 주의 문구 종류 — 문장은 로케일별 렌더(서버는 원시 점수로 분기만). */
@@ -33,14 +35,10 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
   const { locale } = useLanguage();
   const t = homeCopy[locale];
   const labels = t.metricLabels;
-  const leadMetric = c.metrics[0];
-  const summary = leadMetric
-    ? locale === "ko"
-      ? `${labels[leadMetric.key]} 점수가 눈에 띄어 먼저 확인할 후보입니다.`
-      : `${labels[leadMetric.key]} stands out as the first thing to review.`
-    : locale === "ko"
-      ? "여러 지표를 함께 확인할 후보입니다."
-      : "This candidate is worth checking across several metrics.";
+  // 카드별 근거 한 줄 — 강한 지표의 상대순위로 종목마다 다르게. 근거 데이터가 없으면 정직한 폴백.
+  const reason = c.lead
+    ? t.topCandidate.reason(labels[c.lead.key], c.lead.rank, c.lead.topPct)
+    : t.topCandidate.noReason;
   const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
   const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
   const cardClass = featured
@@ -76,7 +74,17 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
       </div>
 
       <p className="mt-2 text-[13px] leading-relaxed text-zinc-700 dark:text-zinc-300">
-        {summary}
+        {reason}
+        {c.lead ? null : (
+          <Link
+            prefetch={false}
+            href={"/stock/" + c.ticker}
+            className="ml-1.5 inline-flex items-center gap-0.5 font-semibold text-blue-700 dark:text-blue-400 hover:underline"
+          >
+            {t.topCandidate.viewStock}
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+        )}
       </p>
 
       <div className="mt-2.5 flex items-start gap-1.5">
@@ -108,17 +116,18 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         ))}
       </div>
 
-      <div className="mt-auto pt-3 flex flex-wrap items-center gap-2">
-      <Link
-        prefetch={false}
-        href={"/stock/" + c.ticker}
-        className="text-center px-3.5 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-      >
-        {t.topCandidate.viewStock}
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-      </Link>
-        <AddToWatchlistButton ticker={c.ticker} name={c.name} compact />
-        <AddToCompareButton ticker={c.ticker} name={c.name} compact />
+      {/* CTA — 상세 보기 · 비교 · 담기(가이드 순서: 근거 확인 → 비교 → 담기). 좁은 화면에서도 한 줄, 각 ≥44px. */}
+      <div className="mt-auto pt-3 flex items-stretch gap-2">
+        <Link
+          prefetch={false}
+          href={"/stock/" + c.ticker}
+          className="flex-1 min-w-0 text-center px-3 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+        >
+          <span className="truncate">{t.topCandidate.viewStock}</span>
+          <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+        </Link>
+        <AddToCompareButton ticker={c.ticker} name={c.name} compact label={t.topCandidate.ctaCompare} />
+        <AddToWatchlistButton ticker={c.ticker} name={c.name} compact label={t.topCandidate.ctaSave} />
       </div>
     </div>
   );

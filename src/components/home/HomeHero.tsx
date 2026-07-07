@@ -89,7 +89,7 @@ export function HomeHero({
                 </div>
                 <div className="shrink-0 text-right">
                   <div className="text-2xl font-black tabular-nums">{lead.score}</div>
-                  <div className="text-[10px] text-zinc-400">ORN</div>
+                  <div className="text-[10px] text-zinc-400">{copy.previewScoreLabel}</div>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between gap-2 text-[11px]">

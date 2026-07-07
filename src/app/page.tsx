@@ -17,7 +17,7 @@ import { FeatureCards } from "@/components/home/FeatureCards";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { RiskNotice } from "@/components/home/RiskNotice";
 import { HomeDataSourceFooter } from "@/components/home/HomeDataSourceFooter";
-import type { StrongMetric, RiskKind } from "@/lib/copy/home";
+import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
 
 interface RecentSignal {
   signalType: string;
@@ -66,6 +66,20 @@ function strongMetrics(s: { momentum: number; flow: number; value: number; vol: 
     { key: "vol", value: Math.round(s.vol) },
   ];
   return items.sort((a, b) => b.value - a.value).slice(0, 2);
+}
+
+// 후보 카드 "왜 후보인지" 근거용 — 강한 지표의 전체 풀 상대순위(종목 상세의 rankOf/topPctOf와 동일 산식).
+// 이미 계산된 4지표 점수에서만 파생하며 점수 계산식은 건드리지 않는다.
+const poolN = realStockPool.length;
+function metricValue(p: { momentum: number; flow: number; value: number; vol: number }, key: MetricKey): number {
+  return key === "momentum" ? p.momentum : key === "flow" ? p.flow : key === "value" ? p.value : p.vol;
+}
+function metricRank(val: number, key: MetricKey): number {
+  return realStockPool.filter((p) => metricValue(p, key) > val).length + 1;
+}
+function metricTopPct(val: number, key: MetricKey): number {
+  const better = realStockPool.filter((p) => metricValue(p, key) > val).length;
+  return Math.max(1, Math.round(((better + 1) / poolN) * 100));
 }
 
 // 탐색 언어 기반 주의 문구 종류 — 문장은 클라이언트에서 현지화(원시 점수로 분기만).
@@ -132,6 +146,14 @@ export default async function HomePage() {
   // ── 후보 카드 뷰모델 ──
   const candidates: StockCandidate[] = topCandidates.map((s, i) => {
     const r3m = typeof s.returns?.r3m === "number" ? s.returns.r3m : null;
+    const metrics = strongMetrics(s);
+    // 가장 강한 지표의 전체 풀 상대순위 → 카드별로 다른 "근거" 한 줄(값 결측 시 null → noReason 폴백).
+    const lead0 = metrics[0];
+    const leadRaw = lead0 ? metricValue(s, lead0.key) : null;
+    const lead =
+      lead0 && leadRaw != null && Number.isFinite(leadRaw)
+        ? { key: lead0.key, rank: metricRank(leadRaw, lead0.key), topPct: metricTopPct(leadRaw, lead0.key) }
+        : null;
     return {
       rank: i + 1,
       name: s.name,
@@ -141,7 +163,8 @@ export default async function HomePage() {
       changePct: s.changePct,
       r3m,
       score: Math.round(compositeOf(s)),
-      metrics: strongMetrics(s),
+      metrics,
+      lead,
       m: {
         momentum: Math.round(s.momentum),
         flow: Math.round(s.flow),

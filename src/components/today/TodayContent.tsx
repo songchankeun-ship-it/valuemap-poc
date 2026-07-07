@@ -7,7 +7,7 @@ import { TodayStatusBar } from "@/components/today/TodayStatusBar";
 import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
 import { TodayTopSection } from "@/components/today/TodayTopSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
-import type { StrongMetric, RiskKind } from "@/lib/copy/home";
+import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
 import { SignalSection } from "@/components/today/SignalSection";
 import type { SignalStockVM } from "@/components/today/SignalStockCard";
 
@@ -42,6 +42,8 @@ export interface TodayTopRaw {
   m: { momentum: number; flow: number; value: number; vol: number };
   value: number;
   vol: number;
+  /** "왜 후보인지" 근거 — 가장 강한 지표의 전체 풀 상대순위(서버 계산, 없으면 null). */
+  lead: { key: MetricKey; rank: number; topPct: number } | null;
 }
 
 export interface TodayDisclosureRaw {
@@ -211,6 +213,7 @@ export function TodayContent(props: TodayContentProps) {
     r3m: s.r3m,
     score: s.score,
     metrics: strongMetrics(s.m),
+    lead: s.lead,
     m: s.m,
     riskKind: riskKindOf({ value: s.value, vol: s.vol }, s.r3m),
     highReturn: s.r3m !== null && s.r3m >= 80,
