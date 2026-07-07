@@ -1,5 +1,6 @@
 "use client";
 
+import { type ReactNode } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDetailCopy, priceBasisLagCopy } from "@/lib/copy/stockDetail";
@@ -46,6 +47,27 @@ export function MetricsSectionHeader({ poolN }: { poolN: number }) {
       </div>
       <p className="mt-1 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.lead}</p>
     </div>
+  );
+}
+
+// 지표 상세 접힘 래퍼 — 4지표 카드·위험 상세·업종 대비 밸류·같은 업종 비교를 기본 접힘으로 묶는다.
+// 요약 탭 첫 화면은 초보자 해석(현재 해석)이 먼저 읽히게 하고, 상세는 '대표 신호 → 자세히 보기' 흐름으로 낮춘다.
+// 표시/순서만 담당하며 점수·순위 계산은 서버에서 끝난 값(children)을 그대로 넘긴다.
+export function MetricsDetailsSection({ children }: { children: ReactNode }) {
+  const { locale } = useLanguage();
+  const t = stockDetailCopy[locale].metricsSection;
+  return (
+    <details className="group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+      <summary className="flex min-h-[44px] cursor-pointer select-none items-center justify-between gap-3 rounded-lg px-3 py-3 md:px-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition list-none [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0">
+          <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.detailsToggle}</span>
+          <span className="mt-0.5 block text-[11px] font-normal leading-snug text-zinc-500 dark:text-zinc-400">{t.detailsHint}</span>
+        </span>
+      </summary>
+      <div className="space-y-3 md:space-y-4 border-t border-zinc-200 dark:border-zinc-800 p-3 md:p-4">
+        {children}
+      </div>
+    </details>
   );
 }
 

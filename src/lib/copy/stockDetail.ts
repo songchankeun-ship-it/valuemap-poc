@@ -30,6 +30,8 @@ export const stockDetailCopy = {
       poolSuffix: "종목 대비",
       guideLink: "지표 가이드 →",
       lead: "이 종목이 후보로 뜬 이유를 4개 지표로 나눠 봅니다 — 무엇이 강하고 무엇을 더 확인해야 하는지.",
+      detailsToggle: "지표 상세·순위·산식 펼치기 ▾",
+      detailsHint: "추세·거래활성도·밸류·위험조정 4지표와 전체·업종 순위, 점수 산식을 함께 봅니다.",
     },
     riskDetail: {
       title: "위험 상세",
@@ -108,6 +110,8 @@ export const stockDetailCopy = {
       poolSuffix: "stocks",
       guideLink: "Metrics guide →",
       lead: "These 4 metrics break down why this stock was surfaced — what's strong and what to check further.",
+      detailsToggle: "Metric detail, ranks & basis ▾",
+      detailsHint: "See all 4 metrics (trend, activity, value, risk-adjusted), overall and sector ranks, and how the score is built.",
     },
     riskDetail: {
       title: "Risk detail",

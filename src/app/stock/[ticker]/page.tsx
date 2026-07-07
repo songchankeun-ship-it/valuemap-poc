@@ -27,6 +27,7 @@ import { buildScoreBasis } from "@/lib/scoreBasis";
 import {
   StockBreadcrumb,
   MetricsSectionHeader,
+  MetricsDetailsSection,
   RiskDetailCard,
   DataBasisCard,
   SectorValueCard,
@@ -428,18 +429,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
       ) : null}
 
-      {/* 자체 지표 4종 (점수 카드) */}
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
-        <MetricsSectionHeader poolN={poolN} />
-        <MetricInsightCards metrics={[
-          { label: "추세", kind: "momentum", score: s.momentum, topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN },
-          { label: "거래활성도", kind: "flow", score: s.flow, topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN },
-          { label: "밸류", kind: "value", score: s.value, topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, per: s.per, pbr: s.pbr },
-          { label: "위험조정", kind: "vol", score: s.vol, topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN },
-        ]} />
-      </section>
-
-      {/* 초보자 해석 — 점수 → 행동 가이드 번역. 기술적 위험/데이터 카드보다 먼저 두어 쉬운 설명이 앞장서게 함 */}
+      {/* 초보자 해석 — 설계서 5-3/5-4: 요약 탭 첫 화면에서 '현재 해석 → 먼저 확인할 것'이 먼저 읽히게 차트 바로 뒤로 승격 */}
       <BeginnerReading s={{
         momentum: s.momentum,
         flow: s.flow,
@@ -450,17 +440,44 @@ export default async function StockDetailPage({ params }: PageProps) {
         roe: s.roe,
       }} />
 
-      {/* 위험 상세 — 위험조정 점수와 별개로 실제 변동성·낙폭 (설계서 6.4) */}
-      {vs && (vs.annualStd != null || vs.maxDrawdown != null) ? (
-        <RiskDetailCard
-          days={vs.days ?? 0}
-          annualStd={vs.annualStd ?? null}
-          maxDrawdown={vs.maxDrawdown ?? null}
-          worstDay={vs.worstDay ?? null}
-        />
-      ) : null}
+      {/* 지표 상세·순위·산식 — 설계서 5-4: 기본 접힘, '대표 신호(히어로) → 자세히 보기' 흐름.
+          4지표 카드·위험 상세·업종 대비 밸류·같은 업종 비교를 한 번에 펼친다(점수/순위 계산 무변경). */}
+      <MetricsDetailsSection>
+        {/* 자체 지표 4종 (점수 카드) */}
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+          <MetricsSectionHeader poolN={poolN} />
+          <MetricInsightCards metrics={[
+            { label: "추세", kind: "momentum", score: s.momentum, topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN },
+            { label: "거래활성도", kind: "flow", score: s.flow, topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN },
+            { label: "밸류", kind: "value", score: s.value, topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, per: s.per, pbr: s.pbr },
+            { label: "위험조정", kind: "vol", score: s.vol, topPct: topPctOf(s.vol, "vol"), rank: rankOf(s.vol, "vol"), total: poolN },
+          ]} />
+        </section>
 
-      {/* 데이터 기준 (설계서 12.2) */}
+        {/* 위험 상세 — 위험조정 점수와 별개로 실제 변동성·낙폭 (설계서 6.4) */}
+        {vs && (vs.annualStd != null || vs.maxDrawdown != null) ? (
+          <RiskDetailCard
+            days={vs.days ?? 0}
+            annualStd={vs.annualStd ?? null}
+            maxDrawdown={vs.maxDrawdown ?? null}
+            worstDay={vs.worstDay ?? null}
+          />
+        ) : null}
+
+        {/* 업종 대비 밸류 — 점수 산식(sectorValueScore) 무변경. 표시/문구만 SectorValueCard에서 분기 */}
+        <SectorValueCard
+          hasScore={sectorValue.score >= 0}
+          sectorName={sectorValue.sector}
+          peers={sectorValue.peers}
+          score={sectorValue.score}
+          poolN={poolN}
+          valueScore={s.value}
+        />
+
+        <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
+      </MetricsDetailsSection>
+
+      {/* 데이터 기준 (설계서 12.2) — 접힘 밖에 두어 기준일이 요약 탭 SSR 본문에 항상 남게 한다 */}
       <DataBasisCard
         priceAsOf={globalAsOf}
         priceLagAsOf={priceLagAsOf}
@@ -468,18 +485,6 @@ export default async function StockDetailPage({ params }: PageProps) {
         scoreDate={globalAsOf}
         formulaVersion={dataStatus.metricsVersionLabel}
       />
-
-      {/* 업종 대비 밸류 — 점수 산식(sectorValueScore) 무변경. 표시/문구만 SectorValueCard에서 분기 */}
-      <SectorValueCard
-        hasScore={sectorValue.score >= 0}
-        sectorName={sectorValue.sector}
-        peers={sectorValue.peers}
-        score={sectorValue.score}
-        poolN={poolN}
-        valueScore={s.value}
-      />
-
-      <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
 
               </>
             ),

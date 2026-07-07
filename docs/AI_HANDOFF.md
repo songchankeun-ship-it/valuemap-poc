@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T10:35:56.3904560+09:00
+Last updated: 2026-07-07T01:59:27.874Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore Sprint 3 stock-detail representative signals
-- Run: manual Codex session
-- Status: completed
-- Agent: codex
-- Note: Continued the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. First updated the existing heartbeat automation `overnight-ornscore-work-queue-runner` so future automatic runs start from commit `b185a97 [codex] improve Discover entry flow` and continue with Sprint 3+ instead of the stale Sprint 2 prompt. Implemented Sprint 3 stock-detail first slice: the top `현재 이 종목은` card now shows only one representative good point and one representative check point, with extra signals demoted to `외 n개는 지표 상세에서 확인`; the `탐색 우선도` card now shows composite score plus `대표 강점` and `먼저 볼 지표`; `/stock/[ticker]` now has a `최근 변화` summary below the hero using existing scoreHistory/priceHistory to show score delta, trading-activity delta, 3-month return, and a disclosure-tab link. No data/scoring/disclosure collection logic changed. Gates passed: `npx tsc --noEmit`, `verify_metrics.py`, `npm run build`, local route verify 9/9 on port 4461, `smoke:check --all` 23/23, `git diff --check`, U+FFFD scan, and in-app browser 390x844 + 1280x900 checks with horizontal overflow none and console errors 0. Next: Sprint 3 follow-up, compress the stock-detail summary tab so the price chart / 4-metric detail / beginner reading / data basis / sector compare order better matches guide section 5, preferably by making 4-metric detail a `representative signal -> expand detail` flow.
+- Task: 95 - [2026-07-07] ORNScore Sprint 3B - 종목 상세 요약/점수 접힘 정리
+- Run: 87
+- Status: failed
+- Agent: claude
+- Note: Planner process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-07 — Codex Sprint 3B stock-detail summary-tab compaction + collapsed metric detail
+- **Source**: Attached ORNScore design/UX overhaul guide ch.5 (§5-3/5-4/5-7/5-8). Follow-up to Sprint 3 on branch `ai-center/task-95-2026-07-07-ornscore-sprint-3b` (tip `4b77098`).
+- **Changes**: Reordered the `/stock/[ticker]` summary tab to `price chart -> BeginnerReading(현재 해석·먼저 확인할 것) -> collapsed metric detail -> DataBasisCard`. Promoted `BeginnerReading` right after the chart so the core interpretation card reads first. Added a new client `MetricsDetailsSection` (`<details>`, default closed) in `StockDetailIntro.tsx` that wraps the 4-metric cards (with `MetricsSectionHeader`), `RiskDetailCard`, `SectorValueCard`, and `SectorComparison`. New non-advisory copy `metricsSection.detailsToggle`/`detailsHint` (ko/en). `DataBasisCard` kept OUTSIDE the collapse so the base date stays in the summary-tab SSR HTML (protects `verify:routes`). No scoring/data/disclosure logic changed — presentation and order only.
+- **CTA**: Confirmed the hero `AddToCompareButton` is the canonical stock-compare CTA; the hero `다음으로 확인할 것` action row (공시/재무/점수 근거/업종 비교) is unchanged. `업종 비교 -> #summary` now lands on the summary tab where the metric-detail collapse is expandable (target still in DOM; accepted minor).
+- **Verification (all passed)**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138/0/0/Metrics 2.4; `npm run build` 0 (176 static pages); local prod 4463 `verify:routes` 9/9 (/stock/005930 keeps base date 2026.07.06) and `smoke:check --all` 23/23; `git diff --check` clean (LF->CRLF warnings only); touched-file U+FFFD scan 0. SSR extract of /stock/005930 confirms BeginnerReading precedes the collapse, DataBasisCard sits outside it, and there are 2 `<details>`.
+- **Limit**: In-app browser / Playwright pixel capture not performed in this environment; structural SSR ordering (chart -> 현재 해석 -> collapse -> data basis) confirms the first-screen priority. Local prod server on 4463 and temp logs cleaned up.
+- **Next**: Guide §5-5 metric `?` tooltips, or §5-6 recent-change 1d/1w/1m windows. Also candidate: auto-open the metric-detail `<details>` when the `업종 비교` anchor targets it.
+
 
 ### 2026-07-06 — Codex design tokens and component rules documentation
 - **Source**: External report sections 4-5 and the weekly task list item "디자인 토큰/컴포넌트 규칙 문서화".
