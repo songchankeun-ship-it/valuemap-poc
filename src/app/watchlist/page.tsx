@@ -6,6 +6,7 @@ import { compositeOf } from "@/lib/score";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
 import type { StockForMatch } from "@/lib/matchConfig";
 import { realStockPool } from "@/lib/realStocks";
+import { CompareTray } from "@/components/stock/CompareTray";
 
 export const metadata = {
   title: "관심 종목 — 오른스코어",
@@ -119,6 +120,10 @@ export default async function WatchlistPage() {
           </p>
         </div>
       </noscript>
+
+      {/* 설계서 §8-3·§12-5: 관심 종목에서 담은 종목을 비교함 N/4로 이어가는 트레이. 담긴 수가
+          0이면 자동 숨김이고, 제거 되돌리기 안내는 흐름 내 요소라 고정 트레이와 겹치지 않는다. */}
+      <CompareTray />
     </div>
   );
 }

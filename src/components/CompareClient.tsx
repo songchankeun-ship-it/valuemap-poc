@@ -430,10 +430,13 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             </div>
           </div>
 
-          {/* 4) 업종·테마로 종목 탐색 */}
-          <div className="pt-1">
-            <Link href="/stocks" prefetch={false} className={`inline-flex items-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}>
+          {/* 4) 종목 탐색 · 오늘 후보 진입점 (설계서 §8-2) — 검색이 막막할 때의 두 진입점 */}
+          <div className="pt-1 flex flex-col sm:flex-row gap-2">
+            <Link href="/stocks" prefetch={false} className={`inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}>
               업종·테마로 종목 탐색 →
+            </Link>
+            <Link href="/today" prefetch={false} className={`inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-blue-400 dark:hover:border-blue-600 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}>
+              오늘 후보에서 고르기 →
             </Link>
           </div>
         </div>

@@ -48,6 +48,9 @@ export default function BacktestPage() {
       <header>
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
         <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          더보기 &gt; 실험실의 참고용 시뮬레이션 도구입니다 · 현재 종합 점수 검증 결과는 아닙니다.
+        </p>
       </header>
 
       <BacktestLimitBadges />
