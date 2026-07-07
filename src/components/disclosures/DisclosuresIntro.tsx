@@ -35,8 +35,8 @@ export function DisclosuresIntroHeader() {
             className="text-[11px] rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5"
           />
         </div>
-        <p className="text-sm text-gray-500 dark:text-zinc-400">
-          {t.descLead}<strong>{t.descStrong}</strong>{t.descTail}
+        <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+          {t.desc}
         </p>
       </header>
 

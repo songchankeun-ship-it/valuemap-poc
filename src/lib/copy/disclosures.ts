@@ -14,9 +14,7 @@ export const disclosuresIntroCopy = {
     returnWatchlist: "관심 종목",
     limitedBadge: "제한 수집",
     title: "공시 신호",
-    descLead: "최근 7일 코스피·코스닥 공시에서 자체 추출한 ",
-    descStrong: "5가지 시장 신호",
-    descTail: ". 자기주식 취득, 임원·주요주주 보유 변동, 손익 정정, 대형 계약, 유증/CB.",
+    desc: "최근 공시 중 확인이 필요한 내용을 유형별로 정리했어요. 투자 판단 전 반드시 원문을 확인하세요.",
     collapseSummary: "수집 범위 안내 — 최신 200건 내 분석",
     collapseBody:
       "선택한 기간 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다. 표시는 최대 50건이며, 선택한 기간의 전체 공시가 포함되지 않아 일부 공시가 누락될 수 있습니다.",
@@ -30,10 +28,7 @@ export const disclosuresIntroCopy = {
     returnWatchlist: "Watchlist",
     limitedBadge: "Limited collection",
     title: "Disclosure signals",
-    descLead: "From the last 7 days of KOSPI·KOSDAQ disclosures, we extract ",
-    descStrong: "5 market signals",
-    descTail:
-      ": treasury share buybacks, insider/major shareholder holdings changes, earnings corrections, large contracts, and rights/CB issuance.",
+    desc: "We grouped recently collected filings that need review by type. Always check the original filing before making any decision.",
     collapseSummary: "Collection scope — analyzed within the latest 200 filings",
     collapseBody:
       "These are not all disclosures in the selected period. They are signals auto-extracted from the latest 100 KOSPI and 100 KOSDAQ filings (200 total). At most 50 are shown, and because not every filing in the period is included, some disclosures may be missing.",
@@ -78,6 +73,14 @@ export const disclosureExplorerCopy = {
     scopeAllDesc: " = 분석 대상 외 종목까지 포함한 DART 전체 공시",
     // 타입 필터 '전체'
     filterAll: (count: number) => `전체 ${count}`,
+    // 상단 탭(§7-3)
+    tabAll: "전체",
+    tabWatchlist: "내 관심종목",
+    // 제한 안내 배너(§7-5) — 큰 안내 대신 작은 info 배너
+    limitBanner: "최근 수집 공시 기준으로 표시돼요. 전체 시장 공시는 DART 원문에서 확인하세요.",
+    // 관심종목 탭 빈 상태
+    watchlistEmpty: "관심 종목에 담아두면 여기서 공시를 모아볼 수 있어요.",
+    watchlistEmptyCta: "종목 담으러 가기",
     // 카드
     autoClassified: "자동분류",
     directionBuy: "장내매수 단서",
@@ -150,6 +153,11 @@ export const disclosureExplorerCopy = {
     scopeAllStrong: "Whole market",
     scopeAllDesc: " = all DART disclosures, including stocks outside the analyzed set",
     filterAll: (count: number) => `All ${count}`,
+    tabAll: "All",
+    tabWatchlist: "My watchlist",
+    limitBanner: "Showing recently collected filings; check DART for the full market.",
+    watchlistEmpty: "Add stocks to your watchlist to gather their filings here.",
+    watchlistEmptyCta: "Go add stocks",
     autoClassified: "Auto-classified",
     directionBuy: "On-market buy clue",
     directionSell: "On-market sell·disposal clue",

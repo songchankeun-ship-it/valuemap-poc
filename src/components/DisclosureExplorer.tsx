@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox } from "lucide-react";
+import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox, Info } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
-import { DisclosureSummaryCards } from "./disclosures/DisclosureSummaryCards";
 import { findGuideByLabel } from "@/lib/signalGuide";
 import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
-import { addToWatchlist, removeFromWatchlist, isInWatchlist } from "@/lib/watchlist";
+import { addToWatchlist, removeFromWatchlist, isInWatchlist, getWatchlist } from "@/lib/watchlist";
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosureExplorerCopy } from "@/lib/copy/disclosures";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
@@ -188,12 +187,30 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [days, setDays] = useState(initialData?.days ?? 7);
+  // 상단 탭: "all" | "watchlist" | 공시 유형(signalType). (설계서 §7-3)
   const [filterType, setFilterType] = useState<string>("all");
   // 분석 대상만 / 전체 시장 (설계서 §15 / [P1-4]). 기본은 '전체 시장' — 기존 동작 보존.
   const [scope, setScope] = useState<"universe" | "all">("all");
+  // '내 관심종목' 탭용 — 관심 종목 티커 집합. watchlist-changed 이벤트로 동기화.
+  const [watchTickers, setWatchTickers] = useState<Set<string>>(new Set());
   // '다시 시도' 시 이 값을 증가시켜 fetch effect를 재실행한다.
   const [reloadKey, setReloadKey] = useState(0);
   const firstRender = useRef(true);
+
+  useEffect(() => {
+    let mounted = true;
+    function load() {
+      getWatchlist().then((items) => {
+        if (mounted) setWatchTickers(new Set(items.map((i) => i.ticker)));
+      });
+    }
+    load();
+    window.addEventListener("watchlist-changed", load);
+    return () => {
+      mounted = false;
+      window.removeEventListener("watchlist-changed", load);
+    };
+  }, []);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -263,20 +280,27 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   }
 
   const grouped = groupSignals(data.signals);
-  // 분석 대상만 보기: 유니버스에 든 종목 공시만. 카운트·배지도 같은 범위로 일관.
-  const scoped = scope === "all" ? grouped : grouped.filter((g) => g.stock_code && universeSet.has(g.stock_code));
+  const isWatchTab = filterType === "watchlist";
+  // 유형/전체 탭의 기준 범위: 분석 대상만 / 전체 시장. '내 관심종목' 탭은 범위 토글과 무관하게 관심 집합만.
+  const typeScopeBase = scope === "all" ? grouped : grouped.filter((g) => g.stock_code && universeSet.has(g.stock_code));
   const universeCount = grouped.filter((g) => g.stock_code && universeSet.has(g.stock_code)).length;
-  const filtered = filterType === "all" ? scoped : scoped.filter((g) => g.signalType === filterType);
-  const signalCounts = scoped.reduce<Record<string, number>>((acc, g) => {
+  const watchlistCount = grouped.filter((g) => g.stock_code && watchTickers.has(g.stock_code)).length;
+  // 유형별 카운트(탭 배지) — 현재 범위 기준으로 일관.
+  const signalCounts = typeScopeBase.reduce<Record<string, number>>((acc, g) => {
     acc[g.signalType] = (acc[g.signalType] || 0) + 1;
     return acc;
   }, {});
+  // 표시할 카드 목록: 관심 탭이면 관심 집합, 아니면 범위 기준 후 유형 필터.
+  const scoped = isWatchTab
+    ? grouped.filter((g) => g.stock_code && watchTickers.has(g.stock_code))
+    : typeScopeBase;
+  const filtered = isWatchTab || filterType === "all" ? scoped : scoped.filter((g) => g.signalType === filterType);
 
   return (
     <div className="space-y-4">
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">{t.title}<span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 whitespace-nowrap"><span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />{t.within200}</span></h2>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.title}</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
             {t.summary(days, data.signalCount, scope === "all", scoped.length)}
           </div>
@@ -289,12 +313,14 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           parts.push(when ?? t.collectedAtUnknown);
           if (src) parts.push(src);
           return (
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 tabular-nums">{parts.join(" · ")}</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 tabular-nums">{parts.join(" · ")}</p>
           );
         })()}
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
-          {t.infoNote(days)}
-        </p>
+        {/* 제한 안내(§7-5) — 큰 영역 대신 작은 info 배너. 자세한 수집 범위는 상단 인트로의 접힘 안내로. */}
+        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
+          <span className="break-words">{t.limitBanner}</span>
+        </div>
 
         <div className="flex gap-2 flex-wrap mb-3">
           {[3, 7, 14, 30].map((d) => (
@@ -310,120 +336,143 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               {t.dayUnit(d)}
             </button>
           ))}
-          {/* 기간 버튼 옆 반복 배지 — 기간을 바꿔도 '선택 기간 전체 공시'가 아님을 다시 고지 */}
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />{t.periodScopeBadge}
-          </span>
         </div>
 
-        {/* 분석 대상만 / 전체 시장 (설계서 §15) — 홈은 분석 대상 중심, 공시 페이지는 전체 시장 탐색까지 */}
-        <div className="mb-3">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{t.scopeLabel}</span>
-            <div
-              role="group"
-              aria-label={t.scopeGroupAria}
-              className="inline-flex rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 p-0.5"
-            >
-              {([
-                { key: "all", label: t.scopeAll, count: grouped.length },
-                { key: "universe", label: t.scopeUniverse, count: universeCount },
-              ] as const).map((opt) => {
-                const active = scope === opt.key;
-                return (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => setScope(opt.key)}
-                    aria-pressed={active}
-                    className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " + FOCUS_RING + " " +
-                      (active
-                        ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600"
-                        : "bg-transparent text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100")}
-                  >
-                    {opt.label}
-                    <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
-                      (active
-                        ? "bg-white/20 text-white"
-                        : "bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300")}>
-                      {opt.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed break-words">
-            <strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeUniverseStrong}</strong>{t.scopeUniverseDesc}<strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeAllStrong}</strong>{t.scopeAllDesc}
-          </p>
+        {/* 상단 탭(§7-3) — 전체 / 내 관심종목 / 유형별. 유형색은 중립(호재·악재 배제), 가로 스크롤. */}
+        <div
+          role="group"
+          aria-label={t.title}
+          className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-1 mb-3"
+        >
+          {(() => {
+            const tabs: { key: string; label: string; count: number; dot?: string }[] = [
+              { key: "all", label: t.tabAll, count: typeScopeBase.length },
+              { key: "watchlist", label: t.tabWatchlist, count: watchlistCount },
+              ...DISCLOSURE_TYPE_ORDER.map((type) => ({
+                key: type,
+                label: typeMetaOf(type).shortLabel,
+                count: signalCounts[type] ?? 0,
+                dot: typeMetaOf(type).dot,
+              })),
+            ];
+            return tabs.map((tab) => {
+              const active = filterType === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setFilterType(tab.key)}
+                  aria-pressed={active}
+                  className={"inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full border text-xs font-medium whitespace-nowrap shrink-0 transition " + FOCUS_RING + " " +
+                    (active
+                      ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                      : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
+                >
+                  {tab.dot ? (
+                    <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (active ? "bg-white/70 dark:bg-zinc-900/70" : tab.dot)} aria-hidden="true" />
+                  ) : null}
+                  {tab.label}
+                  <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
+                    (active
+                      ? "bg-white/20 text-white dark:bg-zinc-900/20 dark:text-zinc-900"
+                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400")}>
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            });
+          })()}
         </div>
 
-        <div className="flex gap-1.5 flex-wrap">
-          <button
-            type="button"
-            onClick={() => setFilterType("all")}
-            className={"text-[11px] px-2.5 py-1 rounded-full border transition " + FOCUS_RING + " " +
-              (filterType === "all"
-                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
-          >
-            {t.filterAll(scoped.length)}
-          </button>
-          {DISCLOSURE_TYPE_ORDER.map((type) => {
-            const meta = typeMetaOf(type);
-            const count = signalCounts[type] ?? 0;
-            const active = filterType === type;
-            return (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setFilterType(type)}
-                disabled={count === 0}
-                className={"inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border transition " + FOCUS_RING + " " +
-                  (active
-                    ? meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder + " font-semibold"
-                    : count === 0
-                    ? "bg-white dark:bg-zinc-900 text-zinc-300 dark:text-zinc-600 border-zinc-100 dark:border-zinc-800 cursor-default"
-                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400")}
+        {/* 분석 대상만 / 전체 시장 (설계서 §15) — '내 관심종목' 탭에서는 숨김(관심 집합이 이미 범위) */}
+        {!isWatchTab ? (
+          <div className="mb-1">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{t.scopeLabel}</span>
+              <div
+                role="group"
+                aria-label={t.scopeGroupAria}
+                className="inline-flex rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 p-0.5"
               >
-                <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (count === 0 ? "bg-zinc-300 dark:bg-zinc-600" : meta.dot)} aria-hidden="true" />
-                {meta.shortLabel} {count}
-              </button>
-            );
-          })}
-        </div>
+                {([
+                  { key: "all", label: t.scopeAll, count: grouped.length },
+                  { key: "universe", label: t.scopeUniverse, count: universeCount },
+                ] as const).map((opt) => {
+                  const active = scope === opt.key;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setScope(opt.key)}
+                      aria-pressed={active}
+                      className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " + FOCUS_RING + " " +
+                        (active
+                          ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600"
+                          : "bg-transparent text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100")}
+                    >
+                      {opt.label}
+                      <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
+                        (active
+                          ? "bg-white/20 text-white"
+                          : "bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300")}>
+                        {opt.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed break-words">
+              <strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeUniverseStrong}</strong>{t.scopeUniverseDesc}<strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeAllStrong}</strong>{t.scopeAllDesc}
+            </p>
+          </div>
+        ) : null}
       </header>
-
-      <DisclosureSummaryCards counts={signalCounts} days={days} total={scoped.length} />
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
-            <Inbox className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} aria-hidden="true" />
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-words">{t.empty}</p>
-            {filterType !== "all" || scope === "universe" ? (
+          isWatchTab && watchTickers.size === 0 ? (
+            // '내 관심종목' 탭 · 관심 종목 자체가 없음 → 담기 유도
+            <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
+              <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} aria-hidden="true" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-words">{t.watchlistEmpty}</p>
               <div className="flex justify-center flex-wrap gap-2">
-                {scope === "universe" ? (
-                  <button
-                    type="button"
-                    onClick={() => setScope("all")}
-                    className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ${FOCUS_RING}`}
-                  >
-                    {t.emptyWidenScope}
-                  </button>
-                ) : null}
-                {filterType !== "all" ? (
-                  <button
-                    type="button"
-                    onClick={() => setFilterType("all")}
-                    className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
-                  >
-                    {t.emptyReset}
-                  </button>
-                ) : null}
+                <a
+                  href="/watchlist"
+                  className={`inline-flex items-center gap-1 text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ${FOCUS_RING}`}
+                >
+                  {t.watchlistEmptyCta} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
+                </a>
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : (
+            <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
+              <Inbox className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} aria-hidden="true" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-words">{t.empty}</p>
+              {filterType !== "all" || (scope === "universe" && !isWatchTab) ? (
+                <div className="flex justify-center flex-wrap gap-2">
+                  {scope === "universe" && !isWatchTab ? (
+                    <button
+                      type="button"
+                      onClick={() => setScope("all")}
+                      className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md bg-blue-600 text-white hover:bg-blue-700 transition ${FOCUS_RING}`}
+                    >
+                      {t.emptyWidenScope}
+                    </button>
+                  ) : null}
+                  {filterType !== "all" ? (
+                    <button
+                      type="button"
+                      onClick={() => setFilterType("all")}
+                      className={`inline-flex items-center text-xs px-3.5 py-2 min-h-[44px] rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+                    >
+                      {t.emptyReset}
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          )
         ) : (
           filtered.map((g) => {
             const meta = typeMetaOf(g.signalType);
@@ -495,8 +544,17 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <span className="break-words">{cautionLine}</span>
                 </div>
 
-                {/* 액션 행 */}
+                {/* 액션 행 (§7-4): 종목 보기 → DART 원문 → 관심 */}
                 <div className="flex items-center gap-2 flex-wrap">
+                  {g.stock_code && universeSet.has(g.stock_code) ? (
+                    <button
+                      type="button"
+                      onClick={() => goToStock(g.stock_code!)}
+                      className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
+                    >
+                      {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => openExternal(g.representative.disclosure.url)}
@@ -505,16 +563,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                   </button>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => goToStock(g.stock_code!)}
-                        className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
-                      >
-                        {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-                      </button>
-                      <WatchlistToggle code={g.stock_code} t={t} />
-                    </>
+                    <WatchlistToggle code={g.stock_code} t={t} />
                   ) : null}
                 </div>
                 {/* 상태 배지는 '원문 보기' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
