@@ -99,12 +99,15 @@ export function WatchlistClient({
   tickerToSignal = {},
   tickerToDelta = {},
   isLoggedIn = false,
+  exampleStocks = [],
 }: {
   allStocks: StockInfo[];
   matchPool?: StockForMatch[];
   tickerToSignal?: Record<string, SignalInfo>;
   tickerToDelta?: Record<string, number>;
   isLoggedIn?: boolean;
+  // 관심 종목이 비어 있을 때만 쓰는 예시 종목(서버에서 실제 필드로 결정적 선택 · isSuspect 제외 · 매수·매도 추천 아님)
+  exampleStocks?: { ticker: string; name: string; reason: string }[];
 }) {
   const { locale } = useLanguage();
   const authCopy = commonCopy[locale].auth;
@@ -252,6 +255,14 @@ export function WatchlistClient({
     setUndoStock(null);
     if (undoTimer.current) clearTimeout(undoTimer.current);
     await addToWatchlist(target.ticker);
+  }
+
+  // 예시 종목 한 번에 담기 — 각 addToWatchlist가 watchlist-changed를 쏴서 목록이 제자리에서 다시 그려진다.
+  // 저장 로직(로컬/Supabase 분기·중복 무시)은 watchlist.ts 그대로 재사용하고, 여기선 순차 호출만 한다.
+  async function addExamples() {
+    for (const ex of exampleStocks) {
+      await addToWatchlist(ex.ticker);
+    }
   }
 
   function clearRecent() {
@@ -555,32 +566,67 @@ export function WatchlistClient({
           <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
             <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
             <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5">아직 담은 종목이 없어요.</p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed">
-              오늘 후보에서 관심 있는 종목을 담아두면 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화</strong>와 <strong className="text-zinc-700 dark:text-zinc-300">공시 신호</strong>를 한곳에서 볼 수 있어요.
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-keep">
+              관심에 담으면 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화 · 공시 신호 · 저평가 여부</strong>를 이 화면에서 바로 확인할 수 있어요.
             </p>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
-              <Link href="/today" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}>
-                오늘 후보에서 담기 <ArrowRight className="w-3.5 h-3.5" />
+              {/* 1탭으로 아래 예시 3개를 모두 담아 빈 화면을 바로 체험 상태로 전환 */}
+              {exampleStocks.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => { void addExamples(); }}
+                  className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}
+                >
+                  <Heart className="w-3.5 h-3.5" fill="currentColor" /> 예시 종목 {exampleStocks.length}개 담아보기
+                </button>
+              ) : null}
+              <Link href="/today" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
+                오늘 뜬 종목 담기 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
                 종목 직접 찾기
               </Link>
-              {/* 최근 본 종목이 있을 때만 — 아래 최근 본 종목 섹션으로 스크롤(중복 목록 없이 흐름 연결) */}
-              {recent.length > 0 ? (
-                <a href="#recent-views" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
-                  <Clock className="w-3.5 h-3.5" /> 최근 본 종목 보기
+            </div>
+            {/* 담기 자체가 이 기기에 남는다는 사실을 CTA 곁에서 한 줄로 안심시켜 이탈을 줄임(로그인 안내와 톤 일치) */}
+            <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">담아두면 이 기기에 저장돼 다음 방문에도 남아요.</p>
+            {/* 관심 종목 담는 법 — 최근 본 종목이 있을 때만 아래 섹션으로 스크롤(중복 목록 없이 흐름 연결) */}
+            {recent.length > 0 ? (
+              <div className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+                관심 종목 담는 법이 낯설다면{" "}
+                <a href="#recent-views" className="inline-flex items-center gap-0.5 font-medium text-blue-600 dark:text-blue-400 hover:underline align-baseline">
+                  <Clock className="w-3 h-3" /> 최근 본 종목
                 </a>
-              ) : null}
-            </div>
-            <div className="my-4 text-left max-w-md mx-auto">
-              <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">바로 검색해서 담기</div>
+                에서 다시 열어 담아보세요.
+              </div>
+            ) : null}
+            {/* 예시 종목 — 서버에서 실제 필드로 뽑은 3개. 각 항목이 한 줄 근거와 1탭 담기 버튼을 가진다(매수·매도 추천 아님) */}
+            {exampleStocks.length > 0 ? (
+              <div className="mt-5 text-left max-w-md mx-auto">
+                <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">담아볼 만한 예시</div>
+                <ul className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {exampleStocks.map((ex) => (
+                    <li key={ex.ticker} className="flex items-center justify-between gap-2 px-3 py-2.5">
+                      <Link href={`/stock/${ex.ticker}`} className="min-w-0 flex-1 group">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">{ex.name}</div>
+                        <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{ex.reason}</div>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => { void addToWatchlist(ex.ticker); }}
+                        className={`shrink-0 inline-flex items-center gap-1 min-h-[44px] px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:border-pink-400 dark:hover:border-pink-600 hover:text-pink-600 dark:hover:text-pink-400 transition ${FOCUS_RING}`}
+                        aria-label={`${ex.name} 관심 종목에 담기`}
+                      >
+                        <Heart className="w-3.5 h-3.5" /> 관심 종목에 담기
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">예시는 참고용이며 매수·매도 추천이 아닙니다.</p>
+              </div>
+            ) : null}
+            <div className="mt-5 text-left max-w-md mx-auto">
+              <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">검색해서 관심 종목에 담기</div>
               <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
-            </div>
-            <div className="mt-4 flex items-center justify-center gap-1.5 flex-wrap">
-              <span className="text-[11px] text-zinc-400 dark:text-zinc-500">많이 보는 종목:</span>
-              {[["005930", "삼성전자"], ["000660", "SK하이닉스"], ["005380", "현대차"]].map(([t, n]) => (
-                <Link key={t} href={"/stock/" + t} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-400 dark:hover:border-pink-600 transition">{n}</Link>
-              ))}
             </div>
           </div>
         ) : (

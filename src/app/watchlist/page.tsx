@@ -5,7 +5,8 @@ import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.
 import { compositeOf } from "@/lib/score";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
 import type { StockForMatch } from "@/lib/matchConfig";
-import { realStockPool } from "@/lib/realStocks";
+import { realStockPool, type RealStock } from "@/lib/realStocks";
+import { isSuspect } from "@/lib/dataQuality";
 import { CompareTray } from "@/components/stock/CompareTray";
 
 export const metadata = {
@@ -62,6 +63,36 @@ export default async function WatchlistPage() {
     themes: s.themes,
   }));
 
+  // 관심 종목이 비어 있을 때 보여줄 예시 종목 — 실제 stocks.json 필드만으로 결정적으로 선택한다.
+  // 신규 지표·점수 계산은 없고(compositeOf/기존 지표 재사용), isSuspect(이상데이터)는 절대 제외한다.
+  // 서로 다른 3개를 각각 한 가지 근거(종합 상위·저평가·추세 상위)로 뽑아 참고용 예시로만 노출한다(매수·매도 추천 아님).
+  const exampleCandidates = realStockPool.filter(
+    (s) => s.compositeScore !== undefined && !isSuspect(s),
+  );
+  const exampleStocks: { ticker: string; name: string; reason: string }[] = [];
+  const usedExampleTickers = new Set<string>();
+  const pickExample = (sorted: RealStock[], reason: (s: RealStock) => string) => {
+    for (const s of sorted) {
+      if (usedExampleTickers.has(s.ticker)) continue;
+      usedExampleTickers.add(s.ticker);
+      exampleStocks.push({ ticker: s.ticker, name: s.name, reason: reason(s) });
+      return;
+    }
+  };
+  // 동점은 ticker 오름차순으로 안정화해 렌더가 매번 같도록(결정적) 한다.
+  const byComposite = [...exampleCandidates].sort(
+    (a, b) => compositeOf(b) - compositeOf(a) || a.ticker.localeCompare(b.ticker),
+  );
+  pickExample(byComposite, (s) => `종합 ${Math.round(compositeOf(s))}점 · 상위권`);
+  const byValue = [...exampleCandidates]
+    .filter((s) => s.value > 0 && s.per > 0)
+    .sort((a, b) => b.value - a.value || a.ticker.localeCompare(b.ticker));
+  pickExample(byValue, (s) => `저평가 · 밸류 ${Math.round(s.value)}점`);
+  const byMomentum = [...exampleCandidates]
+    .filter((s) => s.momentum > 0)
+    .sort((a, b) => b.momentum - a.momentum || a.ticker.localeCompare(b.ticker));
+  pickExample(byMomentum, (s) => `추세 상위 · 모멘텀 ${Math.round(s.momentum)}점`);
+
   const tickerToDelta = await withTimeout(
     getScoreChangesBatch(allStocks.map((s) => s.ticker)),
     4000,
@@ -98,18 +129,18 @@ export default async function WatchlistPage() {
           담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요. 오늘의 변화부터 훑고, 정렬·비교로 이어보세요.
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} />
+      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} />
 
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면/로딩 고착 방지 fallback */}
       <noscript>
         <div className="mt-2 bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
           <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5">아직 담은 종목이 없어요.</p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed">
-            오늘 후보에서 관심 있는 종목을 담아두면 점수 변화와 공시 신호를 한곳에서 볼 수 있어요.
+            관심에 담으면 점수 변화 · 공시 신호 · 저평가 여부를 이 화면에서 바로 확인할 수 있어요.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
             <a href="/today" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold">
-              오늘 후보에서 담기
+              오늘 뜬 종목 담기
             </a>
             <a href="/stocks" className="flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium">
               종목 직접 찾기

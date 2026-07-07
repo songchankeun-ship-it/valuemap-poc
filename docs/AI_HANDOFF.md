@@ -1578,3 +1578,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`direction`·cron/auth·`metricsVersion` 무변경. 기존 copy 키는 문구만 확장(신규 키 `confidenceGloss` 추가), 금칙어 신규 도입 0(부정문 프레이밍 유지).
 - **게이트(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138종목·오류0·금칙0·Metrics 2.4 · `npm run build` 0(SSG) · `smoke:check --base http://localhost:4455 --all` 12/12 200 · SSR 스팟체크: 정상(005930) "이상값 점검 통과"+신규 풀이+강화 disclaimer, suspect(247540, PER 364≥300) "이상값 점검 중"+"점검 중인 종목은 임시 점수" 풀이 렌더 확인. 리스너 PID 31908만 taskkill.
 - **남은 소유자**: EN 언어 토글 실확인·실기기 390px 육안은 운영자 게이트(언어 전환 클라이언트·Playwright 미구성). 로컬 커밋만·푸시 미수행·main 무변경.
+
+### Task 103 — 관심 종목 빈 상태 예시 원클릭 강화 · 근거 노출 · 담기 문구 통일 (2026-07-07, [codex])
+- **Scope**: 관심 종목 빈 화면을 "예시 3종 + 근거 + 원클릭 담기"로 재구성해 첫 방문 이탈 지점을 메움. 표시/진입 전용 — `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·DART·`watchlist.ts` 저장 로직·`metricsVersion` 무변경. 브랜치 `ai-center/task-103-2026-07-07-ornscore-p0b`(base·main HEAD `4b89f86`). 편집 2파일: `src/app/watchlist/page.tsx`·`src/components/WatchlistClient.tsx`.
+- **변경**:
+  - **예시 서버 선택(watchlist/page.tsx)**: `today/page.tsx` 패턴 재사용 — `realStockPool` `!isSuspect` 필터 후 종합 상위/저평가(밸류)/추세 상위(모멘텀) 서로 다른 3종을 결정적(동점 ticker 오름차순) 선택, `exampleStocks:{ticker,name,reason}[]` 프롭 전달. 로컬 데이터 결과: GS(078930)·DGB금융지주(139130)·삼성전기(009150), 3종 distinct·suspect 아님. 신규 지표 0.
+  - **빈 상태(WatchlistClient.tsx)**: 부제 "관심에 담으면 점수 변화·공시 신호·저평가 여부를 이 화면에서 바로 확인" + CTA 3개(`예시 종목 3개 담아보기`=1탭 `addExamples()` 순차 담기·`오늘 뜬 종목 담기`→/today·`종목 직접 찾기`→/stocks) + 예시 3종 리스트(항목별 근거 + 개별 `관심 종목에 담기`) + 로컬 저장 안심줄 + "예시는 참고용" caveat. 근거 없던 "많이 보는 종목" 하드코딩 칩(삼성전자/SK하이닉스/현대차) 제거. noscript 폴백도 새 카피/CTA로 정합.
+  - **담기 문구 통일**: 빈 상태 담기 어포던스 전부 "관심 종목에 담기"로 통일.
+- **워치리스트 vs 관심 종목 용어 결정**: 사용자 노출 표기는 "관심 종목"으로 일관. 상세 페이지 `AddToWatchlistButton.tsx`("관심 종목"/"관심 등록됨")는 PDF가 전역 리네이밍을 명시하지 않아 **무변경**(추측 회피) — 내부 코드/localStorage 키(`ornscore_watchlist`)만 watchlist 명칭 유지. 전역 리네이밍은 소유자 지시 있을 때만.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·cron/auth·`metricsVersion` 무변경. 신규 프롭 1개(`exampleStocks`)·클라이언트 핸들러 1개(`addExamples`)만 추가, 저장/제거/undo/비교 경로 재사용.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean · `npm run build` 0(SSG, `/watchlist` 11.2 kB) · 로컬 prod 4487 `/watchlist` 200(SSR h1·noscript 새 부제/CTA·RSC 예시 근거 82/98/99·U+FFFD 0) · 예시 선택 파이썬 독립 재현으로 distinct·`isSuspect=False` 교차검증. 리스너 PID 1388만 taskkill.
+- **남은 소유자**: 클릭 후 목록 전환·`ornscore_watchlist` 재방문 잔존·개별 담기·실행취소 undo 실거동과 실기기 390×844 육안은 운영자 게이트(Playwright 미구성, `docs/ornscore-real-device-390px-qa-2026-07-06.md` 기준). 로컬 커밋만·push 미수행·main 무변경.
