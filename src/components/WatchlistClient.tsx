@@ -260,6 +260,28 @@ export function WatchlistClient({
     else flatCount += 1;
   }
 
+  // 오늘 변화가 있는 종목 — 점수 델타 또는 공시 신호가 있는 관심 종목만(참고 표시, 매매 추천 아님)
+  // 실제 존재하는 필드(종합 점수 델타·공시 신호)만 사용하고 지표별 델타는 만들지 않는다.
+  const changed = watchlist
+    .map((item) => {
+      const info = allStocks.find((s) => s.ticker === item.ticker);
+      const rawDelta = tickerToDelta[item.ticker];
+      const delta = rawDelta === undefined ? 0 : Math.round(rawDelta);
+      return {
+        ticker: item.ticker,
+        name: info?.name ?? item.ticker,
+        delta,
+        signal: tickerToSignal[item.ticker],
+      };
+    })
+    .filter((c) => c.delta !== 0 || c.signal !== undefined)
+    .sort((a, b) => {
+      const byDelta = Math.abs(b.delta) - Math.abs(a.delta);
+      if (byDelta !== 0) return byDelta;
+      return (b.signal?.strength ?? 0) - (a.signal?.strength ?? 0);
+    })
+    .slice(0, 3);
+
   const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
 
   return (
@@ -367,6 +389,45 @@ export function WatchlistClient({
           ) : null}
         </div>
 
+        {/* 오늘 변화가 있는 종목 — 관심 종목이 있을 때 목록보다 먼저, 오늘의 변화부터 훑도록 */}
+        {watchlist.length > 0 ? (
+          changed.length > 0 ? (
+            <div className="mb-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
+              <div className="mb-0.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 변화가 있는 종목</div>
+              <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 break-words">담아둔 종목의 점수·공시 변화를 모아봤어요.</p>
+              <ul className="space-y-1">
+                {changed.map((c) => (
+                  <li key={c.ticker}>
+                    <Link
+                      href={`/stock/${c.ticker}`}
+                      className="flex items-center justify-between gap-2 rounded-md px-2 py-2 min-h-[44px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group"
+                    >
+                      <span className="min-w-0 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {c.name}
+                      </span>
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        {c.signal ? (
+                          <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[c.signal.signalType] || "bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700")}>
+                            🔔 {c.signal.signalLabel}
+                          </span>
+                        ) : null}
+                        {c.delta !== 0 ? (
+                          <span className={"inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums px-1.5 py-0.5 rounded " + (c.delta > 0 ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" : "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400")}>
+                            {c.delta > 0 ? "▲" : "▼"}{Math.abs(c.delta)}
+                          </span>
+                        ) : null}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-words">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</p>
+            </div>
+          ) : (
+            <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400 break-words">오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요.</p>
+          )
+        ) : null}
+
         {watchlist.length === 0 ? (
           <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
             <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
@@ -381,6 +442,12 @@ export function WatchlistClient({
               <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
                 종목 직접 찾기
               </Link>
+              {/* 최근 본 종목이 있을 때만 — 아래 최근 본 종목 섹션으로 스크롤(중복 목록 없이 흐름 연결) */}
+              {recent.length > 0 ? (
+                <a href="#recent-views" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
+                  <Clock className="w-3.5 h-3.5" /> 최근 본 종목 보기
+                </a>
+              ) : null}
             </div>
             <div className="my-4 text-left max-w-md mx-auto">
               <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">바로 검색해서 담기</div>
@@ -537,7 +604,7 @@ export function WatchlistClient({
       </section>
 
       {/* 최근 본 종목 */}
-      <section>
+      <section id="recent-views" className="scroll-mt-20">
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
             <Clock className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />

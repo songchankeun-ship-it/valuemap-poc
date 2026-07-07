@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-07 · [codex] Sprint 4A 관심종목 매일 루틴 화면화 (설계서 §6-4/§6-5)
+- **범위**: 관심종목 화면을 단순 저장함이 아니라 "오늘의 변화부터 훑는 루틴 화면"으로 정리. 표시 전용 — 데이터/점수/DART/watchlist 저장 로직 무변경. 편집 파일 단일(`src/components/WatchlistClient.tsx`), `page.tsx`가 이미 `tickerToDelta`/`tickerToSignal`/`allStocks`/`recent`를 넘겨 서버 변경 불필요. `4b77098` 이후 브랜치 `ai-center/task-97-2026-07-07-ornscore-sprint-4a`.
+- **오늘 변화 요약(6-4)**: `watchlist.length > 0`일 때만, 목록 `<ul>` 위에 새 블록 추가 → 오늘 바뀐 종목부터 먼저 보이게. `changed` = `Math.round(델타)!==0` 또는 공시 신호 있는 관심 종목, `abs(델타)` 내림차순 → 신호 `strength` 내림차순 정렬 후 상위 3개. 각 행: 종목명 링크 + 공시 신호 칩(`SIGNAL_TONE` 재사용) + 점수 델타 칩(▲빨강/▼파랑, 화살표+숫자 동반 = 색만으로 구분 안 함). 헤더 "오늘 변화가 있는 종목" + 부제 "담아둔 종목의 점수·공시 변화를 모아봤어요." + 기존 면책 "점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.". 변화 없을 때는 저강조 중립 문구("오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요.")로 상단이 비지 않게. "내 현황" 상승/하락/보합 카운트는 그대로.
+- **데이터 정직성**: 실제 존재하는 필드(종합 점수 델타·공시 신호)만 노출. 지표별 가짜 델타("거래활성도 +18") 생성 금지 — 설계서 예시는 예시일 뿐. 중립 변화/확인 프레이밍, 금칙어 0.
+- **빈 상태 3-흐름(6-5)**: 기존 1차 "오늘 후보에서 담기" + 2차 "종목 직접 찾기" + 인라인 검색 유지, `recent.length > 0`일 때만 3번째 "최근 본 종목 보기" 추가. 중복 목록 없이 기존 최근 본 종목 섹션(`id="recent-views"`)으로 앵커 스크롤(`scroll-mt-20`). 로컬 저장 안내·로그인 링크 그대로, 로그인 강요 팝업 없음. `page.tsx` `<noscript>` 그대로(1차 CTA 문구 무변경).
+- **보존**: 담기/제거 확인·5초 실행취소 토스트·간단/분석 토글·저장 필터 섹션·`watchlist-changed`/`recent-views-changed` 리스너·`src/lib/watchlist.ts` 무변경.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138/0오류/0금칙/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(138 SSG) · local prod 4488 `verify:routes` 9/9(기준일 2026.07.06)·`smoke:check --all` 23/23 · 번들 청크에 "오늘 변화가 있는 종목"·"최근 본 종목 보기" 포함 · 편집 파일 금칙어 스캔 0. 로컬 서버 4488 정리(PID kill·포트 clear).
+- **한계**: 실기기 390×844·데스크톱 육안·EN 클라이언트 토글은 운영자 게이트(webview/Playwright 미가용). 로컬 커밋만·푸시 미수행·main 무변경.
+- **다음에 바로 실행할 작업**: 잔여 Sprint 4(관심종목 그룹/메모/정렬, spec §2 8.2)는 P2·이번 슬라이스 범위 밖. 다음 기능 슬라이스는 Task 221 CSV export 유틸(`src/lib/watchlistCsv.ts` + 내보내기 버튼).
+
 ## 2026-07-07 · [codex] Sprint 3C 종목 상세 공시 고지 완화·비교 유도 트레이·CTA 정리
 - **범위**: 설계서 5-7(공시 섹션)·5-8(비교 유도) 슬라이스. 종목 상세 하단의 최근 공시 요약 고지를 과하지 않게 줄이고, 비교함 상태를 반영하는 sticky 트레이를 추가. 데이터 수집·DART 호출·scoring 로직은 무변경(표시/문구/신규 표시용 컴포넌트만).
 - **공시 고지 완화(5-7)**: `StockDisclosures.tsx`의 상시 노출 전체 문장 `scopeNote`를 아이콘 한 줄 요약(`scopeShort` = "최근 수집분 기준 · 전체 이력은 DART에서 확인")으로 교체하고, 상세(수집·표시 건수, 90일 범위) 문구는 `title` 툴팁으로 이동. 행 순서(유형·자동분류+날짜 → 공시명 → 제출인 → 확인 → DART 원문), fetch, 빈 상태, 수집 기준(collectedPrefix) 줄, DART 원문 링크(18-4 원문 확인 의도)는 무변경. copy는 `stockDisclosuresCopy`에 `scopeShort` ko/en 추가(금칙어 0).
