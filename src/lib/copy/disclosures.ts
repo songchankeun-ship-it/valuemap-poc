@@ -78,6 +78,8 @@ export const disclosureExplorerCopy = {
     tabWatchlist: "내 관심종목",
     // 제한 안내 배너(§7-5) — 큰 안내 대신 작은 info 배너
     limitBanner: "최근 수집 공시 기준으로 표시돼요. 전체 시장 공시는 DART 원문에서 확인하세요.",
+    // 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 노출(재검수 P0C)
+    sampleNotice: "현재 표시 데이터는 예시입니다. 실제 공시는 DART 원문에서 확인하세요.",
     // 관심종목 탭 빈 상태
     watchlistEmpty: "관심 종목에 담아두면 여기서 공시를 모아볼 수 있어요.",
     watchlistEmptyCta: "종목 담으러 가기",
@@ -91,7 +93,7 @@ export const disclosureExplorerCopy = {
     submitted: "제출",
     checkLabel: "확인할 것",
     cautionLabel: "주의",
-    viewSource: "원문 보기",
+    viewSource: "DART 원문",
     viewStock: "종목 보기",
     notInUniverse: "분석 대상 외 · DART 원문만",
     descFallback: "원문과 시세 반응을 함께 확인해 보세요.",
@@ -156,6 +158,7 @@ export const disclosureExplorerCopy = {
     tabAll: "All",
     tabWatchlist: "My watchlist",
     limitBanner: "Showing recently collected filings; check DART for the full market.",
+    sampleNotice: "The data shown is example data. Check the actual filings in the DART source.",
     watchlistEmpty: "Add stocks to your watchlist to gather their filings here.",
     watchlistEmptyCta: "Go add stocks",
     autoClassified: "Auto-classified",
@@ -167,7 +170,7 @@ export const disclosureExplorerCopy = {
     submitted: "filed",
     checkLabel: "Check",
     cautionLabel: "Note",
-    viewSource: "View source",
+    viewSource: "DART source",
     viewStock: "View stock",
     notInUniverse: "Outside analyzed set · DART source only",
     descFallback: "Review alongside the full text and price reaction.",

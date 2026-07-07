@@ -4,7 +4,30 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, ExternalLink, Info, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDisclosuresCopy } from "@/lib/copy/stockDetail";
+import { typeMetaOf } from "@/lib/disclosureType";
+import { FOCUS_RING } from "@/components/ui/controlStyles";
 import type { Locale } from "@/lib/i18n";
+
+// DART 공시 통합검색 홈 — 종목별 딥링크가 없을 때(무데이터) 원문 확인 진입점.
+const DART_SEARCH_HOME = "https://dart.fss.or.kr/dsab001/main.do";
+
+// signalLabel(디텍터 원문 라벨) → signalType. 배지 표기를 /disclosures와 동일한 짧은 유형명으로
+// 통일하기 위한 display 전용 매핑(데이터 키·색 로직은 signalLabel 그대로 사용).
+const SIGNAL_LABEL_TO_TYPE: Record<string, string> = {
+  "자기주식 취득 결의": "treasury_buy",
+  "임원·주요주주 보유 변동": "insider_buy",
+  "정정공시": "correction",
+  "단일판매·공급계약": "single_contract",
+  "유상증자 발행": "capital_raise",
+  "전환사채 발행": "capital_raise",
+  "신주인수권부사채 발행": "capital_raise",
+};
+
+// signalLabel → 짧은 유형 표기(자사주/보유 변동/대형 계약/손익 정정/유증·CB). 매핑 없으면 원문 유지.
+function shortTypeLabel(signalLabel: string): string {
+  const type = SIGNAL_LABEL_TO_TYPE[signalLabel];
+  return type ? typeMetaOf(type).label : signalLabel;
+}
 
 interface SignalInfo {
   signalType: string;
@@ -65,17 +88,20 @@ function sourceLabel(source: string | undefined, t: (typeof stockDisclosuresCopy
   return null;
 }
 
-// ISO → KST(서울) 표기. 명시적 timeZone으로 SSR/CSR 일관.
+// ISO → KST(서울) 표기. 날짜 구분자는 공시 제출일과 동일한 점(YYYY.MM.DD HH:mm) 형식으로 통일.
+// formatToParts로 조립해 Intl 로케일별 "2026. 07. 07." 표기 차이를 제거(SSR/CSR 일관, timeZone 명시).
 function fmtKST(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (isNaN(d.getTime())) return null;
   try {
-    return new Intl.DateTimeFormat("ko-KR", {
+    const parts = new Intl.DateTimeFormat("ko-KR", {
       timeZone: "Asia/Seoul",
       year: "numeric", month: "2-digit", day: "2-digit",
       hour: "2-digit", minute: "2-digit", hour12: false,
-    }).format(d);
+    }).formatToParts(d);
+    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+    return `${get("year")}.${get("month")}.${get("day")} ${get("hour")}:${get("minute")}`;
   } catch {
     return null;
   }
@@ -166,31 +192,26 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           {t.summaryPrefix} · {t.summaryDisclosures} {data.count}{t.summaryDisclosuresUnit} · {t.summarySignals} {data.signalCount}{t.summarySignalsUnit}
         </span>
       </div>
-      {/* 수집 범위 고지 — 과하지 않게 한 줄 요약. 상세(수집·표시 건수)는 title 툴팁으로 이동.
-          전체 공시 이력이 아니며 원문은 DART에서 확인한다는 의도(설계서 18-4)는 유지. */}
-      <p
-        className="flex items-start gap-1 text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-2 leading-relaxed"
-        title={t.scopeNote}
-      >
-        <Info className="w-3 h-3 mt-[1px] shrink-0" strokeWidth={2} aria-hidden="true" />
-        <span>{t.scopeShort}</span>
-      </p>
-      {(() => {
-        const when = fmtKST(data.fetchedAt);
-        const src = sourceLabel(data.source, t);
-        if (!when && !src) return null;
-        const parts: string[] = [t.collectedPrefix];
-        parts.push(when ?? t.collectedUnknown);
-        if (src) parts.push(src);
-        return (
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-2 mb-3 tabular-nums">{parts.join(" · ")}</p>
-        );
-      })()}
+      {/* 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 카드 목록 위에 노출(재검수 P0C) */}
+      {data.source.startsWith("sample") ? (
+        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
+          <span className="break-words">{t.sampleNotice}</span>
+        </div>
+      ) : null}
 
       {data.count === 0 ? (
         <div className="text-sm text-zinc-500 dark:text-zinc-400 py-8 text-center">
-          <p>{t.emptyTitle}</p>
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1.5 leading-relaxed">{t.emptySub}</p>
+          <p className="text-zinc-600 dark:text-zinc-300">{t.emptyTitle}</p>
+          <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1.5 leading-relaxed break-words">{t.emptySub}</p>
+          <button
+            type="button"
+            onClick={() => openExternal(DART_SEARCH_HOME)}
+            aria-label={t.emptyDartAria}
+            className={"mt-4 inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition break-words " + FOCUS_RING}
+          >
+            {t.dartOriginal} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
+          </button>
         </div>
       ) : (
         <div>
@@ -201,7 +222,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                   key={entry[0]}
                   className={"text-[11px] px-2 py-0.5 rounded min-w-0 break-words " + getBadgeClass(entry[0])}
                 >
-                  {entry[0]} {entry[1]}
+                  {shortTypeLabel(entry[0])} {entry[1]}
                 </span>
               ))}
             </div>
@@ -231,7 +252,7 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                       <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                         {d.signal ? (
                           <span className={"text-[10px] px-1.5 py-0.5 rounded font-medium " + getBadgeClass(d.signal.signalLabel)}>
-                            {d.signal.signalLabel} · {t.autoClassified}
+                            {typeMetaOf(d.signal.signalType).label} · {t.autoClassified}
                           </span>
                         ) : (
                           <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
@@ -267,6 +288,26 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           </ol>
         </div>
       )}
+
+      {/* 제한 안내(수집 범위) + 수집 기준 시각 — 카드 목록 아래로 이동(재검수 P0C 요청 흐름) */}
+      <p
+        className="flex items-start gap-1 text-[11px] text-zinc-500 dark:text-zinc-400 mt-3 mb-1 leading-relaxed"
+        title={t.scopeNote}
+      >
+        <Info className="w-3 h-3 mt-[1px] shrink-0" strokeWidth={2} aria-hidden="true" />
+        <span>{t.scopeShort}</span>
+      </p>
+      {(() => {
+        const when = fmtKST(data.fetchedAt);
+        const src = sourceLabel(data.source, t);
+        if (!when && !src) return null;
+        const parts: string[] = [t.collectedPrefix];
+        parts.push(when ?? t.collectedUnknown);
+        if (src) parts.push(src);
+        return (
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1 tabular-nums">{parts.join(" · ")}</p>
+        );
+      })()}
 
       {data.note ? (
         <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3 italic">{data.note}</p>

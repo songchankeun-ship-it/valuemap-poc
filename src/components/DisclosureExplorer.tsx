@@ -163,17 +163,20 @@ function sourceLabel(source: string | undefined, t: ExplorerCopy): string | null
   return null;
 }
 
-// ISO → KST(서울) 표기. 명시적 timeZone으로 SSR/CSR 일관.
+// ISO → KST(서울) 표기. 날짜 구분자는 공시 제출일과 동일한 점(YYYY.MM.DD HH:mm) 형식으로 통일.
+// formatToParts로 조립해 Intl 로케일별 "2026. 07. 07." 표기 차이를 제거(SSR/CSR 일관, timeZone 명시).
 function fmtKST(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (isNaN(d.getTime())) return null;
   try {
-    return new Intl.DateTimeFormat("ko-KR", {
+    const parts = new Intl.DateTimeFormat("ko-KR", {
       timeZone: "Asia/Seoul",
       year: "numeric", month: "2-digit", day: "2-digit",
       hour: "2-digit", minute: "2-digit", hour12: false,
-    }).format(d);
+    }).formatToParts(d);
+    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+    return `${get("year")}.${get("month")}.${get("day")} ${get("hour")}:${get("minute")}`;
   } catch {
     return null;
   }
@@ -316,12 +319,6 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 tabular-nums">{parts.join(" · ")}</p>
           );
         })()}
-        {/* 제한 안내(§7-5) — 큰 영역 대신 작은 info 배너. 자세한 수집 범위는 상단 인트로의 접힘 안내로. */}
-        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
-          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
-          <span className="break-words">{t.limitBanner}</span>
-        </div>
-
         <div className="flex gap-2 flex-wrap mb-3">
           {[3, 7, 14, 30].map((d) => (
             <button
@@ -428,6 +425,14 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           </div>
         ) : null}
       </header>
+
+      {/* 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 카드 목록 위에 노출(재검수 P0C) */}
+      {data.source?.startsWith("sample") ? (
+        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 leading-relaxed">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
+          <span className="break-words">{t.sampleNotice}</span>
+        </div>
+      ) : null}
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
@@ -566,7 +571,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     <WatchlistToggle code={g.stock_code} t={t} />
                   ) : null}
                 </div>
-                {/* 상태 배지는 '원문 보기' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
+                {/* 상태 배지는 'DART 원문' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
                 {g.stock_code && !universeSet.has(g.stock_code) ? (
                   <div className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</div>
                 ) : null}
@@ -577,6 +582,14 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           })
         )}
       </div>
+
+      {/* 제한 안내(§7-5) — 카드 목록 아래로 이동(재검수 P0C). 목록이 비어 있으면 빈 상태와 경쟁하지 않도록 숨김. */}
+      {filtered.length > 0 ? (
+        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 leading-relaxed">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
+          <span className="break-words">{t.limitBanner}</span>
+        </div>
+      ) : null}
     </div>
   );
 }
