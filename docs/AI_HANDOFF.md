@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T00:43:50.0014465+09:00
+Last updated: 2026-07-07T09:20:48.5286353+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: OrnScore Sprint 1 IA and home first-screen brief
+- Task: OrnScore Sprint 2 Discover entry flow
 - Run: manual Codex session
 - Status: completed
 - Agent: codex
-- Note: Implemented the first slice from the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. Mobile bottom nav is now `오늘/발견/관심/공시/더보기`; desktop/mobile drawer primary IA is `오늘/발견/관심/공시` with compare/lab/service/help/about under More. Home is now a compact daily brief followed immediately by 3 candidate cards; onboarding moved below candidates; candidate cards include price/change, score, one strength, first-check warning, two checkpoints, and view/watch/compare CTAs with compact icon actions. Header data status is a small pill with existing modal retained. No data/scoring/disclosure logic changed. Gates passed: tsc, verify_metrics, app:check (assetlinks external WAIT only), build, diff check, local route verify 9/9, login preflight 5/5, smoke --all 23/23, in-app browser 390x844 and 1280x800 layout checks. Next: Sprint 2 `/stocks` Discover question presets + mobile bottom-sheet filters + recent search/recent viewed entry points.
+- Note: Implemented the second slice from the attached ORNScore design/UX overhaul guide on branch `codex/ornscore-sprint1-ia-home-20260707`. `/stocks` is now centered on five beginner question presets (`싸 보이는 종목`, `최근 관심이 늘어난 종목`, `흐름이 강한 종목`, `배당/안정형 종목`, `숨은 소형주`) with lucide icons and existing filter configs. Added search-under quick entry chips for watchlist, recent searches (localStorage on Enter/blur), recent viewed stocks, and representative high-score candidates. Mobile detailed filters now open as a bottom sheet with dialog semantics, internal scroll, and persistent reset/view actions. No data/scoring/disclosure logic changed. Gates passed: `npx tsc --noEmit`, `verify_metrics.py`, `npm run app:check` (assetlinks external WAIT only), `npm run build`, local route verify 9/9 on port 4461, `smoke:check --all` 23/23, `git diff --check`, U+FFFD scan, and in-app browser 390x844 + 1280x900 layout checks with console errors 0. A current local prod server is running at `http://localhost:4461`. Next: Sprint 3 from guide section 5, re-check `/stock/[ticker]` detail top flow (`현재 해석`/strength/weakness/first checks), reduce default score exposure to composite + one strength + one weakness, and add/review recent-change and compare prompts.
 
 ## Next Agent Checklist
 

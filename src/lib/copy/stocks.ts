@@ -25,6 +25,13 @@ export const stocksCopy = {
 
     // ── 검색 ──
     searchPlaceholder: "종목명 · 코드로 바로 검색",
+    entry: {
+      label: "빠른 진입",
+      watchlist: "관심종목",
+      recentSearchPrefix: "최근 검색 ",
+      recentViewedPrefix: "최근 본 ",
+      popularPrefix: "대표 후보 ",
+    },
 
     // ── 질문형 프리셋 섹션 ──
     questionHeading: "어떤 종목을 찾고 있나요?",
@@ -228,14 +235,11 @@ export const stocksCopy = {
 
     // ── 질문형 프리셋(QUESTION_PRESETS) ──
     qPreset: {
-      "q-cheap-active": { label: "싸고 거래 늘었나?", desc: "밸류가 낮고 최근 거래 관심이 늘어난 종목", explain: "밸류가 낮으면서 최근 거래 관심이 늘어난 종목을 찾습니다." },
-      "q-good-earner": { label: "돈 잘 버는 회사?", desc: "ROE가 높고 수익성이 확인되는 종목", explain: "ROE가 높고 수익성이 확인되는 종목을 찾습니다." },
-      "q-dividend": { label: "배당 주는 우량주?", desc: "배당이 있고 상대적으로 안정적인 종목", explain: "배당이 있고 상대적으로 안정적인 종목을 찾습니다." },
-      "q-bigcap-stable": { label: "대형주 안정형?", desc: "시가총액이 크고 위험조정이 양호한 종목", explain: "시가총액이 크고 위험조정 점수가 양호한 종목을 찾습니다." },
-      "q-small-value": { label: "숨은 소형 저평가?", desc: "작은 회사 중 밸류가 낮은 종목", explain: "시가총액이 작으면서 밸류가 낮은 종목을 찾습니다." },
-      "q-value-trend": { label: "밸류 + 추세 동시?", desc: "밸류와 추세가 동시에 양호한 종목", explain: "밸류와 추세가 동시에 양호한 종목을 찾습니다." },
-      "q-strong-trend": { label: "최근 흐름 강한 종목?", desc: "최근 가격 흐름이 강한 종목", explain: "최근 가격 흐름이 강한 종목을 찾습니다.", caution: "추세는 빠르게 식을 수 있어 급등 사유 확인이 필요합니다." },
-      "q-surge-risk": { label: "최근 상승폭이 커진 종목", desc: "최근 급등해 추가 확인이 필요한 종목", explain: "최근 3개월 상승률이 큰, 추가 확인이 필요한 종목을 보여줍니다.", caution: "급등 후 변동성이 큰 구간이라 급등 사유 확인이 필요합니다." },
+      "q-cheap-active": { label: "싸 보이는 종목", desc: "밸류 점수가 높은 후보를 먼저 봅니다.", explain: "밸류 점수가 높은 후보를 먼저 보여줍니다." },
+      "q-active-interest": { label: "최근 관심이 늘어난 종목", desc: "거래활성도 점수가 높은 후보를 봅니다.", explain: "거래활성도 점수가 높은 후보를 보여줍니다." },
+      "q-strong-trend": { label: "흐름이 강한 종목", desc: "추세 점수가 높은 후보를 봅니다.", explain: "추세 점수가 높은 후보를 보여줍니다.", caution: "추세는 빠르게 식을 수 있어 상승 사유 확인이 필요합니다." },
+      "q-dividend-stable": { label: "배당/안정형 종목", desc: "배당, 밸류, 위험조정 조건을 함께 봅니다.", explain: "배당, 밸류, 위험조정 조건을 함께 적용한 후보를 보여줍니다." },
+      "q-small-value": { label: "숨은 소형주", desc: "소형주 안에서 밸류 점수가 있는 후보를 봅니다.", explain: "소형주 안에서 밸류 점수가 있는 후보를 보여줍니다." },
     } as Record<string, { label: string; desc: string; explain: string; caution?: string }>,
 
     // ── 빠른 프리셋(PRESETS) ──
@@ -315,6 +319,13 @@ export const stocksCopy = {
 
     // ── Search ──
     searchPlaceholder: "Search by name · ticker",
+    entry: {
+      label: "Quick entry",
+      watchlist: "Watchlist",
+      recentSearchPrefix: "Recent search ",
+      recentViewedPrefix: "Recently viewed ",
+      popularPrefix: "Starter pick ",
+    },
 
     // ── Question presets ──
     questionHeading: "What kind of stock are you looking for?",
@@ -517,14 +528,11 @@ export const stocksCopy = {
 
     // ── Question presets ──
     qPreset: {
-      "q-cheap-active": { label: "Cheap with rising trading?", desc: "Low value with recently rising trading interest", explain: "finds stocks with low value and recently rising trading interest." },
-      "q-good-earner": { label: "Companies earning well?", desc: "High ROE with confirmed profitability", explain: "finds stocks with high ROE and confirmed profitability." },
-      "q-dividend": { label: "Dividend-paying quality?", desc: "Dividend-paying and relatively stable", explain: "finds dividend-paying stocks that are relatively stable." },
-      "q-bigcap-stable": { label: "Large-cap stable?", desc: "Large market cap with sound risk-adjusted score", explain: "finds large-cap stocks with a sound risk-adjusted score." },
-      "q-small-value": { label: "Hidden small-cap value?", desc: "Low value among smaller companies", explain: "finds small-cap stocks with low value." },
-      "q-value-trend": { label: "Value + trend together?", desc: "Favorable on both value and trend", explain: "finds stocks that are favorable on both value and trend." },
-      "q-strong-trend": { label: "Strong recent trend?", desc: "Strong recent price trend", explain: "finds stocks with a strong recent price trend.", caution: "Trends can cool quickly; check the reason behind any surge." },
-      "q-surge-risk": { label: "Recently surged stocks", desc: "Recently surged, needing extra checks", explain: "shows stocks with a large 3-month gain that need extra checking.", caution: "This is a volatile post-surge zone; check the reason behind the surge." },
+      "q-cheap-active": { label: "Looks inexpensive", desc: "Start with candidates that score well on value.", explain: "shows candidates that score well on value." },
+      "q-active-interest": { label: "Interest rising lately", desc: "Start with higher trading-activity scores.", explain: "shows candidates with higher trading-activity scores." },
+      "q-strong-trend": { label: "Strong flow", desc: "Start with higher trend scores.", explain: "shows candidates with higher trend scores.", caution: "Trends can cool quickly; check what drove the move." },
+      "q-dividend-stable": { label: "Dividend/stable", desc: "Combine dividend, value, and risk-adjusted conditions.", explain: "combines dividend, value, and risk-adjusted conditions." },
+      "q-small-value": { label: "Hidden small caps", desc: "Look inside small caps with usable value scores.", explain: "shows small-cap candidates with usable value scores." },
     } as Record<string, { label: string; desc: string; explain: string; caution?: string }>,
 
     // ── Quick presets ──

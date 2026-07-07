@@ -2,8 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { Activity, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { addConditionAlert } from "@/lib/conditionAlerts";
 import { DataStatusBadge } from "@/components/trust/badges";
 import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResultsTable";
@@ -68,6 +70,26 @@ const CAP_MID = 1_000_000_000_000;
 
 // 기본 품질 필터(PER≤200·PBR≤30)를 해제하고 전체 138개를 볼 때 PER/PBR 상한에 쓰는 '사실상 상한 없음' 값.
 const NO_MAX = 999999;
+const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
+
+function readRecentSearches(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(RECENT_SEARCH_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === "string").slice(0, 6) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeRecentSearches(items: string[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(items.slice(0, 6)));
+  } catch {
+    // localStorage가 막힌 환경에서는 최근 검색만 조용히 생략한다.
+  }
+}
 
 function inCapBucket(cap: number, bucket: CapBucket): boolean {
   if (bucket === "all") return true;
@@ -102,7 +124,7 @@ interface Preset {
 }
 
 interface QuestionPreset extends Preset {
-  symbol: string;   // 카드 심볼(아이콘 대용) — 데이터성 이모지, 번역 안 함
+  Icon: LucideIcon;
 }
 
 // 빠른 프리셋 — 질문형보다 가볍고 빠른 보조 필터(칩). 단일 선택.
@@ -124,14 +146,11 @@ const PRESETS: Preset[] = [
 // 질문형 프리셋 — 자연어 질문 그대로 클릭. /stocks의 핵심 시작점.
 // 라벨/설명/고지 문구는 stocksCopy.qPreset[id]에서 로케일별로 가져온다.
 const QUESTION_PRESETS: QuestionPreset[] = [
-  { id: "q-cheap-active", symbol: "🔍", config: { perMax: 15, excludeLoss: true, sortKey: "flow", sortDir: "desc" } },
-  { id: "q-good-earner", symbol: "💰", config: { roeMin: 15, excludeLoss: true, sortKey: "roe", sortDir: "desc" } },
-  { id: "q-dividend", symbol: "🪙", config: { divYieldMin: 2, roeMin: 8, excludeLoss: true, sortKey: "dividendYield", sortDir: "desc" } },
-  { id: "q-bigcap-stable", symbol: "🏛️", config: { capBucket: "large", volMin: 60, sortKey: "vol", sortDir: "desc" } },
-  { id: "q-small-value", symbol: "🌱", config: { capBucket: "small", pbrMax: 1.0, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
-  { id: "q-value-trend", symbol: "⚖️", config: { valueMin: 70, momentumMin: 70, volMin: 50, sortKey: "compositeScore", sortDir: "desc" } },
-  { id: "q-strong-trend", symbol: "📈", config: { momentumMin: 80, sortKey: "momentum", sortDir: "desc" } },
-  { id: "q-surge-risk", symbol: "⚠️", config: { sortKey: "r3m", sortDir: "desc" } },
+  { id: "q-cheap-active", Icon: Search, config: { valueMin: 70, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
+  { id: "q-active-interest", Icon: Activity, config: { flowMin: 70, sortKey: "flow", sortDir: "desc" } },
+  { id: "q-strong-trend", Icon: TrendingUp, config: { momentumMin: 75, sortKey: "momentum", sortDir: "desc" } },
+  { id: "q-dividend-stable", Icon: ShieldCheck, config: { divYieldMin: 1, valueMin: 50, volMin: 55, excludeLoss: true, sortKey: "vol", sortDir: "desc" } },
+  { id: "q-small-value", Icon: Sprout, config: { capBucket: "small", valueMin: 50, excludeLoss: true, sortKey: "value", sortDir: "desc" } },
 ];
 
 // ── 순수 필터 로직: 상태(state)와 분리해 '예상 결과 수' 계산에 재사용 ──
@@ -257,6 +276,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
   const [showQuickPresets, setShowQuickPresets] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [recentViews, setRecentViews] = useState<RecentView[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("card");
 
   useEffect(() => {
@@ -265,6 +286,17 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     load();
     window.addEventListener("saved-searches-changed", load);
     return () => { alive = false; window.removeEventListener("saved-searches-changed", load); };
+  }, []);
+
+  useEffect(() => {
+    setRecentSearches(readRecentSearches());
+  }, []);
+
+  useEffect(() => {
+    const load = () => setRecentViews(getRecentViews());
+    load();
+    window.addEventListener("recent-views-changed", load);
+    return () => window.removeEventListener("recent-views-changed", load);
   }, []);
 
   // 보기 방식(카드형/표형)을 localStorage에 보존 — 새로고침해도 유지. 기본은 카드형.
@@ -302,6 +334,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
     setMarket((c.market as MarketFilter) ?? "all");
     setExcludeLoss(c.excludeLoss ?? false);
     setSelectedThemes(new Set(c.themes ?? []));
+  }
+  function rememberRecentSearch(raw: string) {
+    const value = raw.trim();
+    if (value.length < 2) return;
+    const next = [value, ...recentSearches.filter((q) => q.toLowerCase() !== value.toLowerCase())].slice(0, 6);
+    setRecentSearches(next);
+    writeRecentSearches(next);
   }
   async function handleSaveSearch() {
     const name = (typeof window !== "undefined" ? window.prompt(t.promptSaveName) : "")?.trim();
@@ -400,6 +439,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       return sortDir === "desc" ? bv - av : av - bv;
     });
   }, [filtered, sortKey, sortDir]);
+
+  const recentViewLinks = useMemo(() => recentViews.slice(0, 4), [recentViews]);
+
+  const popularEntryStocks = useMemo(() => {
+    return [...stocks]
+      .sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0))
+      .slice(0, 4);
+  }, [stocks]);
 
   // 각 프리셋의 '예상 결과 수' — 다른 활성 필터와 무관하게 전체 풀에 대해 독립 계산
   // (count-vs-full-pool 의미: 카드 숫자는 "그 프리셋만 적용했을 때 몇 개"를 뜻함).
@@ -802,18 +849,59 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
 
       {/* ── 검색 먼저(첫 화면 단순화: 검색창 → 질문형 프리셋 → 상세 필터 순) ── */}
       <div className="relative">
-        <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none">
-          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-        </svg>
+        <Search aria-hidden size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
         <input
           type="search"
           placeholder={t.searchPlaceholder}
           value={query}
           onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
+          onBlur={(e) => rememberRecentSearch(e.currentTarget.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") rememberRecentSearch(e.currentTarget.value); }}
           suppressHydrationWarning
           className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
         />
       </div>
+
+      <section aria-label={t.entry.label} className="-mt-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5">
+          <Link
+            href="/watchlist"
+            className={`shrink-0 inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
+          >
+            {t.entry.watchlist}
+          </Link>
+          {recentSearches.slice(0, 3).map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => { setActivePreset(null); setQuery(q); }}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.recentSearchPrefix}{q}</span>
+            </button>
+          ))}
+          {recentViewLinks.map((s) => (
+            <Link
+              key={"recent-" + s.ticker}
+              href={"/stock/" + s.ticker}
+              prefetch={false}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.recentViewedPrefix}{s.name}</span>
+            </Link>
+          ))}
+          {popularEntryStocks.map((s) => (
+            <Link
+              key={"popular-" + s.ticker}
+              href={"/stock/" + s.ticker}
+              prefetch={false}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.popularPrefix}{s.name}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       <section>
@@ -825,6 +913,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
             const selected = activePreset === p.id;
             const badges = badgesFromConfig(p.config, t);
             const qc = t.qPreset[p.id];
+            const Icon = p.Icon;
             return (
               <button
                 key={p.id}
@@ -837,7 +926,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
                     : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm")}
               >
                 <div className="flex items-start gap-2">
-                  <span aria-hidden className="text-lg leading-none mt-0.5">{p.symbol}</span>
+                  <span aria-hidden className={"mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full " + (selected ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")}>
+                    <Icon size={15} strokeWidth={2} />
+                  </span>
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{qc.label}</div>
                     <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{qc.desc}</p>
@@ -1077,12 +1168,15 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, totalCount, a
       {drawerOpen ? (
         <>
           <div onClick={() => setDrawerOpen(false)} className="lg:hidden fixed inset-0 bg-black/50 z-50" aria-hidden />
-          <div className="lg:hidden fixed inset-y-0 right-0 w-[340px] max-w-[90vw] bg-white dark:bg-zinc-950 z-50 shadow-2xl flex flex-col">
-            <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.filterDetailTitle}</h3>
-              <button type="button" onClick={() => setDrawerOpen(false)} className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-              </button>
+          <div role="dialog" aria-modal="true" aria-labelledby="stocks-filter-sheet-title" className="lg:hidden fixed inset-x-0 bottom-0 max-h-[88svh] bg-white dark:bg-zinc-950 z-50 rounded-t-2xl shadow-2xl flex flex-col">
+            <div className="px-4 pt-3 pb-3 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+              <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden />
+              <div className="flex items-center justify-between">
+                <h3 id="stocks-filter-sheet-title" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.filterDetailTitle}</h3>
+                <button type="button" aria-label={t.closeFilter} onClick={() => setDrawerOpen(false)} className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto p-4"><FilterPanel /></div>
             <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 shrink-0 grid grid-cols-2 gap-2">

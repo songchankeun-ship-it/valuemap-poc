@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-07 · [codex] Sprint 2 발견 화면 진입 흐름 정리
+- **범위**: 첨부된 `ORNScore 디자인/UX 대공사 개발 지시서` 4장 `/stocks` 발견 화면. 데이터·점수식·후보 산출·공시 로직은 그대로 두고, 첫 진입 질문형 프리셋, 검색 하단 진입점, 모바일 상세 필터 동선만 정리. 브랜치 `codex/ornscore-sprint1-ia-home-20260707`.
+- **질문형 프리셋**: 첫 화면 프리셋을 설계서 문구에 맞춰 5개로 압축: `싸 보이는 종목`, `최근 관심이 늘어난 종목`, `흐름이 강한 종목`, `배당/안정형 종목`, `숨은 소형주`. 카드 심볼은 텍스트 이모지 대신 `lucide-react` 아이콘으로 교체하고, 각 카드의 조건/예상 결과/주의 문구는 기존 필터 엔진에 그대로 연결.
+- **검색 진입점**: 검색창 아래에 가로 스크롤 quick entry 칩을 추가. `관심종목` 바로가기, 최근 검색(localStorage, Enter/blur 시 저장), 최근 본 종목(`recentViews`), 대표 후보(종합점수 상위)를 한 줄에서 바로 열 수 있게 연결. 검색 결과·저장 조건·알림 로직은 기존 동작 유지.
+- **모바일 필터**: 모바일 상세 필터를 오른쪽 드로어에서 하단 바텀시트로 변경. `role="dialog"`/`aria-modal`/타이틀 연결을 추가하고, 88svh 높이 제한+내부 스크롤+하단 `초기화/보기` 액션을 유지.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `npm run app:check` 0(Android assetlinks 외부 WAIT 1 only) · `npm run build` 0(176 static pages) · local prod 4461 `verify:routes` 9/9 · `smoke:check --all` 23/23 · `git diff --check` clean(LF→CRLF 경고만) · 변경 파일 U+FFFD 0. 인앱 브라우저 확인: 390x844 `/stocks` 5개 질문/진입 칩 표시, horizontal overflow 없음, 필터 바텀시트 bottom-aligned/height OK/콘솔 에러 0. 1280x900 확인: 5개 프리셋 카드와 진입 칩 표시, horizontal overflow 없음.
+- **다음에 바로 실행할 작업**: 설계서 5장으로 이동. `/stock/[ticker]` 종목 상세 상단을 `현재 해석 → 강점/주의 → 먼저 확인할 것 → 공시/재무/비교 CTA` 흐름으로 다시 점검하고, 점수 영역의 기본 노출을 종합+강점1+약점1 중심으로 줄이며 최근 변화/비교 유도 섹션을 설계서 기준으로 보강.
+
 ## 2026-07-07 · [codex] Sprint 1 IA + 홈 첫 화면 브리핑 정리
 - **범위**: 첨부된 `ORNScore 디자인/UX 대공사 개발 지시서`의 Sprint 1/P0 첫 묶음. 데이터·점수식·후보 선정·공시 수집 로직은 그대로 두고 IA, 홈 첫 화면, 후보 카드, 데이터 상태 노출 강도만 정리. 브랜치 `codex/ornscore-sprint1-ia-home-20260707`.
 - **IA 변경**: 모바일 하단 탭을 `오늘/발견/관심/공시/더보기` 순서로 고정. 데스크톱/모바일 드로어의 1차 메뉴도 `오늘/발견/관심/공시`로 줄이고, 비교·실험실(백테스트)·서비스 안내·도움말·서비스 소개는 더보기 그룹으로 이동. `/stocks` 사용자-facing 명칭은 `발견`으로 변경.
