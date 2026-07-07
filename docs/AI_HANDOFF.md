@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T04:21:25.556Z
+Last updated: 2026-07-07T04:42:41.534Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 95 - [2026-07-07] ORNScore Sprint 3B - 종목 상세 요약/점수 접힘 정리
-- Run: 88
+- Task: 96 - [2026-07-07] ORNScore Sprint 3C - 종목 상세 공시 요약/비교 CTA 보강
+- Run: 89
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
