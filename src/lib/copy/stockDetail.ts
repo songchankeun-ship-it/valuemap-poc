@@ -238,7 +238,7 @@ export const conclusionSummaryCardCopy = {
     checkPoints: "확인할 점",
     firstCheck: "먼저 확인",
     strengthEmpty: "뚜렷한 강점 지표가 없습니다.",
-    warningEmpty: "특이 주의 신호 없음.",
+    warningEmpty: "현재 자동 분류된 특이 주의 신호는 없어요. 다만 최근 공시와 실적은 직접 확인하세요.",
     moreSignals: (n: number) => `외 ${n}개는 지표 상세에서 확인`,
   },
   en: {
@@ -248,7 +248,7 @@ export const conclusionSummaryCardCopy = {
     checkPoints: "Check points",
     firstCheck: "Check first",
     strengthEmpty: "No standout strength metric.",
-    warningEmpty: "No notable caution signal.",
+    warningEmpty: "No auto-classified caution signal right now. Still, check recent disclosures and results yourself.",
     moreSignals: (n: number) => `${n} more in metric detail`,
   },
 } as const satisfies Record<Locale, unknown>;
