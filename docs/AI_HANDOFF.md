@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T16:22:10.438Z
+Last updated: 2026-07-07T16:38:31.753Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 106 - [2026-07-07] ORNScore 재검수 P0E - 상세 CTA/데이터 상태 탭/발견 문구 즉시 수정
-- Run: 100
-- Status: completed
+- Task: 107 - [2026-07-07] ORNScore 재검수 P1A - 발견 첫 화면 밀도/이모지 아이콘 정리
+- Run: 101
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Quality gate error: tester process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-08 — Codex Task 107 — discovery (`/stocks`) first-screen density consolidation + emoji→icon (lucide) swap (reaudit P1-2/P1-3/P1-4/5-2)
+- **Scope**: The discovery screen (`/stocks`) stacked 3–4 text paragraphs before the question-preset cards (long scroll to reach them), and the label-prefix emoji (`✓`/`⚠`/`🔔`) rendered inconsistently across browsers/OSes. Consolidate the copy and swap the emoji for inline lucide SVG icons. **Presentation/copy-only — no change to scoring formulas (`score.ts`/`metrics.ts`/`sector.ts`), `stocks.json`, DART, `direction`, or `metricsVersion`** (every toggle/count/control preserved; only wording trimmed/relocated and emoji characters removed). Branch `ai-center/task-107-2026-07-07-ornscore-p1a` (main HEAD `4b89f86` confirmed an ancestor of HEAD via `git merge-base --is-ancestor`; accrued on top of task-104…106). Source of truth = `ORNScore 재검수 리포트.pdf` (submitted 2026.07.07). Edited **2 files**: `src/lib/copy/stocks.ts`, `src/components/StocksExplorer.tsx`.
+- **① First-screen density (P1-2/P1-4)**: keep the 123/138 canonical statement in **one place only** — the header `qualityHeadline` pill (`기본 품질 필터 적용 중: N개 / 전체 138개`) + `viewAllToggle` button (`전체 138개 보기`). (a) `headerDesc` drops the redundant `${total}개 종목 중` count → `질문형 프리셋이나 상세 필터로 먼저 볼 후보를 좁혀보세요.` (en mirror trimmed). (b) `baseScreenNote` folded from two sentences to one, so the PER/PBR reason is stated once and points at the toggle above → `기본 화면은 PER 200 이하 · PBR 30 이하만 표시하며, 제외 N개는 위 '전체 보기'로 볼 수 있어요.` (c) the question section's `questionDesc`+`entryPointsHint` two `<p>`s merged into one line → `지표명을 몰라도 질문을 고르면 조건이 자동 적용돼요 · 더 좁히려면 빠른 프리셋·상세 필터` (the now-unused `entryPointsHint` key removed from both ko/en). The current-condition bar's `matchCountShort`/`qualityRowOn`/`qualityRowOff` are the machine-readable summary of a deeper section → **kept as-is** (different role from the canonical pill).
+- **② Emoji→lucide icons (P1-3/5-2)**: render the label-prefix icons as inline SVG in the component and strip the emoji characters from the `stocks.ts` label strings → card strength `✓ 강점`→`<Check/> 강점`, card warning `⚠ 주의`→`<AlertTriangle/> 주의`, question-preset caution (`cautionPrefix "⚠ "` key removed)→`<AlertTriangle/>`, my-search alert `🔔 이 조건 알림`→`<Bell/> 이 조건 알림`, question/quick-preset selected check `✓`→`<Check/>`. Added lucide `Check`/`AlertTriangle`/`Bell` imports. **A11y**: icons next to an equivalent text label (강점/주의/알림) get `aria-hidden` (no double announcement); the selected-check icons also `aria-hidden` since `aria-pressed` conveys state. No icon-only control exists, so no new `aria-label` needed. `▲/▼/▴/▾/×` geometric glyphs left as-is per request/plan (card↔table change-indicator consistency).
+- **Deferred blocker (검증보류 wording — NOT implemented, "don't invent" rule)**: the report's "검증 보류로 제외 / re-include when data is ready" example does **not** match `/stocks`' actual filter (the PER≤200·PBR≤30 quality filter) — 검증보류 is the stock-detail `isSuspect` grade concept, not the discovery-screen exclusion reason. Kept the consolidated line factually about the PER/PBR filter and **deferred the 검증보류 phrasing as an owner-confirmation blocker** (needs exact KO/EN copy) rather than ship an inaccurate reason.
+- **Verification (all passed)**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` **138 / 0 errors / 0 forbidden / Metrics 2.4** (proves scoring+data untouched); `git diff --check` clean; edited 2 files noBOM / uniform CRLF / 0 U+FFFD / 0 emoji (✓⚠🔔) / KO+EN parity; `npm run build` 0 (138 SSG). Local prod 4477 (AI Center 4310 left untouched): `/stocks` 200; `npm run smoke:check -- --all` **23/23 OK**; `verify:routes --base` **9/9 OK** (expected data date 2026.07.07). `/stocks` SSR check: canonical `기본 품질 필터 적용 중` **once** + `전체 138개 보기` toggle once; `headerDesc`/`baseScreenNote`/`questionDesc` once each; emoji ✓⚠🔔 **0**; lucide SVGs rendered (352); card strength/warning labels present. 4477 torn down (PID 23388 taskkill); 4310 untouched.
+- **Limit**: Real-device 390×844 card view (≤lg) + desktop table view eyeball (no overlap after the density trim, icon alignment, ≥44px tap targets, no overflow) remains an **operator visual gate** (Playwright unavailable) per `docs/ornscore-real-device-390px-qa-2026-07-06.md` — icons align via `inline-flex`/`items-center` next to their text, no new fixed widths. Local commit only; not pushed; main unchanged.
 
 ### 2026-07-08 — Codex Task 106 — stock-detail finishing P0E: empty-warning copy fix (reaudit 5-3 #2) + CTA-separation confirmation + scoped blockers
 - **Scope**: Stock-detail (`/stock/[ticker]`) closing-quality copy, per `ORNScore 재검수 리포트.pdf` (submitted 2026.07.07, the authoritative source). Presentation/copy-only — **no change to scoring formulas (`score.ts`/`metrics.ts`/`sector.ts`), `stocks.json`, DART data, `direction`, or `metricsVersion`**. Branch `ai-center/task-106-2026-07-07-ornscore-p0e-cta` (base = main HEAD `4b89f86`, confirmed). Edited **1 file**: `src/lib/copy/stockDetail.ts`.

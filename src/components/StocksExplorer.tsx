@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { Activity, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
+import { Activity, AlertTriangle, Bell, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
@@ -637,7 +637,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
             <div className="flex flex-col gap-1 mt-2">
               {strengths.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0 md:min-w-[2.75rem]">{t.card.strength}</span>
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0 md:min-w-[2.75rem]"><Check aria-hidden size={11} strokeWidth={2.5} />{t.card.strength}</span>
                   {strengths.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900">{label}</span>
                   ))}
@@ -645,7 +645,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
               ) : null}
               {warnings.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0 md:min-w-[2.75rem]">{t.card.warning}</span>
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400 shrink-0 md:min-w-[2.75rem]"><AlertTriangle aria-hidden size={11} strokeWidth={2.5} />{t.card.warning}</span>
                   {warnings.slice(0, 3).map((label) => (
                     <span key={label} className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">{label}</span>
                   ))}
@@ -907,8 +907,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       <section>
         <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{t.questionDesc}</p>
-        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1 mb-3 leading-snug">{t.entryPointsHint}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 mb-3 leading-snug">{t.questionDesc}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
@@ -934,7 +933,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
                     <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{qc.label}</div>
                     <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{qc.desc}</p>
                   </div>
-                  {selected ? <span aria-hidden className="shrink-0 text-blue-600 dark:text-blue-400 text-sm">✓</span> : null}
+                  {selected ? <Check aria-hidden size={16} strokeWidth={2.5} className="shrink-0 text-blue-600 dark:text-blue-400" /> : null}
                 </div>
                 {badges.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-2">
@@ -944,7 +943,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
                   </div>
                 ) : null}
                 {qc.caution ? (
-                  <div className="text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug">{t.cautionPrefix}{qc.caution}</div>
+                  <div className="flex items-start gap-1 text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug"><AlertTriangle aria-hidden size={11} strokeWidth={2.5} className="mt-px shrink-0" /><span>{qc.caution}</span></div>
                 ) : null}
                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 tabular-nums">{t.expectedResults(presetCounts[p.id] ?? 0).a}<strong className="text-zinc-700 dark:text-zinc-200">{t.expectedResults(presetCounts[p.id] ?? 0).b}</strong></div>
               </button>
@@ -982,7 +981,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
                       : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
                 >
                   {pc.label}
-                  {selected ? <span aria-hidden className="ml-1">✓</span> : null}
+                  {selected ? <Check aria-hidden size={12} strokeWidth={2.5} className="inline-block ml-1 align-middle" /> : null}
                 </button>
               );
             })}
@@ -996,7 +995,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
           <div className="flex gap-1.5">
             <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition">{t.alertThis}</button>
+            <button type="button" onClick={handleCreateAlert} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
           </div>
         </div>
         {savedSearches.length === 0 ? (

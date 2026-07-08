@@ -14,14 +14,14 @@ export const stocksCopy = {
     qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 적용 중: ${shown}개 `, b: `/ 전체 ${total}개` }),
     viewAllToggle: (total: number) => `전체 ${total}개 보기`,
     backToDefaultToggle: "기본 품질 보기",
-    headerDesc: (total: number) => `질문형 프리셋과 상세 필터로 ${total}개 종목 중 먼저 볼 후보를 좁혀보세요.`,
+    headerDesc: (total: number) => `질문형 프리셋이나 상세 필터로 먼저 볼 후보를 좁혀보세요.`,
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
     dataStaleLabel: "갱신 지연",
     dataNormalLabel: "데이터 정상",
     notAdvice: "투자 추천 아님 · 탐색 도구",
     baseScreenNote: (excluded: number) =>
-      `기본 화면은 PER 200 이하 · PBR 30 이하 종목만 표시합니다. 고PER·고PBR 등 제외 ${excluded}개는 ‘전체 보기’를 선택하면 포함됩니다.`,
+      `기본 화면은 PER 200 이하 · PBR 30 이하만 표시하며, 제외 ${excluded}개는 위 ‘전체 보기’로 볼 수 있어요.`,
 
     // ── 검색 ──
     searchPlaceholder: "종목명 · 코드로 바로 검색",
@@ -35,11 +35,9 @@ export const stocksCopy = {
 
     // ── 질문형 프리셋 섹션 ──
     questionHeading: "어떤 종목을 찾고 있나요?",
-    questionDesc: "어려운 지표명을 몰라도 질문을 고르면 조건이 자동으로 적용됩니다.",
-    // 세 가지 시작점을 한 줄로 구분(초보자 길잡이)
-    entryPointsHint: "질문형 프리셋으로 시작 · 빠른 프리셋으로 지표로 좁히기 · 상세 필터로 직접 조절",
+    // 질문형 시작 + 더 좁히는 방법을 한 줄로(초보자 길잡이)
+    questionDesc: "지표명을 몰라도 질문을 고르면 조건이 자동 적용돼요 · 더 좁히려면 빠른 프리셋·상세 필터",
     expectedResults: (n: number) => ({ a: "예상 결과 ", b: `${n}개` }),
-    cautionPrefix: "⚠ ",
 
     // ── 빠른 프리셋 ──
     quickPresetsLabel: "빠른 프리셋",
@@ -51,7 +49,7 @@ export const stocksCopy = {
     // ── 내 검색 조건(저장/알림) ──
     mySearchLabel: "내 검색 조건",
     saveCurrent: "+ 현재 조건 저장",
-    alertThis: "🔔 이 조건 알림",
+    alertThis: "이 조건 알림",
     savedEmpty: "자주 쓰는 필터 조합을 저장해 한 번에 불러올 수 있어요. 로그인하면 기기 간 동기화돼요.",
     removeSaved: "삭제",
 
@@ -261,8 +259,8 @@ export const stocksCopy = {
     card: {
       cap: "시총",
       perDash: "—",
-      strength: "✓ 강점",
-      warning: "⚠ 주의",
+      strength: "강점",
+      warning: "주의",
       tip: { momentum: "모멘텀(추세)", flow: "거래활성도(거래)", value: "밸류(저평가)", vol: "변동성조정(위험조정)" },
       abbr: { momentum: "추", flow: "거", value: "저", vol: "위" },
     },
@@ -308,14 +306,14 @@ export const stocksCopy = {
     qualityHeadline: (shown: number, total: number) => ({ a: `Default quality filter on: ${shown} `, b: `/ ${total} total` }),
     viewAllToggle: (total: number) => `View all ${total}`,
     backToDefaultToggle: "Default view",
-    headerDesc: (total: number) => `Use question presets and detailed filters to narrow ${total} stocks down to candidates to look at first.`,
+    headerDesc: (total: number) => `Use question presets or detailed filters to narrow down candidates to look at first.`,
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
     dataStaleLabel: "Update delayed",
     dataNormalLabel: "Data current",
     notAdvice: "Not investment advice · research tool",
     baseScreenNote: (excluded: number) =>
-      `The default view shows only stocks with PER ≤ 200 and PBR ≤ 30. The ${excluded} excluded (high PER/PBR, etc.) are included when you choose "View all".`,
+      `The default view shows only PER ≤ 200 and PBR ≤ 30; the ${excluded} excluded appear via "View all" above.`,
 
     // ── Search ──
     searchPlaceholder: "Search by name · ticker",
@@ -329,11 +327,9 @@ export const stocksCopy = {
 
     // ── Question presets ──
     questionHeading: "What kind of stock are you looking for?",
-    questionDesc: "No need to know the metric names — pick a question and the filters apply automatically.",
-    // Three entry points, one line (beginner orientation)
-    entryPointsHint: "Start with a question preset · narrow by metric with quick presets · fine-tune with detailed filters",
+    // Question start + how to narrow, one line (beginner orientation)
+    questionDesc: "Pick a question and filters apply automatically · narrow further with quick presets or detailed filters",
     expectedResults: (n: number) => ({ a: "Expected results ", b: `${n}` }),
-    cautionPrefix: "⚠ ",
 
     // ── Quick presets ──
     quickPresetsLabel: "Quick presets",
@@ -345,7 +341,7 @@ export const stocksCopy = {
     // ── My searches (save / alert) ──
     mySearchLabel: "My searches",
     saveCurrent: "+ Save current",
-    alertThis: "🔔 Alert on this",
+    alertThis: "Alert on this",
     savedEmpty: "Save filter combinations you use often and recall them in one tap. Sign in to sync across devices.",
     removeSaved: "Remove",
 
@@ -554,8 +550,8 @@ export const stocksCopy = {
     card: {
       cap: "Cap",
       perDash: "—",
-      strength: "✓ Strengths",
-      warning: "⚠ Caution",
+      strength: "Strengths",
+      warning: "Caution",
       tip: { momentum: "Momentum (trend)", flow: "Trading activity", value: "Value (undervalued)", vol: "Volatility-adjusted (risk-adjusted)" },
       abbr: { momentum: "T", flow: "A", value: "V", vol: "R" },
     },
