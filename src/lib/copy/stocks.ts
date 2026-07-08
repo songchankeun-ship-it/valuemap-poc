@@ -9,12 +9,16 @@ export const stocksCopy = {
   ko: {
     // ── 페이지 헤더 ──
     headerTitle: "발견",
-    matchCount: (n: number, total: number) => ({ a: `현재 표시 ${n}개 `, b: `/ 전체 ${total}개` }),
+    matchCount: (n: number, total: number) => ({ a: `검색·필터 결과 ${n}개 `, b: `/ 분석 대상 ${total}종목` }),
     // 기본 품질 필터(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
-    qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 적용 중: ${shown}개 `, b: `/ 전체 ${total}개` }),
+    qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 ${shown}개 `, b: `/ 분석 대상 ${total}종목` }),
     viewAllToggle: (total: number) => `전체 ${total}개 보기`,
     backToDefaultToggle: "기본 품질 보기",
-    headerDesc: (total: number) => `질문형 프리셋이나 상세 필터로 먼저 볼 후보를 좁혀보세요.`,
+    // 결과 리스트 접근성(랜드마크 라벨·목록 제목·바로가기) — 무JS/스크린리더에서도 목록 시작을 명확히 안내
+    resultsRegionLabel: "종목 목록",
+    resultsHeading: (shown: number, total: number) => `종목 목록 · 분석 대상 ${total}종목 내 ${shown}개`,
+    skipToList: "종목 목록 바로가기",
+    headerDesc: (total: number) => `질문·필터로 먼저 볼 후보를 좁혀보세요.`,
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
     dataStaleLabel: "갱신 지연",
@@ -36,7 +40,7 @@ export const stocksCopy = {
     // ── 질문형 프리셋 섹션 ──
     questionHeading: "어떤 종목을 찾고 있나요?",
     // 질문형 시작 + 더 좁히는 방법을 한 줄로(초보자 길잡이)
-    questionDesc: "지표명을 몰라도 질문을 고르면 조건이 자동 적용돼요 · 더 좁히려면 빠른 프리셋·상세 필터",
+    questionDesc: "질문을 고르면 조건이 자동 적용돼요 · 더 좁히려면 빠른 프리셋·상세 필터",
     expectedResults: (n: number) => ({ a: "예상 결과 ", b: `${n}개` }),
 
     // ── 빠른 프리셋 ──
@@ -92,7 +96,7 @@ export const stocksCopy = {
 
     // ── 현재 조건 요약 바 ──
     currentCond: "현재 조건",
-    matchCountShort: (n: number, total: number) => ({ a: `현재 표시 ${n} `, b: `/ 전체 ${total}` }),
+    matchCountShort: (n: number, total: number) => ({ a: `검색·필터 결과 ${n} `, b: `/ 분석 대상 ${total}종목` }),
     // 현재 조건 블록 3행: 기본 품질 필터 / 상세 필터 / 정렬 (기본 품질과 사용자 상세를 명확히 분리)
     qualityRowOn: "기본 품질 필터: PER ≤ 200, PBR ≤ 30",
     qualityRowOff: "기본 품질 필터: 해제됨 (전체 보기)",
@@ -121,12 +125,12 @@ export const stocksCopy = {
     viewAll: "전체 종목 보기",
 
     // ── 결과 푸터 ──
-    topCapNote: (n: number) => `현재 표시 대상 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
+    topCapNote: (n: number, total: number) => `분석 대상 ${total}종목 내 조건에 맞는 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
 
     // ── 상세 필터 패널 ──
     filterDetailTitle: "상세 필터",
     // 필터 조절 중 실시간 예상 결과 수(패널 상단 고정)
-    filterLiveCount: (n: number, total: number) => ({ a: `예상 결과 ${n}개 `, b: `/ 전체 ${total}개` }),
+    filterLiveCount: (n: number, total: number) => ({ a: `예상 결과 ${n}개 `, b: `/ 분석 대상 ${total}종목` }),
     closeDrawerView: (n: number) => `${n}개 보기`,
     labelMarket: "시장",
     labelMarketCap: "시가총액",
@@ -302,11 +306,15 @@ export const stocksCopy = {
   en: {
     // ── Page header ──
     headerTitle: "Find stocks to review today",
-    matchCount: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
-    qualityHeadline: (shown: number, total: number) => ({ a: `Default quality filter on: ${shown} `, b: `/ ${total} total` }),
+    matchCount: (n: number, total: number) => ({ a: `Filtered results ${n} `, b: `/ within ${total} analyzed` }),
+    qualityHeadline: (shown: number, total: number) => ({ a: `Default quality filter ${shown} `, b: `/ within ${total} analyzed` }),
     viewAllToggle: (total: number) => `View all ${total}`,
     backToDefaultToggle: "Default view",
-    headerDesc: (total: number) => `Use question presets or detailed filters to narrow down candidates to look at first.`,
+    // Results-list accessibility (landmark label · list heading · skip link) — surface the list start for no-JS/screen readers
+    resultsRegionLabel: "Stock list",
+    resultsHeading: (shown: number, total: number) => `Stock list · ${shown} within ${total} analyzed`,
+    skipToList: "Skip to stock list",
+    headerDesc: (total: number) => `Use questions or filters to narrow down candidates to look at first.`,
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
     dataStaleLabel: "Update delayed",
@@ -384,7 +392,7 @@ export const stocksCopy = {
 
     // ── Current condition bar ──
     currentCond: "Current conditions",
-    matchCountShort: (n: number, total: number) => ({ a: `Showing ${n} `, b: `/ ${total} total` }),
+    matchCountShort: (n: number, total: number) => ({ a: `Results ${n} `, b: `/ within ${total} analyzed` }),
     qualityRowOn: "Default quality filter: PER ≤ 200, PBR ≤ 30",
     qualityRowOff: "Default quality filter: Off (viewing all)",
     detailRowLabel: "Detail filters",
@@ -412,12 +420,12 @@ export const stocksCopy = {
     viewAll: "View all stocks",
 
     // ── Results footer ──
-    topCapNote: (n: number) => `Showing the top 100 of ${n} results · narrow the conditions to compare more easily.`,
+    topCapNote: (n: number, total: number) => `Within ${total} analyzed, showing the top 100 of ${n} matches · narrow the conditions to compare more easily.`,
 
     // ── Detailed filter panel ──
     filterDetailTitle: "Detailed filters",
     // Live expected result count while adjusting filters (pinned at panel top)
-    filterLiveCount: (n: number, total: number) => ({ a: `Expected ${n} `, b: `/ ${total} total` }),
+    filterLiveCount: (n: number, total: number) => ({ a: `Expected ${n} `, b: `/ within ${total} analyzed` }),
     closeDrawerView: (n: number) => `View ${n}`,
     labelMarket: "Market",
     labelMarketCap: "Market cap",

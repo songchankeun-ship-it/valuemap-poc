@@ -842,6 +842,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
           <DataStatusBadge tone={dataStale ? "delayed" : "normal"} label={dataStale ? t.dataStaleLabel : t.dataNormalLabel} />
           <span aria-hidden>·</span>
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">{t.notAdvice}</span>
+          <span aria-hidden>·</span>
+          {/* 무JS·키보드·스크린리더가 긴 필터 UI를 건너뛰고 종목 목록으로 바로 이동(인페이지 앵커라 JS 없이도 동작) */}
+          <a href="#stock-results" className={`inline-flex items-center px-1.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition ${FOCUS_RING}`}>{t.skipToList}</a>
         </div>
         {nonThemeFilterCount === 0 && themeFilterCount === 0 && !query && sorted.length < stocks.length ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
@@ -1123,7 +1126,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
           </aside>
         ) : null}
 
-        <div className="space-y-2">
+        <section id="stock-results" aria-label={t.resultsRegionLabel} className="space-y-2 scroll-mt-20">
+          {/* 결과 목록 제목 — 무JS/스크린리더가 필터 UI 다음에 '종목 목록' 시작을 바로 인지 + '138종목 내' 범위 재고지 */}
+          {sorted.length > 0 ? (
+            <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 tabular-nums">{t.resultsHeading(sorted.length, total)}</h2>
+          ) : null}
           {sorted.length === 0 ? (() => {
             const sc = strongestConstraint();
             // 필터 제약은 없는데 검색어만 있어 0건 → 검색 실패로 안내(철자 확인·검색어 지우기)
@@ -1161,8 +1168,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
           ) : (
             renderCards()
           )}
-          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">{t.topCapNote(sorted.length)}</div>) : null}
-        </div>
+          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">{t.topCapNote(sorted.length, total)}</div>) : null}
+        </section>
       </div>
 
       {drawerOpen ? (
