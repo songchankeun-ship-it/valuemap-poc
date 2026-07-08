@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 121 — 테마 0건 빈 상태와 기본 품질 필터 제외 사유
+- **범위**: 공개 재검수 P0D "카카오그룹 관련 종목" 0건 UX만 처리. `/stocks?theme=` 테마 유입과 레거시 `/theme/[slug]` 빈 상태 표시를 보강했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
+- **조사**: 현재 실데이터 테마 118개 중 기본 품질 필터(PER≤200·PBR≤30) 때문에 0건이 되는 테마는 5개: `카카오그룹`(3), `바이오AI(신약개발)`(2), `스테이블 코인`(1), `영화`(1), `의료AI`(1). 카카오그룹은 카카오 PER 306.86, 카카오페이 PER 2624.66, 카카오게임즈 PER 17124로 모두 기본 PER 상한 밖. 레거시 `/theme/[slug]`는 `battery`, `semi-materials`, `bio`, `shipbuilding`, `robot` 5개이며, `bio`/`shipbuilding`은 실데이터 매칭이 있는데 mock 테이블만 비어 있었고 `robot`은 현재 138개 분석 대상 내 실매칭 0개.
+- **변경**: `StocksExplorer`가 테마 단독 0건을 일반 "조건 없음" 빈 상태와 분리한다. 테마 소속 종목이 있지만 기본 품질 필터에 제외된 경우 헤더 바로 아래와 결과 빈 상태에 제외 종목 수, 종목별 PER/PBR 제외 이유, `필터를 풀고 보기` 버튼을 표시한다. 유효하지 않은 `theme` 쿼리는 기본 목록으로 풀지 않고 해당 테마 0건 상태와 `/stocks` 검색 CTA를 보여준다. 일반 빈 상태 문장도 `조건이 강해` 대신 `조건 때문에`로 수정했다.
+- **레거시 테마 상세**: `/theme/[slug]`는 실데이터 테마 매칭을 우선 사용해 `bio`가 11개, `shipbuilding`이 6개 등 실제 종목 표를 보여준다. 실매칭이 없는 `robot`은 "현재 138개 분석 대상에는 ... 실데이터 종목이 없습니다"와 `종목 검색으로 확인` CTA를 보여준다.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 공백 오류 0(CRLF 예정 경고만) · `npm run build` 0(기존 lint warning 4건만) · local prod `http://127.0.0.1:4575` `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **브라우저 확인**: 시스템 Chrome headless CDP(임시 포트 9231/임시 프로필)로 `/stocks?theme=카카오그룹` 390x844·1366x900, `/stocks?theme=없는테마` 390x844, `/theme/robot` 390x844, `/theme/bio` 1366x900 확인. 전 케이스 horizontal overflow 0, console/runtime error 0. 카카오그룹 모바일은 헤더 CTA `필터를 풀고 보기`가 y=297에 노출되고 클릭 후 `검색·필터 결과 3개`, `테마: 카카오그룹`, `카카오게임즈` 확인. 스크린샷: `C:\dev\AI_Dev_Center\logs\ornscore-task121-*.png`.
+- **정리/남은 리스크**: local prod 포트 4575와 Chrome CDP 9231은 범위 한정 종료, 임시 Chrome profile 삭제, AI Center 4310은 LISTENING 유지. 남은 제품 리스크는 레거시 `/theme/[slug]`의 상단 테마 점수/수익률이 여전히 mock 메타 기반이라는 점이며, 이번 큐의 다음 진입점은 #122 검색/관심/비교 빠른 시작 강화.
+
 ## 2026-07-09 · [codex] Task 120 — 무료 베타 약관 정합 + 백테스트 기준일 고지 강화
 - **범위**: 공개 재검수 P0C 2건만 처리. `/pricing` 무료 베타 안내와 `/terms` 유료/대기 문구 충돌을 정리하고, `/backtest` 첫 화면에서 백테스트 재계산일과 현재 데이터 기준일 차이를 더 직접 노출했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion`·백테스트 계산/파일 변경 없음.
 - **변경**: `src/app/terms/page.tsx` 상단 정책을 `현재 적용되는 정책 (무료 베타)`로 바꾸고, "대기 신청" 표현을 제거했다. 약관의 유료 섹션은 `유료 결제 관련 정책 (현재 미제공 · 향후 도입 시 초안)`으로 조정해 현재 결제/상용화가 제공 중처럼 읽히지 않게 했다. `src/components/BacktestClient.tsx`에는 상단 한계 배지 바로 아래 `데이터 기준 차이` 박스를 추가해 `마지막 재계산: 2026-06-14 · 현재 데이터 기준: 2026.07.07`과 "현재 종합 점수의 성과 검증이 아님"을 첫 화면에 노출했다. 기존 `현재 종합점수 검증 아님` 배지와 하단 날짜 블록은 유지.

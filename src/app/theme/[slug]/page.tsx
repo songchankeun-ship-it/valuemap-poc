@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getThemeBySlug, getStocksInTheme } from "@/lib/mockData";
+import { realStockPool } from "@/lib/realStocks";
 
 export const revalidate = 3600;
 
@@ -42,7 +43,9 @@ export default async function ThemeDetailPage({ params }: PageProps) {
   const theme = getThemeBySlug(slug);
   if (!theme) notFound();
 
-  const stocks = getStocksInTheme(slug);
+  const realThemeStocks = realStockPool.filter((s) => s.themes.includes(theme.name));
+  const stocks = realThemeStocks.length > 0 ? realThemeStocks : getStocksInTheme(slug);
+  const stockCount = stocks.length;
 
   return (
     <div className="space-y-4">
@@ -63,7 +66,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
             </span>
           </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            {theme.stockCount}개 종목 · 자체 지표 종합 {theme.compositeScore} / 100
+            현재 분석 대상 매칭 {stockCount}개 · 자체 지표 종합 {theme.compositeScore} / 100
           </p>
         </div>
         <button className="px-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-md text-sm">
@@ -107,9 +110,25 @@ export default async function ThemeDetailPage({ params }: PageProps) {
 
       <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium">소속 종목 {theme.stockCount}개</span>
+          <span className="text-sm font-medium">소속 종목 {stockCount}개</span>
           <span className="text-[11px] text-brand-700">소외 정렬 ▼</span>
         </div>
+        {stocks.length === 0 ? (
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-4 py-8 text-center">
+            <div className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+              현재 138개 분석 대상에는 {theme.name} 테마와 연결된 실데이터 종목이 없습니다.
+            </div>
+            <p className="mx-auto mt-2 max-w-lg text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+              테마명이 바뀌었거나 아직 커버리지에 포함되지 않았을 수 있습니다. 종목명·코드 검색에서 직접 확인해보세요.
+            </p>
+            <Link
+              href={`/stocks?q=${encodeURIComponent(theme.name)}`}
+              className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700"
+            >
+              종목 검색으로 확인
+            </Link>
+          </div>
+        ) : (
         <div className="overflow-x-auto -mx-1 px-1"><table className="w-full text-sm min-w-[360px]">
           <thead>
             <tr className="text-[11px] text-gray-500 dark:text-zinc-400 border-b border-gray-200 dark:border-zinc-800">
@@ -153,6 +172,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
           </tbody>
         </table>
         </div>
+        )}
       </div>
     </div>
   );

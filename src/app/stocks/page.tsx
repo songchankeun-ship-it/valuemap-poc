@@ -117,9 +117,11 @@ export default async function StocksPage({ searchParams }: PageProps) {
   }));
   const themes = allThemes();
   const sectors = allSectors();
-  const initialThemes = theme && themes.includes(theme) ? [theme] : [];
+  const validSector = sector && sectors.includes(sector) ? sector : undefined;
   const legacySector = theme && !themes.includes(theme) && sectors.includes(theme) ? theme : undefined;
-  const initialSector = sector && sectors.includes(sector) ? sector : legacySector;
+  const initialSector = validSector ?? legacySector;
+  const unresolvedTheme = theme && !themes.includes(theme) && !legacySector && !initialSector ? theme : undefined;
+  const initialThemes = theme && themes.includes(theme) ? [theme] : unresolvedTheme ? [unresolvedTheme] : [];
   return (
     <>
       <StocksExplorer

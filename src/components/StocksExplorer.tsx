@@ -72,6 +72,8 @@ const CAP_MID = 1_000_000_000_000;
 
 // 기본 품질 필터(PER≤200·PBR≤30)를 해제하고 전체 138개를 볼 때 PER/PBR 상한에 쓰는 '사실상 상한 없음' 값.
 const NO_MAX = 999999;
+const DEFAULT_PER_MAX = 200;
+const DEFAULT_PBR_MAX = 30;
 const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
 
 function readRecentSearches(): string[] {
@@ -226,6 +228,17 @@ function matchesConfig(s: Stock, c: FilterConfig): boolean {
   if (c.themes.length > 0 && !s.themes.some((t) => c.themes.includes(t))) return false;
   if (c.sector && s.sector !== c.sector) return false;
   return true;
+}
+
+function defaultQualityReasonKeys(s: Stock): Array<"per" | "pbr"> {
+  const reasons: Array<"per" | "pbr"> = [];
+  if (s.per > DEFAULT_PER_MAX) reasons.push("per");
+  if (s.pbr > DEFAULT_PBR_MAX) reasons.push("pbr");
+  return reasons;
+}
+
+function formatMetricNumber(value: number, locale: Locale, maximumFractionDigits: number): string {
+  return value.toLocaleString(locale === "ko" ? "ko-KR" : "en-US", { maximumFractionDigits });
 }
 
 type StocksCopyT = (typeof stocksCopy)[Locale];
@@ -460,6 +473,23 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       .slice(0, 4);
   }, [stocks]);
 
+  const selectedThemeLabels = useMemo(() => Array.from(selectedThemes), [selectedThemes]);
+  const selectedThemeSummary = useMemo(() => {
+    if (selectedThemeLabels.length === 0) return locale === "ko" ? "선택한 테마" : "Selected theme";
+    if (selectedThemeLabels.length <= 2) return selectedThemeLabels.join(locale === "ko" ? "·" : ", ");
+    const rest = selectedThemeLabels.length - 2;
+    return locale === "ko"
+      ? `${selectedThemeLabels.slice(0, 2).join("·")} 외 ${rest}개`
+      : `${selectedThemeLabels.slice(0, 2).join(", ")} +${rest}`;
+  }, [locale, selectedThemeLabels]);
+  const themeScopedStocks = useMemo(() => {
+    if (selectedThemeLabels.length === 0) return [];
+    return stocks.filter((s) => s.themes.some((theme) => selectedThemeLabels.includes(theme)));
+  }, [stocks, selectedThemeLabels]);
+  const qualityExcludedThemeStocks = useMemo(() => {
+    return themeScopedStocks.filter((s) => defaultQualityReasonKeys(s).length > 0);
+  }, [themeScopedStocks]);
+
   // 각 프리셋의 '예상 결과 수' — 다른 활성 필터와 무관하게 전체 풀에 대해 독립 계산
   // (count-vs-full-pool 의미: 카드 숫자는 "그 프리셋만 적용했을 때 몇 개"를 뜻함).
   const presetCounts = useMemo(() => {
@@ -496,6 +526,19 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   // 프리셋·검색·상세 필터가 전혀 없는 '순수 기본 탐색' 상태(기본 123개 또는 전체 138개 보기).
   // 이 상태에서만 헤더에 기본 품질 헤드라인과 전체/기본 보기 토글을 노출한다.
   const pureBrowse = nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && !activePreset;
+  const themeOnlyZero =
+    sorted.length === 0 &&
+    themeFilterCount > 0 &&
+    sectorFilterCount === 0 &&
+    nonThemeFilterCount === 0 &&
+    !query &&
+    !activePreset;
+  const showThemeQualityEmpty =
+    themeOnlyZero &&
+    qualityFilterOn &&
+    themeScopedStocks.length > 0 &&
+    qualityExcludedThemeStocks.length === themeScopedStocks.length;
+  const showThemeNoMatchEmpty = themeOnlyZero && themeScopedStocks.length === 0;
 
   // 기본 품질 필터 해제 → 전체 138개 보기(PER/PBR 상한 제거).
   function viewAllStocks() {
@@ -566,6 +609,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     if (next.has(t)) next.delete(t);
     else next.add(t);
     setSelectedThemes(next);
+  }
+
+  function qualityReasonLabels(s: Stock): string[] {
+    return defaultQualityReasonKeys(s).map((reason) => {
+      if (reason === "per") return t.themeQualityPerReason(formatMetricNumber(s.per, locale, 1));
+      return t.themeQualityPbrReason(formatMetricNumber(s.pbr, locale, 2));
+    });
   }
 
   // 현재 조건을 한 줄 자연어로 설명(설계서 §10 상태별).
@@ -889,6 +939,31 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         {nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && sorted.length < stocks.length ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
         ) : null}
+        {showThemeQualityEmpty ? (
+          <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-2.5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-amber-900 dark:text-amber-200 break-words">{t.themeQualityEmptyTitle(selectedThemeSummary)}</div>
+                <p className="mt-0.5 text-[11px] leading-snug text-amber-800 dark:text-amber-300">{t.themeQualityEmptyHint(qualityExcludedThemeStocks.length, themeScopedStocks.length)}</p>
+              </div>
+              <button type="button" onClick={viewAllStocks} className={`inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 ${FOCUS_RING}`}>
+                {t.themeQualityAction}
+              </button>
+            </div>
+          </div>
+        ) : showThemeNoMatchEmpty ? (
+          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2.5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100 break-words">{t.themeNoMatchTitle(selectedThemeSummary)}</div>
+                <p className="mt-0.5 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.themeNoMatchHint}</p>
+              </div>
+              <Link href="/stocks" className={`inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 ${FOCUS_RING}`}>
+                {t.themeNoMatchAction}
+              </Link>
+            </div>
+          </div>
+        ) : null}
       </header>
 
       {/* ── 검색 먼저(첫 화면 단순화: 검색창 → 질문형 프리셋 → 상세 필터 순) ── */}
@@ -1175,10 +1250,54 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             const sc = strongestConstraint();
             // 필터 제약은 없는데 검색어만 있어 0건 → 검색 실패로 안내(철자 확인·검색어 지우기)
             const searchOnly = !sc && !!query.trim();
+            const themeQualityPreview = qualityExcludedThemeStocks.slice(0, 4);
             return (
               <div className="text-center py-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4">
-                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 break-words">{searchOnly ? t.emptySearchTitle(query.trim()) : t.emptyTitle}</div>
-                {sc ? (() => {
+                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200 break-words">
+                  {showThemeQualityEmpty
+                    ? t.themeQualityEmptyTitle(selectedThemeSummary)
+                    : showThemeNoMatchEmpty
+                      ? t.themeNoMatchTitle(selectedThemeSummary)
+                      : searchOnly
+                        ? t.emptySearchTitle(query.trim())
+                        : t.emptyTitle}
+                </div>
+                {showThemeQualityEmpty ? (
+                  <div className="mx-auto mt-2 max-w-2xl text-left">
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center leading-relaxed">
+                      {t.themeQualityEmptyHint(qualityExcludedThemeStocks.length, themeScopedStocks.length)}
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {themeQualityPreview.map((s) => {
+                        const reasons = qualityReasonLabels(s);
+                        return (
+                          <li key={s.ticker} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5">
+                            <div className="flex items-start justify-between gap-2 flex-wrap">
+                              <Link href={"/stock/" + s.ticker} prefetch={false} className="min-w-0 text-sm font-medium text-zinc-800 dark:text-zinc-100 hover:text-blue-700 dark:hover:text-blue-400">
+                                <span className="break-words">{s.name}</span>
+                                <span className="ml-1 text-[11px] font-mono text-zinc-400 dark:text-zinc-500 tabular-nums">{s.ticker}</span>
+                              </Link>
+                              <span className="shrink-0 text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">{t.themeQualityReasonTitle}</span>
+                            </div>
+                            <div className="mt-1.5 flex flex-wrap gap-1">
+                              {reasons.map((reason) => (
+                                <span key={reason} className="rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 text-[10px] text-amber-800 dark:text-amber-300 tabular-nums">
+                                  {reason}
+                                </span>
+                              ))}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {qualityExcludedThemeStocks.length > themeQualityPreview.length ? (
+                      <p className="mt-2 text-center text-[11px] text-zinc-400 dark:text-zinc-500">{t.themeQualityMore(qualityExcludedThemeStocks.length - themeQualityPreview.length)}</p>
+                    ) : null}
+                    <p className="mt-2 text-center text-[11px] text-zinc-400 dark:text-zinc-500">{t.themeQualityCaveat}</p>
+                  </div>
+                ) : showThemeNoMatchEmpty ? (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">{t.themeNoMatchHint}</p>
+                ) : sc ? (() => {
                   const es = t.emptyStrong(sc.label);
                   return (
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">{es.pre}<strong className="text-zinc-700 dark:text-zinc-200">{es.label}</strong>{es.post}<br className="hidden sm:block" />{es.line2}</p>
@@ -1189,7 +1308,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">{t.emptyLoose}</p>
                 )}
                 <div className="flex gap-2 justify-center mt-4 flex-wrap">
-                  {sc ? (
+                  {showThemeQualityEmpty ? (
+                    <button type="button" onClick={viewAllStocks} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.themeQualityAction}</button>
+                  ) : null}
+                  {showThemeNoMatchEmpty ? (
+                    <Link href="/stocks" className={`inline-flex items-center justify-center text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.themeNoMatchAction}</Link>
+                  ) : null}
+                  {sc && !showThemeQualityEmpty && !showThemeNoMatchEmpty ? (
                     <button type="button" onClick={sc.relax} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.relaxStrongest}</button>
                   ) : null}
                   {searchOnly ? (

@@ -115,7 +115,7 @@ export const stocksCopy = {
 
     // ── 결과 없음 ──
     emptyTitle: "조건에 맞는 종목이 없습니다.",
-    emptyStrong: (label: string) => ({ pre: "", label, post: "이 강해 지금 범위에 드는 종목이 없습니다.", line2: "이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요." }),
+    emptyStrong: (label: string) => ({ pre: "", label, post: " 때문에 지금 범위에 드는 종목이 없습니다.", line2: "이 조건만 완화하거나 전체를 초기화해 다시 탐색해보세요." }),
     emptyLoose: "필터를 조금 완화하거나 초기화하면 더 많은 후보를 볼 수 있습니다.",
     // 검색어만 있고 결과가 없을 때(철자 확인·검색어 지우기 유도)
     emptySearchTitle: (query: string) => `‘${query}’에 맞는 종목이 없어요.`,
@@ -123,6 +123,18 @@ export const stocksCopy = {
     clearSearch: "검색어 지우기",
     relaxStrongest: "가장 강한 조건 완화",
     viewAll: "전체 종목 보기",
+    themeQualityEmptyTitle: (theme: string) => `${theme} 테마 종목은 있지만 기본 품질 필터에서 제외됐어요.`,
+    themeQualityEmptyHint: (excluded: number, total: number) =>
+      `현재 소속 ${total}개 종목 중 ${excluded}개가 PER/PBR 기본 상한 밖이라 결과 목록에서 빠졌습니다.`,
+    themeQualityReasonTitle: "제외 이유",
+    themeQualityPerReason: (value: string) => `PER ${value}배 > 200배`,
+    themeQualityPbrReason: (value: string) => `PBR ${value}배 > 30배`,
+    themeQualityMore: (n: number) => `외 ${n}개 종목도 기본 품질 필터 밖입니다.`,
+    themeQualityAction: "필터를 풀고 보기",
+    themeQualityCaveat: "필터 해제는 표시 범위를 넓히는 동작이며 투자 판단이 아닙니다.",
+    themeNoMatchTitle: (theme: string) => `${theme} 테마와 연결된 실데이터 종목이 없습니다.`,
+    themeNoMatchHint: "테마명이 바뀌었거나 현재 138개 분석 대상에 포함되지 않았을 수 있습니다. 종목명·코드 검색으로 확인해보세요.",
+    themeNoMatchAction: "종목 검색으로 이동",
 
     // ── 결과 푸터 ──
     topCapNote: (n: number, total: number) => `분석 대상 ${total}종목 내 조건에 맞는 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
@@ -424,6 +436,18 @@ export const stocksCopy = {
     clearSearch: "Clear search",
     relaxStrongest: "Relax strongest condition",
     viewAll: "View all stocks",
+    themeQualityEmptyTitle: (theme: string) => `${theme} has stocks, but the default quality filter is hiding them.`,
+    themeQualityEmptyHint: (excluded: number, total: number) =>
+      `${excluded} of ${total} theme stocks are outside the default PER/PBR caps, so they are not shown in the result list.`,
+    themeQualityReasonTitle: "Reason hidden",
+    themeQualityPerReason: (value: string) => `PER ${value} > 200`,
+    themeQualityPbrReason: (value: string) => `PBR ${value} > 30`,
+    themeQualityMore: (n: number) => `${n} more stocks are also outside the default quality filter.`,
+    themeQualityAction: "View without filter",
+    themeQualityCaveat: "Turning this off only broadens the display range; it is not investment advice.",
+    themeNoMatchTitle: (theme: string) => `No live data stocks are linked to the ${theme} theme.`,
+    themeNoMatchHint: "The theme name may have changed, or it may not be part of the current 138-stock universe. Try searching by stock name or ticker.",
+    themeNoMatchAction: "Go to stock search",
 
     // ── Results footer ──
     topCapNote: (n: number, total: number) => `Within ${total} analyzed, showing the top 100 of ${n} matches · narrow the conditions to compare more easily.`,
