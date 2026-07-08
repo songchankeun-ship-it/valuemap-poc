@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-08 · [codex] Deployment — #118 queue checkpoint docs + 2026-07-08 data refresh main 배포
+- **범위**: 사용자가 "배포해줘"로 명시 승인. `origin/main`의 최신 데이터 갱신 커밋 `2aefba5`를 보존한 뒤, #118~#123 큐 체크포인트 문서 커밋 2개를 최신 `main` 위에 cherry-pick해 배포 대상으로 정리했다. 제품 코드/점수 산식/수집 로직 변경은 없다.
+- **배포 전 검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙어0/Metrics 2.4, `git diff --check origin/main..HEAD` clean, `npm run build` 0(176 static pages), local prod `http://127.0.0.1:4568` `verify:routes` 9/9(expected date 2026.07.08), `smoke:check --all` 23/23. 임시 서버는 포트 PID 기준으로 종료했다.
+- **다음 진입점**: `origin/main` push 후 공개 `https://ornscore.com`에서 cache-busted `verify:routes`와 `smoke:check --all`을 재확인한다. AI Center 작업 #118~#123은 사용량 제한 리셋 이후 watchdog이 이어가며, 외부 서비스 변경/승인 대기 처리는 새 승인 없이는 하지 않는다.
+
 ## 2026-07-08 · [codex] Queue checkpoint — 공개 재검수 2차 #118~#123 생성, #118 사용량 제한 대기
 - **범위**: 새 공개 검수 텍스트(`.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`)를 P0/P1 로컬 작업 큐로 분리했다. 생성된 작업: #118 홈 80+ 카운트/SEO 숫자, #119 업종 전체 링크 필터, #120 무료 베타 약관+백테스트 기준일, #121 테마 0개 결과, #122 검색/관심/비교 빠른 시작, #123 공시 최신 200건 제한 고지.
 - **현재 상태**: AI Center가 #118 시작 직후 Codex planner `spawn EPERM`으로 Claude fallback을 시도했으나 Claude 주간 한도 429(`resets Jul 9, 9pm Asia/Seoul`)로 실패해 큐가 일시정지됨. 코드/테스트 실패 아님.

@@ -42,6 +42,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-08 — Codex deployment checkpoint — queue docs + 2026-07-08 data refresh
+- **Approval/scope**: Owner explicitly said "배포해줘". Preserve `origin/main` daily data refresh `2aefba5`, then cherry-pick the #118~#123 queue checkpoint docs onto latest `main`. Product code, scoring formulas, collection logic, DART/financial logic, `metricsVersion`, and UI behavior are unchanged.
+- **Pre-push gates passed**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / 0 forbidden / Metrics 2.4; `git diff --check origin/main..HEAD` clean; `npm run build` 0 (176 static pages); local prod `http://127.0.0.1:4568` `verify:routes` 9/9 (expected 2026.07.08) and `smoke:check --all` 23/23. The temp server was stopped by scoped port PID cleanup.
+- **Next entrypoint**: push `main` to trigger Vercel, then run public cache-busted `verify:routes` and `smoke:check --all` against `https://ornscore.com`. AI Center tasks #118~#123 remain queued/paused until the model limit reset watchdog resumes them.
+
 ### 2026-07-08 — Codex queue checkpoint — public review pass #2 tasks #118~#123
 - **Created queue tasks** from `.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`: #118 home 80+ count/SEO numeric snippet, #119 stock-detail industry link filter, #120 free-beta terms copy + backtest date notice, #121 theme zero-result empty state, #122 search/watchlist/compare quick starts, #123 disclosure latest-200 limit copy.
 - **Current blocker is operational, not code**: #118 started, Codex planner hit `spawn EPERM`, fallback Claude hit weekly limit 429 (`resets Jul 9, 9pm Asia/Seoul`), so the queue paused before any code work. The working tree only has this checkpoint doc update.
