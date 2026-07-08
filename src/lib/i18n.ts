@@ -71,6 +71,9 @@ export const commonCopy = {
       closeMenu: "메뉴 닫기",
       theme: "테마",
       beta: "베타",
+      primaryNavLabel: "주요 메뉴",
+      bottomNavLabel: "하단 바로가기",
+      drawerNavLabel: "전체 메뉴",
       explorationNotice:
         "이 도구는 투자 추천이 아니라 탐색 우선순위를 정하는 분석 도구입니다.",
     },
@@ -147,6 +150,9 @@ export const commonCopy = {
       closeMenu: "Close menu",
       theme: "Theme",
       beta: "Beta",
+      primaryNavLabel: "Primary navigation",
+      bottomNavLabel: "Bottom navigation",
+      drawerNavLabel: "Full menu",
       explorationNotice:
         "OrnScore is an analysis tool for prioritizing research, not investment advice.",
     },

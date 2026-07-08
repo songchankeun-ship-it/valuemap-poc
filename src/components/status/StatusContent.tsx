@@ -86,16 +86,19 @@ export function StatusContent({
       </header>
 
       {/* 인페이지 목차 — 모바일에서 긴 상태판 빠르게 이동 */}
-      <nav className="flex flex-wrap gap-x-2 gap-y-1.5 text-[11px]">
-        {toc.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="inline-flex items-center px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-500"
-          >
-            {item.label}
-          </a>
-        ))}
+      <nav aria-label={t.toc.ariaLabel}>
+        <ul className="flex flex-wrap gap-x-2 gap-y-1.5 text-[11px] list-none">
+          {toc.map((item) => (
+            <li key={item.href}>
+              <a
+                href={item.href}
+                className="inline-flex items-center px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-500"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </nav>
 
       {/* 스냅샷 */}

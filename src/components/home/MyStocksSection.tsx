@@ -178,12 +178,18 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
       {rows.length > 0 ? (
         <div className="mt-2.5 flex items-center gap-x-3 gap-y-1 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
           <span className="font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap">{t.nextPrompt}</span>
-          <Link prefetch={false} href="#today-candidates" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-            {t.nextCandidates} <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-          <Link prefetch={false} href="/disclosures" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-            {t.nextDisclosures} <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <ul className="flex items-center gap-x-3 gap-y-1 flex-wrap list-none">
+            <li>
+              <Link prefetch={false} href="#today-candidates" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+                {t.nextCandidates} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </li>
+            <li>
+              <Link prefetch={false} href="/disclosures" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+                {t.nextDisclosures} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </li>
+          </ul>
         </div>
       ) : null}
     </section>

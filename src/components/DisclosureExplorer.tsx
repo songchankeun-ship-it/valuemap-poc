@@ -557,27 +557,33 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 </div>
 
                 {/* 액션 행 (§7-4): 종목 보기 → DART 원문 → 관심 */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <ul className="flex items-center gap-2 flex-wrap list-none">
                   {g.stock_code && universeSet.has(g.stock_code) ? (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={() => goToStock(g.stock_code!)}
+                        className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
+                      >
+                        {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
+                      </button>
+                    </li>
+                  ) : null}
+                  <li>
                     <button
                       type="button"
-                      onClick={() => goToStock(g.stock_code!)}
-                      className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
+                      onClick={() => openExternal(g.representative.disclosure.url)}
+                      className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition ${FOCUS_RING}`}
                     >
-                      {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
+                      {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
                     </button>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={() => openExternal(g.representative.disclosure.url)}
-                    className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition ${FOCUS_RING}`}
-                  >
-                    {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-                  </button>
+                  </li>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <WatchlistToggle code={g.stock_code} t={t} />
+                    <li>
+                      <WatchlistToggle code={g.stock_code} t={t} />
+                    </li>
                   ) : null}
-                </div>
+                </ul>
                 {/* 상태 배지는 'DART 원문' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
                 {g.stock_code && !universeSet.has(g.stock_code) ? (
                   <div className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</div>

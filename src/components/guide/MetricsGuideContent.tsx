@@ -49,12 +49,18 @@ export function MetricsGuideContent({
         </p>
       </header>
 
-      <nav className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 flex gap-2 flex-wrap text-xs">
+      <nav aria-label={t.navLabel} className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 flex gap-2 flex-wrap text-xs">
         <span className="text-zinc-500 dark:text-zinc-400 font-medium">{t.navLabel}</span>
-        {metrics.map((m) => (
-          <Link key={m.id} href={"#" + m.id} className="text-blue-700 dark:text-blue-400 hover:underline">{m.name}</Link>
-        ))}
-        <Link href="#glossary" className="text-blue-700 dark:text-blue-400 hover:underline">{t.glossary.title}</Link>
+        <ul className="flex gap-2 flex-wrap list-none">
+          {metrics.map((m) => (
+            <li key={m.id}>
+              <Link href={"#" + m.id} className="text-blue-700 dark:text-blue-400 hover:underline">{m.name}</Link>
+            </li>
+          ))}
+          <li>
+            <Link href="#glossary" className="text-blue-700 dark:text-blue-400 hover:underline">{t.glossary.title}</Link>
+          </li>
+        </ul>
       </nav>
 
       <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-4">

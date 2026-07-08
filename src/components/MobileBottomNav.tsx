@@ -57,11 +57,12 @@ export function MobileBottomNav() {
         </div>
       ) : null}
 
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
+      <nav aria-label={copy.chrome.bottomNavLabel} className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
         {PRIMARY.map(({ href, Icon, key }) => (
           <Link
             key={href}
             prefetch={false} href={href}
+            aria-current={active(href) ? "page" : undefined}
             className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (active(href) ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
           >
             <Icon className="w-5 h-5" />

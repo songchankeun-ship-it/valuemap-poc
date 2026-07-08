@@ -132,7 +132,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
               </button>
             </div>
 
-            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            <nav aria-label={copy.chrome.drawerNavLabel} className="flex-1 p-3 space-y-1 overflow-y-auto">
               {ITEMS.map((item, idx) => {
                 const active = isActive(pathname, item.href);
                 const Icon = item.Icon;
@@ -145,6 +145,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
                       className={
                         "flex items-center gap-3 px-3 py-3 rounded-md text-sm transition " +
                         (active

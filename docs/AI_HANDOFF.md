@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-08 — Codex Task 116 — 네비 랜드마크 라벨 + 탭/버튼 텍스트 구분(접근성) (P1C)
+- **Scope**: 공개 비회원 검수 '낮음' 2건(상단/드로어/하단 네비 중복, 붙어 읽히는 탭/버튼 텍스트)만. 접근성/마크업 전용 — 점수식·데이터·DART·`stocks.json`·`metricsVersion`·페이지 흐름·시각 레이아웃 클래스 무변경. 브랜치 `ai-center/task-116-2026-07-08-ornscore-p1c`(main HEAD `935cc58`, task 115 `f09a386` 위). 편집 10파일.
+- **변경**: (1) `i18n.ts` chrome에 `primaryNavLabel`/`bottomNavLabel`/`drawerNavLabel`(ko/en) 추가 → `Sidebar`/`MobileNav`(드로어)/`MobileBottomNav` 각 `<nav>`에 서로 다른 `aria-label` + 활성 링크 `aria-current="page"`(중복 링크 유지, 랜드마크로 역할 구분). (2) 붙어 읽히는 클러스터를 `<ul class="list-none"><li>` 시맨틱으로: `StockDetailActionButtons`(공시/재무/근거/비교, `<a>`에 w-full 보존), `status/StatusContent`+`copy/status.ts`(TOC + `toc.ariaLabel` 신설), `home/MyStocksSection`(다음 링크 2개), `DisclosureExplorer`(액션 3버튼), `guide/MetricsGuideContent`(지표 바로가기 + nav aria-label). Tailwind preflight가 ul/ol 패딩 0이라 시각 무영향.
+- **감사**: `StockTabs`=개별 button(무변경), 카드형 block 클러스터=이미 분리(무편집), `StockCandidateCard`=이미 ul/li.
+- **Gates(전부 통과)**: `tsc --noEmit` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(138 SSG) · 로컬 prod 4461 `verify:routes` 9/9(2026.07.07)·`smoke:check --all` 23/23 · SSR HTML에서 네비 aria-label·TOC/액션 ul·li 렌더 확인. 편집 10파일 U+FFFD 0.
+- **남은 소유자**: 실기기 390×844 + 데스크톱 육안(네비 가림·텍스트 겹침·Tab 순서·aria-current)은 시각 게이트(Playwright 부재). **로컬 prod 서버 포트 4461 잔존**(범위 한정 CimInstance 종료가 환경 deny에 막힘 → 프로세스 안전 규칙대로 미종료·포트만 기록). 로컬 커밋만·미push·main 무변경.
+
 ### 2026-07-08 — Codex Task 113 — `/compare` empty state → "try it now": example compare sets (holdcos / banks / today's candidates) + "선택 X/4" count (P0D)
 - **Scope**: Public reviewer P0D — make the `/compare` empty state more than a static hint: a search box plus one-click example sets that immediately fill a comparison. **Presentation/copy/layout/a11y-only — no change to scoring, data collection, DART/financials, `stocks.json`, `metricsVersion`, or `src/lib/compare.ts` (local-storage basket logic).** Branch `ai-center/task-113-2026-07-08-ornscore-p0d` (on top of main HEAD `935cc58`; task 112 `dd87661` an ancestor). Edited **2 files**: `src/app/compare/page.tsx`, `src/components/CompareClient.tsx`.
 - **① Reused the existing search box (request #1 — no rebuild)**: the empty-state stock search (`StockSearchBox`) already existed and was kept as-is; no new lightweight search UI was built. Reuses the existing `onPick→tryAdd→addToCompare` path.

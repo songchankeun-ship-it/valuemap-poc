@@ -37,7 +37,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-900/30">
       <div className="sticky top-[5.5rem] px-3 py-4">
-        <nav className="space-y-0.5">
+        <nav aria-label={copy.chrome.primaryNavLabel} className="space-y-0.5">
           {ITEMS.map((item, idx) => {
             const active = isActive(pathname, item.href);
             const Icon = item.Icon;
@@ -49,6 +49,7 @@ export function Sidebar() {
                 ) : null}
                 <Link
                   prefetch={false} href={item.href}
+                  aria-current={active ? "page" : undefined}
                   className={
                     "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition " +
                     (active

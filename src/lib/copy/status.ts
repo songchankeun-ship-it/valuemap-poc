@@ -16,6 +16,7 @@ export const statusCopy = {
 
     // 인페이지 목차(TOC)
     toc: {
+      ariaLabel: "이 페이지 목차",
       snapshot: "스냅샷",
       domains: "종류별 상태",
       limits: "알려진 제한",
@@ -93,6 +94,7 @@ export const statusCopy = {
     pageSubtitle: "We transparently disclose pipeline freshness and data-source status.",
 
     toc: {
+      ariaLabel: "Page contents",
       snapshot: "Snapshot",
       domains: "Status by type",
       limits: "Known limits",
