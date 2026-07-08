@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-08 · [codex] Task 118 — 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
+- **범위**: 공개 재검수 P0A 중 금융 신뢰를 깨는 숫자 불일치 2건만 처리. **표시/파생/SEO 설명 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 무변경**. 편집 2파일: `src/app/page.tsx`, `src/app/stock/[ticker]/page.tsx`.
+- **홈 80+ 카운트 정합**: 홈 시장 요약의 `strongCount` 기준을 내부 원점수 `compositeOf(s) >= 80`에서 카드와 동일한 표시 점수 기준 `Math.round(compositeOf(s)) >= 80`으로 맞춤. 현재 데이터에서 GS raw 82.475→82, GS건설 raw 79.950→80이라 시장 스냅샷은 `종합 80+ 후보 2개`, 후보 카드는 GS 82점·GS건설 80점으로 논리 일치. 후보 정렬은 계속 raw `compositeOf` desc라 기존 순서 유지.
+- **종목 상세 SEO 숫자 제거**: `/stock/[ticker]` `generateMetadata`의 description/OG/Twitter description에서 종합 점수·4지표·PER/PBR 숫자를 제거하고, 구조 설명(`최신 종합 점수와 추세·거래활성도·밸류·위험조정 지표, 공시·재무 확인 포인트`)만 남김. JSON-LD `Article.headline`/`description`도 같은 원칙으로 변경해 검색 스니펫에 오래된 변동 수치가 재노출될 위험을 줄임. title/canonical/OG/Twitter 구조는 유지.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(176 static pages) · 로컬 prod `http://127.0.0.1:4568`에서 `verify:routes` 9/9, `smoke:check --all` 23/23. HTML 스팟체크: `/`의 `종합 80+ 후보` 값 `2개`, GS `82점`·GS건설 `80점` 렌더 확인. `/stock/078930`, `/stock/005930`의 meta/OG/Twitter/JSON-LD 범위에서 예전 `종합 점수 N`, `추세 N`, `PER N`, `/100` 패턴 0. 포트 4568 서버는 `next start -p 4568` PID만 확인해 종료, 4310 무관.
+- **남은 리스크/다음 진입점**: 인앱 브라우저 `iab`가 이 세션에 없어 실제 390×844/데스크톱 캡처는 미수행(사용 가능 목록은 Chrome 확장만 노출되어 지침상 임의 전환 안 함). 이번 변경은 숫자 텍스트/메타 설명만이라 레이아웃 리스크 낮음. 다음 작업은 같은 피드백의 #119 업종 전체 링크 필터 미적용(`theme=`와 업종 파라미터 분리, 상세 필터 표시 정합).
+
 ## 2026-07-08 · [codex] Queue checkpoint — 공개 재검수 2차 #118~#123 생성, #118 사용량 제한 대기
 - **범위**: 새 공개 검수 텍스트(`.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`)를 P0/P1 로컬 작업 큐로 분리했다. 생성된 작업: #118 홈 80+ 카운트/SEO 숫자, #119 업종 전체 링크 필터, #120 무료 베타 약관+백테스트 기준일, #121 테마 0개 결과, #122 검색/관심/비교 빠른 시작, #123 공시 최신 200건 제한 고지.
 - **현재 상태**: AI Center가 #118 시작 직후 Codex planner `spawn EPERM`으로 Claude fallback을 시도했으나 Claude 주간 한도 429(`resets Jul 9, 9pm Asia/Seoul`)로 실패해 큐가 일시정지됨. 코드/테스트 실패 아님.

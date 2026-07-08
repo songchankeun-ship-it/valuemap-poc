@@ -58,13 +58,16 @@ export function generateStaticParams() {
 
 interface PageProps { params: Promise<{ ticker: string }>; }
 
+function stockSeoDescription(name: string, ticker: string): string {
+  return `${name}(${ticker})의 최신 종합 점수와 추세·거래활성도·밸류·위험조정 지표, 공시·재무 확인 포인트를 오른스코어에서 확인하세요.`;
+}
+
 export async function generateMetadata({ params }: PageProps) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
   if (!s) return { title: "종목을 찾을 수 없습니다" };
-  const composite = Math.round(compositeOf(s));
   const title = `${s.name} (${ticker}) 분석 — 오른스코어`;
-  const description = `${s.name} 종합 점수 ${composite}/100 — 추세 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 위험조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)} · PBR ${s.pbr.toFixed(2)}.`;
+  const description = stockSeoDescription(s.name, ticker);
   return {
     title,
     description,
@@ -346,8 +349,8 @@ export default async function StockDetailPage({ params }: PageProps) {
     "@graph": [
       {
         "@type": "Article",
-        headline: `${s.name} (${ticker}) 종합 분석 — 점수 ${composite}/100`,
-        description: `${s.name} 추세 ${Math.round(s.momentum)} · 거래활성도 ${Math.round(s.flow)} · 밸류 ${Math.round(s.value)} · 위험조정 ${Math.round(s.vol)}. PER ${s.per.toFixed(1)}, PBR ${s.pbr.toFixed(2)}, ROE ${s.roe.toFixed(1)}%.`,
+        headline: `${s.name} (${ticker}) 종목 분석 — 오른스코어`,
+        description: stockSeoDescription(s.name, ticker),
         author: {
           "@type": "Organization",
           name: "오른스코어",

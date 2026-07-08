@@ -57,6 +57,11 @@ function pickTopStocks(n: number) {
     .slice(0, n);
 }
 
+// 홈의 "80+" 카운트는 카드에 보이는 정수 점수와 같은 기준을 쓴다.
+function displayCompositeScore(s: Parameters<typeof compositeOf>[0]): number {
+  return Math.round(compositeOf(s));
+}
+
 // 4지표 중 강한 2개를 "라벨 점수" 칩으로 — key+값만 넘기고 라벨은 클라이언트에서 현지화.
 function strongMetrics(s: { momentum: number; flow: number; value: number; vol: number }): StrongMetric[] {
   const items: StrongMetric[] = [
@@ -133,13 +138,13 @@ export default async function HomePage() {
     poolLookup[s.ticker] = {
       name: s.name,
       sector: sectorOf(s.themes),
-      score: Math.round(compositeOf(s)),
+      score: displayCompositeScore(s),
       changePct: s.changePct,
     };
   }
 
   // ── 오늘의 데이터 요약 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
-  const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80 && !isSuspect(s)).length;
+  const strongCount = realStockPool.filter((s) => displayCompositeScore(s) >= 80 && !isSuspect(s)).length;
   const spikeCount = volumeSpikeCount(realStockPool);
   const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
 
@@ -162,7 +167,7 @@ export default async function HomePage() {
       priceLabel: fmtWon(s.currentPrice),
       changePct: s.changePct,
       r3m,
-      score: Math.round(compositeOf(s)),
+      score: displayCompositeScore(s),
       metrics,
       lead,
       m: {

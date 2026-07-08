@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T10:49:10.756Z
+Last updated: 2026-07-08T15:05:35.245Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-08 — Codex Task 118 — 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
+- **Scope**: 공개 재검수 P0A의 숫자 신뢰 이슈 2건만 처리. 표시/파생/SEO 설명 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 무변경. 편집 2파일: `src/app/page.tsx`, `src/app/stock/[ticker]/page.tsx`.
+- **Home count fix**: 시장 스냅샷/히어로의 80+ 카운트를 후보 카드에 보이는 정수 표시 점수 기준(`Math.round(compositeOf(s)) >= 80`)으로 맞춤. 현재 로컬 데이터 기준 GS raw 82.475→82, GS건설 raw 79.950→80이라 `/`는 `종합 80+ 후보 2개`와 카드 GS 82점·GS건설 80점이 일치. 후보 순서/점수 산식은 raw `compositeOf` 정렬 그대로 유지.
+- **Stock SEO fix**: `/stock/[ticker]` metadata description/OG/Twitter description과 JSON-LD Article headline/description에서 종합 점수·4지표·PER/PBR/ROE 같은 변동 숫자를 제거하고, 최신 지표·공시·재무 확인 포인트 구조 설명으로 교체. title/canonical/OG 구조 유지.
+- **Verification**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(176 static pages) · local prod 4568 `verify:routes` 9/9 + `smoke:check --all` 23/23. HTML spot checks: `/` strong card value `2개`; `/stock/078930` and `/stock/005930` meta/OG/Twitter/JSON-LD old numeric SEO pattern 0. Port 4568 server stopped by scoped PID check; AI Center 4310 untouched.
+- **Residual / next**: In-app browser `iab` was unavailable in this session, so 390×844/desktop screenshot eyeball was not run; HTML/layout-impact risk is low because only count text and head/JSON-LD copy changed. Next entrypoint: Task #119 업종 전체 링크 필터 미적용 (`theme=` vs industry/sector param separation and visible filter summary).
 
 ### 2026-07-08 — Codex queue checkpoint — public review pass #2 tasks #118~#123
 - **Created queue tasks** from `.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`: #118 home 80+ count/SEO numeric snippet, #119 stock-detail industry link filter, #120 free-beta terms copy + backtest date notice, #121 theme zero-result empty state, #122 search/watchlist/compare quick starts, #123 disclosure latest-200 limit copy.
