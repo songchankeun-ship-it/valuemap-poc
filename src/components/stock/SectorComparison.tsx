@@ -36,7 +36,7 @@ export function SectorComparison({
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
       <div className="flex items-baseline justify-between mb-2 gap-2">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">{t.titlePrefix} {sector}</div>
-        <Link href={"/stocks?theme=" + encodeURIComponent(sector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline shrink-0">{t.sectorAllLink}</Link>
+        <Link href={"/stocks?sector=" + encodeURIComponent(sector)} className="text-[11px] text-blue-700 dark:text-blue-400 hover:underline shrink-0">{t.sectorAllLink}</Link>
       </div>
 
       {sectorCount < 2 ? (

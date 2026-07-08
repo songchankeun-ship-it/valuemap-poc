@@ -1,5 +1,6 @@
 // 검색조건 → 종목 매칭 술어. StocksExplorer 필터와 동일 규칙을 서버(알림 cron)에서 재사용.
 import type { SavedSearchConfig } from "@/lib/savedSearches";
+import { sectorOf } from "@/lib/sector";
 
 export interface StockForMatch {
   ticker: string;
@@ -45,5 +46,6 @@ export function matchesConfig(s: StockForMatch, c: SavedSearchConfig): boolean {
   if (c.themes && c.themes.length > 0) {
     if (!s.themes.some((t) => c.themes!.includes(t))) return false;
   }
+  if (c.sector && sectorOf(s.themes) !== c.sector) return false;
   return true;
 }

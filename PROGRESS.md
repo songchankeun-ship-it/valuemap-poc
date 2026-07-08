@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 119 — 종목 상세 업종 전체 링크를 `/stocks` 업종 필터로 연결
+- **범위**: 공개 재검수 P0B "종목 상세의 업종 전체 링크가 전체 기본 목록처럼 풀림"만 처리. 표시/라우팅/필터 상태 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
+- **변경**: `SectorComparison`의 "업종 전체" 링크를 `/stocks?theme=...`에서 `/stocks?sector=...`로 분리. `/stocks`는 `sector` 쿼리를 유효 업종 필터로 초기화하고, 기존에 잘못 공유된 `theme=업종명` URL도 실제 테마가 아닐 때만 업종 필터로 해석. `StocksExplorer`에 `selectedSector` 상태·업종 필터 버튼·현재 조건 칩을 추가해 상세 필터 행에 `업종: 지주·기타`처럼 노출. 테마 필터 칩은 `테마: ...`로 구분. 저장 필터/조건 알림 타입과 매칭도 `sector`를 이해하도록 표시·카운트 경로 보강.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 공백 오류 0(CRLF 예정 경고만) · `npm run build` 0(기존 lint warning 4건만) · local prod `http://127.0.0.1:4572`에서 `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **타깃 확인**: `/stock/078930` 렌더 HTML의 업종 전체 링크가 `/stocks?sector=%EC%A7%80%EC%A3%BC%C2%B7%EA%B8%B0%ED%83%80`로 생성됨. `/stocks?sector=지주·기타`는 `검색·필터 결과 6개`, `/stocks?sector=건설·인프라`는 4개, `/stocks?sector=반도체·IT부품`은 18개로 표시되고 `상세 필터: 없음`이 아님. 레거시 `/stocks?theme=지주·기타`도 업종 필터로 회복됨.
+- **브라우저 확인**: 시스템 Chrome headless CDP로 `/stock/078930`, `/stocks?sector=지주·기타`(390x844·1366x900), `/stocks?sector=건설·인프라`(1366x900), `/stocks?sector=반도체·IT부품`(390x844)을 확인. horizontal overflow 0, 업종 칩/카운트 정상, 런타임 예외·console error 0. 기존 `<meta name="apple-mobile-web-app-capable">` deprecation warning 1건은 이번 변경과 무관. 스크린샷: `C:\dev\AI_Dev_Center\logs\ornscore-119-*.png`. 로컬 서버 PID 38476과 Chrome CDP PID 50552는 포트/PID 한정으로 종료, AI Center 4310 무관.
+- **남은 리스크/다음**: 기본 품질 필터(PER≤200·PBR≤30)는 `/stocks`의 기존 기본 동작대로 업종 필터와 함께 유지된다. 다음 공개 재검수 큐 진입점은 #120 무료 베타 약관 문구와 백테스트 기준일 고지 정합.
+
 ## 2026-07-09 · [codex] Task 118 복구 — 시스템 Chrome 화면 게이트 완료, #119 재개 준비
 - **범위**: AI Center run #115의 false-fail 복구만 수행. commit `796b0ba` 이후 앱 코드·점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion` 변경 없음. 실패 사유는 코드/테스트가 아니라 in-app browser `iab` 미노출로 인한 모바일/데스크톱 화면 확인 미완료였다.
 - **추가 검증**: local prod `http://127.0.0.1:4571`에서 시스템 Chrome headless로 `/`와 `/stock/078930`을 390x844·1366x900 각각 확인. 네 화면 모두 horizontal overflow 0, console/page error 0, 스크린샷 nonblank. `/`는 `종합 80+ 후보`와 `2개`를 렌더했고, `/stock/078930` 모바일 첫 화면에는 `현재 이 종목은`이 보이며 title/description에 `N점` 형태 점수 숫자 패턴 없음. 스크린샷은 `C:\dev\AI_Dev_Center\logs\ornscore-118-*.png`.

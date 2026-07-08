@@ -63,8 +63,9 @@ function describeConfig(c: SavedSearchConfig): string {
   if (c.capBucket && c.capBucket !== "all" && CAP_LABELS[c.capBucket]) parts.push(CAP_LABELS[c.capBucket]);
   if (c.market && c.market !== "all") parts.push(c.market);
   if (c.excludeLoss) parts.push("적자 제외");
+  if (c.sector) parts.push(`업종: ${c.sector}`);
   if (c.themes && c.themes.length > 0) {
-    parts.push(c.themes.slice(0, 2).join("·") + (c.themes.length > 2 ? ` 외 ${c.themes.length - 2}` : ""));
+    parts.push("테마: " + c.themes.slice(0, 2).join("·") + (c.themes.length > 2 ? ` 외 ${c.themes.length - 2}` : ""));
   }
   return parts.length > 0 ? parts.join(" · ") : "조건 지정 없음(전체)";
 }

@@ -144,6 +144,9 @@ export const stocksCopy = {
     noMaxPlaceholder: "상한 없음",
     excludeLossLabel: "적자 기업 제외",
     excludeLossHint: "(EPS > 0)",
+    sectorLabel: "업종",
+    sectorClear: "업종 해제",
+    sectorHint: "업종은 내부 분류 기준입니다. 테마 조건과 별도로 적용됩니다.",
     themeLabel: "테마",
     themeSelected: (n: number) => `(${n}개 선택)`,
     themeClear: "선택 초기화",
@@ -173,7 +176,8 @@ export const stocksCopy = {
       roe: "ROE ",
       div: "배당 ",
       loss: "적자 제외",
-      theme: "테마 ",
+      sector: "업종: ",
+      theme: "테마: ",
     },
 
     // ── 정렬 배지(프리셋 조건 표시용) ──
@@ -211,6 +215,7 @@ export const stocksCopy = {
     // ── 현재 조건 설명(describeConditions) ──
     describeQuestion: (label: string, explain: string) => `"${label}" 조건은 ${explain}`,
     describeQuick: (label: string, desc: string) => `빠른 프리셋 "${label}" — ${desc}.`,
+    describeSector: (sector: string) => `${sector} 업종 종목 중 조건에 맞는 후보를 보고 있습니다.`,
     describeTheme: (themes: string) => `${themes} 테마에 속한 종목 중 조건에 맞는 후보를 보고 있습니다.`,
     describeManual: "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.",
     describeAll: (shown: number, total: number) =>
@@ -229,6 +234,7 @@ export const stocksCopy = {
       pbrMax: (v: string) => `PBR ${v}↓ 조건`,
       roe: (v: number) => `ROE ${v}%+ 조건`,
       div: (v: string) => `배당 ${v}%+ 조건`,
+      sector: (name: string) => `${name} 업종 조건`,
       themes: (n: number) => `선택한 테마(${n}개) 조건`,
       cap: "시가총액 구간 조건",
       excludeLoss: "적자 제외 조건",
@@ -439,6 +445,9 @@ export const stocksCopy = {
     noMaxPlaceholder: "No max",
     excludeLossLabel: "Exclude loss-making",
     excludeLossHint: "(EPS > 0)",
+    sectorLabel: "Sector",
+    sectorClear: "Clear sector",
+    sectorHint: "Sectors use OrnScore's internal grouping and apply separately from theme filters.",
     themeLabel: "Themes",
     themeSelected: (n: number) => `(${n} selected)`,
     themeClear: "Clear selection",
@@ -468,7 +477,8 @@ export const stocksCopy = {
       roe: "ROE ",
       div: "Dividend ",
       loss: "Exclude loss",
-      theme: "Theme ",
+      sector: "Sector: ",
+      theme: "Theme: ",
     },
 
     // ── Sort badges ──
@@ -506,6 +516,7 @@ export const stocksCopy = {
     // ── Describe conditions ──
     describeQuestion: (label: string, explain: string) => `"${label}" — ${explain}`,
     describeQuick: (label: string, desc: string) => `Quick preset "${label}" — ${desc}.`,
+    describeSector: (sector: string) => `Showing candidates in the ${sector} sector that match the conditions.`,
     describeTheme: (themes: string) => `Showing candidates that match the conditions among stocks in the ${themes} theme.`,
     describeManual: "You've narrowed the candidates with custom PER, PBR, ROE, market cap and other conditions.",
     describeAll: (shown: number, total: number) =>
@@ -524,6 +535,7 @@ export const stocksCopy = {
       pbrMax: (v: string) => `PBR ${v}↓ condition`,
       roe: (v: number) => `ROE ${v}%+ condition`,
       div: (v: string) => `Dividend ${v}%+ condition`,
+      sector: (name: string) => `${name} sector condition`,
       themes: (n: number) => `Selected themes (${n}) condition`,
       cap: "Market cap range condition",
       excludeLoss: "Exclude loss-making condition",

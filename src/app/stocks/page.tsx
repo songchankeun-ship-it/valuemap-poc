@@ -7,11 +7,42 @@ import { CompareTray } from "@/components/stock/CompareTray";
 export const revalidate = 3600;
 
 interface PageProps {
-  searchParams: Promise<{ theme?: string; q?: string }>;
+  searchParams: Promise<{ theme?: string; sector?: string; q?: string }>;
+}
+
+function allSectors() {
+  return Array.from(new Set(realStockPool.map((s) => sectorOf(s.themes)))).sort((a, b) => a.localeCompare(b, "ko"));
 }
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const { theme } = await searchParams;
+  const { theme, sector } = await searchParams;
+  const themes = allThemes();
+  const sectors = allSectors();
+  const validSector = sector && sectors.includes(sector) ? sector : undefined;
+  const legacySector = theme && !themes.includes(theme) && sectors.includes(theme) ? theme : undefined;
+  const selectedSector = validSector ?? legacySector;
+  if (selectedSector) {
+    const sectorTitle = `${selectedSector} 업종 종목 — 오른스코어`;
+    const sectorDescription = `${selectedSector} 업종 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`;
+    return {
+      title: sectorTitle,
+      description: sectorDescription,
+      openGraph: {
+        title: sectorTitle,
+        description: sectorDescription,
+        url: `/stocks?sector=${encodeURIComponent(selectedSector)}`,
+        siteName: "오른스코어",
+        locale: "ko_KR",
+        type: "website",
+        images: ["/opengraph-image"],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: sectorTitle,
+        description: sectorDescription,
+      },
+    };
+  }
   if (theme) {
     const themedTitle = `${theme} 관련 종목 — 오른스코어`;
     const themedDescription = `${theme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`;
@@ -62,7 +93,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
 }
 
 export default async function StocksPage({ searchParams }: PageProps) {
-  const { theme, q } = await searchParams;
+  const { theme, sector, q } = await searchParams;
   const stocks = realStockPool.map((s) => ({
     ticker: s.ticker,
     name: s.name,
@@ -85,13 +116,17 @@ export default async function StocksPage({ searchParams }: PageProps) {
     r3m: typeof s.returns?.r3m === "number" ? s.returns.r3m : null,
   }));
   const themes = allThemes();
+  const sectors = allSectors();
   const initialThemes = theme && themes.includes(theme) ? [theme] : [];
+  const legacySector = theme && !themes.includes(theme) && sectors.includes(theme) ? theme : undefined;
+  const initialSector = sector && sectors.includes(sector) ? sector : legacySector;
   return (
     <>
       <StocksExplorer
         stocks={stocks}
         allThemes={themes}
         initialThemes={initialThemes}
+        initialSector={initialSector}
         initialQuery={typeof q === "string" ? q : ""}
         totalCount={stocks.length}
         asOf={formatBizDateLong(dataMetadata.asOfBusinessDate)}

@@ -42,6 +42,7 @@ interface Props {
   stocks: Stock[];
   allThemes: string[];
   initialThemes?: string[];
+  initialSector?: string;
   initialQuery?: string;
   totalCount?: number;
   asOf?: string;
@@ -172,13 +173,14 @@ interface FilterConfig {
   volMin: number;
   excludeLoss: boolean;
   themes: string[];
+  sector: string;
 }
 
 // 기본(비제약) 설정 — 기본 /stocks 화면과 동일(PER 200·PBR 30 상한만 적용).
 const NEUTRAL: FilterConfig = {
   query: "", market: "all", capBucket: "all", minComposite: 0,
   perMin: 0, perMax: 200, pbrMin: 0, pbrMax: 30, roeMin: 0, divYieldMin: 0,
-  momentumMin: 0, flowMin: 0, valueMin: 0, volMin: 0, excludeLoss: false, themes: [],
+  momentumMin: 0, flowMin: 0, valueMin: 0, volMin: 0, excludeLoss: false, themes: [], sector: "",
 };
 
 function presetToConfig(p: PresetConfig): FilterConfig {
@@ -199,6 +201,7 @@ function presetToConfig(p: PresetConfig): FilterConfig {
     volMin: p.volMin ?? 0,
     excludeLoss: p.excludeLoss ?? false,
     themes: [],
+    sector: "",
   };
 }
 
@@ -221,6 +224,7 @@ function matchesConfig(s: Stock, c: FilterConfig): boolean {
   if (c.volMin > 0 && s.vol < c.volMin) return false;
   if (c.excludeLoss && !(s.eps > 0)) return false;
   if (c.themes.length > 0 && !s.themes.some((t) => c.themes.includes(t))) return false;
+  if (c.sector && s.sector !== c.sector) return false;
   return true;
 }
 
@@ -248,7 +252,7 @@ function badgesFromConfig(c: PresetConfig, t: StocksCopyT): string[] {
   return b;
 }
 
-export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery, totalCount, asOf, metricsVersion, dataStale }: Props) {
+export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector, initialQuery, totalCount, asOf, metricsVersion, dataStale }: Props) {
   const { locale } = useLanguage();
   const t = stocksCopy[locale];
   const total = totalCount ?? stocks.length;
@@ -270,6 +274,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
   const [market, setMarket] = useState<MarketFilter>("all");
   const [excludeLoss, setExcludeLoss] = useState(false);
   const [selectedThemes, setSelectedThemes] = useState<Set<string>>(() => new Set(initialThemes ?? []));
+  const [selectedSector, setSelectedSector] = useState(initialSector ?? "");
   const [themeQuery, setThemeQuery] = useState("");
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -313,7 +318,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
   }
 
   function buildCurrentConfig(): SavedSearchConfig {
-    return { query, sortKey, sortDir, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, capBucket, market, excludeLoss, themes: [...selectedThemes] };
+    return { query, sortKey, sortDir, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, capBucket, market, excludeLoss, themes: [...selectedThemes], sector: selectedSector || undefined };
   }
   function applySavedConfig(c: SavedSearchConfig) {
     setActivePreset(null);
@@ -335,6 +340,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     setMarket((c.market as MarketFilter) ?? "all");
     setExcludeLoss(c.excludeLoss ?? false);
     setSelectedThemes(new Set(c.themes ?? []));
+    setSelectedSector(c.sector ?? "");
   }
   function rememberRecentSearch(raw: string) {
     const value = raw.trim();
@@ -388,6 +394,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     setSortDir(p.config.sortDir);
     setQuery("");
     setSelectedThemes(new Set());
+    setSelectedSector("");
     setThemeQuery("");
     setShowAllThemes(false);
   }
@@ -417,10 +424,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     return popularThemes;
   }, [allThemes, themeQuery, showAllThemes, popularThemes]);
 
+  const sectorOptions = useMemo(() => {
+    return Array.from(new Set(stocks.map((s) => s.sector).filter((s): s is string => !!s))).sort((a, b) => a.localeCompare(b, "ko"));
+  }, [stocks]);
+
   const filtered = useMemo(() => {
-    const c: FilterConfig = { query, market, capBucket, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, excludeLoss, themes: [...selectedThemes] };
+    const c: FilterConfig = { query, market, capBucket, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, excludeLoss, themes: [...selectedThemes], sector: selectedSector };
     return stocks.filter((s) => matchesConfig(s, c));
-  }, [stocks, query, market, capBucket, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, excludeLoss, selectedThemes]);
+  }, [stocks, query, market, capBucket, minComposite, perMin, perMax, pbrMin, pbrMax, roeMin, divYieldMin, momentumMin, flowMin, valueMin, volMin, excludeLoss, selectedThemes, selectedSector]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -463,6 +474,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
   }, [stocks]);
 
   const themeFilterCount = selectedThemes.size;
+  const sectorFilterCount = selectedSector ? 1 : 0;
   const nonThemeFilterCount =
     (minComposite > 0 ? 1 : 0) +
     (perMin > 0 || perMax < 200 ? 1 : 0) +
@@ -476,14 +488,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     (capBucket !== "all" ? 1 : 0) +
     (market !== "all" ? 1 : 0) +
     (excludeLoss ? 1 : 0);
-  const activeFilterCount = nonThemeFilterCount + themeFilterCount;
+  const activeFilterCount = nonThemeFilterCount + themeFilterCount + sectorFilterCount;
   const hasAnyCondition = activeFilterCount > 0 || !!query || !!activePreset;
 
   // 기본 품질 필터(PER≤200·PBR≤30) 적용 여부 — 해제하면 전체 138개가 보인다.
   const qualityFilterOn = perMax <= 200 && pbrMax <= 30;
   // 프리셋·검색·상세 필터가 전혀 없는 '순수 기본 탐색' 상태(기본 123개 또는 전체 138개 보기).
   // 이 상태에서만 헤더에 기본 품질 헤드라인과 전체/기본 보기 토글을 노출한다.
-  const pureBrowse = nonThemeFilterCount === 0 && themeFilterCount === 0 && !query && !activePreset;
+  const pureBrowse = nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && !activePreset;
 
   // 기본 품질 필터 해제 → 전체 138개 보기(PER/PBR 상한 제거).
   function viewAllStocks() {
@@ -533,6 +545,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     setExcludeLoss(false);
     setQuery("");
     setSelectedThemes(new Set());
+    setSelectedSector("");
     setThemeQuery("");
     setShowAllThemes(false);
     setActivePreset(null);
@@ -561,10 +574,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     if (qp) { const c = t.qPreset[qp.id]; return t.describeQuestion(c.label, c.explain); }
     const cp = PRESETS.find((p) => p.id === activePreset);
     if (cp) { const c = t.preset[cp.id]; return t.describeQuick(c.label, c.desc); }
-    if (themeFilterCount > 0 && nonThemeFilterCount === 0 && !query) {
+    if (sectorFilterCount > 0 && themeFilterCount === 0 && nonThemeFilterCount === 0 && !query) {
+      return t.describeSector(selectedSector);
+    }
+    if (themeFilterCount > 0 && sectorFilterCount === 0 && nonThemeFilterCount === 0 && !query) {
       return t.describeTheme([...selectedThemes].join(", "));
     }
-    if (nonThemeFilterCount > 0 || query) {
+    if (nonThemeFilterCount > 0 || themeFilterCount > 0 || sectorFilterCount > 0 || query) {
       return t.describeManual;
     }
     return t.describeAll(sorted.length, total);
@@ -583,6 +599,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
     if (pbrMax < 30) cons.push({ label: t.cons.pbrMax(pbrMax.toFixed(1)), strength: 100 - Math.min(100, pbrMax * 3), relax: () => clearPreset(() => setPbrMax(30)) });
     if (roeMin > 0) cons.push({ label: t.cons.roe(roeMin), strength: roeMin * 3, relax: () => clearPreset(() => setRoeMin(0)) });
     if (divYieldMin > 0) cons.push({ label: t.cons.div(divYieldMin.toFixed(1)), strength: divYieldMin * 15, relax: () => clearPreset(() => setDivYieldMin(0)) });
+    if (selectedSector) cons.push({ label: t.cons.sector(selectedSector), strength: 60, relax: () => clearPreset(() => setSelectedSector("")) });
     if (selectedThemes.size > 0) cons.push({ label: t.cons.themes(selectedThemes.size), strength: 55, relax: () => clearPreset(() => setSelectedThemes(new Set())) });
     if (capBucket !== "all") cons.push({ label: t.cons.cap, strength: 45, relax: () => clearPreset(() => setCapBucket("all")) });
     if (excludeLoss) cons.push({ label: t.cons.excludeLoss, strength: 30, relax: () => clearPreset(() => setExcludeLoss(false)) });
@@ -694,6 +711,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
   if (perMin > 0 || perMax < 200) activeChips.push({ key: "per", label: "PER " + perMin + "~" + perMax, onRemove: () => clearPreset(() => { setPerMin(0); setPerMax(200); }) });
   if (pbrMin > 0 || pbrMax < 30) activeChips.push({ key: "pbr", label: "PBR " + pbrMin.toFixed(1) + "~" + pbrMax.toFixed(1), onRemove: () => clearPreset(() => { setPbrMin(0); setPbrMax(30); }) });
   if (excludeLoss) activeChips.push({ key: "loss", label: t.chip.loss, onRemove: () => clearPreset(() => setExcludeLoss(false)) });
+  if (selectedSector) activeChips.push({ key: "sector", label: t.chip.sector + selectedSector, onRemove: () => clearPreset(() => setSelectedSector("")) });
   for (const th of selectedThemes) activeChips.push({ key: "theme-" + th, label: t.chip.theme + th, onRemove: () => toggleTheme(th) });
 
   function ScoreSlider({ label, value, set }: { label: string; value: number; set: (n: number) => void }) {
@@ -782,6 +800,28 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
         </div>
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
           <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{t.sectorLabel}</label>
+            {selectedSector ? (
+              <button type="button" onClick={() => setSelectedSector("")} className="text-[10px] text-blue-700 hover:underline">{t.sectorClear}</button>
+            ) : null}
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {sectorOptions.map((sector) => (
+              <button
+                key={sector}
+                type="button"
+                aria-pressed={selectedSector === sector}
+                onClick={() => { setActivePreset(null); setSelectedSector(selectedSector === sector ? "" : sector); }}
+                className={"min-h-[36px] rounded border px-2 py-1.5 text-left text-[11px] leading-snug transition " + (selectedSector === sector ? "border-blue-600 bg-blue-600 text-white" : "border-zinc-200 bg-white text-zinc-700 hover:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300")}
+              >
+                {sector}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[10px] leading-snug text-zinc-400 dark:text-zinc-500">{t.sectorHint}</p>
+        </div>
+        <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
+          <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{t.themeLabel} <span className="text-zinc-400 tabular-nums">{t.themeSelected(selectedThemes.size)}</span></label>
             {selectedThemes.size > 0 ? (
               <button type="button" onClick={() => setSelectedThemes(new Set())} className="text-[10px] text-blue-700 hover:underline">{t.themeClear}</button>
@@ -846,7 +886,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
           {/* 무JS·키보드·스크린리더가 긴 필터 UI를 건너뛰고 종목 목록으로 바로 이동(인페이지 앵커라 JS 없이도 동작) */}
           <a href="#stock-results" className={`inline-flex items-center px-1.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition ${FOCUS_RING}`}>{t.skipToList}</a>
         </div>
-        {nonThemeFilterCount === 0 && themeFilterCount === 0 && !query && sorted.length < stocks.length ? (
+        {nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && sorted.length < stocks.length ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
         ) : null}
       </header>
@@ -1039,7 +1079,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialQuery,
         <button type="button" onClick={() => setDrawerOpen(true)} aria-label={t.openFilterAria} className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
           <span>{t.filterShort}</span>
-          {nonThemeFilterCount + themeFilterCount > 0 ? (
+          {activeFilterCount > 0 ? (
             <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
           ) : null}
         </button>

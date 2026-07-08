@@ -18,7 +18,8 @@ function summarize(c: SavedSearchConfig): string {
   if (c.capBucket && c.capBucket !== "all") parts.push(CAP_LABEL[c.capBucket] ?? c.capBucket);
   if (c.market && c.market !== "all") parts.push(c.market);
   if (c.excludeLoss) parts.push("적자 제외");
-  if (c.themes && c.themes.length) parts.push(c.themes.join("·"));
+  if (c.sector) parts.push(`업종: ${c.sector}`);
+  if (c.themes && c.themes.length) parts.push(`테마: ${c.themes.join("·")}`);
   return parts.length ? parts.join(" · ") : "전체 종목";
 }
 

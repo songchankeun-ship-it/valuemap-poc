@@ -21,6 +21,7 @@ export interface SavedSearchConfig {
   valueMin?: number;
   volMin?: number;
   themes?: string[];
+  sector?: string;
 }
 
 export interface SavedSearch {
