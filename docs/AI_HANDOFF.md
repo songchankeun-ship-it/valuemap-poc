@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T04:49:30.237Z
+Last updated: 2026-07-08T05:30:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -242,6 +242,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Branch state**: `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s` contains `origin/main` and is 116 commits ahead. No working-tree changes before this checkpoint doc edit.
 - **Pre-push verification**: tsc 0, metrics 138 stocks/0 errors/0 forbidden-copy hits/Metrics 2.4, app packaging check passed with only external Android assetlinks WAIT, build 0, smoke --all 23/23, local cache-busted routes 6/6, local login SSR preflight 5/5, perf 0 warnings, 390x844 route browser checks no overflow/no console errors.
 - **Post-push gate**: After main push/Vercel refresh, run cache-busted public route verification again. Actual OAuth provider round-trip and Android assetlinks remain owner/live-service gates.
+
+### Task 114 — 점수 vs 상대순위 혼동 방지 카드 설명 + 백테스트 "현재 점수 검증 아님" 고정 배지 강화 (2026-07-08, codex, P1A)
+- **범위**: 공개 비회원 검수 '중간' 2건 — (a) 점수(절대)와 순위(상대) 혼동("59점인데 상위 5%?"), (b) 백테스트 기준일 ≠ 현재 데이터 기준일을 초보자가 놓침. **표시/문구/레이아웃 전용** — 점수 계산식·데이터 수집·DART/재무·백테스트 계산·`stocks.json`·`metricsVersion` 무변경. 브랜치 `ai-center/task-114-2026-07-08-ornscore-p1a`. 편집 4파일: `src/lib/copy/stockDetail.ts`·`src/components/stock/PriorityScoreCard.tsx`·`src/components/stock/StockDetailIntro.tsx`·`src/components/BacktestClient.tsx`.
+- **변경**: ① `priorityScoreCardCopy.scoreVsRankNote(n)`(ko/en) 신규 → 상단 결론 히어로의 **상시 노출** `PriorityScoreCard` `scopeNote` 아래 렌더("점수는 절대 해석 · 순위는 현재 138종목 안 상대 위치예요. 점수가 중립이어도 순위는 상위일 수 있어요."). ② `metricsSection.scoreVsRankNote(n)`(ko/en) 신규 → 4지표 카드 위 `MetricsSectionHeader`(접힘 안). ③ 지표 tooltip은 이미 `ScoreTooltip`+해석→주의/확인→행동 순서 정합 → 무편집. ④ `BacktestClient` KPI 위 배지를 `⚠ 현재 점수 검증 아님 · 최신 데이터와 기준일 다름 (백테스트 {생성일} · 현재 데이터 {현재일})`로 강화(`flex-wrap`, amber, 한국어 전용).
+- **검증(전부 통과)**: `tsc` 0 · `verify_metrics.py`(PYTHONUTF8=1) 138/오류0/금칙0/Metrics 2.4 · `git diff --check` 0 · 4파일 U+FFFD 0 · `build` 0(138 SSG). 로컬 prod **3111**(PID 49864만 taskkill·**AI Center 4310 무개입**): `/stock/005930` 200 상시 카드 노트 SSR 렌더 · `/backtest` 200 강화 배지 SSR 렌더(백테스트 2026-06-14 · 현재 2026.07.07) · EN 문자열 빌드 청크 존재.
+- **남은 갭(운영자/제품 게이트)**: 실기기 390×844+데스크톱 육안(2줄 노트·강화 배지 줄바꿈)·EN 실토글(클라 언어전환)은 소유자 시각 게이트(Playwright 부재). 지표 헤더 노트②는 접힘 안이라 펼쳐야 보임 — 주 노출은 ① 상시 히어로 카드. 로컬 커밋만·미push·main 무변경.
 
 ### Task 221 — OrnScore 관심 그룹·메모·CSV 문서 우선 설계서 (2026-07-06, Claude, docs-only)
 - **범위**: 릴리스 준비 노트(215~220) 이후 **다음 제품 베팅을 착수 전 설계서로 확정** — 다음 제품 베팅 #1(관심 종목 고도화: 그룹·메모·CSV)을 구현 없이 스펙화하고 릴리스 게이트 이후 착수할 첫 로컬 슬라이스를 지정. 브랜치 `ai-center/task-221-ornscore-watchlist-groups-memo-csv-s`. **문서 전용**·앱 소스/데이터/점수식/`direction`/`metricsVersion` 무변경·신규 npm 0·빌드 스텝 0·신규 코드/스캐폴드 0.

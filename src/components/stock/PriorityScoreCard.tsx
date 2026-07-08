@@ -83,6 +83,7 @@ export function PriorityScoreCard({
             </div>
           </div>
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scopeNote(poolN)}</div>
+          <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scoreVsRankNote(poolN)}</div>
         </div>
       </div>
 

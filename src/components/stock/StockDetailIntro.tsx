@@ -46,6 +46,7 @@ export function MetricsSectionHeader({ poolN }: { poolN: number }) {
         <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline shrink-0">{t.guideLink}</Link>
       </div>
       <p className="mt-1 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.lead}</p>
+      <p className="mt-1 text-[10px] leading-snug text-zinc-400 dark:text-zinc-500">{t.scoreVsRankNote(poolN)}</p>
     </div>
   );
 }

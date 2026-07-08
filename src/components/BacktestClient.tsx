@@ -260,10 +260,13 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
 
       <BacktestTopRiskSummary metrics={m} benchmarkLabel={data.benchmarkLabel} />
 
-      {/* 상단 요약 근처에 백테스트 기준일 vs 현재 데이터 차이 배지(재검수 P2-5) — 하단 3날짜 블록과 별개로 한 번 더 강조 */}
+      {/* 상단 KPI 근처에 "현재 점수 검증 아님 · 기준일 다름" 고정 배지(재검수 task 114) — 하단 3날짜 블록과 별개로 초보자가 놓치지 않게 한 번 더 강조 */}
       <div className="flex">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-300">
-          백테스트 기준: {formatGeneratedDate(data.generatedAt)} 생성{siteDataAsOf ? ` · 현재 데이터 ${siteDataAsOf}과 다름` : ""}
+        <span className="inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-3 py-1.5 text-[11px] font-medium text-amber-800 dark:text-amber-300">
+          <span className="font-semibold">⚠ 현재 점수 검증 아님 · 최신 데이터와 기준일 다름</span>
+          <span className="text-amber-700/80 dark:text-amber-400/80">
+            (백테스트 {formatGeneratedDate(data.generatedAt)} 생성{siteDataAsOf ? ` · 현재 데이터 ${siteDataAsOf}` : ""})
+          </span>
         </span>
       </div>
 
