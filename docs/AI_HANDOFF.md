@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T15:57:50.683Z
+Last updated: 2026-07-08T16:42:38.788Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 118 - [2026-07-08] ORNScore 공개 재검수 P0A - 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
-- Run: 115
+- Task: 119 - [2026-07-08] ORNScore 공개 재검수 P0B - 종목 상세 업종 전체 링크가 실제 업종 필터로 이어지게 수정
+- Run: 116
 - Status: completed
 - Agent: codex
-- Note: Recovered by Codex operator check. Run 115 had already passed lint/typecheck/metrics/build/routes/smoke and targeted home/SEO HTML checks; the only blocker was unavailable in-app browser `iab`. System Chrome visual verification on local prod `http://127.0.0.1:4571` passed for `/` and `/stock/078930` at 390x844 and 1366x900 with overflow 0, no console/page errors, `종합 80+ 후보 2개`, and score-free stock SEO descriptions.
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
