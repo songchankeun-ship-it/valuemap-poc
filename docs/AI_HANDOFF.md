@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 112 - [2026-07-08] ORNScore 공개 재검수 P0C - 종목 탐색 리스트 SSR/접근성 노출 보강
-- Run: 107
+- Task: 113 - [2026-07-08] ORNScore 공개 재검수 P0D - /compare 빈 상태 예시 비교 세트 + 선택 X/4 카운트
+- Run: 108
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-08 — Codex Task 113 — `/compare` empty state → "try it now": example compare sets (holdcos / banks / today's candidates) + "선택 X/4" count (P0D)
+- **Scope**: Public reviewer P0D — make the `/compare` empty state more than a static hint: a search box plus one-click example sets that immediately fill a comparison. **Presentation/copy/layout/a11y-only — no change to scoring, data collection, DART/financials, `stocks.json`, `metricsVersion`, or `src/lib/compare.ts` (local-storage basket logic).** Branch `ai-center/task-113-2026-07-08-ornscore-p0d` (on top of main HEAD `935cc58`; task 112 `dd87661` an ancestor). Edited **2 files**: `src/app/compare/page.tsx`, `src/components/CompareClient.tsx`.
+- **① Reused the existing search box (request #1 — no rebuild)**: the empty-state stock search (`StockSearchBox`) already existed and was kept as-is; no new lightweight search UI was built. Reuses the existing `onPick→tryAdd→addToCompare` path.
+- **② Three example sets (request #2)**: the server component builds 3-stock sets from real tickers only and passes them via a new `exampleSets` prop — `GS vs SK vs LG` (`078930·034730·003550`, holding companies) and `신한지주 vs KB금융 vs 하나금융` (`055550·105560·086790`, financial holdcos). Shown only when all three tickers exist (`buildTrio` guard, no fake sets). **All six tickers exist** (verified against stocks.json 138 rows via python) → no similar-set substitution needed. The request label "하나금융" maps to the real data name "하나금융지주" (short label kept; the real ticker is what gets added). "오늘 후보 3개 비교" is data-dependent (top5) so the client builds it from `top5.slice(0,3)`. All three route through the existing `addSet(...)` (which enforces `COMPARE_MAX`) — no new storage/login/sync code.
+- **③ De-duplicated buttons**: folded the old `quickCompare` "오늘 후보 3종" fallback into the example set "오늘 후보 3개 비교" (avoids a duplicate button); `quickCompare` now only surfaces "내 관심 3종목 비교하기" when watchlist ≥3.
+- **④ Selection count / limit (request #3)**: renders `선택 {tickers.length}/{COMPARE_MAX} · 최소 2개 필요 · 최대 4개` beside **both** actions (search-box header and example-set header), visible at 0 and 1 selections, using the already-tracked `tickers` state. Non-advisory tone.
+- **⑤ Preserved non-login/local behavior (request #4)**: `src/lib/compare.ts` unchanged — localStorage basket and shared-link (`?stocks=`) seeding untouched. No login sync / external store added.
+- **Verification (all passed)**: `npx tsc --noEmit` 0; `verify_metrics.py` **138 / 0 errors / 0 forbidden / Metrics 2.4** (scoring+data untouched); `git diff --check` clean; edited 2 files 0 U+FFFD / 0 CRLF noise (numstat 17/1, 53/15); `npm run build` 0 (138 SSG). Local prod 3211 (AI Center 4310 untouched): `/compare` 200; server RSC payload has example labels `GS vs SK vs LG`×1, `신한지주 vs KB금융 vs 하나금융`×1 + tickers rendered; client chunk contains `예시로 바로 비교를 체험해 보세요`, `오늘 후보 3개 비교`, `최소 2개 필요`, `클릭 한 번이면` (empty state renders client-side post-mount, so verified in both chunk and RSC). `smoke:check --all --base` **23/23 OK**; `verify:routes --base` **9/9 OK** (data date 2026.07.07). Server torn down by PID 46736 (confirmed `next start -p 3211` under valuemap-poc) via taskkill scoped to port 3211; 4310 untouched.
+- **Limit/blocker**: Real-device 390×844 + desktop eyeball (example buttons `grid sm:grid-cols-2` wrap, count line `flex-wrap` wrap, 44px hit, light/dark) remains an **operator visual gate** (Playwright unavailable). New elements have no fixed widths (`w-full`, `grid sm:grid-cols-2`, `flex-wrap items-baseline justify-between`), so overflow risk is low. Click→2–4 stock state is logically guaranteed by `addSet` (sequential `addToCompare`, cap 4: a 3-stock set adds all three, two sets in a row stop at 4); live browser interaction eyeball is an operator gate. Example sets fixed to the holdco/bank trios (data-independent representative examples). Local commit only; not pushed; main unchanged.
 
 ### 2026-07-08 — Codex Task 112 — discovery (`/stocks`) list SSR accessibility: stock-list landmark/heading/skip-anchor + "within 138 analyzed" range copy (P0C)
 - **Scope**: The public reviewer's "high" finding — the discovery screen shows "현재 표시 123 / 전체 138" but under no-JS/screen-reader/search-engine the list could read like an empty page. **Presentation/copy/a11y-only — no change to scoring formulas, data collection, DART/financials, sort/filter logic, `realStocks`/`stocks.json`, or `metricsVersion`.** Branch `ai-center/task-112-2026-07-08-ornscore-p0c-ssr` (on top of main HEAD `935cc58`; task 111 `abe5dc4` an ancestor). Source of truth = review text (`.codex/attachments/518d6f11-.../pasted-text.txt`). Edited **2 files**: `src/lib/copy/stocks.ts`, `src/components/StocksExplorer.tsx`.

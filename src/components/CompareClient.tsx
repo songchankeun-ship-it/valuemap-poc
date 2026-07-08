@@ -94,7 +94,7 @@ function ScrollX({
   );
 }
 
-export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { stockMap: Record<string, CompareStock>; top5?: Array<{ ticker: string; name: string }>; recommendedSets?: RecommendedSet[] }) {
+export function CompareClient({ stockMap, top5 = [], recommendedSets = [], exampleSets = [] }: { stockMap: Record<string, CompareStock>; top5?: Array<{ ticker: string; name: string }>; recommendedSets?: RecommendedSet[]; exampleSets?: RecommendedSet[] }) {
   const [tickers, setTickers] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
   const [watchlist, setWatchlist] = useState<Array<{ ticker: string; name: string }>>([]);
@@ -253,18 +253,25 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
   const recentAddable = recentViews.filter((r) => !tickers.includes(r.ticker));
   const top5Addable = top5.filter((s) => !tickers.includes(s.ticker));
 
-  // 원클릭 예시 비교 — 관심 3종목을 우선 담고, 없으면 오늘 후보 3종으로 폴백한다.
-  // 이미 담은 종목을 뺀 담을 수 있는 수가 2개 미만이면(눌러도 비교 불가) 아래에서 버튼을 숨긴다.
+  // 원클릭 관심 종목 비교 — 관심 3종목이 있으면 우선 진입점으로 제공.
+  // "오늘 후보 3개 비교"는 아래 예시 세트 버튼으로 옮겨(버튼 중복 방지) 여기서는 다루지 않는다.
+  // 이미 담은 종목을 뺀 담을 수 있는 수가 2개 미만이면(눌러도 비교 불가) 버튼을 숨긴다.
   const quickCompareWatchlist = watchlist.slice(0, 3).map((w) => w.ticker).filter((t) => !tickers.includes(t));
-  const quickCompareTop5 = top5.slice(0, 3).map((s) => s.ticker).filter((t) => !tickers.includes(t));
   const quickCompare =
     watchlist.length >= 3 && quickCompareWatchlist.length >= 2
       ? { tickers: quickCompareWatchlist, label: "내 관심 3종목 비교하기" }
-      : quickCompareTop5.length >= 2
-        ? { tickers: quickCompareTop5, label: "오늘 후보 3종 비교하기" }
-        : quickCompareWatchlist.length >= 2
-          ? { tickers: quickCompareWatchlist, label: "내 관심 3종목 비교하기" }
-          : null;
+      : null;
+
+  // 예시 "오늘 후보 3개 비교" — 오늘 Top 후보 상위 3종. 담을 수 있는 종목이 2개 이상일 때만 노출한다.
+  const exampleTodayTickers = top5.slice(0, 3).map((s) => s.ticker);
+  const showExampleToday = exampleTodayTickers.filter((t) => !tickers.includes(t)).length >= 2;
+
+  // 선택 수 카운트 안내 — 검색창·예시 버튼 옆에 항상 보이게(0·1개에서도). 비자문 톤.
+  const countIndicator = (
+    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 shrink-0">
+      선택 <span className="font-semibold tabular-nums text-zinc-700 dark:text-zinc-200">{tickers.length}/{COMPARE_MAX}</span> · 최소 2개 필요 · 최대 {COMPARE_MAX}개
+    </p>
+  );
 
   // 담기/빼기 피드백 영역 — 두 화면에서 동일하게 렌더(안내 + 되돌리기)
   const feedbackRegion =
@@ -306,7 +313,10 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
 
           {/* 1) 직접 검색하기 — 빈 상태의 첫 행동(유일하게 강조한 박스) */}
           <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3.5">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">종목명 또는 코드 검색</div>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 mb-1">
+              <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">종목명 또는 코드 검색</div>
+              {countIndicator}
+            </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">검색 결과에서 최대 {COMPARE_MAX}개까지 담아 비교할 수 있어요.</p>
             <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void tryAdd(t); }} placeholder="예: 삼성전자, 005930" />
           </div>
@@ -347,13 +357,41 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [] }: { s
             </div>
           ) : null}
 
-          {/* 예시로 바로 비교 체험 — 추천 세트 위에 한 줄 안내 + 관심/후보 원클릭 진입(비자문 문구) */}
-          {recommendedSets.length > 0 || quickCompare ? (
+          {/* 예시로 바로 비교 체험 — 클릭 한 번으로 2~4종목이 채워지는 예시 세트 + 관심 원클릭(비자문) */}
+          {exampleSets.length > 0 || showExampleToday || quickCompare ? (
             <div className="space-y-2.5">
-              <div>
-                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">예시로 바로 비교를 체험해 보세요</p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">무엇을 나란히 볼 수 있는지 한 번에 확인해요.</p>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <div>
+                  <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">예시로 바로 비교를 체험해 보세요</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">클릭 한 번이면 2~4개 종목이 채워져요. 무엇을 나란히 보는지 바로 확인해요.</p>
+                </div>
+                {countIndicator}
               </div>
+              {exampleSets.length > 0 || showExampleToday ? (
+                <div className="grid gap-1.5 sm:grid-cols-2">
+                  {exampleSets.map((set) => (
+                    <button
+                      key={set.label}
+                      type="button"
+                      onClick={() => { void addSet(set.tickers); }}
+                      className={`flex items-center justify-between gap-2 w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition ${FOCUS_RING}`}
+                    >
+                      <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">{set.label}</span>
+                      <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500 shrink-0">{set.tickers.length}종목 →</span>
+                    </button>
+                  ))}
+                  {showExampleToday ? (
+                    <button
+                      type="button"
+                      onClick={() => { void addSet(exampleTodayTickers); }}
+                      className={`flex items-center justify-between gap-2 w-full text-left px-3 py-2.5 min-h-[44px] rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition ${FOCUS_RING}`}
+                    >
+                      <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-100">오늘 후보 3개 비교</span>
+                      <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500 shrink-0">{Math.min(3, exampleTodayTickers.length)}종목 →</span>
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
               {quickCompare ? (
                 <button
                   type="button"

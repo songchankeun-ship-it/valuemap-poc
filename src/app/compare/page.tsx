@@ -134,6 +134,22 @@ export default function ComparePage() {
   // 예시 3쌍 고정 선두 + 큐레이션 쌍 + 업종 그룹 보충, 스캔 가능하도록 총 4세트로 제한
   const recommendedSets = [...namedSets, ...curatedSets, ...sectorSets].slice(0, 4);
 
+  // 빈 상태에서 "바로 체험"용 예시 3종목 세트 — 검색을 몰라도 클릭 한 번으로 비교가 채워지도록.
+  // 요청 라벨(GS vs SK vs LG · 신한지주 vs KB금융 vs 하나금융)은 고정 표기를 쓰고, 실제 담기는
+  // 실데이터 티커로만 한다. 세 티커가 모두 풀에 있을 때만 노출(가짜 세트 없음). "오늘 후보 3개"는
+  // 데이터 의존(top5)이라 서버에서 만들지 않고 클라이언트가 top5로 구성한다.
+  const EXAMPLE_TRIOS: ReadonlyArray<{ label: string; tickers: readonly [string, string, string] }> = [
+    { label: "GS vs SK vs LG", tickers: ["078930", "034730", "003550"] }, // 지주사
+    { label: "신한지주 vs KB금융 vs 하나금융", tickers: ["055550", "105560", "086790"] }, // 금융지주
+  ];
+  const buildTrio = ({ label, tickers }: { label: string; tickers: readonly [string, string, string] }): PairSet | null => {
+    const picks = tickers.map((t) => byTicker.get(t));
+    if (picks.some((s) => !s)) return null;
+    const found = picks as NonNullable<(typeof picks)[number]>[];
+    return { label, tickers: found.map((s) => s.ticker), names: found.map((s) => s.name) };
+  };
+  const exampleSets = EXAMPLE_TRIOS.map(buildTrio).filter((x): x is PairSet => x !== null);
+
   return (
     <div className="space-y-4">
       <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
@@ -150,7 +166,7 @@ export default function ComparePage() {
         </p>
       </header>
 
-      <CompareClient stockMap={stockMap} top5={top5} recommendedSets={recommendedSets} />
+      <CompareClient stockMap={stockMap} top5={top5} recommendedSets={recommendedSets} exampleSets={exampleSets} />
 
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback */}
       <noscript>
