@@ -145,6 +145,39 @@ function BacktestTopRiskSummary({
   );
 }
 
+function BacktestDateMismatchNotice({
+  generatedAt,
+  siteDataAsOf,
+}: {
+  generatedAt: string;
+  siteDataAsOf?: string;
+}) {
+  return (
+    <section
+      className="rounded-xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4"
+      aria-label="백테스트 재계산일과 현재 데이터 기준일 차이"
+    >
+      <div className="flex items-start gap-3">
+        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/80 dark:bg-zinc-900/70 border border-amber-200 dark:border-amber-800 shrink-0">
+          <ShieldAlert className="w-4 h-4 text-amber-700 dark:text-amber-300" strokeWidth={1.8} aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 mb-1">데이터 기준 차이</div>
+          <h2 className="text-base md:text-lg font-bold text-zinc-950 dark:text-zinc-50 leading-snug">
+            마지막 재계산: <span className="tabular-nums">{formatGeneratedDate(generatedAt)}</span>
+            {siteDataAsOf ? (
+              <> · 현재 데이터 기준: <span className="tabular-nums">{siteDataAsOf}</span></>
+            ) : null}
+          </h2>
+          <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            이 백테스트는 현재 지표와 다른 시점의 실험실 결과입니다. 현재 종합 점수의 성과 검증이 아니라, 과거 가격 데이터로 규칙을 점검한 참고 자료로 보세요.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function EquityChart({ data }: { data: EquityPoint[] }) {
   const W = 720;
   const H = 280;
@@ -239,6 +272,8 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
           <BacktestLimitBadges />
         </div>
       </header>
+
+      <BacktestDateMismatchNotice generatedAt={data.generatedAt} siteDataAsOf={siteDataAsOf} />
 
       <BacktestRiskNotice assumptions={data.assumptions} benchmarkLabel={data.benchmarkLabel} />
 

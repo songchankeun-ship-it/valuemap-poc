@@ -33,15 +33,15 @@ export default function TermsPage() {
 
       <LegalEnSummary surface="terms" />
 
-      {/* 현재(상용화 전) 확정 정책 — 안정적 사실. 미확정 항목은 아래 유료 서비스 섹션에서 별도 표기 */}
+      {/* 현재 무료 베타 확정 정책 — 안정적 사실. 미확정 항목은 아래 유료 결제 정책 섹션에서 별도 표기 */}
       <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4 mb-6 not-prose text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">현재 적용되는 정책 (상용화 전)</div>
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">현재 적용되는 정책 (무료 베타)</div>
         <ul className="list-disc list-inside space-y-1 ml-1 text-[13px]">
-          <li>본 서비스는 현재 <strong className="text-zinc-900 dark:text-zinc-100">유료 결제를 제공하지 않으며</strong>, 모든 기능을 무료로 이용할 수 있습니다.</li>
+          <li>본 서비스는 현재 <strong className="text-zinc-900 dark:text-zinc-100">무료 베타</strong>로 제공되며, <strong className="text-zinc-900 dark:text-zinc-100">유료 결제를 제공하지 않습니다.</strong></li>
           <li>로그인은 <strong className="text-zinc-900 dark:text-zinc-100">이메일 매직링크 또는 소셜 로그인(카카오·구글·네이버)</strong>으로만 처리하며, <strong className="text-zinc-900 dark:text-zinc-100">비밀번호를 저장하지 않습니다.</strong></li>
           <li>제공 데이터의 출처는 <strong className="text-zinc-900 dark:text-zinc-100">KRX·DART·Naver Finance·yfinance</strong> 등 공개 데이터이며, 본 서비스는 데이터 분석 도구로서 투자자문·매수·매도 추천을 제공하지 않습니다.</li>
         </ul>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">유료 구독 도입 시 적용될 결제·환불·청약철회 등 세부 조건은 아래 「유료 서비스 이용」 섹션에 별도로 표기하며, 현재는 미확정 상태입니다.</p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">향후 유료 기능을 도입하는 경우 결제·환불·청약철회 등 세부 조건은 사전에 확정·공지합니다. 현재는 미확정 상태입니다.</p>
       </section>
 
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
@@ -81,19 +81,19 @@ export default function TermsPage() {
         </section>
 
         <section className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/60 dark:bg-amber-950/20 p-4 not-prose">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">유료 서비스 이용 (출시 예정 · 초안)</h2>
-          <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">현재 유료 결제는 제공되지 않으며, 요금제는 <Link href="/pricing" className="underline">요금제 안내</Link> 페이지에서 출시 예정(대기 신청) 단계로 안내합니다. 아래는 유료 구독 도입 시 적용될 사항의 <strong>초안</strong>이며, 구속력 있는 금액·날짜를 확정하지 않습니다. 정식 약관은 상용화 전 확정·공지됩니다.</p>
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">유료 결제 관련 정책 (현재 미제공 · 향후 도입 시 초안)</h2>
+          <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">현재 유료 결제는 제공되지 않으며, <Link href="/pricing" className="underline">요금제 안내</Link> 페이지도 무료 베타와 유료 플랜 미제공 상태를 안내합니다. 아래는 향후 유료 기능을 도입하는 경우 적용될 수 있는 사항의 <strong>초안</strong>이며, 구속력 있는 금액·날짜를 확정하지 않습니다. 실제 정책은 유료 결제 오픈 전 확정·공지됩니다.</p>
           <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-zinc-700 dark:text-zinc-300">
-            <li>결제일·자동갱신: 구독은 결제주기마다 자동 갱신되며, 결제일·갱신 사전 고지 방식은 출시 전 확정합니다.</li>
-            <li>해지·요금제 변경: 해지 효력 시점, 상위/하위 요금제 전환 적용 시점은 출시 전 확정합니다.</li>
-            <li>환불·청약철회: 전자상거래법상 청약철회 기준과 디지털 콘텐츠 환불 기준을 출시 전 확정합니다.</li>
-            <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 출시 전 확정합니다.</li>
-            <li>유료 기능 변경 가능성: 유료 기능 구성은 사전 고지 후 변경될 수 있습니다.</li>
+            <li>결제일·자동갱신: 유료 구독을 도입하는 경우 결제주기, 결제일, 갱신 사전 고지 방식은 오픈 전 확정합니다.</li>
+            <li>해지·요금제 변경: 해지 효력 시점, 상위/하위 요금제 전환 적용 시점은 오픈 전 확정합니다.</li>
+            <li>환불·청약철회: 전자상거래법상 청약철회 기준과 디지털 콘텐츠 환불 기준은 오픈 전 확정합니다.</li>
+            <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 오픈 전 확정합니다.</li>
+            <li>향후 유료 기능 구성: 기능 구성은 실제 도입 전 사전 안내 후 확정합니다.</li>
           </ul>
 
           <div className="mt-4 rounded-md border border-amber-300/70 dark:border-amber-800 bg-white/60 dark:bg-zinc-900/40 p-3">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">유료 서비스 — 출시 전 확정 필요 항목 (초안 · 미확정)</div>
-            <p className="text-[11px] text-amber-800 dark:text-amber-300 mb-2">아래 항목은 유료 결제 오픈 전 실제 정책으로 확정·공지될 예정이며, 현재는 미확정 상태입니다. 확정 시 본 약관과 결제 화면에 동일하게 반영합니다.</p>
+            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">유료 결제 도입 전 확정 필요 항목 (초안 · 미확정)</div>
+            <p className="text-[11px] text-amber-800 dark:text-amber-300 mb-2">아래 항목은 유료 결제를 실제로 제공하기 전 확정·공지할 항목이며, 현재는 미확정 상태입니다. 확정 시 본 약관과 결제 화면에 동일하게 반영합니다.</p>
             <ul className="list-disc list-inside space-y-1 ml-2 text-[13px] text-zinc-700 dark:text-zinc-300">
               <li>결제 수단</li>
               <li>결제 주기</li>
@@ -105,7 +105,7 @@ export default function TermsPage() {
               <li>장애 보상 기준</li>
               <li>요금제 변경 시 정산 방식</li>
             </ul>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격과 유료 정책은 현재 미확정이며, 유료 결제 오픈 전 약관과 결제 화면에 동일하게 확정 공지합니다(<Link href="/pricing" className="underline">요금제 안내</Link>).</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격과 유료 정책은 현재 미확정이며, 유료 결제를 제공하기 전 약관과 결제 화면에 동일하게 확정 공지합니다(<Link href="/pricing" className="underline">요금제 안내</Link>).</p>
           </div>
         </section>
 

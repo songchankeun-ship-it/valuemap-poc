@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 120 — 무료 베타 약관 정합 + 백테스트 기준일 고지 강화
+- **범위**: 공개 재검수 P0C 2건만 처리. `/pricing` 무료 베타 안내와 `/terms` 유료/대기 문구 충돌을 정리하고, `/backtest` 첫 화면에서 백테스트 재계산일과 현재 데이터 기준일 차이를 더 직접 노출했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion`·백테스트 계산/파일 변경 없음.
+- **변경**: `src/app/terms/page.tsx` 상단 정책을 `현재 적용되는 정책 (무료 베타)`로 바꾸고, "대기 신청" 표현을 제거했다. 약관의 유료 섹션은 `유료 결제 관련 정책 (현재 미제공 · 향후 도입 시 초안)`으로 조정해 현재 결제/상용화가 제공 중처럼 읽히지 않게 했다. `src/components/BacktestClient.tsx`에는 상단 한계 배지 바로 아래 `데이터 기준 차이` 박스를 추가해 `마지막 재계산: 2026-06-14 · 현재 데이터 기준: 2026.07.07`과 "현재 종합 점수의 성과 검증이 아님"을 첫 화면에 노출했다. 기존 `현재 종합점수 검증 아님` 배지와 하단 날짜 블록은 유지.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 공백 오류 0(CRLF 예정 경고만) · `npm run build` 0(기존 lint warning 4건만) · local prod `http://127.0.0.1:4574` `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **브라우저 확인**: in-app browser `iab`는 이번 세션에서도 미노출(`agent.browsers.list()` = `[]`)이라, 시스템 Chrome headless CDP를 임시 포트 9230/임시 프로필로만 실행했다. `/backtest`, `/pricing`, `/terms`를 390x844 및 1366x900에서 확인: 전 케이스 horizontal overflow 0(데스크톱은 스크롤바 차이 -8), console/runtime error 0. `/backtest` 모바일에서 `마지막 재계산` top 376, `현재 데이터 기준` top 376으로 첫 화면 안에 노출. `/pricing`·`/terms`는 `대기 신청` 0, 무료 베타·유료 미제공 문구 visible. 스크린샷: `C:\dev\AI_Dev_Center\logs\ornscore-task120-*.png`.
+- **정리/남은 리스크**: local prod 포트 4574와 Chrome CDP 9230은 범위 한정 종료, 임시 Chrome profile 삭제, AI Center 4310은 LISTENING 유지. 남은 리스크는 법무가 실제 유료 결제 약관을 확정해야 하는 장기 항목뿐이며 이번 큐의 다음 진입점은 Task #121 테마 0개 결과 빈 상태 개선.
+
 ## 2026-07-09 · [codex] Task 119 repair — 브라우저/뷰포트 게이트 재검증
 - **범위**: Tester failure의 차단 사유였던 브라우저/뷰포트 확인 미완료만 복구. 앱 코드·점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음. 기존 HEAD `3c7da71`의 업종 필터 구현을 그대로 검증했다.
 - **브라우저 상태**: browser plugin 지침대로 in-app browser `iab` 연결을 재시도했으나 이 세션에서도 `Browser is not available: iab`, `agent.browsers.list()`는 `[]`. 코드 결함이 아니라 세션의 in-app browser backend 미노출로 확인.
