@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 118 복구 — 시스템 Chrome 화면 게이트 완료, #119 재개 준비
+- **범위**: AI Center run #115의 false-fail 복구만 수행. commit `796b0ba` 이후 앱 코드·점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion` 변경 없음. 실패 사유는 코드/테스트가 아니라 in-app browser `iab` 미노출로 인한 모바일/데스크톱 화면 확인 미완료였다.
+- **추가 검증**: local prod `http://127.0.0.1:4571`에서 시스템 Chrome headless로 `/`와 `/stock/078930`을 390x844·1366x900 각각 확인. 네 화면 모두 horizontal overflow 0, console/page error 0, 스크린샷 nonblank. `/`는 `종합 80+ 후보`와 `2개`를 렌더했고, `/stock/078930` 모바일 첫 화면에는 `현재 이 종목은`이 보이며 title/description에 `N점` 형태 점수 숫자 패턴 없음. 스크린샷은 `C:\dev\AI_Dev_Center\logs\ornscore-118-*.png`.
+- **복구 판단**: run #115의 기존 로컬 게이트(`lint`, `tsc`, metrics, build, routes, smoke, targeted home/SEO HTML)와 이번 시스템 Chrome 화면 게이트를 합쳐 #118은 완료 처리 가능하다. 다음 자동화 진입점은 #119 `종목 상세 업종 전체 링크가 실제 업종 필터로 이어지게 수정`. #119~#123은 Codex-only, planner off, fallback off, local-only 유지.
+
 ## 2026-07-09 · [codex] Task 118 repair — ESLint 게이트 비대화식 전환
 - **범위**: Tester failure의 차단 항목만 수리. `npm run lint`가 Next ESLint 초기 설정 프롬프트로 빠지는 문제를 닫기 위해 표준 Next ESLint 설정을 추가했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion`·Task 118의 홈 카운트/SEO 로직은 변경하지 않음.
 - **변경**: `.eslintrc.json` 신규(`next/core-web-vitals`), devDependencies에 `eslint@8.57.1`·`eslint-config-next@14.2.13` 추가. 실제 lint error였던 JSX 텍스트 따옴표만 entity로 이스케이프: `src/app/about/page.tsx`, `src/app/compare/page.tsx`, `src/app/terms/page.tsx`, `src/components/SignalGuideExpand.tsx`. 화면에 보이는 문구 의미는 동일.

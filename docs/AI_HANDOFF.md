@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T15:05:35.245Z
+Last updated: 2026-07-08T15:57:50.683Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -22,10 +22,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 ## Last AI Center Event
 
 - Task: 118 - [2026-07-08] ORNScore 공개 재검수 P0A - 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
-- Run: 114
-- Status: failed
-- Agent: claude
-- Note: Development process exited with code 1
+- Run: 115
+- Status: completed
+- Agent: codex
+- Note: Recovered by Codex operator check. Run 115 had already passed lint/typecheck/metrics/build/routes/smoke and targeted home/SEO HTML checks; the only blocker was unavailable in-app browser `iab`. System Chrome visual verification on local prod `http://127.0.0.1:4571` passed for `/` and `/stock/078930` at 390x844 and 1366x900 with overflow 0, no console/page errors, `종합 80+ 후보 2개`, and score-free stock SEO descriptions.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex Task 118 recovery — browser gate completed
+- **Scope**: Operational recovery only. No app code, scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes after commit `796b0ba`; this closes the false failed state caused by missing in-app browser access.
+- **Visual verification**: Started local prod on `http://127.0.0.1:4571` and used system Chrome headless from the AI Center host. Checked `/` and `/stock/078930` at 390x844 and 1366x900. Results: horizontal overflow 0 on all four views, screenshots nonblank, console/page errors 0, home contains `종합 80+ 후보` and `2개`, stock mobile first viewport contains `현재 이 종목은`, stock title/description have no score-like `N점` pattern.
+- **Artifacts**: `C:\dev\AI_Dev_Center\logs\ornscore-118-home-mobile.png`, `ornscore-118-home-desktop.png`, `ornscore-118-stock-mobile.png`, `ornscore-118-stock-desktop.png`.
+- **Queue recovery**: #118 is safe to mark completed in AI Center. Next automation entrypoint is task #119, "종목 상세 업종 전체 링크가 실제 업종 필터로 이어지게 수정". Keep #119~#123 Codex-only, fallback disabled, planner disabled, and local-only unless owner gives a fresh deploy/push approval.
 
 ### 2026-07-09 — Codex Task 118 repair — ESLint gate setup
 - **Scope**: Repair-only follow-up for the tester failure. Closed the non-interactive lint blocker; no scoring/data/DART/financial/`stocks.json`/`metricsVersion` changes and no change to Task 118 home-count or SEO logic.
