@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 119 repair — 브라우저/뷰포트 게이트 재검증
+- **범위**: Tester failure의 차단 사유였던 브라우저/뷰포트 확인 미완료만 복구. 앱 코드·점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음. 기존 HEAD `3c7da71`의 업종 필터 구현을 그대로 검증했다.
+- **브라우저 상태**: browser plugin 지침대로 in-app browser `iab` 연결을 재시도했으나 이 세션에서도 `Browser is not available: iab`, `agent.browsers.list()`는 `[]`. 코드 결함이 아니라 세션의 in-app browser backend 미노출로 확인.
+- **추가 검증**: local prod `http://127.0.0.1:4573`에서 시스템 Chrome headless CDP로 재검증. `/stock/078930`의 접힌 상세 패널을 열고 `업종 전체 →` 링크가 390x844·1366x900 뷰포트 안에서 `/stocks?sector=지주·기타`를 가리키는지 확인. `/stocks?sector=지주·기타`는 390x844·1366x900에서 `업종: 지주·기타`·`검색·필터 결과 6개`, `/stocks?sector=건설·인프라`는 데스크톱 4개, `/stocks?sector=반도체·IT부품`은 모바일 18개 확인. 전 케이스 horizontal overflow 0, console error 0, runtime exception 0.
+- **Finite gates 재확인**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0 · `npm run build` 0(기존 lint warning 4건만) · local prod `verify:routes` 9/9 · `smoke:check --all` 23/23.
+- **Artifacts/cleanup**: 스크린샷 `C:\dev\AI_Dev_Center\logs\ornscore-119-repair-*.png`. local prod 포트 4573 listener PID 16948, Chrome CDP 9229 PID 34796 계열은 범위 한정 종료했고 임시 Chrome profile도 삭제. AI Center 4310은 계속 LISTENING.
+
 ## 2026-07-09 · [codex] Task 119 — 종목 상세 업종 전체 링크를 `/stocks` 업종 필터로 연결
 - **범위**: 공개 재검수 P0B "종목 상세의 업종 전체 링크가 전체 기본 목록처럼 풀림"만 처리. 표시/라우팅/필터 상태 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
 - **변경**: `SectorComparison`의 "업종 전체" 링크를 `/stocks?theme=...`에서 `/stocks?sector=...`로 분리. `/stocks`는 `sector` 쿼리를 유효 업종 필터로 초기화하고, 기존에 잘못 공유된 `theme=업종명` URL도 실제 테마가 아닐 때만 업종 필터로 해석. `StocksExplorer`에 `selectedSector` 상태·업종 필터 버튼·현재 조건 칩을 추가해 상세 필터 행에 `업종: 지주·기타`처럼 노출. 테마 필터 칩은 `테마: ...`로 구분. 저장 필터/조건 알림 타입과 매칭도 `sector`를 이해하도록 표시·카운트 경로 보강.

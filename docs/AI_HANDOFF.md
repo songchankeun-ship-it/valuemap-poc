@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-09 — Codex Task 119 repair — browser/viewport gate recovered
+- **Scope**: Recovery-only follow-up for the tester failure. No app code, scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes after HEAD `3c7da71`; this only closes the missing browser/viewport verification gate.
+- **In-app browser status**: Followed the browser plugin setup path. `iab` remains unavailable in this session (`Browser is not available: iab`) and `agent.browsers.list()` returned `[]`, so the failure is an environment/backend exposure issue rather than an app regression.
+- **Verification**: Re-ran `npx tsc --noEmit`, `verify_metrics.py`, `git diff --check`, `npm run build`, local prod `verify:routes` 9/9, and `smoke:check --all` 23/23. Then used scoped system Chrome headless CDP on local prod `http://127.0.0.1:4573`: `/stock/078930` visible `업종 전체 →` link at 390x844 and 1366x900 points to `/stocks?sector=지주·기타`; `/stocks?sector=지주·기타` shows `업종: 지주·기타` and 6 results at mobile/desktop; 건설·인프라 desktop shows 4; 반도체·IT부품 mobile shows 18. Overflow 0, console errors 0, runtime exceptions 0.
+- **Artifacts/cleanup**: Screenshots saved as `C:\dev\AI_Dev_Center\logs\ornscore-119-repair-*.png`. Stopped only local prod port 4573 and the Chrome CDP 9229 instance/profile created for this repair; AI Center 4310 stayed listening.
+
 ### 2026-07-09 — Codex Task 119 — stock-detail sector link now drives `/stocks?sector=`
 - **Scope**: Fixed the public-review P0B issue where stock-detail "업종 전체" links passed the sector name through `theme=` and `/stocks` dropped it as an invalid theme, making the page look like the default full list. Display/routing/filter state only; no scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes.
 - **Changes**: `SectorComparison` now links to `/stocks?sector=...`. `/stocks` validates `sector` against internal sector names and initializes `StocksExplorer.initialSector`; legacy `theme=업종명` is treated as a sector only when it is not a real theme. `StocksExplorer` now has a separate sector filter state, sector buttons in the detailed filter panel, active chip copy `업종: ...`, and theme chip copy `테마: ...`. Saved-search/condition-alert config and matching understand optional `sector`, so saved counts and summaries stay consistent.
