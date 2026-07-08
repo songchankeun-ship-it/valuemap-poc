@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T05:30:00.000Z
+Last updated: 2026-07-08T05:05:44.355Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 113 - [2026-07-08] ORNScore 공개 재검수 P0D - 비교 빈 상태 검색창과 예시 비교 세트 추가
-- Run: 108
+- Task: 114 - [2026-07-08] ORNScore 공개 재검수 P1A - 점수·상대순위 해석과 백테스트 기준일 배지 보강
+- Run: 109
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
