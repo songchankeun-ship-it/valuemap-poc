@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T18:00:00.000Z
+Last updated: 2026-07-08T04:31:45.941Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,12 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 112 - [2026-07-08] ORNScore 공개 검수 P0C — 발견(/stocks) 리스트 SSR 접근성(종목 목록 랜드마크·제목·바로가기) + "138종목 내" 범위 카피 강화
-- Run: local
-- Status: completed (local gates)
-- Agent: codex
-- Note: Addressed the "high" discovery finding (the "현재 표시 123 / 전체 138" line exists but the list could read as an empty page under no-JS/screen-reader/search-engine). Display/copy/a11y only — scoring formulas, data collection, DART/financials, sort/filter logic, realStocks/stocks.json, metricsVersion all untouched. Files edited (2): src/lib/copy/stocks.ts, src/components/StocksExplorer.tsx. **Objective pre-check first**: after `npm run build`, local prod 3111 `curl /stocks` already had the full list in SSR HTML (100 unique /stock/{ticker} links, real names GS·GS건설·신한지주…). So the report's "list not in SSR" premise was only partly right — the real gap was the **absence of a heading/landmark marking the list** (a screen reader met the question-preset h2 then unlabeled cards). → Planner step-4 server fallback deemed **unnecessary**; focused on semantic exposure + copy + intro compression. Changes: (1) promoted the results container to `<section id="stock-results" aria-label="종목 목록" scroll-mt-20>` landmark and added a new `<h2>` "종목 목록 · 분석 대상 138종목 내 123개" (`resultsHeading(sorted.length, total)`, hidden when 0 results) directly above the list; card render/sort/filter/slice(0,100) unchanged. (2) added an in-page skip anchor `<a href="#stock-results">종목 목록 바로가기</a>` in the header meta row so keyboard/SR/no-JS users bypass the long filter UI (works without JS). (3) strengthened the range copy from "현재 표시 N / 전체 138" to "검색·필터 결과 N개 / 분석 대상 138종목" across matchCount/matchCountShort/qualityHeadline/filterLiveCount, and changed topCapNote to (n,total) → "분석 대상 138종목 내 조건에 맞는 N개 중 상위 100개만 표시…"; ${total} kept dynamic (no hardcoded 138). (4) trimmed headerDesc/questionDesc intro. Gates: tsc 0, verify_metrics 138/0/0/Metrics 2.4, diff --check clean, 2 files U+FFFD 0, build 138 SSG (/stocks 21.2 kB). Local prod 3111 post-edit SSR re-check: new h2 rendered, id="stock-results"×1 + aria-label, skip anchor ×1, 100 unique stock links, new copy present, U+FFFD 0; smoke 23/23, verify:routes 9/9 (data date 2026.07.07). EN strings (Stock list / Skip to stock list / within N analyzed) confirmed in built client chunk (client-side language switch). Servers killed by PID scoped to port 3111 only (47752/49668); AI Center 4310 untouched. Residual: real-device 390px + desktop visual (skip-anchor badge wrap, single-line h2, header count-line overflow) is an owner visual gate (Playwright unavailable) — new elements are flex-wrap badges + a tabular-nums single-line heading, no fixed widths, low overflow risk. Search-engine indexing + actual AT reading order are external gates. Local commit only; not pushed; main untouched.
-- Superseded note (Task 111): Addressed the "high" disclosure finding (period filter reads as "all 30-day filings") + design 5-4 (repeated per-card copy). Display/copy/a11y only — collection/filter/sort logic, getRecentSignals/groupSignals, /api/disclosures, scripts/, public/data all untouched. Files edited (2): src/lib/copy/disclosures.ts, src/components/DisclosureExplorer.tsx. (1) Always-visible neutral scope badge "전체 기간 아님 · 최신 200건 내" (EN "Not the full period · within latest 200 filings") next to the day-filter buttons, marked role="note" + new periodScopeBadgeAria clarifying it is a collection-scope limit, not a control. Result-count line repeats the miss notice via new missingFragment "누락 가능 · 코스피·코스닥 최신 수집 범위 내". (2) One shared warning box above the card list (new topNoticeTitle + 3 topNoticeBullets: check DART original / analyzed-set + latest-200-max-50 limit / type classification not good-bad). Removed the redundant per-card 주의 box (type-specific caution still lives in the SignalGuideExpand "이 공시 이해하기" panel); dropped now-unused firstSentence helper + cautionLine local. Preserved DART 원문 CTA, 확인할 것 line, "분석 대상 외 · DART 원문만" status line, chip spacing, min-h-[44px], FOCUS_RING, watchlist aria-label. Gates: tsc 0, verify_metrics 138/Metrics 2.4, diff --check clean, build 138 SSG, smoke 23/23, verify:routes 9/9 (data date 2026.07.07). SSR: badge×1 + role/aria, missingFragment×1, shared box + 3 bullets×1, 9 cards each with 확인할 것 (no dup), per-card >주의< = 0, DART 원문 CTA ×12. EN strings confirmed in built client chunk (client-side language switch). Local commit only; not pushed; main untouched. Residual: real-device 390px + desktop visual are owner gates; StockDisclosures card on stock pages intentionally out of scope.
+- Task: 112 - [2026-07-08] ORNScore 공개 재검수 P0C - 종목 탐색 리스트 SSR/접근성 노출 보강
+- Run: 107
+- Status: completed
+- Agent: claude
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
