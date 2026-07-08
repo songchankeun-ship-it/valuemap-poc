@@ -180,6 +180,10 @@ export default async function HomePage() {
       highReturn: r3m !== null && r3m >= 80,
     };
   });
+  const todayCompareHref =
+    topCandidates.length >= 2
+      ? `/compare?stocks=${topCandidates.slice(0, 3).map((s) => s.ticker).join(",")}`
+      : undefined;
 
   // ── 공시 신호 카드 뷰모델 (note는 호재/악재 표현이 섞일 수 있어 중립 확인 포인트로 대체) ──
   const signalVMs: DisclosureSignalVM[] = topSignals.map((s) => {
@@ -218,7 +222,7 @@ export default async function HomePage() {
         signalCount={signalCount}
       />
 
-      <TopCandidateSection candidates={candidates} />
+      <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} />
 
       <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
 

@@ -101,6 +101,7 @@ export function WatchlistClient({
   tickerToDelta = {},
   isLoggedIn = false,
   exampleStocks = [],
+  todayCompareTickers = [],
 }: {
   allStocks: StockInfo[];
   matchPool?: StockForMatch[];
@@ -109,6 +110,8 @@ export function WatchlistClient({
   isLoggedIn?: boolean;
   // 관심 종목이 비어 있을 때만 쓰는 예시 종목(서버에서 실제 필드로 결정적 선택 · isSuspect 제외 · 매수·매도 추천 아님)
   exampleStocks?: { ticker: string; name: string; reason: string }[];
+  // 홈/비교 페이지와 같은 오늘 후보 상위 3개. 클릭 시 비교 화면으로만 이어지고 관심 종목에는 저장하지 않는다.
+  todayCompareTickers?: string[];
 }) {
   const { locale } = useLanguage();
   const authCopy = commonCopy[locale].auth;
@@ -258,14 +261,6 @@ export function WatchlistClient({
     await addToWatchlist(target.ticker);
   }
 
-  // 예시 종목 한 번에 담기 — 각 addToWatchlist가 watchlist-changed를 쏴서 목록이 제자리에서 다시 그려진다.
-  // 저장 로직(로컬/Supabase 분기·중복 무시)은 watchlist.ts 그대로 재사용하고, 여기선 순차 호출만 한다.
-  async function addExamples() {
-    for (const ex of exampleStocks) {
-      await addToWatchlist(ex.ticker);
-    }
-  }
-
   function clearRecent() {
     localStorage.removeItem(RECENT_KEY);
     setRecent([]);
@@ -378,6 +373,10 @@ export function WatchlistClient({
 
   // 관심 종목 비교하기 CTA — 담아둔 종목 앞에서부터 최대 COMPARE_MAX개를 비교 화면에 시드
   const compareSeed = sortedWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
+  const todayCompareHref =
+    todayCompareTickers.length >= 2
+      ? `/compare?stocks=${todayCompareTickers.slice(0, 3).join(",")}`
+      : "/compare";
 
   const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
 
@@ -580,26 +579,24 @@ export function WatchlistClient({
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-keep">
               관심에 담으면 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화 · 공시 신호 · 저평가 여부</strong>를 이 화면에서 바로 확인할 수 있어요.
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
-              {/* 1탭으로 아래 예시 3개를 모두 담아 빈 화면을 바로 체험 상태로 전환 */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-2xl mx-auto">
               {exampleStocks.length > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => { void addExamples(); }}
-                  className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition ${FOCUS_RING}`}
+                <a
+                  href="#watchlist-samples"
+                  className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition whitespace-nowrap ${FOCUS_RING}`}
                 >
-                  <Heart className="w-3.5 h-3.5" fill="currentColor" /> 예시 종목 {exampleStocks.length}개 담아보기
-                </button>
+                  <Heart className="w-3.5 h-3.5" /> 샘플 관심목록 보기
+                </a>
               ) : null}
-              <Link href="/today" className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
-                오늘 뜬 종목 담기 <ArrowRight className="w-3.5 h-3.5" />
+              <Link href={todayCompareHref} className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap ${FOCUS_RING}`}>
+                <Scale className="w-3.5 h-3.5" /> 오늘 후보 3개 비교
               </Link>
-              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>
+              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition whitespace-nowrap ${FOCUS_RING}`}>
                 종목 직접 찾기
               </Link>
             </div>
-            {/* 담기 자체가 이 기기에 남는다는 사실을 CTA 곁에서 한 줄로 안심시켜 이탈을 줄임(로그인 안내와 톤 일치) */}
-            <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">담아두면 이 기기에 저장돼 다음 방문에도 남아요.</p>
+            {/* 자동 저장 없이 미리보기와 개별 추가만 제공한다. 사용자가 담기를 누른 종목만 이 기기에 저장된다. */}
+            <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">샘플은 미리보기예요. 개별 담기를 누른 종목만 이 기기에 저장됩니다.</p>
             {/* 관심 종목 담는 법 — 최근 본 종목이 있을 때만 아래 섹션으로 스크롤(중복 목록 없이 흐름 연결) */}
             {recent.length > 0 ? (
               <div className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
@@ -612,7 +609,7 @@ export function WatchlistClient({
             ) : null}
             {/* 예시 종목 — 서버에서 실제 필드로 뽑은 3개. 각 항목이 한 줄 근거와 1탭 담기 버튼을 가진다(매수·매도 추천 아님) */}
             {exampleStocks.length > 0 ? (
-              <div className="mt-5 text-left max-w-md mx-auto">
+              <div id="watchlist-samples" className="mt-5 text-left max-w-md mx-auto scroll-mt-20">
                 <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">담아볼 만한 예시</div>
                 <ul className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800">
                   {exampleStocks.map((ex) => (

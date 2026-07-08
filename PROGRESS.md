@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 122 — 검색/관심/비교 빠른 시작 강화
+- **범위**: 공개 재검수 2순위 "사용자가 바로 행동하게 만들기" 중 검색 진입, 관심 빈 상태, 오늘 후보 3개 비교 경로만 처리했다. 큰 리디자인 없이 기존 `GlobalSearch`/`StockSearchBox`/`watchlist.ts`/`compare.ts` 로컬 저장 로직을 재사용했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
+- **변경**: 헤더 `GlobalSearch` placeholder를 `종목명·코드 검색`으로 바꾸고 폭/입력 높이/테두리 대비를 키웠다. 수동 SVG 검색 아이콘은 lucide `Search`로 교체했다. 홈 `오늘 먼저 볼 후보` 섹션에 `오늘 후보 3개 비교` 링크를 추가해 `/compare?stocks=...`로 바로 이어지게 했다. `/watchlist` 빈 상태는 일괄 `예시 종목 3개 담아보기` 저장 버튼을 제거하고 `샘플 관심목록 보기` 미리보기 + 개별 `관심 종목에 담기`만 남겼다. 같은 빈 상태에 `오늘 후보 3개 비교`와 `종목 직접 찾기`를 추가했다. `/compare?stocks=` 시드는 기존 병렬 `addToCompare` 호출이 로컬 저장 레이스로 1개만 남을 수 있어 추천 세트와 같은 순차 추가 방식으로 고쳤다.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF 예정 경고만) · `npm run build` 0(기존 ESLint warning 4건만) · local prod `http://127.0.0.1:4577` `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **브라우저 확인**: in-app browser `iab`는 이번 세션에서도 미노출(`agent.browsers.list()` = `[]`)이라 시스템 Chrome headless CDP를 임시 포트 9233/임시 프로필로 사용했다. `/`, `/watchlist`, `/compare`를 390x844 및 1366x900에서 확인: 전 케이스 horizontal overflow 0, runtime/console problem 0. 헤더 검색 입력은 모바일 278px·데스크톱 768px로 visible. 관심 빈 상태 데스크톱 CTA는 3개 모두 한 줄(각 217px 이상)로 표시되고, 모바일은 세로 스택. `/compare?stocks=078930,006360,055550`는 비어 있는 로컬 저장 상태에서 GS·GS건설·신한지주 3개 카드가 렌더되는 것을 확인했다. 스크린샷: `C:\dev\AI_Dev_Center\logs\ornscore-task122-*-final.png`.
+- **정리/남은 리스크**: local prod 포트 4577과 Chrome CDP 9233은 포트·명령줄·프로필 기준으로 종료, 임시 profile 삭제, AI Center 4310은 LISTENING 유지. `?stocks=`는 기존 비교함을 비우지는 않고 순차로 추가하는 현재 정책을 유지한다. 다음 큐 진입점은 Task #123 공시 최신 200건 제한 고지 정리.
+
 ## 2026-07-09 · [codex] Task 121 repair — no-real-data 테마 CTA 상태 초기화
 - **범위**: Reviewer blocking failure만 수리. `/stocks?theme=`의 실데이터 매칭 0건 상태에서 `종목 검색으로 이동` CTA가 `/stocks`로 이동해도 클라이언트 `selectedThemes`가 남아 0건 화면에 갇히는 문제를 수정했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
 - **변경**: `src/components/StocksExplorer.tsx`에 `openDefaultStocks()`를 추가해 기존 `resetFilters()`를 호출하게 하고, no-real-data 테마 헤더 CTA와 결과 빈 상태 CTA의 `Link href="/stocks"`에 `onClick={openDefaultStocks}`를 연결했다. 링크 목적지는 유지하되 클릭 즉시 URL-derived theme 상태를 비운다.

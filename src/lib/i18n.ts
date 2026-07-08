@@ -93,7 +93,7 @@ export const commonCopy = {
       code: "코드",
     },
     search: {
-      placeholder: "종목·테마 검색",
+      placeholder: "종목명·코드 검색",
       empty: "일치하는 종목이나 테마가 없습니다",
       emptyCoverageLine: (n: number) =>
         `오른스코어는 현재 약 ${n}개 종목만 분석 대상입니다. 전체 시장이 아니라 데이터 검증을 마친 종목부터 단계적으로 넓히고 있어요.`,
@@ -172,7 +172,7 @@ export const commonCopy = {
       code: "Code",
     },
     search: {
-      placeholder: "Search stocks or themes",
+      placeholder: "Search by name or code",
       empty: "No matching stocks or themes",
       emptyCoverageLine: (n: number) =>
         `OrnScore currently analyzes about ${n} stocks — a curated set, not the whole market, expanding gradually as data is verified.`,

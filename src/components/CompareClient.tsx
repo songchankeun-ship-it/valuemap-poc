@@ -137,12 +137,23 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
       setWatchlist(mapped);
     });
 
-    // 공유 링크(?stocks=005930,000660)에서 비교 바스켓 시드
+    // 공유 링크(?stocks=005930,000660)에서 비교 바스켓 시드.
+    // addToCompare는 현재 로컬 바스켓을 읽고 쓰므로 병렬 호출하면 마지막 쓰기만 남을 수 있다.
+    // 추천 세트 추가와 같이 순차 호출해 2~4개 시드가 안정적으로 채워지게 한다.
     try {
       const shared = new URLSearchParams(window.location.search).get("stocks");
       if (shared) {
         const codes = shared.split(",").map((x) => x.trim()).filter(Boolean).slice(0, 4);
-        if (codes.length) Promise.all(codes.map((c) => addToCompare(c))).then(reload);
+        if (codes.length) {
+          (async () => {
+            for (const code of codes) {
+              await addToCompare(code);
+            }
+            if (active) reload();
+          })().catch(() => {
+            if (active) reload();
+          });
+        }
       }
     } catch {
       /* noop */

@@ -83,6 +83,7 @@ export default async function WatchlistPage() {
   const byComposite = [...exampleCandidates].sort(
     (a, b) => compositeOf(b) - compositeOf(a) || a.ticker.localeCompare(b.ticker),
   );
+  const todayCompareTickers = byComposite.slice(0, 3).map((s) => s.ticker);
   pickExample(byComposite, (s) => `종합 ${Math.round(compositeOf(s))}점 · 상위권`);
   const byValue = [...exampleCandidates]
     .filter((s) => s.value > 0 && s.per > 0)
@@ -129,7 +130,7 @@ export default async function WatchlistPage() {
           담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요. 오늘의 변화부터 훑고, 정렬·비교로 이어보세요.
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} />
+      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} todayCompareTickers={todayCompareTickers} />
 
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면/로딩 고착 방지 fallback */}
       <noscript>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
 
 interface StockItem {
@@ -147,18 +148,13 @@ export function GlobalSearch({ stocks, themes }: Props) {
           open && results.length > 0 ? "global-search-opt-" + selectedIndex : undefined
         }
         suppressHydrationWarning
-        className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-md text-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-500 focus:bg-white dark:focus:bg-zinc-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 transition"
+        className="w-full pl-10 pr-3 py-2 md:py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-zinc-100 rounded-lg text-sm md:text-[15px] font-medium placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-zinc-900/5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
       />
-      <svg
-        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none"
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-      >
-        <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M10 10L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <Search
+        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none"
+        strokeWidth={2}
+        aria-hidden="true"
+      />
 
       {open && query.trim() ? (
         <div className="absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50">

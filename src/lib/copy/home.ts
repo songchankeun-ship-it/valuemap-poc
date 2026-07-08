@@ -60,6 +60,7 @@ export const homeCopy = {
       viewStock: "상세 보기",
       ctaCompare: "비교",
       ctaSave: "담기",
+      compareToday: "오늘 후보 3개 비교",
       // 카드별 "왜 후보인지" 근거 — 강한 지표의 전체 풀 상대순위로 종목마다 다르게(점수 계산 없음, 표시 파생).
       reason: (label: string, rank: number, topPct: number) =>
         `${label} 점수 상위 ${rank}위(상위 ${topPct}%)로 후보에 올랐어요.`,
@@ -215,6 +216,7 @@ export const homeCopy = {
       viewStock: "View details",
       ctaCompare: "Compare",
       ctaSave: "Save",
+      compareToday: "Compare 3 candidates",
       // Per-card reason — differentiated by the strongest metric's rank within the full pool (display-only, no scoring).
       reason: (label: string, rank: number, topPct: number) =>
         `Ranked #${rank} in ${label} (top ${topPct}%) among analyzed stocks.`,
