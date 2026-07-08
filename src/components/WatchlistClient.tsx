@@ -540,9 +540,15 @@ export function WatchlistClient({
                         {c.name}
                       </span>
                       <span className="flex shrink-0 items-center gap-1.5">
+                        {/* 판정 가능한 범위만 라벨링 — 종합 점수 5점 이상 변동(기존 델타), 공시 발생(기존 신호). 지표별 급증은 표시 안 함(아래 고지) */}
+                        {Math.abs(c.delta) >= 5 ? (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">
+                            점수 5점+ 변동
+                          </span>
+                        ) : null}
                         {c.signal ? (
                           <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[c.signal.signalType] || "bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700")}>
-                            🔔 {c.signal.signalLabel}
+                            🔔 공시 발생 · {c.signal.signalLabel}
                           </span>
                         ) : null}
                         {c.delta !== 0 ? (
@@ -556,6 +562,10 @@ export function WatchlistClient({
                 ))}
               </ul>
               <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-words">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</p>
+              {/* 제한 고지 — 판정 가능한 항목만 표시. 거래활성도 급증 등 지표별 하루 변화는 일자별 지표 델타를 따로 기록하지 않아 표시하지 않는다(날조 없음). */}
+              <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 break-words leading-snug">
+                여기서는 종합 점수 5점 이상 변동과 공시 발생만 판정해 보여줘요. 거래활성도 급증처럼 지표별 하루 변화는 일자별 기록이 없어 아직 표시하지 않아요.
+              </p>
             </div>
           ) : (
             <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400 break-words">오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요.</p>

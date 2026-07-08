@@ -629,6 +629,39 @@ export const aiAnalysisCardCopy = {
   },
 } as const satisfies Record<Locale, unknown>;
 
+// ── StockChecklist (확인 완료 체크리스트 · 로컬 저장) ──
+// 사용자가 직접 확인한 항목을 이 기기에만 기록하는 재방문 장치. 매수·매도·수익 표현 없음.
+export const stockChecklistCopy = {
+  ko: {
+    title: "확인 완료 체크리스트",
+    purpose: "직접 확인한 항목을 이 기기에 기록해 다음 방문에 이어봐요.",
+    items: {
+      disclosure: "공시 확인",
+      earnings: "실적 확인",
+      value: "밸류 이유 확인",
+      sector: "업종 비교 확인",
+    },
+    checkedOf: (done: number, total: number) => `${done} / ${total} 확인함`,
+    reset: "전체 지우기",
+    allDone: "네 항목을 모두 확인했어요. 참고 정보이며 매수·매도 추천이 아닙니다.",
+    storageNote: "이 기기에만 저장돼요 · 로그인 동기화·알림은 없어요.",
+  },
+  en: {
+    title: "Review checklist",
+    purpose: "Record what you've checked yourself on this device to pick up on your next visit.",
+    items: {
+      disclosure: "Checked disclosures",
+      earnings: "Checked results",
+      value: "Checked the value reason",
+      sector: "Checked the sector comparison",
+    },
+    checkedOf: (done: number, total: number) => `${done} / ${total} checked`,
+    reset: "Clear all",
+    allDone: "You've checked all four items. Reference information, not a buy/sell recommendation.",
+    storageNote: "Saved on this device only · no login sync or alerts.",
+  },
+} as const satisfies Record<Locale, unknown>;
+
 // ── CompareTray (설계서 5-8: 종목 상세 하단 비교 유도) ──
 // 비교함에 담긴 종목 수를 반영만 하고 /compare로 연결한다. 담기/빼기 로직은 재구현하지 않는다.
 export const compareTrayCopy = {

@@ -22,6 +22,7 @@ import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
 import { CompareTray } from "@/components/stock/CompareTray";
+import { StockChecklist } from "@/components/stock/StockChecklist";
 import { classifyConclusion } from "@/lib/conclusion";
 import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
 import { buildScoreBasis } from "@/lib/scoreBasis";
@@ -440,6 +441,10 @@ export default async function StockDetailPage({ params }: PageProps) {
         pbr: s.pbr,
         roe: s.roe,
       }} />
+
+      {/* 확인 완료 체크리스트 — 직접 확인한 항목(공시·실적·밸류·업종 비교)을 이 기기에만 기록하는 재방문 장치.
+          점수/데이터/공시 로직 무변경 · 로그인 동기화·알림 없음. 각 라벨은 해당 탭 해시로 이어진다. */}
+      <StockChecklist ticker={s.ticker} name={s.name} />
 
       {/* 지표 상세·순위·산식 — 설계서 5-4: 기본 접힘, '대표 신호(히어로) → 자세히 보기' 흐름.
           4지표 카드·위험 상세·업종 대비 밸류·같은 업종 비교를 한 번에 펼친다(점수/순위 계산 무변경). */}
