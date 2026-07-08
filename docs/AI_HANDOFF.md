@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T01:45:19.160Z
+Last updated: 2026-07-08T02:11:15.185Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 108 - [2026-07-07] ORNScore 재검수 P1B - 실험실 위험 우선/지표 툴팁 보강
-- Run: 103
+- Task: 109 - [2026-07-07] ORNScore 재검수 최종 검증 및 production deploy push
+- Run: 104
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: Final deploy recovery. Task 109's local gates had passed and main was a clean fast-forward ahead of origin/main; the remaining owner-gated action was explicitly approved in the active Codex chat. Codex updated this handoff/progress record and proceeded with origin/main push plus public ornscore.com verification.
 
 ## Next Agent Checklist
 

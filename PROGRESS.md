@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-08 · [codex] Task 109 — 재검수 배치 최종 검증 및 production deploy push 복구
+- **상태**: Task 102~108은 모두 완료됐고, Task 109는 로컬 검증을 통과했지만 `git push origin main`/공개 사이트 확인이 owner-gated로 판정되어 AI Center에서는 failed로 멈춤. 사용자가 현 Codex 채팅에서 이미 "마지막 배포 푸시까지"를 명시 승인했고 approval #24(remote_change)·#25(deployment)가 approved 상태임을 확인.
+- **로컬 기준**: `main` HEAD `cb82f6f` 위에 재검수 커밋 10개가 누적되어 `origin/main` 대비 10 ahead / 0 behind fast-forward 상태. Task 109 로그 기준 로컬 게이트 통과: `tsc`, `verify_metrics` 138/Metrics 2.4, build, diff-check, routes 9/9, smoke 23/23, login 5/5.
+- **이번 복구 작업**: 실패로 남은 handoff를 최종 배포 복구 흐름으로 정리하고, docs-only release 기록 커밋 후 `origin/main` push 및 공개 `https://ornscore.com` 반영 확인을 진행한다.
+
 ## 2026-07-08 · [codex] Task 108 — 백테스트 위험 우선 재배치(재검수 §5-7) · 지표 툴팁 한계 문구 보강(§5-9) · 모멘텀 가중치 표기 오류 교정
 - **범위**: 백테스트(`/backtest`) 상단 "먼저 읽기" 요약을 **위험→수익→비교** 순서로 재배치(§5-7)하고, 지표 툴팁(`ScoreTooltip`) 5종에 **한계·왜곡 한 줄(`caveat`)**을 추가(§5-9). **표시/문구 전용 — 점수 계산식(`score.ts`/`metrics.ts`/`sector.ts`)·`stocks.json`·DART·`direction`·`metricsVersion` 무변경**(카드·차트·3일자 블록·면책·탭 전부 보존, 순서/문구만). 브랜치 `ai-center/task-108-2026-07-07-ornscore-p1b`(base·main HEAD `4b89f86`가 HEAD 조상임을 `git merge-base --is-ancestor`로 확인). 소스 진실 = `ORNScore 재검수 리포트.pdf`(제출 2026.07.07). 편집 **2파일**: `src/components/BacktestClient.tsx`·`src/components/ScoreTooltip.tsx`.
 - **① 백테스트 위험 우선(§5-7)**: `BacktestTopRiskSummary`의 3칸 KPI를 `[수익 CAGR][위험 MDD][비교]` → **`[먼저 볼 위험 · 최대낙폭(MDD)][그 다음 수익 · 연복리 CAGR][비교 · 위험조정]`** 순서로 재배치(수익을 숨기는 게 아니라 순서만 위험 우선). MDD 칸은 rose 강조 + `benchmarkMdd` 있으면 `${벤치}보다 낙폭이 컸/작았어요` 델타, 비교 칸은 `sharpe`/`benchmarkSharpe`로 `전략 X.XX · 벤치 Y.YY`. **모든 값은 `data`/`metrics` 실필드(`maxDrawdown`·`benchmarkMdd`·`cagr`·`sharpe`·`benchmarkSharpe`·`benchmarkLabel`)에서만 렌더 — 하드코딩 숫자 없음.** 전략 탭·수익/위험 KPI 분리·차트·3일자·면책 무변경.
