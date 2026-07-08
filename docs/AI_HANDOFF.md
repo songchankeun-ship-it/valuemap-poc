@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T05:27:09.509Z
+Last updated: 2026-07-08T05:48:16.072Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 115 - [2026-07-08] ORNScore 공개 재검수 P1B - 홈 첫 화면 종목 검색과 시장 스냅샷 우선순위 강화
-- Run: 110
+- Task: 116 - [2026-07-08] ORNScore 공개 재검수 P1C - 네비게이션 중복과 붙어 읽히는 탭/버튼 접근성 정리
+- Run: 111
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
