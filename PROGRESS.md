@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-08 · [codex] Queue checkpoint — 공개 재검수 2차 #118~#123 생성, #118 사용량 제한 대기
+- **범위**: 새 공개 검수 텍스트(`.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`)를 P0/P1 로컬 작업 큐로 분리했다. 생성된 작업: #118 홈 80+ 카운트/SEO 숫자, #119 업종 전체 링크 필터, #120 무료 베타 약관+백테스트 기준일, #121 테마 0개 결과, #122 검색/관심/비교 빠른 시작, #123 공시 최신 200건 제한 고지.
+- **현재 상태**: AI Center가 #118 시작 직후 Codex planner `spawn EPERM`으로 Claude fallback을 시도했으나 Claude 주간 한도 429(`resets Jul 9, 9pm Asia/Seoul`)로 실패해 큐가 일시정지됨. 코드/테스트 실패 아님.
+- **다음 진입점**: #118~#123은 Planner 없이도 실행 가능한 작은 슬라이스로 조정한 뒤, 한도 리셋 이후 #118을 requeue/start한다. 외부 반영은 새 승인 전까지 하지 않고 로컬 커밋까지만 진행한다.
+
 ## 2026-07-08 · [codex] Deployment — 공개 재검수 후속 배치 #110~#117 main 배포 체크포인트
 - **승인/범위**: 사용자가 "배포 진행해"로 명시 승인. 현재 릴리스 라인 `ai-center/task-117-2026-07-08-ornscore-p2a`를 `origin/main` 위 fast-forward 배포 대상으로 확정. 포함 범위는 Task 110~117의 공개 화면 UX/문구/접근성/로컬 루틴 개선이며, 점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion`은 변경하지 않음.
 - **배포 전 게이트(전부 통과)**: `git fetch origin` 후 `origin/main...HEAD = 0 14` 및 `origin/main`이 HEAD의 조상임을 확인. `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check origin/main..HEAD` clean · `npm run build` 0(176 static pages) · 로컬 prod `http://127.0.0.1:4567`에서 `verify:routes` 9/9, `smoke:check --all` 23/23 통과. 검증 서버는 포트 PID 한정으로 종료.
