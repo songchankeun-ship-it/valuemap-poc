@@ -64,12 +64,12 @@ export function HomeHero({
           </p>
           <div className="flex flex-row flex-wrap gap-2.5 mt-3 md:mt-4">
             <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition shadow-sm shadow-zinc-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
-              <Search className="h-4 w-4" aria-hidden="true" />
               <span>{copy.primaryCta}</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
             <Link prefetch={false} href="/stocks" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-semibold hover:border-blue-400 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+              <Search className="h-4 w-4" aria-hidden="true" />
               <span>{copy.stockSearch}</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </div>

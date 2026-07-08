@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 114 - [2026-07-08] ORNScore 공개 재검수 P1A - 점수·상대순위 해석과 백테스트 기준일 배지 보강
+- Task: 115 - [2026-07-08] ORNScore 공개 재검수 P1B - 홈 첫 화면 상단 우선순위 재정렬(시장 상태→후보→공시)·종목 검색 진입 명확화
 - Run: 109
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development and all quality gates completed. Display/copy/order only — score·data·metricsVersion untouched.
 
 ## Next Agent Checklist
 

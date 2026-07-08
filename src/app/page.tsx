@@ -206,20 +206,20 @@ export default async function HomePage() {
         previewCandidates={candidates.slice(0, 3)}
       />
 
-      <TopCandidateSection candidates={candidates} />
-
-      <WelcomeOnboarding />
-
-      <MyStocksSection lookup={poolLookup} />
-
-      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
-
       <MarketSnapshotCards
         totalCount={dataMetadata.count}
         strongCount={strongCount}
         volumeSpikeCount={spikeCount}
         signalCount={signalCount}
       />
+
+      <TopCandidateSection candidates={candidates} />
+
+      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
+
+      <WelcomeOnboarding />
+
+      <MyStocksSection lookup={poolLookup} />
 
       <FeatureCards strongCount={strongCount} signalCount={signalCount} />
 

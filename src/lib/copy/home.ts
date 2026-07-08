@@ -33,7 +33,7 @@ export const homeCopy = {
     countStock: "개",
     countCase: "건",
     snapshot: {
-      heading: "오늘의 시장 스냅샷",
+      heading: "오늘의 시장 상태",
       sub: "장마감 데이터 요약",
       cards: {
         total: { title: "분석 종목", sub: "실데이터 기반" },
@@ -188,7 +188,7 @@ export const homeCopy = {
     countStock: "",
     countCase: "",
     snapshot: {
-      heading: "Today's market snapshot",
+      heading: "Today's market status",
       sub: "Market-close data summary",
       cards: {
         total: { title: "Analyzed stocks", sub: "Based on real data" },
