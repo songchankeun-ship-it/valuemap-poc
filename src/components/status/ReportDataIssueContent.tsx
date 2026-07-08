@@ -66,7 +66,7 @@ export function ReportDataIssueContent({
 
       <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
         {t.autofillPrefix}{asOf}{t.autofillMid}{version}{t.autofillSuffix}{" "}
-        {t.storeNotePrefix}<code className="text-[10px]">data_reports</code>{t.storeNoteMid}<code className="text-[10px]">/admin/status</code>{t.storeNoteSuffix}
+        {t.storeNote}
       </p>
     </section>
   );

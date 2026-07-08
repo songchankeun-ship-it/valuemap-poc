@@ -264,16 +264,25 @@ function LoginForm() {
                     placeholder="you@example.com"
                     required
                     autoComplete="email"
+                    aria-invalid={status === "error"}
+                    aria-describedby={status === "error" && errorMsg ? "email-help email-error" : "email-help"}
                     // 일부 브라우저/비밀번호 관리자 확장이 input 에 style 등을 주입해
                     // SSR↔클라이언트 hydration 경고가 뜨는 것을 막는다 (GlobalSearch 와 동일 처리).
                     suppressHydrationWarning
                     className="w-full pl-10 pr-3 py-2.5 border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
+                <p id="email-help" className="mt-1.5 text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  {copy.emailHelp}
+                </p>
               </div>
 
               {status === "error" && errorMsg ? (
-                <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-md p-3 flex items-start gap-2">
+                <div
+                  id="email-error"
+                  role="alert"
+                  className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-md p-3 flex items-start gap-2"
+                >
                   <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                   <div className="text-xs text-red-700 dark:text-red-300">{errorMsg}</div>
                 </div>

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T02:11:15.185Z
+Last updated: 2026-07-08T00:00:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 109 - [2026-07-07] ORNScore 재검수 최종 검증 및 production deploy push
-- Run: 104
-- Status: completed
+- Task: 110 - [2026-07-08] ORNScore 공개 검수 '높음' 2건 P0A — /status 내부 구현 문구 제거 + /login 이메일 흐름·접근성
+- Run: local
+- Status: completed (local gates)
 - Agent: codex
-- Note: Final deploy recovery. Task 109's local gates had passed and main was a clean fast-forward ahead of origin/main; the remaining owner-gated action was explicitly approved in the active Codex chat. Codex updated this handoff/progress record and proceeded with origin/main push plus public ornscore.com verification.
+- Note: Fixed the two "high" public-review findings. (1) /status report area no longer exposes the internal table name `data_reports` or admin path `/admin/status` — replaced the 3-part `storeNote*` copy with a single product-language `storeNote` (KO/EN) and dropped the `<code>` spans in ReportDataIssueContent.tsx. Admin page + report API + form comment keep those identifiers intentionally (private/dev-only). (2) /login email flow clarified: `emailLabel` → "이메일 주소"/"Email address", new `emailHelp` magic-link hint under the input, plus a11y wiring on `#email` (aria-invalid, aria-describedby=email-help[+email-error]) and `role="alert"`/`id="email-error"` on the error box. Magic-link send + OAuth logic unchanged. Gates: tsc 0, verify_metrics 138/Metrics 2.4, diff --check clean, build 138 SSG, login-preflight 5/5, verify:routes 9/9, smoke 23/23, SSR leak-scan clean. Local commit only; not pushed; main untouched. Residual: real-device 390px + magic-link external send are owner visual/infra gates.
 
 ## Next Agent Checklist
 

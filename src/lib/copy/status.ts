@@ -170,9 +170,8 @@ export const reportIssueCopy = {
     autofillPrefix: "메일 본문에 현재 데이터 기준일(",
     autofillMid: ")·산식(",
     autofillSuffix: ")이 자동으로 채워집니다.",
-    storeNotePrefix: "인앱 신고는 저장(",
-    storeNoteMid: ")를 시도하고, 저장이 안 되면 위 메일로 안내합니다. 접수된 신고 확인은 내부 관리자 화면(",
-    storeNoteSuffix: ")에서 처리합니다.",
+    storeNote:
+      "앱 내 신고 저장을 시도하고, 저장이 안 되면 위 메일로 안내합니다. 접수된 신고는 관리자가 데이터 상태를 확인합니다.",
   },
   en: {
     heading: "Report a data issue",
@@ -182,9 +181,8 @@ export const reportIssueCopy = {
     autofillPrefix: "The email body is auto-filled with the current data reference date (",
     autofillMid: ") and formula (",
     autofillSuffix: ").",
-    storeNotePrefix: "In-app reports attempt to save (",
-    storeNoteMid: "); if saving fails, you'll be directed to email above. Received reports are reviewed on the internal admin screen (",
-    storeNoteSuffix: ").",
+    storeNote:
+      "In-app reports are saved when possible; if saving fails, you'll be directed to the email above. Submitted reports are reviewed by an administrator.",
   },
 } as const satisfies Record<Locale, unknown>;
 
