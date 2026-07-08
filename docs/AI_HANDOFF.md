@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-09 — Codex Task 118 repair — ESLint gate setup
+- **Scope**: Repair-only follow-up for the tester failure. Closed the non-interactive lint blocker; no scoring/data/DART/financial/`stocks.json`/`metricsVersion` changes and no change to Task 118 home-count or SEO logic.
+- **Changes**: Added `.eslintrc.json` extending `next/core-web-vitals`; added dev deps `eslint@8.57.1` and `eslint-config-next@14.2.13`; escaped four JSX text quote literals required by lint in `about/page.tsx`, `compare/page.tsx`, `terms/page.tsx`, and `SignalGuideExpand.tsx`. Rendered copy meaning is unchanged.
+- **Verification**: `npm run lint` 0 with existing warnings only (CompareClient/DisclosureExplorer hook deps, StockSearchBox aria-expanded, TrustLayer cleanup ref); `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` clean apart from CRLF notices; `npm run build` 0; local prod 4569 `verify:routes` 9/9 and `smoke:check --all` 23/23; targeted HTML/SEO check passed for `/` 80+ count and `/stock/078930`·`/stock/005930` volatile numeric SEO patterns.
+- **Residual**: In-app browser was attempted through the browser plugin and troubleshooting path, but `iab` is not exposed in this session (`Browser is not available: iab`; browser list only shows a Chrome extension). Per plugin guidance, no unrelated browser backend was substituted. Real 390×844/desktop screenshot eyeball remains an environment/operator gate. Local prod port 4569 listener PID 30500 was stopped by scoped command; AI Center 4310 untouched.
+
 ### 2026-07-08 — Codex Task 118 — 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
 - **Scope**: 공개 재검수 P0A의 숫자 신뢰 이슈 2건만 처리. 표시/파생/SEO 설명 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 무변경. 편집 2파일: `src/app/page.tsx`, `src/app/stock/[ticker]/page.tsx`.
 - **Home count fix**: 시장 스냅샷/히어로의 80+ 카운트를 후보 카드에 보이는 정수 표시 점수 기준(`Math.round(compositeOf(s)) >= 80`)으로 맞춤. 현재 로컬 데이터 기준 GS raw 82.475→82, GS건설 raw 79.950→80이라 `/`는 `종합 80+ 후보 2개`와 카드 GS 82점·GS건설 80점이 일치. 후보 순서/점수 산식은 raw `compositeOf` 정렬 그대로 유지.

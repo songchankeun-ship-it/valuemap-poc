@@ -118,7 +118,7 @@ export function SignalGuideExpand({ guide, url }: { guide: SignalGuide; url?: st
           ) : null}
 
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed pt-1 border-t border-zinc-100 dark:border-zinc-800">
-            ⚠ 이 가이드는 호재/악재 단정이 아닌 <strong>'확인 필요 신호'</strong> 분류입니다. 실제 의미는 회사·시기·맥락에 따라 다릅니다.
+            ⚠ 이 가이드는 호재/악재 단정이 아닌 <strong>&apos;확인 필요 신호&apos;</strong> 분류입니다. 실제 의미는 회사·시기·맥락에 따라 다릅니다.
           </p>
         </div>
       ) : null}

@@ -48,7 +48,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제1조 (목적)</h2>
-          <p>본 약관은 오른스코어(이하 "서비스")이 제공하는 데이터 분석 도구 이용과 관련하여 서비스 운영자와 이용자 사이의 권리·의무, 책임사항을 규정함을 목적으로 합니다.</p>
+          <p>본 약관은 오른스코어(이하 &quot;서비스&quot;)이 제공하는 데이터 분석 도구 이용과 관련하여 서비스 운영자와 이용자 사이의 권리·의무, 책임사항을 규정함을 목적으로 합니다.</p>
         </section>
 
         <section>

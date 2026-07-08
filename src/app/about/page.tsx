@@ -31,7 +31,7 @@ export default function AboutPage() {
       <header>
         <h1 className="text-xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">서비스 소개</h1>
         <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          오른스코어는 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">"오늘 어떤 종목부터 봐야 할지"</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
+          오른스코어는 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">&quot;오늘 어떤 종목부터 봐야 할지&quot;</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
         </p>
       </header>
 

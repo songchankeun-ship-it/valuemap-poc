@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 118 repair — ESLint 게이트 비대화식 전환
+- **범위**: Tester failure의 차단 항목만 수리. `npm run lint`가 Next ESLint 초기 설정 프롬프트로 빠지는 문제를 닫기 위해 표준 Next ESLint 설정을 추가했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion`·Task 118의 홈 카운트/SEO 로직은 변경하지 않음.
+- **변경**: `.eslintrc.json` 신규(`next/core-web-vitals`), devDependencies에 `eslint@8.57.1`·`eslint-config-next@14.2.13` 추가. 실제 lint error였던 JSX 텍스트 따옴표만 entity로 이스케이프: `src/app/about/page.tsx`, `src/app/compare/page.tsx`, `src/app/terms/page.tsx`, `src/components/SignalGuideExpand.tsx`. 화면에 보이는 문구 의미는 동일.
+- **검증**: `npm run lint` 0(기존 warning 4건만: CompareClient/DisclosureExplorer hook deps, StockSearchBox aria-expanded, TrustLayer ref cleanup) · `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 예정 경고만) · `npm run build` 0(176 static pages) · local prod `http://127.0.0.1:4569`에서 `verify:routes` 9/9, `smoke:check --all` 23/23. 타깃 HTML/SEO 재확인: `/` 80+ 카운트 `2개`와 GS 82점·GS건설 80점, `/stock/078930`·`/stock/005930` SEO 영역 변동 숫자 패턴 없음.
+- **브라우저 게이트**: browser plugin 지침대로 `iab` 연결을 재시도하고 troubleshooting/list까지 확인했으나 이 세션에는 in-app browser가 노출되지 않음(`Browser is not available: iab`; 사용 가능 목록은 Chrome extension 1개뿐). 지침상 다른 브라우저 백엔드로 대체하지 않았고, 실제 390×844/데스크톱 스크린샷 육안은 환경 잔여 게이트로 남음. 포트 4569의 `next start` PID 30500만 범위 한정 종료, 4310 무관.
+
 ## 2026-07-08 · [codex] Task 118 — 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
 - **범위**: 공개 재검수 P0A 중 금융 신뢰를 깨는 숫자 불일치 2건만 처리. **표시/파생/SEO 설명 전용 — 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 무변경**. 편집 2파일: `src/app/page.tsx`, `src/app/stock/[ticker]/page.tsx`.
 - **홈 80+ 카운트 정합**: 홈 시장 요약의 `strongCount` 기준을 내부 원점수 `compositeOf(s) >= 80`에서 카드와 동일한 표시 점수 기준 `Math.round(compositeOf(s)) >= 80`으로 맞춤. 현재 데이터에서 GS raw 82.475→82, GS건설 raw 79.950→80이라 시장 스냅샷은 `종합 80+ 후보 2개`, 후보 카드는 GS 82점·GS건설 80점으로 논리 일치. 후보 정렬은 계속 raw `compositeOf` desc라 기존 순서 유지.
