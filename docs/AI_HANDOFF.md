@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T06:11:38.529Z
+Last updated: 2026-07-08T10:41:26.581Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 117 - [2026-07-08] ORNScore 공개 재검수 P2A - 관심 변화 요약과 확인 체크리스트 로컬 기능 보강
-- Run: 112
-- Status: completed
+- Task: 118 - [2026-07-08] ORNScore 공개 재검수 P0A - 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
+- Run: 113
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Planner process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-08 — Codex queue checkpoint — public review pass #2 tasks #118~#123
+- **Created queue tasks** from `.codex/attachments/c6c04b68-4cb9-4cf1-8403-5b688f2ff3b1/pasted-text.txt`: #118 home 80+ count/SEO numeric snippet, #119 stock-detail industry link filter, #120 free-beta terms copy + backtest date notice, #121 theme zero-result empty state, #122 search/watchlist/compare quick starts, #123 disclosure latest-200 limit copy.
+- **Current blocker is operational, not code**: #118 started, Codex planner hit `spawn EPERM`, fallback Claude hit weekly limit 429 (`resets Jul 9, 9pm Asia/Seoul`), so the queue paused before any code work. The working tree only has this checkpoint doc update.
+- **Next entrypoint**: keep #118~#123 local-only and Planner-free, then requeue/start #118 after the model limit resets. Do not perform external release actions without a new owner approval.
 
 ### 2026-07-08 — Codex deployment checkpoint — public review batch #110~#117
 - **Approval/scope**: Owner explicitly said "배포 진행해". Deploy target is the current release line `ai-center/task-117-2026-07-08-ornscore-p2a`, fast-forward from `origin/main`, containing Tasks 110~117. Scope is public-screen UX/copy/accessibility/local-routine improvements only; score formulas, data collection, DART/financial logic, `stocks.json`, and `metricsVersion` remain unchanged.
