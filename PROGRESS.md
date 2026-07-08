@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 123 복구 — Tester 사용량 제한 false-fail 완료 처리
+- **범위**: 자동화 큐 복구만 수행. 앱 코드·점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion`은 commit `8b9631e` 이후 변경하지 않았다.
+- **상황**: Task #123 run #120은 개발 단계에서 `[codex] clarify disclosure collection scope` 커밋을 생성했고, 로그상 `tsc`, `verify_metrics.py`, `git diff --check`, `npm run build`, local prod 4578 `verify:routes` 9/9, `smoke:check --all` 23/23, 시스템 Chrome 390x844·1366x900 화면 확인까지 완료했다. 이후 Tester AI 호출이 `You've hit your usage limit... try again at 6:30 AM`로 종료되어 큐만 failed/paused가 됐다.
+- **복구 판단**: 실패는 코드/테스트/승인 문제가 아니라 Codex 사용량 제한에 따른 품질 게이트 프로세스 실패다. #123은 완료 처리 가능하며, #118~#123 배치가 모두 로컬 커밋으로 끝난 상태다. 원격 push·배포·promote는 수행하지 않았다.
+
 ## 2026-07-09 · [codex] Task 123 — 공시 최신 200건 제한 고지 정리
 - **범위**: 공개 재검수 후속 #123. `/disclosures`, 홈 공시 섹션, 종목 상세 공시 섹션에서 "최근 7일"과 "최신 200건 내"가 같이 보일 때 7일 전체 DART 공시를 다 본 것처럼 읽히는 문구를 정리했다. 데이터 수집·카운트 계산·DART/재무 로직·`stocks.json`·`metricsVersion` 변경 없음.
 - **변경**: `/disclosures` 상단 배지를 `최신 200건 내`로 구체화하고, 본문/접힘 안내/기간 필터 배지/카운트 요약/공통 안내/하단 제한 배너를 `최근 N일 중 최신 200건 내`, `코스피/코스닥 최신 100건씩(합 200건)` 톤으로 통일했다. `전체 시장` 토글 설명은 DART 전체 이력이 아니라 `최신 수집 범위 내 분석 대상 외 종목까지 포함`으로 좁혔다. 홈 공시 섹션은 `최신 수집 200건 내`, `수집 제한`, `코스피/코스닥 최신 100건씩`을 반복 노출하도록 바꿨다. 종목 상세 공시 탭에는 `최대 20건 수집` 배지를 추가하고 로딩/오류/성공 상태 모두에서 보이게 했다.

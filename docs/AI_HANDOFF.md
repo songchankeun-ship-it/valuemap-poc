@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T18:28:58.765Z
+Last updated: 2026-07-08T22:50:49.867Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 122 - [2026-07-08] ORNScore 공개 재검수 P1A - 즉시 행동 강화: 헤더 검색 가시성 + 관심/비교 빠른 시작
-- Run: 119
+- Task: 123 - [2026-07-08] ORNScore 공개 재검수 P1B - 공시 최신 200건 제한 고지 반복 위치 정리
+- Run: 120
 - Status: completed
 - Agent: codex
-- Note: Development and all quality gates completed.
+- Note: Recovered by watchdog. Development produced commit `8b9631e [codex] clarify disclosure collection scope` with local gates and system Chrome viewport checks passing; the only failure was the follow-up Tester AI process hitting the Codex usage limit.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex Task 123 recovery — tester usage-limit false failure
+- **Scope**: Recovery-only follow-up. No app code, scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes after commit `8b9631e`.
+- **Reason**: Run 120 completed development, committed `[codex] clarify disclosure collection scope`, and recorded passing local gates. The queue paused because the subsequent Tester AI process exited with Codex usage limit text: `You've hit your usage limit... try again at 6:30 AM`.
+- **Recovery evidence**: Run logs show `npx tsc --noEmit`, `verify_metrics.py`, `git diff --check`, `npm run build`, local prod 4578 `verify:routes` 9/9, `smoke:check --all` 23/23, and system Chrome viewport checks for `/disclosures`, `/`, and `/stock/078930#disclosures` at 390x844 and 1366x900. Screenshots exist under `C:\dev\AI_Dev_Center\logs\ornscore-task123-*.png`.
+- **Queue state**: Safe to mark task #123 and run #120 completed. Tasks #118-#123 are then complete and the queue can remain idle until the owner adds the next batch. No push/deploy/promotion was performed.
 
 ### 2026-07-09 — Codex Task 123 — disclosure latest-200 scope copy
 - **Scope**: Public-review #123 only. Clarified disclosure collection-scope copy across `/disclosures`, the home disclosure section, and stock-detail disclosures so `recent 7 days` is not read as full-period DART coverage. No scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes.
