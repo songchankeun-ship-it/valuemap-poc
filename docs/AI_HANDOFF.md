@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T10:41:26.581Z
+Last updated: 2026-07-08T10:49:10.756Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -22,10 +22,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 ## Last AI Center Event
 
 - Task: 118 - [2026-07-08] ORNScore 공개 재검수 P0A - 홈 80+ 카운트/표시 점수 일관성 + 종목 SEO 숫자 제거
-- Run: 113
+- Run: 114
 - Status: failed
 - Agent: claude
-- Note: Planner process exited with code 1
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
