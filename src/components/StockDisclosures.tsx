@@ -79,6 +79,14 @@ function SourceBadge({ source, t }: { source: string; t: (typeof stockDisclosure
   return null;
 }
 
+function ScopeBadge({ t }: { t: (typeof stockDisclosuresCopy)[Locale] }) {
+  return (
+    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+      {t.scopeBadge}
+    </span>
+  );
+}
+
 // 수집 출처 라벨 — SourceBadge와 동일 매핑(실시간/저장본/예시 표본)
 function sourceLabel(source: string | undefined, t: (typeof stockDisclosuresCopy)[Locale]): string | null {
   if (!source) return null;
@@ -145,7 +153,10 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
   if (loading) {
     return (
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">{t.title}</div>
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t.title}</span>
+          <ScopeBadge t={t} />
+        </div>
         <div className="space-y-2">
           <div className="h-3 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
           <div className="h-3 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
@@ -161,7 +172,10 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
     // 원문 에러 메시지는 노출하지 않고 안내 문구(t.loadError)만 보여준다. 다시 시도는 reloadKey만 증가.
     return (
       <div className="bg-white dark:bg-zinc-900 border border-rose-200 dark:border-rose-900 rounded-lg p-4">
-        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">{t.title}</div>
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t.title}</span>
+          <ScopeBadge t={t} />
+        </div>
         <div className="text-center py-4">
           <AlertTriangle className="w-8 h-8 text-rose-400 dark:text-rose-500 mx-auto mb-3" strokeWidth={1.5} aria-hidden="true" />
           <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-4 leading-relaxed">{t.loadError}</p>
@@ -183,12 +197,13 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between gap-x-3 gap-y-1 mb-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="text-sm font-medium">{t.title}</span>
           <SourceBadge source={data.source} t={t} />
+          <ScopeBadge t={t} />
         </div>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400 ml-auto">
           {t.summaryPrefix} · {t.summaryDisclosures} {data.count}{t.summaryDisclosuresUnit} · {t.summarySignals} {data.signalCount}{t.summarySignalsUnit}
         </span>
       </div>

@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 123 — 공시 최신 200건 제한 고지 정리
+- **범위**: 공개 재검수 후속 #123. `/disclosures`, 홈 공시 섹션, 종목 상세 공시 섹션에서 "최근 7일"과 "최신 200건 내"가 같이 보일 때 7일 전체 DART 공시를 다 본 것처럼 읽히는 문구를 정리했다. 데이터 수집·카운트 계산·DART/재무 로직·`stocks.json`·`metricsVersion` 변경 없음.
+- **변경**: `/disclosures` 상단 배지를 `최신 200건 내`로 구체화하고, 본문/접힘 안내/기간 필터 배지/카운트 요약/공통 안내/하단 제한 배너를 `최근 N일 중 최신 200건 내`, `코스피/코스닥 최신 100건씩(합 200건)` 톤으로 통일했다. `전체 시장` 토글 설명은 DART 전체 이력이 아니라 `최신 수집 범위 내 분석 대상 외 종목까지 포함`으로 좁혔다. 홈 공시 섹션은 `최신 수집 200건 내`, `수집 제한`, `코스피/코스닥 최신 100건씩`을 반복 노출하도록 바꿨다. 종목 상세 공시 탭에는 `최대 20건 수집` 배지를 추가하고 로딩/오류/성공 상태 모두에서 보이게 했다.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF 예정 경고만) · `npm run build` 0(기존 lint warning 4건만) · local prod `http://127.0.0.1:4578` `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **브라우저 확인**: in-app browser `iab`는 이번 세션에서도 미노출(`agent.browsers.list()` = `[]`). 시스템 Chrome 실행 파일을 Playwright 제어에 연결해 `/disclosures`, 홈 공시 섹션, `/stock/078930#disclosures`를 390x844 및 1366x900에서 확인했다. 전 케이스 horizontal overflow 0. `/disclosures`와 홈은 console error 0, 종목 상세는 로컬 `/api/disclosures/078930` 500으로 네트워크 console error 1건이 있었지만 `최대 20건 수집` 배지는 오류 상태에서도 visible. 스크린샷: `C:\dev\AI_Dev_Center\logs\ornscore-task123-*.png`.
+- **정리/남은 리스크**: local prod 4578은 후속 커밋 전까지 검증용으로만 사용했고, 종료 시 포트·명령줄 기준으로 정리한다. 종목 상세 공시 API 500은 로컬 DART 키/샘플 부재에 따른 기존 폴백 한계이며, 이번 작업은 그 로직을 바꾸지 않았다. 다음 진입점은 공시 전체 기간 수집 파이프라인 또는 종목 상세 공시 API 폴백 품질 개선을 별도 큐로 분리하는 것이다.
+
 ## 2026-07-09 · [codex] Task 122 — 검색/관심/비교 빠른 시작 강화
 - **범위**: 공개 재검수 2순위 "사용자가 바로 행동하게 만들기" 중 검색 진입, 관심 빈 상태, 오늘 후보 3개 비교 경로만 처리했다. 큰 리디자인 없이 기존 `GlobalSearch`/`StockSearchBox`/`watchlist.ts`/`compare.ts` 로컬 저장 로직을 재사용했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
 - **변경**: 헤더 `GlobalSearch` placeholder를 `종목명·코드 검색`으로 바꾸고 폭/입력 높이/테두리 대비를 키웠다. 수동 SVG 검색 아이콘은 lucide `Search`로 교체했다. 홈 `오늘 먼저 볼 후보` 섹션에 `오늘 후보 3개 비교` 링크를 추가해 `/compare?stocks=...`로 바로 이어지게 했다. `/watchlist` 빈 상태는 일괄 `예시 종목 3개 담아보기` 저장 버튼을 제거하고 `샘플 관심목록 보기` 미리보기 + 개별 `관심 종목에 담기`만 남겼다. 같은 빈 상태에 `오늘 후보 3개 비교`와 `종목 직접 찾기`를 추가했다. `/compare?stocks=` 시드는 기존 병렬 `addToCompare` 호출이 로컬 저장 레이스로 1개만 남을 수 있어 추천 세트와 같은 순차 추가 방식으로 고쳤다.

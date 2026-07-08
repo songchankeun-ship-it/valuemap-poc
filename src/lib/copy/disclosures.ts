@@ -12,10 +12,10 @@ export const disclosuresIntroCopy = {
     breadcrumbCurrent: "공시 신호",
     returnToday: "오늘 대시보드",
     returnWatchlist: "관심 종목",
-    limitedBadge: "제한 수집",
+    limitedBadge: "최신 200건 내",
     title: "공시 신호",
-    desc: "최근 공시 중 확인이 필요한 내용을 유형별로 정리했어요. 투자 판단 전 반드시 원문을 확인하세요.",
-    collapseSummary: "수집 범위 안내 — 최신 200건 내 분석",
+    desc: "코스피·코스닥 최신 100건씩(합 200건) 안에서 확인이 필요한 내용을 유형별로 정리했어요. 투자 판단 전 반드시 원문을 확인하세요.",
+    collapseSummary: "수집 범위 — 코스피·코스닥 최신 100건씩",
     collapseBody:
       "선택한 기간 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다. 표시는 최대 50건이며, 선택한 기간의 전체 공시가 포함되지 않아 일부 공시가 누락될 수 있습니다.",
     bottomNote:
@@ -26,10 +26,10 @@ export const disclosuresIntroCopy = {
     breadcrumbCurrent: "Disclosure signals",
     returnToday: "Today",
     returnWatchlist: "Watchlist",
-    limitedBadge: "Limited collection",
+    limitedBadge: "Within latest 200",
     title: "Disclosure signals",
-    desc: "We grouped recently collected filings that need review by type. Always check the original filing before making any decision.",
-    collapseSummary: "Collection scope — analyzed within the latest 200 filings",
+    desc: "We group items to review within the latest 100 KOSPI and 100 KOSDAQ filings (200 total). Always check the original filing before making any decision.",
+    collapseSummary: "Collection scope — latest 100 KOSPI + 100 KOSDAQ",
     collapseBody:
       "These are not all disclosures in the selected period. They are signals auto-extracted from the latest 100 KOSPI and 100 KOSDAQ filings (200 total). At most 50 are shown, and because not every filing in the period is included, some disclosures may be missing.",
     bottomNote:
@@ -49,21 +49,21 @@ export const disclosureExplorerCopy = {
     errorRetry: "다시 시도",
     // 헤더
     title: "공시 신호",
-    within200: "최신 200건 내",
-    periodScopeBadge: "전체 기간 아님 · 최신 200건 내",
+    within200: "최신 수집 200건 내",
+    periodScopeBadge: "최신 수집 200건 내",
     periodScopeBadgeAria:
-      "수집 범위 제한 안내입니다. 선택한 기간 전체 공시가 아니라 코스피·코스닥 최신 200건 안에서만 표시하며, 필터 컨트롤이 아닙니다.",
+      "수집 범위 제한 안내입니다. 선택한 기간 전체 공시가 아니라 코스피와 코스닥 최신 100건씩, 합 200건 안에서만 표시하며, 필터 컨트롤이 아닙니다.",
     // 결과 카운트 옆에 반복 고지하는 누락 안내 조각
-    missingFragment: "누락 가능 · 코스피·코스닥 최신 수집 범위 내",
+    missingFragment: "누락 가능 · 코스피/코스닥 최신 100건씩 내",
     // 카드 위 공통 경고 박스 — 카드마다 반복되던 문구를 한곳에 모음
     topNoticeTitle: "공시 카드 공통 안내",
     topNoticeBullets: [
       "판단 전 DART 원문을 직접 확인하세요.",
-      "분석 대상·수집 제한: 최신 200건 안에서 최대 50건만 표시합니다.",
+      "수집 제한: 코스피/코스닥 최신 100건씩(합 200건) 안에서 최대 50건만 표시합니다.",
       "호재·악재 판단이 아니라 유형 분류·탐색 신호입니다.",
     ] as readonly string[],
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
-      `최근 ${days}일 · 최신 200건 내 신호 ${signalCount}건 · ${scopeAll ? "이벤트 묶음" : "분석 대상 묶음"} ${groupCount}개`,
+      `최근 ${days}일 중 최신 200건 내 신호 ${signalCount}건 · ${scopeAll ? "이벤트 묶음" : "분석 대상 묶음"} ${groupCount}개`,
     collectedAt: "수집 기준",
     collectedAtUnknown: "수집 시각 미상",
     sourceSample: "예시 표본",
@@ -81,14 +81,14 @@ export const disclosureExplorerCopy = {
     scopeUniverseStrong: "분석 대상만",
     scopeUniverseDesc: " = 오른스코어가 점수를 산출하는 분석 대상 종목의 공시 · ",
     scopeAllStrong: "전체 시장",
-    scopeAllDesc: " = 분석 대상 외 종목까지 포함한 DART 전체 공시",
+    scopeAllDesc: " = 최신 수집 범위 내 분석 대상 외 종목까지 포함",
     // 타입 필터 '전체'
     filterAll: (count: number) => `전체 ${count}`,
     // 상단 탭(§7-3)
     tabAll: "전체",
     tabWatchlist: "내 관심종목",
     // 제한 안내 배너(§7-5) — 큰 안내 대신 작은 info 배너
-    limitBanner: "최근 수집 공시 기준으로 표시돼요. 전체 시장 공시는 DART 원문에서 확인하세요.",
+    limitBanner: "선택 기간 전체가 아니라 코스피/코스닥 최신 100건씩(합 200건) 안의 최근 수집 공시입니다. 전체 이력은 DART에서 확인하세요.",
     // 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 노출(재검수 P0C)
     sampleNotice: "현재 표시 데이터는 예시입니다. 실제 공시는 DART 원문에서 확인하세요.",
     // 관심종목 탭 빈 상태
@@ -117,7 +117,7 @@ export const disclosureExplorerCopy = {
     // 빈 상태
     empty: "지금 조건에 맞는 신호가 없습니다.",
     emptyReset: "필터를 해제하고 전체 신호 보기",
-    emptyWidenScope: "전체 시장 공시까지 넓혀 보기",
+    emptyWidenScope: "분석 대상 외까지 넓혀 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
       "자기주식 취득 결의": "주주환원·주가 안정과 관련된 공시입니다. 취득 규모와 소각 여부를 확인하세요.",
@@ -145,21 +145,21 @@ export const disclosureExplorerCopy = {
     errorHelp: "This may be a temporary network issue. Please try again in a moment.",
     errorRetry: "Try again",
     title: "Disclosure signals",
-    within200: "Within latest 200 filings",
-    periodScopeBadge: "Not the full period · within latest 200 filings",
+    within200: "Within latest collected 200",
+    periodScopeBadge: "Within latest collected 200",
     periodScopeBadgeAria:
-      "Collection-scope limit. Shows only within the latest 200 KOSPI/KOSDAQ filings, not every filing in the selected period; this is not a filter control.",
+      "Collection-scope limit. Shows only within the latest 100 KOSPI and 100 KOSDAQ filings, 200 total, not every filing in the selected period; this is not a filter control.",
     // Repeated missing-coverage note shown next to the result count
-    missingFragment: "some may be missing · within latest KOSPI/KOSDAQ collection",
+    missingFragment: "some may be missing · latest 100 KOSPI/KOSDAQ each",
     // Shared top warning box — hoists notes that used to repeat on every card
     topNoticeTitle: "Common notes for all disclosure cards",
     topNoticeBullets: [
       "Check the original DART filing yourself before deciding.",
-      "Analyzed set / collection limit: at most 50 shown within the latest 200 filings.",
+      "Collection limit: at most 50 shown within the latest 100 KOSPI + 100 KOSDAQ filings (200 total).",
       "This is a type classification and exploration signal, not a good/bad judgment.",
     ] as readonly string[],
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
-      `Last ${days} days · ${signalCount} signals within latest 200 filings · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
+      `Last ${days} days, within latest 200 filings · ${signalCount} signals · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
     collectedAt: "Collected as of",
     collectedAtUnknown: "Collection time unknown",
     sourceSample: "Sample data",
@@ -175,11 +175,11 @@ export const disclosureExplorerCopy = {
     scopeUniverseStrong: "Analyzed only",
     scopeUniverseDesc: " = disclosures from stocks OrnScore scores · ",
     scopeAllStrong: "Whole market",
-    scopeAllDesc: " = all DART disclosures, including stocks outside the analyzed set",
+    scopeAllDesc: " = includes stocks outside the analyzed set within the latest collected scope",
     filterAll: (count: number) => `All ${count}`,
     tabAll: "All",
     tabWatchlist: "My watchlist",
-    limitBanner: "Showing recently collected filings; check DART for the full market.",
+    limitBanner: "This is not the full selected period; it is the recent collected subset within the latest 100 KOSPI + 100 KOSDAQ filings (200 total). Check DART for the full history.",
     sampleNotice: "The data shown is example data. Check the actual filings in the DART source.",
     watchlistEmpty: "Add stocks to your watchlist to gather their filings here.",
     watchlistEmptyCta: "Go add stocks",
@@ -203,7 +203,7 @@ export const disclosureExplorerCopy = {
     watch: "Watch",
     empty: "No signals match right now.",
     emptyReset: "Clear filter and view all signals",
-    emptyWidenScope: "Widen to whole-market disclosures",
+    emptyWidenScope: "Include stocks outside coverage",
     descriptions: {
       "자기주식 취득 결의":
         "This is a shareholder-return / price-stability event. Confirm the buyback size and whether shares will be cancelled.",
