@@ -50,7 +50,18 @@ export const disclosureExplorerCopy = {
     // 헤더
     title: "공시 신호",
     within200: "최신 200건 내",
-    periodScopeBadge: "선택 기간 전체 아님 · 최신 200건 내",
+    periodScopeBadge: "전체 기간 아님 · 최신 200건 내",
+    periodScopeBadgeAria:
+      "수집 범위 제한 안내입니다. 선택한 기간 전체 공시가 아니라 코스피·코스닥 최신 200건 안에서만 표시하며, 필터 컨트롤이 아닙니다.",
+    // 결과 카운트 옆에 반복 고지하는 누락 안내 조각
+    missingFragment: "누락 가능 · 코스피·코스닥 최신 수집 범위 내",
+    // 카드 위 공통 경고 박스 — 카드마다 반복되던 문구를 한곳에 모음
+    topNoticeTitle: "공시 카드 공통 안내",
+    topNoticeBullets: [
+      "판단 전 DART 원문을 직접 확인하세요.",
+      "분석 대상·수집 제한: 최신 200건 안에서 최대 50건만 표시합니다.",
+      "호재·악재 판단이 아니라 유형 분류·탐색 신호입니다.",
+    ] as readonly string[],
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
       `최근 ${days}일 · 최신 200건 내 신호 ${signalCount}건 · ${scopeAll ? "이벤트 묶음" : "분석 대상 묶음"} ${groupCount}개`,
     collectedAt: "수집 기준",
@@ -136,6 +147,17 @@ export const disclosureExplorerCopy = {
     title: "Disclosure signals",
     within200: "Within latest 200 filings",
     periodScopeBadge: "Not the full period · within latest 200 filings",
+    periodScopeBadgeAria:
+      "Collection-scope limit. Shows only within the latest 200 KOSPI/KOSDAQ filings, not every filing in the selected period; this is not a filter control.",
+    // Repeated missing-coverage note shown next to the result count
+    missingFragment: "some may be missing · within latest KOSPI/KOSDAQ collection",
+    // Shared top warning box — hoists notes that used to repeat on every card
+    topNoticeTitle: "Common notes for all disclosure cards",
+    topNoticeBullets: [
+      "Check the original DART filing yourself before deciding.",
+      "Analyzed set / collection limit: at most 50 shown within the latest 200 filings.",
+      "This is a type classification and exploration signal, not a good/bad judgment.",
+    ] as readonly string[],
     summary: (days: number, signalCount: number, scopeAll: boolean, groupCount: number) =>
       `Last ${days} days · ${signalCount} signals within latest 200 filings · ${groupCount} ${scopeAll ? "event groups" : "analyzed groups"}`,
     collectedAt: "Collected as of",

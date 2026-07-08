@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T00:00:00.000Z
+Last updated: 2026-07-08T12:00:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 110 - [2026-07-08] ORNScore 공개 검수 '높음' 2건 P0A — /status 내부 구현 문구 제거 + /login 이메일 흐름·접근성
+- Task: 111 - [2026-07-08] ORNScore 공개 검수 P0B — 공시 기간 필터 오해 방지 고정 배지 + 카드 반복 문구 축소
 - Run: local
 - Status: completed (local gates)
 - Agent: codex
-- Note: Fixed the two "high" public-review findings. (1) /status report area no longer exposes the internal table name `data_reports` or admin path `/admin/status` — replaced the 3-part `storeNote*` copy with a single product-language `storeNote` (KO/EN) and dropped the `<code>` spans in ReportDataIssueContent.tsx. Admin page + report API + form comment keep those identifiers intentionally (private/dev-only). (2) /login email flow clarified: `emailLabel` → "이메일 주소"/"Email address", new `emailHelp` magic-link hint under the input, plus a11y wiring on `#email` (aria-invalid, aria-describedby=email-help[+email-error]) and `role="alert"`/`id="email-error"` on the error box. Magic-link send + OAuth logic unchanged. Gates: tsc 0, verify_metrics 138/Metrics 2.4, diff --check clean, build 138 SSG, login-preflight 5/5, verify:routes 9/9, smoke 23/23, SSR leak-scan clean. Local commit only; not pushed; main untouched. Residual: real-device 390px + magic-link external send are owner visual/infra gates.
+- Note: Addressed the "high" disclosure finding (period filter reads as "all 30-day filings") + design 5-4 (repeated per-card copy). Display/copy/a11y only — collection/filter/sort logic, getRecentSignals/groupSignals, /api/disclosures, scripts/, public/data all untouched. Files edited (2): src/lib/copy/disclosures.ts, src/components/DisclosureExplorer.tsx. (1) Always-visible neutral scope badge "전체 기간 아님 · 최신 200건 내" (EN "Not the full period · within latest 200 filings") next to the day-filter buttons, marked role="note" + new periodScopeBadgeAria clarifying it is a collection-scope limit, not a control. Result-count line repeats the miss notice via new missingFragment "누락 가능 · 코스피·코스닥 최신 수집 범위 내". (2) One shared warning box above the card list (new topNoticeTitle + 3 topNoticeBullets: check DART original / analyzed-set + latest-200-max-50 limit / type classification not good-bad). Removed the redundant per-card 주의 box (type-specific caution still lives in the SignalGuideExpand "이 공시 이해하기" panel); dropped now-unused firstSentence helper + cautionLine local. Preserved DART 원문 CTA, 확인할 것 line, "분석 대상 외 · DART 원문만" status line, chip spacing, min-h-[44px], FOCUS_RING, watchlist aria-label. Gates: tsc 0, verify_metrics 138/Metrics 2.4, diff --check clean, build 138 SSG, smoke 23/23, verify:routes 9/9 (data date 2026.07.07). SSR: badge×1 + role/aria, missingFragment×1, shared box + 3 bullets×1, 9 cards each with 확인할 것 (no dup), per-card >주의< = 0, DART 원문 CTA ×12. EN strings confirmed in built client chunk (client-side language switch). Local commit only; not pushed; main untouched. Residual: real-device 390px + desktop visual are owner gates; StockDisclosures card on stock pages intentionally out of scope.
 
 ## Next Agent Checklist
 

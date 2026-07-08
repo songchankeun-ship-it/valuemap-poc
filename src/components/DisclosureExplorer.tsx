@@ -55,13 +55,6 @@ interface GroupedSignal {
   rcept_dt_latest: string;
 }
 
-// 첫 문장만 추출(마침표 기준) — 길면 잘라 카드가 길어지지 않게.
-function firstSentence(s: string): string {
-  const trimmed = s.trim();
-  const m = trimmed.match(/^[^.。!?]*[.。!?]/);
-  return (m ? m[0] : trimmed).trim();
-}
-
 // 방향 표기 — 긍정/부정 valence(호재/악재) 대신 사실(장내매수/매도 단서) 또는 '방향 확인 필요'만.
 function directionLabel(dir: string | undefined, t: ExplorerCopy): string {
   if (dir === "긍정 가능") return t.directionBuy;
@@ -304,8 +297,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
       <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.title}</h2>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-            {t.summary(days, data.signalCount, scope === "all", scoped.length)}
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
+            <span className="tabular-nums">{t.summary(days, data.signalCount, scope === "all", scoped.length)}</span>
+            <span className="block text-[11px] text-zinc-400 dark:text-zinc-500">{t.missingFragment}</span>
           </div>
         </div>
         {(() => {
@@ -319,7 +313,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 tabular-nums">{parts.join(" · ")}</p>
           );
         })()}
-        <div className="flex gap-2 flex-wrap mb-3">
+        <div className="flex gap-2 flex-wrap items-center mb-3">
           {[3, 7, 14, 30].map((d) => (
             <button
               key={d}
@@ -333,6 +327,15 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
               {t.dayUnit(d)}
             </button>
           ))}
+          {/* 기간 필터가 '전체 기간 공시'로 오해되지 않도록 항상 보이는 수집 범위 배지(컨트롤 아님) */}
+          <span
+            role="note"
+            aria-label={t.periodScopeBadgeAria}
+            className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"
+          >
+            <Info className="w-3 h-3 shrink-0 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
+            {t.periodScopeBadge}
+          </span>
         </div>
 
         {/* 상단 탭(§7-3) — 전체 / 내 관심종목 / 유형별. 유형색은 중립(호재·악재 배제), 가로 스크롤. */}
@@ -426,6 +429,19 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         ) : null}
       </header>
 
+      {/* 카드 공통 경고 박스(재검수 5-4 밀도) — DART 원문/수집 제한/호재·악재 아님을 한곳에 모아 카드 반복 축소 */}
+      <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 leading-relaxed">
+        <p className="font-semibold text-slate-500 dark:text-slate-400 mb-1">{t.topNoticeTitle}</p>
+        <ul className="space-y-0.5">
+          {t.topNoticeBullets.map((bullet, i) => (
+            <li key={i} className="flex gap-1.5">
+              <span className="text-slate-400 shrink-0" aria-hidden="true">·</span>
+              <span className="break-words">{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       {/* 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 카드 목록 위에 노출(재검수 P0C) */}
       {data.source?.startsWith("sample") ? (
         <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 leading-relaxed">
@@ -486,9 +502,6 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             const guide = findGuideByLabel(g.signalLabel);
             const checkLine = guide?.checkPoints?.[0] ?? null;
             const checkPoint = checkLine ?? desc;
-            const cautionLine = firstSentence(
-              guide?.cautionNote ?? t.cautionFallbackByType[g.signalType] ?? t.cautionFallback,
-            );
             const dt = g.rcept_dt_latest;
             const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
             return (
@@ -537,16 +550,10 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words line-clamp-2">{g.representative.note}</p>
                 ) : null}
 
-                {/* 확인할 것 — 중립 확인 포인트 */}
-                <div className="flex gap-1.5 text-[11px] text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-2 leading-relaxed">
+                {/* 확인할 것 — 중립 확인 포인트 (반복 '주의' 문구는 상단 공통 경고 박스로 이동) */}
+                <div className="flex gap-1.5 text-[11px] text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
                   <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>
                   <span className="break-words">{checkPoint}</span>
-                </div>
-
-                {/* 주의 — 호재/악재 단정이 아닌 한계·유의점 (확인할 것과 시각적으로 분리) */}
-                <div className="flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
-                  <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.cautionLabel}</span>
-                  <span className="break-words">{cautionLine}</span>
                 </div>
 
                 {/* 액션 행 (§7-4): 종목 보기 → DART 원문 → 관심 */}
