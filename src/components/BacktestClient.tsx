@@ -110,18 +110,24 @@ function BacktestTopRiskSummary({
           </p>
         </div>
       </div>
+      {/* §5-7: 위험을 먼저, 수익을 그 다음 순서로 배치 — 투자 오해 방지(수익을 숨기는 게 아니라 순서만 위험 우선). */}
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
-          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="매년 같은 비율로 불어났다고 가정한 평균 수익률">
-            수익 · 연복리 수익률(CAGR)
-          </div>
-          <div className={"mt-1 text-lg font-bold tabular-nums " + upDownTone(metrics.cagr)}>{pct(metrics.cagr)}</div>
-        </div>
-        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
-          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="기간 중 고점 대비 가장 크게 빠졌던 낙폭">
-            위험 · 최대낙폭(MDD)
+        <div className="rounded-lg border border-rose-200 dark:border-rose-900/70 bg-rose-50/60 dark:bg-rose-950/25 p-3">
+          <div className="text-[11px] font-semibold text-rose-700 dark:text-rose-300" title="기간 중 고점 대비 가장 크게 빠졌던 낙폭">
+            먼저 볼 위험 · 최대낙폭(MDD)
           </div>
           <div className="mt-1 text-lg font-bold tabular-nums text-rose-600 dark:text-rose-400">{pct(metrics.maxDrawdown)}</div>
+          {metrics.benchmarkMdd !== undefined ? (
+            <div className="mt-0.5 text-[10px] text-zinc-500 dark:text-zinc-400">
+              {metrics.maxDrawdown < metrics.benchmarkMdd ? `${benchmarkLabel}보다 낙폭이 컸어요.` : `${benchmarkLabel}보다 낙폭이 작았어요.`}
+            </div>
+          ) : null}
+        </div>
+        <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
+          <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="매년 같은 비율로 불어났다고 가정한 평균 수익률">
+            그 다음 수익 · 연복리 수익률(CAGR)
+          </div>
+          <div className={"mt-1 text-lg font-bold tabular-nums " + upDownTone(metrics.cagr)}>{pct(metrics.cagr)}</div>
         </div>
         <div className="rounded-lg border border-amber-200/80 dark:border-amber-900/70 bg-white/80 dark:bg-zinc-900/70 p-3">
           <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400" title="수익률을 변동성으로 나눠 본 위험조정 성과">

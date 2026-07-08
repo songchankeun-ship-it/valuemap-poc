@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-07T16:38:31.753Z
+Last updated: 2026-07-08T01:45:19.160Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 107 - [2026-07-07] ORNScore 재검수 P1A - 발견 첫 화면 밀도/이모지 아이콘 정리
-- Run: 101
-- Status: failed
+- Task: 108 - [2026-07-07] ORNScore 재검수 P1B - 실험실 위험 우선/지표 툴팁 보강
+- Run: 103
+- Status: completed
 - Agent: claude
-- Note: Quality gate error: tester process exited with code 1
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-08 — Codex Task 108 — backtest risk-first reorder (reaudit §5-7) + metric-tooltip limit copy (§5-9) + momentum-weight accuracy fix
+- **Scope**: Reorder the backtest (`/backtest`) "먼저 읽기" summary to **risk → return → comparison** (§5-7) and add a **limit/distortion one-liner (`caveat`)** to all five metric tooltips (`ScoreTooltip`, §5-9). **Presentation/copy-only — no change to scoring formulas (`score.ts`/`metrics.ts`/`sector.ts`), `stocks.json`, DART, `direction`, or `metricsVersion`** (cards, charts, 3-date block, disclaimers, tabs all preserved; order/wording only). Branch `ai-center/task-108-2026-07-07-ornscore-p1b` (main HEAD `4b89f86` confirmed an ancestor of HEAD via `git merge-base --is-ancestor`). Source of truth = `ORNScore 재검수 리포트.pdf` (submitted 2026.07.07). Edited **2 files**: `src/components/BacktestClient.tsx`, `src/components/ScoreTooltip.tsx`.
+- **① Backtest risk-first (§5-7)**: `BacktestTopRiskSummary`'s three KPI tiles reordered from `[return CAGR][risk MDD][compare]` to **`[먼저 볼 위험 · 최대낙폭(MDD)][그 다음 수익 · 연복리 CAGR][비교 · 위험조정]`** (not hiding return — only ordering risk first). The MDD tile is rose-emphasized with a `${benchmark}보다 낙폭이 컸/작았어요` delta when `benchmarkMdd` exists; the compare tile shows `전략 X.XX · 벤치 Y.YY` from `sharpe`/`benchmarkSharpe`. **Every value renders from real `data`/`metrics` fields (`maxDrawdown`·`benchmarkMdd`·`cagr`·`sharpe`·`benchmarkSharpe`·`benchmarkLabel`) — no hardcoded numbers.** Strategy tabs, return/risk KPI split, charts, 3-date block, disclaimers unchanged.
+- **② Tooltip limit copy (§5-9)**: added a `caveat` field to `ScoreExplanation` and, for all five `ScoreKind` (composite/momentum/flow/value/vol), a formula-grounded limit sentence rendered as an amber `⚠ 한계` line at the bottom of the popover. Dialog/a11y structure preserved (`role="dialog"`, ESC + outside-click close, 44px hit area, `aria-label`). These tooltips are a KO-only surface (no EN mirror in `EXPLANATIONS`) → KO-only, matching the surrounding surface.
+- **③ Momentum-weight accuracy fix (code-grounded)**: the old `momentum.detail` said `1개월(35%)+3개월(35%)+6개월(30%)`, which was **factually wrong**. The real operating formula is 30/40/30 per `metrics.ts:40` (`0.3*r1+0.4*r3+0.3*r6`) and `scripts/compute_metrics.py:48` (`0.3*r1m+0.4*r3m+0.3*r6m`) → corrected to `1개월(30%)+3개월(40%)+6개월(30%) 가중수익률을 전체 138개 안에서 백분위(0~100)로 환산`. The request's/plan's "35/35/30" was also inaccurate; per the "ground every claim in real code" rule I took the code value (not a fabrication).
+- **④ Avoided inventing "금융/적자 exclusion" (accuracy decision)**: the request's "적자기업이나 금융업은 산정 대상이 아닙니다" is **inaccurate** — `valueScore` assigns a neutral 50 when `per<=0||pbr<=0` (not exclusion) and has no 금융 exclusion rule. The value `caveat` keeps a **distortion** framing (not exclusion): `적자기업이나 특수업종(지주·금융·리츠 등)은 PER·PBR이 왜곡돼 실제보다 싸거나 비싸 보일 수 있어요.`
+- **Verification (all passed)**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` **138 / 0 errors / 0 forbidden / Metrics 2.4** (proves scoring+data untouched); `git diff --check` clean; edited 2 files noBOM / uniform CRLF (410·144) / 0 U+FFFD / 0 lone-LF; `npm run build` 0 (138 SSG). Local prod 4471 (AI Center 4310 left untouched): `npm run smoke:check -- --all` **23/23 OK**; `verify:routes --base` **9/9 OK** (expected data date 2026.07.07). `/backtest` SSR order check: `먼저 볼 위험(MDD)`(23738) < `그 다음 수익(CAGR)`(24184) < `비교 · 위험조정`(24525) — **risk-first confirmed**. Tooltip strings are click-rendered, so grepped in built chunks: `1개월(30%) + 3개월(40%)`, `적자기업이나 특수업종`, `표본 기간이 짧거나`, `4지표를 동일 가중` all present. 4471 torn down (PID 36628 taskkill); 4310 untouched.
+- **Limit/blocker**: Real-device 390×844 + desktop eyeball (reordered 3-tile backtest summary alignment; tooltip popover `w-72 max-w-[80vw]` overflow / 44px) remains an **operator visual gate** (Playwright unavailable) per `docs/ornscore-real-device-390px-qa-2026-07-06.md`. The five `caveat` sentences are **grounded in the real formulas** but are authored, not PDF-verbatim → final KO sign-off on the exact limit wording is an owner-confirmation item. Local commit only; not pushed; main unchanged.
 
 ### 2026-07-08 — Codex Task 107 — discovery (`/stocks`) first-screen density consolidation + emoji→icon (lucide) swap (reaudit P1-2/P1-3/P1-4/5-2)
 - **Scope**: The discovery screen (`/stocks`) stacked 3–4 text paragraphs before the question-preset cards (long scroll to reach them), and the label-prefix emoji (`✓`/`⚠`/`🔔`) rendered inconsistently across browsers/OSes. Consolidate the copy and swap the emoji for inline lucide SVG icons. **Presentation/copy-only — no change to scoring formulas (`score.ts`/`metrics.ts`/`sector.ts`), `stocks.json`, DART, `direction`, or `metricsVersion`** (every toggle/count/control preserved; only wording trimmed/relocated and emoji characters removed). Branch `ai-center/task-107-2026-07-07-ornscore-p1a` (main HEAD `4b89f86` confirmed an ancestor of HEAD via `git merge-base --is-ancestor`; accrued on top of task-104…106). Source of truth = `ORNScore 재검수 리포트.pdf` (submitted 2026.07.07). Edited **2 files**: `src/lib/copy/stocks.ts`, `src/components/StocksExplorer.tsx`.
