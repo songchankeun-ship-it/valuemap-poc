@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Task 121 repair — no-real-data 테마 CTA 상태 초기화
+- **범위**: Reviewer blocking failure만 수리. `/stocks?theme=`의 실데이터 매칭 0건 상태에서 `종목 검색으로 이동` CTA가 `/stocks`로 이동해도 클라이언트 `selectedThemes`가 남아 0건 화면에 갇히는 문제를 수정했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
+- **변경**: `src/components/StocksExplorer.tsx`에 `openDefaultStocks()`를 추가해 기존 `resetFilters()`를 호출하게 하고, no-real-data 테마 헤더 CTA와 결과 빈 상태 CTA의 `Link href="/stocks"`에 `onClick={openDefaultStocks}`를 연결했다. 링크 목적지는 유지하되 클릭 즉시 URL-derived theme 상태를 비운다.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF 예정 경고만) · `npm run build` 0(기존 lint warning 4건만) · local prod `http://127.0.0.1:4576` `verify:routes` 9/9, `smoke:check --all` 23/23.
+- **브라우저 확인**: 시스템 Chrome headless CDP로 `/stocks?theme=codex-no-real-theme` 접속 후 no-real-data CTA 클릭. 클릭 전 CTA 2개 확인, 클릭 후 URL `http://127.0.0.1:4576/stocks`, stale theme 문자열 없음, 종목 행 존재 확인. Chrome CDP 임시 포트 9232/임시 프로필 정리 완료.
+- **정리/남은 리스크**: local prod 포트 4576은 포트·명령줄 범위 확인 후 종료. 이 수리는 no-real-data CTA 상태 초기화만 다뤘고, Task 121의 기존 제품 리스크(레거시 `/theme/[slug]` 상단 메타가 mock 기반)는 그대로다.
+
 ## 2026-07-09 · [codex] Task 121 — 테마 0건 빈 상태와 기본 품질 필터 제외 사유
 - **범위**: 공개 재검수 P0D "카카오그룹 관련 종목" 0건 UX만 처리. `/stocks?theme=` 테마 유입과 레거시 `/theme/[slug]` 빈 상태 표시를 보강했다. 점수 산식·데이터 수집·DART/재무 계산·`stocks.json`·`metricsVersion` 변경 없음.
 - **조사**: 현재 실데이터 테마 118개 중 기본 품질 필터(PER≤200·PBR≤30) 때문에 0건이 되는 테마는 5개: `카카오그룹`(3), `바이오AI(신약개발)`(2), `스테이블 코인`(1), `영화`(1), `의료AI`(1). 카카오그룹은 카카오 PER 306.86, 카카오페이 PER 2624.66, 카카오게임즈 PER 17124로 모두 기본 PER 상한 밖. 레거시 `/theme/[slug]`는 `battery`, `semi-materials`, `bio`, `shipbuilding`, `robot` 5개이며, `bio`/`shipbuilding`은 실데이터 매칭이 있는데 mock 테이블만 비어 있었고 `robot`은 현재 138개 분석 대상 내 실매칭 0개.

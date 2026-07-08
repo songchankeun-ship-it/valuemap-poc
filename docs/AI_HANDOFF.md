@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-09 — Codex Task 121 repair — no-real-data theme CTA reset
+- **Scope**: Reviewer blocking failure only. Fixed `/stocks?theme=` no-real-data CTA links that navigated to `/stocks` while leaving the URL-derived `selectedThemes` client state behind. No scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes.
+- **Change**: `src/components/StocksExplorer.tsx` adds `openDefaultStocks()` as a small wrapper around the existing `resetFilters()` and wires it to both `themeNoMatchAction` `Link href="/stocks"` CTAs. The link destination stays `/stocks`, but the stale theme filter is cleared before navigation.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` whitespace 0 with expected CRLF warning only; `npm run build` 0 with existing lint warnings only; local prod 4576 `verify:routes` 9/9 and `smoke:check --all` 23/23.
+- **Browser gate**: System Chrome headless CDP on temp port/profile checked `/stocks?theme=codex-no-real-theme`; before click, two no-real-data `/stocks` CTAs were present; after clicking the first CTA, URL was `/stocks`, stale theme text was gone, and stock rows were visible. Chrome CDP temp port 9232/profile cleaned up.
+- **Cleanup / residual**: Stopped only local prod port 4576 after command-line/port verification. Residual product risk unchanged from Task 121: legacy `/theme/[slug]` top metadata still comes from mock theme metadata while the stock table uses real matches.
+
 ### 2026-07-09 — Codex Task 121 — theme zero-result empty states
 - **Scope**: Public-review P0D only. Improved `/stocks?theme=` zero-result handling and legacy `/theme/[slug]` empty tables. No scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes.
 - **Audit**: 118 real-data themes. Five themes have real members but 0 default results because all members are outside PER≤200/PBR≤30: `카카오그룹`(3), `바이오AI(신약개발)`(2), `스테이블 코인`(1), `영화`(1), `의료AI`(1). `카카오그룹` members are all PER-excluded: 카카오 306.86, 카카오페이 2624.66, 카카오게임즈 17124. Legacy `/theme/[slug]` slugs are `battery`, `semi-materials`, `bio`, `shipbuilding`, `robot`; `bio`/`shipbuilding` had real matches but empty mock tables, while `robot` has 0 current real-data matches.

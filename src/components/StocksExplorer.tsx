@@ -596,6 +596,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     setSortDir("desc");
   }
 
+  function openDefaultStocks() {
+    resetFilters();
+  }
+
   // 현재 조건 요약 바의 초기화 — 실수 방지용 확인(설계서 §16).
   function handleResetWithConfirm() {
     if (!hasAnyCondition) return;
@@ -958,7 +962,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-100 break-words">{t.themeNoMatchTitle(selectedThemeSummary)}</div>
                 <p className="mt-0.5 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.themeNoMatchHint}</p>
               </div>
-              <Link href="/stocks" className={`inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 ${FOCUS_RING}`}>
+              <Link href="/stocks" onClick={openDefaultStocks} className={`inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-blue-700 ${FOCUS_RING}`}>
                 {t.themeNoMatchAction}
               </Link>
             </div>
@@ -1312,7 +1316,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                     <button type="button" onClick={viewAllStocks} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.themeQualityAction}</button>
                   ) : null}
                   {showThemeNoMatchEmpty ? (
-                    <Link href="/stocks" className={`inline-flex items-center justify-center text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.themeNoMatchAction}</Link>
+                    <Link href="/stocks" onClick={openDefaultStocks} className={`inline-flex items-center justify-center text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.themeNoMatchAction}</Link>
                   ) : null}
                   {sc && !showThemeQualityEmpty && !showThemeNoMatchEmpty ? (
                     <button type="button" onClick={sc.relax} className={`text-xs px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition min-h-[44px] ${FOCUS_RING}`}>{t.relaxStrongest}</button>
