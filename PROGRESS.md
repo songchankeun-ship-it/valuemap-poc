@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-08 · [codex] Deployment — 공개 재검수 후속 배치 #110~#117 main 배포 체크포인트
+- **승인/범위**: 사용자가 "배포 진행해"로 명시 승인. 현재 릴리스 라인 `ai-center/task-117-2026-07-08-ornscore-p2a`를 `origin/main` 위 fast-forward 배포 대상으로 확정. 포함 범위는 Task 110~117의 공개 화면 UX/문구/접근성/로컬 루틴 개선이며, 점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion`은 변경하지 않음.
+- **배포 전 게이트(전부 통과)**: `git fetch origin` 후 `origin/main...HEAD = 0 14` 및 `origin/main`이 HEAD의 조상임을 확인. `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check origin/main..HEAD` clean · `npm run build` 0(176 static pages) · 로컬 prod `http://127.0.0.1:4567`에서 `verify:routes` 9/9, `smoke:check --all` 23/23 통과. 검증 서버는 포트 PID 한정으로 종료.
+- **배포 방식/후속 게이트**: 문서 커밋 포함 후 `HEAD`를 `origin/main`으로 push해 Vercel 자동배포를 트리거한다. push 후 공개 URL `https://ornscore.com`에 대해 cache-busted `verify:routes`와 `smoke:check --all`을 실행하고 실패 시 롤백 판단한다.
+
 ## 2026-07-08 · [codex] Task 117 — 종목 상세 확인 체크리스트(로컬) + 관심 변화 요약 정직 라벨 (P2A)
 - **범위**: 외부 계정/이메일/푸시 없이 로컬에서 바로 만드는 재방문 장치의 가장 작은 완성 슬라이스. **표시/문구/접근성 전용 — 점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion`·저장 로직(watchlist/savedSearches) 무변경**. 외부 발송·계정·알림 경로 신규 추가 0. 브랜치 `ai-center/task-117-2026-07-08-ornscore-p2a`(main HEAD `935cc58` 위, task 116 `7aed0c8` 조상). 편집/신규 **5파일**.
 - **① 확인 완료 체크리스트(신규, 종목 상세 요약 탭)**: 신규 `src/lib/stockChecklist.ts` — `recentViews.ts` 규약 그대로(SSR 가드·모든 localStorage 접근 try/catch·레거시 키 폴백). 키 `ornscore_stock_checklist`(레거시 `valuemap_stock_checklist`), 형태 `Record<ticker,{[itemId]:true}>`. export `getChecklist`/`toggleChecklistItem`/`clearChecklist`/`CHECKLIST_ITEMS`(안정 id 4개: `disclosure`·`earnings`·`value`·`sector`, 각 탭 해시 anchor 포함), 쓰기 시 `stock-checklist-changed` CustomEvent 디스패치. Supabase/fetch/날조 없음.
