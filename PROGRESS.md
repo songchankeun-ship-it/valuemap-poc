@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Deployment prep — 재검수 2차 #118~#123 + 2026-07-08 데이터 갱신 통합
+- **승인/범위**: 사용자가 "배포도 부탁해"로 명시 승인. `origin/main`의 일일 데이터 갱신 커밋 `2aefba5`와 기존 queue checkpoint 문서 커밋을 보존하면서, 로컬 완료 배치 #118~#123을 병합해 배포 대상으로 정리한다. 원격 강제 push 없이 `origin/main`을 현재 브랜치에 병합한 뒤 fast-forward 가능한 HEAD를 `origin/main`으로 push한다.
+- **포함 작업**: #118 홈 80+ 카운트/SEO 숫자 제거, #119 업종 링크 `/stocks?sector=`, #120 무료 베타 약관/백테스트 기준일, #121 테마 0건 빈 상태, #122 검색·관심·비교 빠른 시작, #123 공시 최신 200건 제한 고지. 모두 표시/문구/라우팅/UX 범위이며 점수 산식·DART 수집 로직·`metricsVersion` 변경 없음. 단 `origin/main`의 daily refresh 데이터 파일은 그대로 포함된다.
+- **배포 전 절차**: 충돌은 `PROGRESS.md`와 `docs/AI_HANDOFF.md` 문서에서만 발생했고 최신 #123 완료 상태를 기준으로 해소했다. 이어서 `tsc`, `verify_metrics.py`, `git diff --check`, `npm run build`, local prod route/smoke를 다시 통과시킨 뒤 push한다. push 후 공개 `https://ornscore.com`에서 cache-busted `verify:routes`와 `smoke:check --all`을 확인한다.
+
 ## 2026-07-09 · [codex] Task 123 복구 — Tester 사용량 제한 false-fail 완료 처리
 - **범위**: 자동화 큐 복구만 수행. 앱 코드·점수 산식·데이터 수집·DART/재무·`stocks.json`·`metricsVersion`은 commit `8b9631e` 이후 변경하지 않았다.
 - **상황**: Task #123 run #120은 개발 단계에서 `[codex] clarify disclosure collection scope` 커밋을 생성했고, 로그상 `tsc`, `verify_metrics.py`, `git diff --check`, `npm run build`, local prod 4578 `verify:routes` 9/9, `smoke:check --all` 23/23, 시스템 Chrome 390x844·1366x900 화면 확인까지 완료했다. 이후 Tester AI 호출이 `You've hit your usage limit... try again at 6:30 AM`로 종료되어 큐만 failed/paused가 됐다.
