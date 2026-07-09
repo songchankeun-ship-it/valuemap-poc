@@ -30,9 +30,15 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - `StockSearchBox` now exposes the proper combobox role, list autocomplete, and unique listbox IDs.
 - Discovery result cards now show full metric names (`추세`, `거래활성도`, `밸류`, `위험조정`) while dense table/legend abbreviations remain unchanged.
 
+## Completed In Stock Detail Compression Slice
+
+- Stock-detail hero mobile order is now name/price → priority score/ranks/representative signals → quick links → detailed conclusion card.
+- Long score-vs-rank explanatory text is collapsed behind `점수·순위 기준` so the first screen prioritizes score, ranks, top strength, and first-check signal.
+- Stock-detail header, priority card, conclusion card, and quick-link strip spacing/radius were compressed without changing scoring, ranks, price, disclosure, or data logic.
+- Browser checks confirmed `/stock/005930` quick links are in the first viewport on 390x844 and 1366x900, with detailed education blocks lower on the page.
+
 ## Remaining Code Work
 
-- Stock detail compression: keep the first screen to name/price, priority score/rank, top strengths, key risks, and quick links before detailed education blocks.
 - Watchlist empty state: add a stronger temporary/sample experience if the current sample preview still does not create enough first-run momentum.
 - Compare table: add recent disclosure signals and warning flags; add a short “why compare these first” summary.
 - Backtest lab: make “read limitations first” the first CTA and collapse the latest rebalance example by default.

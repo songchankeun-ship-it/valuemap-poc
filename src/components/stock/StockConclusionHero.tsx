@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode } from "react";
+import { AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { conclusionHeroCopy } from "@/lib/copy/stockDetail";
 import { StockHeader } from "./StockHeader";
@@ -71,7 +72,7 @@ export function StockConclusionHero({
   const { locale } = useLanguage();
   const t = conclusionHeroCopy[locale];
   return (
-    <section className="-mx-3 md:-mx-4 space-y-4 border-y border-zinc-200 dark:border-zinc-800 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_50%,#eef6ff_100%)] dark:bg-[linear-gradient(135deg,#0b0f14_0%,#111827_56%,#0f172a_100%)] px-3 py-4 md:px-4 md:py-5">
+    <section className="-mx-3 md:-mx-4 space-y-3 border-y border-zinc-200 dark:border-zinc-800 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_50%,#eef6ff_100%)] dark:bg-[linear-gradient(135deg,#0b0f14_0%,#111827_56%,#0f172a_100%)] px-3 py-3 md:px-4 md:py-4">
       <StockHeader
         sector={sector}
         name={name}
@@ -84,52 +85,55 @@ export function StockConclusionHero({
 
       {suspect ? (
         <div className="flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl px-3 py-2">
-          <span aria-hidden="true">⚠</span>
+          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{t.suspectBanner}</span>
         </div>
       ) : null}
 
       {riskAlert ? (
-        <div className={"flex items-start gap-2 rounded-xl border px-3 py-2.5 text-xs shadow-sm " + (riskAlert.level === "high" ? "border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300" : "border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-300")}>
-          <span aria-hidden="true" className="shrink-0">🔺</span>
+        <div className={"flex items-start gap-2 rounded-xl border px-3 py-2 text-xs shadow-sm " + (riskAlert.level === "high" ? "border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300" : "border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-300")}>
+          <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span><strong className="font-semibold">{riskAlert.label}</strong> — {riskAlert.text}</span>
         </div>
       ) : null}
 
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <ConclusionSummaryCard
-          type={conclusion.type}
-          summary={conclusion.summary}
-          riskNote={conclusion.riskNote}
-          suspect={suspect}
-          strengths={strengths}
-          warnings={warnings}
-        />
-        <PriorityScoreCard
-          score={score}
-          overallRank={overallRank}
-          overallTieCount={overallTieCount}
-          poolN={poolN}
-          sectorRank={sectorRank}
-          sectorTieCount={sectorTieCount}
-          sectorCount={sectorCount}
-          sector={sector}
-          completeness={completeness}
-          metricsVersion={metricsVersion}
-          suspect={suspect}
-          leadStrength={leadStrength}
-          leadCheck={leadCheck}
-        />
+      <div className="grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_19rem]">
+        <div className="order-3 lg:order-1">
+          <ConclusionSummaryCard
+            type={conclusion.type}
+            summary={conclusion.summary}
+            riskNote={conclusion.riskNote}
+            suspect={suspect}
+            strengths={strengths}
+            warnings={warnings}
+          />
+        </div>
+        <div className="order-1 lg:order-2">
+          <PriorityScoreCard
+            score={score}
+            overallRank={overallRank}
+            overallTieCount={overallTieCount}
+            poolN={poolN}
+            sectorRank={sectorRank}
+            sectorTieCount={sectorTieCount}
+            sectorCount={sectorCount}
+            sector={sector}
+            completeness={completeness}
+            metricsVersion={metricsVersion}
+            suspect={suspect}
+            leadStrength={leadStrength}
+            leadCheck={leadCheck}
+          />
+        </div>
+        <div className="order-2 lg:order-3 lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-950/50 px-2.5 py-2.5 md:px-3 shadow-sm">
+          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2">{t.nextToCheck}</div>
+          <StockDetailActionButtons />
+        </div>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-950/50 p-3 md:p-4 shadow-sm">
-        <div className="text-[11px] font-semibold uppercase text-zinc-500 dark:text-zinc-400 mb-2">{t.nextToCheck}</div>
-        <StockDetailActionButtons />
-      </div>
-
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/40 px-3 py-2 space-y-0.5">
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/40 px-3 py-2">
         <p className="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">{t.disclaimerMain}</p>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.disclaimerSub}</p>
+        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug">{t.disclaimerSub}</p>
       </div>
     </section>
   );

@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Reaudit follow-up — 종목 상세 상단 압축
+- **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt` 후속 네 번째 슬라이스. 종목 상세 첫 화면을 이름/가격, 탐색 우선도 점수·순위, 대표 강점/먼저 볼 지표, 빠른 링크 중심으로 다시 압축했다. 데이터·점수 산식·순위 계산·가격·공시 수집 로직은 변경 없음.
+- **상단 순서/밀도**: 모바일에서 `StockConclusionHero` 순서를 `점수 카드 → 빠른 링크 → 현재 이 종목은`으로 재배치했다. 데스크톱은 결론/점수 2열을 유지하고 빠른 링크를 아래 전체 폭 strip으로 둔다. `StockHeader`, `PriorityScoreCard`, `ConclusionSummaryCard`의 padding/radius/간격을 줄이고, 긴 점수·순위 설명은 `점수·순위 기준` details로 접었다.
+- **검증**: `npx tsc --noEmit` 0, `verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` 0(CRLF 예정 경고만), `npm run build` 0(기존 `TrustLayer` ref cleanup warning 1건만), local prod 4584 `verify:routes` 9/9 및 `smoke:check --all` 23/23. In-app browser `/stock/005930`: 390x844에서 빠른 링크 y=693~789로 첫 화면 안, 초보자 교육 블록 y=1987로 아래 이동, overflow 0/console error 0. 1366x900에서 결론/점수 2열과 빠른 링크 y=704~748, overflow 0/console error 0.
+- **다음 자동화 진입점**: 남은 코드 작업은 관심종목 빈 상태 재점검 → 비교표 공시·주의 플래그 → 백테스트 한계 우선 CTA/리밸런싱 접힘 → 필터 canonical/noindex → 차트 마커 순서로 이어간다. Search Console 색인 재요청과 법무 검토는 외부/소유자 조치로 유지.
+
 ## 2026-07-09 · [codex] Reaudit follow-up — 홈 검색 강조 + 발견 카드 지표 풀네임
 - **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt` 후속 세 번째 슬라이스. 데이터·점수 산식·DART/공시 수집 로직은 건드리지 않고, 남은 UX 항목 중 홈/전역 검색 존재감과 발견 카드 지표 표기를 닫았다.
 - **홈 검색**: `GlobalSearch`에 `header`/`hero` variant를 추가하고 홈 히어로에 큰 검색창을 배치했다. 검색 데이터는 현재 138개 `realStockPool`과 `allThemes()`를 그대로 사용한다. 동일 페이지에 헤더 검색과 홈 검색이 함께 있어도 aria ID가 충돌하지 않도록 `useId()` 기반 combobox/listbox ID를 적용했고, 확인용 `data-search-variant`를 붙였다.

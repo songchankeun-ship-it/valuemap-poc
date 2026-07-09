@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-09T13:04:55.2702982+09:00
+Last updated: 2026-07-09T23:40:09.1753559+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: manual - reaudit follow-up home search + discovery card labels
+- Task: manual - reaudit follow-up stock detail top compression
 - Run: n/a
 - Status: completed locally
 - Agent: codex
-- Note: Branch `codex/ornscore-launch-blockers-20260709` now includes the next reaudit follow-up slice after the KRX/disclosure pass. Home hero has a large `GlobalSearch` using the real 138-stock universe and theme list; `GlobalSearch`/`StockSearchBox` combobox IDs are unique; `/stocks` card metrics use full names while dense table/legend abbreviations remain. Local gates and mobile/desktop in-app browser checks passed; no push/deploy was performed in this session.
+- Note: Branch `codex/ornscore-launch-blockers-20260709` now includes the next reaudit follow-up slice after the search/discovery pass. Stock-detail top hero is compressed so mobile reads name/price, priority score/ranks, representative strength/check signal, and quick links before the fuller conclusion/education blocks. Local gates and mobile/desktop in-app browser checks passed; no push/deploy was performed in this session.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex reaudit follow-up — stock-detail top compression
+- **Scope**: Closed the stock-detail compression item from `docs/ornscore_reaudit_2026-07-09_followup_matrix.md`. No changes to data, scoring formulas, rank calculations, price data, disclosure collection, `stocks.json`, or `metricsVersion`.
+- **Changes**: `StockConclusionHero` now orders mobile as priority score/ranks/representative signals → quick links → fuller `현재 이 종목은` conclusion. Desktop keeps the two-column conclusion/priority layout and puts quick links as a full-width strip below. `StockHeader`, `PriorityScoreCard`, and `ConclusionSummaryCard` spacing was tightened; long score-vs-rank notes are now under a collapsed `점수·순위 기준` details row.
+- **Verification**: `npx tsc --noEmit` 0; `verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` 0 with CRLF warnings only; `npm run build` 0 with only the existing `TrustLayer` cleanup-ref warning; local prod 4584 `verify:routes` 9/9 and `smoke:check --all` 23/23. In-app browser checked `/stock/005930` at 390x844 and 1366x900: quick links in first viewport, education block lower on page, overflow 0, console errors 0.
+- **Next**: Continue matrix items in order: watchlist empty-state recheck, compare disclosure/warning rows, backtest limitations-first CTA/collapsed rebalance, filter canonical/noindex, chart markers. Search Console and legal review remain owner/external tasks.
 
 ### 2026-07-09 — Codex reaudit follow-up — home search prominence + discovery card labels
 - **Scope**: Closed the next two remaining code items from `docs/ornscore_reaudit_2026-07-09_followup_matrix.md`: home/global search prominence and discovery card full metric names. No data, scoring, DART/disclosure collection, `stocks.json`, or `metricsVersion` changes.
