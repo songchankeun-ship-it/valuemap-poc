@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-09T11:43:23.7730806+09:00
+Last updated: 2026-07-09T12:21:41.7243119+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: manual - launch blocker pass from public reaudit
+- Task: manual - reaudit follow-up KRX universe audit + disclosure scope/accessibility
 - Run: n/a
 - Status: completed locally
 - Agent: codex
-- Note: Branch `codex/ornscore-launch-blockers-20260709` fixes the 145995/000070 mapping, compare shared-link SSR, stable stock SEO descriptions, tied-rank display, privacy waitlist wording, and DART status copy. Local finite gates and mobile/desktop browser checks passed; no push/deploy was performed in this session.
+- Note: Branch `codex/ornscore-launch-blockers-20260709` now includes a full KRX universe audit/fix after the launch-blocker pass. Added `docs/ornscore_reaudit_2026-07-09_followup_matrix.md` and `scripts/audit_universe_master.py`; corrected 11 official-name mismatches; made `/disclosures` default to analyzed stocks, split price/score vs disclosure collection basis, and added company-specific aria labels. Local gates and mobile/desktop browser checks passed; no push/deploy was performed in this session.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex reaudit follow-up — KRX universe audit + disclosure scope/accessibility
+- **Scope**: Continued the latest public reaudit instead of stopping after the first two launch blockers. Added `docs/ornscore_reaudit_2026-07-09_followup_matrix.md` so remaining code tasks and owner-gated tasks are not lost across chats/agents.
+- **Universe trust**: Ran FinanceDataReader KRX master audit over current `stocks.json` and `seed_tickers.txt`. Corrected 11 code-name mismatches to KRX official names: 에스엠, NC, iM금융지주, HJ중공업, 녹십자홀딩스, HS효성첨단소재, 비에이치아이, 현대무벡스, 아모레퍼시픽홀딩스, HD건설기계, 씨앤씨인터내셔널. Added `scripts/audit_universe_master.py`; `fetch_stock_data.py` now fails on seed/KRX name mismatch; `verify_metrics.py` now fails on stocks/seed name mismatch.
+- **Disclosure UX/a11y**: `/disclosures` now defaults to `분석 대상만`, with `전체 시장` as an explicit widening choice. The header separates `가격·점수 기준` from `공시 수집 기준`. Repeated card actions keep short visible labels but expose company-specific aria labels for stock detail, DART source, watchlist, and disclosure explanation.
+- **Verification**: `python scripts/audit_universe_master.py` 138/0/0/0 and seed mismatch 0; `npx tsc --noEmit` 0; `verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` 0 with CRLF warnings only; `npm run build` 0; local prod 4582 `verify:routes` 9/9 and `smoke:check --all` 23/23. In-app browser checked `/disclosures` at 390x844 and 1366x900: analyzed-only default active, basis rows visible, company-specific aria labels present, overflow 0, console errors 0. Local prod 4582 stopped.
+- **Next**: Continue remaining matrix items in small slices: home/global search prominence, discovery card full metric labels, stock-detail top compression, compare disclosure/warning rows, backtest limitations-first CTA and collapsed rebalance example, filter canonical/noindex, chart markers. Search Console re-indexing and legal review remain owner/external tasks.
 
 ### 2026-07-09 — Codex launch blocker pass — code mapping + compare SSR
 - **Scope**: Manual launch-blocker pass from the latest public reaudit. Prioritized the two blocking items: incorrect `145995` display as 삼양홀딩스 and `/compare?stocks=` empty initial render. Also cleaned low-risk trust copy called out by the same report.

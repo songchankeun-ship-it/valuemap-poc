@@ -9,6 +9,7 @@ import { addToWatchlist, removeFromWatchlist, isInWatchlist, getWatchlist } from
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosureExplorerCopy } from "@/lib/copy/disclosures";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 
 type ExplorerCopy = (typeof disclosureExplorerCopy)[keyof typeof disclosureExplorerCopy];
 
@@ -71,7 +72,7 @@ function goToStock(code: string) {
 }
 
 // 공시 카드용 컴팩트 관심 토글 — 분석 대상(유니버스) 종목에만 노출
-function WatchlistToggle({ code, t }: { code: string; t: ExplorerCopy }) {
+function WatchlistToggle({ code, name, t }: { code: string; name: string; t: ExplorerCopy }) {
   const [added, setAdded] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -104,7 +105,7 @@ function WatchlistToggle({ code, t }: { code: string; t: ExplorerCopy }) {
       type="button"
       onClick={toggle}
       disabled={loading}
-      aria-label={added ? t.watchRemoveAria : t.watchAddAria}
+      aria-label={added ? t.watchRemoveAriaFor(name) : t.watchAddAriaFor(name)}
       className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium border transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " +
         (added
           ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
@@ -185,8 +186,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
   const [days, setDays] = useState(initialData?.days ?? 7);
   // 상단 탭: "all" | "watchlist" | 공시 유형(signalType). (설계서 §7-3)
   const [filterType, setFilterType] = useState<string>("all");
-  // 분석 대상만 / 전체 시장 (설계서 §15 / [P1-4]). 기본은 '전체 시장' — 기존 동작 보존.
-  const [scope, setScope] = useState<"universe" | "all">("all");
+  // 분석 대상만 / 전체 시장 (설계서 §15 / [P1-4]). 기본은 제품이 점수를 산출하는 분석 대상.
+  const [scope, setScope] = useState<"universe" | "all">("universe");
   // '내 관심종목' 탭용 — 관심 종목 티커 집합. watchlist-changed 이벤트로 동기화.
   const [watchTickers, setWatchTickers] = useState<Set<string>>(new Set());
   // '다시 시도' 시 이 값을 증가시켜 fetch effect를 재실행한다.
@@ -233,7 +234,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
       })
       .finally(() => alive && setLoading(false));
     return () => { alive = false; };
-  }, [days, reloadKey]);
+  }, [days, reloadKey, initialData]);
 
   if (loading) {
     return (
@@ -291,6 +292,10 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
     ? grouped.filter((g) => g.stock_code && watchTickers.has(g.stock_code))
     : typeScopeBase;
   const filtered = isWatchTab || filterType === "all" ? scoped : scoped.filter((g) => g.signalType === filterType);
+  const collectedAt = fmtKST(data.fetchedAt);
+  const collectedSource = sourceLabel(data.source, t);
+  const disclosureBasis = [collectedAt ?? t.collectedAtUnknown, collectedSource].filter(Boolean).join(" · ");
+  const priceScoreBasis = `${formatBizDateLong(dataMetadata.asOfBusinessDate)} ${t.marketClose}`;
 
   return (
     <div className="space-y-4">
@@ -302,17 +307,16 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             <span className="block text-[11px] text-zinc-400 dark:text-zinc-500">{t.missingFragment}</span>
           </div>
         </div>
-        {(() => {
-          const when = fmtKST(data.fetchedAt);
-          const src = sourceLabel(data.source, t);
-          if (!when && !src) return null;
-          const parts: string[] = [t.collectedAt];
-          parts.push(when ?? t.collectedAtUnknown);
-          if (src) parts.push(src);
-          return (
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 tabular-nums">{parts.join(" · ")}</p>
-          );
-        })()}
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-3 text-[11px] tabular-nums">
+          <div className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-1.5">
+            <dt className="text-zinc-500 dark:text-zinc-400">{t.priceScoreBasis}</dt>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{priceScoreBasis}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-1.5">
+            <dt className="text-zinc-500 dark:text-zinc-400">{t.disclosureCollectionBasis}</dt>
+            <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{disclosureBasis}</dd>
+          </div>
+        </dl>
         <div className="flex gap-2 flex-wrap items-center mb-3">
           {[3, 7, 14, 30].map((d) => (
             <button
@@ -395,8 +399,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                 className="inline-flex rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 p-0.5"
               >
                 {([
-                  { key: "all", label: t.scopeAll, count: grouped.length },
                   { key: "universe", label: t.scopeUniverse, count: universeCount },
+                  { key: "all", label: t.scopeAll, count: grouped.length },
                 ] as const).map((opt) => {
                   const active = scope === opt.key;
                   return (
@@ -563,6 +567,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                       <button
                         type="button"
                         onClick={() => goToStock(g.stock_code!)}
+                        aria-label={t.viewStockAria(g.corp_name)}
                         className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
                       >
                         {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
@@ -573,6 +578,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     <button
                       type="button"
                       onClick={() => openExternal(g.representative.disclosure.url)}
+                      aria-label={t.viewSourceAria(g.corp_name)}
                       className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition ${FOCUS_RING}`}
                     >
                       {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
@@ -580,7 +586,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   </li>
                   {g.stock_code && universeSet.has(g.stock_code) ? (
                     <li>
-                      <WatchlistToggle code={g.stock_code} t={t} />
+                      <WatchlistToggle code={g.stock_code} name={g.corp_name} t={t} />
                     </li>
                   ) : null}
                 </ul>
@@ -589,7 +595,14 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   <div className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</div>
                 ) : null}
                 {/* 이 공시 이해하기 — 차별점 */}
-                {guide ? <SignalGuideExpand guide={guide} url={g.representative.disclosure.url} /> : null}
+                {guide ? (
+                  <SignalGuideExpand
+                    guide={guide}
+                    url={g.representative.disclosure.url}
+                    ariaLabel={t.explainAria(g.corp_name, g.signalLabel)}
+                    sourceAriaLabel={t.explainSourceAria(g.corp_name)}
+                  />
+                ) : null}
               </div>
             );
           })

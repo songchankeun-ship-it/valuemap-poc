@@ -100,8 +100,10 @@ def main():
         })
     print(f"      OK base: {len(result)} / missing {len(missing)}")
     if name_mismatches:
-        print("      KRX name corrections:")
+        print("      [X] KRX name mismatches in seed_tickers.txt:")
         for m in name_mismatches[:10]: print(f"        - {m}")
+        print("      Update scripts/seed_tickers.txt to the current KRX official name before regenerating data.")
+        sys.exit(1)
     if excluded:
         print("      [X] universe exclusion violations:")
         for e in excluded[:20]: print(f"        - {e}")

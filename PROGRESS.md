@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Reaudit follow-up — KRX 유니버스 전수 감사 + 공시 기본 범위
+- **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt`의 남은 항목을 누락 없이 이어가기 위한 두 번째 슬라이스. 코드로 처리 가능한 항목과 외부 조치가 필요한 항목을 `docs/ornscore_reaudit_2026-07-09_followup_matrix.md`에 분리 기록했다.
+- **유니버스 감사/수정**: FinanceDataReader KRX master로 현재 138개 `stocks.json`과 143개 `seed_tickers.txt`를 전수 대조. `145995` 외에도 공식명 불일치 11건이 있어 `에스엠`, `NC`, `iM금융지주`, `HJ중공업`, `녹십자홀딩스`, `HS효성첨단소재`, `비에이치아이`, `현대무벡스`, `아모레퍼시픽홀딩스`, `HD건설기계`, `씨앤씨인터내셔널`로 정정하고 일부 테마도 실제 코드 기준으로 맞췄다. 감사 스크립트 `scripts/audit_universe_master.py`를 추가했고, `fetch_stock_data.py`는 seed와 KRX 공식명이 다르면 중단한다. `verify_metrics.py`는 `stocks.json` 이름이 seed와 어긋나면 실패한다.
+- **공시 UX/접근성**: `/disclosures` 기본 표시 범위를 `분석 대상만`으로 바꾸고 `전체 시장`은 명시적 확장 선택으로 낮췄다. 공시 헤더에 `가격·점수 기준`과 `공시 수집 기준`을 분리 표시한다. 반복 액션 버튼은 시각 문구는 유지하되 aria-label에 회사명을 포함해 `삼성전자 DART 원문 열기`, `삼성전자 관심 종목에 추가`, `삼성전자 ... 공시 이해하기`처럼 읽히게 했다.
+- **검증**: `python scripts/audit_universe_master.py` 138종목 missing 0/mismatch 0/excluded 0, seed mismatch 0. `npx tsc --noEmit` 0, `verify_metrics.py` 138종목/오류0, `git diff --check` 0(CRLF 경고만), `npm run build` 0, local prod 4582 `verify:routes` 9/9 및 `smoke:check --all` 23/23. In-app browser `/disclosures` 390x844 및 1366x900: 기본 활성 `분석 대상만`, 기준일 2줄, 회사명 포함 aria-label, overflow 0, console error 0. local prod 4582 종료 완료.
+- **다음 자동화 진입점**: 남은 코드 작업은 홈/전역 검색 강조, 발견 카드 풀네임 지표, 종목 상세 상단 압축, 비교표 공시·주의 플래그, 백테스트 한계 우선 CTA/리밸런싱 접힘, 필터 canonical/noindex, 차트 마커 순서로 분리한다. Search Console 색인 재요청과 법무 검토는 외부/소유자 조치로 남김.
+
 ## 2026-07-09 · [codex] Launch blocker pass — 종목 코드 매핑 + 비교 공유 URL
 - **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt`의 출시 전 차단급 2건을 우선 처리. 종목 코드/명칭 신뢰 문제와 `/compare?stocks=` 공유 URL 초기 렌더링 문제를 닫고, 함께 지적된 저위험 카피·SEO·순위 표기를 정리했다.
 - **변경**: `145995` 삼양홀딩스 매핑을 제거하고 보통주 `000070` 삼양홀딩스로 교체, `public/data/prices/000070.json` 생성 및 `145995.json` 삭제. `fetch_stock_data.py`와 `verify_metrics.py`에 145995/우선주·스팩·ETF·ETN 방지 가드를 추가했다. `/compare?stocks=078930,004170,055550` 같은 공유 링크는 서버 초기 HTML부터 비교 종목을 읽고, 잘못된 코드는 제외 안내를 보여준다. 종목 SEO 설명의 변동 점수 숫자 제거, 공동 순위 표기, 개인정보 waitlist 잔여 문구, 데이터 상태의 내부 `DART_API_KEY` 노출 문구도 정리했다.

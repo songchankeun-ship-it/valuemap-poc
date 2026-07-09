@@ -72,6 +72,28 @@ for s in stocks:
     if EXCLUDED_NAME_RE.search(nm):
         errors.append(f"{s.get('ticker')} {nm}: 우선주/스팩/ETF/ETN 의심 종목은 별도 배지·규칙 전까지 제외 필요")
 
+# seed_tickers.txt는 수집 유니버스의 수동 입력 원천이다. stocks.json에 포함된 종목은
+# seed의 현재 공식명과 반드시 일치해야 한다. seed 자체의 KRX 공식명 검증은
+# scripts/fetch_stock_data.py가 FDR KRX master를 조회해 배포 전 차단한다.
+seed_path = os.path.join(os.path.dirname(__file__), "seed_tickers.txt")
+seed_names = {}
+if os.path.exists(seed_path):
+    with open(seed_path, encoding="utf-8-sig") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) >= 2 and parts[0]:
+                seed_names[parts[0]] = parts[1]
+    for s in stocks:
+        tk = s.get("ticker")
+        expected_name = seed_names.get(tk)
+        if expected_name and s.get("name") != expected_name:
+            errors.append(f"{tk} name {s.get('name')!r} != seed_tickers {expected_name!r}")
+else:
+    errors.append("scripts/seed_tickers.txt 없음 — 유니버스 이름 기준 검증 불가")
+
 print(f"검사 {len(stocks)}종목 · 오류 {len(errors)}건")
 for e in errors[:25]:
     print("  ❌", e)
