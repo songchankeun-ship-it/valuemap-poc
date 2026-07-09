@@ -23,10 +23,15 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - `/disclosures` separates `가격·점수 기준` from `공시 수집 기준`.
 - Repeated disclosure actions now include company-specific aria labels for stock detail, DART source, watchlist toggle, and the explanation expander.
 
+## Completed In Search/Discovery Slice
+
+- Home hero now includes a large `GlobalSearch` affordance fed by the 138-stock universe and real theme list.
+- `GlobalSearch` now supports header/hero variants, unique combobox/listbox IDs through `useId()`, and a stable `data-search-variant` marker for viewport checks.
+- `StockSearchBox` now exposes the proper combobox role, list autocomplete, and unique listbox IDs.
+- Discovery result cards now show full metric names (`추세`, `거래활성도`, `밸류`, `위험조정`) while dense table/legend abbreviations remain unchanged.
+
 ## Remaining Code Work
 
-- Global stock search prominence: add a larger home/header search affordance and consider mobile fixed search access.
-- Discovery cards: use full metric names in card view while keeping compact abbreviations in dense table view.
 - Stock detail compression: keep the first screen to name/price, priority score/rank, top strengths, key risks, and quick links before detailed education blocks.
 - Watchlist empty state: add a stronger temporary/sample experience if the current sample preview still does not create enough first-run momentum.
 - Compare table: add recent disclosure signals and warning flags; add a short “why compare these first” summary.

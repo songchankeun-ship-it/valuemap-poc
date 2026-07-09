@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Reaudit follow-up — 홈 검색 강조 + 발견 카드 지표 풀네임
+- **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt` 후속 세 번째 슬라이스. 데이터·점수 산식·DART/공시 수집 로직은 건드리지 않고, 남은 UX 항목 중 홈/전역 검색 존재감과 발견 카드 지표 표기를 닫았다.
+- **홈 검색**: `GlobalSearch`에 `header`/`hero` variant를 추가하고 홈 히어로에 큰 검색창을 배치했다. 검색 데이터는 현재 138개 `realStockPool`과 `allThemes()`를 그대로 사용한다. 동일 페이지에 헤더 검색과 홈 검색이 함께 있어도 aria ID가 충돌하지 않도록 `useId()` 기반 combobox/listbox ID를 적용했고, 확인용 `data-search-variant`를 붙였다.
+- **발견 카드/접근성**: `/stocks` 카드형 결과의 4지표 칩을 `추/거/저/위` 약어 대신 `추세/거래활성도/밸류/위험조정` 풀네임으로 표시한다. 표/범례의 압축 표기는 유지했다. `StockSearchBox`는 combobox role, list autocomplete, unique listbox ID로 정리해 기존 build warning 중 검색박스 경고를 제거했다.
+- **검증**: `npx tsc --noEmit` 0, `verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` 0(CRLF 예정 경고만), `npm run build` 0(기존 `TrustLayer` ref cleanup warning 1건만), local prod 4583 `verify:routes` 9/9 및 `smoke:check --all` 23/23. In-app browser: 홈 390x844 검색창 y=239~292/폭 324, 데스크톱 1366x900 검색창 y=298~356/폭 614, `/stocks` 390x844 카드 풀네임 라벨 확인, 전 케이스 overflow 0 및 console error 0.
+- **다음 자동화 진입점**: 남은 코드 작업은 종목 상세 상단 압축 → 관심종목 빈 상태 재점검 → 비교표 공시·주의 플래그 → 백테스트 한계 우선 CTA/리밸런싱 접힘 → 필터 canonical/noindex → 차트 마커 순서로 이어간다. Search Console 색인 재요청과 법무 검토는 외부/소유자 조치로 유지.
+
 ## 2026-07-09 · [codex] Reaudit follow-up — KRX 유니버스 전수 감사 + 공시 기본 범위
 - **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt`의 남은 항목을 누락 없이 이어가기 위한 두 번째 슬라이스. 코드로 처리 가능한 항목과 외부 조치가 필요한 항목을 `docs/ornscore_reaudit_2026-07-09_followup_matrix.md`에 분리 기록했다.
 - **유니버스 감사/수정**: FinanceDataReader KRX master로 현재 138개 `stocks.json`과 143개 `seed_tickers.txt`를 전수 대조. `145995` 외에도 공식명 불일치 11건이 있어 `에스엠`, `NC`, `iM금융지주`, `HJ중공업`, `녹십자홀딩스`, `HS효성첨단소재`, `비에이치아이`, `현대무벡스`, `아모레퍼시픽홀딩스`, `HD건설기계`, `씨앤씨인터내셔널`로 정정하고 일부 테마도 실제 코드 기준으로 맞췄다. 감사 스크립트 `scripts/audit_universe_master.py`를 추가했고, `fetch_stock_data.py`는 seed와 KRX 공식명이 다르면 중단한다. `verify_metrics.py`는 `stocks.json` 이름이 seed와 어긋나면 실패한다.

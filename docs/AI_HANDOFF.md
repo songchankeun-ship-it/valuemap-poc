@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-09T12:21:41.7243119+09:00
+Last updated: 2026-07-09T13:04:55.2702982+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: manual - reaudit follow-up KRX universe audit + disclosure scope/accessibility
+- Task: manual - reaudit follow-up home search + discovery card labels
 - Run: n/a
 - Status: completed locally
 - Agent: codex
-- Note: Branch `codex/ornscore-launch-blockers-20260709` now includes a full KRX universe audit/fix after the launch-blocker pass. Added `docs/ornscore_reaudit_2026-07-09_followup_matrix.md` and `scripts/audit_universe_master.py`; corrected 11 official-name mismatches; made `/disclosures` default to analyzed stocks, split price/score vs disclosure collection basis, and added company-specific aria labels. Local gates and mobile/desktop browser checks passed; no push/deploy was performed in this session.
+- Note: Branch `codex/ornscore-launch-blockers-20260709` now includes the next reaudit follow-up slice after the KRX/disclosure pass. Home hero has a large `GlobalSearch` using the real 138-stock universe and theme list; `GlobalSearch`/`StockSearchBox` combobox IDs are unique; `/stocks` card metrics use full names while dense table/legend abbreviations remain. Local gates and mobile/desktop in-app browser checks passed; no push/deploy was performed in this session.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex reaudit follow-up — home search prominence + discovery card labels
+- **Scope**: Closed the next two remaining code items from `docs/ornscore_reaudit_2026-07-09_followup_matrix.md`: home/global search prominence and discovery card full metric names. No data, scoring, DART/disclosure collection, `stocks.json`, or `metricsVersion` changes.
+- **Search**: `GlobalSearch` now has `header`/`hero` variants, unique `useId()` combobox/listbox IDs, and `data-search-variant` for viewport checks. Home hero renders the larger variant with the current 138 stocks and `allThemes()`. `StockSearchBox` now has a proper combobox role, list autocomplete, and unique listbox ID.
+- **Discovery cards**: Card metric chips now read `추세`, `거래활성도`, `밸류`, `위험조정` instead of `추/거/저/위`. Dense table/legend abbreviations are intentionally unchanged.
+- **Verification**: `npx tsc --noEmit` 0; `verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` 0 with CRLF warnings only; `npm run build` 0 with only the existing `TrustLayer` cleanup-ref warning; local prod 4583 `verify:routes` 9/9 and `smoke:check --all` 23/23. In-app browser checked home and `/stocks` at 390x844 plus home/`/stocks` at 1366x900: hero search in first viewport, card full labels visible on mobile, overflow 0, console errors 0.
+- **Next**: Continue matrix items in order: stock-detail top compression, watchlist empty-state recheck, compare disclosure/warning rows, backtest limitations-first CTA/collapsed rebalance, filter canonical/noindex, chart markers. Search Console and legal review remain owner/external tasks.
 
 ### 2026-07-09 — Codex reaudit follow-up — KRX universe audit + disclosure scope/accessibility
 - **Scope**: Continued the latest public reaudit instead of stopping after the first two launch blockers. Added `docs/ornscore_reaudit_2026-07-09_followup_matrix.md` so remaining code tasks and owner-gated tasks are not lost across chats/agents.

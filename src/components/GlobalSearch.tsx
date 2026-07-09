@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useId, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
@@ -21,16 +21,28 @@ interface SearchResult {
 interface Props {
   stocks: StockItem[];
   themes: string[];
+  variant?: "header" | "hero";
 }
 
-export function GlobalSearch({ stocks, themes }: Props) {
+export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const listboxId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { copy } = useLanguage();
+  const isHero = variant === "hero";
+  const inputClassName = isHero
+    ? "w-full pl-12 pr-3 py-3.5 md:py-4 bg-white dark:bg-zinc-950 border border-blue-200 dark:border-blue-900 text-zinc-950 dark:text-zinc-100 rounded-xl text-[15px] md:text-base font-bold placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-lg shadow-blue-950/10 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
+    : "w-full pl-10 pr-3 py-2 md:py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-zinc-100 rounded-lg text-sm md:text-[15px] font-medium placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-zinc-900/5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition";
+  const iconClassName = isHero
+    ? "absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none"
+    : "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none";
+  const panelClassName = isHero
+    ? "absolute top-full mt-2 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-xl overflow-hidden z-50"
+    : "absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50";
 
   const results: SearchResult[] = (() => {
     const q = query.trim().toLowerCase();
@@ -126,7 +138,7 @@ export function GlobalSearch({ stocks, themes }: Props) {
   }
 
   return (
-    <div ref={containerRef} className="w-full relative">
+    <div ref={containerRef} data-search-variant={variant} className="w-full relative">
       <input
         ref={inputRef}
         type="search"
@@ -142,22 +154,22 @@ export function GlobalSearch({ stocks, themes }: Props) {
         role="combobox"
         aria-label={copy.search.placeholder}
         aria-expanded={open && results.length > 0}
-        aria-controls="global-search-listbox"
+        aria-controls={listboxId}
         aria-autocomplete="list"
         aria-activedescendant={
-          open && results.length > 0 ? "global-search-opt-" + selectedIndex : undefined
+          open && results.length > 0 ? listboxId + "-opt-" + selectedIndex : undefined
         }
         suppressHydrationWarning
-        className="w-full pl-10 pr-3 py-2 md:py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-zinc-100 rounded-lg text-sm md:text-[15px] font-medium placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-zinc-900/5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
+        className={inputClassName}
       />
       <Search
-        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none"
-        strokeWidth={2}
+        className={iconClassName}
+        strokeWidth={isHero ? 2.25 : 2}
         aria-hidden="true"
       />
 
       {open && query.trim() ? (
-        <div className="absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50">
+        <div className={panelClassName}>
           {results.length === 0 ? (
             <div className="px-3 py-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
               <p>{copy.search.empty}</p>
@@ -178,11 +190,11 @@ export function GlobalSearch({ stocks, themes }: Props) {
               </button>
             </div>
           ) : (
-            <ul id="global-search-listbox" role="listbox" aria-label={copy.search.placeholder}>
+            <ul id={listboxId} role="listbox" aria-label={copy.search.placeholder}>
               {results.map((result, i) => (
                 <li
                   key={result.type === "stock" ? "s-" + result.ticker : "t-" + result.name}
-                  id={"global-search-opt-" + i}
+                  id={listboxId + "-opt-" + i}
                   role="option"
                   aria-selected={i === selectedIndex}
                 >

@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { ArrowRight, BarChart3, FileText, Search, ShieldCheck, TrendingUp, type LucideIcon } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { homeHeroCopy } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
 import type { StockCandidate } from "./StockCandidateCard";
+
+interface SearchStockItem {
+  ticker: string;
+  name: string;
+  themes: string[];
+}
 
 interface HomeHeroProps {
   dataAsOf: string;
@@ -13,6 +20,8 @@ interface HomeHeroProps {
   strongCount: number;
   volumeSpikeCount: number;
   signalCount: number;
+  searchStocks: SearchStockItem[];
+  searchThemes: string[];
   /** 미리보기 카드에 띄울 상위 후보(최대 3). */
   previewCandidates: StockCandidate[];
 }
@@ -26,6 +35,8 @@ export function HomeHero({
   strongCount,
   volumeSpikeCount,
   signalCount,
+  searchStocks,
+  searchThemes,
   previewCandidates,
 }: HomeHeroProps) {
   const { locale } = useLanguage();
@@ -62,6 +73,9 @@ export function HomeHero({
           <p className="hidden sm:block text-[13px] md:text-[14px] text-zinc-600 dark:text-zinc-300 mt-3 max-w-2xl leading-relaxed">
             {copy.description}
           </p>
+          <div className="mt-3 md:mt-4 max-w-2xl">
+            <GlobalSearch stocks={searchStocks} themes={searchThemes} variant="hero" />
+          </div>
           <div className="flex flex-row flex-wrap gap-2.5 mt-3 md:mt-4">
             <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition shadow-sm shadow-zinc-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
               <span>{copy.primaryCta}</span>

@@ -691,16 +691,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 {s.dividendYield > 0 ? <span>{t.chip.div}{s.dividendYield.toFixed(1)}%</span> : null}
               </div>
             </div>
-            <div className="text-right shrink-0">
+            <div className="text-right shrink-0 max-w-[11.5rem] sm:max-w-[14rem]">
               <div className="flex items-baseline gap-1 justify-end mb-2">
                 <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore || 0}</span>
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
               </div>
               <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                <span title={t.card.tip.momentum} className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.momentum} {s.momentum}</span>
-                <span title={t.card.tip.flow} className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.flow} {s.flow}</span>
-                <span title={t.card.tip.value} className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.value} {s.value}</span>
-                <span title={t.card.tip.vol} className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help">{t.card.abbr.vol} {s.vol}</span>
+                <span title={t.card.tip.momentum} className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.momentum} {s.momentum}</span>
+                <span title={t.card.tip.flow} className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.flow} {s.flow}</span>
+                <span title={t.card.tip.value} className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.value} {s.value}</span>
+                <span title={t.card.tip.vol} className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.vol} {s.vol}</span>
               </div>
             </div>
           </div>

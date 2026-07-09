@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 interface Item { ticker: string; name: string }
 
@@ -15,6 +15,7 @@ export function StockSearchBox({
   placeholder?: string;
 }) {
   const [q, setQ] = useState("");
+  const listId = useId();
   const query = q.trim().toLowerCase();
   const matches =
     query.length === 0
@@ -29,13 +30,15 @@ export function StockSearchBox({
         onChange={(e) => setQ(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        aria-controls="stock-search-box-list"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls={listId}
         aria-expanded={matches.length > 0}
         className="w-full px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
       />
       {matches.length > 0 ? (
         <ul
-          id="stock-search-box-list"
+          id={listId}
           role="listbox"
           aria-label={placeholder}
           className="mt-1 border border-zinc-200 dark:border-zinc-800 rounded-md divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden"
