@@ -59,7 +59,7 @@ export function generateStaticParams() {
 interface PageProps { params: Promise<{ ticker: string }>; }
 
 function stockSeoDescription(name: string, ticker: string): string {
-  return `${name}(${ticker})의 최신 종합 점수와 추세·거래활성도·밸류·위험조정 지표, 공시·재무 확인 포인트를 오른스코어에서 확인하세요.`;
+  return `${name}(${ticker})의 추세·거래활성도·밸류·위험조정 지표, 공시 신호, 재무 지표를 데이터 기준일과 함께 확인하세요. 투자 추천이 아닌 탐색 도구입니다.`;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -238,9 +238,11 @@ export default async function StockDetailPage({ params }: PageProps) {
   const sectorValue = sectorValueScore(s, realStockPool);
   const poolN = realStockPool.length;
   const overallRank = realStockPool.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
+  const overallTieCount = realStockPool.filter((p) => Math.round(compositeOf(p)) === composite).length;
   const mySector = sectorOf(s.themes);
   const sectorPeers = realStockPool.filter((p) => sectorOf(p.themes) === mySector);
   const sectorRank = sectorPeers.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
+  const sectorTieCount = sectorPeers.filter((p) => Math.round(compositeOf(p)) === composite).length;
   const sectorCount = sectorPeers.length;
   const sectorSorted = [...sectorPeers].sort((a, b) => compositeOf(b) - compositeOf(a));
   const meInTop = sectorSorted.slice(0, 6).some((p) => p.ticker === s.ticker);
@@ -406,8 +408,10 @@ export default async function StockDetailPage({ params }: PageProps) {
         }
         score={composite}
         overallRank={overallRank}
+        overallTieCount={overallTieCount}
         poolN={poolN}
         sectorRank={sectorRank}
+        sectorTieCount={sectorTieCount}
         sectorCount={sectorCount}
         completeness={completeness}
         metricsVersion={dataStatus.metricsVersionLabel}

@@ -60,6 +60,18 @@ for s in stocks:
         if not (isinstance(v, (int, float)) and v > 0):
             errors.append(f"{tk} {fld} 비정상({v})")
 
+# 출시 전 신뢰 가드: seed/마스터 매핑 오류가 다시 들어오면 배포 차단.
+by_ticker = {s.get("ticker"): s for s in stocks}
+if by_ticker.get("000070", {}).get("name") != "삼양홀딩스":
+    errors.append("000070은 삼양홀딩스 보통주여야 함 (종목명·코드 매핑 확인 필요)")
+if "145995" in by_ticker:
+    errors.append("145995는 삼양사우 우선주 코드로 확인됨 — 삼양홀딩스 보통주처럼 기본 분석 유니버스에 노출 금지")
+EXCLUDED_NAME_RE = re.compile(r"(우$|우B$|우선주|스팩|ETF|ETN)")
+for s in stocks:
+    nm = s.get("name") or ""
+    if EXCLUDED_NAME_RE.search(nm):
+        errors.append(f"{s.get('ticker')} {nm}: 우선주/스팩/ETF/ETN 의심 종목은 별도 배지·규칙 전까지 제외 필요")
+
 print(f"검사 {len(stocks)}종목 · 오류 {len(errors)}건")
 for e in errors[:25]:
     print("  ❌", e)

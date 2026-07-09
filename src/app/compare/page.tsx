@@ -7,6 +7,7 @@ import { sectorOf } from "@/lib/sector";
 import { CompareClient } from "@/components/CompareClient";
 
 const compareDescription = "선택한 종목들의 지표·재무 데이터를 한눈에 비교.";
+const COMPARE_QUERY_MAX = 4;
 
 export const metadata = {
   title: "종목 비교 — 오른스코어",
@@ -29,7 +30,33 @@ export const metadata = {
   alternates: { canonical: "/compare" },
 };
 
-export default function ComparePage() {
+interface PageProps {
+  searchParams: Promise<{ stocks?: string | string[] }>;
+}
+
+function parseCompareQuery(raw: string | string[] | undefined, stockMap: Record<string, unknown>) {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  const initialTickers: string[] = [];
+  const invalidTickers: string[] = [];
+  const seen = new Set<string>();
+  if (!value) return { initialTickers, invalidTickers };
+
+  for (const part of value.split(",")) {
+    const code = part.trim().toUpperCase();
+    if (!code) continue;
+    if (!/^\d{6}$/.test(code) || !stockMap[code]) {
+      invalidTickers.push(code);
+      continue;
+    }
+    if (seen.has(code)) continue;
+    seen.add(code);
+    if (initialTickers.length < COMPARE_QUERY_MAX) initialTickers.push(code);
+  }
+  return { initialTickers, invalidTickers };
+}
+
+export default async function ComparePage({ searchParams }: PageProps) {
+  const { stocks: stocksParam } = await searchParams;
   const allStocks = realStockPool;
 
   // 비교용 최소 정보만 직렬화
@@ -149,6 +176,8 @@ export default function ComparePage() {
     return { label, tickers: found.map((s) => s.ticker), names: found.map((s) => s.name) };
   };
   const exampleSets = EXAMPLE_TRIOS.map(buildTrio).filter((x): x is PairSet => x !== null);
+  const { initialTickers, invalidTickers } = parseCompareQuery(stocksParam, stockMap);
+  const initialNames = initialTickers.map((ticker) => stockMap[ticker].name);
 
   return (
     <div className="space-y-4">
@@ -164,9 +193,26 @@ export default function ComparePage() {
           검색하거나 종목 페이지에서 &quot;비교에 추가&quot; 한 종목들을 나란히 봅니다.
           비교 기준은 자체 지표 4종 + 재무 + 수익률이며, 탐색용입니다.
         </p>
+        {initialTickers.length >= 2 ? (
+          <p className="mt-2 text-xs text-blue-700 dark:text-blue-300">
+            공유 링크에서 불러온 비교: <strong>{initialNames.join(" · ")}</strong>
+          </p>
+        ) : null}
       </header>
 
-      <CompareClient stockMap={stockMap} top5={top5} recommendedSets={recommendedSets} exampleSets={exampleSets} />
+      {invalidTickers.length > 0 ? (
+        <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          유효하지 않은 코드는 비교에서 제외했어요: <span className="font-mono">{invalidTickers.join(", ")}</span>
+        </div>
+      ) : null}
+
+      <CompareClient
+        stockMap={stockMap}
+        top5={top5}
+        recommendedSets={recommendedSets}
+        exampleSets={exampleSets}
+        initialTickers={initialTickers}
+      />
 
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback */}
       <noscript>

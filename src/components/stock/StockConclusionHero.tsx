@@ -29,8 +29,10 @@ export function StockConclusionHero({
   actionsSlot,
   score,
   overallRank,
+  overallTieCount,
   poolN,
   sectorRank,
+  sectorTieCount,
   sectorCount,
   completeness,
   metricsVersion,
@@ -51,8 +53,10 @@ export function StockConclusionHero({
   actionsSlot: ReactNode;
   score: number;
   overallRank: number;
+  overallTieCount?: number;
   poolN: number;
   sectorRank: number;
+  sectorTieCount?: number;
   sectorCount: number;
   completeness: number;
   metricsVersion?: string | null;
@@ -104,8 +108,10 @@ export function StockConclusionHero({
         <PriorityScoreCard
           score={score}
           overallRank={overallRank}
+          overallTieCount={overallTieCount}
           poolN={poolN}
           sectorRank={sectorRank}
+          sectorTieCount={sectorTieCount}
           sectorCount={sectorCount}
           sector={sector}
           completeness={completeness}

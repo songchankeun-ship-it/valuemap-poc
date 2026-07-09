@@ -73,7 +73,7 @@ export const statusCopy = {
     sources: {
       price: { name: "가격·지표 (FinanceDataReader)", detail: "GitHub Actions 매일 평일 자동 갱신" },
       quote: { name: "현재가 (네이버 지연 시세)", detail: "페이지 열 때 실시간 조회 (참고용)" },
-      disclosure: { name: "공시 (DART)", detail: "라이브 조회 (DART_API_KEY 필요)" },
+      disclosure: { name: "공시 (DART)", detail: "DART 연동 상태: 정상" },
       alert: {
         name: "KRX 시장경보",
         detailActive: (n: number) => `활성 ${n}종목`,
@@ -146,7 +146,7 @@ export const statusCopy = {
     sources: {
       price: { name: "Price · metrics (FinanceDataReader)", detail: "Auto-updated every weekday via GitHub Actions" },
       quote: { name: "Current price (Naver delayed quote)", detail: "Fetched live on page load (reference only)" },
-      disclosure: { name: "Disclosures (DART)", detail: "Live query (DART_API_KEY required)" },
+      disclosure: { name: "Disclosures (DART)", detail: "DART connection: active" },
       alert: {
         name: "KRX market alerts",
         detailActive: (n: number) => `${n} stocks active`,

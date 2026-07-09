@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-09 · [codex] Launch blocker pass — 종목 코드 매핑 + 비교 공유 URL
+- **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt`의 출시 전 차단급 2건을 우선 처리. 종목 코드/명칭 신뢰 문제와 `/compare?stocks=` 공유 URL 초기 렌더링 문제를 닫고, 함께 지적된 저위험 카피·SEO·순위 표기를 정리했다.
+- **변경**: `145995` 삼양홀딩스 매핑을 제거하고 보통주 `000070` 삼양홀딩스로 교체, `public/data/prices/000070.json` 생성 및 `145995.json` 삭제. `fetch_stock_data.py`와 `verify_metrics.py`에 145995/우선주·스팩·ETF·ETN 방지 가드를 추가했다. `/compare?stocks=078930,004170,055550` 같은 공유 링크는 서버 초기 HTML부터 비교 종목을 읽고, 잘못된 코드는 제외 안내를 보여준다. 종목 SEO 설명의 변동 점수 숫자 제거, 공동 순위 표기, 개인정보 waitlist 잔여 문구, 데이터 상태의 내부 `DART_API_KEY` 노출 문구도 정리했다.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/Metrics 2.4, `git diff --check` 0(CRLF 경고만), `npm run build` 0(기존 lint warning만), local prod `http://127.0.0.1:4581` `verify:routes` 9/9 및 `smoke:check --all` 23/23. Target HTML로 `/compare?stocks=...`, `/stock/000070`, `/stocks?sector=지주·기타` 확인했고, in-app browser에서 compare/stock 모바일 390x844 및 데스크톱 overflow 0을 확인했다.
+- **정리/다음**: local prod 4581은 종료 완료. 이번 커밋 다음 자동화 진입점은 남은 출시 후 UX 항목 분리: 전역 검색 보강, 공시 기본 탭 `분석 대상만`, 관심종목 임시/샘플 흐름, 공시 버튼 aria-label, 필터 canonical/noindex, 비교표 최근 공시·주의 플래그, 차트 마커 보강.
+
 ## 2026-07-09 · [codex] Deployment prep — 재검수 2차 #118~#123 + 2026-07-08 데이터 갱신 통합
 - **승인/범위**: 사용자가 "배포도 부탁해"로 명시 승인. `origin/main`의 일일 데이터 갱신 커밋 `2aefba5`와 기존 queue checkpoint 문서 커밋을 보존하면서, 로컬 완료 배치 #118~#123을 병합해 배포 대상으로 정리한다. 원격 강제 push 없이 `origin/main`을 현재 브랜치에 병합한 뒤 fast-forward 가능한 HEAD를 `origin/main`으로 push한다.
 - **포함 작업**: #118 홈 80+ 카운트/SEO 숫자 제거, #119 업종 링크 `/stocks?sector=`, #120 무료 베타 약관/백테스트 기준일, #121 테마 0건 빈 상태, #122 검색·관심·비교 빠른 시작, #123 공시 최신 200건 제한 고지. 모두 표시/문구/라우팅/UX 범위이며 점수 산식·DART 수집 로직·`metricsVersion` 변경 없음. 단 `origin/main`의 daily refresh 데이터 파일은 그대로 포함된다.

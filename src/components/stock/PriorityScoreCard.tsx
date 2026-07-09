@@ -32,8 +32,10 @@ function DataStatusPill({ children, tone = "neutral" }: { children: ReactNode; t
 export function PriorityScoreCard({
   score,
   overallRank,
+  overallTieCount = 1,
   poolN,
   sectorRank,
+  sectorTieCount = 1,
   sectorCount,
   sector,
   completeness,
@@ -44,8 +46,10 @@ export function PriorityScoreCard({
 }: {
   score: number;
   overallRank: number;
+  overallTieCount?: number;
   poolN: number;
   sectorRank: number;
+  sectorTieCount?: number;
   sectorCount: number;
   sector: string;
   completeness: number;
@@ -56,6 +60,7 @@ export function PriorityScoreCard({
 }) {
   const { locale } = useLanguage();
   const t = priorityScoreCardCopy[locale];
+  const rankPrefix = (tieCount: number) => tieCount > 1 ? (locale === "ko" ? "공동 " : "T-") : "";
   return (
     <div className={"rounded-2xl border bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 p-4 md:p-5 shadow-lg shadow-zinc-950/10 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-200")}>
       <div className="text-[11px] font-semibold uppercase text-zinc-400 dark:text-zinc-500">{t.title}</div>
@@ -75,11 +80,11 @@ export function PriorityScoreCard({
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-2">
               <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.overallPrefix}</div>
-              <div className="text-base font-black text-white dark:text-zinc-950">{overallRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {poolN}{t.rankSuffix}</span></div>
+              <div className="text-base font-black text-white dark:text-zinc-950">{rankPrefix(overallTieCount)}{overallRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {poolN}{t.rankSuffix}</span></div>
             </div>
             <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-2">
               <div className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">{sector}</div>
-              <div className="text-base font-black text-white dark:text-zinc-950">{sectorRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {sectorCount}{t.rankSuffix}</span></div>
+              <div className="text-base font-black text-white dark:text-zinc-950">{rankPrefix(sectorTieCount)}{sectorRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {sectorCount}{t.rankSuffix}</span></div>
             </div>
           </div>
           <div className="text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">{t.scopeNote(poolN)}</div>

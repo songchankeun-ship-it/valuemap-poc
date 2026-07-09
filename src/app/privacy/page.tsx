@@ -62,7 +62,7 @@ export default function PrivacyPage() {
           <p>회원 정보는 회원 탈퇴 시점까지 보관되며, 탈퇴 즉시 모든 정보가 파기됩니다. 단, 법령에 의해 보관이 필요한 경우 해당 기간 동안 보관합니다.</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>접속 로그·분석 데이터</strong>: 통계 목적으로만 사용하며 최대 12개월 내 파기 또는 익명화.</li>
-            <li><strong>출시 알림(waitlist) 이메일</strong>: 알림 발송 목적에 한해 보관하며, 수신 거부·출시 종료 시 파기.</li>
+            <li><strong>알림 메일 관련 이메일</strong>: 사용자가 알림 기능을 직접 켠 경우 발송 목적에 한해 이용하며, 알림 해제·회원 탈퇴 시 처리 중단.</li>
           </ul>
         </section>
 

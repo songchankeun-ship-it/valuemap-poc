@@ -94,9 +94,22 @@ function ScrollX({
   );
 }
 
-export function CompareClient({ stockMap, top5 = [], recommendedSets = [], exampleSets = [] }: { stockMap: Record<string, CompareStock>; top5?: Array<{ ticker: string; name: string }>; recommendedSets?: RecommendedSet[]; exampleSets?: RecommendedSet[] }) {
-  const [tickers, setTickers] = useState<string[]>([]);
-  const [mounted, setMounted] = useState(false);
+export function CompareClient({
+  stockMap,
+  top5 = [],
+  recommendedSets = [],
+  exampleSets = [],
+  initialTickers = [],
+}: {
+  stockMap: Record<string, CompareStock>;
+  top5?: Array<{ ticker: string; name: string }>;
+  recommendedSets?: RecommendedSet[];
+  exampleSets?: RecommendedSet[];
+  initialTickers?: string[];
+}) {
+  const [tickers, setTickers] = useState<string[]>(() =>
+    initialTickers.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX)
+  );
   const [watchlist, setWatchlist] = useState<Array<{ ticker: string; name: string }>>([]);
   const [recentViews, setRecentViews] = useState<Array<{ ticker: string; name: string }>>([]);
   // 담기/빼기 피드백 — 최대 초과, 이미 담음 등 안내(3초 자동 소멸)
@@ -109,9 +122,10 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
   useEffect(() => {
     let active = true;
 
-    function reload() {
+    function reload(fallback = initialTickers) {
       getCompareList().then((list) => {
-        if (active) setTickers(list);
+        if (!active) return;
+        setTickers(list.length > 0 ? list : fallback.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX));
       });
     }
 
@@ -124,7 +138,6 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
       setRecentViews(mapped);
     }
 
-    setMounted(true);
     reload();
     loadRecent();
 
@@ -143,13 +156,13 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
     try {
       const shared = new URLSearchParams(window.location.search).get("stocks");
       if (shared) {
-        const codes = shared.split(",").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+        const codes = initialTickers.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX);
         if (codes.length) {
           (async () => {
             for (const code of codes) {
               await addToCompare(code);
             }
-            if (active) reload();
+            if (active) reload(codes);
           })().catch(() => {
             if (active) reload();
           });
@@ -180,7 +193,7 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
       window.removeEventListener("recent-views-changed", loadRecent);
       window.removeEventListener("storage", onStorage);
     };
-  }, []);
+  }, [initialTickers, stockMap]);
 
   // 타이머 정리 — 언마운트 시 대기 중인 자동 소멸 타이머를 해제
   useEffect(() => {
@@ -251,8 +264,6 @@ export function CompareClient({ stockMap, top5 = [], recommendedSets = [], examp
       alert(url);
     }
   }
-
-  if (!mounted) return null;
 
   const stocks = tickers
     .map((t) => stockMap[t])

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-08T22:50:49.867Z
+Last updated: 2026-07-09T11:43:23.7730806+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 123 - [2026-07-08] ORNScore 공개 재검수 P1B - 공시 최신 200건 제한 고지 반복 위치 정리
-- Run: 120
-- Status: completed
+- Task: manual - launch blocker pass from public reaudit
+- Run: n/a
+- Status: completed locally
 - Agent: codex
-- Note: Recovered by watchdog. Development produced commit `8b9631e [codex] clarify disclosure collection scope` with local gates and system Chrome viewport checks passing; the only failure was the follow-up Tester AI process hitting the Codex usage limit.
+- Note: Branch `codex/ornscore-launch-blockers-20260709` fixes the 145995/000070 mapping, compare shared-link SSR, stable stock SEO descriptions, tied-rank display, privacy waitlist wording, and DART status copy. Local finite gates and mobile/desktop browser checks passed; no push/deploy was performed in this session.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-09 — Codex launch blocker pass — code mapping + compare SSR
+- **Scope**: Manual launch-blocker pass from the latest public reaudit. Prioritized the two blocking items: incorrect `145995` display as 삼양홀딩스 and `/compare?stocks=` empty initial render. Also cleaned low-risk trust copy called out by the same report.
+- **Changes**: Replaced 삼양홀딩스 universe mapping with `000070`, regenerated `public/data/prices/000070.json`, removed `public/data/prices/145995.json`, and added fetch/verify guards against `145995` and preferred/SPAC/ETF/ETN-like seed entries. `/compare?stocks=` now parses valid tickers server-side and renders the initial comparison from the shared URL. Stock SEO descriptions no longer include volatile score numbers, tied ranks show 공동/T-, privacy no longer mentions waitlist, and public DART status copy no longer exposes `DART_API_KEY`.
+- **Verification**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` 0 with expected CRLF warnings only; `npm run build` 0 with existing warnings only; local prod 4581 `verify:routes` 9/9 and `smoke:check --all` 23/23. Target HTML confirmed `/compare?stocks=078930,004170,055550`, invalid-code handling, `/stock/000070`, and `/stocks?sector=지주·기타`. In-app browser checked compare and stock pages at 390x844 and desktop with overflow 0.
+- **Cleanup / next**: Local prod 4581 stopped. Next queue should split the remaining post-launch UX items: stronger global search, disclosures default tab `분석 대상만`, watchlist sample/temporary flow, disclosure button aria-labels, filter canonical/noindex, richer compare rows with recent disclosure/warning flags, and chart markers.
 
 ### 2026-07-09 — Codex Task 123 recovery — tester usage-limit false failure
 - **Scope**: Recovery-only follow-up. No app code, scoring, data collection, DART/financial logic, `stocks.json`, or `metricsVersion` changes after commit `8b9631e`.

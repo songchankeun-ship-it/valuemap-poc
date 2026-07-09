@@ -11,6 +11,17 @@ except ImportError:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+FORBIDDEN_UNIVERSE_TICKERS = {
+    "145995": "삼양사우 우선주로 확인된 코드입니다. 삼양홀딩스 보통주는 000070을 사용하세요.",
+}
+EXCLUDED_NAME_RE = re.compile(r"(우$|우B$|우선주|스팩|ETF|ETN)")
+
+def universe_exclusion_reason(ticker, name):
+    if ticker in FORBIDDEN_UNIVERSE_TICKERS:
+        return FORBIDDEN_UNIVERSE_TICKERS[ticker]
+    if EXCLUDED_NAME_RE.search(name or ""):
+        return "우선주/스팩/ETF/ETN 의심 종목은 별도 배지·규칙 전까지 기본 분석 유니버스에서 제외합니다."
+    return None
 
 def extract_tickers():
     seed_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_tickers.txt")
@@ -62,7 +73,7 @@ def main():
 
     print("\n[3/4] Base data from FDR...")
     krx_map = {str(row.get("Code","")).zfill(6): row for _, row in krx.iterrows()}
-    result, missing = [], []
+    result, missing, name_mismatches, excluded = [], [], [], []
     for tk, info in tk_dict.items():
         row = krx_map.get(tk)
         if row is None:
@@ -70,16 +81,31 @@ def main():
         def g(k, d=None):
             v = row.get(k)
             return v if pd.notna(v) else d
+        official_name = str(g("Name", info["name"]) or info["name"]).strip()
+        seed_name = str(info["name"]).strip()
+        if official_name and seed_name and official_name != seed_name:
+            name_mismatches.append(f"{tk}: seed={seed_name} / KRX={official_name}")
+        reason = universe_exclusion_reason(tk, official_name)
+        if reason:
+            excluded.append(f"{tk} {official_name}: {reason}")
+            continue
         close = g("Close", 0)
         market = str(g("Market", "KOSPI")).upper()
         result.append({
-            "ticker": tk, "name": info["name"], "themes": info["themes"], "market": market,
+            "ticker": tk, "name": official_name or seed_name, "themes": info["themes"], "market": market,
             "currentPrice": int(close) if close else 0,
             "changePct": float(g("ChagesRatio", 0) or g("Changes", 0) or 0),
             "volume": int(g("Volume", 0) or 0),
             "marketCap": int(g("Marcap", 0) or 0) or None,
         })
     print(f"      OK base: {len(result)} / missing {len(missing)}")
+    if name_mismatches:
+        print("      KRX name corrections:")
+        for m in name_mismatches[:10]: print(f"        - {m}")
+    if excluded:
+        print("      [X] universe exclusion violations:")
+        for e in excluded[:20]: print(f"        - {e}")
+        sys.exit(1)
     if missing[:3]:
         for m in missing[:3]: print(f"        - {m}")
 
