@@ -12,15 +12,30 @@ import {
 import { getWatchlist } from "@/lib/watchlist";
 import { getRecentViews } from "@/lib/recentViews";
 import { sectorOf } from "@/lib/sector";
+import { getDataWarnings, isSuspect } from "@/lib/dataQuality";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
-import { BarChart3, CheckCircle2 } from "lucide-react";
+import { BarChart3, CheckCircle2, ExternalLink, AlertTriangle } from "lucide-react";
 
 interface RecommendedSet {
   label: string;
   tickers: string[];
   names: string[];
+}
+
+// 서버(compare/page.tsx)에서 최근 14일 공시 신호를 종목별로 추출해 전달. 표시 전용.
+interface CompareDisclosure {
+  label: string;
+  type: string;
+  direction?: string;
+  date: string; // YYYYMMDD
+  url: string;
+}
+
+// 공시 접수일(YYYYMMDD) → MM.DD 표기. 형식이 다르면 원본 그대로.
+function fmtDiscDate(d: string): string {
+  return /^\d{8}$/.test(d) ? `${d.slice(4, 6)}.${d.slice(6, 8)}` : d;
 }
 
 interface CompareStock {
@@ -61,6 +76,7 @@ const COMPARE_EMPTY_PREVIEW = [
   "추세/밸류/위험조정 강점 비교",
   "PER/PBR/ROE 차이",
   "수익률과 테마 차이",
+  "최근 공시 신호·데이터 점검 포인트",
 ];
 
 // 모바일에서 가로 스크롤 wrapper. 데스크톱에선 그냥 grid.
@@ -99,12 +115,14 @@ export function CompareClient({
   top5 = [],
   recommendedSets = [],
   exampleSets = [],
+  disclosureByTicker = {},
   initialTickers = [],
 }: {
   stockMap: Record<string, CompareStock>;
   top5?: Array<{ ticker: string; name: string }>;
   recommendedSets?: RecommendedSet[];
   exampleSets?: RecommendedSet[];
+  disclosureByTicker?: Record<string, CompareDisclosure[]>;
   initialTickers?: string[];
 }) {
   const [tickers, setTickers] = useState<string[]>(() =>
@@ -354,7 +372,7 @@ export function CompareClient({
               ))}
             </div>
             <p className="mt-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug">
-              최근 공시 신호는 관심 종목과 공시 화면에서 이어서 확인할 수 있어요.
+              2개 이상 담으면 종목별 최근 공시 신호와 데이터 점검 포인트도 함께 정리해 드려요 — 방향·규모는 원문 확인이 필요합니다.
             </p>
           </div>
 
@@ -537,6 +555,15 @@ export function CompareClient({
   }
 
   const canAddMore = stocks.length < COMPARE_MAX;
+
+  // "먼저 무엇을 비교하는지" 프레임 — 표를 보기 전에 이 묶음의 성격을 한 줄로 짚어준다(비자문·사실).
+  const compareSectors = Array.from(new Set(stocks.map((s) => sectorOf(s.themes))));
+  const sameSector = compareSectors.length === 1;
+  const perValues = stocks.map((s) => s.per).filter((v) => v > 0);
+  const perRange = perValues.length >= 2 ? { min: Math.min(...perValues), max: Math.max(...perValues) } : null;
+  const withDisclosures = stocks.filter((s) => (disclosureByTicker[s.ticker]?.length ?? 0) > 0).length;
+  const flaggedCount = stocks.filter((s) => isSuspect(s) || getDataWarnings(s).length > 0).length;
+
   // 결과 화면 빠른 추가 후보 — 최근·Top5·관심을 합치고 중복 제거(칩 과다 방지 위해 6개까지)
   const quickAdd: Array<{ ticker: string; name: string }> = [];
   {
@@ -559,6 +586,36 @@ export function CompareClient({
           <button onClick={clearAll} className="text-zinc-500 dark:text-zinc-400 hover:text-red-600 transition">모두 비우기</button>
         </div>
       </div>
+
+      {/* 먼저 무엇을 비교하는지 — 표 이전에 이 묶음의 성격(업종·밸류 폭·공시·점검)을 한 줄로 프레이밍(비자문) */}
+      <section className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3 md:p-3.5">
+        <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-300 mb-1 uppercase tracking-wide">먼저 무엇을 비교하는지</div>
+        <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed break-keep">
+          {sameSector
+            ? <>같은 업종(<strong>{compareSectors[0]}</strong>) {stocks.length}종을 같은 잣대로 나란히 점검해요.</>
+            : <>업종이 다른 {stocks.length}종이에요 — PER·PBR 같은 밸류 지표는 업종 차이를 감안해 보세요.</>}
+        </p>
+        <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300">
+            업종 {sameSector ? compareSectors[0] : `${compareSectors.length}종 혼합`}
+          </span>
+          {perRange ? (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 tabular-nums">
+              PER {perRange.min.toFixed(1)}~{perRange.max.toFixed(1)}배
+            </span>
+          ) : null}
+          {withDisclosures > 0 ? (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300">
+              최근 공시 신호 {withDisclosures}종
+            </span>
+          ) : null}
+          {flaggedCount > 0 ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-300">
+              <AlertTriangle className="w-3 h-3" strokeWidth={2} /> 데이터 점검 권장 {flaggedCount}종
+            </span>
+          ) : null}
+        </div>
+      </section>
 
       {/* 바스켓 관리 — 결과 화면에서도 종목을 더 담거나 잘못 담은 종목을 되돌릴 수 있게 */}
       <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/40 p-3 md:p-3.5 space-y-2.5">
@@ -633,6 +690,72 @@ export function CompareClient({
         })}
       </ScrollX>
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 -mt-1 break-keep">각 카드의 업종은 오른스코어 내부 분류 기준이며 공식 KRX 업종과 다를 수 있습니다.</p>
+
+      {/* 최근 공시 신호 · 데이터 점검 — 종목별 컨텍스트(표시 전용). 방향·규모는 원문 확인 필요, 매수·매도 판단 아님 */}
+      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 md:p-5 shadow-soft">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">최근 공시 신호 · 데이터 점검</h3>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mb-3 md:mb-4 break-keep">최근 14일 공시에서 추출한 신호와 이상값 점검이에요. 방향·규모·사유는 원문 확인이 필요하며, 매수·매도 판단이 아닙니다.</p>
+        <ScrollX count={stocks.length} cardWidthPx={200}>
+          {stocks.map((s) => {
+            const ds = disclosureByTicker[s.ticker] ?? [];
+            const warns = getDataWarnings(s);
+            const suspect = isSuspect(s);
+            return (
+              <div key={s.ticker} className="space-y-2 min-w-0">
+                <div className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 truncate">{s.name}</div>
+                {/* 최근 공시 신호 */}
+                <div className="space-y-1.5">
+                  {ds.length > 0 ? (
+                    ds.map((d) => (
+                      <a
+                        key={d.url}
+                        href={d.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`block rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-800/40 px-2 py-1.5 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
+                      >
+                        <div className="flex items-center justify-between gap-1.5">
+                          <span className="text-[11px] font-medium text-zinc-800 dark:text-zinc-100 truncate">{d.label}</span>
+                          <ExternalLink className="w-3 h-3 shrink-0 text-zinc-400 dark:text-zinc-500" strokeWidth={1.8} />
+                        </div>
+                        <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-zinc-500 dark:text-zinc-400">
+                          <span className="tabular-nums">{fmtDiscDate(d.date)}</span>
+                          {d.direction ? <span className="px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700/60 text-zinc-600 dark:text-zinc-300">{d.direction}</span> : null}
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    <p className="text-[11px] text-zinc-400 dark:text-zinc-500">최근 공시 신호 없음</p>
+                  )}
+                </div>
+                {/* 데이터 점검 */}
+                {suspect || warns.length > 0 ? (
+                  <div className="space-y-1">
+                    {warns.length > 0 ? (
+                      warns.map((w) => (
+                        <div key={w} className="flex items-start gap-1 text-[10px] leading-snug text-amber-700 dark:text-amber-300">
+                          <AlertTriangle className="mt-0.5 w-3 h-3 shrink-0" strokeWidth={2} />
+                          <span className="break-keep">{w}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center gap-1 text-[10px] text-amber-700 dark:text-amber-300">
+                        <AlertTriangle className="w-3 h-3 shrink-0" strokeWidth={2} />
+                        <span>이상값 점검 중 — 값 해석에 주의</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="w-3 h-3 shrink-0" strokeWidth={2} />
+                    <span>이상값 점검 통과</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </ScrollX>
+      </section>
 
       {/* 자체 지표 비교 */}
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 md:p-5 shadow-soft">

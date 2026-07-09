@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [claude] Reaudit follow-up — 비교 화면 공시 컨텍스트·주의 플래그·"먼저 무엇을 비교하는지" 프레임
+- **범위**: 재검수 후속 여섯 번째 슬라이스(follow-up matrix "Compare table" 항목). 비교 결과를 원시 표가 아니라 (1) 이 묶음의 성격을 짚는 프레임 + (2) 종목별 최근 공시 신호·데이터 점검이 있는 화면으로 보강. 표시 전용 — 데이터·점수 산식·DART/공시 수집·생성 데이터셋·`metricsVersion` 무변경. 편집 2파일: `src/app/compare/page.tsx`(서버)·`src/components/CompareClient.tsx`(클라이언트), 문서 3.
+- **변경**: (1) **먼저 무엇을 비교하는지 프레임** — 결과 상단에 같은 업종/혼합 여부 한 줄 + 사실 칩(업종, PER 범위, 최근 공시 신호 종 수, 데이터 점검 권장 종 수). 중립·기술 표현, 추천 없음. (2) **최근 공시 신호 · 데이터 점검 섹션** — 종목별로 최근 14일 DART 신호(라벨·접수일·방향, 원문 링크)를 `getRecentSignals(14)`(라이브 실패 시 샘플 fallback)로 노출하고, `getDataWarnings`/`isSuspect` 결과를 주의 플래그로 표시. 데이터 없으면 "최근 공시 신호 없음"·"이상값 점검 통과"로 graceful. (3) 빈 상태 프리뷰·noscript 목록에 "최근 공시 신호·데이터 점검" 추가, "공시 화면에서 이어서 확인" 낡은 안내 교체. (4) `/compare`에 `revalidate = 1800` 추가(`/disclosures`와 동일 패턴). 신규 프롭 1개(`disclosureByTicker`), 신규 헬퍼 1개(`fmtDiscDate`)만 추가.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·DART 수집·`metricsVersion` 무변경. `ScrollX` 등 기존 반응형 패턴 재사용(390px 오버플로 회피).
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` clean, `npm run build` 0(`/compare` ƒ 11.8 kB). local prod 4491 `/compare` 200·`/compare?stocks=005930,000660` 200, 공유링크 SSR에 프레임("먼저 무엇을 비교하는지")·공시 섹션("최근 공시 신호 · 데이터 점검")·"이상값 점검 통과"·"임원·주요주주 보유 변동" 신호·PER 칩 렌더 확인, 두 종목 정상이라 "데이터 점검 권장" 칩은 조건부 숨김(정상 동작), U+FFFD 0. 리스너 PID 58808만 taskkill, AI Center 4310 무변경.
+- **남은 소유자**: 실기기 390×844 육안·언어 토글 EN 실확인은 운영자 게이트(클라이언트 렌더·Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.
+- **다음 자동화 진입점**: 남은 코드 작업은 백테스트 한계 우선 CTA/리밸런싱 접힘 → 필터 canonical/noindex → 차트 마커 순서. Search Console 색인 재요청·법무 검토는 외부/소유자 조치로 유지.
+
 ## 2026-07-10 · [claude] Reaudit follow-up — 관심 종목 일상 루틴 강화(비로그인·미저장)
 - **범위**: 재검수 후속 다섯 번째 슬라이스. 로그인하지 않았거나 아직 종목을 담지 않은 사용자에게 `/watchlist`가 "죽은 빈 화면"이 아니라 매일 열어볼 루틴 화면으로 읽히도록 표시/진입 전용 보강. 데이터·점수 산식·`watchlist.ts` 저장/마이그레이션·`metricsVersion`은 변경 없음. 편집 1파일: `src/components/WatchlistClient.tsx`.
 - **변경**: (1) 빈 상태의 기존 "최근 본 종목" 텍스트 안내를 실제 액션 블록 **최근 본 종목 이어담기**(최대 4개, 1탭 담기 + 오늘 점수 델타 칩)로 교체 — 둘러보기만 하고 담지 않은 재방문자를 곧장 담기로 연결. (2) 예시·이어담기 항목에 오늘 종합 점수 델타 칩(▲/▼N, 0이면 숨김) 추가로 화면이 살아 있게 표시. (3) `내 현황`에 비로그인·미저장이지만 최근 본 종목이 있는 경우 **최근 본 종목 오늘 변화: 점수가 움직인 종목 M / N** 요약 한 줄 추가. 모두 기존 `tickerToDelta`·`recentViews`·`addToWatchlist` 재사용, 신규 프롭/데이터 0. 카피는 중립("참고 정보 · 매수·매도 추천 아님"), 계정 저장 오해 없이 "담기를 누른 종목만 이 기기에 저장" 유지.

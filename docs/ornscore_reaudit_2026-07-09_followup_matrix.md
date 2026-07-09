@@ -44,8 +44,14 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - "내 현황" now shows a lightweight change summary for logged-out users with no saved symbols but recent views ("최근 본 종목 오늘 변화: 점수가 움직인 종목 M / N").
 - All additions reuse existing `tickerToDelta`/`recentViews`/`addToWatchlist`; storage, migration, scoring, and `metricsVersion` unchanged. Wording stays neutral (참고 정보 · 매수·매도 추천 아님).
 
+## Completed In Compare Context Slice
+
+- `/compare` result view now opens with a "먼저 무엇을 비교하는지" frame: same-vs-mixed sector line + factual chips (업종, PER 범위, 최근 공시 신호 종 수, 데이터 점검 권장 종 수). Descriptive/neutral, no recommendation.
+- New "최근 공시 신호 · 데이터 점검" section per compared symbol: recent DART signals (label · 접수일 · 방향, links to 원문) from `getRecentSignals(14)` (live→sample fallback), plus `getDataWarnings`/`isSuspect` flags. Graceful "최근 공시 신호 없음" / "이상값 점검 통과" fallbacks when data is absent.
+- Empty-state preview and noscript list now advertise the disclosure/check context; the stale "공시 화면에서 이어서 확인" pointer is replaced.
+- Display-only: reuses `recentSignals`/`disclosure-signals`/`dataQuality`; no collection, scoring, dataset, or `metricsVersion` change. `/compare` gets `revalidate = 1800` matching `/disclosures`.
+
 ## Remaining Code Work
-- Compare table: add recent disclosure signals and warning flags; add a short “why compare these first” summary.
 - Backtest lab: make “read limitations first” the first CTA and collapse the latest rebalance example by default.
 - Filter SEO: set canonical/noindex rules for zero-result and highly parameterized `/stocks` filter combinations.
 - Chart markers: add score move, DART filing, flow spike, 3M warning, and drawdown markers as a later chart slice.

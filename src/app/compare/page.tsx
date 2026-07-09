@@ -4,10 +4,14 @@ import { realStockPool } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { isSuspect } from "@/lib/dataQuality";
 import { sectorOf } from "@/lib/sector";
+import { getRecentSignals } from "@/lib/recentSignals";
 import { CompareClient } from "@/components/CompareClient";
 
 const compareDescription = "선택한 종목들의 지표·재무 데이터를 한눈에 비교.";
 const COMPARE_QUERY_MAX = 4;
+
+// 공시 페이지와 동일하게 최근 신호를 서버에서 추출(라이브 실패 시 샘플 fallback). 30분 캐시.
+export const revalidate = 1800;
 
 export const metadata = {
   title: "종목 비교 — 오른스코어",
@@ -176,6 +180,32 @@ export default async function ComparePage({ searchParams }: PageProps) {
     return { label, tickers: found.map((s) => s.ticker), names: found.map((s) => s.name) };
   };
   const exampleSets = EXAMPLE_TRIOS.map(buildTrio).filter((x): x is PairSet => x !== null);
+  // 최근 공시 신호(최근 14일) — 비교 종목별 컨텍스트로 노출. 표시 전용(수집·점수 로직 무변경).
+  // getRecentSignals는 라이브 DART 실패 시 샘플로 graceful fallback하며, 여기선 풀에 있는 종목만 남긴다.
+  const disclosureByTicker: Record<string, Array<{ label: string; type: string; direction?: string; date: string; url: string }>> = {};
+  try {
+    const recent = await getRecentSignals(14);
+    for (const sig of recent.signals) {
+      const code = sig.disclosure.stock_code;
+      if (!code || !stockMap[code]) continue;
+      (disclosureByTicker[code] ??= []).push({
+        label: sig.signalLabel,
+        type: sig.signalType,
+        direction: sig.direction,
+        date: sig.disclosure.rcept_dt,
+        url: sig.disclosure.url,
+      });
+    }
+    // 종목별 최근순 최대 2건으로 정리(칩 과다 방지)
+    for (const code of Object.keys(disclosureByTicker)) {
+      disclosureByTicker[code] = disclosureByTicker[code]
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 2);
+    }
+  } catch {
+    /* 신호 없으면 비교는 그대로 동작 — graceful */
+  }
+
   const { initialTickers, invalidTickers } = parseCompareQuery(stocksParam, stockMap);
   const initialNames = initialTickers.map((ticker) => stockMap[ticker].name);
 
@@ -211,6 +241,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
         top5={top5}
         recommendedSets={recommendedSets}
         exampleSets={exampleSets}
+        disclosureByTicker={disclosureByTicker}
         initialTickers={initialTickers}
       />
 
@@ -224,7 +255,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
             <strong className="text-zinc-700 dark:text-zinc-300"> 최소 2개 · 최대 4개</strong>를 고르면 나란히 비교합니다.
           </p>
           <div className="mb-4 grid gap-1.5 sm:grid-cols-2 max-w-md mx-auto text-left">
-            {["종합 점수 차이", "추세/밸류/위험조정 강점 비교", "PER/PBR/ROE 차이", "수익률과 테마 차이"].map((item) => (
+            {["종합 점수 차이", "추세/밸류/위험조정 강점 비교", "PER/PBR/ROE 차이", "수익률과 테마 차이", "최근 공시 신호·데이터 점검"].map((item) => (
               <div key={item} className="text-xs text-zinc-600 dark:text-zinc-300">✓ {item}</div>
             ))}
           </div>
