@@ -51,8 +51,14 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - Empty-state preview and noscript list now advertise the disclosure/check context; the stale "공시 화면에서 이어서 확인" pointer is replaced.
 - Display-only: reuses `recentSignals`/`disclosure-signals`/`dataQuality`; no collection, scoring, dataset, or `metricsVersion` change. `/compare` gets `revalidate = 1800` matching `/disclosures`.
 
+## Completed In Backtest Framing Slice
+
+- `/backtest` (real-data `BacktestClient`) now leads the header with a prominent "먼저 읽기 · 이 실험의 한계와 주의점 확인 →" CTA anchoring to `#backtest-limits` — the first obvious action reads limitations before results.
+- `#backtest-limits` wraps the date-mismatch notice + risk/limitations list, so the CTA lands at the top of the old-vs-current caveat cluster (`scroll-mt-4`).
+- The "마지막 리밸런싱 구성 예시" holdings list is now a `<details>` collapsed by default (summary keeps the `현재 추천 아님` badge + `펼쳐 보기` hint), so the pick-list no longer competes with the caveat message; content is still one tap away.
+- Display-only: backtest calculations, dates, source data, and result numbers unchanged. No new copy about the old-vs-current relationship (already covered by `BacktestDateMismatchNotice` + amber badge + 3-date footer) to avoid overexplaining.
+
 ## Remaining Code Work
-- Backtest lab: make “read limitations first” the first CTA and collapse the latest rebalance example by default.
 - Filter SEO: set canonical/noindex rules for zero-result and highly parameterized `/stocks` filter combinations.
 - Chart markers: add score move, DART filing, flow spike, 3M warning, and drawdown markers as a later chart slice.
 

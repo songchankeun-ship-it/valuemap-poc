@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TrendingUp, ShieldAlert } from "lucide-react";
+import { TrendingUp, ShieldAlert, ChevronRight } from "lucide-react";
 import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
 import { MonthlyHeatmap } from "@/components/backtest/MonthlyHeatmap";
@@ -268,14 +268,24 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
           과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과입니다 · 현재 종합 점수 검증 결과는 아닙니다.
         </p>
+        {/* 결과보다 한계를 먼저 읽게 하는 1순위 행동(§5-7). 결과가 아래로 긴 모바일에서 특히 유효. */}
+        <a
+          href="#backtest-limits"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-3 py-2 text-xs font-semibold text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition"
+        >
+          <ShieldAlert className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          먼저 읽기 · 이 실험의 한계와 주의점 확인 →
+        </a>
         <div className="mt-3">
           <BacktestLimitBadges />
         </div>
       </header>
 
-      <BacktestDateMismatchNotice generatedAt={data.generatedAt} siteDataAsOf={siteDataAsOf} />
+      <div id="backtest-limits" className="scroll-mt-4 space-y-6">
+        <BacktestDateMismatchNotice generatedAt={data.generatedAt} siteDataAsOf={siteDataAsOf} />
 
-      <BacktestRiskNotice assumptions={data.assumptions} benchmarkLabel={data.benchmarkLabel} />
+        <BacktestRiskNotice assumptions={data.assumptions} benchmarkLabel={data.benchmarkLabel} />
+      </div>
 
       <div className="flex gap-1.5 flex-wrap">
         {data.strategies.map((s) => (
@@ -414,18 +424,20 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
         <div className="space-y-3">
           <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
-            <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-0.5 flex items-center gap-1.5 flex-wrap">
+            <details className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
+              <summary className="flex items-center gap-1.5 flex-wrap cursor-pointer list-none text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 [&::-webkit-details-marker]:hidden">
+                <ChevronRight className="w-3.5 h-3.5 shrink-0 transition-transform group-open:rotate-90" aria-hidden="true" />
                 마지막 리밸런싱 구성 예시 {active.latestHoldings.length}종목
                 <span className="inline-flex items-center rounded-full border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">현재 추천 아님</span>
-              </div>
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 백테스트 규칙을 마지막 리밸런싱 시점에 적용했을 때의 구성 예시입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
+                <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500 group-open:hidden">· 펼쳐 보기</span>
+              </summary>
+              <div className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-500 mb-2 leading-relaxed">과거 백테스트 규칙을 마지막 리밸런싱 시점에 적용했을 때의 구성 예시입니다 · 현재 확인 후보나 추천이 아닙니다.</div>
               <div className="flex flex-wrap gap-1.5">
                 {active.latestHoldings.map((tk) => (
                   <Link key={tk} href={"/stock/" + tk} prefetch={false} className="text-[11px] px-2 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 transition">{names[tk] ?? tk}</Link>
                 ))}
               </div>
-            </section>
+            </details>
           ) : null}
         </div>
       ) : null}

@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [claude] Reaudit follow-up — 백테스트 한계 우선 CTA · 마지막 리밸런싱 예시 기본 접힘
+- **범위**: 재검수 후속 일곱 번째 슬라이스(follow-up matrix "Backtest lab" 항목). `/backtest`가 "현재 점수 성과 증명"이 아니라 "한계가 앞서는 실험"으로 읽히게 표시/배치만 조정. 백테스트 계산·기간·소스 데이터·결과 숫자는 무변경. 편집 1파일: `src/components/BacktestClient.tsx`(실데이터 경로), 문서 3.
+- **변경**: (1) 헤더 부제 바로 아래에 눈에 띄는 1순위 CTA "먼저 읽기 · 이 실험의 한계와 주의점 확인 →"(amber pill, `ShieldAlert`) 추가 — 결과보다 한계 읽기를 첫 행동으로. (2) 날짜 불일치 고지 + 위험·한계 리스트를 `id="backtest-limits"`(`scroll-mt-4`) 래퍼로 묶어 CTA가 과거↔현재 주의 클러스터 맨 위로 스크롤되게 함. (3) "마지막 리밸런싱 구성 예시 N종목"을 `<details>` 기본 접힘으로 전환(summary에 `현재 추천 아님` 배지 + `펼쳐 보기` 힌트 유지, `ChevronRight` group-open 회전) — 종목 칩 목록이 주의 메시지와 경쟁하지 않게. 한 탭으로 펼침 가능. (4) 과거↔현재 관계는 기존 `BacktestDateMismatchNotice`+amber 배지+3날짜 푸터로 이미 명시 → 과설명 방지 위해 신규 카피 미추가.
+- **불변식**: `public/data/*`·`backtest-result.json`·점수식·`compositeScore`/지표 산출·DART 수집·`metricsVersion` 무변경. 신규 지표/프롭 0, `lucide-react`에서 `ChevronRight`만 추가 import.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` clean, `npm run build` 0. local prod 4489 `/backtest` 200 + `smoke-check --all` 23/23 200. SSR 확인: CTA·`href="#backtest-limits"`·anchor id·"읽기 전에" 한계 블록 렌더, 리밸런싱 예시는 `<details>`에 `open` 속성 없이 기본 접힘, U+FFFD 0. 리스너 PID 10328만 taskkill, AI Center 4310 무변경.
+- **남은 소유자**: 실기기 390×844 육안(접힘 토글·스크롤 앵커 동작)·언어 토글 EN 실확인은 운영자 게이트(Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.
+- **다음 자동화 진입점**: 남은 코드 작업은 필터 canonical/noindex(`/stocks` 0건·과다 파라미터) → 차트 마커(점수 이동·공시·수급 스파이크·3M 경고·낙폭) 순서. Search Console 색인 재요청·법무 검토·풀 백테스트 파이프라인은 외부/소유자 조치로 유지.
+
 ## 2026-07-10 · [claude] Reaudit follow-up — 비교 화면 공시 컨텍스트·주의 플래그·"먼저 무엇을 비교하는지" 프레임
 - **범위**: 재검수 후속 여섯 번째 슬라이스(follow-up matrix "Compare table" 항목). 비교 결과를 원시 표가 아니라 (1) 이 묶음의 성격을 짚는 프레임 + (2) 종목별 최근 공시 신호·데이터 점검이 있는 화면으로 보강. 표시 전용 — 데이터·점수 산식·DART/공시 수집·생성 데이터셋·`metricsVersion` 무변경. 편집 2파일: `src/app/compare/page.tsx`(서버)·`src/components/CompareClient.tsx`(클라이언트), 문서 3.
 - **변경**: (1) **먼저 무엇을 비교하는지 프레임** — 결과 상단에 같은 업종/혼합 여부 한 줄 + 사실 칩(업종, PER 범위, 최근 공시 신호 종 수, 데이터 점검 권장 종 수). 중립·기술 표현, 추천 없음. (2) **최근 공시 신호 · 데이터 점검 섹션** — 종목별로 최근 14일 DART 신호(라벨·접수일·방향, 원문 링크)를 `getRecentSignals(14)`(라이브 실패 시 샘플 fallback)로 노출하고, `getDataWarnings`/`isSuspect` 결과를 주의 플래그로 표시. 데이터 없으면 "최근 공시 신호 없음"·"이상값 점검 통과"로 graceful. (3) 빈 상태 프리뷰·noscript 목록에 "최근 공시 신호·데이터 점검" 추가, "공시 화면에서 이어서 확인" 낡은 안내 교체. (4) `/compare`에 `revalidate = 1800` 추가(`/disclosures`와 동일 패턴). 신규 프롭 1개(`disclosureByTicker`), 신규 헬퍼 1개(`fmtDiscDate`)만 추가.
