@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-10 (KST)
+Last updated: 2026-07-09T15:13:01.887Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: manual - reaudit follow-up watchlist daily-routine strengthening
-- Run: n/a
-- Status: completed locally
+- Task: 124 - ORNScore follow-up 2026-07-09 A - Watchlist first-run momentum
+- Run: 121
+- Status: completed
 - Agent: claude
-- Note: Branch `ai-center/task-124-ornscore-follow-up-2026-07-09-a-watc` strengthens `/watchlist` as a daily-routine screen for logged-out / not-yet-saved users. Empty state now hands off recent-viewed stocks as an actionable one-tap "이어담기" list (replacing the old text pointer), sample/recent rows show today score-delta chips (▲/▼N, hidden at 0), and "내 현황" adds a lightweight change summary for returning non-savers ("최근 본 종목 오늘 변화: 점수가 움직인 종목 M / N"). Display/entry only — `watchlist.ts` storage/migration, scoring, DART, and `metricsVersion` unchanged; wording stays neutral (참고 정보 · 매수·매도 추천 아님) and keeps the local-only save notice light (no account requirement). Gates: tsc 0, verify_metrics 138/0/Metrics 2.4, git diff --check clean, build 0 (/watchlist 12.7 kB), local prod 4491 /watchlist 200 with SSR shell + new strings in client chunk. Local commit only; no push/deploy. 390px in-app browser check remains an operator gate (Playwright not configured; empty-state routine content is localStorage-driven client render).
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
