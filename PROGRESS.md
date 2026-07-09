@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [claude] Reaudit follow-up — /stocks 필터 SEO(0건·과다 파라미터 noindex/canonical)
+- **범위**: 재검수 후속 여덟 번째 슬라이스(follow-up matrix "Filter SEO" 항목). 0건·과다 파라미터 `/stocks` 필터 조합의 SEO 리스크(무한 저품질 URL 색인)를 줄이되, 정상 `/stocks`·단일 업종/테마 발견 페이지의 색인성은 유지. 표시/메타데이터 전용 — 종목 데이터·필터 의미·점수 산식·`metricsVersion` 무변경. 편집 2파일: `src/app/stocks/page.tsx`(`generateMetadata`), `package.json`(스크립트 1개), 신규 게이트 `scripts/verify-stocks-seo.mjs`, 문서 3.
+- **변경**: (1) `generateMetadata`가 SSR 시점에 `serverResultCount`(theme/sector/q 3축, 클라이언트 `matchesConfig`와 동일 의미)로 결과 건수를 계산하고 `conservativeIndex` 판정. (2) 축소 대상 = 결과 0건(존재하지 않는 테마/업종/검색어) · 자유 검색어 `q`(무한 조합) · 필터 축 2개 이상 · 미인식/과다 파라미터 → `robots:{index:false,follow:true}` + `canonical:/stocks`. (3) 색인 유지 = 기본 `/stocks`(self canonical) · 단일 유효 업종(`canonical:/stocks?sector=…`) · 단일 유효 테마(`canonical:/stocks?theme=…`). 레거시 `?theme=<업종명>`은 정규 `?sector=<업종명>`으로 통합. (4) 기존 테마 URL "canonical 미지정" 주석/동작을 자기 참조 canonical로 교체(과다 파라미터만 축소).
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·DART 수집·필터 시맨틱(`StocksExplorer` 무편집)·`metricsVersion` 무변경. 신규 프롭/데이터 0. `robots:{index:false,follow:true}`는 기존 `/blog` 패턴 재사용.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` clean, `npm run build` 0(`/stocks` ƒ dynamic). local prod 4489: 신규 `verify:stocks-seo` 7/7 OK(기본/단일업종/단일테마=index+self canonical, q검색/0건테마/theme+q/업종+utm=noindex+canonical /stocks), `verify:routes` 9/9, `smoke:check --all` 23/23. 직접 curl로 `?sector=반도체·IT부품`=index+self canonical, 레거시 `?theme=금융`=index+`canonical:/stocks?sector=금융` 확인. U+FFFD 0. 리스너 PID 4180만 taskkill, AI Center 4310 LISTENING 유지.
+- **남은 소유자**: Search Console 색인 재요청(배포 후)·법무 검토는 외부/소유자 조치. 실기기 육안은 해당 없음(메타데이터 전용, SSR HTML로 게이트 검증 완료).
+- **다음 자동화 진입점**: 남은 코드 작업은 차트 마커(점수 이동·DART 공시·수급 스파이크·3M 경고·낙폭) 슬라이스. Search Console·법무·풀 백테스트 파이프라인은 외부/소유자 조치로 유지.
+
 ## 2026-07-10 · [claude] Reaudit follow-up — 백테스트 한계 우선 CTA · 마지막 리밸런싱 예시 기본 접힘
 - **범위**: 재검수 후속 일곱 번째 슬라이스(follow-up matrix "Backtest lab" 항목). `/backtest`가 "현재 점수 성과 증명"이 아니라 "한계가 앞서는 실험"으로 읽히게 표시/배치만 조정. 백테스트 계산·기간·소스 데이터·결과 숫자는 무변경. 편집 1파일: `src/components/BacktestClient.tsx`(실데이터 경로), 문서 3.
 - **변경**: (1) 헤더 부제 바로 아래에 눈에 띄는 1순위 CTA "먼저 읽기 · 이 실험의 한계와 주의점 확인 →"(amber pill, `ShieldAlert`) 추가 — 결과보다 한계 읽기를 첫 행동으로. (2) 날짜 불일치 고지 + 위험·한계 리스트를 `id="backtest-limits"`(`scroll-mt-4`) 래퍼로 묶어 CTA가 과거↔현재 주의 클러스터 맨 위로 스크롤되게 함. (3) "마지막 리밸런싱 구성 예시 N종목"을 `<details>` 기본 접힘으로 전환(summary에 `현재 추천 아님` 배지 + `펼쳐 보기` 힌트 유지, `ChevronRight` group-open 회전) — 종목 칩 목록이 주의 메시지와 경쟁하지 않게. 한 탭으로 펼침 가능. (4) 과거↔현재 관계는 기존 `BacktestDateMismatchNotice`+amber 배지+3날짜 푸터로 이미 명시 → 과설명 방지 위해 신규 카피 미추가.

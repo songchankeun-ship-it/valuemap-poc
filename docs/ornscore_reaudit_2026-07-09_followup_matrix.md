@@ -58,8 +58,13 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - The "마지막 리밸런싱 구성 예시" holdings list is now a `<details>` collapsed by default (summary keeps the `현재 추천 아님` badge + `펼쳐 보기` hint), so the pick-list no longer competes with the caveat message; content is still one tap away.
 - Display-only: backtest calculations, dates, source data, and result numbers unchanged. No new copy about the old-vs-current relationship (already covered by `BacktestDateMismatchNotice` + amber badge + 3-date footer) to avoid overexplaining.
 
+## Completed In Filter SEO Slice
+
+- `/stocks` `generateMetadata` now computes a server-side `resultCount` (theme/sector/q axes, mirroring `matchesConfig`) and a `conservativeIndex` flag. Degenerate URLs get `robots: { index:false, follow:true }` + `canonical: /stocks`: zero-result combinations (nonexistent theme/sector/query), free-text `q` search (infinite URL space), 2+ filter dimensions, or any over-parameterized/unknown-param URL.
+- Meaningful simple pages stay indexable with a self-referencing canonical: plain `/stocks` (`canonical: /stocks`), a single valid sector (`canonical: /stocks?sector=…`), and a single valid theme (`canonical: /stocks?theme=…`). Legacy `?theme=<sectorName>` URLs now consolidate onto the canonical `?sector=<sectorName>` form.
+- Display/metadata-only: no change to stock data, filtering semantics, scoring, or `metricsVersion`. New gate `scripts/verify-stocks-seo.mjs` (`npm run verify:stocks-seo`) asserts the robots/canonical contract from live SSR HTML across 7 representative URLs.
+
 ## Remaining Code Work
-- Filter SEO: set canonical/noindex rules for zero-result and highly parameterized `/stocks` filter combinations.
 - Chart markers: add score move, DART filing, flow spike, 3M warning, and drawdown markers as a later chart slice.
 
 ## External Or Owner-Gated Work
