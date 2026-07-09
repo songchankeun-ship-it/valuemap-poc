@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [claude] Reaudit follow-up — 관심 종목 일상 루틴 강화(비로그인·미저장)
+- **범위**: 재검수 후속 다섯 번째 슬라이스. 로그인하지 않았거나 아직 종목을 담지 않은 사용자에게 `/watchlist`가 "죽은 빈 화면"이 아니라 매일 열어볼 루틴 화면으로 읽히도록 표시/진입 전용 보강. 데이터·점수 산식·`watchlist.ts` 저장/마이그레이션·`metricsVersion`은 변경 없음. 편집 1파일: `src/components/WatchlistClient.tsx`.
+- **변경**: (1) 빈 상태의 기존 "최근 본 종목" 텍스트 안내를 실제 액션 블록 **최근 본 종목 이어담기**(최대 4개, 1탭 담기 + 오늘 점수 델타 칩)로 교체 — 둘러보기만 하고 담지 않은 재방문자를 곧장 담기로 연결. (2) 예시·이어담기 항목에 오늘 종합 점수 델타 칩(▲/▼N, 0이면 숨김) 추가로 화면이 살아 있게 표시. (3) `내 현황`에 비로그인·미저장이지만 최근 본 종목이 있는 경우 **최근 본 종목 오늘 변화: 점수가 움직인 종목 M / N** 요약 한 줄 추가. 모두 기존 `tickerToDelta`·`recentViews`·`addToWatchlist` 재사용, 신규 프롭/데이터 0. 카피는 중립("참고 정보 · 매수·매도 추천 아님"), 계정 저장 오해 없이 "담기를 누른 종목만 이 기기에 저장" 유지.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff --check` clean, `npm run build` 0(SSG, `/watchlist` 12.7 kB). local prod 4491 `/watchlist` 200, SSR shell(h1 `관심 종목`·noscript 빈 상태) 렌더 확인, 신규 문구 3종("이어담기"·"최근 본 종목 오늘 변화"·"점수가 움직인 종목") 클라이언트 청크 적재 확인, U+FFFD 0. 리스너 PID 32404만 taskkill, AI Center 4310 LISTENING 유지.
+- **남은 소유자**: 빈 상태→담기 후 목록 전환·이어담기 델타 칩·390×844 육안은 운영자 게이트(localStorage 의존 클라이언트 렌더, Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.
+- **다음 자동화 진입점**: 남은 코드 작업은 비교표 공시·주의 플래그 + "왜 이 조합부터" 요약 → 백테스트 한계 우선 CTA/리밸런싱 접힘 → 필터 canonical/noindex → 차트 마커 순서로 이어간다. Search Console 색인 재요청·법무 검토는 외부/소유자 조치로 유지.
+
 ## 2026-07-09 · [codex] Reaudit follow-up — 종목 상세 상단 압축
 - **범위**: 재검수 `9c3d882c-9747-480d-b596-2675efffad18/pasted-text.txt` 후속 네 번째 슬라이스. 종목 상세 첫 화면을 이름/가격, 탐색 우선도 점수·순위, 대표 강점/먼저 볼 지표, 빠른 링크 중심으로 다시 압축했다. 데이터·점수 산식·순위 계산·가격·공시 수집 로직은 변경 없음.
 - **상단 순서/밀도**: 모바일에서 `StockConclusionHero` 순서를 `점수 카드 → 빠른 링크 → 현재 이 종목은`으로 재배치했다. 데스크톱은 결론/점수 2열을 유지하고 빠른 링크를 아래 전체 폭 strip으로 둔다. `StockHeader`, `PriorityScoreCard`, `ConclusionSummaryCard`의 padding/radius/간격을 줄이고, 긴 점수·순위 설명은 `점수·순위 기준` details로 접었다.

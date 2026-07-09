@@ -37,9 +37,14 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - Stock-detail header, priority card, conclusion card, and quick-link strip spacing/radius were compressed without changing scoring, ranks, price, disclosure, or data logic.
 - Browser checks confirmed `/stock/005930` quick links are in the first viewport on 390x844 and 1366x900, with detailed education blocks lower on the page.
 
-## Remaining Code Work
+## Completed In Watchlist Routine Slice
 
-- Watchlist empty state: add a stronger temporary/sample experience if the current sample preview still does not create enough first-run momentum.
+- `/watchlist` empty state now hands off recent-viewed stocks: an actionable "최근 본 종목 이어담기" list (up to 4) with one-tap add replaces the old text-only pointer, so returning non-savers continue from what they browsed.
+- Sample and recent-handoff rows now show a today score-delta chip (▲/▼N, composite delta only, hidden when 0) so the first-run screen reads as a live routine, not a static list.
+- "내 현황" now shows a lightweight change summary for logged-out users with no saved symbols but recent views ("최근 본 종목 오늘 변화: 점수가 움직인 종목 M / N").
+- All additions reuse existing `tickerToDelta`/`recentViews`/`addToWatchlist`; storage, migration, scoring, and `metricsVersion` unchanged. Wording stays neutral (참고 정보 · 매수·매도 추천 아님).
+
+## Remaining Code Work
 - Compare table: add recent disclosure signals and warning flags; add a short “why compare these first” summary.
 - Backtest lab: make “read limitations first” the first CTA and collapse the latest rebalance example by default.
 - Filter SEO: set canonical/noindex rules for zero-result and highly parameterized `/stocks` filter combinations.

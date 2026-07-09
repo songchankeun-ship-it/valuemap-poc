@@ -380,6 +380,20 @@ export function WatchlistClient({
 
   const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
 
+  // 오늘 점수 델타 칩(표시 전용 · 종합 점수 델타만 · 0이면 표시 안 함 · 매수·매도 추천 아님)
+  const deltaChip = (ticker: string) => {
+    const raw = tickerToDelta[ticker];
+    const d = raw === undefined ? 0 : Math.round(raw);
+    if (d === 0) return null;
+    return (
+      <span className={"shrink-0 inline-flex items-center gap-0.5 text-[11px] font-semibold tabular-nums px-1.5 py-0.5 rounded " + (d > 0 ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" : "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400")}>
+        {d > 0 ? "▲" : "▼"}{Math.abs(d)}
+      </span>
+    );
+  };
+  // 최근 본 종목 중 오늘 점수가 움직인 개수 — 담은 종목이 없어도 루틴 요약을 보여주기 위한 참고 표시
+  const recentMoved = recent.filter((r) => Math.round(tickerToDelta[r.ticker] ?? 0) !== 0).length;
+
   return (
     <div className="space-y-8">
       {/* 내 현황 요약 — 재방문 개인화 출발점 */}
@@ -413,6 +427,12 @@ export function WatchlistClient({
                 내린 종목 <strong className="text-blue-600 dark:text-blue-400">{downCount}</strong> ·
                 변동 없음 <strong className="text-zinc-700 dark:text-zinc-300">{flatCount}</strong>
                 <span className="block mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</span>
+              </p>
+            ) : recent.length > 0 ? (
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug break-words tabular-nums">
+                <span className="text-zinc-500 dark:text-zinc-500">최근 본 종목 오늘 변화:</span>{" "}
+                점수가 움직인 종목 <strong className="text-zinc-800 dark:text-zinc-200">{recentMoved}</strong> / {recent.length}
+                <span className="block mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">아래에서 바로 관심 종목에 담아 이 화면에서 추적을 시작할 수 있어요.</span>
               </p>
             ) : null}
           </div>
@@ -597,14 +617,32 @@ export function WatchlistClient({
             </div>
             {/* 자동 저장 없이 미리보기와 개별 추가만 제공한다. 사용자가 담기를 누른 종목만 이 기기에 저장된다. */}
             <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">샘플은 미리보기예요. 개별 담기를 누른 종목만 이 기기에 저장됩니다.</p>
-            {/* 관심 종목 담는 법 — 최근 본 종목이 있을 때만 아래 섹션으로 스크롤(중복 목록 없이 흐름 연결) */}
+            {/* 최근 본 종목 이어담기 — 담지 않고 둘러본 종목을 빈 상태에서 바로 1탭 담기로 잇는다.
+                (아래 스크롤 안내 대신 실제 액션. 담기를 누른 종목만 이 기기에 저장된다.) */}
             {recent.length > 0 ? (
-              <div className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
-                관심 종목 담는 법이 낯설다면{" "}
-                <a href="#recent-views" className="inline-flex items-center gap-0.5 font-medium text-blue-600 dark:text-blue-400 hover:underline align-baseline">
-                  <Clock className="w-3 h-3" /> 최근 본 종목
-                </a>
-                에서 다시 열어 담아보세요.
+              <div className="mt-5 text-left max-w-md mx-auto">
+                <div className="mb-1.5 flex items-center gap-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+                  <Clock className="w-3 h-3" /> 최근 본 종목 이어담기
+                </div>
+                <ul className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {recent.slice(0, 4).map((r) => (
+                    <li key={r.ticker} className="flex items-center justify-between gap-2 px-3 py-2.5">
+                      <Link href={`/stock/${r.ticker}`} className="min-w-0 flex-1 group flex items-center gap-1.5">
+                        <span className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">{r.name}</span>
+                        {deltaChip(r.ticker)}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => { void addToWatchlist(r.ticker); }}
+                        className={`shrink-0 inline-flex items-center gap-1 min-h-[44px] px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:border-pink-400 dark:hover:border-pink-600 hover:text-pink-600 dark:hover:text-pink-400 transition ${FOCUS_RING}`}
+                        aria-label={`${r.name} 관심 종목에 담기`}
+                      >
+                        <Heart className="w-3.5 h-3.5" /> 담기
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">최근 열어본 종목이에요 · 담기를 누른 종목만 이 기기에 저장됩니다.</p>
               </div>
             ) : null}
             {/* 예시 종목 — 서버에서 실제 필드로 뽑은 3개. 각 항목이 한 줄 근거와 1탭 담기 버튼을 가진다(매수·매도 추천 아님) */}
@@ -615,7 +653,10 @@ export function WatchlistClient({
                   {exampleStocks.map((ex) => (
                     <li key={ex.ticker} className="flex items-center justify-between gap-2 px-3 py-2.5">
                       <Link href={`/stock/${ex.ticker}`} className="min-w-0 flex-1 group">
-                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">{ex.name}</div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">{ex.name}</span>
+                          {deltaChip(ex.ticker)}
+                        </div>
                         <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{ex.reason}</div>
                       </Link>
                       <button
