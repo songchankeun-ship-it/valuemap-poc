@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-09T15:50:36.345Z
+Last updated: 2026-07-09T16:10:57.682Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 126 - ORNScore follow-up 2026-07-09 C - Backtest limitations-first flow
-- Run: 123
+- Task: 127 - ORNScore follow-up 2026-07-09 D - Stocks filter canonical and noindex rules
+- Run: 124
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
