@@ -64,8 +64,14 @@ This matrix exists so follow-up agents do not silently drop items from the publi
 - Meaningful simple pages stay indexable with a self-referencing canonical: plain `/stocks` (`canonical: /stocks`), a single valid sector (`canonical: /stocks?sector=…`), and a single valid theme (`canonical: /stocks?theme=…`). Legacy `?theme=<sectorName>` URLs now consolidate onto the canonical `?sector=<sectorName>` form.
 - Display/metadata-only: no change to stock data, filtering semantics, scoring, or `metricsVersion`. New gate `scripts/verify-stocks-seo.mjs` (`npm run verify:stocks-seo`) asserts the robots/canonical contract from live SSR HTML across 7 representative URLs.
 
+## Completed In Chart Marker Layer Slice
+
+- `StockPriceChart` now renders a non-invasive marker layer computed purely from the price points it already receives — no new data collection, API calls, props, or scoring change. Markers recompute per visible range via `useMemo` so chart performance and the summary-first flow are preserved.
+- Implemented marker types (first meaningful set): **flow spike** (거래량 급증 — days ≥ 2.5× the trailing 20-business-day volume average, strongest 3 kept) and **drawdown** (고점 대비 저점 — deepest point below the running peak when ≤ −10%, 1 kept). Both are derivable from close/volume alone, so they render for representative stocks (verified 042700/139130/078930 show both, 005930/000660 show drawdown) and gracefully omit when nothing qualifies (n<5, no spike, drawdown > −10%).
+- Mobile clutter guard: markers capped (≤3 flow + 1 drawdown), a legend appears only when markers exist, and a `지점 숨기기/보기` toggle lets users hide the layer. Markers live inside the existing fixed-height SVG viewBox, so they add no layout height and cannot overlap adjacent content; the legend row uses `flex-wrap`. Hovering a marker enriches the existing date/volume readout with its detail.
+
 ## Remaining Code Work
-- Chart markers: add score move, DART filing, flow spike, 3M warning, and drawdown markers as a later chart slice.
+- Chart markers — remaining types: **score movement**, **DART filing**, and **3M warning** markers. These need date-aligned event data threaded into the chart (score history from Supabase `daily_scores`, disclosures from `/api/disclosures/[ticker]`, 3M surge/warning from `getDataWarnings`), unlike the price-derived flow/drawdown markers already shipped. The marker scaffold (`ChartMarker`/`MARKER_META`/marker layer + legend + toggle) is in place to extend; the text-based `StockEventTimeline` already surfaces score+disclosure events separately.
 
 ## External Or Owner-Gated Work
 
