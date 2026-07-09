@@ -238,7 +238,7 @@ const selfCheck: SelfCheck = {
 };
 
 /** 데이터 오류 신고 접수 메일 주소(단일 소스). */
-export const reportEmail = "songchankeun@gmail.com";
+export const reportEmail = "contact@ornscore.com";
 
 /** 오류 신고 시 포함하면 확인이 빨라지는 항목 — 화면 체크리스트와 메일 본문이 같은 정의를 쓴다. */
 export interface DataIssueField {

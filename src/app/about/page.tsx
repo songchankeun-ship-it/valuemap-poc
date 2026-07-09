@@ -143,10 +143,10 @@ export default function AboutPage() {
           </p>
           <p>기능 제안·협업 문의는 아래로 연락해주세요:</p>
           <p className="font-mono text-zinc-900 dark:text-zinc-100">
-            <a href="mailto:songchankeun@gmail.com" className="text-blue-600 dark:text-blue-400 underline">songchankeun@gmail.com</a>
+            <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a>
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3">
-            운영: 송찬근 / 필로소디 · 한국 개인 투자자를 위한 사이드 프로젝트로 시작되었습니다.
+            운영: 오른스코어 운영팀 · 한국 개인 투자자를 위한 사이드 프로젝트로 시작되었습니다.
           </p>
         </div>
       </section>

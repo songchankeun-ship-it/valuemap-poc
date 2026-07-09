@@ -23,7 +23,7 @@
 | 스토어 짧은 설명(초안) | 한국 주식 후보를 점수·공시·재무 지표로 빠르게 좁히는 탐색 도구 | `docs/app-store-submission-pack.md:41` |
 | 개인정보처리방침 링크 | `https://ornscore.com/privacy` | 페이지 실재 `src/app/privacy/page.tsx` · 참조 `docs/app-store-submission-pack.md:24` |
 | 이용약관 링크 | `https://ornscore.com/terms` | 페이지 실재 `src/app/terms/page.tsx` · 참조 `docs/app-store-submission-pack.md:25` |
-| 문의(mailto) | `songchankeun@gmail.com` | `docs/app-store-submission-pack.md:26` |
+| 문의(mailto) | `contact@ornscore.com` | `docs/app-store-submission-pack.md:26` |
 | 모바일 우선 가치 제안 | 설치형(standalone) 세로 화면에서 오늘 살펴볼 종목을 한 화면에 좁혀 보는 탐색 도구 | `src/app/manifest.ts:18` (`display:"standalone"`), `:24` (`orientation:"portrait"`), `:25-29` (`shortcuts` 오늘/종목/공시) · `src/app/layout.tsx:51-55` (`appleWebApp`), `:62-70` (`viewport`/`themeColor`) |
 
 **요약 판단:** 이름·태그라인·support/privacy 링크·모바일 우선 표면(standalone·portrait·shortcuts·apple-touch·appleWebApp·viewport·theme-color)은 모두 코드에 존재하고 정합하다. 갭은 전부 **에셋 의존(스크린샷/공유 이미지)** 이며 코드 결함이 아니다(§3 참조).

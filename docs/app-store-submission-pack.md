@@ -23,7 +23,7 @@
 - 웹 URL: `https://ornscore.com`
 - 개인정보처리방침: `https://ornscore.com/privacy`
 - 이용약관: `https://ornscore.com/terms`
-- 문의: `songchankeun@gmail.com`
+- 문의: `contact@ornscore.com`
 - 카테고리 후보: Finance
 - 로그인 방식: 이메일 매직링크, Kakao, Google, Naver.
 - 서비스 성격: 한국 주식 데이터 탐색 도구. 투자 추천, 매수·매도 권유, 투자자문, 거래 체결 기능 없음.
@@ -80,7 +80,7 @@
 - 공유/위탁 후보: Supabase, Vercel, Resend, Kakao, Google, Naver. `https://ornscore.com/privacy`의 위탁 처리 표와 일치해야 한다.
 - 결제 정보: 현재 앱 내 결제 없음.
 - 광고/추적: 현재 광고성 추적 목적 없음으로 운영자가 확인.
-- 삭제 요청: 회원 탈퇴/삭제 요청은 `songchankeun@gmail.com`으로 처리. Play Console이 공개 데이터 삭제 URL을 요구하면 `/privacy` 또는 별도 삭제 안내 URL을 추가한 뒤 제출한다.
+- 삭제 요청: 회원 탈퇴/삭제 요청은 `contact@ornscore.com`으로 처리. Play Console이 공개 데이터 삭제 URL을 요구하면 `/privacy` 또는 별도 삭제 안내 URL을 추가한 뒤 제출한다.
 - 주의: 공개 베타에서는 AI 분석 기능을 전면에 노출하지 않는다. AI 기능을 다시 공개하면 `privacy`와 Data safety/App Privacy 답변에 AI 처리 제공자와 보관 항목을 복구해야 한다.
 
 ## App Store 등록 초안

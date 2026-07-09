@@ -128,7 +128,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제8조 (문의)</h2>
-          <p>약관 관련 문의: <a href="mailto:songchankeun@gmail.com" className="text-blue-600 dark:text-blue-400 underline">songchankeun@gmail.com</a></p>
+          <p>약관 관련 문의: <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a></p>
         </section>
 
       </div>

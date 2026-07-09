@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [claude] 최종 릴리스 전 연락처 정리 — 공개 이메일 도메인화·개인명 제거(Task 130)
+- **범위**: Task 130 — 최종 릴리스(Task 129) 직전 공개 연락처 정리. 공개면의 개인 Gmail(`songchankeun@gmail.com`)을 도메인 이메일 `contact@ornscore.com`으로 교체하고 개인정보/법적 연락처 문구에서 개인명(송찬근)을 중립 조직명("오른스코어 운영팀")으로 대체. 표시/문구 전용 — 데이터·점수 산식·`metricsVersion`·발신 주소 무변경. 로컬 소스/문서만.
+- **변경**: (1) mailto/연락처 교체 — `/about`(문의 mailto), `/terms`(제8조 문의), `/privacy`(6. 권리 행사·8. 책임자 연락처), 데이터 오류 신고 단일 소스 `src/lib/dataStatus.ts` `reportEmail`(→`/status`·`/about`·푸터 공유), 제출 문서 `docs/app-store-submission-pack.md`(문의·삭제 요청)·`docs/ornscore-mobile-listing-prep-pack.md`(문의 mailto). (2) 개인명 제거 — `/privacy` §8 "개인정보 보호 책임자: 송찬근 / 필로소디" → "오른스코어 운영팀", `/about` "운영: 송찬근 / 필로소디" → "운영: 오른스코어 운영팀". 법적 의미 유지(책임 운영자에게 `contact@ornscore.com`으로 연락 가능).
+- **불변식**: 발신 전용 주소 `noreply@ornscore.com`(cron notify·evaluate-alerts) 무변경 — 사용자 연락/회신용 아님. 신규 별칭(support@/privacy@) 발명 안 함, `contact@ornscore.com` 단일 사용. 잔여 `songchankeun@gmail.com`은 `CLAUDE.md` 소유자 프로필·과거 태스크 기록(`PROGRESS.md`/`AI_HANDOFF.md`)뿐 — 내부 인수인계 기록(비공개), 이 슬라이스가 상위 결정으로 문서화.
+- **검증**: `rg songchankeun@gmail.com`·`rg 송찬근` 공개 소스/문서 0건(내부·아카이브만 잔존), `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0, `git diff --check` clean, `npm run build` 0. local prod `/about`·`/terms`·`/privacy` 200 + 신규 이메일 렌더 확인. 로컬 커밋만·push 미수행·main 무변경.
+- **다음**: Task 129 최종 릴리스 — 연락처 정리 완료됨(이 항목이 신호). 잔여 코드 작업은 차트 마커(점수 이동·DART 공시·3M 경고). Search Console·법무 검토는 외부/소유자 조치.
+
 ## 2026-07-10 · [claude] Reaudit follow-up — 종목 차트 주요 지점 마커 레이어(거래량 급증·낙폭)
 - **범위**: Task 128 — 종목 상세 주가 차트에 비침습 마커 레이어를 추가해 사용자가 차트 맥락과 이벤트를 연결하도록 함. follow-up matrix "Chart markers" 잔여 항목의 첫 유의미 슬라이스. 표시 전용 — 신규 데이터 수집·API·프롭·점수 산식·`metricsVersion` 무변경. 편집 1소스 `src/components/StockPriceChart.tsx` + 문서 3. `StockPriceChartLazy.tsx`·`StockEventTimeline.tsx`·`page.tsx` 무변경.
 - **변경**: 마커 스캐폴드(`MarkerKind`/`ChartMarker`/`MARKER_META`/`computeMarkers`) 신설 — 차트가 이미 받는 `points`(종가·거래량)에서만 파생, 표시 범위별 `useMemo` 재계산(성능·요약 우선 흐름 유지). 마커 2종: **거래량 급증**(직전 20영업일 평균의 2.5배 이상, 강도 상위 3) · **고점 대비 저점**(러닝 피크 대비 −10% 이하 최저점 1). 기존 SVG viewBox 내부에 점선 세로틱+흰테 원으로 렌더(레이아웃 높이 추가 0). 마커 있을 때만 범례 표시, `지점 숨기기/보기` 토글(`showMarkers`)로 은닉, 마커 호버 시 기존 날짜·거래량 표시에 상세 부가. 중립 캡션("가격·거래량에서 자동 표시한 참고용 위치") — 투자자문 문구 없음.

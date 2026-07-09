@@ -157,7 +157,7 @@ export default function PrivacyPage() {
             <li>본인 개인정보 사본(다운로드) 요청</li>
             <li>알림 수신 거부</li>
           </ul>
-          <p className="mt-2">행사 방법: <a href="mailto:songchankeun@gmail.com" className="text-blue-600 dark:text-blue-400 underline">songchankeun@gmail.com</a>으로 이메일</p>
+          <p className="mt-2">행사 방법: <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a>으로 이메일</p>
         </section>
 
         <section>
@@ -167,8 +167,8 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">8. 책임자</h2>
-          <p>개인정보 보호 책임자: 송찬근 / 필로소디</p>
-          <p>연락처: <a href="mailto:songchankeun@gmail.com" className="text-blue-600 dark:text-blue-400 underline">songchankeun@gmail.com</a></p>
+          <p>개인정보 보호 책임자: 오른스코어 운영팀</p>
+          <p>연락처: <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a></p>
         </section>
 
       </div>
