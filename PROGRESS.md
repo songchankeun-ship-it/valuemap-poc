@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] Reaudit — 발견/목록 카드 지표 라벨 약어 정리 (Task 140)
+- **범위**: 재검수 P2 #3 — 발견/목록 화면 하단 범례가 `추=추세(모멘텀) · 거=거래활성도 · 저=저평가(밸류) · 위=위험조정`처럼 약어 + 구용어(모멘텀·저평가)를 노출. **표시/문구 정책 전용** — 정렬·필터 동작, 점수 산식, 수집 코드, 생성 데이터셋, `metricsVersion`(2.4) 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-140-ornscore-reaudit-2026-07-10-j-discov`.
+- **현황 파악**: 카드형(`StocksExplorer` renderCards, 705~708행)은 이미 `t.metric.*` 풀네임(추세·거래활성도·밸류·위험조정) 사용. 데스크톱 표(`StockResultsTable` 헤더)도 `t.table.*` 풀네임 사용. 남은 약어는 **모바일 전용 범례 바**(`md:hidden`, 1240~1242행) 하나뿐 — 그런데 모바일은 카드형만 렌더(표형도 `<lg`에서 카드로 폴백)라 약어가 실제로 카드에 안 뜨는데 범례만 약어를 설명 → 무의미·구용어 잔존.
+- **변경(2파일)**:
+  - `src/lib/copy/stocks.ts` — 범례 `legend` Full 값에서 구용어 괄호 제거: KO `momentumFull "추세(모멘텀)"→"추세"`, `valueFull "저평가(밸류)"→"밸류"`, 단문자 `value "저"→"밸"`(일관성, 실렌더 안됨). EN `momentumFull "Trend (momentum)"→"Trend"`, `valueFull "Value (undervalued)"→"Value"`. 카드 툴팁 `card.tip`도 구용어 선행을 현행어 선행으로: KO `"모멘텀(추세)"→"추세(모멘텀)"`, `"변동성조정(위험조정)"→"위험조정(변동성조정)"`; EN `"Momentum (trend)"→"Trend (momentum)"`, `"Volatility-adjusted…"→"Risk-adjusted (volatility-adjusted)"`. (title 텍스트라 구용어는 괄호 인지 보조로만 유지)
+  - `src/components/StocksExplorer.tsx`(1241행) — 모바일 범례를 약어 매핑(`<strong>추</strong>=추세(모멘텀)…`)에서 풀네임 나열(`<strong>추세</strong> · <strong>거래활성도</strong> · <strong>밸류</strong> · <strong>위험조정</strong>`)로 교체. `/guide/metrics` "자세히" 링크 유지. 정렬/필터/뷰토글 무변경.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF만) · `npm run build` 0(기존 `TrustLayer` ref 경고만). local prod 4623: `verify:routes` 9/9 · `smoke:check --all` 24/24. `/stocks` SSR HTML 직접 확인 — 범례가 `<strong>추세</strong> · <strong>거래활성도</strong> · <strong>밸류</strong> · <strong>위험조정</strong>` 렌더, 구 약어(`저=저평가`·`추=추세(모멘텀)`·`저평가(밸류)`) 노출 0. 리스너 PID 52876만 taskkill.
+- **잔여 리스크 / 다음 큐**: 범례는 기존 컨테이너 내부 래핑 `<span>`이라 390px 가로 오버플로 위험 없음(정적 분석 + build/smoke 통과). 실기기 390×844/데스크톱 육안·EN 토글은 운영자 게이트(Playwright 미구성). 미사용이 된 `legend` 단문자·`card.abbr` 키는 데드코드로 남김(제거 시 노이즈). 후속 고도화(브리프 P2): 종목 상세 차트 마커(공시·점수·거래활성도), 발견 카드형/표형 정보 밀도 분리 심화, 관심 종목 빈 상태 샘플. 로컬 커밋만·push 미수행·main 무변경.
+
+
 ## 2026-07-11 · [claude] Reaudit — 홈 검색 1차 액션화 + 대표 3개 vs 80+ 후보 수 명확화 (Task 139)
 - **범위**: 재검수 P2 #1(홈 검색창이 CTA 링크처럼 보임) · #2(오늘 후보 3개 vs 종합 80+ 후보 수 혼동). **표시/문구 정책 전용** — 기존 검색 동작·점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4) 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-139-ornscore-reaudit-2026-07-10-i-home-s`.
 - **#1 검색 1차 액션화**: (a) 히어로 `GlobalSearch`(variant="hero") placeholder에 예시 추가 — `종목명·코드 검색 (예: 삼성전자, 005930)` / EN `Search by name or code (e.g. Samsung, 005930)`. 접근성 `aria-label`은 간결한 기본 placeholder 유지. (b) 검색창 바로 아래 힌트 1줄 추가 — `예: 삼성전자, 005930, GS — 궁금한 종목을 바로 검색하세요.` (placeholder는 입력 시 사라지므로 항상 보이는 힌트로 보강). (c) 혼동을 주던 보조 CTA 라벨 `종목명·코드 검색`(→ `/stocks` 이동인데 검색처럼 보임)을 `전체 종목 목록`(EN `All stocks`)으로 교체 — 실제 검색은 위 입력창이 담당하고, 이 버튼은 '전체 목록 둘러보기' 역할로 명확화. 검색 로직·라우팅·자동완성 무변경.

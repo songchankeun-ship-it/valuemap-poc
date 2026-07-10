@@ -1238,7 +1238,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       </section>
 
       <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2 text-[10px] text-blue-800 dark:text-blue-300 flex items-center justify-between md:hidden">
-        <span><strong>{t.legend.momentum}</strong>={t.legend.momentumFull} · <strong>{t.legend.flow}</strong>={t.legend.flowFull} · <strong>{t.legend.value}</strong>={t.legend.valueFull} · <strong>{t.legend.vol}</strong>={t.legend.volFull}</span>
+        <span><strong>{t.legend.momentumFull}</strong> · <strong>{t.legend.flowFull}</strong> · <strong>{t.legend.valueFull}</strong> · <strong>{t.legend.volFull}</strong></span>
         <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">{t.legendMore}</Link>
       </div>
 

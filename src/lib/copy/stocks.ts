@@ -283,12 +283,12 @@ export const stocksCopy = {
       perDash: "—",
       strength: "강점",
       warning: "주의",
-      tip: { momentum: "모멘텀(추세)", flow: "거래활성도(거래)", value: "밸류(저평가)", vol: "변동성조정(위험조정)" },
+      tip: { momentum: "추세(모멘텀)", flow: "거래활성도(거래)", value: "밸류(저평가)", vol: "위험조정(변동성조정)" },
       abbr: { momentum: "추", flow: "거", value: "저", vol: "위" },
     },
 
     // ── 모바일 약어 범례 ──
-    legend: { momentum: "추", flow: "거", value: "저", vol: "위", momentumFull: "추세(모멘텀)", flowFull: "거래활성도", valueFull: "저평가(밸류)", volFull: "위험조정" },
+    legend: { momentum: "추", flow: "거", value: "밸", vol: "위", momentumFull: "추세", flowFull: "거래활성도", valueFull: "밸류", volFull: "위험조정" },
 
     // ── 표(StockResultsTable) ──
     table: {
@@ -602,12 +602,12 @@ export const stocksCopy = {
       perDash: "—",
       strength: "Strengths",
       warning: "Caution",
-      tip: { momentum: "Momentum (trend)", flow: "Trading activity", value: "Value (undervalued)", vol: "Volatility-adjusted (risk-adjusted)" },
+      tip: { momentum: "Trend (momentum)", flow: "Trading activity", value: "Value (undervalued)", vol: "Risk-adjusted (volatility-adjusted)" },
       abbr: { momentum: "T", flow: "A", value: "V", vol: "R" },
     },
 
     // ── Mobile legend ──
-    legend: { momentum: "T", flow: "A", value: "V", vol: "R", momentumFull: "Trend (momentum)", flowFull: "Trading activity", valueFull: "Value (undervalued)", volFull: "Risk-adjusted" },
+    legend: { momentum: "T", flow: "A", value: "V", vol: "R", momentumFull: "Trend", flowFull: "Trading activity", valueFull: "Value", volFull: "Risk-adjusted" },
 
     // ── Table ──
     table: {
