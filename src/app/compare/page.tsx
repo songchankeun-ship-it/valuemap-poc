@@ -6,9 +6,9 @@ import { isSuspect } from "@/lib/dataQuality";
 import { sectorOf } from "@/lib/sector";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { CompareClient } from "@/components/CompareClient";
+import { COMPARE_QUERY_MAX, parseCompareQuery } from "@/lib/compareQuery";
 
 const compareDescription = "선택한 종목들의 지표·재무 데이터를 한눈에 비교.";
-const COMPARE_QUERY_MAX = 4;
 
 // 공시 페이지와 동일하게 최근 신호를 서버에서 추출(라이브 실패 시 샘플 fallback). 30분 캐시.
 export const revalidate = 1800;
@@ -36,27 +36,6 @@ export const metadata = {
 
 interface PageProps {
   searchParams: Promise<{ stocks?: string | string[] }>;
-}
-
-function parseCompareQuery(raw: string | string[] | undefined, stockMap: Record<string, unknown>) {
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  const initialTickers: string[] = [];
-  const invalidTickers: string[] = [];
-  const seen = new Set<string>();
-  if (!value) return { initialTickers, invalidTickers };
-
-  for (const part of value.split(",")) {
-    const code = part.trim().toUpperCase();
-    if (!code) continue;
-    if (!/^\d{6}$/.test(code) || !stockMap[code]) {
-      invalidTickers.push(code);
-      continue;
-    }
-    if (seen.has(code)) continue;
-    seen.add(code);
-    if (initialTickers.length < COMPARE_QUERY_MAX) initialTickers.push(code);
-  }
-  return { initialTickers, invalidTickers };
 }
 
 export default async function ComparePage({ searchParams }: PageProps) {
@@ -206,8 +185,13 @@ export default async function ComparePage({ searchParams }: PageProps) {
     /* 신호 없으면 비교는 그대로 동작 — graceful */
   }
 
-  const { initialTickers, invalidTickers } = parseCompareQuery(stocksParam, stockMap);
+  const { initialTickers, invalidTickers, truncatedTickers } = parseCompareQuery(
+    stocksParam,
+    (code) => Boolean(stockMap[code])
+  );
   const initialNames = initialTickers.map((ticker) => stockMap[ticker].name);
+  // 상한 초과로 잘라낸 종목은 유효 코드이므로 이름으로 안내한다.
+  const truncatedNames = truncatedTickers.map((ticker) => stockMap[ticker].name);
 
   return (
     <div className="space-y-4">
@@ -236,6 +220,12 @@ export default async function ComparePage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
+      {truncatedTickers.length > 0 ? (
+        <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          비교는 최대 {COMPARE_QUERY_MAX}개까지만 담을 수 있어 뒤쪽 종목은 제외했어요: <strong>{truncatedNames.join(", ")}</strong>
+        </div>
+      ) : null}
+
       <CompareClient
         stockMap={stockMap}
         top5={top5}
@@ -245,7 +235,10 @@ export default async function ComparePage({ searchParams }: PageProps) {
         initialTickers={initialTickers}
       />
 
-      {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback */}
+      {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback.
+          단, 유효 종목이 2개 이상이면 CompareClient가 이미 결과를 SSR로 출력하므로
+          빈 상태를 함께 렌더하지 않는다(결과 + 빈 상태 동시 노출 방지). */}
+      {initialTickers.length < 2 ? (
       <noscript>
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-8 text-center">
           <div className="text-2xl mb-2">📊</div>
@@ -269,6 +262,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
           </div>
         </div>
       </noscript>
+      ) : null}
     </div>
   );
 }

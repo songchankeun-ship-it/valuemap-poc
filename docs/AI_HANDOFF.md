@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-10T14:46:30.000Z
+Last updated: 2026-07-10T16:20:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 132 - ORNScore reaudit 2026-07-10 B - per-stock stale badges
-- Run: 129
-- Status: recovered locally; validation passed
-- Agent: claude + codex recovery
-- Note: Claude implemented most of the per-stock price-lag slice before an AI Center restart interrupted the run. Codex completed the /stocks wiring, verified the lag badge/status surfaces, and committed the recovered slice. Checks passed: npx tsc --noEmit, verify_metrics.py 138/0/Metrics 2.4, git diff --check, npm run build, local verify:routes 9/9, smoke:check --all 23/23.
+- Task: 133 - ORNScore reaudit 2026-07-10 C - compare page state conditions
+- Run: 133
+- Status: implemented locally; validation passed
+- Agent: claude
+- Note: Fixed the compare-page state bug where results and the empty "비교할 종목이 아직 없습니다" block co-rendered. Root cause was the always-emitted `<noscript>` fallback in compare/page.tsx; now gated to `initialTickers.length < 2`. Extracted the query parser into pure `src/lib/compareQuery.ts` (returns initial/invalid/truncated), added a >4-symbol truncation notice, a pure-function regression test (`npm run test:compare`), and a `mustAbsent` guard + 2 compare routes in smoke-check. Checks passed: npx tsc --noEmit 0, test:compare PASS, verify_metrics.py 138/0/Metrics 2.4, git diff --check clean, npm run build 0, local smoke:check --all 24/24 + direct curl of all 6 brief cases. Local commit only; no push; main untouched.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-10 — Claude reaudit P0 #3 — compare results / empty state cannot co-render (Task 133)
+- **Scope**: Reaudit P0 item #3. With 2+ valid symbols the compare results render (SSR), yet the `<noscript>` fallback's "비교할 종목이 아직 없습니다" empty block stayed in the HTML, so a scrolling user / crawler / screen reader saw both and asked "did the compare work?". Display/state-policy only — no change to compare data semantics, share-link seeding, scoring, collection, or `metricsVersion`.
+- **Root cause**: `CompareClient` already renders results XOR the start screen via its `stocks.length < 2` branch, so there was no double render inside the client component. The real duplicate was the always-emitted `<noscript>` empty block in `compare/page.tsx`. It also silently dropped valid symbols beyond the 4-max with no truncation notice.
+- **Changes**: (1) Pure parser `src/lib/compareQuery.ts` — `parseCompareQuery(raw, isValidCode)` returns `{ initialTickers, invalidTickers, truncatedTickers }` (6-digit + in-pool only, dedupe, `COMPARE_QUERY_MAX`=4, overflow → truncated). Replaced the inline parser in `page.tsx` so server + test share it. (2) Gated the noscript empty block behind `initialTickers.length < 2` — removes the results+empty coexistence. (3) Added an amber truncation notice (same style as the existing invalid-code notice) listing the dropped stock names. (4) Regression test `scripts/test_compare_query.ts` (`npm run test:compare`, tsx) covering the 6 brief cases + array-param/whitespace. (5) `smoke-check.mjs` gained a `mustAbsent` guard + `/compare` (no results header) and `/compare?stocks=004170,078930,055550` (results present, empty block absent) routes.
+- **Verification**: `npx tsc --noEmit` 0; `npm run test:compare` PASS; `verify_metrics.py` 138/0/Metrics 2.4; `git diff --check` clean; `npm run build` 0; local prod 4477 `smoke:check --all` 24/24 + direct curl of every brief case (base=start only, 3-valid=results w/o empty block, 1-valid="1개 더", invalid=warning+survivor, dedupe=2 stocks, 5-valid=4 results+truncation notice, no `stock/005930` card). No hydration drift — noscript gating and truncation notice are server-decided props (`initialTickers`/`truncatedTickers`) so SSR matches the client's initial render. Local commit only; no push; main untouched.
+- **Next**: Reaudit P0 remainder — #2 per-stock price-date lag badge (삼양홀딩스 000070; list/detail/compare + `/status` stale-count), #4 buyback disclosure classification copy (취득신탁계약 해지 ≠ 취득 결의), #5 holding-change disclosure target-company/reporter split. Then P1 (SEO meta score numbers, backtest noindex). Owner-gated: real-device 390×844 eyeball of the truncation badge (Playwright not configured; it's a full-width block like the invalid notice, no overflow expected).
 
 ### 2026-07-10 — Claude reaudit P0 #1 — separate pipeline health from market-data freshness (Task 131)
 - **Scope**: Reaudit P0 item #1 (data freshness badge/status). "데이터 정상" only means the generation pipeline didn't fail, but users read it as "latest". When a user visits after Friday's close and only the previous trading day (Thu) close exists, the surfaces now say "prior trading day · today's close not yet collected" instead of only "정상/normal". Display/copy + freshness decision logic only — no data generation, scoring, collection code, or `metricsVersion` change.

@@ -73,7 +73,8 @@ const CORE_ROUTES = [
 // past 12-route passes; the rest are launch-critical public pages (about / guide /
 // universe / legal / a real theme) that must render their own SSR content.
 const EXTRA_ROUTES = [
-  { path: "/compare", anchor: "비교", why: "compare start screen renders" },
+  { path: "/compare", anchor: "비교", mustAbsent: ["비교 중인 종목"], why: "base compare shows only the start state (no results header)" },
+  { path: "/compare?stocks=004170,078930,055550", anchor: "비교 중인 종목", mustAbsent: ["비교할 종목이 아직 없습니다"], why: "3 valid symbols render results, NOT the empty no-symbols block" },
   { path: "/pricing", anchor: "베타", why: "pricing shows the free-beta lead" },
   { path: "/status", anchor: "상태", why: "status page renders" },
   { path: "/backtest", anchor: "백테스트", why: "backtest page renders" },
@@ -143,6 +144,13 @@ async function checkRoute(route) {
 
   // (c) positive content anchor present
   if (!body.includes(route.anchor)) reasons.push(`missing anchor "${route.anchor}" (${route.why})`);
+
+  // (d) optional: strings that MUST be absent (state-exclusivity guards, e.g. the
+  //     empty compare block must not co-render with real results)
+  if (Array.isArray(route.mustAbsent)) {
+    const present = route.mustAbsent.filter((m) => body.includes(m));
+    if (present.length) reasons.push(`unexpected content present: ${present.map((s) => `"${s}"`).join(", ")}`);
+  }
 
   return { ...route, ok: reasons.length === 0, status, reasons };
 }
