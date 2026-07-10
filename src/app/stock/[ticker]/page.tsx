@@ -59,7 +59,16 @@ export function generateStaticParams() {
 interface PageProps { params: Promise<{ ticker: string }>; }
 
 function stockSeoDescription(name: string, ticker: string): string {
-  return `${name}(${ticker})의 추세·거래활성도·밸류·위험조정 지표, 공시 신호, 재무 지표를 데이터 기준일과 함께 확인하세요. 투자 추천이 아닌 탐색 도구입니다.`;
+  return `${name}(${ticker})의 추세·거래활성도·밸류·위험조정 지표와 재무, 공시, 데이터 기준일을 확인하세요. 투자 추천이 아닌 종목 탐색 도구입니다.`;
+}
+
+function stockStructuredDataDate(): string | undefined {
+  if (dataMetadata.generatedAt) return dataMetadata.generatedAt;
+  const d = dataMetadata.asOfBusinessDate;
+  if (d && /^\d{8}$/.test(d)) {
+    return `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}T00:00:00+09:00`;
+  }
+  return undefined;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -346,6 +355,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       : null;
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
+  const structuredDataDate = stockStructuredDataDate();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -363,8 +373,8 @@ export default async function StockDetailPage({ params }: PageProps) {
           name: "오른스코어",
           url: "https://ornscore.com",
         },
-        datePublished: new Date().toISOString(),
-        dateModified: new Date().toISOString(),
+        datePublished: structuredDataDate,
+        dateModified: structuredDataDate,
         mainEntityOfPage: `https://ornscore.com/stock/${ticker}`,
         about: {
           "@type": "Thing",
