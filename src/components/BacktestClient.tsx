@@ -421,7 +421,10 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
       ) : null}
 
       {active.contributors && active.contributors.length > 0 ? (
-        <div className="space-y-3">
+        // 성과 기여 종목·마지막 리밸런싱 구성 예시는 과거 백테스트 산물이라 검색/AI 요약 스니펫에
+        // 종목명만 잘려 나가면 "현재 추천"으로 오해될 위험이 큼 → data-nosnippet 으로 스니펫에서만 제외.
+        // 인앱 사용자는 그대로 열람 가능(표시·수치·계산 무변경).
+        <div className="space-y-3" data-nosnippet>
           <ContributionBars contributors={active.contributors} names={names} />
           {active.latestHoldings && active.latestHoldings.length > 0 ? (
             <details className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">

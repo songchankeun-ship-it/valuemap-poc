@@ -1,6 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
 
+## 2026-07-11 · [claude] Reaudit — backtest 스니펫 리스크 축소 (nosnippet + data-nosnippet) (Task 137)
+- **범위**: 재검수 P1 #7 — 실험실 백테스트의 과거 성과·구성 예시가 검색/AI 요약/SNS 스니펫에 맥락 없이 잘려 "현재 추천"으로 오해되는 리스크를 낮춤. **표시/메타 정책 전용** — 백테스트 데이터·수치·계산·`public/backtest-result.json`·점수 산식·수집 코드·생성 데이터셋·`metricsVersion` 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-137-ornscore-reaudit-2026-07-10-g-backte`.
+- **변경(2파일, 최소 침습·기존 패턴)**:
+  - `src/app/backtest/page.tsx` 메타데이터에 `robots: { index: true, follow: true, nosnippet: true }` 추가. 레포에 이미 8곳 이상 쓰이는 Next `robots` 메타 패턴 재사용. `index/follow` 유지 → 페이지 자체는 계속 색인·발견 가능(인앱 연구 자료 가치 보존), `nosnippet` 으로 **스니펫 노출만** 차단. 준비중(빈 상태)·실데이터 상태 공통 적용(메타는 모듈 레벨).
+  - `src/components/BacktestClient.tsx` 의 성과 기여 종목(`ContributionBars`) + 마지막 리밸런싱 구성 예시(`latestHoldings`) 래퍼 div 에 `data-nosnippet` 부여. 브리프가 명시한 정확한 두 표면을 요소 단위로 스니펫 제외(요소 단위 규칙을 존중하는 크롤러/AI 요약 방어). 인앱 표시·수치·링크·계산 무변경.
+- **가시 문구·한계 고지 무변경**: "먼저 읽기 · 성과 보장 아님", "현재 종합 점수 검증 아님 · 기준일 다름", 생존편향/슬리피지 면책, MDD/Sharpe/CAGR 수치, 3개 날짜 블록 모두 그대로. 페이지는 여전히 한계 있는 연구/실험으로 읽힘.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` 0(CRLF만) · `npm run build` 0(기존 `TrustLayer` ref 경고만) · 로컬 prod 4611: `/backtest` SSR HTML 에 `<meta name="robots" content="index, follow, nosnippet">` 렌더 확인 + `data-nosnippet` 렌더 확인 · `smoke:check --all` 24/24 200. 리스너 PID 62840만 taskkill, AI Center 4310(PID 9640) 무중단.
+- **잔여 리스크 / 다음 큐**: 재검수 P1 잔여 — 종목 상세 **차트 섹션 텍스트 fallback**(#5, 비JS/스크린리더/SEO 빈 섹션 보완). Search Console 색인/스니펫 재요청은 운영자 외부 작업. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [codex] Reaudit — stock detail SEO metadata stable snippets (Task 136)
 - **Scope**: P1 SEO item from the reaudit brief: remove volatile stock-detail snippet content and old metric terms from metadata. Metadata/snippet policy only — visible stock detail scores, financials, returns, collection code, generated market datasets, formulas, and `metricsVersion` unchanged.
 - **Change**: `src/app/stock/[ticker]/page.tsx` keeps one stable SEO description source for `description`, OpenGraph, Twitter, and JSON-LD. Copy now names stable surfaces only: 추세, 거래활성도, 밸류, 위험조정, 재무, 공시, 데이터 기준일, and "투자 추천이 아닌 종목 탐색 도구" framing. It does not emit score numbers, PER/PBR, returns/percentages, or old terms such as 모멘텀/변동성조정. JSON-LD `datePublished`/`dateModified` now uses the dataset timestamp/business date fallback instead of the render clock.

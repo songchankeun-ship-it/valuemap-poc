@@ -28,6 +28,10 @@ export const metadata = {
     description: backtestDescription,
   },
   alternates: { canonical: "/backtest" },
+  // 실험실 백테스트의 과거 성과·구성 예시가 검색/AI 요약 스니펫에 맥락 없이 잘려 나가면
+  // "현재 추천"으로 오해될 수 있어 nosnippet 으로 스니펫 노출만 차단한다.
+  // index/follow 는 유지 — 인앱 연구 자료로서 페이지 자체는 계속 색인·발견 가능.
+  robots: { index: true, follow: true, nosnippet: true },
 };
 
 // backtest-result.json 은 mock(준비 중) 또는 실데이터 두 형태일 수 있음.
