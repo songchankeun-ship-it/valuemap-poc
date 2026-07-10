@@ -5,7 +5,7 @@
 // 렌더되어(그 환경들도 읽을 수 있게) 이미 받은 종가 배열에서 계산한 수치만 텍스트로 제공한다.
 // 새 데이터·API·차트 이벤트 생성 없음(가격 시계열 파생 수치만).
 import type { PricePoint } from "@/lib/priceHistory";
-import { computePriceSummary, signedPctText } from "@/lib/priceSummary";
+import { computePriceSummary, computeChartEvents, signedPctText } from "@/lib/priceSummary";
 
 interface Props {
   name: string;
@@ -43,6 +43,24 @@ export function StockPriceSummary({ name, points }: Props) {
     rows.push({ label: "표시 구간 최대낙폭", text: `${s.maxDrawdownPct.toFixed(1)}%`, pct: s.maxDrawdownPct });
   }
 
+  // 차트 마커 후보 이벤트(종가·거래량 파생) — 실제 차트 오버레이 전, 텍스트로만 노출.
+  const ev = computeChartEvents(points);
+  const eventLines: string[] = [];
+  if (ev.surge3m) {
+    const range = ev.surge3m.fromDate && ev.surge3m.toDate
+      ? ` (${fmtDate(ev.surge3m.fromDate)}~${fmtDate(ev.surge3m.toDate)})`
+      : "";
+    eventLines.push(`최근 3개월 급등 구간${range}: ${signedPctText(ev.surge3m.pct)} — 변동성 확대·급등 사유 원본 확인 필요`);
+  }
+  if (ev.maxDrawdownTroughDate) {
+    const peak = ev.maxDrawdownPeakDate ? `${fmtDate(ev.maxDrawdownPeakDate)} 고점 → ` : "";
+    eventLines.push(`표시 구간 최대낙폭 저점: ${peak}${fmtDate(ev.maxDrawdownTroughDate)}`);
+  }
+  if (ev.volumeSpikeCount > 0) {
+    const recent = ev.recentVolumeSpikeDate ? ` · 최근 ${fmtDate(ev.recentVolumeSpikeDate)}` : "";
+    eventLines.push(`거래량 급증일(직전 20거래일 중앙값 3배 이상): ${ev.volumeSpikeCount}일${recent}`);
+  }
+
   const from = fmtDate(s.fromDate);
   const to = fmtDate(s.toDate);
   const fullText = signedPctText(s.fullReturnPct);
@@ -78,8 +96,19 @@ export function StockPriceSummary({ name, points }: Props) {
         </dl>
       ) : null}
 
+      {eventLines.length > 0 ? (
+        <div className="mt-2 border-t border-zinc-100 dark:border-zinc-800 pt-2">
+          <p className="text-[11px] font-medium text-zinc-600 dark:text-zinc-300">관측된 이벤트 (참고)</p>
+          <ul className="mt-1 space-y-0.5">
+            {eventLines.map((line) => (
+              <li key={line} className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">· {line}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">
-        위 수치는 표시 구간 종가에서 계산한 참고용 요약입니다. 위 차트가 렌더되지 않는 환경(검색엔진·스크린리더 등)에서도 확인할 수 있게 제공합니다.
+        위 수치는 표시 구간 종가·거래량에서 계산한 참고용 요약입니다. 위 차트가 렌더되지 않는 환경(검색엔진·스크린리더 등)에서도 확인할 수 있게 제공합니다. 호재·악재 판단이 아니라 확인할 지점을 짚어줄 뿐이며, 급등·급락·거래량 변동의 사유는 공시 원문에서 확인하세요.
       </p>
     </section>
   );

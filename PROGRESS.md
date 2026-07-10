@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] Reaudit — 데이터 상태 이력 + 차트 마커 안전 follow-up (Task 141)
+- **범위**: 재검수 "이후 고도화" 잔여 2건 — #6 데이터 상태 이력 공개, #2 종목 상세 차트 마커. **과잉구현 금지·정직성 우선** — 수집 코드·생성 데이터셋·점수 산식·`metricsVersion`(2.4)·차트 컴포넌트 무변경. 이미 받은 `prices/{ticker}.json`(d/c/v)에서만 파생. 가짜 데이터/마커 0. 브랜치 `ai-center/task-141-ornscore-reaudit-2026-07-10-k-advanc`.
+- **현황 파악**: (a) 데이터 상태 이력 — `/status`·`src/lib/dataStatus.ts`는 **현재 스냅샷 1개**만 표시. `stocks.json` 메타(`generatedAt`·`asOfBusinessDate`·`pricesSyncedAt`·`metricsVersion`)는 단일 시점 값이라 과거 상태가 빌드에 없음 → 진짜 이력은 **수집 단계의 append-only 스냅샷 로그** 선행 필요(표시 전용 슬라이스 밖). 1행짜리 가짜 이력은 오해 소지 → **라이브 표면 추가 안 함, 정밀 next-work로 문서화.** 산식 버전 이력은 `/guide/metrics/changelog`에 이미 존재(별개 개념). (b) 차트 마커 5종 중 종가·거래량으로 **진짜 파생 가능한 3종**(최대낙폭 구간·3개월 급등·거래량 급증)만 구현, 점수 마커(Supabase daily_scores)·공시 마커(DART 날짜 정합)는 새 데이터 필요 → next-work.
+- **구현(최소 스캐폴드, 기존 데이터만)**:
+  - `src/lib/priceSummary.ts` — 순수 `computeChartEvents(points)` 추가: 최대낙폭 고점/저점 거래일, 3개월 급등 구간(`SURGE_3M_THRESHOLD_PCT`=+40% 이상 시), 거래량 급증일 수·최근일(직전 `VOLUME_SPIKE_BASELINE`=20거래일 중앙값의 `VOLUME_SPIKE_MULTIPLE`=3배 이상, 최근 `VOLUME_SPIKE_WINDOW`=63거래일 구간). 임계 미달·이력 부족은 null/0(graceful). 점수·공시 이벤트 미생성.
+  - `src/components/StockPriceSummary.tsx`(Task 138 텍스트 fallback 블록) — "관측된 이벤트 (참고)" 소섹션 추가로 위 이벤트를 **서버 렌더 텍스트**로 노출(검색엔진·스크린리더도 읽음 = 미래 차트 오버레이의 SEO/a11y 표현이자 단일 소스의 첫 소비처). 고지문에 "호재·악재 판단 아님 · 사유는 공시 원문 확인" 추가. 차트 컴포넌트·마커 오버레이 무변경.
+  - `scripts/test_priceSummary.ts` — `computeChartEvents` 회귀 가드 12개 추가(낙폭 고점/저점 날짜·급등 임계 경계·거래량 급증/무급증) → 총 35 assertion.
+  - `docs/ornscore-data-status-history-and-chart-markers-plan-2026-07-11.md`(신규) — 마커 5종 파생가능성 매트릭스, 데이터 상태 이력 append-only 로그 정밀 스펙, 브리프 잔여 고득점 next-work 목록.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `npm run test:price-summary` PASS(35) · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF만) · `npm run build` 0(기존 `TrustLayer` ref 경고만). local prod 4732: `verify:routes` 9/9(기준일 2026.07.09) · `smoke:check --all` 24/24. SSR HTML 직접 확인 — `/stock/004170`(신세계) "관측된 이벤트": 3개월 급등 +94.9%(2026.04.07~07.09, 점수근거 패널 3개월 수익률 +94.9%와 일치) + 최대낙폭 저점(2021.05.31 고점→2024.12.09); `/stock/000070`(삼양홀딩스) 최대낙폭 저점 + 거래량 급증 1일(2026.05.12). 점수/공시 등 가짜 이벤트 문구 0. 임시서버 PID 37668만 taskkill.
+- **잔여 리스크 / 다음 큐**: 이벤트 소섹션은 기존 블록 내부 `ul`(세로 스택·고정폭 없음) → 390px 가로 오버플로 위험 없음(정적 분석 + build/smoke 통과). 실기기 390×844/데스크톱 육안·EN 토글은 운영자 게이트(Playwright 미구성). **차트 오버레이 본구현**(낙폭 밴드·급등 밴드·거래량 점 마커) + **점수/공시 마커**(Supabase daily_scores·DART 날짜 정합, 새 생성 데이터셋)와 **데이터 상태 이력**(수집 단계 append-only `status-history.json` 선행)은 문서의 next-work로 남김. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [claude] Reaudit — 발견/목록 카드 지표 라벨 약어 정리 (Task 140)
 - **범위**: 재검수 P2 #3 — 발견/목록 화면 하단 범례가 `추=추세(모멘텀) · 거=거래활성도 · 저=저평가(밸류) · 위=위험조정`처럼 약어 + 구용어(모멘텀·저평가)를 노출. **표시/문구 정책 전용** — 정렬·필터 동작, 점수 산식, 수집 코드, 생성 데이터셋, `metricsVersion`(2.4) 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-140-ornscore-reaudit-2026-07-10-j-discov`.
 - **현황 파악**: 카드형(`StocksExplorer` renderCards, 705~708행)은 이미 `t.metric.*` 풀네임(추세·거래활성도·밸류·위험조정) 사용. 데스크톱 표(`StockResultsTable` 헤더)도 `t.table.*` 풀네임 사용. 남은 약어는 **모바일 전용 범례 바**(`md:hidden`, 1240~1242행) 하나뿐 — 그런데 모바일은 카드형만 렌더(표형도 `<lg`에서 카드로 폴백)라 약어가 실제로 카드에 안 뜨는데 범례만 약어를 설명 → 무의미·구용어 잔존.

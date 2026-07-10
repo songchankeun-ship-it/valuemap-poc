@@ -94,3 +94,114 @@ export function signedPctText(pct: number | null): string | null {
   if (pct === null || !Number.isFinite(pct)) return null;
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
 }
+
+// ── 차트 마커 스캐폴드(브리프 P2 #5 / 고도화 #2) ──────────────────────────
+//
+// 브리프는 종목 상세 차트에 5종 레이어를 제안한다: 공시 마커 / 점수 급등·급락 마커 /
+// 거래활성도(거래량) 급증 마커 / 최대낙폭 구간 / 3개월 급등 경고 구간.
+// 그중 "이미 받은 종가·거래량 시계열만으로 진짜로 파생 가능한" 3종(최대낙폭 구간 ·
+// 3개월 급등 구간 · 거래량 급증일)만 여기서 계산한다. 점수 마커(일별 점수 시계열=Supabase
+// daily_scores 필요)·공시 마커(DART 공시일-가격일 정합 필요)는 이 파일 범위 밖 —
+// 새 데이터 소스가 필요해 문서에 다음 작업으로 남긴다(마커를 지어내지 않는다).
+//
+// 원칙: 존재하는 d/c/v 값만 사용. 임계 미달·이력 부족 항목은 null/0/false로 반환(graceful).
+
+/** 3개월(약 63거래일) 등락률이 이 값(%) 이상이면 "급등 구간"으로 표시(경고 아님, 확인 유도). */
+export const SURGE_3M_THRESHOLD_PCT = 40;
+/** 거래량 급증 판정: 직전 baseline 거래일 중앙값 대비 이 배수 이상. */
+export const VOLUME_SPIKE_MULTIPLE = 3;
+/** 거래량 급증 baseline 거래일 수(직전 N일 중앙값). */
+export const VOLUME_SPIKE_BASELINE = 20;
+/** 거래량 급증을 훑는 최근 구간 거래일 수(약 3개월). */
+export const VOLUME_SPIKE_WINDOW = TRADING_DAYS_3M;
+
+export interface ChartEvents {
+  /** 최대낙폭 고점(peak) 거래일. 낙폭 없음이면 null. */
+  maxDrawdownPeakDate: string | null;
+  /** 최대낙폭 저점(trough) 거래일. 낙폭 없음이면 null. */
+  maxDrawdownTroughDate: string | null;
+  /** 3개월 급등 구간 — 임계 이상일 때만 존재, 아니면 null. */
+  surge3m: { pct: number; fromDate: string | null; toDate: string | null } | null;
+  /** 최근 구간 거래량 급증일 수. */
+  volumeSpikeCount: number;
+  /** 가장 최근 거래량 급증일. 없으면 null. */
+  recentVolumeSpikeDate: string | null;
+}
+
+function median(nums: number[]): number {
+  if (nums.length === 0) return 0;
+  const sorted = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+/**
+ * 가격/거래량 시계열에서 차트 마커 후보 이벤트를 파생한다(새 데이터 없이 d/c/v만 사용).
+ * 실제 차트 오버레이는 후속 작업 — 이 순수 함수가 그 단일 소스가 되고, 지금은 텍스트로만 노출한다.
+ */
+export function computeChartEvents(points: PricePoint[]): ChartEvents {
+  const n = points.length;
+  const empty: ChartEvents = {
+    maxDrawdownPeakDate: null,
+    maxDrawdownTroughDate: null,
+    surge3m: null,
+    volumeSpikeCount: 0,
+    recentVolumeSpikeDate: null,
+  };
+  if (n < 2) return empty;
+
+  // 최대낙폭 고점/저점 거래일 — computePriceSummary 와 동일 규칙(종가 기준)으로 인덱스만 추적.
+  let peak = points[0].c;
+  let peakIdx = 0;
+  let maxDd = 0;
+  let bestPeakIdx: number | null = null;
+  let bestTroughIdx: number | null = null;
+  for (let i = 1; i < n; i++) {
+    const c = points[i].c;
+    if (c > peak) {
+      peak = c;
+      peakIdx = i;
+    }
+    if (peak > 0) {
+      const dd = (c - peak) / peak;
+      if (dd < maxDd) {
+        maxDd = dd;
+        bestPeakIdx = peakIdx;
+        bestTroughIdx = i;
+      }
+    }
+  }
+
+  // 3개월 급등 구간 — 충분한 이력이 있고 임계 이상일 때만.
+  let surge3m: ChartEvents["surge3m"] = null;
+  if (n - 1 >= TRADING_DAYS_3M) {
+    const fromIdx = n - 1 - TRADING_DAYS_3M;
+    const pct = pctChange(points[fromIdx].c, points[n - 1].c);
+    if (pct !== null && pct >= SURGE_3M_THRESHOLD_PCT) {
+      surge3m = { pct, fromDate: points[fromIdx].d ?? null, toDate: points[n - 1].d ?? null };
+    }
+  }
+
+  // 거래량 급증일 — 최근 구간에서 직전 baseline 중앙값 대비 배수 이상인 날.
+  let volumeSpikeCount = 0;
+  let recentVolumeSpikeDate: string | null = null;
+  const start = Math.max(VOLUME_SPIKE_BASELINE, n - VOLUME_SPIKE_WINDOW);
+  for (let i = start; i < n; i++) {
+    const base = median(
+      points.slice(i - VOLUME_SPIKE_BASELINE, i).map((p) => p.v).filter((v) => Number.isFinite(v) && v > 0),
+    );
+    const v = points[i].v;
+    if (base > 0 && Number.isFinite(v) && v >= base * VOLUME_SPIKE_MULTIPLE) {
+      volumeSpikeCount++;
+      recentVolumeSpikeDate = points[i].d ?? recentVolumeSpikeDate;
+    }
+  }
+
+  return {
+    maxDrawdownPeakDate: bestPeakIdx !== null ? points[bestPeakIdx].d ?? null : null,
+    maxDrawdownTroughDate: bestTroughIdx !== null ? points[bestTroughIdx].d ?? null : null,
+    surge3m,
+    volumeSpikeCount,
+    recentVolumeSpikeDate,
+  };
+}

@@ -3,7 +3,14 @@
 //
 // 접근성/SEO fallback 텍스트는 서버 렌더 수치라, 계산이 조용히 바뀌면 사용자가 보는
 // 문구가 틀어진다. 3개월/1개월 등락률·최대낙폭·구간 등락률·기준일 경계를 고정한다.
-import { computePriceSummary, signedPctText, TRADING_DAYS_3M, TRADING_DAYS_1M } from "../src/lib/priceSummary";
+import {
+  computePriceSummary,
+  computeChartEvents,
+  signedPctText,
+  TRADING_DAYS_3M,
+  TRADING_DAYS_1M,
+  SURGE_3M_THRESHOLD_PCT,
+} from "../src/lib/priceSummary";
 import type { PricePoint } from "../src/lib/priceHistory";
 
 let failed = 0;
@@ -82,8 +89,76 @@ check("signedPctText null", signedPctText(null) === null);
   check("tradingDays 3", s.tradingDays === 3);
 }
 
+// ── computeChartEvents (차트 마커 스캐폴드) ───────────────────────────────
+// 날짜·거래량을 명시하는 헬퍼(급증 판정 검증용).
+function dpts(rows: { d: string; c: number; v: number }[]): PricePoint[] {
+  return rows.map((r) => ({ d: r.d, c: r.c, v: r.v }));
+}
+function seqDate(i: number): string {
+  // 2026-01-01 부터 순차 증가(월/일 롤오버 단순 처리, 순서만 의미).
+  const day = (i % 28) + 1;
+  const month = Math.floor(i / 28) + 1;
+  return `2026-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+// H. 2점 미만 → 전부 빈 값.
+{
+  const e = computeChartEvents(pts([100]));
+  check("events single → trough null", e.maxDrawdownTroughDate === null);
+  check("events single → surge null", e.surge3m === null);
+  check("events single → spike 0", e.volumeSpikeCount === 0);
+}
+
+// I. 고점→저점 낙폭 구간 날짜.
+{
+  // 100 → 120(고점, idx2) → 90(저점, idx4)
+  const e = computeChartEvents(
+    dpts([
+      { d: "2026-01-01", c: 100, v: 1000 },
+      { d: "2026-01-02", c: 110, v: 1000 },
+      { d: "2026-01-03", c: 120, v: 1000 },
+      { d: "2026-01-04", c: 100, v: 1000 },
+      { d: "2026-01-05", c: 90, v: 1000 },
+    ]),
+  );
+  check("events peak date = high", e.maxDrawdownPeakDate === "2026-01-03");
+  check("events trough date = low", e.maxDrawdownTroughDate === "2026-01-05");
+}
+
+// J. 3개월 급등 구간 — 임계 이상일 때만.
+{
+  // length 64: idx0=100 → idx63=160 → +60% (임계 40 이상)
+  const rising = computeChartEvents(
+    dpts(Array.from({ length: 64 }, (_, i) => ({ d: seqDate(i), c: 100 + i, v: 1000 }))),
+  );
+  check("surge3m present when >= threshold", rising.surge3m !== null && rising.surge3m.pct >= SURGE_3M_THRESHOLD_PCT);
+  check("surge3m fromDate/toDate set", !!rising.surge3m?.fromDate && !!rising.surge3m?.toDate);
+  // length 64 flat → null.
+  const flat = computeChartEvents(
+    dpts(Array.from({ length: 64 }, (_, i) => ({ d: seqDate(i), c: 100, v: 1000 }))),
+  );
+  check("surge3m null when flat", flat.surge3m === null);
+  // length 63(경계, n-1=62 < 63) → null.
+  const short = computeChartEvents(
+    dpts(Array.from({ length: 63 }, (_, i) => ({ d: seqDate(i), c: 100 + i * 2, v: 1000 }))),
+  );
+  check("surge3m null below 3m history", short.surge3m === null);
+}
+
+// K. 거래량 급증일 — baseline 20일 중앙값 3배 이상.
+{
+  const rows = Array.from({ length: 30 }, (_, i) => ({ d: seqDate(i), c: 100, v: 1000 }));
+  rows[25].v = 5000; // 중앙값 1000 대비 5배 → 급증
+  const e = computeChartEvents(dpts(rows));
+  check("volume spike counted", e.volumeSpikeCount >= 1);
+  check("recent spike date set", e.recentVolumeSpikeDate === rows[25].d);
+  // 급증 없음.
+  const calm = computeChartEvents(dpts(Array.from({ length: 30 }, (_, i) => ({ d: seqDate(i), c: 100, v: 1000 }))));
+  check("no spike when volume flat", calm.volumeSpikeCount === 0 && calm.recentVolumeSpikeDate === null);
+}
+
 if (failed > 0) {
   console.error(`\n${failed} assertion(s) failed.`);
   process.exit(1);
 }
-console.log("PASS: priceSummary (23 assertions)");
+console.log("PASS: priceSummary (35 assertions)");
