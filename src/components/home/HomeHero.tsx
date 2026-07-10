@@ -91,6 +91,9 @@ export function HomeHero({
           </p>
           <div className="mt-3 md:mt-4 max-w-2xl">
             <GlobalSearch stocks={searchStocks} themes={searchThemes} variant="hero" />
+            <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+              {copy.searchHint}
+            </p>
           </div>
           <div className="flex flex-row flex-wrap gap-2.5 mt-3 md:mt-4">
             <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition shadow-sm shadow-zinc-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
@@ -99,7 +102,7 @@ export function HomeHero({
             </a>
             <Link prefetch={false} href="/stocks" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-semibold hover:border-blue-400 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
               <Search className="h-4 w-4" aria-hidden="true" />
-              <span>{copy.stockSearch}</span>
+              <span>{copy.browseAll}</span>
             </Link>
           </div>
         </div>
@@ -138,7 +141,7 @@ export function HomeHero({
             <KpiCell value={strongCount} label={copy.kpiStrong} tone="blue" Icon={BarChart3} />
           </div>
           <p className="text-[10px] text-zinc-400 mt-2.5">
-            {countLabel} · {visibleCandidateCount}{locale === "ko" ? "개 후보만 먼저 표시" : " candidates shown first"}
+            {countLabel} · {copy.previewRelation(strongCount, visibleCandidateCount)}
           </p>
         </div>
       </div>

@@ -235,7 +235,7 @@ export default async function HomePage() {
         signalCount={signalCount}
       />
 
-      <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} />
+      <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} strongCount={strongCount} />
 
       <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
 

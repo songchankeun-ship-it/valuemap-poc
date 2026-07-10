@@ -142,7 +142,7 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
       <input
         ref={inputRef}
         type="search"
-        placeholder={copy.search.placeholder}
+        placeholder={isHero ? copy.search.placeholderHero : copy.search.placeholder}
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);

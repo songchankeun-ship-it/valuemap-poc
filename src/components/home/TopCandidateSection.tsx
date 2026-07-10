@@ -6,7 +6,16 @@ import { StockCandidateCard, type StockCandidate } from "./StockCandidateCard";
 import { useLanguage } from "@/components/LanguageProvider";
 import { homeCopy } from "@/lib/copy/home";
 
-export function TopCandidateSection({ candidates, compareHref }: { candidates: StockCandidate[]; compareHref?: string }) {
+export function TopCandidateSection({
+  candidates,
+  compareHref,
+  strongCount,
+}: {
+  candidates: StockCandidate[];
+  compareHref?: string;
+  /** 종합 80+ 후보 수(시장 스냅샷과 동일 기준) — 대표 카드 수와의 관계 문구용. */
+  strongCount: number;
+}) {
   const { locale } = useLanguage();
   const t = homeCopy[locale].topCandidate;
   const [featured, ...rest] = candidates;
@@ -22,6 +31,11 @@ export function TopCandidateSection({ candidates, compareHref }: { candidates: S
             <h2 className="mt-1.5 text-[19px] md:text-2xl font-black text-zinc-950 dark:text-zinc-50">
               {t.heading}
             </h2>
+            {candidates.length > 0 ? (
+              <p className="mt-1 text-[12px] md:text-[13px] text-zinc-500 dark:text-zinc-400 leading-snug">
+                {t.poolRelation(strongCount, candidates.length)}
+              </p>
+            ) : null}
           </div>
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             <span className="text-[11px] text-zinc-500 dark:text-zinc-400 text-right">

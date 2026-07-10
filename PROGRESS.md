@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] Reaudit — 홈 검색 1차 액션화 + 대표 3개 vs 80+ 후보 수 명확화 (Task 139)
+- **범위**: 재검수 P2 #1(홈 검색창이 CTA 링크처럼 보임) · #2(오늘 후보 3개 vs 종합 80+ 후보 수 혼동). **표시/문구 정책 전용** — 기존 검색 동작·점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4) 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-139-ornscore-reaudit-2026-07-10-i-home-s`.
+- **#1 검색 1차 액션화**: (a) 히어로 `GlobalSearch`(variant="hero") placeholder에 예시 추가 — `종목명·코드 검색 (예: 삼성전자, 005930)` / EN `Search by name or code (e.g. Samsung, 005930)`. 접근성 `aria-label`은 간결한 기본 placeholder 유지. (b) 검색창 바로 아래 힌트 1줄 추가 — `예: 삼성전자, 005930, GS — 궁금한 종목을 바로 검색하세요.` (placeholder는 입력 시 사라지므로 항상 보이는 힌트로 보강). (c) 혼동을 주던 보조 CTA 라벨 `종목명·코드 검색`(→ `/stocks` 이동인데 검색처럼 보임)을 `전체 종목 목록`(EN `All stocks`)으로 교체 — 실제 검색은 위 입력창이 담당하고, 이 버튼은 '전체 목록 둘러보기' 역할로 명확화. 검색 로직·라우팅·자동완성 무변경.
+- **#2 대표 3개 vs 80+ 명확화**: (a) `TopCandidateSection`에 `strongCount`(시장 스냅샷의 '종합 80+ 후보'와 동일 기준) 프롭 추가 → 헤딩 아래에 전 브레이크포인트 표시 서브라인 `종합 80+ 후보 N개 중, 오늘 먼저 볼 대표 M개예요.`(EN `M representative picks from N candidates scoring 80+.`). (b) 히어로 데스크톱 미리보기 하단 요약을 `{총개수} · 종합 80↑ N개 중 먼저 볼 M개`로 교체(기존 `M개 후보만 먼저 표시` → 80+ 총수와의 관계 노출). strongCount는 홈에서 이미 계산된 값(`displayCompositeScore>=80 && !isSuspect`) 재사용 — 신규 계산 없음.
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF만) · `npm run build` 0(기존 `TrustLayer` ref 경고만). local prod 3100: `smoke:check --all` 24/24 200. SSR HTML 직접 확인 — `/` 에 히어로 placeholder(예시 포함)·힌트 `예: 삼성전자, 005930, GS…`·보조버튼 `전체 종목 목록`·서브라인 `종합 80+ 후보 5개 중, 오늘 먼저 볼 대표 3개예요`(strong=5·shown=3, 브리프 예시와 일치) 렌더. EN 문자열(previewRelation/searchHint/browseAll/poolRelation)은 client 청크에 존재(언어 토글은 client-side). 리스너 PID 8600만 taskkill.
+- **잔여 리스크 / 다음 큐**: 추가 요소는 모두 max-w-2xl·min-w-0 컨테이너 내부 래핑 `<p>`(고정폭 없음)이고 보조버튼 라벨은 더 짧아짐 → 390px 가로 오버플로 위험 없음(정적 분석 + build/smoke 통과). 실기기 390×844/데스크톱 육안·EN 토글은 운영자 게이트(Playwright 미구성). 후속 고도화(브리프 P2): 종목 상세 차트 마커(공시·점수·거래활성도), 발견 카드형/표형 정보 밀도 분리, 관심 종목 빈 상태 샘플. 로컬 커밋만·push 미수행·main 무변경.
+
 
 ## 2026-07-11 · [claude] Reaudit — 종목 상세 차트 접근성/SEO 텍스트 fallback (Task 138)
 - **범위**: 재검수 P2 #5 — 종목 상세 "주가 차트" 섹션이 검색엔진·스크린리더·비JS 환경에서 빈 섹션으로 보이던 문제 보완. `StockPriceChart`는 `next/dynamic({ ssr:false })` 지연 로드라 SSR HTML에는 스켈레톤(제목 "주가 차트"만) → 크롤러/스크린리더는 내용 요약을 못 읽음. **표시 정책 전용** — 이미 받은 `public/data/prices/{ticker}.json` 종가 배열에서만 파생 수치 계산. 점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·차트 컴포넌트·마커 로직 무변경. 차트 이벤트(공시·급등 구간명 등) 생성 없음.

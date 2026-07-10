@@ -94,6 +94,7 @@ export const commonCopy = {
     },
     search: {
       placeholder: "종목명·코드 검색",
+      placeholderHero: "종목명·코드 검색 (예: 삼성전자, 005930)",
       empty: "일치하는 종목이나 테마가 없습니다",
       emptyCoverageLine: (n: number) =>
         `오른스코어는 현재 약 ${n}개 종목만 분석 대상입니다. 전체 시장이 아니라 데이터 검증을 마친 종목부터 단계적으로 넓히고 있어요.`,
@@ -173,6 +174,7 @@ export const commonCopy = {
     },
     search: {
       placeholder: "Search by name or code",
+      placeholderHero: "Search by name or code (e.g. Samsung, 005930)",
       empty: "No matching stocks or themes",
       emptyCoverageLine: (n: number) =>
         `OrnScore currently analyzes about ${n} stocks — a curated set, not the whole market, expanding gradually as data is verified.`,
@@ -200,6 +202,10 @@ export const homeHeroCopy = {
     secondaryCta: "지표 이해하기",
     note: "오른스코어는 투자 추천이 아닌, 한국 주식 탐색·분석 무료 도구입니다.",
     stockSearch: "종목명·코드 검색",
+    browseAll: "전체 종목 목록",
+    searchHint: "예: 삼성전자, 005930, GS — 궁금한 종목을 바로 검색하세요.",
+    previewRelation: (strong: number, shown: number) =>
+      `종합 80↑ ${strong}개 중 먼저 볼 ${shown}개`,
     previewTitle: "오늘 먼저 볼 후보",
     previewFilter: "검증 보류 제외",
     previewLead: "1번 후보",
@@ -226,6 +232,10 @@ export const homeHeroCopy = {
     secondaryCta: "Understand metrics",
     note: "OrnScore is a free Korean-stock research tool, not investment advice.",
     stockSearch: "Search by name or code",
+    browseAll: "All stocks",
+    searchHint: "e.g. Samsung Electronics, 005930, GS — look up any stock directly.",
+    previewRelation: (strong: number, shown: number) =>
+      `${shown} shown first of ${strong} scoring 80+`,
     previewTitle: "Candidates to check first",
     previewFilter: "Pending verification excluded",
     previewLead: "First candidate",

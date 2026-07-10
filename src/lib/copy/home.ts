@@ -46,6 +46,9 @@ export const homeCopy = {
       heading: "오늘 먼저 볼 후보",
       stepEyebrow: "먼저 볼 것",
       tag: "3개만 먼저",
+      // 홈의 "종합 80+ 후보 N개"(시장 스냅샷)와 여기 대표 카드 수의 관계를 명시(초보자 혼동 완화).
+      poolRelation: (strong: number, shown: number) =>
+        `종합 80+ 후보 ${strong}개 중, 오늘 먼저 볼 대표 ${shown}개예요.`,
       intro:
         "점수와 거래활성도, 공시 신호를 함께 보고 먼저 확인할 후보를 추렸어요.",
       rankCriteria:
@@ -202,6 +205,8 @@ export const homeCopy = {
       heading: "Candidates to check first today",
       stepEyebrow: "First check",
       tag: "Top 3 first",
+      poolRelation: (strong: number, shown: number) =>
+        `${shown} representative picks from ${strong} candidates scoring 80+.`,
       intro:
         "Candidates are narrowed using scores, trading activity, and disclosure signals.",
       rankCriteria:
