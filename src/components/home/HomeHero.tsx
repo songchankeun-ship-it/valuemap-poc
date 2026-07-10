@@ -5,6 +5,8 @@ import { ArrowRight, BarChart3, FileText, Search, ShieldCheck, TrendingUp, type 
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { homeHeroCopy } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
+import { marketFreshnessCopy } from "@/lib/freshness";
 import type { StockCandidate } from "./StockCandidateCard";
 
 interface SearchStockItem {
@@ -15,6 +17,8 @@ interface SearchStockItem {
 
 interface HomeHeroProps {
   dataAsOf: string;
+  /** 데이터 기준일 YYYYMMDD (방문 시각 기준 신선도 계산용). */
+  dataAsOfRaw: string;
   dataStale: boolean;
   totalCount: number;
   strongCount: number;
@@ -30,6 +34,7 @@ interface HomeHeroProps {
 // 후보 카드가 모바일 첫 화면 안에 곧바로 이어지도록 높이를 낮춘다.
 export function HomeHero({
   dataAsOf,
+  dataAsOfRaw,
   dataStale,
   totalCount,
   strongCount,
@@ -41,6 +46,11 @@ export function HomeHero({
 }: HomeHeroProps) {
   const { locale } = useLanguage();
   const copy = homeHeroCopy[locale];
+  const f = marketFreshnessCopy[locale];
+  // 방문 시각 기준 신선도 — 전 거래일 종가만 있고 오늘 장마감 수집 전이면 "정상"으로 보이지 않게 경고 톤.
+  const freshness = useMarketFreshness(dataAsOfRaw);
+  const awaitingClose = freshness?.state === "awaiting_close" && !dataStale;
+  const dataWarn = dataStale || awaitingClose;
   const lead = previewCandidates[0];
   const visibleCandidateCount = Math.min(previewCandidates.length, 3);
   const countLabel = locale === "ko" ? `${totalCount}개 분석` : `${totalCount} analyzed`;
@@ -61,9 +71,15 @@ export function HomeHero({
               className="inline-flex items-center gap-1.5 text-[10px] text-zinc-600 dark:text-zinc-300 px-2.5 py-1 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800"
               title={`${copy.dataPrefix} ${dataAsOf} ${copy.marketClose}`}
             >
-              <span className={"w-1.5 h-1.5 rounded-full " + (dataStale ? "bg-orange-400" : "bg-emerald-400")} />
+              <span className={"w-1.5 h-1.5 rounded-full " + (dataWarn ? "bg-orange-400" : "bg-emerald-400")} />
               <span className="tabular-nums">{copy.dataPrefix} {dataAsOf} {copy.marketClose}</span>
-              {dataStale ? <span className="font-medium text-orange-600 dark:text-orange-300">· {copy.delayed}</span> : <span className="text-emerald-600 dark:text-emerald-300">· {copy.normal}</span>}
+              {dataStale ? (
+                <span className="font-medium text-orange-600 dark:text-orange-300">· {copy.delayed}</span>
+              ) : awaitingClose ? (
+                <span className="font-medium text-orange-600 dark:text-orange-300">· {f.awaitingShort}</span>
+              ) : (
+                <span className="text-emerald-600 dark:text-emerald-300">· {copy.normal}</span>
+              )}
             </span>
           </div>
           <h1 className="max-w-2xl text-[24px] leading-[1.08] md:text-[38px] md:leading-[1.04] font-black text-zinc-950 dark:text-white">

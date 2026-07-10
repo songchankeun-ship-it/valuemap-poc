@@ -91,6 +91,7 @@ export async function AppHeader() {
       <HeaderDataBar
         businessDate={businessDate}
         businessDateShort={businessDateShort}
+        businessDateRaw={dataMetadata.asOfBusinessDate ?? ""}
         bizDaysSince={bizDaysSince}
         isStale={isStale}
         hasData={businessDate !== "데이터 준비 중"}

@@ -208,6 +208,7 @@ export default async function HomePage() {
     <div className="space-y-5 md:space-y-7">
       <HomeHero
         dataAsOf={dataAsOf}
+        dataAsOfRaw={dataMetadata.asOfBusinessDate ?? ""}
         dataStale={dataStale}
         totalCount={dataMetadata.count}
         strongCount={strongCount}

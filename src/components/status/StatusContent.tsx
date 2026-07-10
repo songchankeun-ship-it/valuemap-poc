@@ -5,6 +5,8 @@ import { DataStatusBadge } from "@/components/trust/badges";
 import { ReportDataIssue } from "@/components/status/ReportDataIssue";
 import { useLanguage } from "@/components/LanguageProvider";
 import { statusCopy } from "@/lib/copy/status";
+import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
+import { marketFreshnessCopy } from "@/lib/freshness";
 import type { LocalizedDataStatus } from "@/lib/dataStatus";
 import type { Locale } from "@/lib/i18n";
 
@@ -53,8 +55,16 @@ export function StatusContent({
 }) {
   const { locale } = useLanguage();
   const t = statusCopy[locale];
+  const f = marketFreshnessCopy[locale];
   const ds = dataStatusByLocale[locale];
   const sc = selfCheck;
+
+  // 방문 시각 기준 신선도 — 전 거래일 종가만 있고 오늘 장마감 수집 전이면 "정상"으로만 보이지 않게 한다.
+  // 파이프라인 지연(priceStale)이 우선, 그다음 오늘 마감 수집 대기(awaiting_close)를 경고로 노출.
+  const freshness = useMarketFreshness(ds.globalAsOfDate);
+  const awaitingClose = freshness?.state === "awaiting_close" && !priceStale;
+  const snapshotWarn = priceStale || awaitingClose;
+  const snapshotBadge = priceStale ? t.snapshotStale : awaitingClose ? f.awaitingBadge : t.snapshotOk;
 
   const sources: { name: string; detail: string; tone: Tone }[] = [
     { name: t.sources.price.name, detail: t.sources.price.detail, tone: priceStale ? "warn" : "ok" },
@@ -105,14 +115,17 @@ export function StatusContent({
       <section id="snapshot" className="scroll-mt-20 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{t.snapshotHeading}</div>
-          <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium " + (priceStale ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300")}>
-            {priceStale ? t.snapshotStale : t.snapshotOk}
+          <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium " + (snapshotWarn ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300")}>
+            {snapshotBadge}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">{t.snapshotPriceDate}</div>
             <div className="font-semibold tabular-nums text-zinc-800 dark:text-zinc-200">{ds.globalAsOfLabel}{priceAge !== null ? t.daysAgo(priceAge) : ""}</div>
+            {awaitingClose ? (
+              <div className="text-[10px] font-medium text-amber-700 dark:text-amber-400 mt-0.5">{f.awaitingNote}</div>
+            ) : null}
           </div>
           <div>
             <div className="text-zinc-400 dark:text-zinc-500">{t.snapshotScoreTime}</div>
@@ -139,6 +152,15 @@ export function StatusContent({
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
           {t.dataCadenceNote}
         </p>
+        {/* 파이프라인 정상 ≠ 최신 시세 — 신뢰 분리 고지(항상 노출). awaiting_close면 오늘 마감 수집 대기 상세 추가. */}
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+          {f.pipelineVsLatest}
+        </p>
+        {awaitingClose ? (
+          <p className="text-[11px] font-medium text-amber-700 dark:text-amber-400 mt-1.5 leading-relaxed">
+            {f.awaitingDetail}
+          </p>
+        ) : null}
       </section>
 
       {/* 데이터 종류별 상태 — 가격/재무/공시/산식 분리 (전역 dataStatus 단일 소스 재사용) */}
