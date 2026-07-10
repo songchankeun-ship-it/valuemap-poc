@@ -1,6 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
 
+## 2026-07-11 · [codex] Repair — Playwright desktop screenshot timeout no-JS guard (Task 135 quality gate)
+- **Blocker**: Task 135 copy-only slice passed source/build checks but the external quality gate failed on `PLAYWRIGHT: DESKTOP ERROR: page.screenshot: Timeout 30000ms exceeded` after fonts loaded. Prior project history already identified headless Chromium screenshot hangs around `backdrop-filter` recomposition in sticky/fixed app-shell UI.
+- **Root cause narrowed**: Existing `layout.tsx` automation guard only ran when JavaScript executed and `navigator.webdriver` was true. A no-JS/SSR screenshot path still entered the `<noscript>` font fallback while leaving `backdrop-filter`/animations/transitions active, matching the failure signature.
+- **Change**: `src/app/layout.tsx` only. Widened the JS automation detector to `navigator.webdriver || HeadlessChrome || Playwright`, and added the same screenshot-safe CSS inside `<noscript>` so JS-disabled captures also disable `backdrop-filter`, `-webkit-backdrop-filter`, animations, and transitions. Public copy, data, scoring, collection, generated datasets, and `metricsVersion` unchanged. No new live contact mailboxes introduced.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138/0/Metrics 2.4/forbidden-copy 0; `git diff --check` 0 (CRLF warning only); `npm run build` 0 (existing `TrustLayer` ref warning only); local prod 4621 `verify:routes` 9/9 and `smoke:check --all` 24/24; direct `/privacy` HTML check confirmed the `<noscript>` screenshot guard and HeadlessChrome/Playwright detector render. Temp server PID 55700 stopped.
+- **Residual risk / next**: Exact external Playwright screenshot runner is not installed in this repo and the in-app browser was unavailable in this session, so the repaired branch still needs the AI Center quality gate rerun. If it passes, continue the previously documented P1 queue: stock-detail SEO meta score-number removal, backtest noindex/data-nosnippet, and chart text fallback. Local commit only; no push/deploy.
+
 ## 2026-07-11 · [claude] Reaudit — 문의 메일 통일 확인 + 국외 이전 법적 근거 문구 + yfinance 출처 정밀화 (Task 135)
 - **범위**: 재검수 #8(문의 메일 통일)·#9(국외 이전 법적 근거)·#10(yfinance 출처 문구). 표시/문구 전용, 기존 데이터 사용 — 점수 산식·수집 코드·생성 데이터셋·`metricsVersion` 무변경. 신규 npm/라우트/컴포넌트 0.
 - **#8 문의 메일(확인+문서화, 코드 무변경)**: 공개면 전부 이미 `contact@ornscore.com` 단일 메일 사용(`/about`·`/terms`·`/privacy` 권리행사+책임자·`/status` 오류신고 `src/lib/dataStatus.ts` `reportEmail`). 충돌 채널 0, 미확인 별칭(support@/privacy@/data@/security@) 코드 내 0 — 브리프대로 `contact@` 캐논 유지. `noreply@ornscore.com`은 cron 발신 전용(연락 경로 아님). 별칭/포워딩(Google Workspace) 설정은 운영자 외부 작업으로만 문서화(PROGRESS §23.3/수익화 백로그) — 공개 약속 0.
