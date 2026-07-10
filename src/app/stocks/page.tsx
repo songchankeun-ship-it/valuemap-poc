@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { realStockPool, allThemes, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
+import { getPriceLagSummary } from "@/lib/priceLag";
 import { StocksExplorer } from "@/components/StocksExplorer";
 import { CompareTray } from "@/components/stock/CompareTray";
 
@@ -168,6 +169,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
   const initialSector = validSector ?? legacySector;
   const unresolvedTheme = theme && !themes.includes(theme) && !legacySector && !initialSector ? theme : undefined;
   const initialThemes = theme && themes.includes(theme) ? [theme] : unresolvedTheme ? [unresolvedTheme] : [];
+  const laggedTickers = getPriceLagSummary().laggedTickers;
   return (
     <>
       <StocksExplorer
@@ -180,6 +182,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
         asOf={formatBizDateLong(dataMetadata.asOfBusinessDate)}
         metricsVersion={dataMetadata.metricsVersion}
         dataStale={isDataStale(dataMetadata.asOfBusinessDate)}
+        laggedTickers={laggedTickers}
       />
       {/* 설계서 §8-3·§12-5: 발견에서 담은 종목을 비교함 N/4로 이어가는 트레이. 담기는 각 카드가
           소유하고, 트레이는 담긴 수 반영 + /compare 이동만 담당(count 0이면 자동 숨김). */}

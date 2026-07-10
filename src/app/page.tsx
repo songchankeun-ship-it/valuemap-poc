@@ -1,5 +1,6 @@
 import { allThemes, dataMetadata, realStockPool, formatBizDateShort, isDataStale } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
+import { getPriceLagSummary } from "@/lib/priceLag";
 import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { fmtWon } from "@/lib/format";
@@ -50,9 +51,15 @@ function pickTopSignals(n: number, all: RecentSignal[], universe?: Set<string>):
     .slice(0, n);
 }
 
-function pickTopStocks(n: number) {
+// 오늘 후보·Top 목록 정책(재검수 P0 #2):
+//  - 검증 보류(isSuspect) 종목 제외(기존)
+//  - 가격 기준일이 전역 기준일보다 과거인(최신 배치 미반영) 종목 제외(exclude)
+// 이유: 금융 서비스에서 "틀린 종목 하나"가 전체 점수 신뢰를 무너뜨린다. 지연 종목은 최신 종가가
+// 반영되지 않아 순위·점수 해석이 왜곡될 수 있으므로, 대표 후보 카드에서는 보수적으로 제외한다.
+// (전체 목록 /stocks 에서는 제외하지 않고 '데이터 지연' 배지로 표시해 탐색 가능성은 유지한다.)
+function pickTopStocks(n: number, exclude: Set<string>) {
   return [...realStockPool]
-    .filter((s) => compositeOf(s) > 0 && !isSuspect(s))
+    .filter((s) => compositeOf(s) > 0 && !isSuspect(s) && !exclude.has(s.ticker))
     .sort((a, b) => compositeOf(b) - compositeOf(a))
     .slice(0, n);
 }
@@ -127,7 +134,9 @@ export const metadata = {
 export default async function HomePage() {
   const recentSig = await getRecentSignals(7);
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
-  const topCandidates = pickTopStocks(3);
+  // 가격 기준일 지연(최신 배치 미반영) 종목은 오늘 후보·Top 카드에서 제외(정책은 pickTopStocks 주석 참조).
+  const laggedTickers = new Set(getPriceLagSummary().laggedTickers);
+  const topCandidates = pickTopStocks(3, laggedTickers);
   const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? [], universeTickers);
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);

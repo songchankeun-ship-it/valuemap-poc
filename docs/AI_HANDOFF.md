@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-10T14:22:00.000Z
+Last updated: 2026-07-10T14:46:30.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 131 - ORNScore reaudit 2026-07-10 A - data freshness labels
-- Run: 128
+- Task: 132 - ORNScore reaudit 2026-07-10 B - per-stock stale badges
+- Run: 129
 - Status: recovered locally; validation passed
 - Agent: claude + codex recovery
-- Note: Claude completed and committed b7d5807 with tsc, freshness test 13/13, verify_metrics 138/0, git diff --check, build, verify:routes 9/9, and smoke 23/23 passing. AI Center later marked the run failed on a dev-server readiness timeout after the PASS verdict, so Codex recovered the queue state for the next task.
+- Note: Claude implemented most of the per-stock price-lag slice before an AI Center restart interrupted the run. Codex completed the /stocks wiring, verified the lag badge/status surfaces, and committed the recovered slice. Checks passed: npx tsc --noEmit, verify_metrics.py 138/0/Metrics 2.4, git diff --check, npm run build, local verify:routes 9/9, smoke:check --all 23/23.
 
 ## Next Agent Checklist
 

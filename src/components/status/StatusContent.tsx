@@ -36,6 +36,7 @@ export function StatusContent({
   scoreTimeUtc,
   alertedCount,
   metricsChangelogPath,
+  priceLag,
   selfCheck,
 }: {
   dataStatusByLocale: Record<Locale, LocalizedDataStatus>;
@@ -45,6 +46,10 @@ export function StatusContent({
   scoreTimeUtc: string;
   alertedCount: number;
   metricsChangelogPath: string;
+  priceLag: {
+    count: number;
+    symbols: { ticker: string; name: string; priceDate: string; businessDaysBehind: number }[];
+  };
   selfCheck: {
     suspectCount: number;
     missingFinancialsCount: number;
@@ -58,6 +63,11 @@ export function StatusContent({
   const f = marketFreshnessCopy[locale];
   const ds = dataStatusByLocale[locale];
   const sc = selfCheck;
+
+  // YYYYMMDD → 2026.07.08 (표시 전용).
+  const fmtYmd = (v: string) =>
+    /^\d{8}$/.test(v) ? `${v.slice(0, 4)}.${v.slice(4, 6)}.${v.slice(6, 8)}` : v;
+  const lagCount = priceLag.count;
 
   // 방문 시각 기준 신선도 — 전 거래일 종가만 있고 오늘 장마감 수집 전이면 "정상"으로만 보이지 않게 한다.
   // 파이프라인 지연(priceStale)이 우선, 그다음 오늘 마감 수집 대기(awaiting_close)를 경고로 노출.
@@ -200,7 +210,7 @@ export function StatusContent({
       {/* 최근 자동 점검 요약 — 앱 내부 실측 값(검증 보류·결측·산식 일치) */}
       <section id="selfcheck" className="scroll-mt-20">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.selfcheckHeading}</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3">
             <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.selfcheckSuspect}</div>
             <div className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">{sc.suspectCount}<span className="text-xs font-medium text-zinc-400 dark:text-zinc-500"> / {sc.universeCount}</span></div>
@@ -216,7 +226,19 @@ export function StatusContent({
             <div className={"text-lg font-bold tabular-nums " + (sc.metricsVersionMatch ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400")}>{sc.metricsVersionMatch ? t.selfcheckMatch : t.selfcheckMismatch}</div>
             <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.selfcheckVersionNote(ds.metricsVersionLabel)}</div>
           </div>
+          {/* 종목별 가격 기준일 불일치 — 전역 기준일보다 과거인 종목 수·이름. 0이면 회색, ≥1이면 amber. */}
+          <div className={"rounded-lg border p-3 " + (lagCount > 0 ? "border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20" : "border-zinc-200 dark:border-zinc-800")}>
+            <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.selfcheckPriceLag}</div>
+            <div className={"text-lg font-bold tabular-nums " + (lagCount > 0 ? "text-amber-700 dark:text-amber-400" : "text-zinc-800 dark:text-zinc-200")}>{lagCount}<span className="text-xs font-medium text-zinc-400 dark:text-zinc-500"> / {sc.universeCount}</span></div>
+            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{lagCount > 0 ? t.selfcheckPriceLagNote : t.selfcheckPriceLagNone}</div>
+          </div>
         </div>
+        {lagCount > 0 ? (
+          <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-2 leading-relaxed">
+            <span className="font-medium">{t.selfcheckPriceLagNamesPrefix}</span>
+            {priceLag.symbols.map((s) => t.selfcheckPriceLagSymbol(s.name, s.ticker, fmtYmd(s.priceDate))).join(", ")}
+          </p>
+        ) : null}
         <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
           {t.selfcheckFootnote}
         </p>

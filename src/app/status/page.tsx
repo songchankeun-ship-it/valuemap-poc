@@ -1,6 +1,7 @@
 import { dataMetadata, isDataStale } from "@/lib/realStocks";
 import { dataStatus, dataStatusByLocale, metricsChangelogPath } from "@/lib/dataStatus";
 import { getAlertedTickers } from "@/lib/marketAlert";
+import { getPriceLagSummary } from "@/lib/priceLag";
 import { StatusContent } from "@/components/status/StatusContent";
 
 export const metadata = {
@@ -43,6 +44,8 @@ export default async function StatusPage() {
   const priceStale = isDataStale(dataMetadata.asOfBusinessDate);
   const alertedCount = (await getAlertedTickers()).size;
   const sc = dataStatus.selfCheck;
+  // 종목별 가격 기준일 불일치(전역 기준일보다 과거인 종목) — 기존 가격 파일에서만 파생, 데이터셋 무변경.
+  const priceLag = getPriceLagSummary();
   const { kst: scoreTimeKst, utc: scoreTimeUtc } = formatScoreTimes(dataMetadata.generatedAt);
 
   // 다국어 v2: 데이터 파생값(dataStatusByLocale)·서버 계산값을 직렬화 props로 넘기고,
@@ -56,6 +59,15 @@ export default async function StatusPage() {
       scoreTimeUtc={scoreTimeUtc}
       alertedCount={alertedCount}
       metricsChangelogPath={metricsChangelogPath}
+      priceLag={{
+        count: priceLag.count,
+        symbols: priceLag.lagged.map((l) => ({
+          ticker: l.ticker,
+          name: l.name,
+          priceDate: l.priceDate,
+          businessDaysBehind: l.businessDaysBehind,
+        })),
+      }}
       selfCheck={{
         suspectCount: sc.suspectCount,
         missingFinancialsCount: sc.missingFinancialsCount,

@@ -320,6 +320,12 @@ export const stocksCopy = {
       priceFalling: "가격 하락 중",
       surgeCaution: "급등 주의",
     },
+
+    // ── 종목별 가격 기준일 지연 배지(목록/카드) ──
+    dataLag: {
+      badge: "데이터 지연",
+      tooltip: "이 종목 주가는 전체 기준일보다 과거입니다(최신 배치 미반영). 순위·점수 해석 시 주의하세요.",
+    },
   },
   en: {
     // ── Page header ──
@@ -632,6 +638,12 @@ export const stocksCopy = {
       highVol: "High volatility",
       priceFalling: "Price falling",
       surgeCaution: "Surge caution",
+    },
+
+    // ── Per-stock price-date lag badge (list/card) ──
+    dataLag: {
+      badge: "Data delayed",
+      tooltip: "This stock's price is older than the site reference date (not in the latest batch). Interpret its rank/score with care.",
     },
   },
 } as const satisfies Record<Locale, unknown>;

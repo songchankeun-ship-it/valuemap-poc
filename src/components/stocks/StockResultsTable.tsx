@@ -5,6 +5,7 @@ import { fmtWon } from "@/lib/format";
 import { scoreColorOf } from "@/lib/scoreColor";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stocksCopy } from "@/lib/copy/stocks";
+import { DataLagBadge } from "@/components/trust/badges";
 
 // /stocks 데스크톱 점수 히트맵 테이블 — 카드와 같은 점수 색 규칙(scoreColor)을 쓴다.
 // 모바일에서는 렌더하지 않는다(상위 StocksExplorer가 lg:block로만 노출).
@@ -75,9 +76,10 @@ const TD = "px-2.5 py-2.5 align-middle whitespace-nowrap";
 // 종합점수 열 왼쪽 구분선 — 이름/가격 그룹과 4지표 히트맵 블록을 시각적으로 분리(표시 전용).
 const SEP = " border-l border-zinc-200/80 dark:border-zinc-800";
 
-export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
+export function StockResultsTable({ rows, laggedTickers = [] }: { rows: StockRowVM[]; laggedTickers?: string[] }) {
   const { locale } = useLanguage();
   const t = stocksCopy[locale];
+  const lagged = new Set(laggedTickers);
   return (
     <div className="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900">
       <table className="w-full text-left text-xs border-collapse">
@@ -105,7 +107,10 @@ export function StockResultsTable({ rows }: { rows: StockRowVM[] }) {
               <tr key={s.ticker} className="border-b border-zinc-100 dark:border-zinc-800/60 even:bg-zinc-50/50 dark:even:bg-zinc-900/30 hover:bg-blue-50/50 dark:hover:bg-zinc-800/50 transition">
                 <td className={TD}>
                   <Link prefetch={false} href={"/stock/" + s.ticker} className="group inline-flex flex-col">
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400">{s.name}</span>
+                    <span className="inline-flex items-center gap-1.5 flex-wrap">
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400">{s.name}</span>
+                      {lagged.has(s.ticker) ? <DataLagBadge label={t.dataLag.badge} title={t.dataLag.tooltip} /> : null}
+                    </span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono tabular-nums">{s.ticker} · {s.market}</span>
                   </Link>
                 </td>

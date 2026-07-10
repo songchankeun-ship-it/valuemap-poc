@@ -73,6 +73,34 @@ export function AsOfDateBadge({
   );
 }
 
+/**
+ * 종목별 가격 기준일 지연 배지 — "데이터 지연" 등.
+ * 경고(amber)지만 오류가 아니므로 차분한 톤. 색상 외에 항상 단어를 동반(접근성 §20).
+ * 목록/카드에서 지연 종목이 "최신"으로 오해되지 않게 하기 위한 작은 인라인 배지.
+ */
+export function DataLagBadge({
+  label,
+  title,
+  className = "",
+}: {
+  label: string;
+  title?: string;
+  className?: string;
+}) {
+  return (
+    <span
+      title={title ?? label}
+      className={
+        "inline-flex items-center gap-1 rounded border border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-px text-[10px] font-medium text-amber-700 dark:text-amber-400 whitespace-nowrap " +
+        className
+      }
+    >
+      <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500" aria-hidden="true" />
+      <span>{label}</span>
+    </span>
+  );
+}
+
 /** 산식 버전 배지 — "Metrics 2.4" (단일 표기). */
 export function MetricsVersionBadge({
   label,

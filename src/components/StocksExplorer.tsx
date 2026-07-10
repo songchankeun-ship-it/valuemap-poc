@@ -7,7 +7,7 @@ import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { addConditionAlert } from "@/lib/conditionAlerts";
-import { DataStatusBadge } from "@/components/trust/badges";
+import { DataStatusBadge, DataLagBadge } from "@/components/trust/badges";
 import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResultsTable";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stocksCopy } from "@/lib/copy/stocks";
@@ -48,6 +48,8 @@ interface Props {
   asOf?: string;
   metricsVersion?: string;
   dataStale?: boolean;
+  /** 가격 기준일이 전역 기준일보다 과거인(최신 배치 미반영) 종목 티커 — '데이터 지연' 배지용. */
+  laggedTickers?: string[];
 }
 
 type SortKey =
@@ -265,7 +267,8 @@ function badgesFromConfig(c: PresetConfig, t: StocksCopyT): string[] {
   return b;
 }
 
-export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector, initialQuery, totalCount, asOf, metricsVersion, dataStale }: Props) {
+export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector, initialQuery, totalCount, asOf, metricsVersion, dataStale, laggedTickers = [] }: Props) {
+  const laggedSet = useMemo(() => new Set(laggedTickers), [laggedTickers]);
   const { locale } = useLanguage();
   const t = stocksCopy[locale];
   const total = totalCount ?? stocks.length;
@@ -667,6 +670,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   function renderCards() {
     return sorted.slice(0, 100).map((s) => {
       const { strengths, warnings } = deriveSignals(s, t.signal);
+      const lagged = laggedSet.has(s.ticker);
       return (
         <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
           <div className="flex items-start justify-between gap-3">
@@ -674,6 +678,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               <div className="flex items-baseline gap-2 mb-1 flex-wrap">
                 <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
                 <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
+                {lagged ? <DataLagBadge label={t.dataLag.badge} title={t.dataLag.tooltip} /> : null}
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
                 {s.sector ? <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">· {s.sector}</span> : null}
               </div>
@@ -1331,7 +1336,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           })() : viewMode === "table" ? (
             <>
               {/* 표형: 데스크톱은 점수 히트맵 테이블, 모바일(<lg)은 카드형 유지 */}
-              <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, 100)} /></div>
+              <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, 100)} laggedTickers={laggedTickers} /></div>
               <div className="lg:hidden space-y-2">{renderCards()}</div>
             </>
           ) : (

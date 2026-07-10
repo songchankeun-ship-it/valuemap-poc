@@ -65,6 +65,12 @@ export const statusCopy = {
     selfcheckMatch: "일치",
     selfcheckMismatch: "불일치",
     selfcheckVersionNote: (v: string) => `${v} 기준`,
+    selfcheckPriceLag: "종목별 가격 기준일 불일치",
+    selfcheckPriceLagNote: "전체 기준일보다 과거인 종목",
+    selfcheckPriceLagNone: "모든 종목 기준일 일치",
+    selfcheckPriceLagNamesPrefix: "최신 배치 미반영: ",
+    selfcheckPriceLagSymbol: (name: string, ticker: string, date: string) =>
+      `${name}(${ticker}) · ${date} 기준`,
     selfcheckFootnote:
       "이 수치는 현재 빌드에 포함된 데이터 풀에서 즉시 계산한 값입니다. 현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다.",
 
@@ -139,6 +145,12 @@ export const statusCopy = {
     selfcheckMatch: "Match",
     selfcheckMismatch: "Mismatch",
     selfcheckVersionNote: (v: string) => `as of ${v}`,
+    selfcheckPriceLag: "Per-stock price-date mismatch",
+    selfcheckPriceLagNote: "Stocks older than the site reference date",
+    selfcheckPriceLagNone: "All stocks match the reference date",
+    selfcheckPriceLagNamesPrefix: "Not in latest batch: ",
+    selfcheckPriceLagSymbol: (name: string, ticker: string, date: string) =>
+      `${name}(${ticker}) · as of ${date}`,
     selfcheckFootnote:
       "These figures are computed instantly from the data pool included in the current build. For now we provide deploy-time snapshot check results, and we plan to progressively disclose check history and re-collection status over time.",
 
