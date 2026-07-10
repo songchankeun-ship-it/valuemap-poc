@@ -10,6 +10,7 @@ import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { StockEventTimelineLazy } from "@/components/StockEventTimelineLazy";
 import { getScoreHistory, type ScorePoint } from "@/lib/scoreHistory";
 import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
+import { StockPriceSummary } from "@/components/StockPriceSummary";
 import { getPriceHistory } from "@/lib/priceHistory";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
@@ -445,7 +446,12 @@ export default async function StockDetailPage({ params }: PageProps) {
               <>
       {/* 주가 차트 (가격 데이터 있을 때만) */}
       {priceHistory && priceHistory.points.length >= 2 ? (
-        <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
+        <>
+          <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
+          {/* 차트는 ssr:false 지연 로드라 검색엔진·스크린리더·비JS에 빈 섹션으로 보인다.
+              서버 렌더 텍스트 요약으로 차트 섹션이 비지 않게 보완(가격 시계열 파생 수치만). */}
+          <StockPriceSummary name={s.name} points={priceHistory.points} />
+        </>
       ) : null}
 
       {/* 초보자 해석 — 설계서 5-3/5-4: 요약 탭 첫 화면에서 '현재 해석 → 먼저 확인할 것'이 먼저 읽히게 차트 바로 뒤로 승격 */}

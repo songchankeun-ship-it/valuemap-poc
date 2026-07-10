@@ -16,6 +16,7 @@
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
     "test:freshness": "tsx scripts/test_freshness.ts",
     "test:compare": "tsx scripts/test_compare_query.ts",
+    "test:price-summary": "tsx scripts/test_priceSummary.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

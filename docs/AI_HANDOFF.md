@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 137 - ORNScore reaudit 2026-07-10 G - backtest crawler safety
-- Run: 134
+- Task: 138 - ORNScore reaudit 2026-07-10 H - stock detail chart accessibility/SEO text fallback
+- Run: 135
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Server-rendered price text summary below the (ssr:false) chart so crawlers/screen-readers/no-JS see 3M·1M return, drawdown, and date context. Display-only, existing price data. All local gates passed.
 
 ## Next Agent Checklist
 

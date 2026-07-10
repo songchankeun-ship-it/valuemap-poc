@@ -1,6 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
 
+## 2026-07-11 · [claude] Reaudit — 종목 상세 차트 접근성/SEO 텍스트 fallback (Task 138)
+- **범위**: 재검수 P2 #5 — 종목 상세 "주가 차트" 섹션이 검색엔진·스크린리더·비JS 환경에서 빈 섹션으로 보이던 문제 보완. `StockPriceChart`는 `next/dynamic({ ssr:false })` 지연 로드라 SSR HTML에는 스켈레톤(제목 "주가 차트"만) → 크롤러/스크린리더는 내용 요약을 못 읽음. **표시 정책 전용** — 이미 받은 `public/data/prices/{ticker}.json` 종가 배열에서만 파생 수치 계산. 점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·차트 컴포넌트·마커 로직 무변경. 차트 이벤트(공시·급등 구간명 등) 생성 없음.
+- **신규(2 lib/컴포넌트 + 1 테스트)**:
+  - `src/lib/priceSummary.ts` — 순수 `computePriceSummary(points)` : `{ fullReturnPct, return3mPct(63거래일), return1mPct(21거래일), maxDrawdownPct(고점대비, 음수), lastClose, fromDate, toDate, tradingDays }`. 이력 부족 항목은 null(graceful). `signedPctText` 부호 포함 포맷 헬퍼. 새 데이터/API 없음.
+  - `src/components/StockPriceSummary.tsx` — **서버 컴포넌트**(no "use client")라 SSR HTML에 항상 렌더 → 크롤러/스크린리더/비JS가 읽음. `aria-label="{name} 주가 요약"`, h3 "주가 요약", 기준일 구간·거래일 수·구간 등락률, 3개월/1개월 수익률·표시 구간 최대낙폭(값 있을 때만). 한국 관습 색(상승 빨강/하락 파랑). "참고용 요약 · 차트 미렌더 환경에서도 확인" 안내 1줄. 투자 자문 표현 없음.
+  - `scripts/test_priceSummary.ts`(`npm run test:price-summary`, tsx) — 23 assertion: 2점 미만 null·단조상승 낙폭 null·낙폭 -20% 경계·3M/1M 등락률(길이 64)·3M 경계(길이 63 → null)·signedPctText 포맷·from/to 날짜.
+- **반영**: `src/app/stock/[ticker]/page.tsx` — 차트(`StockPriceChartLazy`) 바로 아래 `<StockPriceSummary>` 삽입(가격 데이터 ≥2점일 때만, 차트와 동일 조건). 상단 히어로(종목명·코드·가격·기준일·탐색 우선도·이유·위험·바로가기)는 무변경 — 요약은 요약 탭 차트 바로 뒤(접힘선 아래)라 모바일 첫 화면 압축 유지. 반복 고지 추가 없음(요약 안내 1줄만).
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `npm run test:price-summary` PASS(23) · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF만) · `npm run build` 0(기존 `TrustLayer` ref 경고만). local prod 4655: `verify:routes` 9/9 · `smoke:check --all` 24/24 · `verify:stocks-seo` 9/9. SSR HTML 직접 확인 — `/stock/005930`에 `data-testid="price-summary-fallback"` 섹션 1개, 최근 3개월 +41.5%(빨강)·1개월·최대낙폭 렌더; `/stock/000070` 최대낙폭 -59.2%(파랑) 렌더; 급등 구간명/공시 마커 등 가짜 이벤트 문구 0. 리스너 PID 25020만 taskkill.
+- **잔여 리스크 / 다음 큐**: 요약 블록은 mobile `grid-cols-1`(세로 스택)·가변폭·고정폭 없음 → 390px 가로 오버플로 위험 없음(정적 분석). 실기기 390×844/데스크톱 육안·언어 토글 EN은 운영자 게이트(Playwright 미구성). **차트 마커 스캐폴드**(점수 급등/급락·DART 공시·거래활성도 급증·3개월 급등 경고 구간 레이어)는 별도 데이터 정합이 필요한 후속 작업으로 남김(브리프 P2 #5 후단) — 이번 슬라이스는 텍스트 fallback만. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [claude] Reaudit — backtest 스니펫 리스크 축소 (nosnippet + data-nosnippet) (Task 137)
 - **범위**: 재검수 P1 #7 — 실험실 백테스트의 과거 성과·구성 예시가 검색/AI 요약/SNS 스니펫에 맥락 없이 잘려 "현재 추천"으로 오해되는 리스크를 낮춤. **표시/메타 정책 전용** — 백테스트 데이터·수치·계산·`public/backtest-result.json`·점수 산식·수집 코드·생성 데이터셋·`metricsVersion` 무변경. 신규 npm/라우트/컴포넌트 0. 브랜치 `ai-center/task-137-ornscore-reaudit-2026-07-10-g-backte`.
 - **변경(2파일, 최소 침습·기존 패턴)**:
