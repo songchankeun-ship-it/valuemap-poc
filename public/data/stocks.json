@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T09:41:59.431960",
+  "generatedAt": "2026-07-10T10:45:32.034713",
   "source": "FDR + Naver + yfinance",
   "count": 138,
   "stocks": [
@@ -14,8 +14,8 @@
         "밸류업"
       ],
       "market": "KOSPI",
-      "currentPrice": 278000,
-      "changePct": 0.18,
+      "currentPrice": 285000,
+      "changePct": 2.52,
       "volume": 34314920,
       "marketCap": 2060813209320000,
       "per": 36.84,
@@ -26,30 +26,30 @@
       "dividendYield": 0.41,
       "beta": 1.33,
       "peg": 0.21,
-      "momentum": 94.9,
+      "momentum": 94.2,
       "returns": {
-        "r1m": -8.1,
-        "r3m": 41.48,
-        "r6m": 116.34,
-        "r1y": 357.24
+        "r1m": -4.68,
+        "r3m": 35.39,
+        "r6m": 106.37,
+        "r1y": 376.59
       },
       "volScore": 97.8,
       "volStats": {
-        "annualReturn": 171.77,
-        "annualStd": 62.26,
-        "sharpe": 2.7,
+        "annualReturn": 175.93,
+        "annualStd": 62.24,
+        "sharpe": 2.77,
         "days": 253,
         "maxDrawdown": -23.45,
         "worstDay": -12.31
       },
-      "flow": 46.0,
+      "flow": 41.7,
       "flowStats": {
-        "recent5dAvg": 30027273,
-        "recent20dAvg": 31611100,
-        "ratio": 0.95
+        "recent5dAvg": 27888602,
+        "recent20dAvg": 31102152,
+        "ratio": 0.9
       },
       "value": 42.0,
-      "compositeScore": 70.2,
+      "compositeScore": 68.9,
       "valueNA": false
     },
     {
@@ -62,8 +62,8 @@
         "SK그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 2186000,
-      "changePct": 5.3,
+      "currentPrice": 2180000,
+      "changePct": -0.27,
       "volume": 3659482,
       "marketCap": 1630663011120000,
       "per": 6.4,
@@ -76,28 +76,28 @@
       "peg": 3.34,
       "momentum": 98.6,
       "returns": {
-        "r1m": 6.74,
-        "r3m": 138.65,
-        "r6m": 222.9,
-        "r1y": 669.72
+        "r1m": 3.76,
+        "r3m": 111.04,
+        "r6m": 213.22,
+        "r1y": 646.58
       },
       "volScore": 98.6,
       "volStats": {
-        "annualReturn": 234.28,
-        "annualStd": 76.88,
-        "sharpe": 3.0,
+        "annualReturn": 231.19,
+        "annualStd": 76.86,
+        "sharpe": 2.96,
         "days": 253,
         "maxDrawdown": -28.88,
         "worstDay": -14.57
       },
-      "flow": 51.3,
+      "flow": 47.2,
       "flowStats": {
-        "recent5dAvg": 6232585,
-        "recent20dAvg": 5925013,
-        "ratio": 1.05
+        "recent5dAvg": 5728650,
+        "recent20dAvg": 5933954,
+        "ratio": 0.97
       },
       "value": 63.1,
-      "compositeScore": 77.9,
+      "compositeScore": 76.9,
       "valueNA": false
     },
     {
@@ -108,8 +108,8 @@
         "HBM/HBM3E"
       ],
       "market": "KOSPI",
-      "currentPrice": 215500,
-      "changePct": 8.18,
+      "currentPrice": 222000,
+      "changePct": 3.02,
       "volume": 2394664,
       "marketCap": 28974908800000,
       "per": 22.48,
@@ -120,30 +120,30 @@
       "dividendYield": 0.29,
       "beta": 2.27,
       "peg": 1.53,
-      "momentum": 70.3,
+      "momentum": 55.1,
       "returns": {
-        "r1m": -20.19,
-        "r3m": -14.99,
-        "r6m": 49.13,
-        "r1y": 109.43
+        "r1m": -23.71,
+        "r3m": -20.86,
+        "r6m": 32.7,
+        "r1y": 117.65
       },
-      "volScore": 84.1,
+      "volScore": 82.6,
       "volStats": {
-        "annualReturn": 113.44,
-        "annualStd": 91.02,
-        "sharpe": 1.21,
+        "annualReturn": 117.33,
+        "annualStd": 91.05,
+        "sharpe": 1.25,
         "days": 253,
         "maxDrawdown": -51.36,
         "worstDay": -14.43
       },
-      "flow": 18.4,
+      "flow": 29.3,
       "flowStats": {
-        "recent5dAvg": 835488,
-        "recent20dAvg": 1379744,
-        "ratio": 0.61
+        "recent5dAvg": 829248,
+        "recent20dAvg": 1118493,
+        "ratio": 0.74
       },
       "value": 27.4,
-      "compositeScore": 50.0,
+      "compositeScore": 48.6,
       "valueNA": false
     },
     {
@@ -155,8 +155,8 @@
         "DB그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 116700,
-      "changePct": 4.38,
+      "currentPrice": 121900,
+      "changePct": 4.46,
       "volume": 795273,
       "marketCap": 7709012993600,
       "per": 9.87,
@@ -167,30 +167,30 @@
       "dividendYield": 0.48,
       "beta": 2.19,
       "peg": null,
-      "momentum": 92.0,
+      "momentum": 89.9,
       "returns": {
-        "r1m": -24.07,
-        "r3m": 32.92,
-        "r6m": 58.34,
-        "r1y": 153.15
+        "r1m": -21.46,
+        "r3m": 29.13,
+        "r6m": 62.1,
+        "r1y": 160.47
       },
       "volScore": 89.9,
       "volStats": {
-        "annualReturn": 123.35,
-        "annualStd": 78.89,
-        "sharpe": 1.52,
+        "annualReturn": 126.28,
+        "annualStd": 78.98,
+        "sharpe": 1.55,
         "days": 253,
         "maxDrawdown": -49.3,
         "worstDay": -14.59
       },
-      "flow": 19.7,
+      "flow": 23.3,
       "flowStats": {
-        "recent5dAvg": 563860,
-        "recent20dAvg": 908082,
-        "ratio": 0.62
+        "recent5dAvg": 535548,
+        "recent20dAvg": 803330,
+        "ratio": 0.67
       },
       "value": 64.6,
-      "compositeScore": 66.6,
+      "compositeScore": 66.9,
       "valueNA": false
     },
     {
@@ -200,8 +200,8 @@
         "반도체 후공정"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 70000,
-      "changePct": 1.16,
+      "currentPrice": 73800,
+      "changePct": 5.43,
       "volume": 1156169,
       "marketCap": 7590700260000,
       "per": 27.83,
@@ -212,30 +212,30 @@
       "dividendYield": 0.86,
       "beta": 0.32,
       "peg": null,
-      "momentum": 22.5,
+      "momentum": 24.6,
       "returns": {
-        "r1m": -24.73,
-        "r3m": -36.19,
-        "r6m": 7.86,
-        "r1y": 38.07
+        "r1m": -26.05,
+        "r3m": -36.82,
+        "r6m": 13.54,
+        "r1y": 44.99
       },
       "volScore": 65.9,
       "volStats": {
-        "annualReturn": 53.64,
-        "annualStd": 65.97,
-        "sharpe": 0.76,
+        "annualReturn": 58.68,
+        "annualStd": 66.17,
+        "sharpe": 0.83,
         "days": 253,
         "maxDrawdown": -45.51,
         "worstDay": -11.74
       },
-      "flow": 11.0,
+      "flow": 27.8,
       "flowStats": {
-        "recent5dAvg": 939572,
-        "recent20dAvg": 1833583,
-        "ratio": 0.51
+        "recent5dAvg": 949474,
+        "recent20dAvg": 1313462,
+        "ratio": 0.72
       },
       "value": 28.1,
-      "compositeScore": 31.9,
+      "compositeScore": 36.6,
       "valueNA": false
     },
     {
@@ -245,8 +245,8 @@
         "반도체 후공정"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 141800,
-      "changePct": 3.2,
+      "currentPrice": 151200,
+      "changePct": 6.63,
       "volume": 276417,
       "marketCap": 4546768941000,
       "per": 111.45,
@@ -257,30 +257,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 29.0,
+      "momentum": 39.1,
       "returns": {
-        "r1m": -21.48,
-        "r3m": -40.67,
-        "r6m": 18.17,
-        "r1y": 138.72
+        "r1m": -20.63,
+        "r3m": -41.17,
+        "r6m": 34.76,
+        "r1y": 152.84
       },
-      "volScore": 87.7,
+      "volScore": 87.0,
       "volStats": {
-        "annualReturn": 121.38,
-        "annualStd": 83.75,
-        "sharpe": 1.41,
+        "annualReturn": 127.33,
+        "annualStd": 83.98,
+        "sharpe": 1.47,
         "days": 253,
         "maxDrawdown": -49.3,
         "worstDay": -15.92
       },
-      "flow": 28.1,
+      "flow": 41.9,
       "flowStats": {
-        "recent5dAvg": 300839,
-        "recent20dAvg": 413898,
-        "ratio": 0.73
+        "recent5dAvg": 327214,
+        "recent20dAvg": 364315,
+        "ratio": 0.9
       },
       "value": 17.5,
-      "compositeScore": 40.6,
+      "compositeScore": 46.4,
       "valueNA": false
     },
     {
@@ -291,8 +291,8 @@
         "원익그룹"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 104900,
-      "changePct": 2.14,
+      "currentPrice": 125000,
+      "changePct": 19.16,
       "volume": 1192341,
       "marketCap": 6243472207200,
       "per": 52.87,
@@ -303,30 +303,30 @@
       "dividendYield": 0.2,
       "beta": 1.59,
       "peg": null,
-      "momentum": 71.7,
+      "momentum": 83.3,
       "returns": {
-        "r1m": -10.11,
-        "r3m": -8.06,
-        "r6m": 31.13,
-        "r1y": 298.1
+        "r1m": -11.35,
+        "r3m": 2.97,
+        "r6m": 58.63,
+        "r1y": 372.59
       },
-      "volScore": 92.8,
+      "volScore": 94.2,
       "volStats": {
-        "annualReturn": 192.05,
-        "annualStd": 105.46,
-        "sharpe": 1.79,
+        "annualReturn": 210.83,
+        "annualStd": 107.05,
+        "sharpe": 1.94,
         "days": 253,
         "maxDrawdown": -43.97,
         "worstDay": -20.95
       },
-      "flow": 30.6,
+      "flow": 37.7,
       "flowStats": {
-        "recent5dAvg": 1637767,
-        "recent20dAvg": 2160414,
-        "ratio": 0.76
+        "recent5dAvg": 1782549,
+        "recent20dAvg": 2107726,
+        "ratio": 0.85
       },
       "value": 31.4,
-      "compositeScore": 56.6,
+      "compositeScore": 61.6,
       "valueNA": false
     },
     {
@@ -336,8 +336,8 @@
         "반도체 후공정"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 38600,
-      "changePct": -3.5,
+      "currentPrice": 45000,
+      "changePct": 16.58,
       "volume": 799252,
       "marketCap": 532568026800,
       "per": 74.17,
@@ -350,28 +350,28 @@
       "peg": null,
       "momentum": 97.8,
       "returns": {
-        "r1m": -0.39,
-        "r3m": 94.56,
-        "r6m": 178.3,
-        "r1y": 326.05
+        "r1m": 2.27,
+        "r3m": 96.08,
+        "r6m": 211.42,
+        "r1y": 405.62
       },
-      "volScore": 95.7,
+      "volScore": 96.4,
       "volStats": {
-        "annualReturn": 183.9,
-        "annualStd": 89.95,
-        "sharpe": 2.01,
+        "annualReturn": 202.25,
+        "annualStd": 91.3,
+        "sharpe": 2.18,
         "days": 253,
         "maxDrawdown": -43.89,
         "worstDay": -13.7
       },
-      "flow": 57.8,
+      "flow": 52.6,
       "flowStats": {
-        "recent5dAvg": 646992,
-        "recent20dAvg": 492992,
-        "ratio": 1.31
+        "recent5dAvg": 520001,
+        "recent20dAvg": 471193,
+        "ratio": 1.1
       },
       "value": 17.2,
-      "compositeScore": 67.1,
+      "compositeScore": 66.0,
       "valueNA": false
     },
     {
@@ -382,8 +382,8 @@
         "반도체 기술(GAA)"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 39300,
-      "changePct": 2.75,
+      "currentPrice": 44400,
+      "changePct": 12.98,
       "volume": 4259435,
       "marketCap": 3888675000000,
       "per": 44.33,
@@ -394,30 +394,30 @@
       "dividendYield": 1.13,
       "beta": 1.6,
       "peg": null,
-      "momentum": 53.6,
+      "momentum": 68.1,
       "returns": {
-        "r1m": -25.99,
-        "r3m": -5.64,
-        "r6m": 14.08,
-        "r1y": 37.17
+        "r1m": -19.27,
+        "r3m": -3.27,
+        "r6m": 26.86,
+        "r1y": 60.0
       },
-      "volScore": 64.5,
+      "volScore": 68.1,
       "volStats": {
-        "annualReturn": 68.17,
-        "annualStd": 86.46,
-        "sharpe": 0.75,
+        "annualReturn": 84.29,
+        "annualStd": 87.32,
+        "sharpe": 0.93,
         "days": 253,
         "maxDrawdown": -54.19,
         "worstDay": -20.6
       },
       "flow": 10,
       "flowStats": {
-        "recent5dAvg": 4033767,
-        "recent20dAvg": 8344098,
-        "ratio": 0.48
+        "recent5dAvg": 3310942,
+        "recent20dAvg": 7699097,
+        "ratio": 0.43
       },
       "value": 16.8,
-      "compositeScore": 36.2,
+      "compositeScore": 40.8,
       "valueNA": false
     },
     {
@@ -431,8 +431,8 @@
         "전고체 배터리"
       ],
       "market": "KOSPI",
-      "currentPrice": 313500,
-      "changePct": -0.63,
+      "currentPrice": 326000,
+      "changePct": 3.99,
       "volume": 707995,
       "marketCap": 99450000000000,
       "per": 80.86,
@@ -443,30 +443,30 @@
       "dividendYield": 0,
       "beta": 1.01,
       "peg": 7.45,
-      "momentum": 24.6,
+      "momentum": 30.4,
       "returns": {
-        "r1m": -18.68,
-        "r3m": -23.26,
-        "r6m": -13.16,
-        "r1y": 8.85
+        "r1m": -15.21,
+        "r3m": -19.7,
+        "r6m": -12.25,
+        "r1y": 9.76
       },
-      "volScore": 48.6,
+      "volScore": 44.9,
       "volStats": {
-        "annualReturn": 26.33,
-        "annualStd": 60.43,
-        "sharpe": 0.38,
+        "annualReturn": 27.19,
+        "annualStd": 60.48,
+        "sharpe": 0.39,
         "days": 253,
         "maxDrawdown": -39.01,
         "worstDay": -11.58
       },
-      "flow": 46.6,
+      "flow": 43.4,
       "flowStats": {
-        "recent5dAvg": 434602,
-        "recent20dAvg": 454019,
-        "ratio": 0.96
+        "recent5dAvg": 407734,
+        "recent20dAvg": 444175,
+        "ratio": 0.92
       },
       "value": 17.9,
-      "compositeScore": 34.4,
+      "compositeScore": 34.2,
       "valueNA": false
     },
     {
@@ -479,8 +479,8 @@
         "전고체 배터리"
       ],
       "market": "KOSPI",
-      "currentPrice": 401500,
-      "changePct": -2.55,
+      "currentPrice": 434000,
+      "changePct": 8.09,
       "volume": 466380,
       "marketCap": 48512489060000,
       "per": 16.63,
@@ -491,30 +491,30 @@
       "dividendYield": 0.36,
       "beta": 1.62,
       "peg": 12.29,
-      "momentum": 73.9,
+      "momentum": 77.5,
       "returns": {
-        "r1m": -19.13,
-        "r3m": -12.05,
-        "r6m": 52.95,
-        "r1y": 136.59
+        "r1m": -12.94,
+        "r3m": -7.95,
+        "r6m": 57.82,
+        "r1y": 151.16
       },
-      "volScore": 90.6,
+      "volScore": 91.3,
       "volStats": {
-        "annualReturn": 109.03,
-        "annualStd": 68.06,
-        "sharpe": 1.55,
+        "annualReturn": 115.3,
+        "annualStd": 68.47,
+        "sharpe": 1.63,
         "days": 253,
         "maxDrawdown": -43.61,
         "worstDay": -13.97
       },
-      "flow": 46.5,
+      "flow": 47.4,
       "flowStats": {
-        "recent5dAvg": 508568,
-        "recent20dAvg": 532182,
-        "ratio": 0.96
+        "recent5dAvg": 505128,
+        "recent20dAvg": 522396,
+        "ratio": 0.97
       },
       "value": 50.4,
-      "compositeScore": 65.4,
+      "compositeScore": 66.6,
       "valueNA": false
     },
     {
@@ -526,8 +526,8 @@
         "SK그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 99000,
-      "changePct": -0.8,
+      "currentPrice": 102900,
+      "changePct": 3.94,
       "volume": 410852,
       "marketCap": 19796081474800,
       "per": 53.47,
@@ -538,30 +538,30 @@
       "dividendYield": 1.84,
       "beta": 1.58,
       "peg": null,
-      "momentum": 48.6,
+      "momentum": 53.6,
       "returns": {
-        "r1m": -4.53,
-        "r3m": -18.72,
-        "r6m": -0.9,
-        "r1y": 1.23
+        "r1m": -0.29,
+        "r3m": -14.53,
+        "r6m": 0.19,
+        "r1y": -15.93
       },
-      "volScore": 42.0,
+      "volScore": 30.4,
       "volStats": {
-        "annualReturn": 18.75,
-        "annualStd": 59.97,
-        "sharpe": 0.25,
+        "annualReturn": -2.46,
+        "annualStd": 54.59,
+        "sharpe": -0.11,
         "days": 253,
         "maxDrawdown": -40.25,
         "worstDay": -16.73
       },
-      "flow": 50.8,
+      "flow": 52.9,
       "flowStats": {
-        "recent5dAvg": 451117,
-        "recent20dAvg": 437553,
-        "ratio": 1.03
+        "recent5dAvg": 483500,
+        "recent20dAvg": 433102,
+        "ratio": 1.12
       },
       "value": 50.7,
-      "compositeScore": 48.0,
+      "compositeScore": 46.9,
       "valueNA": false
     },
     {
@@ -573,8 +573,8 @@
         "에코프로그룹"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 111500,
-      "changePct": -0.98,
+      "currentPrice": 121600,
+      "changePct": 9.06,
       "volume": 656104,
       "marketCap": 19253029411200,
       "per": 364.17,
@@ -585,30 +585,30 @@
       "dividendYield": 0.05,
       "beta": 0.93,
       "peg": null,
-      "momentum": 2.9,
+      "momentum": 5.1,
       "returns": {
-        "r1m": -32.22,
-        "r3m": -44.67,
-        "r6m": -21.31,
-        "r1y": 11.28
+        "r1m": -25.99,
+        "r3m": -41.68,
+        "r6m": -16.6,
+        "r1y": 20.87
       },
-      "volScore": 53.6,
+      "volScore": 55.8,
       "volStats": {
-        "annualReturn": 37.76,
-        "annualStd": 74.26,
-        "sharpe": 0.46,
+        "annualReturn": 46.42,
+        "annualStd": 74.79,
+        "sharpe": 0.57,
         "days": 253,
         "maxDrawdown": -54.67,
         "worstDay": -16.99
       },
       "flow": 36.3,
       "flowStats": {
-        "recent5dAvg": 550737,
-        "recent20dAvg": 664412,
+        "recent5dAvg": 547557,
+        "recent20dAvg": 660574,
         "ratio": 0.83
       },
       "value": 4.4,
-      "compositeScore": 24.3,
+      "compositeScore": 25.4,
       "valueNA": false
     },
     {
@@ -619,8 +619,8 @@
         "에코프로그룹"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 79400,
-      "changePct": 1.79,
+      "currentPrice": 85800,
+      "changePct": 8.06,
       "volume": 1370132,
       "marketCap": 17569434068800,
       "per": 336.78,
@@ -631,30 +631,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 8.7,
+      "momentum": 9.4,
       "returns": {
-        "r1m": -25.02,
-        "r3m": -45.17,
-        "r6m": -10.08,
-        "r1y": 76.64
+        "r1m": -21.14,
+        "r3m": -43.96,
+        "r6m": -4.56,
+        "r1y": 90.03
       },
-      "volScore": 76.8,
+      "volScore": 77.5,
       "volStats": {
-        "annualReturn": 95.5,
-        "annualStd": 89.92,
-        "sharpe": 1.02,
+        "annualReturn": 103.12,
+        "annualStd": 90.25,
+        "sharpe": 1.1,
         "days": 253,
         "maxDrawdown": -57.84,
         "worstDay": -18.41
       },
-      "flow": 47.8,
+      "flow": 41.2,
       "flowStats": {
-        "recent5dAvg": 1310713,
-        "recent20dAvg": 1347633,
-        "ratio": 0.97
+        "recent5dAvg": 1197560,
+        "recent20dAvg": 1345397,
+        "ratio": 0.89
       },
       "value": 6.9,
-      "compositeScore": 35.0,
+      "compositeScore": 33.8,
       "valueNA": false
     },
     {
@@ -664,8 +664,8 @@
         "2차전지 소재부품"
       ],
       "market": "KOSPI",
-      "currentPrice": 91500,
-      "changePct": -0.33,
+      "currentPrice": 100500,
+      "changePct": 9.84,
       "volume": 376950,
       "marketCap": 6076414147400,
       "per": 180.38,
@@ -676,30 +676,30 @@
       "dividendYield": 0,
       "beta": 0.86,
       "peg": null,
-      "momentum": 8.0,
+      "momentum": 13.8,
       "returns": {
-        "r1m": -27.61,
-        "r3m": -50.54,
-        "r6m": -2.97,
-        "r1y": 84.85
+        "r1m": -20.11,
+        "r3m": -45.41,
+        "r6m": 4.36,
+        "r1y": 103.85
       },
-      "volScore": 79.7,
+      "volScore": 81.9,
       "volStats": {
-        "annualReturn": 98.25,
-        "annualStd": 86.48,
-        "sharpe": 1.1,
+        "annualReturn": 108.49,
+        "annualStd": 86.99,
+        "sharpe": 1.21,
         "days": 253,
         "maxDrawdown": -57.04,
         "worstDay": -17.08
       },
-      "flow": 35.8,
+      "flow": 40.4,
       "flowStats": {
-        "recent5dAvg": 319048,
-        "recent20dAvg": 387628,
-        "ratio": 0.82
+        "recent5dAvg": 338348,
+        "recent20dAvg": 384285,
+        "ratio": 0.88
       },
       "value": 12.0,
-      "compositeScore": 33.9,
+      "compositeScore": 37.0,
       "valueNA": false
     },
     {
@@ -710,8 +710,8 @@
         "실리콘 음극재"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 43600,
-      "changePct": 0.46,
+      "currentPrice": 46450,
+      "changePct": 6.54,
       "volume": 68348,
       "marketCap": 764630318400,
       "per": 88.0,
@@ -722,30 +722,30 @@
       "dividendYield": 0.4,
       "beta": 0.8,
       "peg": null,
-      "momentum": 17.4,
+      "momentum": 21.7,
       "returns": {
-        "r1m": -20.0,
-        "r3m": -32.72,
-        "r6m": -8.69,
-        "r1y": -11.2
+        "r1m": -16.31,
+        "r3m": -31.08,
+        "r6m": -5.59,
+        "r1y": -7.29
       },
-      "volScore": 37.7,
+      "volScore": 40.6,
       "volStats": {
-        "annualReturn": 11.79,
-        "annualStd": 69.34,
-        "sharpe": 0.12,
+        "annualReturn": 16.29,
+        "annualStd": 69.62,
+        "sharpe": 0.18,
         "days": 253,
         "maxDrawdown": -51.13,
         "worstDay": -18.1
       },
-      "flow": 43.7,
+      "flow": 45.4,
       "flowStats": {
-        "recent5dAvg": 69386,
-        "recent20dAvg": 75344,
-        "ratio": 0.92
+        "recent5dAvg": 68399,
+        "recent20dAvg": 72527,
+        "ratio": 0.94
       },
       "value": 16.1,
-      "compositeScore": 28.7,
+      "compositeScore": 30.9,
       "valueNA": false
     },
     {
@@ -755,8 +755,8 @@
         "2차전지 소재부품"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 22350,
-      "changePct": 2.05,
+      "currentPrice": 23100,
+      "changePct": 3.36,
       "volume": 149286,
       "marketCap": 777840251500,
       "per": 15519.0,
@@ -769,28 +769,28 @@
       "peg": null,
       "momentum": 0.0,
       "returns": {
-        "r1m": -27.08,
-        "r3m": -36.6,
-        "r6m": -65.24,
-        "r1y": -60.79
+        "r1m": -33.81,
+        "r3m": -37.82,
+        "r6m": -63.74,
+        "r1y": -58.68
       },
-      "volScore": 22.5,
+      "volScore": 23.9,
       "volStats": {
-        "annualReturn": -44.51,
-        "annualStd": 99.68,
-        "sharpe": -0.48,
+        "annualReturn": -39.23,
+        "annualStd": 99.72,
+        "sharpe": -0.43,
         "days": 253,
         "maxDrawdown": -77.63,
         "worstDay": -29.94
       },
-      "flow": 29.7,
+      "flow": 45.4,
       "flowStats": {
-        "recent5dAvg": 123340,
-        "recent20dAvg": 165176,
-        "ratio": 0.75
+        "recent5dAvg": 159395,
+        "recent20dAvg": 169182,
+        "ratio": 0.94
       },
       "value": 7.3,
-      "compositeScore": 14.9,
+      "compositeScore": 19.2,
       "valueNA": false
     },
     {
@@ -801,8 +801,8 @@
         "삼성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 1325000,
-      "changePct": -2.79,
+      "currentPrice": 1395000,
+      "changePct": 5.28,
       "volume": 69504,
       "marketCap": 62400201948000,
       "per": 92.82,
@@ -813,30 +813,30 @@
       "dividendYield": 0,
       "beta": 0.26,
       "peg": 2.06,
-      "momentum": 41.3,
+      "momentum": 48.6,
       "returns": {
-        "r1m": 2.08,
-        "r3m": -16.46,
-        "r6m": -21.27,
-        "r1y": -9.61
+        "r1m": 8.48,
+        "r3m": -12.7,
+        "r6m": -18.56,
+        "r1y": -4.45
       },
-      "volScore": 28.3,
+      "volScore": 32.6,
       "volStats": {
-        "annualReturn": -3.22,
-        "annualStd": 37.14,
-        "sharpe": -0.18,
+        "annualReturn": 2.47,
+        "annualStd": 37.51,
+        "sharpe": -0.03,
         "days": 253,
         "maxDrawdown": -36.74,
         "worstDay": -9.82
       },
-      "flow": 31.4,
+      "flow": 29.1,
       "flowStats": {
-        "recent5dAvg": 48248,
-        "recent20dAvg": 62843,
-        "ratio": 0.77
+        "recent5dAvg": 45976,
+        "recent20dAvg": 62245,
+        "ratio": 0.74
       },
       "value": 13.9,
-      "compositeScore": 28.7,
+      "compositeScore": 31.1,
       "valueNA": false
     },
     {
@@ -847,8 +847,8 @@
         "제약"
       ],
       "market": "KOSPI",
-      "currentPrice": 173100,
-      "changePct": -2.09,
+      "currentPrice": 175200,
+      "changePct": 1.21,
       "volume": 581517,
       "marketCap": 39129370414200,
       "per": 55.43,
@@ -859,30 +859,30 @@
       "dividendYield": 0.4,
       "beta": 0.35,
       "peg": 0.85,
-      "momentum": 56.5,
+      "momentum": 54.3,
       "returns": {
-        "r1m": 3.47,
-        "r3m": -6.24,
-        "r6m": -10.32,
-        "r1y": 13.57
+        "r1m": 5.42,
+        "r3m": -9.01,
+        "r6m": -12.26,
+        "r1y": 15.17
       },
-      "volScore": 50.0,
+      "volScore": 47.1,
       "volStats": {
-        "annualReturn": 21.21,
-        "annualStd": 41.3,
-        "sharpe": 0.43,
+        "annualReturn": 22.61,
+        "annualStd": 41.32,
+        "sharpe": 0.46,
         "days": 253,
         "maxDrawdown": -32.7,
         "worstDay": -12.27
       },
-      "flow": 51.5,
+      "flow": 46.9,
       "flowStats": {
-        "recent5dAvg": 681412,
-        "recent20dAvg": 643552,
-        "ratio": 1.06
+        "recent5dAvg": 597664,
+        "recent20dAvg": 621442,
+        "ratio": 0.96
       },
       "value": 25.5,
-      "compositeScore": 45.9,
+      "compositeScore": 43.4,
       "valueNA": false
     },
     {
@@ -893,8 +893,8 @@
         "바이오AI(신약개발)"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 300000,
-      "changePct": -4.31,
+      "currentPrice": 324000,
+      "changePct": 8.0,
       "volume": 393265,
       "marketCap": 18567667849500,
       "per": 264.19,
@@ -905,30 +905,30 @@
       "dividendYield": 0.1,
       "beta": 0.99,
       "peg": null,
-      "momentum": 28.3,
+      "momentum": 29.0,
       "returns": {
-        "r1m": -4.76,
-        "r3m": -15.25,
-        "r6m": -34.35,
-        "r1y": -21.16
+        "r1m": -6.63,
+        "r3m": -13.48,
+        "r6m": -30.84,
+        "r1y": -12.9
       },
-      "volScore": 32.6,
+      "volScore": 36.2,
       "volStats": {
-        "annualReturn": -1.77,
-        "annualStd": 65.83,
-        "sharpe": -0.08,
+        "annualReturn": 8.47,
+        "annualStd": 66.28,
+        "sharpe": 0.07,
         "days": 253,
         "maxDrawdown": -48.21,
         "worstDay": -22.35
       },
-      "flow": 35.0,
+      "flow": 37.6,
       "flowStats": {
-        "recent5dAvg": 399547,
-        "recent20dAvg": 491675,
-        "ratio": 0.81
+        "recent5dAvg": 417931,
+        "recent20dAvg": 494950,
+        "ratio": 0.84
       },
       "value": 5.1,
-      "compositeScore": 25.2,
+      "compositeScore": 27.0,
       "valueNA": false
     },
     {
@@ -939,8 +939,8 @@
         "바이오AI(신약개발)"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 10550,
-      "changePct": -1.31,
+      "currentPrice": 10840,
+      "changePct": 2.75,
       "volume": 378931,
       "marketCap": 1132103719920,
       "per": 3830.0,
@@ -953,28 +953,28 @@
       "peg": null,
       "momentum": 2.2,
       "returns": {
-        "r1m": -32.07,
-        "r3m": -34.04,
-        "r6m": -48.79,
-        "r1y": -57.53
+        "r1m": -32.75,
+        "r3m": -36.12,
+        "r6m": -46.84,
+        "r1y": -59.85
       },
-      "volScore": 8.0,
+      "volScore": 5.1,
       "volStats": {
-        "annualReturn": -61.72,
-        "annualStd": 68.76,
-        "sharpe": -0.95,
+        "annualReturn": -67.65,
+        "annualStd": 68.25,
+        "sharpe": -1.04,
         "days": 253,
         "maxDrawdown": -63.41,
         "worstDay": -18.04
       },
-      "flow": 21.3,
+      "flow": 27.1,
       "flowStats": {
-        "recent5dAvg": 322863,
-        "recent20dAvg": 503372,
-        "ratio": 0.64
+        "recent5dAvg": 310999,
+        "recent20dAvg": 435682,
+        "ratio": 0.71
       },
       "value": 4.7,
-      "compositeScore": 9.0,
+      "compositeScore": 9.8,
       "valueNA": false
     },
     {
@@ -985,8 +985,8 @@
         "미용기기"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 236000,
-      "changePct": -1.46,
+      "currentPrice": 240500,
+      "changePct": 1.91,
       "volume": 69435,
       "marketCap": 3106768332500,
       "per": 19.88,
@@ -997,30 +997,30 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 62.3,
+      "momentum": 65.2,
       "returns": {
-        "r1m": -1.46,
-        "r3m": -1.87,
-        "r6m": 0.43,
-        "r1y": -36.04
+        "r1m": -2.04,
+        "r3m": -3.22,
+        "r6m": 4.79,
+        "r1y": -38.02
       },
       "volScore": 19.6,
       "volStats": {
-        "annualReturn": -29.63,
-        "annualStd": 55.12,
-        "sharpe": -0.6,
+        "annualReturn": -32.87,
+        "annualStd": 54.91,
+        "sharpe": -0.66,
         "days": 253,
         "maxDrawdown": -44.85,
         "worstDay": -10.27
       },
-      "flow": 43.8,
+      "flow": 41.2,
       "flowStats": {
-        "recent5dAvg": 55402,
-        "recent20dAvg": 60029,
-        "ratio": 0.92
+        "recent5dAvg": 53352,
+        "recent20dAvg": 59935,
+        "ratio": 0.89
       },
       "value": 40.9,
-      "compositeScore": 41.6,
+      "compositeScore": 41.7,
       "valueNA": false
     },
     {
@@ -1031,8 +1031,8 @@
         "의료기기"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 50100,
-      "changePct": 5.25,
+      "currentPrice": 48500,
+      "changePct": -3.19,
       "volume": 240719,
       "marketCap": 2837751166500,
       "per": 32.94,
@@ -1043,30 +1043,30 @@
       "dividendYield": 2.34,
       "beta": 0.71,
       "peg": null,
-      "momentum": 64.5,
+      "momentum": 51.4,
       "returns": {
-        "r1m": 15.7,
-        "r3m": -2.34,
-        "r6m": -14.51,
-        "r1y": -19.19
+        "r1m": 3.52,
+        "r3m": -8.14,
+        "r6m": -14.31,
+        "r1y": -22.65
       },
-      "volScore": 30.4,
+      "volScore": 27.5,
       "volStats": {
-        "annualReturn": -5.86,
-        "annualStd": 55.89,
-        "sharpe": -0.17,
+        "annualReturn": -10.18,
+        "annualStd": 55.97,
+        "sharpe": -0.24,
         "days": 253,
         "maxDrawdown": -44.44,
         "worstDay": -11.9
       },
-      "flow": 52.1,
+      "flow": 51.0,
       "flowStats": {
-        "recent5dAvg": 283049,
-        "recent20dAvg": 261222,
-        "ratio": 1.08
+        "recent5dAvg": 261591,
+        "recent20dAvg": 251332,
+        "ratio": 1.04
       },
       "value": 23.7,
-      "compositeScore": 42.7,
+      "compositeScore": 38.4,
       "valueNA": false
     },
     {
@@ -1078,8 +1078,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 21850,
-      "changePct": -1.8,
+      "currentPrice": 22400,
+      "changePct": 2.52,
       "volume": 56947,
       "marketCap": 778515098200,
       "per": 51.46,
@@ -1090,27 +1090,27 @@
       "dividendYield": 0,
       "beta": 0.32,
       "peg": null,
-      "momentum": 4.3,
+      "momentum": 2.9,
       "returns": {
-        "r1m": -8.19,
-        "r3m": -34.58,
-        "r6m": -53.06,
-        "r1y": -57.82
+        "r1m": -9.68,
+        "r3m": -34.5,
+        "r6m": -47.42,
+        "r1y": -56.42
       },
-      "volScore": 0.0,
+      "volScore": 0.7,
       "volStats": {
-        "annualReturn": -77.89,
-        "annualStd": 40.67,
-        "sharpe": -2.0,
+        "annualReturn": -74.6,
+        "annualStd": 40.76,
+        "sharpe": -1.92,
         "days": 253,
-        "maxDrawdown": -61.85,
+        "maxDrawdown": -61.56,
         "worstDay": -9.64
       },
-      "flow": 55.9,
+      "flow": 56.2,
       "flowStats": {
-        "recent5dAvg": 92918,
-        "recent20dAvg": 75282,
-        "ratio": 1.23
+        "recent5dAvg": 92656,
+        "recent20dAvg": 74284,
+        "ratio": 1.25
       },
       "value": 29.6,
       "compositeScore": 22.4,
@@ -1124,8 +1124,8 @@
         "면역항암제"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 80500,
-      "changePct": -1.23,
+      "currentPrice": 81800,
+      "changePct": 1.61,
       "volume": 309162,
       "marketCap": 5906677346500,
       "per": 1547.0,
@@ -1136,30 +1136,30 @@
       "dividendYield": 0,
       "beta": 0.33,
       "peg": null,
-      "momentum": 1.4,
+      "momentum": 0.7,
       "returns": {
-        "r1m": -10.75,
-        "r3m": -47.66,
-        "r6m": -58.82,
-        "r1y": 22.9
+        "r1m": -12.14,
+        "r3m": -48.36,
+        "r6m": -61.42,
+        "r1y": 21.73
       },
-      "volScore": 60.1,
+      "volScore": 58.0,
       "volStats": {
-        "annualReturn": 62.27,
-        "annualStd": 92.68,
-        "sharpe": 0.63,
+        "annualReturn": 61.29,
+        "annualStd": 92.66,
+        "sharpe": 0.62,
         "days": 253,
         "maxDrawdown": -67.21,
         "worstDay": -19.47
       },
-      "flow": 47.9,
+      "flow": 46.4,
       "flowStats": {
-        "recent5dAvg": 442829,
-        "recent20dAvg": 454941,
-        "ratio": 0.97
+        "recent5dAvg": 433606,
+        "recent20dAvg": 454109,
+        "ratio": 0.95
       },
       "value": 3.3,
-      "compositeScore": 28.2,
+      "compositeScore": 27.1,
       "valueNA": false
     },
     {
@@ -1171,8 +1171,8 @@
         "전기차"
       ],
       "market": "KOSPI",
-      "currentPrice": 445500,
-      "changePct": -3.68,
+      "currentPrice": 457500,
+      "changePct": 2.69,
       "volume": 1061547,
       "marketCap": 143330436200000,
       "per": 4.67,
@@ -1183,30 +1183,30 @@
       "dividendYield": 1.37,
       "beta": 1.54,
       "peg": 4.13,
-      "momentum": 73.2,
+      "momentum": 72.5,
       "returns": {
-        "r1m": -26.0,
-        "r3m": -5.81,
-        "r6m": 49.25,
-        "r1y": 117.32
+        "r1m": -23.37,
+        "r3m": -9.94,
+        "r6m": 50.25,
+        "r1y": 124.82
       },
       "volScore": 89.1,
       "volStats": {
-        "annualReturn": 97.92,
-        "annualStd": 63.96,
-        "sharpe": 1.48,
+        "annualReturn": 101.34,
+        "annualStd": 63.99,
+        "sharpe": 1.53,
         "days": 253,
         "maxDrawdown": -40.6,
         "worstDay": -15.8
       },
-      "flow": 36.0,
+      "flow": 33.9,
       "flowStats": {
-        "recent5dAvg": 952187,
-        "recent20dAvg": 1154995,
-        "ratio": 0.82
+        "recent5dAvg": 889271,
+        "recent20dAvg": 1112641,
+        "ratio": 0.8
       },
       "value": 85.4,
-      "compositeScore": 70.9,
+      "compositeScore": 70.2,
       "valueNA": false
     },
     {
@@ -1218,8 +1218,8 @@
         "전기차"
       ],
       "market": "KOSPI",
-      "currentPrice": 144800,
-      "changePct": -7.65,
+      "currentPrice": 147500,
+      "changePct": 1.86,
       "volume": 1477504,
       "marketCap": 64105814271600,
       "per": 4.59,
@@ -1230,30 +1230,30 @@
       "dividendYield": 4.03,
       "beta": 0.99,
       "peg": 0.42,
-      "momentum": 69.6,
+      "momentum": 68.8,
       "returns": {
-        "r1m": -9.33,
-        "r3m": -3.98,
-        "r6m": 20.07,
-        "r1y": 48.21
+        "r1m": -5.45,
+        "r3m": -7.35,
+        "r6m": 20.31,
+        "r1y": 52.22
       },
-      "volScore": 72.5,
+      "volScore": 71.0,
       "volStats": {
-        "annualReturn": 52.99,
-        "annualStd": 52.26,
-        "sharpe": 0.95,
+        "annualReturn": 55.67,
+        "annualStd": 52.27,
+        "sharpe": 1.0,
         "days": 253,
         "maxDrawdown": -34.32,
         "worstDay": -14.04
       },
-      "flow": 53.7,
+      "flow": 55.3,
       "flowStats": {
-        "recent5dAvg": 1396629,
-        "recent20dAvg": 1215648,
-        "ratio": 1.15
+        "recent5dAvg": 1387869,
+        "recent20dAvg": 1146573,
+        "ratio": 1.21
       },
       "value": 79.9,
-      "compositeScore": 68.9,
+      "compositeScore": 68.8,
       "valueNA": false
     },
     {
@@ -1265,8 +1265,8 @@
         "자율주행"
       ],
       "market": "KOSPI",
-      "currentPrice": 465000,
-      "changePct": -4.81,
+      "currentPrice": 488000,
+      "changePct": 4.95,
       "volume": 787100,
       "marketCap": 68140169833000,
       "per": 6.52,
@@ -1277,30 +1277,30 @@
       "dividendYield": 0.86,
       "beta": 0.95,
       "peg": 0.09,
-      "momentum": 77.5,
+      "momentum": 80.4,
       "returns": {
-        "r1m": -18.42,
-        "r3m": 19.23,
-        "r6m": 26.02,
-        "r1y": 60.62
+        "r1m": -15.28,
+        "r3m": 19.9,
+        "r6m": 31.18,
+        "r1y": 70.03
       },
-      "volScore": 74.6,
+      "volScore": 76.1,
       "volStats": {
-        "annualReturn": 68.18,
-        "annualStd": 65.42,
-        "sharpe": 0.99,
+        "annualReturn": 73.99,
+        "annualStd": 65.58,
+        "sharpe": 1.07,
         "days": 253,
         "maxDrawdown": -39.45,
         "worstDay": -14.83
       },
-      "flow": 35.2,
+      "flow": 36.3,
       "flowStats": {
-        "recent5dAvg": 400309,
-        "recent20dAvg": 490977,
-        "ratio": 0.82
+        "recent5dAvg": 379559,
+        "recent20dAvg": 457809,
+        "ratio": 0.83
       },
       "value": 83.6,
-      "compositeScore": 67.7,
+      "compositeScore": 69.1,
       "valueNA": false
     },
     {
@@ -1311,8 +1311,8 @@
         "현대자동차그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 59400,
-      "changePct": -1.98,
+      "currentPrice": 61900,
+      "changePct": 4.21,
       "volume": 191239,
       "marketCap": 2205521231300,
       "per": 19.36,
@@ -1323,30 +1323,30 @@
       "dividendYield": 1.42,
       "beta": 1.03,
       "peg": null,
-      "momentum": 18.1,
+      "momentum": 25.4,
       "returns": {
-        "r1m": -18.18,
-        "r3m": -21.43,
-        "r6m": -25.09,
-        "r1y": 28.43
+        "r1m": -13.55,
+        "r3m": -22.43,
+        "r6m": -17.25,
+        "r1y": 35.15
       },
-      "volScore": 62.3,
+      "volScore": 63.8,
       "volStats": {
-        "annualReturn": 44.03,
-        "annualStd": 61.64,
-        "sharpe": 0.66,
+        "annualReturn": 49.21,
+        "annualStd": 61.76,
+        "sharpe": 0.74,
         "days": 253,
         "maxDrawdown": -41.66,
         "worstDay": -19.67
       },
-      "flow": 25.5,
+      "flow": 27.2,
       "flowStats": {
-        "recent5dAvg": 109437,
-        "recent20dAvg": 157882,
-        "ratio": 0.69
+        "recent5dAvg": 103546,
+        "recent20dAvg": 144859,
+        "ratio": 0.71
       },
       "value": 67.5,
-      "compositeScore": 43.3,
+      "compositeScore": 46.0,
       "valueNA": false
     },
     {
@@ -1357,8 +1357,8 @@
         "전기차"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 15560,
-      "changePct": 5.71,
+      "currentPrice": 17810,
+      "changePct": 14.46,
       "volume": 218938,
       "marketCap": 1114739939820,
       "per": 39.18,
@@ -1369,30 +1369,30 @@
       "dividendYield": 0,
       "beta": 1.71,
       "peg": null,
-      "momentum": 55.8,
+      "momentum": 71.7,
       "returns": {
-        "r1m": -0.13,
-        "r3m": 6.58,
-        "r6m": -23.91,
-        "r1y": -18.92
+        "r1m": 9.4,
+        "r3m": 11.31,
+        "r6m": -14.99,
+        "r1y": -3.42
       },
-      "volScore": 39.1,
+      "volScore": 42.8,
       "volStats": {
-        "annualReturn": 14.16,
-        "annualStd": 85.08,
-        "sharpe": 0.13,
+        "annualReturn": 32.53,
+        "annualStd": 86.19,
+        "sharpe": 0.34,
         "days": 253,
         "maxDrawdown": -50.42,
         "worstDay": -16.88
       },
-      "flow": 19.0,
+      "flow": 19.4,
       "flowStats": {
-        "recent5dAvg": 401896,
-        "recent20dAvg": 656362,
-        "ratio": 0.61
+        "recent5dAvg": 412322,
+        "recent20dAvg": 668210,
+        "ratio": 0.62
       },
       "value": 33.6,
-      "compositeScore": 36.9,
+      "compositeScore": 41.9,
       "valueNA": false
     },
     {
@@ -1403,8 +1403,8 @@
         "HD현대그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 327500,
-      "changePct": -3.68,
+      "currentPrice": 340500,
+      "changePct": 3.97,
       "volume": 306729,
       "marketCap": 26752237848000,
       "per": 38.59,
@@ -1415,30 +1415,30 @@
       "dividendYield": 2.37,
       "beta": 1.3,
       "peg": 0.21,
-      "momentum": 37.7,
+      "momentum": 38.4,
       "returns": {
-        "r1m": -15.05,
-        "r3m": -12.9,
-        "r6m": -16.77,
-        "r1y": -10.03
+        "r1m": -9.32,
+        "r3m": -12.58,
+        "r6m": -15.09,
+        "r1y": -6.97
       },
-      "volScore": 34.8,
+      "volScore": 35.5,
       "volStats": {
-        "annualReturn": 3.22,
-        "annualStd": 52.37,
-        "sharpe": -0.01,
+        "annualReturn": 6.64,
+        "annualStd": 52.52,
+        "sharpe": 0.06,
         "days": 253,
         "maxDrawdown": -31.7,
         "worstDay": -14.16
       },
-      "flow": 50.7,
+      "flow": 51.9,
       "flowStats": {
-        "recent5dAvg": 247108,
-        "recent20dAvg": 240753,
-        "ratio": 1.03
+        "recent5dAvg": 254171,
+        "recent20dAvg": 236393,
+        "ratio": 1.08
       },
       "value": 48.9,
-      "compositeScore": 43.0,
+      "compositeScore": 43.7,
       "valueNA": false
     },
     {
@@ -1450,8 +1450,8 @@
         "방산주"
       ],
       "market": "KOSPI",
-      "currentPrice": 78600,
-      "changePct": -4.15,
+      "currentPrice": 81300,
+      "changePct": 3.44,
       "volume": 1284079,
       "marketCap": 35390747007000,
       "per": 33.15,
@@ -1462,30 +1462,30 @@
       "dividendYield": 0,
       "beta": 0.96,
       "peg": 0.44,
-      "momentum": 5.8,
+      "momentum": 4.3,
       "returns": {
-        "r1m": -28.68,
-        "r3m": -34.99,
-        "r6m": -31.47,
-        "r1y": -1.01
+        "r1m": -22.2,
+        "r3m": -36.34,
+        "r6m": -31.04,
+        "r1y": 2.39
       },
-      "volScore": 44.2,
+      "volScore": 42.8,
       "volStats": {
-        "annualReturn": 23.98,
-        "annualStd": 69.92,
-        "sharpe": 0.29,
+        "annualReturn": 27.41,
+        "annualStd": 70.0,
+        "sharpe": 0.34,
         "days": 253,
         "maxDrawdown": -47.57,
         "worstDay": -22.65
       },
-      "flow": 62.9,
+      "flow": 63.8,
       "flowStats": {
-        "recent5dAvg": 4004486,
-        "recent20dAvg": 2642010,
-        "ratio": 1.52
+        "recent5dAvg": 4043293,
+        "recent20dAvg": 2602694,
+        "ratio": 1.55
       },
       "value": 38.3,
-      "compositeScore": 37.8,
+      "compositeScore": 37.3,
       "valueNA": false
     },
     {
@@ -1496,8 +1496,8 @@
         "HD현대그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 507000,
-      "changePct": -1.93,
+      "currentPrice": 504000,
+      "changePct": -0.59,
       "volume": 354982,
       "marketCap": 68434718700000,
       "per": 463.89,
@@ -1508,30 +1508,30 @@
       "dividendYield": 1.15,
       "beta": 1.08,
       "peg": null,
-      "momentum": 59.4,
+      "momentum": 55.8,
       "returns": {
-        "r1m": -20.9,
-        "r3m": 7.87,
-        "r6m": 0.6,
-        "r1y": 20.14
+        "r1m": -21.98,
+        "r3m": 4.02,
+        "r6m": -1.75,
+        "r1y": 17.62
       },
-      "volScore": 57.2,
+      "volScore": 50.7,
       "volStats": {
-        "annualReturn": 34.82,
-        "annualStd": 57.52,
-        "sharpe": 0.54,
+        "annualReturn": 32.68,
+        "annualStd": 57.5,
+        "sharpe": 0.51,
         "days": 253,
-        "maxDrawdown": -32.25,
+        "maxDrawdown": -32.35,
         "worstDay": -13.39
       },
-      "flow": 50.0,
+      "flow": 50.8,
       "flowStats": {
-        "recent5dAvg": 336187,
-        "recent20dAvg": 335788,
-        "ratio": 1.0
+        "recent5dAvg": 337420,
+        "recent20dAvg": 327007,
+        "ratio": 1.03
       },
       "value": 17.9,
-      "compositeScore": 46.1,
+      "compositeScore": 43.8,
       "valueNA": false
     },
     {
@@ -1543,8 +1543,8 @@
         "현대자동차그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 160600,
-      "changePct": -5.03,
+      "currentPrice": 178900,
+      "changePct": 11.39,
       "volume": 664097,
       "marketCap": 21239090217800,
       "per": 18.03,
@@ -1555,30 +1555,30 @@
       "dividendYield": 0.3,
       "beta": 1.8,
       "peg": null,
-      "momentum": 23.2,
+      "momentum": 43.5,
       "returns": {
-        "r1m": -15.21,
-        "r3m": -23.89,
-        "r6m": -16.96,
-        "r1y": -20.1
+        "r1m": -5.04,
+        "r3m": -13.37,
+        "r6m": -10.01,
+        "r1y": -8.96
       },
-      "volScore": 32.6,
+      "volScore": 39.1,
       "volStats": {
-        "annualReturn": -1.45,
-        "annualStd": 64.56,
-        "sharpe": -0.08,
+        "annualReturn": 12.19,
+        "annualStd": 65.51,
+        "sharpe": 0.13,
         "days": 253,
         "maxDrawdown": -40.3,
         "worstDay": -18.88
       },
-      "flow": 50.2,
+      "flow": 53.3,
       "flowStats": {
-        "recent5dAvg": 595544,
-        "recent20dAvg": 591475,
-        "ratio": 1.01
+        "recent5dAvg": 652856,
+        "recent20dAvg": 577177,
+        "ratio": 1.13
       },
       "value": 48.5,
-      "compositeScore": 38.6,
+      "compositeScore": 46.1,
       "valueNA": false
     },
     {
@@ -1591,8 +1591,8 @@
         "스페이스X"
       ],
       "market": "KOSPI",
-      "currentPrice": 953000,
-      "changePct": -8.45,
+      "currentPrice": 967000,
+      "changePct": 1.47,
       "volume": 315238,
       "marketCap": 55275965872000,
       "per": 7.98,
@@ -1603,30 +1603,30 @@
       "dividendYield": 0.65,
       "beta": 0.89,
       "peg": null,
-      "momentum": 29.7,
+      "momentum": 28.3,
       "returns": {
-        "r1m": -7.57,
-        "r3m": -38.0,
-        "r6m": 0.74,
-        "r1y": 7.08
+        "r1m": -4.64,
+        "r3m": -34.84,
+        "r6m": -4.45,
+        "r1y": 14.03
       },
       "volScore": 45.7,
       "volStats": {
-        "annualReturn": 24.31,
-        "annualStd": 59.59,
-        "sharpe": 0.35,
+        "annualReturn": 30.49,
+        "annualStd": 59.41,
+        "sharpe": 0.45,
         "days": 253,
         "maxDrawdown": -38.0,
         "worstDay": -8.45
       },
-      "flow": 38.0,
+      "flow": 33.8,
       "flowStats": {
-        "recent5dAvg": 206929,
-        "recent20dAvg": 243483,
-        "ratio": 0.85
+        "recent5dAvg": 192446,
+        "recent20dAvg": 241130,
+        "ratio": 0.8
       },
       "value": 58.8,
-      "compositeScore": 43.0,
+      "compositeScore": 41.6,
       "valueNA": false
     },
     {
@@ -1638,8 +1638,8 @@
         "한화그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 30800,
-      "changePct": 3.18,
+      "currentPrice": 31900,
+      "changePct": 3.57,
       "volume": 1342855,
       "marketCap": 6849917559600,
       "per": 17.38,
@@ -1650,30 +1650,30 @@
       "dividendYield": 1.13,
       "beta": 1.57,
       "peg": null,
-      "momentum": 60.9,
+      "momentum": 61.6,
       "returns": {
-        "r1m": -10.78,
-        "r3m": -12.1,
-        "r6m": 22.07,
-        "r1y": -0.9
+        "r1m": -8.47,
+        "r3m": -16.08,
+        "r6m": 25.26,
+        "r1y": 7.03
       },
-      "volScore": 46.4,
+      "volScore": 45.7,
       "volStats": {
-        "annualReturn": 33.4,
-        "annualStd": 83.95,
-        "sharpe": 0.36,
+        "annualReturn": 41.06,
+        "annualStd": 83.91,
+        "sharpe": 0.45,
         "days": 253,
         "maxDrawdown": -45.9,
         "worstDay": -18.22
       },
-      "flow": 56.7,
+      "flow": 57.5,
       "flowStats": {
-        "recent5dAvg": 2567202,
-        "recent20dAvg": 2023322,
-        "ratio": 1.27
+        "recent5dAvg": 2675063,
+        "recent20dAvg": 2054731,
+        "ratio": 1.3
       },
       "value": 62.4,
-      "compositeScore": 56.6,
+      "compositeScore": 56.8,
       "valueNA": false
     },
     {
@@ -1684,8 +1684,8 @@
         "롯데그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 61300,
-      "changePct": 0.99,
+      "currentPrice": 61800,
+      "changePct": 0.82,
       "volume": 197498,
       "marketCap": 3451976313300,
       "per": 254.43,
@@ -1696,30 +1696,30 @@
       "dividendYield": 1.29,
       "beta": 1.36,
       "peg": null,
-      "momentum": 20.3,
+      "momentum": 16.7,
       "returns": {
-        "r1m": -18.16,
-        "r3m": -30.34,
-        "r6m": -9.19,
-        "r1y": 4.61
+        "r1m": -18.68,
+        "r3m": -32.53,
+        "r6m": -10.3,
+        "r1y": 5.1
       },
-      "volScore": 44.9,
+      "volScore": 44.2,
       "volStats": {
-        "annualReturn": 25.66,
-        "annualStd": 65.46,
-        "sharpe": 0.34,
+        "annualReturn": 26.13,
+        "annualStd": 65.47,
+        "sharpe": 0.35,
         "days": 253,
         "maxDrawdown": -48.56,
         "worstDay": -16.34
       },
-      "flow": 29.5,
+      "flow": 30.8,
       "flowStats": {
-        "recent5dAvg": 112676,
-        "recent20dAvg": 151492,
-        "ratio": 0.74
+        "recent5dAvg": 113250,
+        "recent20dAvg": 148966,
+        "ratio": 0.76
       },
       "value": 48.9,
-      "compositeScore": 35.9,
+      "compositeScore": 35.2,
       "valueNA": false
     },
     {
@@ -1731,8 +1731,8 @@
         "포스코 그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 297000,
-      "changePct": -2.3,
+      "currentPrice": 313500,
+      "changePct": 5.56,
       "volume": 481985,
       "marketCap": 31795662708750,
       "per": 24.88,
@@ -1743,30 +1743,30 @@
       "dividendYield": 2.38,
       "beta": 1.67,
       "peg": 0.9,
-      "momentum": 43.5,
+      "momentum": 49.3,
       "returns": {
-        "r1m": -18.18,
-        "r3m": -14.04,
-        "r6m": -0.17,
-        "r1y": 14.23
+        "r1m": -12.43,
+        "r3m": -13.52,
+        "r6m": 3.64,
+        "r1y": 20.11
       },
-      "volScore": 52.2,
+      "volScore": 53.6,
       "volStats": {
-        "annualReturn": 25.95,
-        "annualStd": 50.38,
-        "sharpe": 0.45,
+        "annualReturn": 31.12,
+        "annualStd": 50.67,
+        "sharpe": 0.55,
         "days": 253,
         "maxDrawdown": -44.49,
         "worstDay": -14.15
       },
-      "flow": 34.3,
+      "flow": 34.7,
       "flowStats": {
-        "recent5dAvg": 308855,
-        "recent20dAvg": 384437,
-        "ratio": 0.8
+        "recent5dAvg": 303479,
+        "recent20dAvg": 375169,
+        "ratio": 0.81
       },
       "value": 59.1,
-      "compositeScore": 47.3,
+      "compositeScore": 49.2,
       "valueNA": false
     },
     {
@@ -1777,8 +1777,8 @@
         "방산주"
       ],
       "market": "KOSPI",
-      "currentPrice": 61500,
-      "changePct": -1.6,
+      "currentPrice": 65100,
+      "changePct": 5.85,
       "volume": 121009,
       "marketCap": 2076598999800,
       "per": 7.02,
@@ -1789,30 +1789,30 @@
       "dividendYield": 2.28,
       "beta": 1.33,
       "peg": null,
-      "momentum": 3.6,
+      "momentum": 5.8,
       "returns": {
-        "r1m": -12.27,
-        "r3m": -39.76,
-        "r6m": -42.36,
-        "r1y": -54.91
+        "r1m": -6.87,
+        "r3m": -37.22,
+        "r6m": -40.33,
+        "r1y": -49.42
       },
-      "volScore": 5.1,
+      "volScore": 10.1,
       "volStats": {
-        "annualReturn": -61.92,
-        "annualStd": 59.3,
-        "sharpe": -1.1,
+        "annualReturn": -50.42,
+        "annualStd": 59.36,
+        "sharpe": -0.91,
         "days": 253,
         "maxDrawdown": -62.73,
         "worstDay": -15.73
       },
-      "flow": 35.1,
+      "flow": 49.0,
       "flowStats": {
-        "recent5dAvg": 102155,
-        "recent20dAvg": 125479,
-        "ratio": 0.81
+        "recent5dAvg": 115657,
+        "recent20dAvg": 117083,
+        "ratio": 0.99
       },
       "value": 82.8,
-      "compositeScore": 31.6,
+      "compositeScore": 36.9,
       "valueNA": false
     },
     {
@@ -1824,8 +1824,8 @@
         "해상풍력"
       ],
       "market": "KOSPI",
-      "currentPrice": 815000,
-      "changePct": 0.12,
+      "currentPrice": 851000,
+      "changePct": 4.42,
       "volume": 294607,
       "marketCap": 35938993595000,
       "per": 11.43,
@@ -1836,30 +1836,30 @@
       "dividendYield": 0.84,
       "beta": 1.19,
       "peg": null,
-      "momentum": 50.7,
+      "momentum": 41.3,
       "returns": {
-        "r1m": -17.34,
-        "r3m": -8.53,
-        "r6m": -0.49,
-        "r1y": 67.18
+        "r1m": -17.62,
+        "r3m": -13.16,
+        "r6m": -1.96,
+        "r1y": 67.85
       },
-      "volScore": 78.3,
+      "volScore": 76.8,
       "volStats": {
-        "annualReturn": 70.62,
-        "annualStd": 62.08,
-        "sharpe": 1.08,
+        "annualReturn": 71.04,
+        "annualStd": 62.11,
+        "sharpe": 1.09,
         "days": 253,
         "maxDrawdown": -42.68,
         "worstDay": -11.75
       },
-      "flow": 46.5,
+      "flow": 47.7,
       "flowStats": {
-        "recent5dAvg": 198723,
-        "recent20dAvg": 207872,
-        "ratio": 0.96
+        "recent5dAvg": 183980,
+        "recent20dAvg": 189378,
+        "ratio": 0.97
       },
       "value": 47.1,
-      "compositeScore": 55.6,
+      "compositeScore": 53.2,
       "valueNA": false
     },
     {
@@ -1872,8 +1872,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSPI",
-      "currentPrice": 184400,
-      "changePct": -4.31,
+      "currentPrice": 191300,
+      "changePct": 3.74,
       "volume": 3324031,
       "marketCap": 41885298192000,
       "per": 36.25,
@@ -1884,30 +1884,30 @@
       "dividendYield": 0.94,
       "beta": 1.13,
       "peg": 32.68,
-      "momentum": 36.2,
+      "momentum": 35.5,
       "returns": {
-        "r1m": -18.77,
-        "r3m": -5.87,
-        "r6m": -25.34,
-        "r1y": -28.39
+        "r1m": -14.6,
+        "r3m": -5.06,
+        "r6m": -23.33,
+        "r1y": -27.12
       },
-      "volScore": 23.9,
+      "volScore": 25.4,
       "volStats": {
-        "annualReturn": -20.15,
-        "annualStd": 51.73,
-        "sharpe": -0.46,
+        "annualReturn": -18.35,
+        "annualStd": 51.83,
+        "sharpe": -0.42,
         "days": 253,
         "maxDrawdown": -35.75,
         "worstDay": -11.86
       },
-      "flow": 25.1,
+      "flow": 29.9,
       "flowStats": {
-        "recent5dAvg": 1034806,
-        "recent20dAvg": 1502935,
-        "ratio": 0.69
+        "recent5dAvg": 957611,
+        "recent20dAvg": 1278410,
+        "ratio": 0.75
       },
       "value": 43.8,
-      "compositeScore": 32.2,
+      "compositeScore": 33.6,
       "valueNA": false
     },
     {
@@ -1920,8 +1920,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSPI",
-      "currentPrice": 33650,
-      "changePct": -2.89,
+      "currentPrice": 35350,
+      "changePct": 5.05,
       "volume": 2029140,
       "marketCap": 18506836726600,
       "per": 306.86,
@@ -1932,30 +1932,30 @@
       "dividendYield": 0.18,
       "beta": 1.27,
       "peg": 1.2,
-      "momentum": 10.1,
+      "momentum": 8.0,
       "returns": {
-        "r1m": -11.8,
-        "r3m": -27.48,
-        "r6m": -45.81,
-        "r1y": -44.75
+        "r1m": -10.05,
+        "r3m": -26.12,
+        "r6m": -43.71,
+        "r1y": -41.08
       },
-      "volScore": 6.5,
+      "volScore": 8.7,
       "volStats": {
-        "annualReturn": -47.77,
-        "annualStd": 47.75,
-        "sharpe": -1.07,
+        "annualReturn": -41.24,
+        "annualStd": 48.02,
+        "sharpe": -0.93,
         "days": 253,
         "maxDrawdown": -51.03,
         "worstDay": -16.28
       },
-      "flow": 48.9,
+      "flow": 51.9,
       "flowStats": {
-        "recent5dAvg": 1790203,
-        "recent20dAvg": 1815945,
-        "ratio": 0.99
+        "recent5dAvg": 1851322,
+        "recent20dAvg": 1720649,
+        "ratio": 1.08
       },
       "value": 17.9,
-      "compositeScore": 20.8,
+      "compositeScore": 21.6,
       "valueNA": false
     },
     {
@@ -1967,8 +1967,8 @@
         "카카오그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 37450,
-      "changePct": -1.83,
+      "currentPrice": 38850,
+      "changePct": 3.74,
       "volume": 191556,
       "marketCap": 6282653973750,
       "per": 2624.66,
@@ -1979,30 +1979,30 @@
       "dividendYield": 0,
       "beta": 2.13,
       "peg": null,
-      "momentum": 18.8,
+      "momentum": 18.1,
       "returns": {
-        "r1m": -11.88,
-        "r3m": -23.65,
-        "r6m": -26.28,
-        "r1y": -55.52
+        "r1m": -13.28,
+        "r3m": -26.0,
+        "r6m": -23.97,
+        "r1y": -49.35
       },
-      "volScore": 12.3,
+      "volScore": 18.1,
       "volStats": {
-        "annualReturn": -56.87,
-        "annualStd": 69.99,
-        "sharpe": -0.86,
+        "annualReturn": -44.22,
+        "annualStd": 69.56,
+        "sharpe": -0.69,
         "days": 253,
         "maxDrawdown": -56.81,
         "worstDay": -16.19
       },
-      "flow": 40.8,
+      "flow": 40.9,
       "flowStats": {
-        "recent5dAvg": 214996,
-        "recent20dAvg": 242807,
+        "recent5dAvg": 206295,
+        "recent20dAvg": 232935,
         "ratio": 0.89
       },
       "value": 10.6,
-      "compositeScore": 20.6,
+      "compositeScore": 21.9,
       "valueNA": false
     },
     {
@@ -2013,8 +2013,8 @@
         "카카오그룹"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 8480,
-      "changePct": 3.41,
+      "currentPrice": 8340,
+      "changePct": -1.65,
       "volume": 257703,
       "marketCap": 872728774920,
       "per": 17124.0,
@@ -2025,30 +2025,30 @@
       "dividendYield": 0,
       "beta": 0.46,
       "peg": null,
-      "momentum": 12.3,
+      "momentum": 7.2,
       "returns": {
-        "r1m": -0.35,
-        "r3m": -26.32,
-        "r6m": -44.9,
-        "r1y": -58.23
+        "r1m": -4.25,
+        "r3m": -30.38,
+        "r6m": -45.42,
+        "r1y": -56.38
       },
       "volScore": 1.4,
       "volStats": {
-        "annualReturn": -76.33,
-        "annualStd": 46.41,
-        "sharpe": -1.72,
+        "annualReturn": -72.17,
+        "annualStd": 46.1,
+        "sharpe": -1.64,
         "days": 253,
-        "maxDrawdown": -65.86,
+        "maxDrawdown": -63.76,
         "worstDay": -13.05
       },
-      "flow": 21.1,
+      "flow": 21.9,
       "flowStats": {
-        "recent5dAvg": 513152,
-        "recent20dAvg": 803052,
-        "ratio": 0.64
+        "recent5dAvg": 525976,
+        "recent20dAvg": 811401,
+        "ratio": 0.65
       },
       "value": 24.5,
-      "compositeScore": 14.8,
+      "compositeScore": 13.7,
       "valueNA": false
     },
     {
@@ -2060,8 +2060,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSPI",
-      "currentPrice": 216000,
-      "changePct": -6.09,
+      "currentPrice": 220500,
+      "changePct": 2.08,
       "volume": 218799,
       "marketCap": 9223881286000,
       "per": 51.84,
@@ -2072,30 +2072,30 @@
       "dividendYield": 0.23,
       "beta": 0.89,
       "peg": null,
-      "momentum": 33.3,
+      "momentum": 29.7,
       "returns": {
-        "r1m": 5.37,
-        "r3m": -15.62,
-        "r6m": -37.57,
-        "r1y": -29.3
+        "r1m": 1.15,
+        "r3m": -15.36,
+        "r6m": -34.67,
+        "r1y": -28.64
       },
-      "volScore": 21.0,
+      "volScore": 21.7,
       "volStats": {
-        "annualReturn": -22.41,
-        "annualStd": 49.27,
-        "sharpe": -0.53,
+        "annualReturn": -21.48,
+        "annualStd": 49.3,
+        "sharpe": -0.51,
         "days": 253,
         "maxDrawdown": -56.04,
         "worstDay": -15.55
       },
-      "flow": 58.3,
+      "flow": 57.8,
       "flowStats": {
-        "recent5dAvg": 417546,
-        "recent20dAvg": 313061,
-        "ratio": 1.33
+        "recent5dAvg": 401311,
+        "recent20dAvg": 305696,
+        "ratio": 1.31
       },
       "value": 24.1,
-      "compositeScore": 34.2,
+      "compositeScore": 33.3,
       "valueNA": false
     },
     {
@@ -2106,8 +2106,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 74600,
-      "changePct": -5.33,
+      "currentPrice": 77500,
+      "changePct": 3.89,
       "volume": 99080,
       "marketCap": 1801812103000,
       "per": 25.14,
@@ -2118,30 +2118,30 @@
       "dividendYield": 2.07,
       "beta": 0.4,
       "peg": null,
-      "momentum": 31.9,
+      "momentum": 23.9,
       "returns": {
-        "r1m": 1.77,
-        "r3m": -10.12,
-        "r6m": -43.66,
-        "r1y": -45.75
+        "r1m": -12.73,
+        "r3m": -10.92,
+        "r6m": -34.87,
+        "r1y": -45.04
       },
-      "volScore": 11.6,
+      "volScore": 13.0,
       "volStats": {
-        "annualReturn": -45.58,
-        "annualStd": 56.18,
-        "sharpe": -0.87,
+        "annualReturn": -44.23,
+        "annualStd": 56.26,
+        "sharpe": -0.85,
         "days": 253,
         "maxDrawdown": -56.54,
         "worstDay": -10.12
       },
-      "flow": 55.4,
+      "flow": 54.3,
       "flowStats": {
-        "recent5dAvg": 143268,
-        "recent20dAvg": 117982,
-        "ratio": 1.21
+        "recent5dAvg": 131170,
+        "recent20dAvg": 111762,
+        "ratio": 1.17
       },
       "value": 33.9,
-      "compositeScore": 33.2,
+      "compositeScore": 31.3,
       "valueNA": false
     },
     {
@@ -2152,8 +2152,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 41050,
-      "changePct": -2.26,
+      "currentPrice": 42200,
+      "changePct": 2.8,
       "volume": 112479,
       "marketCap": 805584211900,
       "per": 15.49,
@@ -2164,30 +2164,30 @@
       "dividendYield": 0.69,
       "beta": 0.57,
       "peg": null,
-      "momentum": 23.9,
+      "momentum": 21.0,
       "returns": {
-        "r1m": 1.48,
+        "r1m": -5.17,
         "r3m": -17.74,
-        "r6m": -41.69,
-        "r1y": -55.48
+        "r6m": -35.18,
+        "r1y": -55.67
       },
-      "volScore": 3.6,
+      "volScore": 2.9,
       "volStats": {
-        "annualReturn": -67.44,
-        "annualStd": 51.8,
-        "sharpe": -1.37,
+        "annualReturn": -67.89,
+        "annualStd": 51.77,
+        "sharpe": -1.38,
         "days": 253,
         "maxDrawdown": -63.59,
         "worstDay": -9.7
       },
-      "flow": 48.5,
+      "flow": 47.8,
       "flowStats": {
-        "recent5dAvg": 119816,
-        "recent20dAvg": 122085,
-        "ratio": 0.98
+        "recent5dAvg": 114081,
+        "recent20dAvg": 117326,
+        "ratio": 0.97
       },
       "value": 47.8,
-      "compositeScore": 31.0,
+      "compositeScore": 29.9,
       "valueNA": false
     },
     {
@@ -2197,8 +2197,8 @@
         "게임"
       ],
       "market": "KOSPI",
-      "currentPrice": 38250,
-      "changePct": -1.42,
+      "currentPrice": 37550,
+      "changePct": -1.83,
       "volume": 196438,
       "marketCap": 3584637481250,
       "per": 173.31,
@@ -2209,30 +2209,30 @@
       "dividendYield": 1.95,
       "beta": 0.93,
       "peg": null,
-      "momentum": 31.2,
+      "momentum": 18.8,
       "returns": {
-        "r1m": -4.38,
-        "r3m": -21.46,
-        "r6m": -22.81,
-        "r1y": -35.28
+        "r1m": -12.78,
+        "r3m": -25.2,
+        "r6m": -23.68,
+        "r1y": -39.44
       },
-      "volScore": 14.5,
+      "volScore": 6.5,
       "volStats": {
-        "annualReturn": -33.59,
-        "annualStd": 44.4,
-        "sharpe": -0.84,
+        "annualReturn": -40.32,
+        "annualStd": 44.15,
+        "sharpe": -0.99,
         "days": 253,
         "maxDrawdown": -48.31,
         "worstDay": -10.99
       },
-      "flow": 23.5,
+      "flow": 29.8,
       "flowStats": {
-        "recent5dAvg": 144490,
-        "recent20dAvg": 215981,
-        "ratio": 0.67
+        "recent5dAvg": 152269,
+        "recent20dAvg": 203731,
+        "ratio": 0.75
       },
       "value": 38.0,
-      "compositeScore": 26.8,
+      "compositeScore": 23.3,
       "valueNA": false
     },
     {
@@ -2243,8 +2243,8 @@
         "5G"
       ],
       "market": "KOSPI",
-      "currentPrice": 58000,
-      "changePct": 4.69,
+      "currentPrice": 54200,
+      "changePct": -6.55,
       "volume": 439567,
       "marketCap": 13810788338000,
       "per": 8.85,
@@ -2255,30 +2255,30 @@
       "dividendYield": 4.45,
       "beta": 0.16,
       "peg": 4.43,
-      "momentum": 72.5,
+      "momentum": 52.9,
       "returns": {
-        "r1m": 3.76,
-        "r3m": -1.86,
-        "r6m": 13.06,
-        "r1y": 6.62
+        "r1m": -9.67,
+        "r3m": -11.15,
+        "r6m": 5.04,
+        "r1y": -2.69
       },
-      "volScore": 42.0,
+      "volScore": 32.6,
       "volStats": {
-        "annualReturn": 11.48,
-        "annualStd": 31.62,
-        "sharpe": 0.25,
+        "annualReturn": 2.54,
+        "annualStd": 32.21,
+        "sharpe": -0.03,
         "days": 253,
         "maxDrawdown": -24.96,
         "worstDay": -12.86
       },
-      "flow": 51.5,
+      "flow": 54.4,
       "flowStats": {
-        "recent5dAvg": 412347,
-        "recent20dAvg": 389431,
-        "ratio": 1.06
+        "recent5dAvg": 442603,
+        "recent20dAvg": 376084,
+        "ratio": 1.18
       },
       "value": 79.9,
-      "compositeScore": 61.5,
+      "compositeScore": 55.0,
       "valueNA": false
     },
     {
@@ -2290,8 +2290,8 @@
         "LG그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 10680,
-      "changePct": -4.98,
+      "currentPrice": 11010,
+      "changePct": 3.09,
       "volume": 12460579,
       "marketCap": 8080000000000,
       "per": 26.09,
@@ -2302,30 +2302,30 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": null,
-      "momentum": 46.4,
+      "momentum": 42.0,
       "returns": {
-        "r1m": -17.27,
-        "r3m": -5.24,
-        "r6m": -9.72,
-        "r1y": 17.11
+        "r1m": -14.32,
+        "r3m": -9.08,
+        "r6m": -8.4,
+        "r1y": 22.88
       },
-      "volScore": 55.8,
+      "volScore": 57.2,
       "volStats": {
-        "annualReturn": 36.74,
-        "annualStd": 65.13,
-        "sharpe": 0.51,
+        "annualReturn": 41.59,
+        "annualStd": 65.17,
+        "sharpe": 0.58,
         "days": 253,
         "maxDrawdown": -36.01,
         "worstDay": -14.46
       },
-      "flow": 46.0,
+      "flow": 47.6,
       "flowStats": {
-        "recent5dAvg": 4942066,
-        "recent20dAvg": 5201029,
-        "ratio": 0.95
+        "recent5dAvg": 4824151,
+        "recent20dAvg": 4975740,
+        "ratio": 0.97
       },
       "value": 58.4,
-      "compositeScore": 51.6,
+      "compositeScore": 51.3,
       "valueNA": false
     },
     {
@@ -2336,8 +2336,8 @@
         "엔터테인먼트"
       ],
       "market": "KOSPI",
-      "currentPrice": 249500,
-      "changePct": -3.48,
+      "currentPrice": 248500,
+      "changePct": -0.4,
       "volume": 298310,
       "marketCap": 6226222358000,
       "per": 24.89,
@@ -2348,30 +2348,30 @@
       "dividendYield": 0.34,
       "beta": 0.9,
       "peg": null,
-      "momentum": 79.0,
+      "momentum": 76.1,
       "returns": {
-        "r1m": -2.92,
-        "r3m": 18.81,
-        "r6m": 15.24,
-        "r1y": 34.36
+        "r1m": -4.42,
+        "r3m": 13.99,
+        "r6m": 16.12,
+        "r1y": 20.34
       },
-      "volScore": 64.5,
+      "volScore": 53.6,
       "volStats": {
-        "annualReturn": 45.05,
-        "annualStd": 55.67,
-        "sharpe": 0.75,
+        "annualReturn": 33.45,
+        "annualStd": 54.56,
+        "sharpe": 0.55,
         "days": 253,
         "maxDrawdown": -30.62,
         "worstDay": -14.61
       },
-      "flow": 29.8,
+      "flow": 33.3,
       "flowStats": {
-        "recent5dAvg": 82896,
-        "recent20dAvg": 110830,
-        "ratio": 0.75
+        "recent5dAvg": 85428,
+        "recent20dAvg": 107969,
+        "ratio": 0.79
       },
       "value": 48.5,
-      "compositeScore": 55.4,
+      "compositeScore": 52.9,
       "valueNA": false
     },
     {
@@ -2382,8 +2382,8 @@
         "음식료업종"
       ],
       "market": "KOSPI",
-      "currentPrice": 176400,
-      "changePct": -4.29,
+      "currentPrice": 173500,
+      "changePct": -1.64,
       "volume": 505523,
       "marketCap": 18239497119200,
       "per": 13.14,
@@ -2394,30 +2394,30 @@
       "dividendYield": 3.25,
       "beta": 0.21,
       "peg": 3.72,
-      "momentum": 82.6,
+      "momentum": 75.4,
       "returns": {
-        "r1m": -4.7,
-        "r3m": 14.03,
-        "r6m": 25.64,
-        "r1y": 43.07
+        "r1m": -6.27,
+        "r3m": 9.46,
+        "r6m": 22.36,
+        "r1y": 35.87
       },
-      "volScore": 82.6,
+      "volScore": 72.5,
       "volStats": {
-        "annualReturn": 40.78,
-        "annualStd": 31.46,
-        "sharpe": 1.18,
+        "annualReturn": 35.56,
+        "annualStd": 31.33,
+        "sharpe": 1.02,
         "days": 253,
         "maxDrawdown": -15.64,
         "worstDay": -6.59
       },
-      "flow": 49.1,
+      "flow": 51.8,
       "flowStats": {
-        "recent5dAvg": 281027,
-        "recent20dAvg": 284286,
-        "ratio": 0.99
+        "recent5dAvg": 306608,
+        "recent20dAvg": 285613,
+        "ratio": 1.07
       },
       "value": 62.4,
-      "compositeScore": 69.2,
+      "compositeScore": 65.5,
       "valueNA": false
     },
     {
@@ -2429,8 +2429,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 326000,
-      "changePct": -5.78,
+      "currentPrice": 340500,
+      "changePct": 4.45,
       "volume": 1011569,
       "marketCap": 87100000000000,
       "per": 7.29,
@@ -2441,30 +2441,30 @@
       "dividendYield": 1.1,
       "beta": 0.78,
       "peg": 1.51,
-      "momentum": 94.2,
+      "momentum": 94.9,
       "returns": {
-        "r1m": -11.41,
-        "r3m": 46.85,
-        "r6m": 108.57,
-        "r1y": 158.12
+        "r1m": -6.71,
+        "r3m": 42.77,
+        "r6m": 107.5,
+        "r1y": 167.27
       },
-      "volScore": 93.5,
+      "volScore": 92.8,
       "volStats": {
-        "annualReturn": 112.33,
-        "annualStd": 59.31,
-        "sharpe": 1.83,
+        "annualReturn": 115.91,
+        "annualStd": 59.45,
+        "sharpe": 1.89,
         "days": 253,
         "maxDrawdown": -34.41,
         "worstDay": -10.84
       },
-      "flow": 46.9,
+      "flow": 51.4,
       "flowStats": {
-        "recent5dAvg": 482495,
-        "recent20dAvg": 501917,
-        "ratio": 0.96
+        "recent5dAvg": 552274,
+        "recent20dAvg": 522705,
+        "ratio": 1.06
       },
       "value": 90.1,
-      "compositeScore": 81.2,
+      "compositeScore": 82.3,
       "valueNA": false
     },
     {
@@ -2476,8 +2476,8 @@
         "삼성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 188300,
-      "changePct": -3.09,
+      "currentPrice": 199600,
+      "changePct": 6.0,
       "volume": 830264,
       "marketCap": 20892006000000,
       "per": 18.97,
@@ -2488,30 +2488,30 @@
       "dividendYield": 1.06,
       "beta": 0.82,
       "peg": null,
-      "momentum": 76.1,
+      "momentum": 79.7,
       "returns": {
-        "r1m": -16.31,
-        "r3m": 24.45,
-        "r6m": 7.54,
-        "r1y": 8.66
+        "r1m": -13.03,
+        "r3m": 29.61,
+        "r6m": 12.7,
+        "r1y": 17.69
       },
-      "volScore": 49.3,
+      "volScore": 50.7,
       "volStats": {
-        "annualReturn": 30.47,
-        "annualStd": 68.16,
-        "sharpe": 0.4,
+        "annualReturn": 38.6,
+        "annualStd": 68.37,
+        "sharpe": 0.51,
         "days": 253,
         "maxDrawdown": -47.98,
         "worstDay": -16.99
       },
-      "flow": 37.6,
+      "flow": 36.6,
       "flowStats": {
-        "recent5dAvg": 352595,
-        "recent20dAvg": 417011,
-        "ratio": 0.85
+        "recent5dAvg": 329475,
+        "recent20dAvg": 395530,
+        "ratio": 0.83
       },
       "value": 50.4,
-      "compositeScore": 53.4,
+      "compositeScore": 54.4,
       "valueNA": false
     },
     {
@@ -2523,8 +2523,8 @@
         "삼성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 1493000,
-      "changePct": 0.95,
+      "currentPrice": 1584000,
+      "changePct": 6.1,
       "volume": 1434249,
       "marketCap": 128547850816000,
       "per": 28.11,
@@ -2537,28 +2537,28 @@
       "peg": 4.23,
       "momentum": 99.3,
       "returns": {
-        "r1m": -17.29,
-        "r3m": 226.7,
-        "r6m": 452.96,
-        "r1y": 1001.85
+        "r1m": -12.24,
+        "r3m": 208.17,
+        "r6m": 486.67,
+        "r1y": 1075.95
       },
       "volScore": 99.3,
       "volStats": {
-        "annualReturn": 269.22,
-        "annualStd": 76.06,
-        "sharpe": 3.49,
+        "annualReturn": 275.91,
+        "annualStd": 76.2,
+        "sharpe": 3.57,
         "days": 253,
         "maxDrawdown": -34.85,
         "worstDay": -12.65
       },
-      "flow": 43.4,
+      "flow": 42.5,
       "flowStats": {
-        "recent5dAvg": 1059023,
-        "recent20dAvg": 1154679,
-        "ratio": 0.92
+        "recent5dAvg": 998982,
+        "recent20dAvg": 1101644,
+        "ratio": 0.91
       },
       "value": 46.7,
-      "compositeScore": 72.2,
+      "compositeScore": 72.0,
       "valueNA": false
     },
     {
@@ -2570,8 +2570,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 622000,
-      "changePct": -7.3,
+      "currentPrice": 648000,
+      "changePct": 4.18,
       "volume": 443781,
       "marketCap": 32414065398000,
       "per": 7.31,
@@ -2582,30 +2582,30 @@
       "dividendYield": 3.04,
       "beta": 0.34,
       "peg": null,
-      "momentum": 92.8,
+      "momentum": 90.6,
       "returns": {
-        "r1m": 0.97,
-        "r3m": 39.31,
-        "r6m": 25.15,
-        "r1y": 42.99
+        "r1m": -2.26,
+        "r3m": 38.46,
+        "r6m": 32.92,
+        "r1y": 49.31
       },
-      "volScore": 68.1,
+      "volScore": 67.4,
       "volStats": {
-        "annualReturn": 52.42,
-        "annualStd": 58.11,
-        "sharpe": 0.84,
+        "annualReturn": 56.83,
+        "annualStd": 58.25,
+        "sharpe": 0.92,
         "days": 253,
         "maxDrawdown": -30.08,
         "worstDay": -22.3
       },
-      "flow": 36.2,
+      "flow": 38.4,
       "flowStats": {
-        "recent5dAvg": 121065,
-        "recent20dAvg": 146299,
-        "ratio": 0.83
+        "recent5dAvg": 126949,
+        "recent20dAvg": 148564,
+        "ratio": 0.85
       },
       "value": 77.7,
-      "compositeScore": 68.7,
+      "compositeScore": 68.5,
       "valueNA": false
     },
     {
@@ -2617,8 +2617,8 @@
         "CJ그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 191200,
-      "changePct": -3.53,
+      "currentPrice": 191000,
+      "changePct": -0.1,
       "volume": 64723,
       "marketCap": 3018364293000,
       "per": 13.75,
@@ -2631,28 +2631,28 @@
       "peg": null,
       "momentum": 44.9,
       "returns": {
-        "r1m": -1.75,
-        "r3m": -20.0,
-        "r6m": -7.63,
-        "r1y": -23.37
+        "r1m": -1.9,
+        "r3m": -16.59,
+        "r6m": -7.51,
+        "r1y": -23.29
       },
-      "volScore": 16.7,
+      "volScore": 14.5,
       "volStats": {
-        "annualReturn": -21.84,
+        "annualReturn": -21.75,
         "annualStd": 30.92,
         "sharpe": -0.82,
         "days": 253,
         "maxDrawdown": -34.14,
         "worstDay": -8.29
       },
-      "flow": 30.0,
+      "flow": 30.1,
       "flowStats": {
-        "recent5dAvg": 53138,
-        "recent20dAvg": 70901,
+        "recent5dAvg": 52491,
+        "recent20dAvg": 69899,
         "ratio": 0.75
       },
       "value": 67.2,
-      "compositeScore": 39.7,
+      "compositeScore": 39.2,
       "valueNA": false
     },
     {
@@ -2664,8 +2664,8 @@
         "해외 인프라"
       ],
       "market": "KOSPI",
-      "currentPrice": 98900,
-      "changePct": -1.79,
+      "currentPrice": 107200,
+      "changePct": 8.39,
       "volume": 721992,
       "marketCap": 15322553264000,
       "per": 7.32,
@@ -2678,28 +2678,28 @@
       "peg": null,
       "momentum": 50.0,
       "returns": {
-        "r1m": -24.1,
-        "r3m": -36.56,
-        "r6m": 43.33,
-        "r1y": 25.51
+        "r1m": -12.63,
+        "r3m": -43.19,
+        "r6m": 44.86,
+        "r1y": 36.56
       },
-      "volScore": 59.4,
+      "volScore": 62.3,
       "volStats": {
-        "annualReturn": 52.28,
-        "annualStd": 78.45,
-        "sharpe": 0.62,
+        "annualReturn": 61.05,
+        "annualStd": 78.87,
+        "sharpe": 0.73,
         "days": 253,
         "maxDrawdown": -47.59,
         "worstDay": -15.68
       },
-      "flow": 26.2,
+      "flow": 29.6,
       "flowStats": {
-        "recent5dAvg": 631810,
-        "recent20dAvg": 898658,
-        "ratio": 0.7
+        "recent5dAvg": 646758,
+        "recent20dAvg": 868106,
+        "ratio": 0.75
       },
       "value": 83.9,
-      "compositeScore": 54.9,
+      "compositeScore": 56.4,
       "valueNA": false
     },
     {
@@ -2710,8 +2710,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 105000,
-      "changePct": -2.14,
+      "currentPrice": 109200,
+      "changePct": 4.0,
       "volume": 2050213,
       "marketCap": 47607832408300,
       "per": 4.78,
@@ -2722,30 +2722,30 @@
       "dividendYield": 2.86,
       "beta": 0.74,
       "peg": 5.14,
-      "momentum": 89.1,
+      "momentum": 86.2,
       "returns": {
-        "r1m": 6.92,
-        "r3m": 14.88,
-        "r6m": 37.08,
-        "r1y": 73.55
+        "r1m": 12.69,
+        "r3m": 12.93,
+        "r6m": 38.05,
+        "r1y": 77.85
       },
       "volScore": 90.6,
       "volStats": {
-        "annualReturn": 62.34,
-        "annualStd": 37.84,
-        "sharpe": 1.55,
+        "annualReturn": 64.85,
+        "annualStd": 38.01,
+        "sharpe": 1.61,
         "days": 253,
         "maxDrawdown": -17.26,
         "worstDay": -9.67
       },
-      "flow": 54.3,
+      "flow": 51.2,
       "flowStats": {
-        "recent5dAvg": 1821091,
-        "recent20dAvg": 1552640,
-        "ratio": 1.17
+        "recent5dAvg": 1596930,
+        "recent20dAvg": 1521839,
+        "ratio": 1.05
       },
       "value": 90.9,
-      "compositeScore": 81.2,
+      "compositeScore": 79.7,
       "valueNA": false
     },
     {
@@ -2757,8 +2757,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 171400,
-      "changePct": 0.23,
+      "currentPrice": 184400,
+      "changePct": 7.58,
       "volume": 2139478,
       "marketCap": 60998334438000,
       "per": 4.77,
@@ -2769,30 +2769,30 @@
       "dividendYield": 2.94,
       "beta": 0.77,
       "peg": 0.74,
-      "momentum": 91.3,
+      "momentum": 92.0,
       "returns": {
-        "r1m": 11.3,
-        "r3m": 16.84,
-        "r6m": 39.01,
-        "r1y": 54.97
+        "r1m": 21.72,
+        "r3m": 18.21,
+        "r6m": 45.43,
+        "r1y": 66.28
       },
-      "volScore": 84.1,
+      "volScore": 86.2,
       "volStats": {
-        "annualReturn": 51.89,
-        "annualStd": 40.0,
-        "sharpe": 1.21,
+        "annualReturn": 59.2,
+        "annualStd": 40.67,
+        "sharpe": 1.37,
         "days": 253,
         "maxDrawdown": -18.42,
         "worstDay": -11.71
       },
-      "flow": 52.9,
+      "flow": 54.3,
       "flowStats": {
-        "recent5dAvg": 1747619,
-        "recent20dAvg": 1563372,
-        "ratio": 1.12
+        "recent5dAvg": 1865506,
+        "recent20dAvg": 1592782,
+        "ratio": 1.17
       },
       "value": 91.6,
-      "compositeScore": 80.0,
+      "compositeScore": 81.0,
       "valueNA": false
     },
     {
@@ -2803,8 +2803,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 122600,
-      "changePct": 0.25,
+      "currentPrice": 128500,
+      "changePct": 4.81,
       "volume": 974777,
       "marketCap": 33006440084400,
       "per": 3.74,
@@ -2815,30 +2815,30 @@
       "dividendYield": 3.91,
       "beta": 0.83,
       "peg": 4.79,
-      "momentum": 84.1,
+      "momentum": 85.5,
       "returns": {
-        "r1m": 3.99,
-        "r3m": 10.25,
-        "r6m": 31.26,
-        "r1y": 45.61
+        "r1m": 11.93,
+        "r3m": 9.74,
+        "r6m": 36.56,
+        "r1y": 48.9
       },
       "volScore": 77.5,
       "volStats": {
-        "annualReturn": 45.76,
-        "annualStd": 40.3,
-        "sharpe": 1.05,
+        "annualReturn": 48.08,
+        "annualStd": 40.49,
+        "sharpe": 1.1,
         "days": 253,
         "maxDrawdown": -19.65,
         "worstDay": -12.16
       },
-      "flow": 51.5,
+      "flow": 52.5,
       "flowStats": {
-        "recent5dAvg": 925127,
-        "recent20dAvg": 874049,
-        "ratio": 1.06
+        "recent5dAvg": 959579,
+        "recent20dAvg": 873113,
+        "ratio": 1.1
       },
       "value": 93.4,
-      "compositeScore": 76.6,
+      "compositeScore": 77.2,
       "valueNA": false
     },
     {
@@ -2849,8 +2849,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 30050,
-      "changePct": -2.12,
+      "currentPrice": 31450,
+      "changePct": 4.66,
       "volume": 2111958,
       "marketCap": 22315920128000,
       "per": 3.84,
@@ -2861,30 +2861,30 @@
       "dividendYield": 4.62,
       "beta": 0.67,
       "peg": 2.56,
-      "momentum": 65.9,
+      "momentum": 71.0,
       "returns": {
-        "r1m": 0.84,
-        "r3m": -5.65,
-        "r6m": 7.13,
-        "r1y": 33.56
+        "r1m": 4.31,
+        "r3m": -5.84,
+        "r6m": 12.72,
+        "r1y": 40.09
       },
-      "volScore": 69.6,
+      "volScore": 71.7,
       "volStats": {
-        "annualReturn": 35.48,
-        "annualStd": 36.06,
-        "sharpe": 0.89,
+        "annualReturn": 40.36,
+        "annualStd": 36.34,
+        "sharpe": 1.01,
         "days": 253,
         "maxDrawdown": -30.51,
         "worstDay": -9.92
       },
-      "flow": 47.8,
+      "flow": 48.8,
       "flowStats": {
-        "recent5dAvg": 2160047,
-        "recent20dAvg": 2220284,
-        "ratio": 0.97
+        "recent5dAvg": 2181793,
+        "recent20dAvg": 2215104,
+        "ratio": 0.98
       },
       "value": 93.4,
-      "compositeScore": 69.2,
+      "compositeScore": 71.2,
       "valueNA": false
     },
     {
@@ -2895,8 +2895,8 @@
         "한진그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 26700,
-      "changePct": -5.15,
+      "currentPrice": 26750,
+      "changePct": 0.19,
       "volume": 1231782,
       "marketCap": 9260749624150,
       "per": 8.32,
@@ -2907,30 +2907,30 @@
       "dividendYield": 2.96,
       "beta": 0.83,
       "peg": null,
-      "momentum": 83.3,
+      "momentum": 78.3,
       "returns": {
-        "r1m": 4.91,
-        "r3m": 15.58,
-        "r6m": 20.27,
-        "r1y": 14.59
+        "r1m": 7.86,
+        "r3m": 7.21,
+        "r6m": 18.36,
+        "r1y": 16.81
       },
-      "volScore": 52.2,
+      "volScore": 50.0,
       "volStats": {
-        "annualReturn": 23.4,
-        "annualStd": 44.4,
-        "sharpe": 0.45,
+        "annualReturn": 25.3,
+        "annualStd": 44.37,
+        "sharpe": 0.49,
         "days": 253,
         "maxDrawdown": -22.63,
         "worstDay": -10.32
       },
-      "flow": 50.9,
+      "flow": 50.8,
       "flowStats": {
-        "recent5dAvg": 3756980,
-        "recent20dAvg": 3620678,
-        "ratio": 1.04
+        "recent5dAvg": 3750130,
+        "recent20dAvg": 3637350,
+        "ratio": 1.03
       },
       "value": 71.2,
-      "compositeScore": 64.4,
+      "compositeScore": 62.6,
       "valueNA": false
     },
     {
@@ -2941,8 +2941,8 @@
         "SK그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 610000,
-      "changePct": 2.35,
+      "currentPrice": 657000,
+      "changePct": 7.7,
       "volume": 216151,
       "marketCap": 48359302901000,
       "per": 11.73,
@@ -2955,28 +2955,28 @@
       "peg": null,
       "momentum": 96.4,
       "returns": {
-        "r1m": 5.35,
-        "r3m": 95.2,
-        "r6m": 135.52,
-        "r1y": 208.7
+        "r1m": 14.26,
+        "r3m": 92.11,
+        "r6m": 143.33,
+        "r1y": 221.27
       },
-      "volScore": 94.9,
+      "volScore": 95.7,
       "volStats": {
-        "annualReturn": 134.12,
-        "annualStd": 65.42,
-        "sharpe": 2.0,
+        "annualReturn": 138.34,
+        "annualStd": 65.74,
+        "sharpe": 2.05,
         "days": 253,
         "maxDrawdown": -30.54,
         "worstDay": -13.04
       },
-      "flow": 34.5,
+      "flow": 30.2,
       "flowStats": {
-        "recent5dAvg": 296585,
-        "recent20dAvg": 368095,
-        "ratio": 0.81
+        "recent5dAvg": 281326,
+        "recent20dAvg": 373682,
+        "ratio": 0.75
       },
       "value": 77.4,
-      "compositeScore": 75.8,
+      "compositeScore": 74.9,
       "valueNA": false
     },
     {
@@ -2988,7 +2988,7 @@
       ],
       "market": "KOSPI",
       "currentPrice": 101300,
-      "changePct": -1.17,
+      "changePct": 0.0,
       "volume": 1000912,
       "marketCap": 20233871952000,
       "per": 10.92,
@@ -2999,30 +2999,30 @@
       "dividendYield": 2.21,
       "beta": 0.91,
       "peg": null,
-      "momentum": 81.2,
+      "momentum": 76.8,
       "returns": {
-        "r1m": -6.81,
-        "r3m": 15.64,
-        "r6m": 25.06,
-        "r1y": 27.1
+        "r1m": -5.77,
+        "r3m": 10.35,
+        "r6m": 24.29,
+        "r1y": 27.26
       },
       "volScore": 60.1,
       "volStats": {
-        "annualReturn": 41.24,
+        "annualReturn": 41.37,
         "annualStd": 59.7,
         "sharpe": 0.63,
         "days": 253,
         "maxDrawdown": -41.74,
         "worstDay": -15.56
       },
-      "flow": 36.1,
+      "flow": 37.5,
       "flowStats": {
-        "recent5dAvg": 442723,
-        "recent20dAvg": 535822,
-        "ratio": 0.83
+        "recent5dAvg": 439461,
+        "recent20dAvg": 520819,
+        "ratio": 0.84
       },
       "value": 77.4,
-      "compositeScore": 63.7,
+      "compositeScore": 63.0,
       "valueNA": false
     },
     {
@@ -3033,8 +3033,8 @@
         "현대자동차그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 26000,
-      "changePct": -3.35,
+      "currentPrice": 26900,
+      "changePct": 3.46,
       "volume": 714177,
       "marketCap": 5057595251500,
       "per": 10.56,
@@ -3045,30 +3045,30 @@
       "dividendYield": 1.32,
       "beta": 1.44,
       "peg": null,
-      "momentum": 19.6,
+      "momentum": 20.3,
       "returns": {
-        "r1m": -21.8,
-        "r3m": -24.53,
-        "r6m": -15.03,
-        "r1y": -13.91
+        "r1m": -16.33,
+        "r3m": -28.93,
+        "r6m": -10.48,
+        "r1y": -8.5
       },
-      "volScore": 35.5,
+      "volScore": 37.7,
       "volStats": {
-        "annualReturn": 3.81,
-        "annualStd": 61.51,
-        "sharpe": 0.01,
+        "annualReturn": 9.92,
+        "annualStd": 61.55,
+        "sharpe": 0.1,
         "days": 253,
         "maxDrawdown": -44.09,
         "worstDay": -18.48
       },
-      "flow": 34.7,
+      "flow": 42.8,
       "flowStats": {
-        "recent5dAvg": 560196,
-        "recent20dAvg": 692251,
-        "ratio": 0.81
+        "recent5dAvg": 587403,
+        "recent20dAvg": 645549,
+        "ratio": 0.91
       },
       "value": 85.4,
-      "compositeScore": 43.8,
+      "compositeScore": 46.6,
       "valueNA": false
     },
     {
@@ -3080,8 +3080,8 @@
         "삼성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 20950,
-      "changePct": -0.95,
+      "currentPrice": 22350,
+      "changePct": 6.68,
       "volume": 9540243,
       "marketCap": 25080000000000,
       "per": 155.7,
@@ -3092,30 +3092,30 @@
       "dividendYield": 0,
       "beta": 1.12,
       "peg": 0.11,
-      "momentum": 26.1,
+      "momentum": 32.6,
       "returns": {
-        "r1m": -19.42,
-        "r3m": -21.83,
-        "r6m": -13.25,
-        "r1y": 29.64
+        "r1m": -11.66,
+        "r3m": -21.02,
+        "r6m": -8.59,
+        "r1y": 33.35
       },
-      "volScore": 63.0,
+      "volScore": 62.3,
       "volStats": {
-        "annualReturn": 41.68,
-        "annualStd": 56.33,
-        "sharpe": 0.68,
+        "annualReturn": 44.65,
+        "annualStd": 56.59,
+        "sharpe": 0.73,
         "days": 253,
         "maxDrawdown": -39.1,
         "worstDay": -16.07
       },
-      "flow": 50.5,
+      "flow": 50.6,
       "flowStats": {
-        "recent5dAvg": 4759898,
-        "recent20dAvg": 4664215,
-        "ratio": 1.02
+        "recent5dAvg": 4745580,
+        "recent20dAvg": 4627540,
+        "ratio": 1.03
       },
       "value": 24.8,
-      "compositeScore": 41.1,
+      "compositeScore": 42.6,
       "valueNA": false
     },
     {
@@ -3125,8 +3125,8 @@
         "게임"
       ],
       "market": "KOSPI",
-      "currentPrice": 238500,
-      "changePct": -2.65,
+      "currentPrice": 238000,
+      "changePct": -0.21,
       "volume": 222114,
       "marketCap": 11788001711500,
       "per": 15.84,
@@ -3139,28 +3139,28 @@
       "peg": null,
       "momentum": 67.4,
       "returns": {
-        "r1m": 2.8,
-        "r3m": 2.36,
-        "r6m": -3.83,
-        "r1y": -33.29
+        "r1m": 2.15,
+        "r3m": 1.71,
+        "r6m": -3.25,
+        "r1y": -34.44
       },
-      "volScore": 14.5,
+      "volScore": 11.6,
       "volStats": {
-        "annualReturn": -31.69,
-        "annualStd": 41.9,
-        "sharpe": -0.84,
+        "annualReturn": -33.44,
+        "annualStd": 41.86,
+        "sharpe": -0.88,
         "days": 253,
         "maxDrawdown": -44.19,
         "worstDay": -10.59
       },
-      "flow": 35.6,
+      "flow": 39.0,
       "flowStats": {
-        "recent5dAvg": 106628,
-        "recent20dAvg": 129940,
-        "ratio": 0.82
+        "recent5dAvg": 110448,
+        "recent20dAvg": 128113,
+        "ratio": 0.86
       },
       "value": 52.9,
-      "compositeScore": 42.6,
+      "compositeScore": 42.7,
       "valueNA": false
     },
     {
@@ -3170,8 +3170,8 @@
         "게임"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 25950,
-      "changePct": -0.19,
+      "currentPrice": 27350,
+      "changePct": 5.39,
       "volume": 78610,
       "marketCap": 324047188400,
       "per": 15.92,
@@ -3182,30 +3182,30 @@
       "dividendYield": 4.88,
       "beta": 0.5,
       "peg": null,
-      "momentum": 45.7,
+      "momentum": 52.2,
       "returns": {
-        "r1m": 3.8,
-        "r3m": -19.16,
-        "r6m": -13.36,
-        "r1y": -36.94
+        "r1m": 8.32,
+        "r3m": -16.62,
+        "r6m": -6.97,
+        "r1y": -34.02
       },
-      "volScore": 5.1,
+      "volScore": 7.2,
       "volStats": {
-        "annualReturn": -38.74,
-        "annualStd": 38.43,
-        "sharpe": -1.1,
+        "annualReturn": -34.08,
+        "annualStd": 38.82,
+        "sharpe": -0.97,
         "days": 253,
         "maxDrawdown": -45.95,
         "worstDay": -10.75
       },
-      "flow": 35.5,
+      "flow": 35.7,
       "flowStats": {
-        "recent5dAvg": 36459,
-        "recent20dAvg": 44562,
+        "recent5dAvg": 36693,
+        "recent20dAvg": 44707,
         "ratio": 0.82
       },
       "value": 71.9,
-      "compositeScore": 39.6,
+      "compositeScore": 41.8,
       "valueNA": false
     },
     {
@@ -3215,8 +3215,8 @@
         "게임"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 18160,
-      "changePct": 0.22,
+      "currentPrice": 18510,
+      "changePct": 1.93,
       "volume": 64442,
       "marketCap": 424940054760,
       "per": 12.06,
@@ -3227,30 +3227,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 25.4,
+      "momentum": 26.8,
       "returns": {
-        "r1m": -6.15,
-        "r3m": -20.7,
-        "r6m": -28.5,
-        "r1y": -27.21
+        "r1m": -6.18,
+        "r3m": -20.56,
+        "r6m": -25.81,
+        "r1y": -26.55
       },
-      "volScore": 20.3,
+      "volScore": 21.0,
       "volStats": {
-        "annualReturn": -21.65,
-        "annualStd": 45.06,
-        "sharpe": -0.56,
+        "annualReturn": -20.72,
+        "annualStd": 45.1,
+        "sharpe": -0.54,
         "days": 253,
         "maxDrawdown": -47.17,
         "worstDay": -13.7
       },
-      "flow": 37.3,
+      "flow": 30.4,
       "flowStats": {
-        "recent5dAvg": 68664,
-        "recent20dAvg": 81586,
-        "ratio": 0.84
+        "recent5dAvg": 61473,
+        "recent20dAvg": 81360,
+        "ratio": 0.76
       },
       "value": 63.1,
-      "compositeScore": 36.5,
+      "compositeScore": 35.3,
       "valueNA": false
     },
     {
@@ -3260,8 +3260,8 @@
         "게임"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 17370,
-      "changePct": 2.6,
+      "currentPrice": 17900,
+      "changePct": 3.05,
       "volume": 56191,
       "marketCap": 187031493000,
       "per": 11.9,
@@ -3272,27 +3272,27 @@
       "dividendYield": 0,
       "beta": 0.07,
       "peg": null,
-      "momentum": 34.1,
+      "momentum": 31.2,
       "returns": {
-        "r1m": 23.54,
-        "r3m": -21.58,
-        "r6m": -47.76,
-        "r1y": -58.19
+        "r1m": 28.5,
+        "r3m": -25.88,
+        "r6m": -43.35,
+        "r1y": -58.85
       },
-      "volScore": 10.9,
+      "volScore": 9.4,
       "volStats": {
-        "annualReturn": -61.78,
-        "annualStd": 72.61,
-        "sharpe": -0.9,
+        "annualReturn": -63.42,
+        "annualStd": 72.52,
+        "sharpe": -0.92,
         "days": 253,
         "maxDrawdown": -76.68,
         "worstDay": -13.65
       },
-      "flow": 36.2,
+      "flow": 40.7,
       "flowStats": {
-        "recent5dAvg": 61297,
-        "recent20dAvg": 74024,
-        "ratio": 0.83
+        "recent5dAvg": 64952,
+        "recent20dAvg": 73543,
+        "ratio": 0.88
       },
       "value": 42.3,
       "compositeScore": 30.9,
@@ -3306,8 +3306,8 @@
         "의료기기"
       ],
       "market": "KOSPI",
-      "currentPrice": 39000,
-      "changePct": -0.89,
+      "currentPrice": 41650,
+      "changePct": 6.79,
       "volume": 27871,
       "marketCap": 395405402350,
       "per": 15.02,
@@ -3318,30 +3318,30 @@
       "dividendYield": 1.31,
       "beta": 0.63,
       "peg": null,
-      "momentum": 30.4,
+      "momentum": 37.0,
       "returns": {
-        "r1m": -11.26,
-        "r3m": -20.16,
-        "r6m": -18.75,
-        "r1y": -38.1
+        "r1m": -6.72,
+        "r3m": -16.45,
+        "r6m": -13.14,
+        "r1y": -32.5
       },
-      "volScore": 7.2,
+      "volScore": 15.9,
       "volStats": {
-        "annualReturn": -39.3,
-        "annualStd": 41.84,
-        "sharpe": -1.02,
+        "annualReturn": -30.44,
+        "annualStd": 42.37,
+        "sharpe": -0.8,
         "days": 253,
         "maxDrawdown": -46.73,
         "worstDay": -9.45
       },
-      "flow": 21.4,
+      "flow": 26.2,
       "flowStats": {
-        "recent5dAvg": 19004,
-        "recent20dAvg": 29561,
-        "ratio": 0.64
+        "recent5dAvg": 20333,
+        "recent20dAvg": 28927,
+        "ratio": 0.7
       },
       "value": 45.6,
-      "compositeScore": 26.2,
+      "compositeScore": 31.2,
       "valueNA": false
     },
     {
@@ -3352,8 +3352,8 @@
         "삼양그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 57000,
-      "changePct": -1.21,
+      "currentPrice": 57300,
+      "changePct": 3.8,
       "volume": 12474,
       "marketCap": 442501887000,
       "per": 2.37,
@@ -3365,30 +3365,30 @@
       "beta": null,
       "peg": null,
       "returns": {
-        "r1m": 5.56,
-        "r3m": -11.49,
-        "r6m": -1.04,
-        "r1y": -0.33
+        "r1m": 4.18,
+        "r3m": -14.48,
+        "r6m": -0.17,
+        "r1y": -1.53
       },
-      "volScore": 37.0,
+      "volScore": 34.8,
       "volStats": {
-        "annualReturn": 5.59,
-        "annualStd": 34.3,
-        "sharpe": 0.06,
+        "annualReturn": 4.49,
+        "annualStd": 34.59,
+        "sharpe": 0.03,
         "days": 253,
         "maxDrawdown": -30.34,
         "worstDay": -10.03
       },
-      "flow": 59.9,
+      "flow": 39.5,
       "flowStats": {
-        "recent5dAvg": 15729,
-        "recent20dAvg": 11279,
-        "ratio": 1.39
+        "recent5dAvg": 9575,
+        "recent20dAvg": 11023,
+        "ratio": 0.87
       },
       "value": 99.6,
       "momentum": 58.0,
       "valueNA": false,
-      "compositeScore": 63.6
+      "compositeScore": 58.0
     },
     {
       "ticker": "139130",
@@ -3398,8 +3398,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 17310,
-      "changePct": -4.31,
+      "currentPrice": 17850,
+      "changePct": 3.12,
       "volume": 522260,
       "marketCap": 2809323956670,
       "per": 3.7,
@@ -3410,30 +3410,30 @@
       "dividendYield": 4.01,
       "beta": 0.63,
       "peg": null,
-      "momentum": 74.6,
+      "momentum": 73.9,
       "returns": {
-        "r1m": 0.06,
-        "r3m": 4.4,
-        "r6m": 13.06,
-        "r1y": 37.93
+        "r1m": -2.57,
+        "r3m": 4.63,
+        "r6m": 16.67,
+        "r1y": 42.0
       },
-      "volScore": 71.7,
+      "volScore": 72.5,
       "volStats": {
-        "annualReturn": 39.48,
-        "annualStd": 38.16,
-        "sharpe": 0.94,
+        "annualReturn": 42.44,
+        "annualStd": 38.28,
+        "sharpe": 1.02,
         "days": 253,
         "maxDrawdown": -26.88,
         "worstDay": -10.06
       },
-      "flow": 51.9,
+      "flow": 51.1,
       "flowStats": {
-        "recent5dAvg": 722176,
-        "recent20dAvg": 671553,
-        "ratio": 1.08
+        "recent5dAvg": 673841,
+        "recent20dAvg": 645985,
+        "ratio": 1.04
       },
       "value": 97.1,
-      "compositeScore": 73.8,
+      "compositeScore": 73.6,
       "valueNA": false
     },
     {
@@ -3443,8 +3443,8 @@
         "증권"
       ],
       "market": "KOSPI",
-      "currentPrice": 222500,
-      "changePct": -4.71,
+      "currentPrice": 239000,
+      "changePct": 7.42,
       "volume": 281396,
       "marketCap": 14070812980000,
       "per": 5.34,
@@ -3455,30 +3455,30 @@
       "dividendYield": 3.6,
       "beta": 1.48,
       "peg": null,
-      "momentum": 79.7,
+      "momentum": 82.6,
       "returns": {
-        "r1m": -2.84,
-        "r3m": 4.46,
-        "r6m": 34.85,
-        "r1y": 58.48
+        "r1m": 3.91,
+        "r3m": 0.0,
+        "r6m": 42.52,
+        "r1y": 71.2
       },
-      "volScore": 74.6,
+      "volScore": 79.0,
       "volStats": {
-        "annualReturn": 65.92,
-        "annualStd": 63.28,
-        "sharpe": 0.99,
+        "annualReturn": 73.91,
+        "annualStd": 63.68,
+        "sharpe": 1.11,
         "days": 253,
         "maxDrawdown": -31.62,
         "worstDay": -14.14
       },
-      "flow": 53.2,
+      "flow": 51.2,
       "flowStats": {
-        "recent5dAvg": 313171,
-        "recent20dAvg": 278066,
-        "ratio": 1.13
+        "recent5dAvg": 280676,
+        "recent20dAvg": 268149,
+        "ratio": 1.05
       },
       "value": 89.1,
-      "compositeScore": 74.2,
+      "compositeScore": 75.5,
       "valueNA": false
     },
     {
@@ -3489,8 +3489,8 @@
         "미래에셋 그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 40250,
-      "changePct": -0.62,
+      "currentPrice": 42200,
+      "changePct": 4.84,
       "volume": 2297192,
       "marketCap": 32622749104000,
       "per": 18.04,
@@ -3501,27 +3501,27 @@
       "dividendYield": 0.52,
       "beta": 1.46,
       "peg": null,
-      "momentum": 63.0,
+      "momentum": 65.9,
       "returns": {
-        "r1m": -21.39,
-        "r3m": -34.55,
-        "r6m": 64.0,
-        "r1y": 89.35
+        "r1m": -17.42,
+        "r3m": -37.67,
+        "r6m": 66.21,
+        "r1y": 97.59
       },
-      "volScore": 81.9,
+      "volScore": 80.4,
       "volStats": {
-        "annualReturn": 95.98,
-        "annualStd": 81.67,
-        "sharpe": 1.13,
+        "annualReturn": 100.36,
+        "annualStd": 81.8,
+        "sharpe": 1.18,
         "days": 253,
         "maxDrawdown": -52.09,
         "worstDay": -15.16
       },
-      "flow": 35.8,
+      "flow": 34.4,
       "flowStats": {
-        "recent5dAvg": 2607422,
-        "recent20dAvg": 3172080,
-        "ratio": 0.82
+        "recent5dAvg": 2455706,
+        "recent20dAvg": 3052051,
+        "ratio": 0.8
       },
       "value": 71.9,
       "compositeScore": 63.2,
@@ -3536,8 +3536,8 @@
         "해상풍력"
       ],
       "market": "KOSPI",
-      "currentPrice": 2770000,
-      "changePct": 3.01,
+      "currentPrice": 2924000,
+      "changePct": 5.56,
       "volume": 42528,
       "marketCap": 32617268904000,
       "per": 13.02,
@@ -3548,30 +3548,30 @@
       "dividendYield": 0.21,
       "beta": 2.17,
       "peg": null,
-      "momentum": 80.4,
+      "momentum": 81.9,
       "returns": {
-        "r1m": -19.41,
-        "r3m": 6.13,
-        "r6m": 50.14,
-        "r1y": 223.22
+        "r1m": -9.92,
+        "r3m": -0.2,
+        "r6m": 52.85,
+        "r1y": 228.17
       },
-      "volScore": 96.4,
+      "volScore": 94.9,
       "volStats": {
-        "annualReturn": 140.29,
-        "annualStd": 67.81,
-        "sharpe": 2.02,
+        "annualReturn": 141.89,
+        "annualStd": 67.91,
+        "sharpe": 2.04,
         "days": 253,
         "maxDrawdown": -41.56,
         "worstDay": -12.37
       },
-      "flow": 52.5,
+      "flow": 51.2,
       "flowStats": {
-        "recent5dAvg": 67587,
-        "recent20dAvg": 61471,
-        "ratio": 1.1
+        "recent5dAvg": 61941,
+        "recent20dAvg": 59144,
+        "ratio": 1.05
       },
       "value": 60.2,
-      "compositeScore": 72.4,
+      "compositeScore": 72.1,
       "valueNA": false
     },
     {
@@ -3582,8 +3582,8 @@
         "불화수소"
       ],
       "market": "KOSPI",
-      "currentPrice": 11840,
-      "changePct": 10.24,
+      "currentPrice": 13740,
+      "changePct": 16.05,
       "volume": 1820362,
       "marketCap": 1222710762000,
       "per": 152.05,
@@ -3594,30 +3594,30 @@
       "dividendYield": 0,
       "beta": 1.62,
       "peg": null,
-      "momentum": 87.7,
+      "momentum": 92.8,
       "returns": {
-        "r1m": -27.09,
-        "r3m": 19.96,
-        "r6m": 60.0,
-        "r1y": 147.96
+        "r1m": -12.87,
+        "r3m": 41.5,
+        "r6m": 73.48,
+        "r1y": 190.49
       },
-      "volScore": 87.0,
+      "volScore": 87.7,
       "volStats": {
-        "annualReturn": 135.5,
-        "annualStd": 96.49,
-        "sharpe": 1.37,
+        "annualReturn": 152.49,
+        "annualStd": 97.71,
+        "sharpe": 1.52,
         "days": 253,
         "maxDrawdown": -52.05,
         "worstDay": -15.95
       },
-      "flow": 24.0,
+      "flow": 33.5,
       "flowStats": {
-        "recent5dAvg": 5178307,
-        "recent20dAvg": 7667090,
-        "ratio": 0.68
+        "recent5dAvg": 5735900,
+        "recent20dAvg": 7223359,
+        "ratio": 0.79
       },
       "value": 16.1,
-      "compositeScore": 53.7,
+      "compositeScore": 57.5,
       "valueNA": false
     },
     {
@@ -3628,8 +3628,8 @@
         "GS그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 75600,
-      "changePct": -3.82,
+      "currentPrice": 80200,
+      "changePct": 6.08,
       "volume": 377612,
       "marketCap": 7060057620000,
       "per": 2.98,
@@ -3642,25 +3642,25 @@
       "peg": null,
       "momentum": 88.4,
       "returns": {
-        "r1m": 4.13,
-        "r3m": 17.03,
-        "r6m": 36.71,
-        "r1y": 64.53
+        "r1m": 11.85,
+        "r3m": 16.91,
+        "r6m": 37.56,
+        "r1y": 71.92
       },
-      "volScore": 83.3,
+      "volScore": 84.1,
       "volStats": {
-        "annualReturn": 61.3,
-        "annualStd": 48.03,
-        "sharpe": 1.2,
+        "annualReturn": 65.86,
+        "annualStd": 48.37,
+        "sharpe": 1.29,
         "days": 253,
         "maxDrawdown": -23.87,
         "worstDay": -12.91
       },
-      "flow": 57.9,
+      "flow": 57.1,
       "flowStats": {
-        "recent5dAvg": 461574,
-        "recent20dAvg": 350439,
-        "ratio": 1.32
+        "recent5dAvg": 452028,
+        "recent20dAvg": 352021,
+        "ratio": 1.28
       },
       "value": 96.0,
       "compositeScore": 81.4,
@@ -3674,8 +3674,8 @@
         "삼성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 19990,
-      "changePct": 5.32,
+      "currentPrice": 18810,
+      "changePct": -5.9,
       "volume": 778520,
       "marketCap": 2108705654250,
       "per": 11.69,
@@ -3686,30 +3686,30 @@
       "dividendYield": 6.68,
       "beta": 0.22,
       "peg": null,
-      "momentum": 71.0,
+      "momentum": 56.5,
       "returns": {
-        "r1m": 8.52,
-        "r3m": 4.17,
-        "r6m": -4.12,
-        "r1y": -1.04
+        "r1m": -2.59,
+        "r3m": -2.94,
+        "r6m": -10.43,
+        "r1y": -6.18
       },
-      "volScore": 34.1,
+      "volScore": 28.3,
       "volStats": {
-        "annualReturn": 2.56,
-        "annualStd": 26.8,
-        "sharpe": -0.03,
+        "annualReturn": -2.6,
+        "annualStd": 27.43,
+        "sharpe": -0.22,
         "days": 253,
         "maxDrawdown": -22.33,
         "worstDay": -7.31
       },
-      "flow": 18.4,
+      "flow": 32.1,
       "flowStats": {
-        "recent5dAvg": 373866,
-        "recent20dAvg": 617944,
-        "ratio": 0.61
+        "recent5dAvg": 389159,
+        "recent20dAvg": 501264,
+        "ratio": 0.78
       },
       "value": 60.2,
-      "compositeScore": 45.9,
+      "compositeScore": 44.3,
       "valueNA": false
     },
     {
@@ -3720,8 +3720,8 @@
         "포스코 그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 146000,
-      "changePct": 0.9,
+      "currentPrice": 151800,
+      "changePct": 3.97,
       "volume": 230006,
       "marketCap": 19746060840000,
       "per": 968.71,
@@ -3732,30 +3732,30 @@
       "dividendYield": 0.11,
       "beta": 1.66,
       "peg": 4.51,
-      "momentum": 13.8,
+      "momentum": 15.2,
       "returns": {
-        "r1m": -22.17,
-        "r3m": -30.14,
-        "r6m": -17.47,
-        "r1y": 18.12
+        "r1m": -17.81,
+        "r3m": -30.21,
+        "r6m": -16.13,
+        "r1y": 20.09
       },
-      "volScore": 56.5,
+      "volScore": 55.1,
       "volStats": {
-        "annualReturn": 40.41,
-        "annualStd": 69.44,
-        "sharpe": 0.53,
+        "annualReturn": 42.12,
+        "annualStd": 69.52,
+        "sharpe": 0.56,
         "days": 253,
         "maxDrawdown": -51.11,
         "worstDay": -18.23
       },
-      "flow": 55.4,
+      "flow": 54.0,
       "flowStats": {
-        "recent5dAvg": 383581,
-        "recent20dAvg": 315072,
-        "ratio": 1.22
+        "recent5dAvg": 364423,
+        "recent20dAvg": 314536,
+        "ratio": 1.16
       },
       "value": 4.7,
-      "compositeScore": 32.6,
+      "compositeScore": 32.2,
       "valueNA": false
     },
     {
@@ -3765,8 +3765,8 @@
         "음식료업종"
       ],
       "market": "KOSPI",
-      "currentPrice": 135500,
-      "changePct": -3.42,
+      "currentPrice": 137100,
+      "changePct": 1.18,
       "volume": 143685,
       "marketCap": 5175279678800,
       "per": 12.19,
@@ -3777,30 +3777,30 @@
       "dividendYield": 2.73,
       "beta": 0.36,
       "peg": null,
-      "momentum": 81.9,
+      "momentum": 79.0,
       "returns": {
-        "r1m": 2.26,
-        "r3m": 4.23,
-        "r6m": 31.43,
-        "r1y": 27.11
+        "r1m": -0.72,
+        "r3m": 5.46,
+        "r6m": 31.83,
+        "r1y": 26.01
       },
-      "volScore": 67.4,
+      "volScore": 65.2,
       "volStats": {
-        "annualReturn": 28.95,
-        "annualStd": 31.57,
-        "sharpe": 0.81,
+        "annualReturn": 28.07,
+        "annualStd": 31.53,
+        "sharpe": 0.78,
         "days": 253,
         "maxDrawdown": -18.34,
         "worstDay": -5.95
       },
-      "flow": 35.2,
+      "flow": 38.0,
       "flowStats": {
-        "recent5dAvg": 112131,
-        "recent20dAvg": 137490,
-        "ratio": 0.82
+        "recent5dAvg": 119019,
+        "recent20dAvg": 140017,
+        "ratio": 0.85
       },
       "value": 56.2,
-      "compositeScore": 60.2,
+      "compositeScore": 59.6,
       "valueNA": false
     },
     {
@@ -3812,8 +3812,8 @@
         "한진그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 16680,
-      "changePct": -1.3,
+      "currentPrice": 17730,
+      "changePct": 6.29,
       "volume": 621409,
       "marketCap": 1995527102400,
       "per": 92.42,
@@ -3824,30 +3824,30 @@
       "dividendYield": 0,
       "beta": 1.46,
       "peg": null,
-      "momentum": 14.5,
+      "momentum": 17.4,
       "returns": {
-        "r1m": -18.24,
-        "r3m": -28.1,
-        "r6m": -21.69,
-        "r1y": 109.55
+        "r1m": -14.76,
+        "r3m": -31.54,
+        "r6m": -15.17,
+        "r1y": 123.02
       },
-      "volScore": 85.5,
+      "volScore": 84.8,
       "volStats": {
-        "annualReturn": 110.49,
-        "annualStd": 86.71,
-        "sharpe": 1.23,
+        "annualReturn": 116.91,
+        "annualStd": 86.91,
+        "sharpe": 1.3,
         "days": 253,
         "maxDrawdown": -49.99,
         "worstDay": -17.17
       },
-      "flow": 30.4,
+      "flow": 26.8,
       "flowStats": {
-        "recent5dAvg": 573372,
-        "recent20dAvg": 759250,
-        "ratio": 0.76
+        "recent5dAvg": 534008,
+        "recent20dAvg": 751792,
+        "ratio": 0.71
       },
       "value": 39.1,
-      "compositeScore": 42.4,
+      "compositeScore": 42.0,
       "valueNA": false
     },
     {
@@ -3859,8 +3859,8 @@
         "한화그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 64700,
-      "changePct": -0.31,
+      "currentPrice": 71700,
+      "changePct": 10.82,
       "volume": 768044,
       "marketCap": 18268504916300,
       "per": 9.39,
@@ -3871,30 +3871,30 @@
       "dividendYield": 0.51,
       "beta": 1.51,
       "peg": null,
-      "momentum": 13.0,
+      "momentum": 27.5,
       "returns": {
-        "r1m": -29.37,
-        "r3m": -50.87,
-        "r6m": 17.0,
-        "r1y": 9.11
+        "r1m": -19.07,
+        "r3m": -45.1,
+        "r6m": 23.62,
+        "r1y": 23.62
       },
-      "volScore": 54.3,
+      "volScore": 58.0,
       "volStats": {
-        "annualReturn": 45.44,
-        "annualStd": 88.37,
-        "sharpe": 0.47,
+        "annualReturn": 58.46,
+        "annualStd": 88.97,
+        "sharpe": 0.62,
         "days": 253,
         "maxDrawdown": -60.23,
         "worstDay": -20.93
       },
-      "flow": 52.7,
+      "flow": 55.3,
       "flowStats": {
-        "recent5dAvg": 959021,
-        "recent20dAvg": 864880,
-        "ratio": 1.11
+        "recent5dAvg": 1008873,
+        "recent20dAvg": 833614,
+        "ratio": 1.21
       },
       "value": 61.7,
-      "compositeScore": 45.4,
+      "compositeScore": 50.6,
       "valueNA": false
     },
     {
@@ -3906,8 +3906,8 @@
         "지주사"
       ],
       "market": "KOSPI",
-      "currentPrice": 126000,
-      "changePct": -7.42,
+      "currentPrice": 134700,
+      "changePct": 6.9,
       "volume": 213595,
       "marketCap": 8044854619500,
       "per": 12.72,
@@ -3918,30 +3918,30 @@
       "dividendYield": 0.31,
       "beta": 0.93,
       "peg": null,
-      "momentum": 78.3,
+      "momentum": 84.1,
       "returns": {
-        "r1m": 9.0,
-        "r3m": 17.54,
-        "r6m": 4.13,
-        "r1y": 6.51
+        "r1m": 13.77,
+        "r3m": 17.44,
+        "r6m": 14.93,
+        "r1y": 13.96
       },
-      "volScore": 47.1,
+      "volScore": 47.8,
       "volStats": {
-        "annualReturn": 28.02,
-        "annualStd": 66.0,
-        "sharpe": 0.37,
+        "annualReturn": 35.01,
+        "annualStd": 66.34,
+        "sharpe": 0.47,
         "days": 253,
         "maxDrawdown": -39.48,
         "worstDay": -17.22
       },
-      "flow": 54.0,
+      "flow": 53.7,
       "flowStats": {
-        "recent5dAvg": 133634,
-        "recent20dAvg": 115383,
-        "ratio": 1.16
+        "recent5dAvg": 131178,
+        "recent20dAvg": 114284,
+        "ratio": 1.15
       },
       "value": 52.9,
-      "compositeScore": 58.1,
+      "compositeScore": 59.6,
       "valueNA": false
     },
     {
@@ -3952,8 +3952,8 @@
         "비만치료제(위고비)"
       ],
       "market": "KOSPI",
-      "currentPrice": 401000,
-      "changePct": -1.96,
+      "currentPrice": 389000,
+      "changePct": -2.99,
       "volume": 211485,
       "marketCap": 6322224058500,
       "per": 30.88,
@@ -3964,30 +3964,30 @@
       "dividendYield": 0.39,
       "beta": 0.43,
       "peg": null,
-      "momentum": 42.0,
+      "momentum": 34.1,
       "returns": {
-        "r1m": -2.55,
-        "r3m": -20.91,
-        "r6m": -9.48,
-        "r1y": 38.51
+        "r1m": -5.35,
+        "r3m": -21.18,
+        "r6m": -13.94,
+        "r1y": 36.01
       },
-      "volScore": 65.9,
+      "volScore": 63.8,
       "volStats": {
-        "annualReturn": 54.61,
-        "annualStd": 66.82,
-        "sharpe": 0.76,
+        "annualReturn": 52.82,
+        "annualStd": 66.88,
+        "sharpe": 0.74,
         "days": 253,
         "maxDrawdown": -41.53,
         "worstDay": -16.4
       },
-      "flow": 51.5,
+      "flow": 39.9,
       "flowStats": {
-        "recent5dAvg": 115869,
-        "recent20dAvg": 109160,
-        "ratio": 1.06
+        "recent5dAvg": 95623,
+        "recent20dAvg": 109457,
+        "ratio": 0.87
       },
       "value": 27.7,
-      "compositeScore": 46.8,
+      "compositeScore": 41.4,
       "valueNA": false
     },
     {
@@ -3999,8 +3999,8 @@
         "면역항암제"
       ],
       "market": "KOSPI",
-      "currentPrice": 67400,
-      "changePct": -2.46,
+      "currentPrice": 68500,
+      "changePct": 1.63,
       "volume": 366578,
       "marketCap": 6387737600200,
       "per": 41.11,
@@ -4011,30 +4011,30 @@
       "dividendYield": 0.74,
       "beta": 0.46,
       "peg": null,
-      "momentum": 10.9,
+      "momentum": 8.7,
       "returns": {
-        "r1m": -12.35,
-        "r3m": -26.26,
-        "r6m": -40.25,
-        "r1y": -34.94
+        "r1m": -10.34,
+        "r3m": -27.28,
+        "r6m": -40.17,
+        "r1y": -34.26
       },
-      "volScore": 12.3,
+      "volScore": 13.8,
       "volStats": {
-        "annualReturn": -33.76,
-        "annualStd": 43.34,
-        "sharpe": -0.86,
+        "annualReturn": -32.71,
+        "annualStd": 43.37,
+        "sharpe": -0.83,
         "days": 253,
         "maxDrawdown": -51.1,
         "worstDay": -13.24
       },
-      "flow": 50.3,
+      "flow": 47.8,
       "flowStats": {
-        "recent5dAvg": 309968,
-        "recent20dAvg": 306784,
-        "ratio": 1.01
+        "recent5dAvg": 298978,
+        "recent20dAvg": 307365,
+        "ratio": 0.97
       },
       "value": 28.5,
-      "compositeScore": 25.5,
+      "compositeScore": 24.7,
       "valueNA": false
     },
     {
@@ -4045,8 +4045,8 @@
         "전기차"
       ],
       "market": "KOSPI",
-      "currentPrice": 3570,
-      "changePct": -0.14,
+      "currentPrice": 3605,
+      "changePct": 0.98,
       "volume": 9624123,
       "marketCap": 4941454187880,
       "per": 80.7,
@@ -4057,30 +4057,30 @@
       "dividendYield": 0,
       "beta": 1.06,
       "peg": null,
-      "momentum": 65.2,
+      "momentum": 60.1,
       "returns": {
-        "r1m": -17.36,
-        "r3m": -4.03,
-        "r6m": 21.64,
-        "r1y": 22.93
+        "r1m": -14.78,
+        "r3m": -8.73,
+        "r6m": 20.37,
+        "r1y": 25.13
       },
       "volScore": 58.0,
       "volStats": {
-        "annualReturn": 48.04,
+        "annualReturn": 49.82,
         "annualStd": 75.01,
-        "sharpe": 0.59,
+        "sharpe": 0.62,
         "days": 253,
         "maxDrawdown": -37.87,
         "worstDay": -15.51
       },
       "flow": 10,
       "flowStats": {
-        "recent5dAvg": 5329019,
-        "recent20dAvg": 13792254,
-        "ratio": 0.39
+        "recent5dAvg": 5364461,
+        "recent20dAvg": 12967814,
+        "ratio": 0.41
       },
       "value": 31.4,
-      "compositeScore": 41.1,
+      "compositeScore": 39.9,
       "valueNA": false
     },
     {
@@ -4091,8 +4091,8 @@
         "코로나 바이러스"
       ],
       "market": "KOSPI",
-      "currentPrice": 7870,
-      "changePct": -1.01,
+      "currentPrice": 8100,
+      "changePct": 2.92,
       "volume": 83213,
       "marketCap": 490113180700,
       "per": 87.79,
@@ -4105,28 +4105,28 @@
       "peg": null,
       "momentum": 11.6,
       "returns": {
-        "r1m": -9.95,
-        "r3m": -23.22,
-        "r6m": -43.54,
-        "r1y": -39.13
+        "r1m": -10.1,
+        "r3m": -22.64,
+        "r6m": -41.35,
+        "r1y": -47.16
       },
-      "volScore": 18.8,
+      "volScore": 8.0,
       "volStats": {
-        "annualReturn": -33.14,
-        "annualStd": 58.63,
-        "sharpe": -0.62,
+        "annualReturn": -48.77,
+        "annualStd": 55.64,
+        "sharpe": -0.94,
         "days": 253,
         "maxDrawdown": -49.84,
         "worstDay": -10.71
       },
-      "flow": 38.4,
+      "flow": 42.5,
       "flowStats": {
-        "recent5dAvg": 67283,
-        "recent20dAvg": 78734,
-        "ratio": 0.85
+        "recent5dAvg": 69542,
+        "recent20dAvg": 76727,
+        "ratio": 0.91
       },
       "value": 22.6,
-      "compositeScore": 22.8,
+      "compositeScore": 21.2,
       "valueNA": false
     },
     {
@@ -4137,8 +4137,8 @@
         "면역항암제"
       ],
       "market": "KOSPI",
-      "currentPrice": 55600,
-      "changePct": -5.28,
+      "currentPrice": 57400,
+      "changePct": 3.24,
       "volume": 370508,
       "marketCap": 2899355409000,
       "per": 659.6,
@@ -4149,30 +4149,30 @@
       "dividendYield": 0,
       "beta": 0.65,
       "peg": null,
-      "momentum": 90.6,
+      "momentum": 84.8,
       "returns": {
-        "r1m": 10.98,
-        "r3m": 20.87,
-        "r6m": 31.75,
-        "r1y": 127.87
+        "r1m": 8.3,
+        "r3m": 22.65,
+        "r6m": 21.35,
+        "r1y": 136.7
       },
-      "volScore": 86.2,
+      "volScore": 85.5,
       "volStats": {
-        "annualReturn": 122.05,
-        "annualStd": 90.48,
-        "sharpe": 1.31,
+        "annualReturn": 125.9,
+        "annualStd": 90.51,
+        "sharpe": 1.35,
         "days": 253,
         "maxDrawdown": -39.13,
         "worstDay": -17.73
       },
-      "flow": 33.0,
+      "flow": 28.6,
       "flowStats": {
-        "recent5dAvg": 484315,
-        "recent20dAvg": 615226,
-        "ratio": 0.79
+        "recent5dAvg": 454346,
+        "recent20dAvg": 620726,
+        "ratio": 0.73
       },
       "value": 4.7,
-      "compositeScore": 53.6,
+      "compositeScore": 50.9,
       "valueNA": false
     },
     {
@@ -4182,8 +4182,8 @@
         "물류"
       ],
       "market": "KOSPI",
-      "currentPrice": 2170,
-      "changePct": -1.59,
+      "currentPrice": 2110,
+      "changePct": -2.76,
       "volume": 61521,
       "marketCap": 27900000000,
       "per": 2.38,
@@ -4194,30 +4194,30 @@
       "dividendYield": 3.22,
       "beta": 0.78,
       "peg": null,
-      "momentum": 32.6,
+      "momentum": 26.1,
       "returns": {
-        "r1m": -4.62,
-        "r3m": -16.7,
-        "r6m": -28.03,
-        "r1y": -40.47
+        "r1m": -6.22,
+        "r3m": -19.31,
+        "r6m": -28.23,
+        "r1y": -40.31
       },
-      "volScore": 0.7,
+      "volScore": 0.0,
       "volStats": {
-        "annualReturn": -48.33,
-        "annualStd": 26.41,
-        "sharpe": -1.96,
+        "annualReturn": -48.08,
+        "annualStd": 26.38,
+        "sharpe": -1.95,
         "days": 253,
         "maxDrawdown": -45.07,
         "worstDay": -6.07
       },
-      "flow": 16.8,
+      "flow": 20.1,
       "flowStats": {
-        "recent5dAvg": 17974,
-        "recent20dAvg": 30724,
-        "ratio": 0.59
+        "recent5dAvg": 19214,
+        "recent20dAvg": 30655,
+        "ratio": 0.63
       },
       "value": 80.3,
-      "compositeScore": 32.6,
+      "compositeScore": 31.6,
       "valueNA": false
     },
     {
@@ -4227,8 +4227,8 @@
         "증권"
       ],
       "market": "KOSPI",
-      "currentPrice": 9420,
-      "changePct": -2.89,
+      "currentPrice": 10000,
+      "changePct": 6.16,
       "volume": 97942,
       "marketCap": 1329947754870,
       "per": 5.96,
@@ -4239,30 +4239,30 @@
       "dividendYield": 4.94,
       "beta": 1.07,
       "peg": null,
-      "momentum": 42.8,
+      "momentum": 47.1,
       "returns": {
-        "r1m": -12.53,
-        "r3m": -18.79,
-        "r6m": 0.43,
-        "r1y": 9.66
+        "r1m": -7.32,
+        "r3m": -20.26,
+        "r6m": 6.72,
+        "r1y": 17.92
       },
-      "volScore": 47.1,
+      "volScore": 50.7,
       "volStats": {
-        "annualReturn": 23.75,
-        "annualStd": 54.02,
-        "sharpe": 0.37,
+        "annualReturn": 31.19,
+        "annualStd": 54.34,
+        "sharpe": 0.51,
         "days": 253,
         "maxDrawdown": -44.62,
         "worstDay": -12.85
       },
-      "flow": 23.9,
+      "flow": 28.2,
       "flowStats": {
-        "recent5dAvg": 62185,
-        "recent20dAvg": 92279,
-        "ratio": 0.67
+        "recent5dAvg": 58110,
+        "recent20dAvg": 79859,
+        "ratio": 0.73
       },
       "value": 91.6,
-      "compositeScore": 51.4,
+      "compositeScore": 54.4,
       "valueNA": false
     },
     {
@@ -4273,8 +4273,8 @@
         "LG그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 1550,
-      "changePct": -0.13,
+      "currentPrice": 1614,
+      "changePct": 4.13,
       "volume": 6037859,
       "marketCap": 211042707125,
       "per": 102.0,
@@ -4285,30 +4285,30 @@
       "dividendYield": 0,
       "beta": 0.54,
       "peg": null,
-      "momentum": 7.2,
+      "momentum": 6.5,
       "returns": {
-        "r1m": -29.38,
-        "r3m": -30.49,
-        "r6m": -33.9,
-        "r1y": -44.14
+        "r1m": -26.97,
+        "r3m": -29.05,
+        "r6m": -31.03,
+        "r1y": -42.56
       },
-      "volScore": 9.4,
+      "volScore": 12.3,
       "volStats": {
-        "annualReturn": -44.94,
-        "annualStd": 52.85,
-        "sharpe": -0.92,
+        "annualReturn": -42.08,
+        "annualStd": 53.01,
+        "sharpe": -0.86,
         "days": 253,
         "maxDrawdown": -53.24,
         "worstDay": -13.56
       },
       "flow": 10,
       "flowStats": {
-        "recent5dAvg": 254065,
-        "recent20dAvg": 585362,
-        "ratio": 0.43
+        "recent5dAvg": 255866,
+        "recent20dAvg": 531594,
+        "ratio": 0.48
       },
       "value": 51.5,
-      "compositeScore": 19.5,
+      "compositeScore": 20.1,
       "valueNA": false
     },
     {
@@ -4320,8 +4320,8 @@
         "면세점"
       ],
       "market": "KOSPI",
-      "currentPrice": 606000,
-      "changePct": -3.04,
+      "currentPrice": 629000,
+      "changePct": 3.8,
       "volume": 163538,
       "marketCap": 6186593555000,
       "per": 7.66,
@@ -4332,30 +4332,30 @@
       "dividendYield": 0.23,
       "beta": 1.04,
       "peg": null,
-      "momentum": 97.1,
+      "momentum": 95.7,
       "returns": {
-        "r1m": -11.53,
-        "r3m": 94.86,
-        "r6m": 162.34,
-        "r1y": 220.8
+        "r1m": -11.9,
+        "r3m": 90.61,
+        "r6m": 161.0,
+        "r1y": 233.86
       },
       "volScore": 97.1,
       "volStats": {
-        "annualReturn": 134.03,
-        "annualStd": 59.19,
-        "sharpe": 2.21,
+        "annualReturn": 138.09,
+        "annualStd": 59.27,
+        "sharpe": 2.27,
         "days": 253,
         "maxDrawdown": -21.91,
         "worstDay": -12.0
       },
-      "flow": 52.5,
+      "flow": 52.8,
       "flowStats": {
-        "recent5dAvg": 105548,
-        "recent20dAvg": 95945,
-        "ratio": 1.1
+        "recent5dAvg": 101080,
+        "recent20dAvg": 90982,
+        "ratio": 1.11
       },
       "value": 85.0,
-      "compositeScore": 82.9,
+      "compositeScore": 82.6,
       "valueNA": false
     },
     {
@@ -4366,8 +4366,8 @@
         "신세계그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 79600,
-      "changePct": -1.85,
+      "currentPrice": 81800,
+      "changePct": 2.76,
       "volume": 364035,
       "marketCap": 2605045313600,
       "per": 16.52,
@@ -4378,30 +4378,30 @@
       "dividendYield": 2.83,
       "beta": 0.49,
       "peg": null,
-      "momentum": 51.4,
+      "momentum": 50.7,
       "returns": {
-        "r1m": -9.03,
-        "r3m": -13.67,
-        "r6m": -0.75,
-        "r1y": -7.12
+        "r1m": -7.47,
+        "r3m": -12.7,
+        "r6m": -0.85,
+        "r1y": -4.22
       },
-      "volScore": 36.2,
+      "volScore": 37.0,
       "volStats": {
-        "annualReturn": 4.48,
-        "annualStd": 48.71,
-        "sharpe": 0.02,
+        "annualReturn": 7.59,
+        "annualStd": 48.78,
+        "sharpe": 0.08,
         "days": 253,
         "maxDrawdown": -37.7,
         "worstDay": -13.65
       },
-      "flow": 45.3,
+      "flow": 40.8,
       "flowStats": {
-        "recent5dAvg": 130516,
-        "recent20dAvg": 138745,
-        "ratio": 0.94
+        "recent5dAvg": 117729,
+        "recent20dAvg": 132966,
+        "ratio": 0.89
       },
       "value": 80.3,
-      "compositeScore": 53.3,
+      "compositeScore": 52.2,
       "valueNA": false
     },
     {
@@ -4412,8 +4412,8 @@
         "이미지센서"
       ],
       "market": "KOSPI",
-      "currentPrice": 18290,
-      "changePct": 0.38,
+      "currentPrice": 19050,
+      "changePct": 4.16,
       "volume": 46407,
       "marketCap": 368041725000,
       "per": 19.48,
@@ -4424,30 +4424,30 @@
       "dividendYield": 4.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 21.0,
+      "momentum": 22.5,
       "returns": {
-        "r1m": -11.0,
-        "r3m": -14.13,
-        "r6m": -36.93,
-        "r1y": -33.61
+        "r1m": -10.14,
+        "r3m": -14.77,
+        "r6m": -32.92,
+        "r1y": -29.7
       },
-      "volScore": 17.4,
+      "volScore": 18.8,
       "volStats": {
-        "annualReturn": -31.47,
-        "annualStd": 43.42,
-        "sharpe": -0.81,
+        "annualReturn": -25.68,
+        "annualStd": 43.61,
+        "sharpe": -0.67,
         "days": 253,
         "maxDrawdown": -43.24,
         "worstDay": -12.26
       },
-      "flow": 50.6,
+      "flow": 37.7,
       "flowStats": {
-        "recent5dAvg": 57615,
-        "recent20dAvg": 56330,
-        "ratio": 1.02
+        "recent5dAvg": 46862,
+        "recent20dAvg": 55409,
+        "ratio": 0.85
       },
       "value": 47.4,
-      "compositeScore": 34.1,
+      "compositeScore": 31.6,
       "valueNA": false
     },
     {
@@ -4458,8 +4458,8 @@
         "SK그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 8300,
-      "changePct": -2.47,
+      "currentPrice": 8580,
+      "changePct": 3.37,
       "volume": 27260131,
       "marketCap": 2657869029250,
       "per": 19.43,
@@ -4472,28 +4472,28 @@
       "peg": null,
       "momentum": 93.5,
       "returns": {
-        "r1m": -35.91,
-        "r3m": 63.71,
-        "r6m": 86.94,
-        "r1y": 86.73
+        "r1m": -26.48,
+        "r3m": 57.72,
+        "r6m": 91.95,
+        "r1y": 91.52
       },
-      "volScore": 80.4,
+      "volScore": 79.7,
       "volStats": {
-        "annualReturn": 89.84,
-        "annualStd": 76.79,
-        "sharpe": 1.12,
+        "annualReturn": 92.42,
+        "annualStd": 76.85,
+        "sharpe": 1.16,
         "days": 253,
         "maxDrawdown": -41.92,
         "worstDay": -16.22
       },
       "flow": 10,
       "flowStats": {
-        "recent5dAvg": 2192558,
-        "recent20dAvg": 6914704,
-        "ratio": 0.32
+        "recent5dAvg": 2135319,
+        "recent20dAvg": 5543624,
+        "ratio": 0.39
       },
       "value": 65.3,
-      "compositeScore": 62.3,
+      "compositeScore": 62.1,
       "valueNA": false
     },
     {
@@ -4504,8 +4504,8 @@
         "SK그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 9830,
-      "changePct": -1.5,
+      "currentPrice": 10050,
+      "changePct": 2.24,
       "volume": 273827,
       "marketCap": 514018335300,
       "per": 35.72,
@@ -4516,30 +4516,30 @@
       "dividendYield": 2.65,
       "beta": 0.59,
       "peg": null,
-      "momentum": 15.2,
+      "momentum": 10.1,
       "returns": {
-        "r1m": -3.44,
-        "r3m": -26.59,
-        "r6m": -38.29,
-        "r1y": -38.6
+        "r1m": -11.45,
+        "r3m": -26.37,
+        "r6m": -37.19,
+        "r1y": -37.46
       },
-      "volScore": 8.7,
+      "volScore": 10.9,
       "volStats": {
-        "annualReturn": -38.72,
-        "annualStd": 44.82,
-        "sharpe": -0.94,
+        "annualReturn": -36.85,
+        "annualStd": 44.88,
+        "sharpe": -0.9,
         "days": 253,
         "maxDrawdown": -43.62,
         "worstDay": -10.96
       },
-      "flow": 18.6,
+      "flow": 22.7,
       "flowStats": {
-        "recent5dAvg": 71479,
-        "recent20dAvg": 117608,
-        "ratio": 0.61
+        "recent5dAvg": 72103,
+        "recent20dAvg": 109443,
+        "ratio": 0.66
       },
       "value": 52.6,
-      "compositeScore": 23.8,
+      "compositeScore": 24.1,
       "valueNA": false
     },
     {
@@ -4550,8 +4550,8 @@
         "해저케이블"
       ],
       "market": "KOSPI",
-      "currentPrice": 27800,
-      "changePct": -1.42,
+      "currentPrice": 30250,
+      "changePct": 8.81,
       "volume": 2807748,
       "marketCap": 8339484959800,
       "per": 17.94,
@@ -4562,30 +4562,30 @@
       "dividendYield": 0,
       "beta": 2.37,
       "peg": null,
-      "momentum": 58.7,
+      "momentum": 60.9,
       "returns": {
-        "r1m": -25.77,
-        "r3m": -1.24,
-        "r6m": 16.81,
-        "r1y": 69.1
+        "r1m": -18.13,
+        "r3m": -3.66,
+        "r6m": 17.7,
+        "r1y": 75.46
       },
-      "volScore": 76.1,
+      "volScore": 74.6,
       "volStats": {
-        "annualReturn": 82.26,
-        "annualStd": 78.09,
-        "sharpe": 1.01,
+        "annualReturn": 86.2,
+        "annualStd": 78.41,
+        "sharpe": 1.05,
         "days": 253,
         "maxDrawdown": -61.55,
         "worstDay": -18.72
       },
-      "flow": 19.2,
+      "flow": 16.8,
       "flowStats": {
-        "recent5dAvg": 2237279,
-        "recent20dAvg": 3637863,
-        "ratio": 0.61
+        "recent5dAvg": 2080793,
+        "recent20dAvg": 3555519,
+        "ratio": 0.59
       },
       "value": 56.6,
-      "compositeScore": 52.6,
+      "compositeScore": 52.2,
       "valueNA": false
     },
     {
@@ -4596,8 +4596,8 @@
         "PCB"
       ],
       "market": "KOSPI",
-      "currentPrice": 91800,
-      "changePct": 4.56,
+      "currentPrice": 103800,
+      "changePct": 13.07,
       "volume": 1144082,
       "marketCap": 9829494424100,
       "per": 39.81,
@@ -4608,30 +4608,30 @@
       "dividendYield": 0.17,
       "beta": 2.1,
       "peg": null,
-      "momentum": 26.8,
+      "momentum": 34.8,
       "returns": {
-        "r1m": -18.76,
-        "r3m": -13.4,
-        "r6m": -24.44,
-        "r1y": 82.5
+        "r1m": -15.75,
+        "r3m": -13.57,
+        "r6m": -11.21,
+        "r1y": 98.47
       },
-      "volScore": 79.0,
+      "volScore": 81.2,
       "volStats": {
-        "annualReturn": 93.84,
-        "annualStd": 82.78,
-        "sharpe": 1.09,
+        "annualReturn": 102.94,
+        "annualStd": 83.67,
+        "sharpe": 1.19,
         "days": 253,
         "maxDrawdown": -45.6,
         "worstDay": -14.09
       },
-      "flow": 33.4,
+      "flow": 40.9,
       "flowStats": {
-        "recent5dAvg": 1002102,
-        "recent20dAvg": 1264980,
-        "ratio": 0.79
+        "recent5dAvg": 1087105,
+        "recent20dAvg": 1225872,
+        "ratio": 0.89
       },
       "value": 21.2,
-      "compositeScore": 40.1,
+      "compositeScore": 44.5,
       "valueNA": false
     },
     {
@@ -4642,8 +4642,8 @@
         "반도체 장비"
       ],
       "market": "KOSPI",
-      "currentPrice": 15730,
-      "changePct": -2.3,
+      "currentPrice": 17350,
+      "changePct": 10.3,
       "volume": 529524,
       "marketCap": 465216819000,
       "per": 25.88,
@@ -4654,30 +4654,30 @@
       "dividendYield": 0,
       "beta": 1.49,
       "peg": null,
-      "momentum": 9.4,
+      "momentum": 14.5,
       "returns": {
-        "r1m": -19.37,
-        "r3m": -54.21,
-        "r6m": -2.96,
-        "r1y": 5.36
+        "r1m": -14.11,
+        "r3m": -48.29,
+        "r6m": 4.14,
+        "r1y": 18.51
       },
-      "volScore": 50.0,
+      "volScore": 55.8,
       "volStats": {
-        "annualReturn": 40.18,
-        "annualStd": 85.0,
-        "sharpe": 0.43,
+        "annualReturn": 52.43,
+        "annualStd": 85.57,
+        "sharpe": 0.57,
         "days": 253,
         "maxDrawdown": -63.38,
         "worstDay": -17.9
       },
-      "flow": 16.1,
+      "flow": 15.7,
       "flowStats": {
-        "recent5dAvg": 229517,
-        "recent20dAvg": 398052,
-        "ratio": 0.58
+        "recent5dAvg": 223117,
+        "recent20dAvg": 390835,
+        "ratio": 0.57
       },
       "value": 43.8,
-      "compositeScore": 29.8,
+      "compositeScore": 32.4,
       "valueNA": false
     },
     {
@@ -4688,8 +4688,8 @@
         "효성그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 148300,
-      "changePct": -1.26,
+      "currentPrice": 149200,
+      "changePct": 0.61,
       "volume": 18531,
       "marketCap": 934069158000,
       "per": 39.83,
@@ -4700,30 +4700,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 15.9,
+      "momentum": 13.0,
       "returns": {
-        "r1m": -22.03,
-        "r3m": -27.83,
-        "r6m": -17.2,
-        "r1y": -27.83
+        "r1m": -23.25,
+        "r3m": -29.79,
+        "r6m": -16.55,
+        "r1y": -28.44
       },
-      "volScore": 23.9,
+      "volScore": 23.2,
       "volStats": {
-        "annualReturn": -19.83,
-        "annualStd": 50.5,
-        "sharpe": -0.46,
+        "annualReturn": -20.68,
+        "annualStd": 50.49,
+        "sharpe": -0.48,
         "days": 253,
         "maxDrawdown": -46.56,
         "worstDay": -15.09
       },
-      "flow": 45.7,
+      "flow": 45.1,
       "flowStats": {
-        "recent5dAvg": 13164,
-        "recent20dAvg": 13912,
-        "ratio": 0.95
+        "recent5dAvg": 13094,
+        "recent20dAvg": 13952,
+        "ratio": 0.94
       },
       "value": 30.3,
-      "compositeScore": 29.0,
+      "compositeScore": 27.9,
       "valueNA": false
     },
     {
@@ -4735,8 +4735,8 @@
         "LG그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 15200,
-      "changePct": 2.63,
+      "currentPrice": 14960,
+      "changePct": -1.58,
       "volume": 1480549,
       "marketCap": 6655026837760,
       "per": 7.17,
@@ -4747,30 +4747,30 @@
       "dividendYield": 4.09,
       "beta": 0.28,
       "peg": 0.78,
-      "momentum": 68.1,
+      "momentum": 58.7,
       "returns": {
-        "r1m": 3.19,
-        "r3m": -4.28,
-        "r6m": 5.34,
-        "r1y": 6.0
+        "r1m": -2.79,
+        "r3m": -7.25,
+        "r6m": 2.75,
+        "r1y": 4.62
       },
       "volScore": 41.3,
       "volStats": {
-        "annualReturn": 11.94,
-        "annualStd": 34.96,
-        "sharpe": 0.24,
+        "annualReturn": 10.64,
+        "annualStd": 35.0,
+        "sharpe": 0.2,
         "days": 253,
         "maxDrawdown": -21.39,
         "worstDay": -9.5
       },
-      "flow": 43.5,
+      "flow": 50.9,
       "flowStats": {
-        "recent5dAvg": 1047708,
-        "recent20dAvg": 1140710,
-        "ratio": 0.92
+        "recent5dAvg": 1146680,
+        "recent20dAvg": 1105981,
+        "ratio": 1.04
       },
       "value": 83.2,
-      "compositeScore": 59.0,
+      "compositeScore": 58.5,
       "valueNA": false
     },
     {
@@ -4782,8 +4782,8 @@
         "바이오"
       ],
       "market": "KOSPI",
-      "currentPrice": 40800,
-      "changePct": 0.49,
+      "currentPrice": 40700,
+      "changePct": -0.25,
       "volume": 59937,
       "marketCap": 723953357100,
       "per": 32.7,
@@ -4794,30 +4794,30 @@
       "dividendYield": 1.79,
       "beta": 0.84,
       "peg": null,
-      "momentum": 21.7,
+      "momentum": 12.3,
       "returns": {
-        "r1m": 0.12,
-        "r3m": -20.62,
-        "r6m": -38.28,
-        "r1y": -41.46
+        "r1m": -8.64,
+        "r3m": -25.05,
+        "r6m": -39.52,
+        "r1y": -43.47
       },
-      "volScore": 9.4,
+      "volScore": 5.8,
       "volStats": {
-        "annualReturn": -41.6,
-        "annualStd": 48.76,
-        "sharpe": -0.92,
+        "annualReturn": -45.15,
+        "annualStd": 48.64,
+        "sharpe": -1.0,
         "days": 253,
         "maxDrawdown": -53.26,
         "worstDay": -14.91
       },
-      "flow": 40.9,
+      "flow": 31.9,
       "flowStats": {
-        "recent5dAvg": 64155,
-        "recent20dAvg": 72401,
-        "ratio": 0.89
+        "recent5dAvg": 54378,
+        "recent20dAvg": 70225,
+        "ratio": 0.77
       },
       "value": 57.3,
-      "compositeScore": 32.3,
+      "compositeScore": 26.8,
       "valueNA": false
     },
     {
@@ -4828,8 +4828,8 @@
         "클라우드"
       ],
       "market": "KOSPI",
-      "currentPrice": 37900,
-      "changePct": -2.07,
+      "currentPrice": 38150,
+      "changePct": 0.66,
       "volume": 360555,
       "marketCap": 1536122219100,
       "per": 30.44,
@@ -4840,30 +4840,30 @@
       "dividendYield": 0.94,
       "beta": 0.65,
       "peg": null,
-      "momentum": 76.8,
+      "momentum": 73.2,
       "returns": {
-        "r1m": -6.54,
-        "r3m": 6.61,
-        "r6m": 22.85,
-        "r1y": 28.04
+        "r1m": -4.86,
+        "r3m": 2.69,
+        "r6m": 19.41,
+        "r1y": 29.98
       },
-      "volScore": 61.6,
+      "volScore": 60.9,
       "volStats": {
-        "annualReturn": 44.78,
-        "annualStd": 64.15,
-        "sharpe": 0.64,
+        "annualReturn": 46.28,
+        "annualStd": 64.14,
+        "sharpe": 0.67,
         "days": 253,
         "maxDrawdown": -45.81,
         "worstDay": -12.01
       },
-      "flow": 31.2,
+      "flow": 33.4,
       "flowStats": {
-        "recent5dAvg": 126723,
-        "recent20dAvg": 165541,
-        "ratio": 0.77
+        "recent5dAvg": 120679,
+        "recent20dAvg": 152213,
+        "ratio": 0.79
       },
       "value": 63.1,
-      "compositeScore": 58.2,
+      "compositeScore": 57.6,
       "valueNA": false
     },
     {
@@ -4873,8 +4873,8 @@
         "반도체 후공정"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 39450,
-      "changePct": 3.95,
+      "currentPrice": 43900,
+      "changePct": 11.28,
       "volume": 1382491,
       "marketCap": 1982370007500,
       "per": 181.67,
@@ -4885,30 +4885,30 @@
       "dividendYield": 0.27,
       "beta": 1.43,
       "peg": null,
-      "momentum": 16.7,
+      "momentum": 23.2,
       "returns": {
-        "r1m": -31.51,
-        "r3m": -16.24,
-        "r6m": -22.5,
-        "r1y": 20.27
+        "r1m": -28.15,
+        "r3m": -13.58,
+        "r6m": -16.38,
+        "r1y": 31.63
       },
-      "volScore": 58.0,
+      "volScore": 61.6,
       "volStats": {
-        "annualReturn": 52.88,
-        "annualStd": 84.02,
-        "sharpe": 0.59,
+        "annualReturn": 62.49,
+        "annualStd": 84.73,
+        "sharpe": 0.7,
         "days": 253,
         "maxDrawdown": -46.62,
         "worstDay": -18.75
       },
-      "flow": 13.2,
+      "flow": 21.2,
       "flowStats": {
-        "recent5dAvg": 1342638,
-        "recent20dAvg": 2487422,
-        "ratio": 0.54
+        "recent5dAvg": 1366938,
+        "recent20dAvg": 2137161,
+        "ratio": 0.64
       },
       "value": 24.1,
-      "compositeScore": 28.0,
+      "compositeScore": 32.5,
       "valueNA": false
     },
     {
@@ -4918,8 +4918,8 @@
         "신용평가사"
       ],
       "market": "KOSPI",
-      "currentPrice": 13510,
-      "changePct": -3.77,
+      "currentPrice": 13820,
+      "changePct": 2.29,
       "volume": 254465,
       "marketCap": 833598107050,
       "per": 10.25,
@@ -4930,30 +4930,30 @@
       "dividendYield": 3.6,
       "beta": 0.22,
       "peg": null,
-      "momentum": 40.6,
+      "momentum": 42.8,
       "returns": {
-        "r1m": -4.79,
-        "r3m": -14.39,
-        "r6m": -17.27,
-        "r1y": -18.96
+        "r1m": -6.24,
+        "r3m": -9.2,
+        "r6m": -15.78,
+        "r1y": -15.42
       },
-      "volScore": 23.2,
+      "volScore": 26.1,
       "volStats": {
-        "annualReturn": -14.03,
-        "annualStd": 37.5,
-        "sharpe": -0.47,
+        "annualReturn": -9.75,
+        "annualStd": 37.53,
+        "sharpe": -0.35,
         "days": 253,
         "maxDrawdown": -28.02,
         "worstDay": -6.52
       },
-      "flow": 50.5,
+      "flow": 47.0,
       "flowStats": {
-        "recent5dAvg": 77416,
-        "recent20dAvg": 75977,
-        "ratio": 1.02
+        "recent5dAvg": 70682,
+        "recent20dAvg": 73438,
+        "ratio": 0.96
       },
       "value": 60.9,
-      "compositeScore": 43.8,
+      "compositeScore": 44.2,
       "valueNA": false
     },
     {
@@ -4964,8 +4964,8 @@
         "줄기세포"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 8480,
-      "changePct": -2.08,
+      "currentPrice": 9240,
+      "changePct": 8.96,
       "volume": 222856,
       "marketCap": 449676796410,
       "per": 37.98,
@@ -4976,30 +4976,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 0.7,
+      "momentum": 1.4,
       "returns": {
-        "r1m": -9.69,
-        "r3m": -56.76,
-        "r6m": -48.39,
-        "r1y": -36.95
+        "r1m": -11.58,
+        "r3m": -55.04,
+        "r6m": -44.4,
+        "r1y": -31.56
       },
-      "volScore": 31.2,
+      "volScore": 32.6,
       "volStats": {
-        "annualReturn": -7.57,
-        "annualStd": 88.54,
-        "sharpe": -0.13,
+        "annualReturn": 1.02,
+        "annualStd": 88.99,
+        "sharpe": -0.03,
         "days": 253,
         "maxDrawdown": -71.21,
         "worstDay": -20.5
       },
-      "flow": 48.2,
+      "flow": 52.0,
       "flowStats": {
-        "recent5dAvg": 109132,
-        "recent20dAvg": 111667,
-        "ratio": 0.98
+        "recent5dAvg": 116266,
+        "recent20dAvg": 107534,
+        "ratio": 1.08
       },
       "value": 47.8,
-      "compositeScore": 32.0,
+      "compositeScore": 33.4,
       "valueNA": false
     },
     {
@@ -5010,8 +5010,8 @@
         "음식료업종"
       ],
       "market": "KOSPI",
-      "currentPrice": 15400,
-      "changePct": 1.65,
+      "currentPrice": 15040,
+      "changePct": -2.34,
       "volume": 192010,
       "marketCap": 1153697900950,
       "per": 44.98,
@@ -5022,30 +5022,30 @@
       "dividendYield": 3.7,
       "beta": 0.33,
       "peg": null,
-      "momentum": 49.3,
+      "momentum": 39.9,
       "returns": {
-        "r1m": -3.14,
-        "r3m": -8.17,
-        "r6m": -15.62,
-        "r1y": -23.76
+        "r1m": -8.46,
+        "r3m": -10.74,
+        "r6m": -17.13,
+        "r1y": -26.99
       },
-      "volScore": 4.3,
+      "volScore": 2.2,
       "volStats": {
-        "annualReturn": -24.88,
-        "annualStd": 21.16,
-        "sharpe": -1.34,
+        "annualReturn": -29.2,
+        "annualStd": 21.17,
+        "sharpe": -1.54,
         "days": 253,
         "maxDrawdown": -35.18,
         "worstDay": -6.17
       },
-      "flow": 30.0,
+      "flow": 28.0,
       "flowStats": {
-        "recent5dAvg": 109233,
-        "recent20dAvg": 145648,
-        "ratio": 0.75
+        "recent5dAvg": 103158,
+        "recent20dAvg": 142345,
+        "ratio": 0.72
       },
       "value": 41.2,
-      "compositeScore": 31.2,
+      "compositeScore": 27.8,
       "valueNA": false
     },
     {
@@ -5056,8 +5056,8 @@
         "롯데그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 22950,
-      "changePct": -4.38,
+      "currentPrice": 23400,
+      "changePct": 1.96,
       "volume": 325765,
       "marketCap": 2601224553600,
       "per": 26.43,
@@ -5068,30 +5068,30 @@
       "dividendYield": 4.96,
       "beta": 0.66,
       "peg": null,
-      "momentum": 39.9,
+      "momentum": 33.3,
       "returns": {
-        "r1m": -10.7,
-        "r3m": -14.84,
-        "r6m": -11.9,
-        "r1y": -17.59
+        "r1m": -12.2,
+        "r3m": -17.31,
+        "r6m": -12.36,
+        "r1y": -15.83
       },
-      "volScore": 27.5,
+      "volScore": 29.7,
       "volStats": {
-        "annualReturn": -6.48,
-        "annualStd": 51.26,
-        "sharpe": -0.19,
+        "annualReturn": -4.34,
+        "annualStd": 51.3,
+        "sharpe": -0.15,
         "days": 253,
         "maxDrawdown": -40.54,
         "worstDay": -12.17
       },
-      "flow": 16.3,
+      "flow": 24.4,
       "flowStats": {
-        "recent5dAvg": 175943,
-        "recent20dAvg": 303979,
-        "ratio": 0.58
+        "recent5dAvg": 177485,
+        "recent20dAvg": 260836,
+        "ratio": 0.68
       },
       "value": 69.7,
-      "compositeScore": 38.4,
+      "compositeScore": 39.3,
       "valueNA": false
     },
     {
@@ -5101,8 +5101,8 @@
         "반도체 장비"
       ],
       "market": "KOSPI",
-      "currentPrice": 83500,
-      "changePct": 0.48,
+      "currentPrice": 97400,
+      "changePct": 16.65,
       "volume": 320655,
       "marketCap": 1332449885300,
       "per": 17.64,
@@ -5113,30 +5113,30 @@
       "dividendYield": 0.75,
       "beta": 1.5,
       "peg": null,
-      "momentum": 95.7,
+      "momentum": 97.1,
       "returns": {
-        "r1m": 28.26,
-        "r3m": 90.42,
-        "r6m": 99.05,
-        "r1y": 206.99
+        "r1m": 27.49,
+        "r3m": 109.24,
+        "r6m": 128.64,
+        "r1y": 268.24
       },
-      "volScore": 92.0,
+      "volScore": 93.5,
       "volStats": {
-        "annualReturn": 145.23,
-        "annualStd": 81.87,
-        "sharpe": 1.73,
+        "annualReturn": 164.64,
+        "annualStd": 83.36,
+        "sharpe": 1.93,
         "days": 253,
         "maxDrawdown": -29.28,
         "worstDay": -15.07
       },
-      "flow": 44.4,
+      "flow": 42.0,
       "flowStats": {
-        "recent5dAvg": 311916,
-        "recent20dAvg": 335564,
-        "ratio": 0.93
+        "recent5dAvg": 299472,
+        "recent20dAvg": 332654,
+        "ratio": 0.9
       },
       "value": 57.7,
-      "compositeScore": 72.4,
+      "compositeScore": 72.6,
       "valueNA": false
     },
     {
@@ -5147,8 +5147,8 @@
         "바이오"
       ],
       "market": "KOSDAQ GLOBAL",
-      "currentPrice": 119200,
-      "changePct": -0.83,
+      "currentPrice": 123600,
+      "changePct": 3.69,
       "volume": 104801,
       "marketCap": 2574301449200,
       "per": 65.13,
@@ -5161,28 +5161,28 @@
       "peg": null,
       "momentum": 57.2,
       "returns": {
-        "r1m": 1.19,
-        "r3m": -12.99,
-        "r6m": 3.65,
-        "r1y": 55.82
+        "r1m": 0.32,
+        "r3m": -11.71,
+        "r6m": -0.16,
+        "r1y": 60.52
       },
-      "volScore": 73.9,
+      "volScore": 72.5,
       "volStats": {
-        "annualReturn": 62.68,
-        "annualStd": 60.89,
-        "sharpe": 0.97,
+        "annualReturn": 65.71,
+        "annualStd": 60.99,
+        "sharpe": 1.02,
         "days": 253,
         "maxDrawdown": -35.09,
         "worstDay": -15.49
       },
-      "flow": 39.5,
+      "flow": 40.7,
       "flowStats": {
-        "recent5dAvg": 112038,
-        "recent20dAvg": 128879,
-        "ratio": 0.87
+        "recent5dAvg": 111116,
+        "recent20dAvg": 125686,
+        "ratio": 0.88
       },
       "value": 22.6,
-      "compositeScore": 48.3,
+      "compositeScore": 48.2,
       "valueNA": false
     },
     {
@@ -5193,8 +5193,8 @@
         "PCB"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 45000,
-      "changePct": -0.11,
+      "currentPrice": 48350,
+      "changePct": 7.44,
       "volume": 307208,
       "marketCap": 2166106250000,
       "per": 30.38,
@@ -5205,30 +5205,30 @@
       "dividendYield": 0,
       "beta": null,
       "peg": null,
-      "momentum": 5.1,
+      "momentum": 3.6,
       "returns": {
-        "r1m": -25.74,
-        "r3m": -49.89,
-        "r6m": -14.61,
-        "r1y": 10.16
+        "r1m": -22.02,
+        "r3m": -48.94,
+        "r6m": -15.03,
+        "r1y": 13.9
       },
-      "volScore": 55.1,
+      "volScore": 52.9,
       "volStats": {
-        "annualReturn": 45.85,
-        "annualStd": 86.23,
-        "sharpe": 0.49,
+        "annualReturn": 49.38,
+        "annualStd": 86.46,
+        "sharpe": 0.53,
         "days": 253,
         "maxDrawdown": -58.9,
         "worstDay": -18.22
       },
-      "flow": 16.1,
+      "flow": 21.5,
       "flowStats": {
-        "recent5dAvg": 194187,
-        "recent20dAvg": 336996,
-        "ratio": 0.58
+        "recent5dAvg": 189247,
+        "recent20dAvg": 293926,
+        "ratio": 0.64
       },
       "value": 30.7,
-      "compositeScore": 26.8,
+      "compositeScore": 27.2,
       "valueNA": false
     },
     {
@@ -5240,8 +5240,8 @@
         "현대자동차그룹"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 22750,
-      "changePct": 4.84,
+      "currentPrice": 23250,
+      "changePct": 2.2,
       "volume": 792691,
       "marketCap": 3898161365000,
       "per": 94.17,
@@ -5252,30 +5252,30 @@
       "dividendYield": 0.13,
       "beta": 2.41,
       "peg": null,
-      "momentum": 34.8,
+      "momentum": 15.9,
       "returns": {
-        "r1m": -35.73,
-        "r3m": -9.9,
-        "r6m": -4.01,
-        "r1y": 337.5
+        "r1m": -43.01,
+        "r3m": -20.38,
+        "r6m": -3.12,
+        "r1y": 342.02
       },
-      "volScore": 94.2,
+      "volScore": 92.0,
       "volStats": {
-        "annualReturn": 204.33,
-        "annualStd": 108.18,
-        "sharpe": 1.86,
+        "annualReturn": 205.37,
+        "annualStd": 108.19,
+        "sharpe": 1.87,
         "days": 253,
         "maxDrawdown": -53.18,
         "worstDay": -27.62
       },
-      "flow": 45.2,
+      "flow": 51.8,
       "flowStats": {
-        "recent5dAvg": 1075118,
-        "recent20dAvg": 1143662,
-        "ratio": 0.94
+        "recent5dAvg": 1058270,
+        "recent20dAvg": 986270,
+        "ratio": 1.07
       },
       "value": 22.3,
-      "compositeScore": 49.1,
+      "compositeScore": 45.5,
       "valueNA": false
     },
     {
@@ -5286,8 +5286,8 @@
         "고배당"
       ],
       "market": "KOSPI",
-      "currentPrice": 10030,
-      "changePct": 0.3,
+      "currentPrice": 10230,
+      "changePct": 1.99,
       "volume": 1932686,
       "marketCap": 5272931142930,
       "per": null,
@@ -5300,28 +5300,28 @@
       "peg": null,
       "momentum": 47.8,
       "returns": {
-        "r1m": -7.3,
-        "r3m": -11.0,
-        "r6m": -10.37,
-        "r1y": -12.93
+        "r1m": -6.4,
+        "r3m": -9.55,
+        "r6m": -8.33,
+        "r1y": -10.89
       },
-      "volScore": 2.9,
+      "volScore": 4.3,
       "volStats": {
-        "annualReturn": -13.21,
-        "annualStd": 11.25,
-        "sharpe": -1.49,
+        "annualReturn": -10.87,
+        "annualStd": 11.43,
+        "sharpe": -1.26,
         "days": 253,
         "maxDrawdown": -15.98,
         "worstDay": -2.77
       },
-      "flow": 20.7,
+      "flow": 20.5,
       "flowStats": {
-        "recent5dAvg": 1462661,
-        "recent20dAvg": 2307476,
+        "recent5dAvg": 1428122,
+        "recent20dAvg": 2264108,
         "ratio": 0.63
       },
-      "value": 23.8,
-      "compositeScore": 23.8,
+      "value": 24.2,
+      "compositeScore": 24.2,
       "valueNA": true
     },
     {
@@ -5332,8 +5332,8 @@
         "한진그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 15600,
-      "changePct": -4.65,
+      "currentPrice": 15820,
+      "changePct": 1.41,
       "volume": 14196,
       "marketCap": 256367536320,
       "per": 14.22,
@@ -5344,30 +5344,30 @@
       "dividendYield": 3.67,
       "beta": 0.66,
       "peg": null,
-      "momentum": 39.1,
+      "momentum": 36.2,
       "returns": {
-        "r1m": -2.5,
-        "r3m": -16.13,
-        "r6m": -20.81,
-        "r1y": -21.84
+        "r1m": -1.49,
+        "r3m": -17.35,
+        "r6m": -19.65,
+        "r1y": -20.1
       },
-      "volScore": 13.8,
+      "volScore": 16.7,
       "volStats": {
-        "annualReturn": -20.61,
-        "annualStd": 28.43,
-        "sharpe": -0.85,
+        "annualReturn": -18.4,
+        "annualStd": 28.46,
+        "sharpe": -0.77,
         "days": 253,
         "maxDrawdown": -35.11,
         "worstDay": -6.86
       },
-      "flow": 53.2,
+      "flow": 51.5,
       "flowStats": {
-        "recent5dAvg": 31880,
-        "recent20dAvg": 28229,
-        "ratio": 1.13
+        "recent5dAvg": 30380,
+        "recent20dAvg": 28675,
+        "ratio": 1.06
       },
       "value": 80.3,
-      "compositeScore": 46.6,
+      "compositeScore": 46.2,
       "valueNA": false
     },
     {
@@ -5378,8 +5378,8 @@
         "K-콘텐츠"
       ],
       "market": "KOSPI",
-      "currentPrice": 78500,
-      "changePct": -2.12,
+      "currentPrice": 77600,
+      "changePct": -1.15,
       "volume": 90874,
       "marketCap": 2738955862500,
       "per": 8.04,
@@ -5390,30 +5390,30 @@
       "dividendYield": 3.8,
       "beta": 0.53,
       "peg": null,
-      "momentum": 86.2,
+      "momentum": 81.2,
       "returns": {
-        "r1m": -0.63,
-        "r3m": 28.48,
-        "r6m": 18.4,
-        "r1y": -0.76
+        "r1m": -6.73,
+        "r3m": 23.17,
+        "r6m": 18.47,
+        "r1y": -1.77
       },
       "volScore": 37.7,
       "volStats": {
-        "annualReturn": 8.71,
-        "annualStd": 43.88,
-        "sharpe": 0.12,
+        "annualReturn": 7.69,
+        "annualStd": 43.89,
+        "sharpe": 0.1,
         "days": 253,
         "maxDrawdown": -28.05,
         "worstDay": -9.7
       },
-      "flow": 31.9,
+      "flow": 42.5,
       "flowStats": {
-        "recent5dAvg": 73042,
-        "recent20dAvg": 94328,
-        "ratio": 0.77
+        "recent5dAvg": 81338,
+        "recent20dAvg": 89792,
+        "ratio": 0.91
       },
       "value": 51.5,
-      "compositeScore": 51.8,
+      "compositeScore": 53.2,
       "valueNA": false
     },
     {
@@ -5424,8 +5424,8 @@
         "BGF그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 120200,
-      "changePct": -4.15,
+      "currentPrice": 123600,
+      "changePct": 2.83,
       "volume": 89880,
       "marketCap": 2226167092800,
       "per": 11.59,
@@ -5436,30 +5436,30 @@
       "dividendYield": 3.09,
       "beta": -0.06,
       "peg": 2.18,
-      "momentum": 60.1,
+      "momentum": 69.6,
       "returns": {
-        "r1m": -7.61,
-        "r3m": -12.01,
-        "r6m": 15.36,
-        "r1y": 0.92
+        "r1m": -3.44,
+        "r3m": -7.49,
+        "r6m": 19.08,
+        "r1y": 2.15
       },
-      "volScore": 39.1,
+      "volScore": 39.9,
       "volStats": {
-        "annualReturn": 8.55,
-        "annualStd": 39.23,
-        "sharpe": 0.13,
+        "annualReturn": 9.78,
+        "annualStd": 39.3,
+        "sharpe": 0.16,
         "days": 253,
         "maxDrawdown": -26.93,
         "worstDay": -11.3
       },
-      "flow": 21.6,
+      "flow": 20.7,
       "flowStats": {
-        "recent5dAvg": 75307,
-        "recent20dAvg": 116710,
-        "ratio": 0.65
+        "recent5dAvg": 72179,
+        "recent20dAvg": 113996,
+        "ratio": 0.63
       },
       "value": 51.5,
-      "compositeScore": 43.1,
+      "compositeScore": 45.4,
       "valueNA": false
     },
     {
@@ -5470,8 +5470,8 @@
         "미래에셋 그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 16730,
-      "changePct": -2.51,
+      "currentPrice": 18320,
+      "changePct": 9.5,
       "volume": 1591374,
       "marketCap": 2626547400000,
       "per": 9.31,
@@ -5482,27 +5482,27 @@
       "dividendYield": 0,
       "beta": 0.12,
       "peg": null,
-      "momentum": 87.0,
+      "momentum": 87.7,
       "returns": {
-        "r1m": -25.97,
-        "r3m": 3.34,
-        "r6m": 78.55,
-        "r1y": 165.56
+        "r1m": -37.58,
+        "r3m": 10.23,
+        "r6m": 95.31,
+        "r1y": 189.87
       },
-      "volScore": 88.4,
+      "volScore": 87.7,
       "volStats": {
-        "annualReturn": 142.42,
-        "annualStd": 96.88,
-        "sharpe": 1.43,
+        "annualReturn": 151.6,
+        "annualStd": 97.29,
+        "sharpe": 1.52,
         "days": 253,
         "maxDrawdown": -51.58,
         "worstDay": -29.96
       },
       "flow": 10,
       "flowStats": {
-        "recent5dAvg": 388382,
-        "recent20dAvg": 1857600,
-        "ratio": 0.21
+        "recent5dAvg": 385124,
+        "recent20dAvg": 1543545,
+        "ratio": 0.25
       },
       "value": 88.0,
       "compositeScore": 68.3,
@@ -5516,8 +5516,8 @@
         "에코프로그룹"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 24050,
-      "changePct": -6.78,
+      "currentPrice": 28000,
+      "changePct": 16.42,
       "volume": 277960,
       "marketCap": 643930412400,
       "per": 33.34,
@@ -5528,30 +5528,30 @@
       "dividendYield": 0.65,
       "beta": 0.9,
       "peg": null,
-      "momentum": 44.2,
+      "momentum": 70.3,
       "returns": {
-        "r1m": -13.64,
-        "r3m": -19.43,
-        "r6m": 3.0,
-        "r1y": -2.43
+        "r1m": 3.13,
+        "r3m": -9.68,
+        "r6m": 17.65,
+        "r1y": 13.59
       },
-      "volScore": 43.5,
+      "volScore": 48.6,
       "volStats": {
-        "annualReturn": 22.59,
-        "annualStd": 72.19,
-        "sharpe": 0.26,
+        "annualReturn": 39.02,
+        "annualStd": 74.01,
+        "sharpe": 0.48,
         "days": 253,
         "maxDrawdown": -45.4,
         "worstDay": -17.0
       },
-      "flow": 31.3,
+      "flow": 30.9,
       "flowStats": {
-        "recent5dAvg": 249862,
-        "recent20dAvg": 326076,
-        "ratio": 0.77
+        "recent5dAvg": 250718,
+        "recent20dAvg": 329363,
+        "ratio": 0.76
       },
       "value": 22.3,
-      "compositeScore": 35.3,
+      "compositeScore": 43.0,
       "valueNA": false
     },
     {
@@ -5562,8 +5562,8 @@
         "K-뷰티"
       ],
       "market": "KOSPI",
-      "currentPrice": 10380,
-      "changePct": -5.64,
+      "currentPrice": 10330,
+      "changePct": -0.48,
       "volume": 51069,
       "marketCap": 214249407550,
       "per": 79.09,
@@ -5574,30 +5574,30 @@
       "dividendYield": 2.85,
       "beta": 0.51,
       "peg": null,
-      "momentum": 68.8,
+      "momentum": 63.8,
       "returns": {
-        "r1m": 9.26,
-        "r3m": 5.27,
-        "r6m": -12.7,
-        "r1y": -19.72
+        "r1m": 6.28,
+        "r3m": 2.89,
+        "r6m": -12.38,
+        "r1y": -22.62
       },
-      "volScore": 26.1,
+      "volScore": 22.5,
       "volStats": {
-        "annualReturn": -13.36,
-        "annualStd": 41.98,
-        "sharpe": -0.4,
+        "annualReturn": -17.09,
+        "annualStd": 41.85,
+        "sharpe": -0.49,
         "days": 253,
         "maxDrawdown": -39.58,
         "worstDay": -10.08
       },
-      "flow": 76.1,
+      "flow": 75.9,
       "flowStats": {
-        "recent5dAvg": 74906,
-        "recent20dAvg": 36674,
+        "recent5dAvg": 75573,
+        "recent20dAvg": 37110,
         "ratio": 2.04
       },
       "value": 50.0,
-      "compositeScore": 55.2,
+      "compositeScore": 53.0,
       "valueNA": false
     },
     {
@@ -5608,8 +5608,8 @@
         "K-뷰티"
       ],
       "market": "KOSPI",
-      "currentPrice": 23500,
-      "changePct": -5.24,
+      "currentPrice": 24300,
+      "changePct": 3.4,
       "volume": 157175,
       "marketCap": 1693548687000,
       "per": 23.54,
@@ -5620,30 +5620,30 @@
       "dividendYield": 1.82,
       "beta": 1.03,
       "peg": null,
-      "momentum": 47.1,
+      "momentum": 45.7,
       "returns": {
-        "r1m": 1.51,
-        "r3m": -11.82,
-        "r6m": -18.97,
-        "r1y": -23.2
+        "r1m": -1.02,
+        "r3m": -12.12,
+        "r6m": -13.98,
+        "r1y": -23.46
       },
-      "volScore": 25.4,
+      "volScore": 23.9,
       "volStats": {
-        "annualReturn": -15.85,
-        "annualStd": 46.29,
-        "sharpe": -0.42,
+        "annualReturn": -16.2,
+        "annualStd": 46.26,
+        "sharpe": -0.43,
         "days": 253,
         "maxDrawdown": -41.65,
         "worstDay": -10.53
       },
-      "flow": 43.6,
+      "flow": 45.0,
       "flowStats": {
-        "recent5dAvg": 137577,
-        "recent20dAvg": 149446,
-        "ratio": 0.92
+        "recent5dAvg": 137209,
+        "recent20dAvg": 146318,
+        "ratio": 0.94
       },
       "value": 58.0,
-      "compositeScore": 43.5,
+      "compositeScore": 43.2,
       "valueNA": false
     },
     {
@@ -5654,8 +5654,8 @@
         "K-뷰티"
       ],
       "market": "KOSPI",
-      "currentPrice": 116300,
-      "changePct": -6.44,
+      "currentPrice": 123100,
+      "changePct": 5.85,
       "volume": 313061,
       "marketCap": 6498545524900,
       "per": 55.59,
@@ -5666,30 +5666,30 @@
       "dividendYield": 1.13,
       "beta": 1.18,
       "peg": null,
-      "momentum": 54.3,
+      "momentum": 66.7,
       "returns": {
-        "r1m": 4.03,
-        "r3m": -8.93,
-        "r6m": -8.35,
-        "r1y": -11.36
+        "r1m": 10.11,
+        "r3m": -5.53,
+        "r6m": -2.76,
+        "r1y": -9.95
       },
-      "volScore": 31.9,
+      "volScore": 31.2,
       "volStats": {
-        "annualReturn": -1.6,
-        "annualStd": 46.49,
-        "sharpe": -0.11,
+        "annualReturn": 0.05,
+        "annualStd": 46.67,
+        "sharpe": -0.07,
         "days": 253,
         "maxDrawdown": -41.73,
         "worstDay": -9.52
       },
-      "flow": 56.1,
+      "flow": 54.8,
       "flowStats": {
-        "recent5dAvg": 438673,
-        "recent20dAvg": 352926,
-        "ratio": 1.24
+        "recent5dAvg": 431325,
+        "recent20dAvg": 362438,
+        "ratio": 1.19
       },
       "value": 28.8,
-      "compositeScore": 42.8,
+      "compositeScore": 45.4,
       "valueNA": false
     },
     {
@@ -5700,8 +5700,8 @@
         "롯데그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 33300,
-      "changePct": 3.9,
+      "currentPrice": 35600,
+      "changePct": 6.91,
       "volume": 510698,
       "marketCap": 3178583604100,
       "per": 172.76,
@@ -5712,30 +5712,30 @@
       "dividendYield": 0,
       "beta": 1.41,
       "peg": null,
-      "momentum": 37.0,
+      "momentum": 40.6,
       "returns": {
-        "r1m": -26.81,
-        "r3m": -26.81,
-        "r6m": 11.0,
-        "r1y": 50.34
+        "r1m": -25.76,
+        "r3m": -21.06,
+        "r6m": 16.15,
+        "r1y": 62.56
       },
-      "volScore": 68.8,
+      "volScore": 68.1,
       "volStats": {
-        "annualReturn": 79.01,
-        "annualStd": 89.35,
-        "sharpe": 0.85,
+        "annualReturn": 87.05,
+        "annualStd": 89.58,
+        "sharpe": 0.93,
         "days": 253,
         "maxDrawdown": -59.17,
         "worstDay": -17.19
       },
-      "flow": 50.8,
+      "flow": 52.4,
       "flowStats": {
-        "recent5dAvg": 284410,
-        "recent20dAvg": 275620,
-        "ratio": 1.03
+        "recent5dAvg": 278731,
+        "recent20dAvg": 254265,
+        "ratio": 1.1
       },
       "value": 35.0,
-      "compositeScore": 47.9,
+      "compositeScore": 49.0,
       "valueNA": false
     },
     {
@@ -5746,8 +5746,8 @@
         "가전"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 3100,
-      "changePct": -6.06,
+      "currentPrice": 3420,
+      "changePct": 10.32,
       "volume": 65663,
       "marketCap": 74174713750,
       "per": 18.91,
@@ -5758,30 +5758,30 @@
       "dividendYield": 2.28,
       "beta": 0.85,
       "peg": null,
-      "momentum": 6.5,
+      "momentum": 10.9,
       "returns": {
-        "r1m": -12.92,
-        "r3m": -35.42,
-        "r6m": -43.84,
-        "r1y": -53.03
+        "r1m": -4.87,
+        "r3m": -30.2,
+        "r6m": -37.82,
+        "r1y": -49.71
       },
-      "volScore": 2.2,
+      "volScore": 3.6,
       "volStats": {
-        "annualReturn": -65.32,
-        "annualStd": 45.01,
-        "sharpe": -1.53,
+        "annualReturn": -58.03,
+        "annualStd": 46.12,
+        "sharpe": -1.33,
         "days": 253,
         "maxDrawdown": -60.61,
         "worstDay": -14.04
       },
       "flow": 100,
       "flowStats": {
-        "recent5dAvg": 770967,
-        "recent20dAvg": 210093,
-        "ratio": 3.67
+        "recent5dAvg": 719186,
+        "recent20dAvg": 211610,
+        "ratio": 3.4
       },
       "value": 60.9,
-      "compositeScore": 42.4,
+      "compositeScore": 43.9,
       "valueNA": false
     },
     {
@@ -5791,8 +5791,8 @@
         "항공"
       ],
       "market": "KOSPI",
-      "currentPrice": 7130,
-      "changePct": -5.56,
+      "currentPrice": 7160,
+      "changePct": 0.42,
       "volume": 74062,
       "marketCap": 1421335905900,
       "per": 7.29,
@@ -5803,30 +5803,30 @@
       "dividendYield": 0,
       "beta": 0.51,
       "peg": null,
-      "momentum": 66.7,
+      "momentum": 62.3,
       "returns": {
-        "r1m": 6.1,
-        "r3m": 3.48,
-        "r6m": -9.29,
-        "r1y": -26.27
+        "r1m": 4.99,
+        "r3m": 0.99,
+        "r6m": -9.14,
+        "r1y": -25.96
       },
       "volScore": 14.5,
       "volStats": {
-        "annualReturn": -24.88,
+        "annualReturn": -24.46,
         "annualStd": 33.98,
-        "sharpe": -0.84,
+        "sharpe": -0.82,
         "days": 253,
         "maxDrawdown": -34.03,
         "worstDay": -7.77
       },
-      "flow": 22.6,
+      "flow": 14.1,
       "flowStats": {
-        "recent5dAvg": 147885,
-        "recent20dAvg": 224994,
-        "ratio": 0.66
+        "recent5dAvg": 120640,
+        "recent20dAvg": 219092,
+        "ratio": 0.55
       },
       "value": 71.2,
-      "compositeScore": 43.8,
+      "compositeScore": 40.5,
       "valueNA": false
     },
     {
@@ -5837,8 +5837,8 @@
         "현대백화점그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 12870,
-      "changePct": -8.59,
+      "currentPrice": 14000,
+      "changePct": 8.78,
       "volume": 310039,
       "marketCap": 2043905386110,
       "per": 0.33,
@@ -5849,30 +5849,30 @@
       "dividendYield": 1.86,
       "beta": 0.93,
       "peg": null,
-      "momentum": 84.8,
+      "momentum": 91.3,
       "returns": {
-        "r1m": -2.28,
-        "r3m": -4.45,
-        "r6m": 60.47,
-        "r1y": 50.18
+        "r1m": 5.58,
+        "r3m": 4.4,
+        "r6m": 76.1,
+        "r1y": 56.25
       },
-      "volScore": 70.3,
+      "volScore": 69.6,
       "volStats": {
-        "annualReturn": 57.94,
-        "annualStd": 59.64,
-        "sharpe": 0.91,
+        "annualReturn": 62.17,
+        "annualStd": 60.1,
+        "sharpe": 0.98,
         "days": 253,
         "maxDrawdown": -35.84,
         "worstDay": -8.94
       },
-      "flow": 21.0,
+      "flow": 19.6,
       "flowStats": {
-        "recent5dAvg": 210720,
-        "recent20dAvg": 330719,
-        "ratio": 0.64
+        "recent5dAvg": 203408,
+        "recent20dAvg": 327761,
+        "ratio": 0.62
       },
       "value": 99.3,
-      "compositeScore": 68.8,
+      "compositeScore": 69.9,
       "valueNA": false
     },
     {
@@ -5883,8 +5883,8 @@
         "두산그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 1203000,
-      "changePct": -5.13,
+      "currentPrice": 1382000,
+      "changePct": 14.88,
       "volume": 118100,
       "marketCap": 29067933825000,
       "per": 220.26,
@@ -5895,30 +5895,30 @@
       "dividendYield": 0.26,
       "beta": 1.94,
       "peg": null,
-      "momentum": 85.5,
+      "momentum": 89.1,
       "returns": {
-        "r1m": -24.05,
-        "r3m": 14.68,
-        "r6m": 57.67,
-        "r1y": 84.79
+        "r1m": -14.74,
+        "r3m": 14.78,
+        "r6m": 72.97,
+        "r1y": 110.67
       },
-      "volScore": 80.4,
+      "volScore": 83.3,
       "volStats": {
-        "annualReturn": 93.78,
-        "annualStd": 80.84,
-        "sharpe": 1.12,
+        "annualReturn": 107.89,
+        "annualStd": 82.13,
+        "sharpe": 1.27,
         "days": 253,
         "maxDrawdown": -45.39,
         "worstDay": -16.41
       },
-      "flow": 43.7,
+      "flow": 50.8,
       "flowStats": {
-        "recent5dAvg": 84973,
-        "recent20dAvg": 92256,
-        "ratio": 0.92
+        "recent5dAvg": 90446,
+        "recent20dAvg": 87551,
+        "ratio": 1.03
       },
       "value": 35.4,
-      "compositeScore": 61.2,
+      "compositeScore": 64.6,
       "valueNA": false
     },
     {
@@ -5930,8 +5930,8 @@
         "해상풍력"
       ],
       "market": "KOSPI",
-      "currentPrice": 73200,
-      "changePct": -1.08,
+      "currentPrice": 78100,
+      "changePct": 6.69,
       "volume": 2776295,
       "marketCap": 63607721797800,
       "per": 183.04,
@@ -5942,30 +5942,30 @@
       "dividendYield": 0,
       "beta": 1.9,
       "peg": null,
-      "momentum": 35.5,
+      "momentum": 31.9,
       "returns": {
-        "r1m": -19.65,
-        "r3m": -22.87,
-        "r6m": -2.66,
-        "r1y": 11.25
+        "r1m": -11.85,
+        "r3m": -22.83,
+        "r6m": -6.13,
+        "r1y": 14.18
       },
-      "volScore": 51.4,
+      "volScore": 48.6,
       "volStats": {
-        "annualReturn": 32.64,
-        "annualStd": 66.34,
-        "sharpe": 0.44,
+        "annualReturn": 35.38,
+        "annualStd": 66.56,
+        "sharpe": 0.48,
         "days": 253,
         "maxDrawdown": -46.33,
         "worstDay": -16.82
       },
-      "flow": 46.7,
+      "flow": 46.1,
       "flowStats": {
-        "recent5dAvg": 3056106,
-        "recent20dAvg": 3188623,
-        "ratio": 0.96
+        "recent5dAvg": 3023867,
+        "recent20dAvg": 3177474,
+        "ratio": 0.95
       },
       "value": 32.1,
-      "compositeScore": 41.4,
+      "compositeScore": 39.7,
       "valueNA": false
     },
     {
@@ -5976,8 +5976,8 @@
         "두산그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 60100,
-      "changePct": -2.12,
+      "currentPrice": 62900,
+      "changePct": 4.66,
       "volume": 376536,
       "marketCap": 6527798026500,
       "per": 5.48,
@@ -5988,30 +5988,30 @@
       "dividendYield": 2.61,
       "beta": 0.87,
       "peg": null,
-      "momentum": 63.8,
+      "momentum": 63.0,
       "returns": {
-        "r1m": -5.06,
-        "r3m": -2.75,
-        "r6m": 5.81,
-        "r1y": 2.21
+        "r1m": -2.33,
+        "r3m": -4.98,
+        "r6m": 6.61,
+        "r1y": 8.08
       },
-      "volScore": 40.6,
+      "volScore": 42.0,
       "volStats": {
-        "annualReturn": 13.44,
-        "annualStd": 47.28,
-        "sharpe": 0.21,
+        "annualReturn": 19.12,
+        "annualStd": 47.49,
+        "sharpe": 0.33,
         "days": 253,
         "maxDrawdown": -21.64,
         "worstDay": -18.18
       },
-      "flow": 38.3,
+      "flow": 36.3,
       "flowStats": {
-        "recent5dAvg": 235941,
-        "recent20dAvg": 276242,
-        "ratio": 0.85
+        "recent5dAvg": 217972,
+        "recent20dAvg": 262998,
+        "ratio": 0.83
       },
       "value": 78.1,
-      "compositeScore": 55.2,
+      "compositeScore": 54.8,
       "valueNA": false
     },
     {
@@ -6022,8 +6022,8 @@
         "GS그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 29250,
-      "changePct": 2.99,
+      "currentPrice": 31850,
+      "changePct": 8.89,
       "volume": 689588,
       "marketCap": 2426235241500,
       "per": 6.05,
@@ -6034,30 +6034,30 @@
       "dividendYield": 1.77,
       "beta": 0.85,
       "peg": null,
-      "momentum": 89.9,
+      "momentum": 87.0,
       "returns": {
-        "r1m": 9.14,
-        "r3m": 1.56,
-        "r6m": 55.42,
-        "r1y": 37.32
+        "r1m": 21.56,
+        "r3m": -14.84,
+        "r6m": 67.54,
+        "r1y": 53.49
       },
-      "volScore": 63.8,
+      "volScore": 66.7,
       "volStats": {
-        "annualReturn": 56.28,
-        "annualStd": 72.04,
-        "sharpe": 0.73,
+        "annualReturn": 67.76,
+        "annualStd": 72.5,
+        "sharpe": 0.89,
         "days": 253,
         "maxDrawdown": -45.94,
         "worstDay": -12.18
       },
-      "flow": 58.7,
+      "flow": 61.3,
       "flowStats": {
-        "recent5dAvg": 2895257,
-        "recent20dAvg": 2148453,
-        "ratio": 1.35
+        "recent5dAvg": 3264600,
+        "recent20dAvg": 2246508,
+        "ratio": 1.45
       },
       "value": 91.2,
-      "compositeScore": 75.9,
+      "compositeScore": 76.6,
       "valueNA": false
     },
     {
@@ -6068,8 +6068,8 @@
         "롯데그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 32250,
-      "changePct": 0.31,
+      "currentPrice": 33200,
+      "changePct": 2.95,
       "volume": 49232,
       "marketCap": 1111067272800,
       "per": 8.47,
@@ -6080,30 +6080,30 @@
       "dividendYield": 3.88,
       "beta": 0.37,
       "peg": null,
-      "momentum": 75.4,
+      "momentum": 74.6,
       "returns": {
-        "r1m": 7.86,
-        "r3m": 4.54,
-        "r6m": 7.5,
-        "r1y": -5.98
+        "r1m": 8.5,
+        "r3m": 5.56,
+        "r6m": 11.04,
+        "r1y": -3.07
       },
-      "volScore": 28.3,
+      "volScore": 31.2,
       "volStats": {
-        "annualReturn": -1.78,
-        "annualStd": 29.88,
-        "sharpe": -0.18,
+        "annualReturn": 1.31,
+        "annualStd": 30.02,
+        "sharpe": -0.07,
         "days": 253,
         "maxDrawdown": -22.11,
         "worstDay": -5.18
       },
-      "flow": 51.5,
+      "flow": 52.6,
       "flowStats": {
-        "recent5dAvg": 50295,
-        "recent20dAvg": 47400,
-        "ratio": 1.06
+        "recent5dAvg": 53996,
+        "recent20dAvg": 48990,
+        "ratio": 1.1
       },
       "value": 73.7,
-      "compositeScore": 57.2,
+      "compositeScore": 58.0,
       "valueNA": false
     },
     {
@@ -6114,8 +6114,8 @@
         "HD현대그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 121200,
-      "changePct": -3.27,
+      "currentPrice": 130300,
+      "changePct": 7.51,
       "volume": 241810,
       "marketCap": 7135570463300,
       "per": 7.31,
@@ -6126,30 +6126,30 @@
       "dividendYield": 0.37,
       "beta": 1.44,
       "peg": null,
-      "momentum": 55.1,
+      "momentum": 59.4,
       "returns": {
-        "r1m": -15.95,
-        "r3m": -18.0,
-        "r6m": 24.44,
-        "r1y": 59.26
+        "r1m": -8.94,
+        "r3m": -19.02,
+        "r6m": 27.62,
+        "r1y": 71.45
       },
-      "volScore": 72.5,
+      "volScore": 75.4,
       "volStats": {
-        "annualReturn": 70.11,
-        "annualStd": 69.77,
-        "sharpe": 0.95,
+        "annualReturn": 77.75,
+        "annualStd": 70.14,
+        "sharpe": 1.06,
         "days": 253,
         "maxDrawdown": -44.37,
         "worstDay": -15.98
       },
-      "flow": 40.3,
+      "flow": 44.6,
       "flowStats": {
-        "recent5dAvg": 319860,
-        "recent20dAvg": 364144,
-        "ratio": 0.88
+        "recent5dAvg": 320975,
+        "recent20dAvg": 344223,
+        "ratio": 0.93
       },
       "value": 79.9,
-      "compositeScore": 62.0,
+      "compositeScore": 64.8,
       "valueNA": false
     },
     {
@@ -6160,8 +6160,8 @@
         "HD현대그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 189400,
-      "changePct": -2.22,
+      "currentPrice": 199500,
+      "changePct": 5.33,
       "volume": 218001,
       "marketCap": 22236553427500,
       "per": 18.91,
@@ -6172,30 +6172,30 @@
       "dividendYield": 1.88,
       "beta": 1.15,
       "peg": null,
-      "momentum": 38.4,
+      "momentum": 37.7,
       "returns": {
-        "r1m": -21.9,
-        "r3m": -19.92,
-        "r6m": 2.82,
-        "r1y": 49.37
+        "r1m": -18.74,
+        "r3m": -20.52,
+        "r6m": 4.45,
+        "r1y": 54.05
       },
-      "volScore": 71.0,
+      "volScore": 69.6,
       "volStats": {
-        "annualReturn": 56.19,
-        "annualStd": 56.9,
-        "sharpe": 0.93,
+        "annualReturn": 59.39,
+        "annualStd": 57.1,
+        "sharpe": 0.98,
         "days": 253,
         "maxDrawdown": -39.0,
         "worstDay": -10.14
       },
-      "flow": 31.0,
+      "flow": 32.8,
       "flowStats": {
-        "recent5dAvg": 149039,
-        "recent20dAvg": 195358,
-        "ratio": 0.76
+        "recent5dAvg": 150454,
+        "recent20dAvg": 191633,
+        "ratio": 0.79
       },
       "value": 65.0,
-      "compositeScore": 51.4,
+      "compositeScore": 51.3,
       "valueNA": false
     },
     {
@@ -6206,8 +6206,8 @@
         "CJ그룹"
       ],
       "market": "KOSPI",
-      "currentPrice": 4500,
-      "changePct": -1.75,
+      "currentPrice": 4445,
+      "changePct": -1.22,
       "volume": 307884,
       "marketCap": 726906670150,
       "per": 3441.0,
@@ -6218,30 +6218,30 @@
       "dividendYield": 0,
       "beta": 1.03,
       "peg": null,
-      "momentum": 52.2,
+      "momentum": 44.2,
       "returns": {
-        "r1m": 1.69,
-        "r3m": -2.39,
-        "r6m": -22.68,
-        "r1y": -10.0
+        "r1m": 0.34,
+        "r3m": -6.62,
+        "r6m": -23.49,
+        "r1y": -12.33
       },
-      "volScore": 28.3,
+      "volScore": 26.8,
       "volStats": {
-        "annualReturn": -3.39,
+        "annualReturn": -6.02,
         "annualStd": 37.75,
-        "sharpe": -0.18,
+        "sharpe": -0.25,
         "days": 253,
         "maxDrawdown": -34.47,
         "worstDay": -13.09
       },
-      "flow": 35.9,
+      "flow": 52.9,
       "flowStats": {
-        "recent5dAvg": 282144,
-        "recent20dAvg": 342506,
-        "ratio": 0.82
+        "recent5dAvg": 407165,
+        "recent20dAvg": 364446,
+        "ratio": 1.12
       },
       "value": 22.6,
-      "compositeScore": 34.8,
+      "compositeScore": 36.6,
       "valueNA": false
     },
     {
@@ -6252,8 +6252,8 @@
         "리모델링"
       ],
       "market": "KOSPI",
-      "currentPrice": 35200,
-      "changePct": 2.62,
+      "currentPrice": 34800,
+      "changePct": -1.14,
       "volume": 50360,
       "marketCap": 722491589600,
       "per": 7.4,
@@ -6264,30 +6264,30 @@
       "dividendYield": 0,
       "beta": 0.97,
       "peg": null,
-      "momentum": 52.9,
+      "momentum": 46.4,
       "returns": {
-        "r1m": 9.32,
-        "r3m": -8.33,
-        "r6m": -22.12,
-        "r1y": -21.69
+        "r1m": 7.74,
+        "r3m": -13.0,
+        "r6m": -21.18,
+        "r1y": -24.51
       },
-      "volScore": 21.7,
+      "volScore": 20.3,
       "volStats": {
-        "annualReturn": -16.32,
-        "annualStd": 40.31,
-        "sharpe": -0.49,
+        "annualReturn": -20.01,
+        "annualStd": 40.24,
+        "sharpe": -0.58,
         "days": 253,
         "maxDrawdown": -44.46,
         "worstDay": -11.16
       },
-      "flow": 47.4,
+      "flow": 46.7,
       "flowStats": {
-        "recent5dAvg": 52033,
-        "recent20dAvg": 53785,
-        "ratio": 0.97
+        "recent5dAvg": 50616,
+        "recent20dAvg": 52782,
+        "ratio": 0.96
       },
       "value": 52.9,
-      "compositeScore": 43.7,
+      "compositeScore": 41.6,
       "valueNA": false
     },
     {
@@ -6297,8 +6297,8 @@
         "2차전지 장비"
       ],
       "market": "KOSDAQ",
-      "currentPrice": 20150,
-      "changePct": 3.17,
+      "currentPrice": 20200,
+      "changePct": 0.25,
       "volume": 43829,
       "marketCap": 274642505150,
       "per": 19.89,
@@ -6309,30 +6309,30 @@
       "dividendYield": 3.19,
       "beta": 0.22,
       "peg": 0.18,
-      "momentum": 27.5,
+      "momentum": 19.6,
       "returns": {
-        "r1m": 4.62,
-        "r3m": -20.04,
-        "r6m": -38.75,
-        "r1y": -38.0
+        "r1m": 0.5,
+        "r3m": -22.31,
+        "r6m": -36.58,
+        "r1y": -39.7
       },
-      "volScore": 18.1,
+      "volScore": 17.4,
       "volStats": {
-        "annualReturn": -33.36,
-        "annualStd": 53.71,
-        "sharpe": -0.69,
+        "annualReturn": -36.19,
+        "annualStd": 53.61,
+        "sharpe": -0.74,
         "days": 253,
         "maxDrawdown": -61.12,
         "worstDay": -14.09
       },
-      "flow": 20.9,
+      "flow": 26.9,
       "flowStats": {
-        "recent5dAvg": 23774,
-        "recent20dAvg": 37367,
-        "ratio": 0.64
+        "recent5dAvg": 23666,
+        "recent20dAvg": 33293,
+        "ratio": 0.71
       },
       "value": 33.6,
-      "compositeScore": 25.0,
+      "compositeScore": 24.4,
       "valueNA": false
     },
     {
@@ -6342,8 +6342,8 @@
         "해운"
       ],
       "market": "KOSPI",
-      "currentPrice": 19320,
-      "changePct": -3.64,
+      "currentPrice": 19740,
+      "changePct": 2.17,
       "volume": 1695609,
       "marketCap": 18525193730800,
       "per": 10.71,
@@ -6354,34 +6354,34 @@
       "dividendYield": 3.59,
       "beta": 0.89,
       "peg": null,
-      "momentum": 61.6,
+      "momentum": 64.5,
       "returns": {
-        "r1m": 5.11,
-        "r3m": -4.12,
-        "r6m": -4.36,
-        "r1y": -13.75
+        "r1m": 4.72,
+        "r3m": -4.41,
+        "r6m": -0.55,
+        "r1y": -12.27
       },
-      "volScore": 26.8,
+      "volScore": 28.3,
       "volStats": {
-        "annualReturn": -6.91,
-        "annualStd": 39.55,
-        "sharpe": -0.26,
+        "annualReturn": -5.18,
+        "annualStd": 39.6,
+        "sharpe": -0.22,
         "days": 253,
         "maxDrawdown": -29.44,
         "worstDay": -16.33
       },
-      "flow": 32.3,
+      "flow": 37.4,
       "flowStats": {
-        "recent5dAvg": 1219232,
-        "recent20dAvg": 1566146,
-        "ratio": 0.78
+        "recent5dAvg": 1289101,
+        "recent20dAvg": 1529181,
+        "ratio": 0.84
       },
       "value": 73.0,
-      "compositeScore": 48.4,
+      "compositeScore": 50.8,
       "valueNA": false
     }
   ],
   "metricsVersion": "2.4",
-  "asOfBusinessDate": "20260709",
-  "pricesSyncedAt": "2026-07-10T09:41:56.358373"
+  "asOfBusinessDate": "20260710",
+  "pricesSyncedAt": "2026-07-10T10:45:31.294911"
 }
