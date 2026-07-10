@@ -99,6 +99,9 @@ export const disclosureExplorerCopy = {
     watchlistEmptyCta: "종목 담으러 가기",
     // 카드
     autoClassified: "자동분류",
+    // 보유 변동(소유상황보고서)에서 '대상 회사'와 '보고자/제출자'를 분리 표기(혼동 방지)
+    targetCompanyLabel: "대상 회사",
+    reporterLabel: "보고자",
     directionBuy: "장내매수 단서",
     directionSell: "장내매도·처분 단서",
     directionUnknown: "방향 확인 필요",
@@ -129,6 +132,10 @@ export const disclosureExplorerCopy = {
     emptyWidenScope: "분석 대상 외까지 넓혀 보기",
     // 신호 라벨별 한 줄 의미(키=원문 signalLabel, 데이터 판별자 → 유지)
     descriptions: {
+      "자기주식 취득 결정": "회사가 자기주식을 직접 취득하기로 한 결정입니다. 취득 예정 수량·기간·목적과 시총 대비 규모를 원문에서 확인하세요.",
+      "자사주 신탁계약 체결": "자기주식 취득을 신탁사에 위탁하는 계약 체결입니다. 신탁 규모와 계약 기간, 실제 취득 시점을 원문에서 확인하세요.",
+      "자사주 신탁계약 해지": "자기주식 취득을 위탁했던 신탁계약을 끝낸다는 공시입니다. 신규 취득 결정이 아니며, 해지 사유와 실제 취득 완료 여부를 원문에서 확인하세요.",
+      "자기주식 처분 결정": "보유 중인 자기주식을 처분한다는 공시입니다. 취득이 아닌 처분이며, 처분 목적·대상과 오버행 가능성을 원문에서 확인하세요.",
       "자기주식 취득 결의": "주주환원·주가 안정과 관련된 공시입니다. 취득 규모와 소각 여부를 확인하세요.",
       "임원·주요주주 보유 변동": "주요 주주·임원의 지분이 변동됐습니다. 매수·매도 방향을 원문에서 확인하세요.",
       "정정공시": "기존 공시 내용이 바뀌었습니다. 무엇이 정정됐는지 확인하세요.",
@@ -196,6 +203,9 @@ export const disclosureExplorerCopy = {
     watchlistEmpty: "Add stocks to your watchlist to gather their filings here.",
     watchlistEmptyCta: "Go add stocks",
     autoClassified: "Auto-classified",
+    // Ownership-change reports: separate the target company from the reporter/filer to avoid confusion
+    targetCompanyLabel: "Target company",
+    reporterLabel: "Reporter",
     directionBuy: "On-market buy clue",
     directionSell: "On-market sell·disposal clue",
     directionUnknown: "Direction to be confirmed",
@@ -223,6 +233,14 @@ export const disclosureExplorerCopy = {
     emptyReset: "Clear filter and view all signals",
     emptyWidenScope: "Include stocks outside coverage",
     descriptions: {
+      "자기주식 취득 결정":
+        "A decision to buy back the company's own shares directly. Confirm the planned quantity, period, purpose, and size vs. market cap in the source.",
+      "자사주 신탁계약 체결":
+        "A trust contract entrusting a buyback to a trustee. Confirm the trust size, contract period, and actual purchase timing in the source.",
+      "자사주 신탁계약 해지":
+        "This ends a previously signed buyback trust contract. It is not a new buyback decision; confirm the termination reason and whether purchases were actually completed.",
+      "자기주식 처분 결정":
+        "A decision to dispose of treasury shares held. This is a disposal, not an acquisition; confirm the purpose, recipients, and overhang risk in the source.",
       "자기주식 취득 결의":
         "This is a shareholder-return / price-stability event. Confirm the buyback size and whether shares will be cancelled.",
       "임원·주요주주 보유 변동":

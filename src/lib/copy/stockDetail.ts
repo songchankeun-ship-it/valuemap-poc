@@ -524,6 +524,7 @@ export const stockDisclosuresCopy = {
     dirSell: "장내매도·처분 단서",
     dirCheck: "방향 확인 필요",
     checkLabel: "확인",
+    reporterLabel: "보고자",
     dartOriginal: "DART 원문",
   },
   en: {
@@ -557,6 +558,7 @@ export const stockDisclosuresCopy = {
     dirSell: "on-market sell/disposal clue",
     dirCheck: "direction to confirm",
     checkLabel: "Check",
+    reporterLabel: "Reporter",
     dartOriginal: "DART source",
   },
 } as const satisfies Record<Locale, unknown>;

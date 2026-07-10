@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+
+## 2026-07-10 - [codex] Reaudit P0 #4 disclosure classification safety recovered (Task 134)
+- **Scope**: Recovered Task 134 after the AI Center restarted before Claude could commit. This is copy/classification/display safety only: no DART fetching, score formula, stock data, or `metricsVersion` change.
+- **Changes**: Treasury-share disclosure detection now distinguishes direct buyback decisions, trust-contract signing, trust-contract termination, and treasury-share disposal so trust termination is not presented as a new buyback. Disclosure cards now separate target company and reporter for ownership-change reports. Sample disclosure fixtures were updated so the public `/disclosures` page exercises the safer labels/copy.
+- **Validation**: `npx tsc --noEmit` passed; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` passed with 138 stocks / 0 errors / Metrics 2.4; `git diff --check` passed; `npm run build` passed with the existing `TrustLayer` ref warning; local prod 4612 `verify:routes` 9/9 and `smoke:check --all` 24/24 passed. Direct `/disclosures` check confirmed "대상 회사", "보고자", direct buyback copy, and sample names render.
+- **Next automation entry**: Continue with Task 135, "ORNScore reaudit 2026-07-10 E - contact privacy source copy", from the Task 134 commit. Keep tasks 131-141 local-only until final approved release task 142.
 ## 2026-07-10 · [claude] Reaudit P0 #3 — 비교 페이지 결과·빈 상태 동시 렌더 제거 + 상태 조건 정리(Task 133)
 - **범위**: 재검수 P0 3번. 유효 종목 2개 이상으로 비교 결과가 SSR로 나오는데도 `<noscript>` fallback의 "비교할 종목이 아직 없습니다" 빈 상태 블록이 HTML에 함께 남아, 스크롤한 사용자·크롤러·스크린리더가 "비교가 된 건가?"로 오해하던 상태 조건 버그. 표시/상태 정책 전용 — 비교 데이터 의미·공유 링크 시드·점수 산식·수집 코드·`metricsVersion` 무변경. 편집 3소스 + 신규 2 + 문서.
 - **원인**: `CompareClient`는 `stocks.length < 2` 분기로 결과 XOR 시작 화면을 배타 렌더해 자체 이중 렌더는 없었음. 진짜 원인은 `compare/page.tsx`의 `<noscript>` 빈 상태가 **항상** HTML에 방출되던 것. 유효 종목이 2개 이상이면 `CompareClient`가 이미 결과를 정적 SSR로 출력하므로 noscript 빈 상태는 모순·중복이었다. 부차로 유효 5개 이상 쿼리는 앞 4개만 조용히 반영하고 초과분 안내가 없었다(브리프 요구: "최대 4개만 반영 + 초과 종목 안내").

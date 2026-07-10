@@ -534,15 +534,40 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
                 {/* 회사명 / 공시명 */}
                 <div className="mb-2 min-w-0">
-                  <div className="flex items-baseline gap-2 flex-wrap min-w-0">
-                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
-                    {g.stock_code ? (
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
-                    ) : null}
-                    {g.representative.disclosure.flr_nm ? (
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {g.representative.disclosure.flr_nm}</span>
-                    ) : null}
-                  </div>
+                  {(() => {
+                    const flr = g.representative.disclosure.flr_nm;
+                    // 보고자가 대상 회사와 다를 때만 제출자로 취급(회사 자체 제출 공시는 중복 표기 생략).
+                    const reporterDiffers = Boolean(flr) && flr !== g.corp_name;
+                    // 보유 변동(소유상황보고서)은 '대상 회사'와 '보고자'가 헷갈리므로 명시적으로 분리 표기한다.
+                    if (g.signalType === "insider_buy" && reporterDiffers) {
+                      return (
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <div className="flex items-baseline gap-1.5 flex-wrap min-w-0">
+                            <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 shrink-0">{t.targetCompanyLabel}</span>
+                            <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
+                            {g.stock_code ? (
+                              <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
+                            ) : null}
+                          </div>
+                          <div className="flex items-baseline gap-1.5 flex-wrap min-w-0">
+                            <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 shrink-0">{t.reporterLabel}</span>
+                            <span className="text-xs text-zinc-600 dark:text-zinc-300 break-words">{flr}</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
+                        {g.stock_code ? (
+                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
+                        ) : null}
+                        {reporterDiffers ? (
+                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {flr}</span>
+                        ) : null}
+                      </div>
+                    );
+                  })()}
                   <p className="mt-1 text-sm font-medium text-zinc-800 dark:text-zinc-200 leading-snug break-words line-clamp-2">
                     {g.representative.disclosure.report_nm}
                   </p>

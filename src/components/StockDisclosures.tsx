@@ -14,6 +14,10 @@ const DART_SEARCH_HOME = "https://dart.fss.or.kr/dsab001/main.do";
 // signalLabel(디텍터 원문 라벨) → signalType. 배지 표기를 /disclosures와 동일한 짧은 유형명으로
 // 통일하기 위한 display 전용 매핑(데이터 키·색 로직은 signalLabel 그대로 사용).
 const SIGNAL_LABEL_TO_TYPE: Record<string, string> = {
+  "자기주식 취득 결정": "treasury_buy",
+  "자사주 신탁계약 체결": "treasury_buy",
+  "자사주 신탁계약 해지": "treasury_buy",
+  "자기주식 처분 결정": "treasury_buy",
   "자기주식 취득 결의": "treasury_buy",
   "임원·주요주주 보유 변동": "insider_buy",
   "정정공시": "correction",
@@ -58,8 +62,13 @@ interface ApiResponse {
   note?: string;
 }
 
+const TREASURY_BADGE = "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700";
 const SIGNAL_BG: Record<string, string> = {
-  "자기주식 취득 결의": "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700",
+  "자기주식 취득 결정": TREASURY_BADGE,
+  "자사주 신탁계약 체결": TREASURY_BADGE,
+  "자사주 신탁계약 해지": TREASURY_BADGE,
+  "자기주식 처분 결정": TREASURY_BADGE,
+  "자기주식 취득 결의": TREASURY_BADGE,
   "임원·주요주주 보유 변동": "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700",
   "정정공시": "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700",
   "단일판매·공급계약": "bg-slate-50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700",
@@ -285,7 +294,12 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                       </span>
                     </div>
                     <div className="text-xs font-medium text-zinc-800 dark:text-zinc-200 break-words leading-snug">{d.report_nm}</div>
-                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 truncate">{d.flr_nm}</div>
+                    {/* 보유 변동(소유상황보고서)은 제출자가 대상 종목과 달라 헷갈리므로 '보고자'로 명시 */}
+                    <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 truncate">
+                      {d.signal?.signalType === "insider_buy" && d.flr_nm && d.flr_nm !== d.corp_name
+                        ? `${t.reporterLabel} · ${d.flr_nm}`
+                        : d.flr_nm}
+                    </div>
                     {d.signal?.note ? (
                       <div className="mt-1.5 flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2 py-1.5 leading-relaxed">
                         <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>

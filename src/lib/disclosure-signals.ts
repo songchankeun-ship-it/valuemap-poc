@@ -23,6 +23,8 @@ export interface SignalHit {
 
 const RE_TREASURY_BUY = /자기주식\s*취득/;
 const RE_TREASURY_SELL = /자기주식\s*처분/;
+const RE_TRUST = /신탁계약/;      // 자기주식 취득 신탁계약(체결/해지)
+const RE_TRUST_END = /해지/;      // 신탁계약 '해지' — 신규 취득 결정이 아님
 const RE_INSIDER = /임원[ㆍ·, ]*주요주주/;
 const RE_CORRECTION = /정정/;
 const RE_PNL_KEYWORDS = /(매출액?|영업[손익이익]+|순?이익|손익|실적)/;
@@ -33,15 +35,53 @@ const RE_BW = /신주인수권부사채[권]?\s*발행/;
 
 // ---------- 디텍터들 ----------
 
-function detectTreasuryBuy(d: Disclosure): SignalHit | null {
-  if (RE_TREASURY_SELL.test(d.report_nm)) return null;
-  if (!RE_TREASURY_BUY.test(d.report_nm)) return null;
+// 자사주 공시는 하위 유형(직접취득 / 처분 / 신탁계약 체결 / 신탁계약 해지)마다 의미가 다르므로
+// 하나로 뭉뚱그리지 않고 분리 분류한다. 특히 '취득 신탁계약 해지'는 신규 취득 결정이 아니므로
+// '취득 결의'로 읽히면 안 된다(재검수 P0-4). signalType은 중립 표기를 위해 treasury_buy로 유지하고
+// 구분은 라벨·확인 포인트(note)로 전달한다. 호재/악재 단정 없이 '무엇을 확인할지'만 안내.
+function detectTreasury(d: Disclosure): SignalHit | null {
+  const nm = d.report_nm;
+  const isBuy = RE_TREASURY_BUY.test(nm);
+  const isSell = RE_TREASURY_SELL.test(nm);
+  if (!isBuy && !isSell) return null;
+
+  // 1) 자기주식 취득 신탁계약 해지 — 신규 취득 결정 아님(가장 오해가 큰 케이스)
+  if (isBuy && RE_TRUST.test(nm) && RE_TRUST_END.test(nm)) {
+    return {
+      signalType: "treasury_buy",
+      signalLabel: "자사주 신탁계약 해지",
+      disclosure: d,
+      strength: 55,
+      note: "자기주식 취득 신탁계약 해지 — 신규 취득 결정이 아닙니다. 해지 사유·실제 취득 완료 수량·소각 여부·잔여 신탁금은 원문 확인 필요",
+    };
+  }
+  // 2) 자기주식 취득 신탁계약 체결 — 직접 취득과 구분
+  if (isBuy && RE_TRUST.test(nm)) {
+    return {
+      signalType: "treasury_buy",
+      signalLabel: "자사주 신탁계약 체결",
+      disclosure: d,
+      strength: 65,
+      note: "자기주식 취득을 신탁사에 위탁하는 계약 체결 — 신탁 규모·계약 기간·실제 취득 시점은 원문 확인 필요",
+    };
+  }
+  // 3) 자기주식 처분 결정 — 취득이 아닌 처분
+  if (isSell) {
+    return {
+      signalType: "treasury_buy",
+      signalLabel: "자기주식 처분 결정",
+      disclosure: d,
+      strength: 60,
+      note: "자기주식 처분 결정 — 취득이 아닌 처분입니다. 처분 목적·처분 대상·오버행(잠재 매물) 가능성은 원문 확인 필요",
+    };
+  }
+  // 4) 자기주식 직접 취득 결정
   return {
     signalType: "treasury_buy",
-    signalLabel: "자기주식 취득 결의",
+    signalLabel: "자기주식 취득 결정",
     disclosure: d,
     strength: 80,
-    note: "자기주식 취득 결의 — 취득 규모·소각 여부는 원문 확인 필요",
+    note: "자기주식 직접 취득 결정 — 취득 예정 수량·취득 기간·취득 목적·시가총액 대비 규모는 원문 확인 필요",
   };
 }
 
@@ -109,7 +149,7 @@ function detectCapitalRaise(d: Disclosure): SignalHit | null {
 }
 
 const DETECTORS = [
-  detectTreasuryBuy,
+  detectTreasury,
   detectInsiderBuy,
   detectCorrection,
   detectSingleContract,
