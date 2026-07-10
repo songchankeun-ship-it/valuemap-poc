@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-10T15:27:00.000Z
+Last updated: 2026-07-10T16:16:33.312Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 134 - ORNScore reaudit 2026-07-10 D - disclosure classification safety
-- Run: 131
-- Status: recovered locally; validation passed
-- Agent: claude + codex recovery
-- Note: Claude implemented disclosure wording/classification safety and local gates passed, but AI Center was interrupted before commit. Codex restarted AI Center, re-ran validation, updated this handoff, and committed the recovered slice. Changes split treasury-share signals into direct buy, trust contract, trust termination, and disposal copy; separate target company/reporter labels on disclosure cards; and update disclosure samples. Checks passed: npx tsc --noEmit, verify_metrics.py 138/0/Metrics 2.4, git diff --check, npm run build, local verify:routes 9/9, smoke:check --all 24/24, and /disclosures copy presence checks.
+- Task: 135 - ORNScore reaudit 2026-07-10 E - contact privacy source copy
+- Run: 132
+- Status: completed
+- Agent: codex
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
