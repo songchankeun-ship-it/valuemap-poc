@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-10 · [codex] 최종 릴리스 회수 — origin/main 일일 데이터 병합·로컬 검증 완료(Task 129)
+- **범위**: AI Center/Claude의 Task 129가 사용량/세션 제한으로 멈춘 뒤 Codex가 마지막 릴리스를 회수했다. 코드 실패가 아니라 실행 제한 이슈였고, `origin/main` 일일 데이터 갱신 `f77fc28 chore(data): daily refresh 2026-07-09T10:45Z`를 릴리스 브랜치 `ai-center/task-129-ornscore-final-release-after-tasks-1`에 병합했다.
+- **충돌 처리**: `145995`가 다시 들어오지 않게 `public/data/prices/145995.json` 삭제를 유지하고, 삼양홀딩스는 정상 보통주 코드 `000070` 객체를 보존했다. `verify_metrics.py`가 잡은 11개 공식명 보정(SM→에스엠, 엔씨소프트→NC, DGB금융지주→iM금융지주 등)도 `seed_tickers.txt` 기준으로 복구했다. 이후 `sync_prices_to_stocks.py`와 `compute_metrics.py`를 재실행해 `stocks.json`을 기존 차트 가격 JSON과 다시 맞췄다.
+- **검증**: `npx tsc --noEmit` 0, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4, `git diff HEAD --check` clean(CRLF 예정 알림만), `npm run build` 0(기존 `TrustLayer` ref cleanup warning만). local prod 4590: `verify:routes` 9/9, `smoke:check --all` 23/23, `verify:login-preflight` 5/5, `verify:stocks-seo` 7/7. 직접 체크로 `/about`·`/terms`·`/privacy`·`/status`·`/stock/000070`·`/stock/005930`에서 `contact@ornscore.com` 렌더, 공개 old Gmail/`145995` 미노출 확인.
+- **다음**: 사용자가 이미 최종 push/deploy를 승인했으므로 이 검증된 릴리스 병합을 non-force로 `origin/main`에 push하고, `https://ornscore.com` production 라우트/메일/`145995` 미노출을 확인한다. Search Console 재색인·법무 검토는 외부/소유자 조치.
+
 ## 2026-07-10 · [claude] 최종 릴리스 전 연락처 정리 — 공개 이메일 도메인화·개인명 제거(Task 130)
 - **범위**: Task 130 — 최종 릴리스(Task 129) 직전 공개 연락처 정리. 공개면의 개인 Gmail(`songchankeun@gmail.com`)을 도메인 이메일 `contact@ornscore.com`으로 교체하고 개인정보/법적 연락처 문구에서 개인명(송찬근)을 중립 조직명("오른스코어 운영팀")으로 대체. 표시/문구 전용 — 데이터·점수 산식·`metricsVersion`·발신 주소 무변경. 로컬 소스/문서만.
 - **변경**: (1) mailto/연락처 교체 — `/about`(문의 mailto), `/terms`(제8조 문의), `/privacy`(6. 권리 행사·8. 책임자 연락처), 데이터 오류 신고 단일 소스 `src/lib/dataStatus.ts` `reportEmail`(→`/status`·`/about`·푸터 공유), 제출 문서 `docs/app-store-submission-pack.md`(문의·삭제 요청)·`docs/ornscore-mobile-listing-prep-pack.md`(문의 mailto). (2) 개인명 제거 — `/privacy` §8 "개인정보 보호 책임자: 송찬근 / 필로소디" → "오른스코어 운영팀", `/about` "운영: 송찬근 / 필로소디" → "운영: 오른스코어 운영팀". 법적 의미 유지(책임 운영자에게 `contact@ornscore.com`으로 연락 가능).

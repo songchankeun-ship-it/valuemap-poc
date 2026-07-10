@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-09T17:08:16.377Z
+Last updated: 2026-07-10T00:45:56.585Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 130 - ORNScore contact email and privacy owner cleanup
-- Run: 126
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: 129 - ORNScore final release after tasks 124-128 and contact cleanup
+- Run: 127
+- Status: recovered locally; release validation passed
+- Agent: codex
+- Note: Claude stopped on a usage/session limit. Codex resolved the origin/main daily-data merge, preserved the 000070/seed-name universe guards, and passed the local release gates. Next action is the already-approved non-force push to main and production route check.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-10 — Codex final release recovery — origin/main daily refresh merged and validated
+- **Scope**: Took over Task 129 after the AI Center/Claude run failed from a usage/session limit, not from a code failure. Merged `origin/main` daily refresh `f77fc28 chore(data): daily refresh 2026-07-09T10:45Z` into `ai-center/task-129-ornscore-final-release-after-tasks-1` without reverting user/agent work.
+- **Conflict recovery**: Resolved the stale universe conflict by keeping the corrected `000070` 삼양홀딩스 entry, removing the reintroduced `public/data/prices/145995.json`, and reapplying the 11 seed/KRX official-name corrections that `verify_metrics.py` guards. Re-ran `sync_prices_to_stocks.py` and `compute_metrics.py` so `stocks.json` is internally consistent with existing chart price JSON. Result: 138 stocks, `asOfBusinessDate=20260709`, Metrics 2.4, no `145995` in the public universe.
+- **Release gates passed locally**: `npx tsc --noEmit`; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`; `git diff HEAD --check`; `npm run build` (only existing `TrustLayer` ref cleanup warning); local prod `4590` `verify:routes` 9/9, `smoke:check --all` 23/23, `verify:login-preflight` 5/5, `verify:stocks-seo` 7/7. Direct local checks confirmed `contact@ornscore.com` renders on public/legal/status/stock routes, old Gmail is absent there, and `145995` is absent.
+- **Next**: User already approved final push/deploy. Proceed with a non-force `origin/main` push from the validated release merge, then check production `https://ornscore.com` routes. Search Console re-index and legal review remain owner/external tasks.
 
 ### 2026-07-10 — Claude pre-release contact cleanup — domain email + personal name removed (Task 130)
 - **Scope**: Task 130 — pre-final-release (Task 129) public contact cleanup. Replace the owner's personal Gmail (`songchankeun@gmail.com`) with the new domain email `contact@ornscore.com` on all public surfaces, and remove the personal name from privacy/legal contact copy using neutral organization wording ("오른스코어 운영팀"). Display/copy-only: no data, scoring, `metricsVersion`, or sender-address change. Local source/docs only; no remote/hosting/secret/DB changes.
