@@ -1,6 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
 
+## 2026-07-11 · [claude] Reaudit — 문의 메일 통일 확인 + 국외 이전 법적 근거 문구 + yfinance 출처 정밀화 (Task 135)
+- **범위**: 재검수 #8(문의 메일 통일)·#9(국외 이전 법적 근거)·#10(yfinance 출처 문구). 표시/문구 전용, 기존 데이터 사용 — 점수 산식·수집 코드·생성 데이터셋·`metricsVersion` 무변경. 신규 npm/라우트/컴포넌트 0.
+- **#8 문의 메일(확인+문서화, 코드 무변경)**: 공개면 전부 이미 `contact@ornscore.com` 단일 메일 사용(`/about`·`/terms`·`/privacy` 권리행사+책임자·`/status` 오류신고 `src/lib/dataStatus.ts` `reportEmail`). 충돌 채널 0, 미확인 별칭(support@/privacy@/data@/security@) 코드 내 0 — 브리프대로 `contact@` 캐논 유지. `noreply@ornscore.com`은 cron 발신 전용(연락 경로 아님). 별칭/포워딩(Google Workspace) 설정은 운영자 외부 작업으로만 문서화(PROGRESS §23.3/수익화 백로그) — 공개 약속 0.
+- **#10 yfinance 정밀화**: `about/page.tsx`가 "yfinance — 외국인·기관 보조 지표"였으나, `scripts/fetch_stock_data.py`는 yfinance에서 `dividendYield`/`beta`/`peg`만 수집하고 `거래활성도`는 수급(외국인/기관) 미반영(`src/lib/metrics.ts:55`). → "배당수익률·베타 등 가격·수익률 보조 데이터"로 교체. 홈·지표가이드 푸터의 모호한 "yfinance 보조 지표 / auxiliary metrics"도 이미 정확한 `dataStatus.ts` 표현에 맞춰 "yfinance 가격 보조 데이터 / auxiliary price data"(ko+en)로 정렬. 이제 어떤 소스도 외국인·기관 수급을 주장하지 않음.
+- **#9 국외 이전 법적 근거**: `/privacy` §5-1 이전 표 아래에 보수적 문구 추가 — 법적 근거 방향 = 서비스 제공을 위한 개인정보 처리위탁 + 이용자 서비스 이용계약 이행에 필요한 처리, 정확한 조문·표현은 개인정보 전문 자문 검토 후 확정 예정이며 본 문구는 법률 자문이 아님을 명시. EN 국외 이전 요약(`src/lib/copy/legal.ts`)에도 동일 취지 한 문장 반영. 법무 검토는 운영자 외부 작업.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/Metrics 2.4/금칙0 · `git diff --check` clean · `npm run build` 0. 로컬 prod 4611: `/about` 200 신규 yfinance 문구 렌더·"외국인·기관 보조 지표" 부재, `/privacy` "국외 이전의 법적 근거(방향)" 렌더, `/about`·`/privacy`·`/terms`·`/status` 각 `contact@ornscore.com`만 노출·support@/privacy@/data@/security@ 0. 리스너 PID 43872만 taskkill. 로컬 커밋만·push 미수행·main 무변경.
+- **다음**: 재검수 P1 — 종목 상세 meta description 점수 숫자 제거·과거 용어(모멘텀/변동성조정) 통일·백테스트 noindex/data-nosnippet·차트 텍스트 fallback. 운영자 게이트: 실기기 390×844 육안·Google Workspace 별칭 생성·개인정보 전문 법무 검토.
+
 ## 2026-07-10 - [codex] Reaudit P0 #4 disclosure classification safety recovered (Task 134)
 - **Scope**: Recovered Task 134 after the AI Center restarted before Claude could commit. This is copy/classification/display safety only: no DART fetching, score formula, stock data, or `metricsVersion` change.
 - **Changes**: Treasury-share disclosure detection now distinguishes direct buyback decisions, trust-contract signing, trust-contract termination, and treasury-share disposal so trust termination is not presented as a new buyback. Disclosure cards now separate target company and reporter for ownership-change reports. Sample disclosure fixtures were updated so the public `/disclosures` page exercises the safer labels/copy.

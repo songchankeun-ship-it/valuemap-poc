@@ -81,7 +81,7 @@ export default function AboutPage() {
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>yfinance</strong> — 외국인·기관 보조 지표</span>
+            <span><strong>yfinance</strong> — 배당수익률·베타 등 가격·수익률 보조 데이터</span>
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>

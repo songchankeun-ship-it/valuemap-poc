@@ -174,7 +174,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
     footer: {
       sourcePrefix: "데이터 출처:",
       body: (count: number) =>
-        ` KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 보조 지표. ${count}개 종목. 영업일 마감 후 자동 갱신.`,
+        ` KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 가격 보조 데이터. ${count}개 종목. 영업일 마감 후 자동 갱신.`,
     },
     glossary: {
       title: "용어 한눈에",
@@ -289,7 +289,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
     footer: {
       sourcePrefix: "Data sources:",
       body: (count: number) =>
-        ` KRX daily close (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance supplementary metrics. ${count} stocks. Updated automatically after market close on business days.`,
+        ` KRX daily close (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance supplementary price data. ${count} stocks. Updated automatically after market close on business days.`,
     },
     glossary: {
       title: "Glossary at a glance",

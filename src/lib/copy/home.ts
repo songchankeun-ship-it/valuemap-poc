@@ -171,7 +171,7 @@ export const homeCopy = {
     dataSource: {
       label: "데이터 출처:",
       bodyA:
-        "KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 보조 지표, DART 공시 실데이터. ",
+        "KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 가격 보조 데이터, DART 공시 실데이터. ",
       bodyMid: "개 종목 · 매일 갱신 · 데이터 기준 ",
       bodyEnd: " 장마감.",
       about: "서비스 소개",
@@ -327,7 +327,7 @@ export const homeCopy = {
     dataSource: {
       label: "Data sources:",
       bodyA:
-        "KRX daily close (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance auxiliary metrics, DART disclosure data. ",
+        "KRX daily close (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance auxiliary price data, DART disclosure data. ",
       bodyMid: " stocks · updated daily · data as of ",
       bodyEnd: " market close.",
       about: "About",

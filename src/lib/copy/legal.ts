@@ -76,7 +76,7 @@ export const legalEnSummaryCopy = {
         "OrnScore relies on external processors, each governed by its own privacy policy: Supabase (Tokyo, Japan — authentication and data storage), Vercel (USA — hosting and anonymous analytics), Resend (USA — alert emails), Kakao (South Korea — social login), Google (USA — social login), and Naver (South Korea — social login). Social login is used only if you choose it.",
       crossBorderTitle: "Cross-border transfer (summary of section 5-1)",
       crossBorderDesc:
-        "Some processors host servers outside Korea (Supabase in Japan; Vercel, Resend, and Google in the USA), so personal data may be transferred and processed abroad for the items and purposes in section 5. Kakao and Naver are processed domestically. If you do not want cross-border transfer, you can stop using the related features such as alerts or withdraw your membership. See the table in the Korean body for transfer items, timing, retention, and how to refuse.",
+        "Some processors host servers outside Korea (Supabase in Japan; Vercel, Resend, and Google in the USA), so personal data may be transferred and processed abroad for the items and purposes in section 5. Kakao and Naver are processed domestically. If you do not want cross-border transfer, you can stop using the related features such as alerts or withdraw your membership. The legal basis for these transfers is the processing entrustment needed to provide the service and to perform your service agreement; the exact statutory wording is subject to separate professional legal review, and this summary is not legal advice. See the table in the Korean body for transfer items, timing, retention, and how to refuse.",
     },
   },
 } as const satisfies Record<Locale, unknown>;
