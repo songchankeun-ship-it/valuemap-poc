@@ -7,7 +7,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { statusCopy } from "@/lib/copy/status";
 import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
 import { marketFreshnessCopy } from "@/lib/freshness";
-import type { LocalizedDataStatus } from "@/lib/dataStatus";
+import type { LocalizedDataStatus, VerificationSource } from "@/lib/dataStatus";
 import type { StatusHistoryEntry } from "@/lib/statusHistory";
 import type { Locale } from "@/lib/i18n";
 
@@ -37,6 +37,7 @@ export function StatusContent({
   scoreTimeUtc,
   alertedCount,
   metricsChangelogPath,
+  verificationSources,
   statusHistory,
   priceLag,
   selfCheck,
@@ -48,6 +49,7 @@ export function StatusContent({
   scoreTimeUtc: string;
   alertedCount: number;
   metricsChangelogPath: string;
+  verificationSources: VerificationSource[];
   statusHistory: StatusHistoryEntry[];
   priceLag: {
     count: number;
@@ -98,6 +100,7 @@ export function StatusContent({
     { href: "#selfcheck", label: t.toc.selfcheck },
     { href: "#history", label: t.toc.history },
     { href: "#sources", label: t.toc.sources },
+    { href: "#verify", label: t.toc.verify },
     { href: "#report", label: t.toc.report },
   ];
 
@@ -301,6 +304,35 @@ export function StatusContent({
             </div>
           ))}
         </div>
+      </section>
+
+      {/* 원본 소스 직접 확인 — 사용자가 공식 원출처에서 수치를 직접 교차 확인하는 evidence 진입점.
+          외부 링크는 새 탭(rel=noopener). URL은 서버가 dataStatus에서 단일 소스로 넘긴 verificationSources,
+          이름·용도 문구는 로케일별 statusCopy에서 읽는다. 톤: 대조·확인용(비자문). */}
+      <section id="verify" className="scroll-mt-20">
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.verifyHeading}</div>
+        <p className="text-[12px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words">{t.verifyIntro}</p>
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800">
+          {verificationSources.map((v) => (
+            <a
+              key={v.id}
+              href={v.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition min-h-[44px]"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-blue-700 dark:text-blue-400 break-words">{t.verifySources[v.id].name} ↗</div>
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-words">{t.verifySources[v.id].what}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed break-words">
+          {t.verifyFormulaPrefix}
+          <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 hover:underline">{t.verifyFormulaLink}</Link>
+          {t.verifyFormulaSuffix} · {t.verifyOutbound}
+        </p>
       </section>
 
       {/* 데이터 오류 신고 — 단일 소스(dataStatus) 기반 진입점 */}

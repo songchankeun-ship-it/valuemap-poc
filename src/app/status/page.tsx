@@ -1,5 +1,5 @@
 import { dataMetadata, isDataStale } from "@/lib/realStocks";
-import { dataStatus, dataStatusByLocale, metricsChangelogPath } from "@/lib/dataStatus";
+import { dataStatus, dataStatusByLocale, metricsChangelogPath, VERIFICATION_SOURCES } from "@/lib/dataStatus";
 import { getAlertedTickers } from "@/lib/marketAlert";
 import { getPriceLagSummary } from "@/lib/priceLag";
 import { readStatusHistory } from "@/lib/statusHistory";
@@ -63,6 +63,7 @@ export default async function StatusPage() {
       scoreTimeUtc={scoreTimeUtc}
       alertedCount={alertedCount}
       metricsChangelogPath={metricsChangelogPath}
+      verificationSources={VERIFICATION_SOURCES}
       statusHistory={statusHistory}
       priceLag={{
         count: priceLag.count,

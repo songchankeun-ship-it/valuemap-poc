@@ -23,6 +23,7 @@ export const statusCopy = {
       selfcheck: "자동 점검",
       history: "상태 이력",
       sources: "데이터 소스",
+      verify: "원본 확인",
       report: "오류 신고",
     },
 
@@ -103,6 +104,20 @@ export const statusCopy = {
       scores: { name: "점수 변화 (Supabase daily_scores)", detail: "장 마감 후 cron 저장" },
     },
 
+    // 원본 소스 직접 확인 (evidence cockpit)
+    verifyHeading: "원본 소스에서 직접 확인",
+    verifyIntro:
+      "표시된 수치가 의심되면 아래 공식 원출처에서 직접 교차 확인해 보세요. 매수·매도 판단이 아니라 데이터 대조용입니다.",
+    verifySources: {
+      krx: { name: "KRX 정보데이터시스템", what: "가격·거래량·종가를 공식 시장 데이터로 확인" },
+      naver: { name: "네이버 금융", what: "PER·PBR·ROE·배당 등 재무 지표 대조" },
+      dart: { name: "DART 전자공시", what: "공시 원문을 직접 열람" },
+    },
+    verifyFormulaPrefix: "산식·점수 계산 방식은 ",
+    verifyFormulaLink: "지표 계산 방식",
+    verifyFormulaSuffix: " 문서에서 확인할 수 있습니다.",
+    verifyOutbound: "링크는 새 탭에서 외부 사이트로 이동합니다.",
+
     // 푸터 + 하단 링크
     footerNote:
       "데이터는 평일마다 장 마감 후 클라우드(GitHub Actions)에서 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.",
@@ -122,6 +137,7 @@ export const statusCopy = {
       selfcheck: "Self-check",
       history: "Status history",
       sources: "Data sources",
+      verify: "Verify",
       report: "Report issue",
     },
 
@@ -196,6 +212,20 @@ export const statusCopy = {
       },
       scores: { name: "Score changes (Supabase daily_scores)", detail: "Saved via cron after market close" },
     },
+
+    // Verify at the original source (evidence cockpit)
+    verifyHeading: "Verify at the original source",
+    verifyIntro:
+      "If a figure looks off, cross-check it directly at the official sources below. This is for data comparison, not a buy/sell judgment.",
+    verifySources: {
+      krx: { name: "KRX Information Data System", what: "Confirm price, volume, and close via official market data" },
+      naver: { name: "Naver Finance", what: "Cross-check PER, PBR, ROE, dividends and other financials" },
+      dart: { name: "DART electronic disclosure", what: "Read the original disclosure filings directly" },
+    },
+    verifyFormulaPrefix: "See how metrics and scores are computed in the ",
+    verifyFormulaLink: "metrics calculation",
+    verifyFormulaSuffix: " guide.",
+    verifyOutbound: "Links open the external site in a new tab.",
 
     footerNote:
       "Data is auto-updated in the cloud (GitHub Actions) after market close on weekdays. If an update fails, the last good data is kept, and new data is applied only after passing automated checks (consistency and branding). All scores and rankings are based on closing prices and are not investment advice.",

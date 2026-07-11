@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [claude] /status evidence cockpit: 원본 소스 직접 확인 섹션
+- **목표**: 사용자가 앱을 신뢰하기 전에 "무엇이 신선하고, 무엇이 제한적이며, 무엇을 원본에서 직접 확인할 수 있는가"를 1분 내 파악하도록 로컬 신뢰/근거 코크핏 강화. 점수 산식·데이터 수집은 무변경(로컬 UI/문서만).
+- **간극**: 기존 /status "데이터 소스" 섹션은 출처 이름만 나열하고 사용자가 **원본에서 직접 교차검증할 클릭 경로**가 없었음.
+- **변경**:
+  - `src/lib/dataStatus.ts`: `VERIFICATION_SOURCES`(KRX `data.krx.co.kr`, Naver `finance.naver.com`, DART `dart.fss.or.kr/dsab001/main.do`) + `VerificationSource`/`VerificationSourceId` 타입 추가. URL 단일 소스. StockDisclosures가 이미 쓰는 DART 검색 진입점과 동일.
+  - `src/lib/copy/status.ts`: ko/en 모두 `verify*` 크롬(제목·안내·소스 이름/용도·산식 링크·외부탭 고지) + TOC `verify` 추가. 비자문 톤("매수·매도 판단 아님, 대조용").
+  - `src/app/status/page.tsx`: `VERIFICATION_SOURCES`를 직렬화 prop로 전달(클라이언트 번들에 stocks.json 미포함 원칙 유지 — 텍스트는 copy에서, URL만 서버 prop).
+  - `src/components/status/StatusContent.tsx`: 데이터 소스 섹션 뒤에 `#verify` 섹션 추가. 외부 링크 `target="_blank" rel="noopener noreferrer"`, 각 행 `min-h-[44px]`(터치 타깃), `break-words`/`min-w-0`로 390px 오버플로 방지. 산식 검증은 내부 `/guide/metrics`로 안내.
+- **검증**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목/오류0/금칙어0/Metrics 2.4 · `git diff --check` 0 · `npm run build` 0 · 로컬 prod :4633 `/status` 200 — SSR에 `id="verify"`·"원본 소스에서 직접 확인"·3개 원본 URL·`rel="noopener noreferrer"` 존재, 에러 마커 0 · `verify-routes` 9/9 · `smoke-check --all` 24/24.
+- **소유자 전용 라이브 검증 게이트(문서화)**: 이 슬라이스는 로컬 UI/문서만. **배포된 공개 사이트에서 원본 소스 대비 라이브 신선도 교차검증**(release 시 `verify:routes`/`smoke:check --all`를 `https://ornscore.com` 대상으로 실행, 실기기 QA, Search Console 재색인)은 소유자 승인·실행 항목으로 남는다. AI는 원격 push/호스팅/스토어/계정 작업을 하지 않음. 참조: `docs/ornscore-owner-final-checklist.md`.
+- **잔여/다음**: 인하네스 브라우저 없어 390×844 실측 스크린샷 없음(구성상 오버플로 위험 낮음 — 고정폭 요소 없음, flex-wrap TOC, break-words). 작업 PC는 /status를 390px에서 눈으로 확인 권장. 로컬 커밋만; push 없음; main 무변경.
+
 ## 2026-07-11 - [codex] Owner-approved public release for app/review batch
 - **Scope**: Release-only closeout after the completed 2026-07-11 app-launch + review-residual automation batch. Owner approved the live release in Codex. No source/scoring/data/auth/store-console/Search Console/account/assetlinks content change in this closeout note.
 - **Release action**: Fast-forwarded local `main` to release commit `b871363` (`[codex] recover task 154 final handoff status`) and pushed non-forced to `origin/main` (`d35cfdc..b871363`). Vercel auto-deploy was verified on the public domain.

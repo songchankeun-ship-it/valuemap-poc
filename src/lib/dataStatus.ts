@@ -71,6 +71,26 @@ export const DATA_SOURCES: DataSource[] = [
   { id: "dart", label: "DART", usage: "공시 원문과 공시 신호 분류에 사용합니다." },
 ];
 
+/**
+ * 원본 소스 직접 확인 경로(evidence cockpit) — 사용자가 오른스코어 수치를 공식 원출처에서
+ * 직접 교차 확인할 수 있는 외부 링크. URL은 이곳에서 단일 관리하고, 표시 문구(이름·용도)는
+ * 로케일별 statusCopy.verifySources에서 읽는다(클라이언트 번들에 stocks.json 미포함 유지).
+ * 비자문 원칙: "확인·대조" 용도만 안내하며 매수·매도 판단을 유도하지 않는다.
+ */
+export type VerificationSourceId = "krx" | "naver" | "dart";
+
+export interface VerificationSource {
+  id: VerificationSourceId;
+  /** 공식 원출처 홈/검색 진입점(새 탭 이동). */
+  url: string;
+}
+
+export const VERIFICATION_SOURCES: VerificationSource[] = [
+  { id: "krx", url: "https://data.krx.co.kr/" },
+  { id: "naver", url: "https://finance.naver.com/" },
+  { id: "dart", url: "https://dart.fss.or.kr/dsab001/main.do" },
+];
+
 /** generatedAt(ISO) → "YYYY.MM.DD" (산식 적용일 파생용). 형식 불명 시 undefined. */
 function isoToDotDate(iso?: string): string | undefined {
   if (!iso || iso.length < 10) return undefined;
