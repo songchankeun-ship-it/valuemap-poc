@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] 스토어 제출 팩 로컬 다듬기 — 옛 지표명·오너 게이트 정리 (Task 145)
+- **범위**: Play/App Store 제출 준비 문서 2종을 현 사이트 사실 기준으로 다듬음. **문서 전용** — 소스/매니페스트/아이콘/라우트/메타데이터/점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증·알림 동작 무변경. 외부 콘솔 제출/업로드/계정/서명/호스팅 조치 0. 브랜치 `ai-center/task-145-ornscore-app-launch-2026-07-11-c-sto`.
+- **문제**: `docs/app-store-submission-pack.md`·`docs/ornscore-mobile-listing-prep-pack.md`의 리스팅 카피가 **옛 지표명**(모멘텀·변동성조정)을 써서 현 사이트 용어(추세·거래활성도·밸류·위험조정, `src/lib/metricReadings.ts:28,92,122-132`)와 불일치. 스크린샷·데이터 안전/개인정보 콘솔 답변의 **오너 전용** 표기가 약함. OG/Twitter·manifest `screenshots[]` 공유 이미지 부재는 문서화가 분산.
+- **변경(문서 2, 소스 0)**:
+  - `app-store-submission-pack.md`: (1) Google Play·App Store 전체 설명 지표명 2곳 모멘텀·변동성조정 → 추세·위험조정. (2) 갱신일 2026-07-01 → 2026-07-11. (3) 문의 `contact@ornscore.com`이 라이브 전 페이지·`src/lib/dataStatus.ts` `reportEmail`가 쓰는 대표 주소임을 명시 — 리뷰의 `support@` 통일 제안은 저장소 근거 없어 오너 개설 전까지 `contact@` 유지로 결정 기록. (4) Data safety·App Privacy 초안에 **오너 전용(계정 콘솔 답변)** 배너. (5) 스크린샷 섹션을 캡처 체크리스트 + 미확보 에셋 게이트(모바일 standalone 캡처·manifest `screenshots[]`·OG/Twitter 공유 이미지 — 현재 자산 없음, 가짜 생성 금지)로 확장. (6) 리스크 점검에 '콘솔 제출은 오너 작업' 1줄.
+  - `ornscore-mobile-listing-prep-pack.md`: 리스팅 카피 지표명 동기화 + 2026-07-11 갱신 노트.
+- **검증**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF만) · 두 문서 옛 지표명 잔존 0 · U+FFFD 0 · CRLF 보존. 문서 전용(라우트/UI/메타데이터/공개문구/SEO 무접촉)이라 build/smoke/routes는 이 슬라이스에 불필요.
+- **잔여 리스크 / 다음 큐**: 캡처 스크린샷·OG/Twitter 공유 이미지·manifest `screenshots[]`는 실기기 캡처·디자인 산출물이 선행되는 **오너/디자인 게이트**(자산 없음 — 문서에 게이트로만 기록, 코드 미변경). 대표 메일 통일(`support@` 등)·실 콘솔 제출·서명 SHA-256 확보는 오너 게이트. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [claude] Android TWA assetlinks 안전장치 강화 (가짜 지문 게이트) (Task 144)
 - **범위**: 실 Digital Asset Links를 배포하지 않으면서 Android TWA 준비를 더 안전하게. **로컬 검증/스크립트/문서 전용** — 매니페스트/아이콘/UI/라우트/메타데이터/점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증·알림 동작 무변경. 실 assetlinks 생성·배포·원격 push·계정/콘솔 조치 0. 브랜치 `ai-center/task-144-ornscore-app-launch-2026-07-11-b-and`.
 - **문제(문서-코드 불일치)**: 운영자 키트(`ornscore-android-assetlinks-owner-kit.md`)는 `AB:AB:…:AB` 같은 **반복 단일바이트 더미**를 "가짜 = 커밋 금지"로 명시하지만, `check-app-packaging.mjs`의 공개파일 가드는 자리표시자 **문자열 2개**(`REPLACE_WITH_REAL`·`com.example.ornscore`)만 검사했다. 즉 `com.ornscore.app` + 전부-AB 지문 파일이 커밋되면 "non-placeholder values"로 **오탐 통과**(false green)했다 — 배포 시 TWA 도메인 검증 실패로 주소창 노출 위험.
