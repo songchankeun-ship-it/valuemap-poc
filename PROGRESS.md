@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [codex] Final launch P0 trust fixes from post-release review
+- **범위**: 외부 검수 `7d5c09f4`의 "출시 전 마지막 P0 3개"만 처리. 공개 문구/표시 분류 전용이며 `public/data/*`, 가격 수집, DART 수집, 점수 산식, `metricsVersion`은 변경하지 않음. 배포/push는 새 사용자 승인 전까지 보류.
+- **홈 공시 카드**: 홈 미니 공시 카드가 `signalType=treasury_buy`의 generic 문구만 쓰던 문제를 수정. `signalLabel` 우선 매핑을 추가해 자기주식 처분/신탁 해지/신탁 체결/직접 취득을 각각 다른 확인 포인트로 표시한다. 매핑 누락 fallback도 "취득" 단정이 아닌 중립 자사주 문구로 변경.
+- **업종 오분류**: `sectorOf(themes, ticker?)`를 티커 override 가능 구조로 확장하고 NAVER(`035420`)는 `인터넷·플랫폼`, 비에이치아이(`083650`)는 `에너지·기계`로 표시. `/stocks`, 홈/오늘/상세/비교/유니버스/저장 필터 매칭 호출부가 같은 기준을 쓰도록 티커를 전달.
+- **개인정보처리방침**: `/privacy` 국외 이전 문단에서 "확정 예정", "법률 자문 아님" 초안 문구를 제거하고, 서비스 제공을 위한 처리위탁 및 이용계약 이행 범위/거부 방법/기능 제한 안내로 정리.
+- **검증**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF warning only) · `npm run build` 0(기존 `TrustLayer` ref warning만) · local prod 4764 `verify:routes` 9/9 · `smoke:check --all` 24/24. SSR 직접 확인: `/stocks`와 `/stock/035420`에 `인터넷·플랫폼`, `/stocks`와 `/stock/083650`에 `에너지·기계`, `/privacy`에 초안/자문 문구 0건. `tsx` 스팟체크로 홈 공시 라벨별 확인 포인트 4종 매핑 확인.
+- **다음에 바로 실행할 작업**: 사용자가 승인하면 이 커밋을 `origin/main`에 비강제 push하고 공개 사이트 배포 반영 후 cache-busted `verify:routes`/`smoke:check --all`로 확인. 출시 후 개선 항목은 검색 스니펫/색인 재요청, 알림 fallback, 비교 접근성 텍스트, 검색창 강화 순서로 큐화.
+
 ## 2026-07-11 · [claude] 최종 공개 릴리스 — Reaudit 2026-07-10 배치(Task 131~141) origin/main 반영 (Task 142)
 - **범위**: 재검수(2026-07-10 외부 리뷰) 배치의 최종 공개 릴리스. 소유자 승인(2026-07-10 Codex 대화)에 따라 검증된 릴리스 HEAD를 **비강제(non-force)** 표준 경로로 `origin/main`에 반영하고 공개 사이트를 확인. 계정/호스팅/시크릿/패키지 레지스트리 설정은 무접촉. 브랜치 `ai-center/task-142-ornscore-reaudit-2026-07-10-z-final-`.
 - **대기 조건 충족 확인**: Task 131~141 전부 로컬 검증·커밋 완료(작업트리 clean). 브리프 매핑 — P0#1 데이터 신선도(T131)·P0#2 종목별 가격 지연 배지(T132)·P0#3 비교 빈 상태(T133)·P0#4 자사주 분류/P0#5 보유변동 대상·보고자(T134)·#8~#10 연락처/국외이전/yfinance(T135)·P1#6 종목 SEO 메타(T136)·P1#7 백테스트 nosnippet(T137)·P2#5 차트 텍스트 fallback(T138)·P2#1 홈 검색(T139)·P2#3 발견 라벨(T140)·고도화 차트 이벤트/데이터 상태 이력 계획(T141). 미커밋 소스 변경 없음.

@@ -117,7 +117,7 @@ export default function UniversePage() {
               ) : (
                 rows.map((s, i) => {
                   const suspect = isSuspect(s);
-                  const sector = sectorOf(s.themes);
+                  const sector = sectorOf(s.themes, s.ticker);
                   return (
                     <tr key={s.ticker} className="border-t border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
                       <td className="py-1.5 px-3 tabular-nums text-zinc-500 dark:text-zinc-400">{i + 1}</td>

@@ -22,7 +22,7 @@ export interface DisclosureSignalVM {
 export function DisclosureSignalCard({ s }: { s: DisclosureSignalVM }) {
   const { locale } = useLanguage();
   const t = homeCopy[locale].disclosure;
-  const checkPoint = t.check[s.signalType] ?? t.check.default;
+  const checkPoint = t.checkByLabel[s.signalLabel] ?? t.check[s.signalType] ?? t.check.default;
   const meta = typeMetaOf(s.signalType);
   const Icon = meta.Icon;
   return (

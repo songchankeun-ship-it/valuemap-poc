@@ -147,7 +147,7 @@ export default async function HomePage() {
   for (const s of realStockPool) {
     poolLookup[s.ticker] = {
       name: s.name,
-      sector: sectorOf(s.themes),
+      sector: sectorOf(s.themes, s.ticker),
       score: displayCompositeScore(s),
       changePct: s.changePct,
     };
@@ -173,7 +173,7 @@ export default async function HomePage() {
       rank: i + 1,
       name: s.name,
       ticker: s.ticker,
-      sector: sectorOf(s.themes),
+      sector: sectorOf(s.themes, s.ticker),
       priceLabel: fmtWon(s.currentPrice),
       changePct: s.changePct,
       r3m,

@@ -12,7 +12,7 @@ interface PageProps {
 }
 
 function allSectors() {
-  return Array.from(new Set(realStockPool.map((s) => sectorOf(s.themes)))).sort((a, b) => a.localeCompare(b, "ko"));
+  return Array.from(new Set(realStockPool.map((s) => sectorOf(s.themes, s.ticker)))).sort((a, b) => a.localeCompare(b, "ko"));
 }
 
 // SSR 시점에 필터 조합의 결과 건수를 서버에서 계산한다. StocksExplorer 의 matchesConfig 중
@@ -23,7 +23,7 @@ function serverResultCount({ theme, sector, q }: { theme?: string; sector?: stri
   return realStockPool.filter((s) => {
     if (ql && !s.name.toLowerCase().includes(ql) && !s.ticker.includes(ql)) return false;
     if (theme && !s.themes.includes(theme)) return false;
-    if (sector && sectorOf(s.themes) !== sector) return false;
+    if (sector && sectorOf(s.themes, s.ticker) !== sector) return false;
     return true;
   }).length;
 }
@@ -159,7 +159,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
     vol: s.vol,
     compositeScore: s.compositeScore,
     themes: s.themes,
-    sector: sectorOf(s.themes),
+    sector: sectorOf(s.themes, s.ticker),
     r3m: typeof s.returns?.r3m === "number" ? s.returns.r3m : null,
   }));
   const themes = allThemes();

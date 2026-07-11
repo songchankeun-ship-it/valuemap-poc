@@ -113,14 +113,14 @@ export default async function ComparePage({ searchParams }: PageProps) {
 
   // 예시·큐레이션 쌍이 이미 커버한 업종은 보충에서 제외(중복 방지)
   const curatedSectors = new Set(
-    [...namedSets, ...curatedSets].flatMap((set) => set.tickers.map((t) => sectorOf(byTicker.get(t)!.themes)))
+    [...namedSets, ...curatedSets].flatMap((set) => set.tickers.map((t) => sectorOf(byTicker.get(t)!.themes, t)))
   );
 
   // 같은 업종(sector) 그룹 — 검증 보류 제외, 큐레이션이 다루지 않은 업종만 보충
   const bySector = new Map<string, typeof allStocks>();
   for (const s of allStocks) {
     if (!(compositeOf(s) > 0) || isSuspect(s)) continue;
-    const sector = sectorOf(s.themes);
+    const sector = sectorOf(s.themes, s.ticker);
     if (!sector || sector === "기타" || curatedSectors.has(sector)) continue;
     const arr = bySector.get(sector) ?? [];
     arr.push(s);

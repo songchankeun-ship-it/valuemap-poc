@@ -249,8 +249,8 @@ export default async function StockDetailPage({ params }: PageProps) {
   const poolN = realStockPool.length;
   const overallRank = realStockPool.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
   const overallTieCount = realStockPool.filter((p) => Math.round(compositeOf(p)) === composite).length;
-  const mySector = sectorOf(s.themes);
-  const sectorPeers = realStockPool.filter((p) => sectorOf(p.themes) === mySector);
+  const mySector = sectorOf(s.themes, s.ticker);
+  const sectorPeers = realStockPool.filter((p) => sectorOf(p.themes, p.ticker) === mySector);
   const sectorRank = sectorPeers.filter((p) => Math.round(compositeOf(p)) > composite).length + 1;
   const sectorTieCount = sectorPeers.filter((p) => Math.round(compositeOf(p)) === composite).length;
   const sectorCount = sectorPeers.length;

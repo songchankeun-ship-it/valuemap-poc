@@ -111,12 +111,19 @@ export const homeCopy = {
       viewStock: "종목 보기",
       dartOriginal: "DART 원문 ↗",
       check: {
-        treasury_buy: "자기주식 취득 규모와 목적을 원문에서 확인하세요.",
+        treasury_buy: "자기주식 공시의 세부 유형과 규모·목적을 원문에서 확인하세요.",
         insider_buy: "보유 변동의 매수·매도 방향과 규모를 본문에서 확인하세요.",
         correction: "정정 사유와 변경된 수치를 원문에서 확인하세요.",
         single_contract: "계약 규모와 직전 매출 대비 비율을 원문에서 확인하세요.",
         capital_raise: "발행 규모와 자금 사용 목적을 원문에서 확인하세요.",
         default: "공시 원문에서 세부 내용을 확인하세요.",
+      } as Record<string, string>,
+      checkByLabel: {
+        "자기주식 처분 결정": "처분 규모 · 처분 목적 · 처분 대상 · 잔여 자사주 · 오버행 가능성을 원문에서 확인하세요.",
+        "자사주 신탁계약 해지": "해지 사유 · 실제 취득 완료 수량 · 소각 여부 · 잔여 신탁금을 원문에서 확인하세요.",
+        "자사주 신탁계약 체결": "취득 예정 금액 · 기간 · 목적 · 시총 대비 규모를 원문에서 확인하세요.",
+        "자기주식 취득 결정": "직접 취득 예정 수량 · 취득 기간 · 취득 목적 · 시총 대비 규모를 원문에서 확인하세요.",
+        "자기주식 취득 결의": "직접 취득 예정 수량 · 취득 기간 · 취득 목적 · 시총 대비 규모를 원문에서 확인하세요.",
       } as Record<string, string>,
     },
     myStocks: {
@@ -269,12 +276,19 @@ export const homeCopy = {
       viewStock: "View stock",
       dartOriginal: "DART original ↗",
       check: {
-        treasury_buy: "Check the size and purpose of the treasury-stock purchase in the original.",
+        treasury_buy: "Check the specific treasury-stock event type, size, and purpose in the original.",
         insider_buy: "Check the buy/sell direction and size of the holding change in the body.",
         correction: "Check the reason for the correction and the changed figures in the original.",
         single_contract: "Check the contract size and its ratio to recent revenue in the original.",
         capital_raise: "Check the issuance size and the purpose of the funds in the original.",
         default: "Check the details in the original disclosure.",
+      } as Record<string, string>,
+      checkByLabel: {
+        "자기주식 처분 결정": "Check the disposal size, purpose, recipients, remaining treasury shares, and possible overhang in the original.",
+        "자사주 신탁계약 해지": "Check the termination reason, actual shares acquired, cancellation status, and remaining trust balance in the original.",
+        "자사주 신탁계약 체결": "Check the planned amount, period, purpose, and size versus market cap in the original.",
+        "자기주식 취득 결정": "Check the planned direct-purchase quantity, period, purpose, and size versus market cap in the original.",
+        "자기주식 취득 결의": "Check the planned direct-purchase quantity, period, purpose, and size versus market cap in the original.",
       } as Record<string, string>,
     },
     myStocks: {

@@ -147,7 +147,7 @@ export default function PrivacyPage() {
           </div>
           <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">소셜 로그인 중 Kakao와 Naver는 국내 처리되며, Google은 미국에서 처리되어 위 표에 포함됩니다. 위탁사 변경·추가 시 본 표를 갱신합니다.</p>
           <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            <strong className="text-zinc-700 dark:text-zinc-300">국외 이전의 법적 근거(방향)</strong>: 위 국외 이전은 서비스 제공을 위한 개인정보 처리위탁과 이용자의 서비스 이용계약 이행에 필요한 처리를 근거로 합니다. 정확한 근거 조문·표현은 개인정보 전문 자문(변호사 등)의 검토를 거쳐 확정할 예정이며, 본 문구는 법률 자문이 아닙니다.
+            <strong className="text-zinc-700 dark:text-zinc-300">국외 이전의 법적 근거</strong>: 위 국외 이전은 서비스 제공을 위한 개인정보 처리위탁 및 이용계약 이행에 필요한 범위에서 이루어집니다. 이용자는 해당 기능 사용 중단 또는 회원 탈퇴를 통해 국외 이전을 거부할 수 있으며, 이 경우 일부 기능 이용이 제한될 수 있습니다.
           </p>
         </section>
 

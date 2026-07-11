@@ -46,6 +46,6 @@ export function matchesConfig(s: StockForMatch, c: SavedSearchConfig): boolean {
   if (c.themes && c.themes.length > 0) {
     if (!s.themes.some((t) => c.themes!.includes(t))) return false;
   }
-  if (c.sector && sectorOf(s.themes) !== c.sector) return false;
+  if (c.sector && sectorOf(s.themes, s.ticker) !== c.sector) return false;
   return true;
 }

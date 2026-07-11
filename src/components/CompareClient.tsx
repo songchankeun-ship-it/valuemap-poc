@@ -557,7 +557,7 @@ export function CompareClient({
   const canAddMore = stocks.length < COMPARE_MAX;
 
   // "먼저 무엇을 비교하는지" 프레임 — 표를 보기 전에 이 묶음의 성격을 한 줄로 짚어준다(비자문·사실).
-  const compareSectors = Array.from(new Set(stocks.map((s) => sectorOf(s.themes))));
+  const compareSectors = Array.from(new Set(stocks.map((s) => sectorOf(s.themes, s.ticker))));
   const sameSector = compareSectors.length === 1;
   const perValues = stocks.map((s) => s.per).filter((v) => v > 0);
   const perRange = perValues.length >= 2 ? { min: Math.min(...perValues), max: Math.max(...perValues) } : null;
@@ -683,7 +683,7 @@ export function CompareClient({
                   {isUp ? "▲" : isDown ? "▼" : "—"} {Math.abs(s.changePct).toFixed(2)}%
                 </div>
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">시총 {fmtMarketCap(s.marketCap)}</div>
-                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sectorOf(s.themes)}</div>
+                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sectorOf(s.themes, s.ticker)}</div>
               </Link>
             </div>
           );

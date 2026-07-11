@@ -2,10 +2,16 @@
 // 데이터에 GICS 업종이 없어, 대표 테마 키워드로 섹터를 근사한다(완벽하진 않음).
 
 export interface SectorStock {
+  ticker?: string;
   themes: string[];
   per: number;
   pbr: number;
 }
+
+const SECTOR_OVERRIDES_BY_TICKER: Record<string, string> = {
+  "035420": "인터넷·플랫폼", // NAVER
+  "083650": "에너지·기계", // 비에이치아이
+};
 
 const SECTOR_RULES: { sector: string; keys: string[] }[] = [
   { sector: "반도체·IT부품", keys: ["반도체", "HBM", "DDR", "팹리스", "후공정", "MLCC", "PCB", "LCD", "OLED", "디스플레이", "이미지센서", "스마트폰"] },
@@ -22,7 +28,8 @@ const SECTOR_RULES: { sector: string; keys: string[] }[] = [
   { sector: "지주·기타", keys: ["지주사"] },
 ];
 
-export function sectorOf(themes: string[] | undefined): string {
+export function sectorOf(themes: string[] | undefined, ticker?: string): string {
+  if (ticker && SECTOR_OVERRIDES_BY_TICKER[ticker]) return SECTOR_OVERRIDES_BY_TICKER[ticker];
   // 기업집단(○○그룹)은 업종이 아니므로 매칭에서 제외 — "현대자동차그룹"의 '자동차' 오매칭 방지
   const ts = (themes ?? []).filter((t) => !t.includes("그룹"));
   for (const rule of SECTOR_RULES) {
@@ -35,8 +42,8 @@ export interface SectorValue { score: number; sector: string; peers: number }
 
 /** 같은 업종 내 PER·PBR 상대 위치(0~100, 높을수록 업종 내 저평가). 피어 4개 미만이면 score=-1. */
 export function sectorValueScore(target: SectorStock, pool: SectorStock[]): SectorValue {
-  const sector = sectorOf(target.themes);
-  const peers = pool.filter((p) => sectorOf(p.themes) === sector && p.per > 0 && p.pbr > 0);
+  const sector = sectorOf(target.themes, target.ticker);
+  const peers = pool.filter((p) => sectorOf(p.themes, p.ticker) === sector && p.per > 0 && p.pbr > 0);
   if (peers.length < 4 || !(target.per > 0 && target.pbr > 0)) {
     return { score: -1, sector, peers: peers.length };
   }

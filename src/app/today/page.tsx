@@ -132,7 +132,7 @@ export default async function TodayPage() {
   const toRaw = (s: (typeof validStocks)[number]): TodayStockRaw => ({
     name: s.name,
     ticker: s.ticker,
-    sector: sectorOf(s.themes),
+    sector: sectorOf(s.themes, s.ticker),
     priceLabel: fmtWon(s.currentPrice),
     changePct: s.changePct,
     score: Math.round(compositeOf(s)),
@@ -172,7 +172,7 @@ export default async function TodayPage() {
       rank: i + 1,
       name: s.name,
       ticker: s.ticker,
-      sector: sectorOf(s.themes),
+      sector: sectorOf(s.themes, s.ticker),
       priceLabel: fmtWon(s.currentPrice),
       changePct: s.changePct,
       r3m,
