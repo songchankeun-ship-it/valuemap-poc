@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] 앱모드·모바일 표면 점검 + app:check 날짜 가드 복구 (Task 146)
+- **범위**: 홈 화면(standalone/PWA) 사용자가 닿는 7표면(`/about`·`/offline`·`/login`·`/watchlist`·`/settings/notifications`·`/privacy`·`/terms`)을 **스토어 패키징 전에** 점검·검증·문서화. 앱 소스 카피/점수식/데이터/`direction`/`metricsVersion`/인증/알림 동작 무변경. 원격 push·호스팅·콘솔·서명·라이브 릴리스 0. 브랜치 `ai-center/task-146-ornscore-app-launch-2026-07-11-d-sta`.
+- **점검 결과(정직성 게이트 통과)**: 설치/도움말·오프라인·로그인 폴백 카피가 **스토어 출시 단정·미제공 푸시 과장** 0. 근거 — `about/page.tsx:129`("App Store·Play 스토어 출시 여부 아직 미정"), `PwaInstallHelper`(프롬프트 있을 때만 실버튼·가짜 버튼 0), `NotificationChannels`(푸시=`preparing`·"준비 중"·켜둬도 무발송), `auth/callback/route.ts`+`LoginContent`(standalone 복귀 실패를 `auth_callback_no_code`→친절 폴백으로 구분), privacy/terms "확정 예정/법률 자문" 0·푸시/스토어 문구 0. → **앱 소스 카피 무편집(선행 태스크에서 이미 정직 수렴, churn 회피).**
+- **모바일 390px 오버플로(SSR·구조) 통과**: 7라우트 로컬 prod 200. 뷰포트보다 넓은 요소는 개인정보 국외이전 표(`privacy/page.tsx:96` `min-w-[480px]`) 1곳뿐이며 부모 `overflow-x-auto -mx-3 px-3`(line 95)+모바일 스와이프 안내(line 94)로 **컨테이너 내부 스크롤**·바디 넘침 0. `KakaoAlertPreview` `w-[300px]`<390 안전, 알림 채널 그리드 390px 1열. 실픽셀·다크대비·스티키는 오너 실기기 게이트(Playwright 미구성).
+- **부수 수정(패키징 게이트 복구)**: 직전 **Task 145가 제출 팩 갱신일을 `2026-07-01`→`2026-07-11`로 올리며 `check-app-packaging.mjs`의 freshness 가드 문자열은 갱신 안 함**(Task 145는 문서 전용이라 app:check 미실행 → 미검출). `npm run app:check`가 `FAIL … missing current store submission pack date`였다. 가드 문자열 `"마지막 갱신: 2026-07-01"`→`"2026-07-11"`(`scripts/check-app-packaging.mjs:176`, 문서 실제 날짜와 일치)로 맞춰 **게이트 초록 복구**.
+- **산출물**: `docs/ornscore-app-mode-mobile-qa-2026-07-11.md`(앱모드 전용 표면 QA — 실기기 390px 런북과 중복 없이 about/offline/notifications/privacy/terms 보강 + 오너 게이트 목록).
+- **검증(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF만) · `npm run app:check` **PASS**(FAIL 0·WAIT 1=assetlinks 외부 게이트, 수정 전 FAIL 1) · `npm run build` 0(138 SSG) · 로컬 prod 4472 `smoke:check --all` 24/24 · `verify:routes` 9/9(기대 기준일 `2026.07.10`) · 신규 문서 U+FFFD 0 · 스크립트 한글 인코딩 정상. 리스너 PID만 taskkill.
+- **잔여 리스크 / 다음 큐**: 실기기 390px 육안(다크+라이트)·standalone 설치→OAuth 왕복→매직링크 복귀·오프라인 실거동은 **오너 게이트**(문서 §4). Android assetlinks는 실 패키지+SHA-256 확보까지 WAIT. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [claude] 스토어 제출 팩 로컬 다듬기 — 옛 지표명·오너 게이트 정리 (Task 145)
 - **범위**: Play/App Store 제출 준비 문서 2종을 현 사이트 사실 기준으로 다듬음. **문서 전용** — 소스/매니페스트/아이콘/라우트/메타데이터/점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증·알림 동작 무변경. 외부 콘솔 제출/업로드/계정/서명/호스팅 조치 0. 브랜치 `ai-center/task-145-ornscore-app-launch-2026-07-11-c-sto`.
 - **문제**: `docs/app-store-submission-pack.md`·`docs/ornscore-mobile-listing-prep-pack.md`의 리스팅 카피가 **옛 지표명**(모멘텀·변동성조정)을 써서 현 사이트 용어(추세·거래활성도·밸류·위험조정, `src/lib/metricReadings.ts:28,92,122-132`)와 불일치. 스크린샷·데이터 안전/개인정보 콘솔 답변의 **오너 전용** 표기가 약함. OG/Twitter·manifest `screenshots[]` 공유 이미지 부재는 문서화가 분산.

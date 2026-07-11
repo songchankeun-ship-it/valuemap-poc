@@ -173,7 +173,7 @@ if (
   failure("assetlinks example placeholder changed unexpectedly");
 }
 
-includes("docs/app-store-submission-pack.md", "마지막 갱신: 2026-07-01", "current store submission pack date");
+includes("docs/app-store-submission-pack.md", "마지막 갱신: 2026-07-11", "current store submission pack date");
 includes("docs/app-store-submission-pack.md", "로그인 방식: 이메일 매직링크, Kakao, Google, Naver.", "active auth providers in store pack");
 includes("docs/app-store-submission-pack.md", "현재 유료 결제 없음", "no in-app payments in store pack");
 includes("docs/app-store-submission-pack.md", "Supabase, Vercel, Resend, Kakao, Google, Naver", "store privacy processors match public policy");
