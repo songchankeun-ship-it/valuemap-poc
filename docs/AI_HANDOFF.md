@@ -2013,3 +2013,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·cron/auth·`metricsVersion` 무변경. 신규 프롭 1개(`exampleStocks`)·클라이언트 핸들러 1개(`addExamples`)만 추가, 저장/제거/undo/비교 경로 재사용.
 - **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean · `npm run build` 0(SSG, `/watchlist` 11.2 kB) · 로컬 prod 4487 `/watchlist` 200(SSR h1·noscript 새 부제/CTA·RSC 예시 근거 82/98/99·U+FFFD 0) · 예시 선택 파이썬 독립 재현으로 distinct·`isSuspect=False` 교차검증. 리스너 PID 1388만 taskkill.
 - **남은 소유자**: 클릭 후 목록 전환·`ornscore_watchlist` 재방문 잔존·개별 담기·실행취소 undo 실거동과 실기기 390×844 육안은 운영자 게이트(Playwright 미구성, `docs/ornscore-real-device-390px-qa-2026-07-06.md` 기준). 로컬 커밋만·push 미수행·main 무변경.
+
+
+### Task 156 — 관심 종목 경로 첫 방문/재방문 유용성 점검 · 담기 토스트에 추적 가치 안내 (2026-07-11, [claude])
+- **Scope**: 관심 종목 경로(`/watchlist`·종목 상세 CTA·빈 상태·localStorage·알림 설정 진입점)를 계정/외부 알림 추가 없이 첫 방문·재방문 모두에 유용하게. 브랜치 `ai-center/task-156-ornscore-continuity-2026-07-11-b-wat`.
+- **점검 결과(대부분 기존 충족)**: 빈 상태(예시 3종+개별 담기+최근 본 종목 이어담기+검색), 제거 실행취소(목록·상세 토스트 양쪽), 로컬→클라우드 마이그레이션(레거시 키 `valuemap_watchlist`/`_migrated` 호환 유지), 내비 진입(Heart→/watchlist), 알림 브리지(가치 교육 겸용)까지 선행 Task 103/148/160/221에서 이미 성숙. 수용 기준 3개(빈 상태 명확한 다음 행동·상세→담기 발견성/비권유·기존 저장 데이터 호환) 사실상 충족 상태였음 → churn 회피, 실제 공백 1건만 보강.
+- **실제 공백 1건 보강(copy-only, 추가형)**: 종목 상세 `AddToWatchlistButton.tsx`의 "추가됨" 토스트는 익명(로그아웃=첫 방문 대개) 사용자에게 저장 위치·이 기기 저장만 안내하고 **왜 다시 찾을지(추적 가치)**는 안 알렸음. 가치 교육이 `/watchlist`에만 있고 결정 지점(상세)엔 없던 공백. → 로그아웃 분기에 muted 한 줄 추가: "담아두면 점수·공시 변화를 관심 목록에서 바로 추적해요"(로그인 사용자 토스트 무변경 = 재방문 다수에 노이즈 0). 비권유 표현.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`watchlist.ts` 저장/마이그레이션 로직·localStorage 키·cron/auth·`metricsVersion` 무변경. 편집 1파일(`AddToWatchlistButton.tsx`) copy-only, 신규 로직/프롭 0. 금칙어 신규 도입 0.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean · `npm run build` 0(SSG, `/watchlist` 12.8 kB) · 신규 카피 클라이언트 청크(7224) 번들 확인 · `smoke:check`(base 4455) 7/7 200(`/watchlist` 포함) · 편집 파일 U+FFFD 0.
+- **남은 소유자**: 실기기 390×844 첫 화면 육안·로그아웃 토스트 3줄 레이아웃 실측·로그인 왕복은 운영자 게이트(Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.

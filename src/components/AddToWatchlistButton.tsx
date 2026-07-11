@@ -157,9 +157,11 @@ export function AddToWatchlistButton({
                   목록 보기 →
                 </Link>
               </div>
-              {/* 로그아웃이 확인된 경우에만 — 이 기기 저장·로그인 시 이어짐을 조용히 안내 */}
+              {/* 로그아웃이 확인된 경우에만(익명·첫 방문 대개) — 왜 다시 찾을지(추적 가치) + 이 기기 저장·로그인 시 이어짐을 조용히 안내.
+                  값 안내는 참고 정보이며 매수·매도 추천이 아니다. */}
               {isLoggedOut ? (
                 <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-400">
+                  <span className="w-full text-center break-keep text-zinc-300">담아두면 점수·공시 변화를 관심 목록에서 바로 추적해요</span>
                   <span className="break-keep">이 기기에 저장됨 · 로그인하면 다른 기기에서도 이어집니다</span>
                   <Link
                     href={loginHref}
