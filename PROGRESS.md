@@ -2856,3 +2856,10 @@
 - **게이트(전부 통과, base=http://localhost:4459)**: `npx tsc --noEmit` 0 · `npm run build` 0(138 SSG, 라우트 표 불변) · `npm run verify:local` → 진짜 게이트 4/4 통과(`smoke:check --all` 24/24 · `verify:routes` 9/9 기준일 2026.07.10 · `verify:stocks-seo` 12/12 · `verify:login-preflight` 5/5), perf advisory 0 경고. 오케스트레이터 exit 코드 검증: 성공 exit 0 · 서버 미기동 exit 1 · `--no-perf` 4/4 exit 0. `git diff --check` clean. 편집 문서 U+FFFD 0.
 - **perf baseline**(base=http://localhost:4459, 3 samples, median TTFB): `/`=36ms · `/stocks`=26ms · `/today`=33ms · `/stock/034730`=35ms · `/stock/032830`=29ms · `/login`=44ms · `/pricing`=61ms · `/status`=44ms · `/disclosures`=39ms · `/backtest`=41ms · `/watchlist`=41ms · `/compare`=46ms. (카테고리 B total: `/today`=4060ms · `/stock/034730`=4044ms · `/stock/032830`=4056ms · `/watchlist`=4045ms — Supabase 왕복, 정상 신호. 나머지 total <70ms.)
 - **남은 소유자/다음**: 실기기 브라우저 픽셀·OAuth 실 왕복은 여전히 운영자 게이트(Playwright 미구성). 후속 후보: perf:check에 카테고리 B `total` 예산 경고를 명시 추가(현재는 문서로만 안내). 배포 시 `verify:local --base https://ornscore.com`으로 라이브 재확인(운영자 실행). 로컬 커밋만·push 미수행·main 무변경.
+
+
+### Task 160 — 연속성 배치 클로징: 소유자 핸드오프 정리 (2026-07-12, [claude])
+- **Scope**: 2026-07-11 연속성 배치(tasks 155-159, A-E)를 채팅 기록 없이 넘겨받을 수 있게 단일 핸드오프/체크리스트로 정리. docs-only(신규 클로징 문서 1 + PROGRESS + AI_HANDOFF). 소스/점수식/metricsVersion/데이터 수집/auth/cron/원격/호스팅/스토어/계정 무변경. 브랜치 ai-center/task-160-ornscore-continuity-2026-07-11-f-own.
+- **산출물**: docs/ornscore-continuity-2026-07-11-batch-closeout.md — (1) 배치가 로컬로 끝낸 5슬라이스 표(155~159, 커밋), (2) 다음 릴리스 체크리스트(라이브 출시 주장 없음, 로컬 재현 순서), (3) 운영자 전용 게이트 요약(정본은 owner-final-checklist §B로 위임 — 라이브 릴리스/assetlinks/실기기 QA/픽셀/스토어 콘솔/Search Console/결제·법무), (4) 다음 자동화 큐(spec-coverage §A 위임). 개별 task의 옛 "다음 작업" 줄은 이 클로징 큐로 대체됨을 명시(역사 기록은 보존).
+- **불변식/스코프 준수**: 원격 push·호스팅·스토어·Search Console·계정 작업 0. agent가 운영자 외부 액션을 자동 실행하지 않음(문서로만 분리).
+- **게이트(재실행, 전부 green)**: npx tsc --noEmit 0 · verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean · npm run app:check pass(외부 WAIT 1 = assetlinks, 운영자 전용) · 편집 문서 U+FFFD 0. 로컬 커밋만·push 미수행·main 무변경.
