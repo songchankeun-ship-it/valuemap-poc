@@ -203,7 +203,9 @@ export const homeHeroCopy = {
     note: "오른스코어는 투자 추천이 아닌, 한국 주식 탐색·분석 무료 도구입니다.",
     stockSearch: "종목명·코드 검색",
     browseAll: "전체 종목 목록",
-    searchHint: "예: 삼성전자, 005930, GS — 궁금한 종목을 바로 검색하세요.",
+    searchLabel: "종목 바로 검색",
+    searchExamplePrefix: "예",
+    searchCodeNote: "코드로도 검색",
     previewRelation: (strong: number, shown: number) =>
       `종합 80↑ ${strong}개 중 먼저 볼 ${shown}개`,
     previewTitle: "오늘 먼저 볼 후보",
@@ -233,7 +235,9 @@ export const homeHeroCopy = {
     note: "OrnScore is a free Korean-stock research tool, not investment advice.",
     stockSearch: "Search by name or code",
     browseAll: "All stocks",
-    searchHint: "e.g. Samsung Electronics, 005930, GS — look up any stock directly.",
+    searchLabel: "Search any stock",
+    searchExamplePrefix: "Try",
+    searchCodeNote: "codes work too",
     previewRelation: (strong: number, shown: number) =>
       `${shown} shown first of ${strong} scoring 80+`,
     previewTitle: "Candidates to check first",

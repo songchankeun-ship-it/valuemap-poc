@@ -15,6 +15,9 @@ interface SearchStockItem {
   themes: string[];
 }
 
+// 검색창 아래 예시 칩용 대표 종목 코드(삼성전자·카카오·GS). 분석 풀에 있는 것만 렌더된다.
+const SEARCH_EXAMPLE_TICKERS = ["005930", "035720", "078930"];
+
 interface HomeHeroProps {
   dataAsOf: string;
   /** 데이터 기준일 YYYYMMDD (방문 시각 기준 신선도 계산용). */
@@ -53,6 +56,12 @@ export function HomeHero({
   const dataWarn = dataStale || awaitingClose;
   const lead = previewCandidates[0];
   const visibleCandidateCount = Math.min(previewCandidates.length, 3);
+  // 검색이 홈의 1차 동선임을 드러내는 예시 칩 — 잘 알려진 대형주를 실제 분석 풀에서만 노출(없으면 자동 제외).
+  // 하드코딩된 종목명 대신 풀에서 이름을 조회해 이름/코드 불일치를 방지한다.
+  const searchExamples = SEARCH_EXAMPLE_TICKERS.map((ticker) => {
+    const hit = searchStocks.find((s) => s.ticker === ticker);
+    return hit ? { ticker, name: hit.name } : null;
+  }).filter((x): x is { ticker: string; name: string } => x !== null);
   const countLabel = locale === "ko" ? `${totalCount}개 분석` : `${totalCount} analyzed`;
   const changeLabel = lead
     ? `${lead.changePct >= 0 ? "▲" : "▼"}${Math.abs(lead.changePct).toFixed(2)}%`
@@ -90,10 +99,26 @@ export function HomeHero({
             {copy.description}
           </p>
           <div className="mt-3 md:mt-4 max-w-2xl">
+            <div className="flex items-center gap-1.5 mb-1.5 text-[12px] font-bold text-zinc-800 dark:text-zinc-100">
+              <Search className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <span>{copy.searchLabel}</span>
+            </div>
             <GlobalSearch stocks={searchStocks} themes={searchThemes} variant="hero" />
-            <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-              {copy.searchHint}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <span className="shrink-0">{copy.searchExamplePrefix}</span>
+              {searchExamples.map((ex) => (
+                <Link
+                  key={ex.ticker}
+                  prefetch={false}
+                  href={"/stock/" + ex.ticker}
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2 py-0.5 font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500"
+                >
+                  <span className="truncate max-w-[7rem]">{ex.name}</span>
+                  <span className="font-mono tabular-nums text-[10px] text-zinc-400 dark:text-zinc-500">{ex.ticker}</span>
+                </Link>
+              ))}
+              <span className="shrink-0 text-zinc-400 dark:text-zinc-500">· {copy.searchCodeNote}</span>
+            </div>
           </div>
           <div className="flex flex-row flex-wrap gap-2.5 mt-3 md:mt-4">
             <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition shadow-sm shadow-zinc-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
