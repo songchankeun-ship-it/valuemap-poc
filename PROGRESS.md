@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] 앱/PWA/TWA 로컬 준비도 감사 단일 문서화 (Task 143)
+- **범위**: 흩어지고 날짜가 밀린 앱/PWA/TWA 문서를 **유지보수자 한 명이 문서 하나로 준비도를 파악**할 수 있게 정리. **표시·문서 전용** — 매니페스트/아이콘/스크립트 로직·점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증 설정·알림 동작 무변경. 외부 스토어/계정 조치 0. 브랜치 `ai-center/task-143-ornscore-app-launch-2026-07-11-a-pac`.
+- **현황 파악**: 기존 앱 문서(`app-packaging-readiness`·`-final-checklist`·`app-roadmap`·`app-store-submission-pack`·`ornscore-mobile-listing-prep-pack`·assetlinks/twa owner kit)는 내용은 정확하나 날짜가 밀려 있고(final-checklist 2026-06-28, readiness Task 77) 준비 상태가 6~7개 파일에 분산. `npm run app:check`는 **통과**(FAIL 0)하며 유일한 `WAIT`은 `assetlinks.json` 실 서명 지문 대기(의도된 외부 게이트). `manifest.ts`·4개 소스 SW 미등록·아이콘 4종·설치 프롬프트·오프라인·safe-area 모두 존재.
+- **변경(3파일)**:
+  - `docs/app-readiness-audit-2026-07-11.md`(신규) — **단일 준비도 감사**. 3버킷(✅ 로컬 준비 완료·자동검증 / 🔒 운영자 게이트: Play/Apple 계정·서명 SHA-256·콘솔·실기기 QA / ⏳ 자동화 불가: assetlinks 실 지문·iOS 래퍼·Capacitor·"등재됨" 문구). 현재 `app:check` 결과 원문 인용, PWA 설치 준비 완료·Android TWA 1차 경로·iOS 래퍼 운영자/Mac/Xcode 보류·SW 여전히 의도적 미등록 명시. 관련 문서 링크 목록 포함.
+  - `docs/app-packaging-final-checklist.md` — 마지막 갱신 2026-06-28→**2026-07-11**, 상단에 감사 문서 포인터 + 현재 app:check 통과 상태 1줄 추가.
+  - `scripts/check-app-packaging.mjs` — 감사 문서 핵심 주장(app:check 결과 라인·SW 미등록·Android TWA 우선·iOS 운영자 게이트·"Play Store 등재됨" 허위 문구 부재) 회귀 방지 5개 assertion 추가.
+- **검증(전부 통과)**: `npm run app:check` 통과(FAIL 0 · WAIT 1 = 의도된 assetlinks 외부 게이트, 신규 5 assertion OK) · `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF만). 신규 문서 한글 인코딩 정상(치환문자 0). 라우트/UI/메타데이터/공개문구/SEO 무접촉이라 build/smoke/routes는 이 슬라이스에 불필요.
+- **잔여 리스크 / 다음 큐**: `public/.well-known/assetlinks.json` `WAIT`은 앱 패키징의 유일 잔여 게이트이자 **운영자 전용**(실 Android 앱 서명 SHA-256) — `docs/ornscore-android-assetlinks-owner-kit.md` 절차. 실기기 standalone/OAuth 복귀 육안 점검(390×844+데스크톱)은 운영자 게이트(Playwright 미구성). iOS App Store 래퍼·Capacitor는 레포/제품 결정 전까지 범위 밖. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [codex] Final launch P0 trust fixes from post-release review
 - **범위**: 외부 검수 `7d5c09f4`의 "출시 전 마지막 P0 3개"만 처리. 공개 문구/표시 분류 전용이며 `public/data/*`, 가격 수집, DART 수집, 점수 산식, `metricsVersion`은 변경하지 않음. 배포/push는 새 사용자 승인 전까지 보류.
 - **홈 공시 카드**: 홈 미니 공시 카드가 `signalType=treasury_buy`의 generic 문구만 쓰던 문제를 수정. `signalLabel` 우선 매핑을 추가해 자기주식 처분/신탁 해지/신탁 체결/직접 취득을 각각 다른 확인 포인트로 표시한다. 매핑 누락 fallback도 "취득" 단정이 아닌 중립 자사주 문구로 변경.

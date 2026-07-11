@@ -168,6 +168,14 @@ notIncludes("docs/app-store-submission-pack.md", "Naver는 준비 중", "stale N
 notIncludes("docs/app-store-submission-pack.md", "AI 분석 기록", "stale AI history data item");
 notIncludes("docs/app-store-submission-pack.md", "Anthropic", "stale Anthropic processor");
 
+// Single-doc readiness audit: a maintainer opens one doc to see ready / owner-only / not-yet-automatable.
+// Keep its core claims from silently regressing (SW still not registered, Android TWA first, iOS deferred).
+includes("docs/app-readiness-audit-2026-07-11.md", "app packaging check passed (1 external gate waiting)", "readiness audit records current app:check result");
+includes("docs/app-readiness-audit-2026-07-11.md", "Service Worker는 여전히 의도적으로 미등록", "readiness audit confirms SW intentionally unregistered");
+includes("docs/app-readiness-audit-2026-07-11.md", "Android TWA로 잠금", "readiness audit locks Android TWA first path");
+includes("docs/app-readiness-audit-2026-07-11.md", "iOS 정식 래퍼는 **운영자·Mac·Xcode 게이트**로 보류", "readiness audit keeps iOS wrapper owner-gated");
+notIncludes("docs/app-readiness-audit-2026-07-11.md", "Play Store에 등재됨", "false Play Store live claim in readiness audit");
+
 const publicAssetlinks = rel("public/.well-known/assetlinks.json");
 if (existsSync(publicAssetlinks)) {
   const deployed = readFileSync(publicAssetlinks, "utf8");
