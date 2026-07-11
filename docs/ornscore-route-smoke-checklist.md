@@ -8,6 +8,37 @@
 
 ---
 
+## ⚡ 한 번에 전부 돌리기 — `npm run verify:local` (권장 진입점)
+
+라우트 게이트가 5개(`smoke:check` · `verify:routes` · `verify:stocks-seo` · `verify:login-preflight` · `perf:check`)로 늘면서 **하나씩 기억해 각기 다른 플래그로 호출**하는 게 부담이 됐다. `scripts/verify-local.mjs`(신규 의존성 0, 순수 Node)는 **이 5개를 같은 `--base`에 대해 순서대로 실행하고 exit 코드를 하나로 집계**한다. 유지보수자가 라우트 건강성을 로컬에서 증명하는 **표준 진입점**.
+
+```bash
+# 1) 빌드 → 2) 전용 고포트로 로컬 prod 기동(3000/4310 금지) → 3) 한 커맨드
+npm run build
+npx next start -p 4459
+npm run verify:local -- --base http://localhost:4459
+```
+
+- **집계 규칙:** 진짜 게이트 4개(`smoke:check --all` 24 · `verify:routes` 9 · `verify:stocks-seo` 12 · `verify:login-preflight` 5) 중 하나라도 실패하면 전체 `exit 1`. `perf:check`는 **권고(advisory)** — 자체가 항상 exit 0이라 집계 결과를 바꾸지 않고, 같은 패스에서 라우트별 타이밍만 찍는다.
+- **서버 미기동 시:** 5개 ERR 표 대신 **선(先) 도달성 체크**로 한 줄 안내 후 `exit 1`.
+- **오케스트레이션만:** 형제 스크립트처럼 서버를 **켜거나 끄지 않는다**(상시 AI Center `:4310` 리스너 보호). 내가 띄운 prod 프리뷰의 `--base`만 넘긴다.
+- **옵션:** `--samples <n>`(perf 표본 수, 기본 3) · `--no-perf`(권고 perf 생략) · `--data <path>`(verify:routes 기준일 소스 오버라이드). 환경변수 `VERIFY_BASE_URL`/`SMOKE_BASE_URL`/`PERF_BASE_URL`로도 base 지정(플래그 우선).
+- 개별 게이트를 따로 돌리고 싶으면 아래 각 절의 단독 커맨드를 그대로 쓰면 된다(`verify:local`은 이들을 감쌀 뿐 대체하지 않음).
+
+### 알려진 느림/취약 라우트 (perf 판독 시 정상 신호)
+
+`perf:check`는 **TTFB(응답 헤더까지)** 기준으로 예산을 판정하지만, 카테고리 B 라우트의 실제 지연은 **본문 다운로드(total)** 에 있다 — 요청 시점 Supabase 왕복이 스트리밍 중에 일어나기 때문. 그래서 로컬에서 다음 패턴은 **정상**이며 회귀가 아니다:
+
+| 라우트 | cat | TTFB | total(로컬) | 원인 |
+|---|---|---|---|---|
+| `/today` · `/stock/*` · `/watchlist` | B | 수십 ms | **~4,000ms** | 요청 시점 Supabase 왕복(무료 티어 로컬→원격 고정 warm-up 비용). task-119 타임아웃 가드가 `/stock/*`를 ~4–4.5s로 캡. 프로덕션에선 작음(환경 아티팩트). |
+| 나머지(A) | A | 수십 ms | <70ms | 요청 시점 원격 호출 없음 |
+
+- **실제 회귀 신호**는 (1) 카테고리 A 라우트 TTFB가 baseline 대비 +300ms↑ 창거나, (2) 카테고리 B `total`이 ~4.5s를 **크게** 넘길 때. 절대값은 PC/네트워크마다 다르니 `PROGRESS.md`에 기록된 최근 baseline과의 **상대 변화**로 본다.
+- perf 표에서 카테고리 B의 `TTFBms`가 작다고 "빠르다"고 오독하지 말 것 — 그 라우트의 체감 비용은 `totalms` 열에 있다.
+
+---
+
 ## 실행 방법
 
 ```bash

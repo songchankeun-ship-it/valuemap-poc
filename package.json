@@ -11,6 +11,7 @@
     "app:assetlinks": "node scripts/generate-assetlinks.mjs",
     "perf:check": "node scripts/perf-check.mjs",
     "smoke:check": "node scripts/smoke-check.mjs",
+    "verify:local": "node scripts/verify-local.mjs",
     "verify:routes": "node scripts/verify-routes.mjs",
     "verify:stocks-seo": "node scripts/verify-stocks-seo.mjs",
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
