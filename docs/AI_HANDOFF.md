@@ -42,6 +42,24 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-11 - Claude - Task 154 final local consolidation + release-ready handoff
+- **Context**: Final local-only consolidation pass closing the 2026-07-11 app-launch + review-residual batch (tasks 144–153). Confirms every prior task is committed with no open blockers, runs the broadest practical local validation, spot-checks key routes, and leaves an owner-approval release checklist. No source, scoring, `metricsVersion`, DART/market-data, generated dataset, auth, notification, remote-write, hosting, store/account-console, or live-release change. Working tree started clean at `147814a`; only PROGRESS.md + this handoff were edited.
+- **Batch commits confirmed (all local, main untouched)**: `d28a932` (144) · `29fcdad`/`03ca479` (145) · `756ec2e`/`719a1e0` (146) · `8868df5` (147) · `07de621` (148) · `32cad4b` (149) · `de92ac7`/`ca94c83` (150) · `141e33f`/`27f0573` (151) · `a8bbf7a`/`b0c88aa` (152) · `147814a` (153). `git status` clean before and after this docs-only slice.
+- **Validation (all green)**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목/0 오류/0 금칙어/Metrics 2.4 · `git diff --check` 0 · `npm run build` 0 (138 SSG) · `npm run app:check` pass (assetlinks WAIT = owner gate) · local prod `:4611` `verify:routes` 9/9 (date 2026.07.10) · `smoke:check --all` 24/24 · `verify:stocks-seo` 12/12 · `test:price-summary`/`test:freshness`/`test:compare`/`test_statusHistory.ts` PASS.
+- **Route spot-check**: `/ /about /offline /login /settings/notifications /stocks /stock/005930 /compare /disclosures /status /backtest /privacy /terms` → 13/13 HTTP 200, 0 error markers. Invariants held: 138종목, Korean-only (0 LanguageSwitcher/English), 0 AI-analysis leak on detail, non-advisory copy intact. Local listener PID 45796 killed; AI Center `:4310` (PID 55144) untouched.
+
+#### Ready-to-approve release checklist (owner-gated — AI does NOT execute these)
+1. [ ] Owner approves live release of the local branch to `main`.
+2. [ ] Push `main` → Vercel auto-deploy.
+3. [ ] Post-deploy: public `verify:routes` + `smoke:check --all` against `https://ornscore.com` (cache-busted).
+4. [ ] Real-device OAuth round-trip (Kakao/Google/Naver/email) + standalone return.
+5. [ ] Desktop + 390px visual eyeball QA (no in-harness browser available).
+6. [ ] Android `assetlinks.json` — generate with real package id + SHA-256 fingerprint (`docs/ornscore-android-assetlinks-owner-kit.md`), then serve.
+7. [ ] Store console submission (Play/App Store) using `docs/app-store-submission-pack.md`.
+8. [ ] Search Console reindex.
+- Reference for the full AI-done vs owner-only split: `docs/ornscore-owner-final-checklist.md`.
+- **Residual / next**: Local work consolidated and release-ready pending owner approval. This slice writes nothing to remotes/hosting/store/account/assetlinks. Local commit only; no push; main unchanged.
+
 ### 2026-07-11 - Codex - Recovery for Task 153 data-status history scaffold
 - **Context**: AI Center restarted during Task 153 and fallback handling marked the run failed after the local scaffold files were written but before validation/commit. Recovery completed validation, documentation, commit, and queue handoff locally. No generated stock data, scoring, `metricsVersion`, DART/market-data collection, auth, notification sending, remote write, hosting, account-console, or live-release change.
 - **Changes**: Added `src/lib/statusHistory.ts` as the shared schema/read/parse/merge scaffold for the future append-only `public/data/status-history.json`. `/status` now passes `readStatusHistory()` into `StatusContent` and renders a "데이터 상태 이력" section. If the file is missing or malformed, the UI shows only an honest pending state explaining that history begins after logging is enabled, rather than inventing past snapshots. Added `scripts/test_statusHistory.ts` for coerce/parse/merge/build/read behavior.
