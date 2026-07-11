@@ -6,6 +6,23 @@
 
 ---
 
+## 0. 2026-07-12 보호 상태
+
+`/admin/status`는 이제 Supabase 로그인 세션 + 관리자 이메일 allowlist로 보호한다.
+
+- 비로그인 접근: `/login?next=/admin/status`로 이동.
+- 로그인했지만 허용 이메일이 아님: 관리자 권한 없음 화면 표시.
+- 기본 허용 이메일: `contact@ornscore.com`.
+- 배포 환경변수로 재정의 가능: `ADMIN_EMAILS=contact@ornscore.com,another@example.com` 또는 `ORNSCORE_ADMIN_EMAILS`.
+- `ADMIN_ENABLED=1`은 여전히 신고 목록(`data_reports`) 조회 여부만 제어한다. 페이지 접근 보호와 별개다.
+
+운영 전 권장:
+- Vercel 환경변수에 `ADMIN_EMAILS=contact@ornscore.com` 명시.
+- contact 계정으로 실제 로그인 후 `/admin/status` 접근 확인.
+- 허용되지 않은 다른 계정으로 접근 시 권한 없음 화면 확인.
+
+---
+
 ## 1. 이번에 구현한 MVP (읽기 전용)
 
 라우트: **`/admin/status`** (`src/app/admin/status/page.tsx`, 서버 컴포넌트, `robots: noindex`, `dynamic = force-dynamic`).

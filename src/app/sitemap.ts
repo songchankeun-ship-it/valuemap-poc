@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { mockTopNeglectedThemes } from "@/lib/mockData";
 
 const SITE = "https://ornscore.com";
 
@@ -93,6 +94,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // 2. 종목 페이지 (138개)
+  const themePages: MetadataRoute.Sitemap = mockTopNeglectedThemes.map((theme) => ({
+    url: `${SITE}/theme/${theme.slug}`,
+    lastModified: dataDate,
+    changeFrequency: "weekly" as const,
+    priority: 0.55,
+  }));
+
   const stockPages: MetadataRoute.Sitemap = realStockPool.map((s) => ({
     url: `${SITE}/stock/${s.ticker}`,
     lastModified: dataDate,
@@ -101,5 +109,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.marketCap >= 5_000_000_000_000 ? 0.8 : s.marketCap >= 1_000_000_000_000 ? 0.7 : 0.6,
   }));
 
-  return [...staticPages, ...stockPages];
+  return [...staticPages, ...themePages, ...stockPages];
 }

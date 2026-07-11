@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-12 - Codex - Admin status protection + SEO keyword map
+- **Context**: Owner asked to lock down the admin page and called out that post-launch search keywords/organic acquisition should have been discussed earlier. This slice protects `/admin/status` and documents the SEO keyword plan; it does not perform Search Console/account/store/database actions.
+- **Admin protection**: Middleware now guards `/admin` and `/admin/*` before page render. Anonymous HEAD/GET requests return 307 to `/login?next=%2Fadmin%2Fstatus`; logged-in non-admin users get 403 with `x-robots-tag: noindex, nofollow`; fallback admin email is `contact@ornscore.com`, with `ADMIN_EMAILS` or `ORNSCORE_ADMIN_EMAILS` override. The page itself also keeps a server-component guard as defense in depth.
+- **SEO discovery**: `src/app/sitemap.ts` now includes the theme landing slugs from `mockTopNeglectedThemes` (`/theme/battery`, `/theme/semi-materials`, etc.) in addition to static routes and 138 stock pages.
+- **SEO planning doc**: Added `docs/ornscore-seo-keyword-map-2026-07-12.md`: brand, stock screening, PER/PBR/ROE, DART disclosure, theme, data-trust, and backtest keyword clusters mapped to current routes and next content slices. It explicitly avoids `meta keywords` stuffing and follows Google Search Central guidance around title/description/content/structured data/Search Console.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with the existing `TrustLayer` cleanup warning only; local prod confirmed admin HEAD/GET 307 redirects and sitemap theme markers; `npm run verify:local -- --base http://127.0.0.1:4667 --no-perf` passed all 4 real gates.
+- **Owner-only next**: Set `ADMIN_EMAILS=contact@ornscore.com` in Vercel, log in with the contact account and verify `/admin/status`, then register Search Console, submit `https://ornscore.com/sitemap.xml`, and request indexing for the priority URLs listed in the SEO map.
+
 ### 2026-07-12 - Codex - Owner-approved public web release for continuity batch 155-160
 - **Context**: Owner paused Android/Play Console setup and asked to go straight to the website launch. Released the completed continuity batch from `ai-center/task-160-ornscore-continuity-2026-07-11-f-own`; no app-store, Search Console, account, assetlinks, signing-key, or database action was performed.
 - **Release**: Fast-forwarded `main` from `5f9b665` to `74be92e`, pushed non-forced to `origin/main`, and let Vercel auto-deploy. Public `/status?deploycheck=...` showed the new `id="verify"` original-source verification section and KRX source marker before post-deploy gates ran.

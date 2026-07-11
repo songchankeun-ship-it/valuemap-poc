@@ -10,10 +10,12 @@
  * 검색 노출 차단(noindex). ADMIN_ENABLED=1 일 때만 신고 목록을 조회한다(개인정보 보호).
  */
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { realStockPool } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { dataStatus } from "@/lib/dataStatus";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "내부 데이터 상태판 — 오른스코어",
@@ -30,6 +32,27 @@ interface DataReport {
   message: string;
   email: string | null;
   status: string;
+}
+
+const FALLBACK_ADMIN_EMAILS = ["contact@ornscore.com"];
+
+function adminEmailSet(): Set<string> {
+  const configured = (process.env.ADMIN_EMAILS ?? process.env.ORNSCORE_ADMIN_EMAILS ?? "")
+    .split(/[,\s]+/)
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+  const emails = configured.length > 0 ? configured : FALLBACK_ADMIN_EMAILS;
+  return new Set(emails.map((email) => email.toLowerCase()));
+}
+
+async function requireAdminAccess(): Promise<{ email: string; allowed: boolean }> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  const email = data.user?.email?.trim().toLowerCase();
+  if (!email) {
+    redirect(`/login?next=${encodeURIComponent("/admin/status")}`);
+  }
+  return { email, allowed: adminEmailSet().has(email) };
 }
 
 async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
@@ -53,6 +76,29 @@ async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
 }
 
 export default async function AdminStatusPage() {
+  const admin = await requireAdminAccess();
+  if (!admin.allowed) {
+    return (
+      <div className="max-w-2xl mx-auto px-3 md:px-4 py-10">
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 p-5">
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-300 mb-2">관리자 전용</p>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">접근 권한이 없습니다</h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+            현재 로그인 계정 <span className="font-mono">{admin.email}</span> 은 관리자 허용 목록에 없습니다.
+            운영자 계정으로 다시 로그인하거나, 배포 환경변수 <code>ADMIN_EMAILS</code>에 허용 이메일을 추가하세요.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/login?next=/admin/status" className="min-h-[44px] inline-flex items-center rounded-md bg-zinc-900 dark:bg-zinc-100 px-3 text-sm font-medium text-white dark:text-zinc-900">
+              다른 계정으로 로그인
+            </Link>
+            <Link href="/" className="min-h-[44px] inline-flex items-center rounded-md border border-zinc-300 dark:border-zinc-700 px-3 text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              홈으로
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
   const suspects = realStockPool.filter((s) => isSuspect(s));
   const missing = realStockPool.filter(
     (s) => !(typeof s.per === "number" && s.per > 0) || !(typeof s.pbr === "number" && s.pbr > 0),

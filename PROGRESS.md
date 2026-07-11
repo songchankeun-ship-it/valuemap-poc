@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] admin status protection + SEO keyword map
+- **Scope**: Protected the internal admin status page and started the post-launch organic-search plan. No scoring, data collection, DART logic, generated stock data, app-store, Search Console, account, or database action.
+- **Admin protection**: `/admin/status` is now guarded in middleware before page render. Anonymous HEAD/GET requests 307 to `/login?next=%2Fadmin%2Fstatus`; logged-in users not in `ADMIN_EMAILS`/`ORNSCORE_ADMIN_EMAILS` get 403. Fallback admin email is `contact@ornscore.com`. The page still has a server-component guard as a defense-in-depth fallback.
+- **SEO discovery**: `sitemap.xml` now includes theme landing pages from `mockTopNeglectedThemes` (`/theme/battery`, `/theme/semi-materials`, etc.) so theme-intent pages are discoverable alongside static pages and stock detail pages.
+- **Keyword plan**: Added `docs/ornscore-seo-keyword-map-2026-07-12.md` mapping search intent to routes: brand, stock screening, PER/PBR/ROE, DART disclosures, theme-related searches, data trust, and backtest education. The plan follows Google Search Central guidance: title/description/content/structured data/Search Console over stuffing `meta keywords`.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with existing `TrustLayer` cleanup warning; local prod confirmed admin HEAD/GET redirects and sitemap theme markers; `npm run verify:local -- --base http://127.0.0.1:4667 --no-perf` passed 4/4 real gates.
+- **Remaining owner-only**: Set `ADMIN_EMAILS=contact@ornscore.com` explicitly in Vercel, log in with the contact account to confirm admin access, add Search Console property, submit `https://ornscore.com/sitemap.xml`, and request indexing for the priority URLs listed in the SEO map.
+
 ## 2026-07-12 - [codex] public web release for continuity batch 155-160
 - **Scope**: Owner paused Android/Play Console setup and approved going straight to the public website release. Released the completed continuity batch from `ai-center/task-160-ornscore-continuity-2026-07-11-f-own` to `main`; no app-store, Search Console, account, assetlinks, signing-key, or database action was performed.
 - **Release action**: Fast-forwarded `main` from `5f9b665` to `74be92e` and pushed non-forced to `origin/main`. Vercel auto-deploy was allowed to complete; `/status?deploycheck=...` showed the new `id="verify"` original-source verification section and KRX source marker.
