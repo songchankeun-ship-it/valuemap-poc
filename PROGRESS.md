@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [codex] Recover Task 149 compare accessibility text
+- **Scope**: Recovered Task 149 after AI Center restart/provider fallback interrupted the run while the compare accessibility edits were already in place. Local-only semantic accessibility slice; no scoring, generated data, disclosure collection, price logic, `metricsVersion`, remote write, hosting, account console, signing, or live release change.
+- **Changes**: `/compare` now gives screen readers explicit price direction words instead of arrow-only change markers, hides decorative score bars from assistive tech while adding full stock/metric/score sentences, and gives the finance and return tables captions, column scopes, row header scopes, and sr-only best-value labels. Visual layout intent is unchanged.
+- **Validation**: Recovery reran finite local gates before commit: `npx tsc --noEmit`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, `npm run build`, and a local `/compare?stocks=004170,078930,055550` HTML spot check for captions, row headers, sr-only score text, and arrow-hiding semantics.
+- **Residual / next**: Continue with Task 150 home search primacy follow-up, then discover density, chart overlay, data-status history, and final local verification. Local commit only; no push; main unchanged.
+
 ## 2026-07-11 - [codex] Recover Task 148 notification fallback honesty
 - **Scope**: Recovered Task 148 after AI Center marked the run failed during a headless viewport probe even though the local notification fallback edits were in place. Local-only recovery; no notification sending behavior, cron, Resend/provider config, secrets, remote write, hosting, account console, scoring, generated data, or `metricsVersion` change.
 - **Changes**: `/settings/notifications` now includes a `<noscript>` explanation that saved-condition management needs login/browser features and that the live product channel is email only. `ConditionAlertsManager` accepts login state and replaces the generic `불러오는 중...` fallback with honest logged-in/non-login copy plus a login CTA. `NotificationToggle` loading state now reads as an email-alert settings placeholder instead of an unfinished spinner-only block.

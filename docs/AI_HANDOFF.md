@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T05:58:00.000Z
+Last updated: 2026-07-11T06:09:30.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 148 - ORNScore review residual 2026-07-11 F - notifications fallback honesty
-- Run: 145
+- Task: 149 - ORNScore review residual 2026-07-11 G - compare accessibility text
+- Run: 146
 - Status: completed
 - Agent: codex
-- Note: Watchdog recovery completed local notification fallback edits after a headless viewport probe/tooling mismatch, reran finite gates, and committed locally.
+- Note: Watchdog recovery completed local compare accessibility semantics after AI Center restart/provider fallback interruption, reran finite gates, and committed locally.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-11 - Codex - Recovery for Task 149 compare accessibility text
+- **Context**: AI Center restarted during Task 149 and then fallback handling marked the run failed even though the compare accessibility edits and HTML spot check evidence were present. Recovery completed docs/validation/commit locally. No scoring, generated data, disclosure collection, price logic, `metricsVersion`, remote write, hosting, account-console work, signing, or live release change.
+- **Changes**: `/compare` now exposes price movement as words in addition to hidden decorative arrows, gives score comparison rows complete sr-only stock/metric/score sentences while hiding decorative bars, and upgrades the finance and return tables with sr-only captions, column scopes, row header scopes, and best-value sr-only labels.
+- **Validation**: Recovery reran finite local gates before commit: `npx tsc --noEmit`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, `npm run build`, and a local `/compare?stocks=004170,078930,055550` HTML spot check for captions, row headers, sr-only score text, and arrow-hiding semantics.
+- **Residual / next**: Continue with Task 150 home search primacy follow-up, then discover density, chart overlay, data-status history, and final local verification. Local commit only; no push; main unchanged.
 
 ### 2026-07-11 - Codex - Recovery for Task 148 notification fallback honesty
 - **Context**: AI Center marked Task 148 failed during a headless viewport probe even though the requested notification fallback edits were already present. The failed probe treated lower-page notification sections as needing first-viewport visibility; this is a tooling mismatch for this task, not a product blocker. Recovery completed docs/validation/commit locally. No notification sending behavior, cron, provider config, secrets, remote write, hosting, account-console work, scoring, generated data, or `metricsVersion` change.

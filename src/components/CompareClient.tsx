@@ -680,7 +680,9 @@ export function CompareClient({
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2 truncate">{s.name}</div>
                 <div className="text-base md:text-lg font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</div>
                 <div className={`text-xs font-medium tabular-nums ${priceColor}`}>
-                  {isUp ? "▲" : isDown ? "▼" : "—"} {Math.abs(s.changePct).toFixed(2)}%
+                  <span aria-hidden="true">{isUp ? "▲" : isDown ? "▼" : "—"} </span>
+                  <span className="sr-only">{isUp ? "상승" : isDown ? "하락" : "보합"} </span>
+                  {Math.abs(s.changePct).toFixed(2)}%
                 </div>
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">시총 {fmtMarketCap(s.marketCap)}</div>
                 <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sectorOf(s.themes, s.ticker)}</div>
@@ -774,11 +776,12 @@ export function CompareClient({
                     const isMax = v === max && stocks.length > 1;
                     return (
                       <div key={s.ticker}>
-                        <div className="flex items-baseline justify-between mb-0.5">
+                        <span className="sr-only">{s.name} {label} {Math.round(v)}점{isMax ? " · 가장 높음" : ""}</span>
+                        <div className="flex items-baseline justify-between mb-0.5" aria-hidden="true">
                           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{s.name}</span>
                           <span className={`text-xs font-bold tabular-nums ${isMax ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-700 dark:text-zinc-300"}`}>{Math.round(v)}</span>
                         </div>
-                        <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden" aria-hidden="true">
                           <div className={`h-full ${color} ${isMax ? "" : "opacity-70"}`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -796,11 +799,12 @@ export function CompareClient({
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">재무</h3>
         <div className="-mx-3 md:mx-0 px-3 md:px-0 overflow-x-auto">
           <table className="w-full text-xs" style={{ minWidth: stocks.length > 2 ? `${100 + stocks.length * 80}px` : "auto" }}>
+            <caption className="sr-only">비교 중인 종목별 재무 지표(PER·PBR·ROE·배당) 표</caption>
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">항목</th>
+                <th scope="col" className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">항목</th>
                 {stocks.map((s) => (
-                  <th key={s.ticker} className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
+                  <th key={s.ticker} scope="col" className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
                 ))}
               </tr>
             </thead>
@@ -810,13 +814,14 @@ export function CompareClient({
                 const best = better === "low" ? Math.min(...vals.filter((v) => v > 0)) : Math.max(...vals);
                 return (
                   <tr key={key} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</td>
+                    <th scope="row" className="py-2.5 text-left font-normal text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</th>
                     {stocks.map((s) => {
                       const v = s[key];
                       const isBest = v === best && stocks.length > 1;
                       return (
                         <td key={s.ticker} className={`py-2.5 px-2 text-right tabular-nums whitespace-nowrap ${isBest ? "text-emerald-700 dark:text-emerald-400 font-semibold" : "text-zinc-700 dark:text-zinc-300"}`}>
                           {v > 0 ? v.toFixed(2) : "-"}<span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-0.5">{suffix}</span>
+                          {isBest ? <span className="sr-only"> · 가장 좋은 값</span> : null}
                         </td>
                       );
                     })}
@@ -834,11 +839,12 @@ export function CompareClient({
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3 md:mb-4">수익률 <span className="text-[10px] font-normal text-zinc-400">(높을수록 강세)</span></h3>
         <div className="-mx-3 md:mx-0 px-3 md:px-0 overflow-x-auto">
           <table className="w-full text-xs" style={{ minWidth: stocks.length > 2 ? `${100 + stocks.length * 80}px` : "auto" }}>
+            <caption className="sr-only">비교 중인 종목별 기간(1·3·6개월) 수익률 표</caption>
             <thead>
               <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                <th className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">기간</th>
+                <th scope="col" className="text-left text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase pb-2 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">기간</th>
                 {stocks.map((s) => (
-                  <th key={s.ticker} className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
+                  <th key={s.ticker} scope="col" className="text-right text-[11px] font-medium text-zinc-500 dark:text-zinc-400 pb-2 px-2 whitespace-nowrap">{s.name}</th>
                 ))}
               </tr>
             </thead>
@@ -848,7 +854,7 @@ export function CompareClient({
                 const best = nums.length > 0 ? Math.max(...nums) : undefined;
                 return (
                   <tr key={k} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
-                    <td className="py-2.5 text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</td>
+                    <th scope="row" className="py-2.5 text-left font-normal text-zinc-600 dark:text-zinc-400 sticky left-0 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">{label}</th>
                     {stocks.map((s) => {
                       const v = s.returns?.[k];
                       const has = typeof v === "number";
@@ -856,6 +862,7 @@ export function CompareClient({
                       return (
                         <td key={s.ticker} className={"py-2.5 px-2 text-right tabular-nums whitespace-nowrap " + (isBest ? "font-semibold " : "") + (has ? (v >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400") : "text-zinc-400")}>
                           {has ? (v >= 0 ? "+" : "") + v.toFixed(0) + "%" : "—"}
+                          {isBest ? <span className="sr-only"> · 가장 높음</span> : null}
                         </td>
                       );
                     })}
