@@ -58,6 +58,9 @@ export function MetricsGuideContent({
             </li>
           ))}
           <li>
+            <Link href="#faq" className="text-blue-700 dark:text-blue-400 hover:underline">{t.seoFaq.title}</Link>
+          </li>
+          <li>
             <Link href="#glossary" className="text-blue-700 dark:text-blue-400 hover:underline">{t.glossary.title}</Link>
           </li>
         </ul>
@@ -126,6 +129,19 @@ export function MetricsGuideContent({
           <li>· <strong className="text-zinc-900 dark:text-zinc-100">{t.commonBasis.versionPrefix}{metricsVersionLabel}</strong>{metricsEffectiveDate ? <span className="text-zinc-500 dark:text-zinc-400">{t.commonBasis.appliedPrefix}{metricsEffectiveDate}</span> : null}{t.commonBasis.samePolicy} <Link href="/guide/metrics/changelog" className="text-blue-700 dark:text-blue-400 hover:underline">{t.commonBasis.changelogLink}</Link></li>
           <li>· {t.commonBasis.codeIntro}<a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/scripts/compute_metrics.py" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">compute_metrics.py</a>{t.commonBasis.codeGenerator}<a href="https://github.com/songchankeun-ship-it/valuemap-poc/blob/main/src/lib/metrics.ts" className="text-blue-700 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">metrics.ts</a>{t.commonBasis.codeReference}<strong>{t.composite.noteStrong}</strong>{t.commonBasis.codeNote}</li>
         </ul>
+      </section>
+
+      <section id="faq" className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5 scroll-mt-24">
+        <h2 className="text-lg font-semibold mb-2 text-zinc-900 dark:text-zinc-100">{t.seoFaq.title}</h2>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed mb-3">{t.seoFaq.note}</p>
+        <div className="space-y-2.5">
+          {t.seoFaq.items.map((item) => (
+            <details key={item.question} className="border-b border-zinc-200 dark:border-zinc-800 pb-2.5 last:border-b-0 last:pb-0">
+              <summary className="cursor-pointer select-none text-sm font-semibold text-zinc-900 dark:text-zinc-100">{item.question}</summary>
+              <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">{item.answer}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       <section id="glossary" className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5 scroll-mt-24">

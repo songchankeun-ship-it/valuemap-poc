@@ -2,15 +2,17 @@ import { DisclosureExplorer } from "@/components/DisclosureExplorer";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { realStockPool } from "@/lib/realStocks";
 import { DisclosuresIntroHeader, DisclosuresIntroNote } from "@/components/disclosures/DisclosuresIntro";
+import { disclosureKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 const disclosuresDescription =
-  "최근 7일 중 DART 최신 수집 200건 내에서 5가지 시장 신호만 추출. 자기주식·임원·주요주주 보유변동·정정·대형계약·증자.";
+  "DART 공시 분석을 위한 신호 페이지. 최신 수집 200건 내에서 자사주 취득, 자기주식 처분, 임원·주요주주 보유변동, 정정공시, 단일판매·공급계약, 전환사채·유상증자 공시를 유형별로 정리합니다.";
 
 export const metadata = {
-  title: "공시 신호 — 오른스코어",
+  title: "DART 공시 신호 분석 — 오른스코어",
   description: disclosuresDescription,
+  keywords: uniqueKeywords(disclosureKeywords),
   openGraph: {
-    title: "공시 신호 — 오른스코어",
+    title: "DART 공시 신호 분석 — 오른스코어",
     description: disclosuresDescription,
     url: "/disclosures",
     siteName: "오른스코어",
@@ -21,7 +23,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "공시 신호 — 오른스코어",
+    title: "DART 공시 신호 분석 — 오른스코어",
     description: disclosuresDescription,
   },
   alternates: { canonical: "/disclosures" },

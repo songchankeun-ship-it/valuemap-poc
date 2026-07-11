@@ -4,10 +4,12 @@ import { getAlertedTickers } from "@/lib/marketAlert";
 import { getPriceLagSummary } from "@/lib/priceLag";
 import { readStatusHistory } from "@/lib/statusHistory";
 import { StatusContent } from "@/components/status/StatusContent";
+import { trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const metadata = {
-  title: "데이터 상태 — 오른스코어",
-  description: "오른스코어 데이터 파이프라인의 신선도와 소스 상태를 보여주는 운영 상태 페이지.",
+  title: "주식 데이터 기준일·출처 — 오른스코어",
+  description: "오른스코어의 주식 데이터 기준일, KRX·Naver Finance·DART 출처, 점수 산식 버전, 갱신 상태를 확인하는 데이터 상태 페이지.",
+  keywords: uniqueKeywords(trustKeywords),
 };
 
 export const revalidate = 600;

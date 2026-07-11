@@ -926,6 +926,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           </div>
         </div>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">{t.headerDesc(total)}</p>
+        <section aria-label={t.searchIntent.title} className="border-l-2 border-blue-200 dark:border-blue-900 pl-3 py-1">
+          <h2 className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">{t.searchIntent.title}</h2>
+          <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{t.searchIntent.body}</p>
+        </section>
         <div className="flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
           {asOf ? <span className="tabular-nums">{asOf} {t.marketCloseSuffix}</span> : null}
           {metricsVersion ? <><span aria-hidden>·</span><span>{t.metricsPrefix} {metricsVersion}</span></> : null}

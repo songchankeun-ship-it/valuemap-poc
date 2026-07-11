@@ -18,6 +18,14 @@ export const disclosuresIntroCopy = {
     collapseSummary: "수집 범위 — 코스피·코스닥 최신 100건씩",
     collapseBody:
       "선택한 기간 전체 공시가 아니라, 코스피·코스닥 각 최신 100건(합 200건)에서 자동 추출한 신호입니다. 표시는 최대 50건이며, 선택한 기간의 전체 공시가 포함되지 않아 일부 공시가 누락될 수 있습니다.",
+    typeGuide: {
+      title: "주요 공시 유형",
+      items: [
+        "자사주 취득·자기주식 처분 공시는 규모, 기간, 목적, 소각 여부를 확인합니다.",
+        "임원·주요주주 보유변동은 매수·매도 방향과 보고자, 대상 회사를 분리해 봅니다.",
+        "정정공시, 단일판매·공급계약, 전환사채·유상증자 공시는 원문 수치와 기존 재무 흐름을 함께 봅니다.",
+      ],
+    },
     bottomNote:
       "본 페이지의 신호는 DART 공시 보고서명 매칭 기반 1차 필터입니다. 본문 확인 + 시세 추이 검토 후 판단하세요. 투자 권유가 아닙니다.",
   },
@@ -32,6 +40,14 @@ export const disclosuresIntroCopy = {
     collapseSummary: "Collection scope — latest 100 KOSPI + 100 KOSDAQ",
     collapseBody:
       "These are not all disclosures in the selected period. They are signals auto-extracted from the latest 100 KOSPI and 100 KOSDAQ filings (200 total). At most 50 are shown, and because not every filing in the period is included, some disclosures may be missing.",
+    typeGuide: {
+      title: "Key disclosure types",
+      items: [
+        "For treasury-share buybacks or disposals, check size, period, purpose, and whether cancellation is planned.",
+        "For officer or major-shareholder ownership changes, separate buy/sell direction, reporter, and target company.",
+        "For corrections, large supply contracts, convertible bonds, or paid-in capital increases, compare source figures with the existing financial trend.",
+      ],
+    },
     bottomNote:
       "Signals on this page are a first-pass filter based on matching DART disclosure report titles. Review the full text and price trend before deciding. This is not investment advice.",
   },

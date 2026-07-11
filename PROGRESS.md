@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] SEO keyword expansion for launch pages
+- **Scope**: Expanded organic-search coverage for the public website without changing scoring, data collection, DART parsing, generated datasets, auth, account settings, Search Console, or deployment configuration.
+- **Keyword system**: Added `src/lib/seoKeywords.ts` as a shared source for brand, stock-screening, PER/PBR/ROE, DART disclosure, trust/source, and theme-related keyword clusters. The implementation uses page titles/descriptions/body copy/structured data instead of relying on keyword stuffing.
+- **Public pages updated**: Strengthened metadata for `/`, `/stocks`, `/compare`, `/guide/metrics`, `/disclosures`, `/theme/[slug]`, `/status`, and `/about`. `/stocks` now names common search intents such as 주식 스크리닝, 종목 검색, PER/PBR/ROE 비교, 저평가 주식, 배당수익률, and 코스피·코스닥 종목 분석. `/disclosures` now names DART 공시 분석, 자사주, 보유변동, 정정, 단일판매·공급계약, CB/유상증자. `/theme/[slug]` now uses related-stock/theme aliases such as 2차전지 관련주 and 반도체 관련주.
+- **Visible content**: Added compact visible intent/type sections to `/stocks` and `/disclosures`, plus a `/guide/metrics` FAQ covering PER, PBR, ROE, 배당수익률, and 위험조정. The guide FAQ is also emitted as `FAQPage` JSON-LD.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except existing CRLF notices; `npm run build` 0 with existing `TrustLayer` cleanup warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4668 --no-perf` passed 4/4 real gates. HTML spot checks confirmed `/stocks` 주식 스크리닝, `/guide/metrics` FAQ + JSON-LD, `/disclosures` 주요 공시 유형, and `/theme/battery` 2차전지 관련주 render.
+- **Next**: Owner-only Search Console registration/sitemap submission/indexing request remains the real discovery accelerator. After query data appears, tune titles/descriptions based on actual impressions rather than guessing.
+
 ## 2026-07-12 - [codex] admin status protection + SEO keyword map
 - **Scope**: Protected the internal admin status page and started the post-launch organic-search plan. No scoring, data collection, DART logic, generated stock data, app-store, Search Console, account, or database action.
 - **Admin protection**: `/admin/status` is now guarded in middleware before page render. Anonymous HEAD/GET requests 307 to `/login?next=%2Fadmin%2Fstatus`; logged-in users not in `ADMIN_EMAILS`/`ORNSCORE_ADMIN_EMAILS` get 403. Fallback admin email is `contact@ornscore.com`. The page still has a server-component guard as a defense-in-depth fallback.

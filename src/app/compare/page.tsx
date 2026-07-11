@@ -7,17 +7,19 @@ import { sectorOf } from "@/lib/sector";
 import { getRecentSignals } from "@/lib/recentSignals";
 import { CompareClient } from "@/components/CompareClient";
 import { COMPARE_QUERY_MAX, parseCompareQuery } from "@/lib/compareQuery";
+import { metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
-const compareDescription = "선택한 종목들의 지표·재무 데이터를 한눈에 비교.";
+const compareDescription = "선택한 종목의 PER·PBR·ROE, 배당수익률, 추세, 밸류, 위험조정, 최근 공시 신호를 한눈에 비교합니다.";
 
 // 공시 페이지와 동일하게 최근 신호를 서버에서 추출(라이브 실패 시 샘플 fallback). 30분 캐시.
 export const revalidate = 1800;
 
 export const metadata = {
-  title: "종목 비교 — 오른스코어",
+  title: "종목 비교·PER PBR ROE 비교 — 오른스코어",
   description: compareDescription,
+  keywords: uniqueKeywords(["종목 비교", "주식 비교", "PER PBR ROE 비교"], metricKeywords, stockDiscoveryKeywords),
   openGraph: {
-    title: "종목 비교 — 오른스코어",
+    title: "종목 비교·PER PBR ROE 비교 — 오른스코어",
     description: compareDescription,
     url: "/compare",
     siteName: "오른스코어",
@@ -28,7 +30,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "종목 비교 — 오른스코어",
+    title: "종목 비교·PER PBR ROE 비교 — 오른스코어",
     description: compareDescription,
   },
   alternates: { canonical: "/compare" },

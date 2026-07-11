@@ -39,6 +39,11 @@ interface MetricsGuideCopy {
     title: string;
     items: (count: number) => readonly string[];
   };
+  seoFaq: {
+    title: string;
+    note: string;
+    items: readonly { question: string; answer: string }[];
+  };
   metrics: readonly MetricCopy[];
   metricSection: {
     calcSummary: string;
@@ -95,6 +100,37 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
         "종합 점수는 네 지표를 똑같은 비중으로 평균합니다. 추세 · 거래활성도 · 밸류 · 위험조정 4지표를 각각 25%씩 동일 가중으로 더해 평균한 값이라, 한 지표만 아주 높아도 나머지가 평범하면 종합 점수는 중간대에 머뭅니다. 종목 상세의 점수 근거 보기에서 각 지표가 종합 점수에 얼마나 기여했는지 확인할 수 있습니다.",
         "점수와 순위는 다릅니다. 점수는 0~100 절대값이고, 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 점수와 상대순위를 분리해 표시합니다.",
         `밸류 점수의 기준에 주의하세요. 밸류는 전체 ${count}개 풀 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 업종 대비 밸류는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합 점수에는 포함되지 않습니다.`,
+      ],
+    },
+    seoFaq: {
+      title: "주식 지표 FAQ",
+      note: "PER·PBR·ROE 같은 재무 지표는 단독 결론이 아니라 종목을 더 볼지 정하는 출발점입니다.",
+      items: [
+        {
+          question: "PER이 낮으면 저평가 주식인가요?",
+          answer:
+            "PER이 낮은 종목은 이익 대비 가격이 낮다는 뜻이지만, 업황 부진이나 일회성 이익 때문에 낮아 보일 수도 있습니다. 오른스코어는 PER을 PBR, ROE, 추세, 거래활성도와 함께 확인합니다.",
+        },
+        {
+          question: "PBR이 낮은 종목은 어떻게 봐야 하나요?",
+          answer:
+            "PBR은 순자산 대비 주가를 보는 지표입니다. 낮은 PBR은 저평가 단서일 수 있지만, 자산 효율이나 성장성이 낮은 경우도 있어 ROE와 업종 특성을 같이 봐야 합니다.",
+        },
+        {
+          question: "ROE가 높으면 좋은 기업인가요?",
+          answer:
+            "ROE는 자기자본 대비 이익 창출력을 보여줍니다. 다만 부채 구조나 일회성 이익의 영향을 받을 수 있어 PER·PBR·배당수익률, 최근 실적 변화와 함께 보는 편이 안전합니다.",
+        },
+        {
+          question: "배당수익률 높은 주식은 무조건 안정적인가요?",
+          answer:
+            "배당수익률은 현금 배당의 단서지만 주가 하락으로 높아 보일 수도 있습니다. 배당 지속 가능성, 이익 흐름, 재무 상태를 함께 확인해야 합니다.",
+        },
+        {
+          question: "위험조정 점수는 무엇인가요?",
+          answer:
+            "위험조정 점수는 관측 기간의 수익을 변동성과 함께 본 지표입니다. 점수가 높아도 향후 하락 위험이 작다는 뜻은 아니며, 과거 흐름을 해석하는 참고 신호입니다.",
+        },
       ],
     },
     metrics: [
@@ -210,6 +246,37 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
         "The composite score averages the four metrics with equal weight. Trend, trading activity, valuation, and risk-adjusted are each weighted 25% and averaged, so even if one metric is very high, the composite stays mid-range when the others are average. In a stock's detail page, See score basis shows how much each metric contributed to the composite.",
         "Score and rank are different. The score is an absolute value from 0 to 100, while the relative rank shows where a stock places within the full pool. The same 52 points can rank differently depending on the distribution, so the two should not be read as the same thing. Stock detail pages show score and relative rank separately.",
         `Note the basis of the valuation score. Valuation is a percentile within the full pool of ${count} stocks, so it does not adjust for sector differences — sectors that are structurally low-PER/low-PBR, such as financials and holding companies, can cluster near the top. The in-sector valuation on a stock's detail page is a separate reference metric viewed within the same sector and is not included in the composite score.`,
+      ],
+    },
+    seoFaq: {
+      title: "Stock metric FAQ",
+      note: "Financial metrics such as PER, PBR, and ROE are starting points for research, not standalone conclusions.",
+      items: [
+        {
+          question: "Does a low PER mean a stock is undervalued?",
+          answer:
+            "A low PER means the price is low relative to earnings, but it can also reflect weak industry conditions or one-off earnings. OrnScore reads PER together with PBR, ROE, trend, and trading activity.",
+        },
+        {
+          question: "How should I read a low PBR stock?",
+          answer:
+            "PBR compares price with book value. A low PBR can be an undervaluation clue, but low asset efficiency or weak growth can also explain it, so ROE and sector context matter.",
+        },
+        {
+          question: "Is a high ROE always good?",
+          answer:
+            "ROE shows profit generated per unit of equity. It can be affected by leverage or one-off gains, so compare it with PER, PBR, dividend yield, and recent earnings changes.",
+        },
+        {
+          question: "Are high dividend-yield stocks always stable?",
+          answer:
+            "Dividend yield is a cash-return clue, but it can look high after a price decline. Check dividend sustainability, earnings flow, and financial condition together.",
+        },
+        {
+          question: "What is a risk-adjusted score?",
+          answer:
+            "The risk-adjusted score reads return together with volatility over the observed period. A high score does not mean future downside risk is small; it is a historical reference signal.",
+        },
       ],
     },
     metrics: [

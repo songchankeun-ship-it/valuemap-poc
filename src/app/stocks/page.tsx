@@ -4,6 +4,7 @@ import { sectorOf } from "@/lib/sector";
 import { getPriceLagSummary } from "@/lib/priceLag";
 import { StocksExplorer } from "@/components/StocksExplorer";
 import { CompareTray } from "@/components/stock/CompareTray";
+import { metricKeywords, stockDiscoveryKeywords, themeKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const revalidate = 3600;
 
@@ -60,12 +61,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const noindexRobots = { index: false, follow: true } as const;
 
   if (selectedSector) {
-    const sectorTitle = `${selectedSector} 업종 종목 — 오른스코어`;
-    const sectorDescription = `${selectedSector} 업종 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`;
+    const sectorTitle = `${selectedSector} 업종 종목 분석 — 오른스코어`;
+    const sectorDescription = `${selectedSector} 업종 종목을 주식 스크리닝 기준으로 정렬·필터링합니다. PER·PBR·ROE, 배당수익률, 추세·거래활성도·밸류·위험조정을 함께 비교하세요.`;
     const canonicalUrl = `/stocks?sector=${encodeURIComponent(selectedSector)}`;
     return {
       title: sectorTitle,
       description: sectorDescription,
+      keywords: uniqueKeywords([`${selectedSector} 업종`, `${selectedSector} 종목`, `${selectedSector} 주식`], stockDiscoveryKeywords, metricKeywords),
       openGraph: {
         title: sectorTitle,
         description: sectorDescription,
@@ -87,12 +89,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     };
   }
   if (effectiveTheme) {
-    const themedTitle = `${effectiveTheme} 관련 종목 — 오른스코어`;
-    const themedDescription = `${effectiveTheme} 테마 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 정렬·필터링합니다.`;
+    const themedTitle = `${effectiveTheme} 관련주 테마 종목 — 오른스코어`;
+    const themedDescription = `${effectiveTheme} 관련주와 테마주를 주식 스크리닝 기준으로 살펴봅니다. PER·PBR·ROE, 배당수익률, 추세·거래활성도·밸류·위험조정을 함께 비교하세요.`;
     const canonicalUrl = `/stocks?theme=${encodeURIComponent(effectiveTheme)}`;
     return {
       title: themedTitle,
       description: themedDescription,
+      keywords: uniqueKeywords(themeKeywords("", effectiveTheme), stockDiscoveryKeywords, metricKeywords),
       openGraph: {
         title: themedTitle,
         description: themedDescription,
@@ -113,11 +116,12 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       alternates: { canonical: conservativeIndex ? "/stocks" : canonicalUrl },
     };
   }
-  const title = "종목 탐색 — 오른스코어";
-  const description = `${dataMetadata.count}개 종목을 자체 지표 4종으로 정렬·필터링`;
+  const title = "주식 스크리닝·종목 검색 — 오른스코어";
+  const description = `${dataMetadata.count}개 코스피·코스닥 종목을 검색하고 정렬합니다. PER·PBR·ROE, 배당수익률, 저평가, 추세, 거래활성도, 위험조정 지표로 종목을 좁혀보세요.`;
   return {
     title,
     description,
+    keywords: uniqueKeywords(stockDiscoveryKeywords, metricKeywords),
     openGraph: {
       title,
       description,

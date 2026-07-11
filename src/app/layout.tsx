@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { dataStatus } from "@/lib/dataStatus";
+import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ornscore.com"),
@@ -17,10 +18,11 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description:
-    "138개 종목의 자체 지표 4종 · PER · PBR · ROE · DART 공시 신호를 한 화면에서.",
+    "오른스코어는 한국 주식 스크리닝, 종목 검색, PER·PBR·ROE 지표, DART 공시 신호를 함께 보는 주식 탐색 도구입니다.",
+  keywords: uniqueKeywords(brandKeywords, stockDiscoveryKeywords, metricKeywords, disclosureKeywords),
   openGraph: {
     title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "138개 종목 · 자체 지표 4종 · DART 공시 신호. 한국 주식 데이터 탐색을 한 화면에서.",
+    description: "한국 주식 스크리닝 · 종목 검색 · PER/PBR/ROE · DART 공시 신호를 한 화면에서.",
     url: "https://ornscore.com",
     siteName: "오른스코어",
     locale: "ko_KR",
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "138개 종목 · 자체 지표 4종 · DART 공시 신호",
+    description: "한국 주식 스크리닝 · 종목 검색 · PER/PBR/ROE · DART 공시 신호",
   },
   robots: {
     index: true,
@@ -78,7 +80,7 @@ const siteJsonLd = {
       name: "오른스코어",
       url: "https://ornscore.com",
       logo: "https://ornscore.com/icon-512.png",
-      description: "한국 테마주 데이터 분석 도구",
+      description: "한국 주식 스크리닝, 종목 검색, 지표 비교, DART 공시 신호를 제공하는 주식 탐색 도구",
       foundingDate: "2026",
       sameAs: [],
     },

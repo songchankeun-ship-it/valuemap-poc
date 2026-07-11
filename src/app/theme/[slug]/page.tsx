@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getThemeBySlug, getStocksInTheme } from "@/lib/mockData";
 import { realStockPool } from "@/lib/realStocks";
+import { keywordSentence, themeKeywords } from "@/lib/seoKeywords";
 
 export const revalidate = 3600;
 
@@ -13,12 +14,14 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const theme = getThemeBySlug(slug);
   if (!theme) return { title: "테마를 찾을 수 없습니다 — 오른스코어" };
-  const title = `${theme.name} 테마 종목 — 오른스코어`;
+  const keywords = themeKeywords(slug, theme.name);
+  const title = `${theme.name} 관련주 테마 종목 — 오른스코어`;
   // 테마는 데이터 분류(그룹)일 뿐 투자 추천이 아니다 — 수익/급등/추천 표현 금지.
-  const description = `${theme.name} 테마로 분류된 종목을 자체 지표 4종(추세·거래활성도·밸류·위험조정)으로 살펴보세요. 테마는 데이터 분류이며 투자 추천이 아닙니다.`;
+  const description = `${keywordSentence(keywords, 3)}를 자체 지표 4종(추세·거래활성도·밸류·위험조정)과 PER·PBR·ROE로 살펴보세요. 테마는 데이터 분류이며 투자 추천이 아닙니다.`;
   return {
     title,
     description,
+    keywords,
     openGraph: {
       title,
       description,
@@ -67,6 +70,9 @@ export default async function ThemeDetailPage({ params }: PageProps) {
           </div>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
             현재 분석 대상 매칭 {stockCount}개 · 자체 지표 종합 {theme.compositeScore} / 100
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {keywordSentence(themeKeywords(slug, theme.name), 4)} 검색 흐름에서 볼 수 있는 테마 분류입니다. 관련주 목록은 투자 추천이 아니라 데이터 비교 출발점입니다.
           </p>
         </div>
         <button className="px-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-md text-sm">

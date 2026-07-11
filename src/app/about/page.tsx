@@ -2,13 +2,15 @@ import Link from "next/link";
 import { dataMetadata } from "@/lib/realStocks";
 import { Mail, Database, Code, AlertTriangle, Smartphone } from "lucide-react";
 import PwaInstallHelper from "@/components/PwaInstallHelper";
+import { brandKeywords, stockDiscoveryKeywords, trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const metadata = {
-  title: "서비스 소개 — 오른스코어",
-  description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+  title: "오른스코어 소개 — 한국 주식 탐색 도구",
+  description: "오른스코어는 한국 주식 스크리닝, 종목 검색, PER·PBR·ROE 지표, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
+  keywords: uniqueKeywords(brandKeywords, stockDiscoveryKeywords, trustKeywords),
   openGraph: {
-    title: "서비스 소개 — 오른스코어",
-    description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+    title: "오른스코어 소개 — 한국 주식 탐색 도구",
+    description: "한국 주식 스크리닝, 종목 검색, 지표 비교, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
     url: "/about",
     siteName: "오른스코어",
     locale: "ko_KR",
@@ -19,8 +21,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "서비스 소개 — 오른스코어",
-    description: "오른스코어가 누구를 위해, 어떤 목적으로 만들어진 도구인지 안내합니다.",
+    title: "오른스코어 소개 — 한국 주식 탐색 도구",
+    description: "한국 주식 스크리닝, 종목 검색, 지표 비교, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
   },
   alternates: { canonical: "/about" },
 };

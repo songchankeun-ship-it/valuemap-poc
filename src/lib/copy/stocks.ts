@@ -19,6 +19,11 @@ export const stocksCopy = {
     resultsHeading: (shown: number, total: number) => `종목 목록 · 분석 대상 ${total}종목 내 ${shown}개`,
     skipToList: "종목 목록 바로가기",
     headerDesc: (total: number) => `질문·필터로 먼저 볼 후보를 좁혀보세요.`,
+    searchIntent: {
+      title: "많이 찾는 탐색어",
+      body:
+        "주식 스크리닝, 종목 검색, PER/PBR/ROE 비교, 저평가 주식 찾기, 배당수익률 높은 주식, 코스피·코스닥 종목 분석을 같은 목록에서 좁혀볼 수 있습니다.",
+    },
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
     dataStaleLabel: "갱신 지연",
@@ -346,6 +351,11 @@ export const stocksCopy = {
     resultsHeading: (shown: number, total: number) => `Stock list · ${shown} within ${total} analyzed`,
     skipToList: "Skip to stock list",
     headerDesc: (total: number) => `Use questions or filters to narrow down candidates to look at first.`,
+    searchIntent: {
+      title: "Common search intents",
+      body:
+        "Use one list to narrow Korean stock screening, stock search, PER/PBR/ROE comparison, undervalued stock ideas, dividend-yield screens, and KOSPI/KOSDAQ stock analysis.",
+    },
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
     dataStaleLabel: "Update delayed",
