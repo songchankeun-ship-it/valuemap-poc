@@ -8,6 +8,7 @@ import { statusCopy } from "@/lib/copy/status";
 import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
 import { marketFreshnessCopy } from "@/lib/freshness";
 import type { LocalizedDataStatus } from "@/lib/dataStatus";
+import type { StatusHistoryEntry } from "@/lib/statusHistory";
 import type { Locale } from "@/lib/i18n";
 
 type Tone = "ok" | "warn" | "off";
@@ -36,6 +37,7 @@ export function StatusContent({
   scoreTimeUtc,
   alertedCount,
   metricsChangelogPath,
+  statusHistory,
   priceLag,
   selfCheck,
 }: {
@@ -46,6 +48,7 @@ export function StatusContent({
   scoreTimeUtc: string;
   alertedCount: number;
   metricsChangelogPath: string;
+  statusHistory: StatusHistoryEntry[];
   priceLag: {
     count: number;
     symbols: { ticker: string; name: string; priceDate: string; businessDaysBehind: number }[];
@@ -93,6 +96,7 @@ export function StatusContent({
     { href: "#domains", label: t.toc.domains },
     { href: "#limits", label: t.toc.limits },
     { href: "#selfcheck", label: t.toc.selfcheck },
+    { href: "#history", label: t.toc.history },
     { href: "#sources", label: t.toc.sources },
     { href: "#report", label: t.toc.report },
   ];
@@ -242,6 +246,45 @@ export function StatusContent({
         <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">
           {t.selfcheckFootnote}
         </p>
+      </section>
+
+      {/* 데이터 상태 이력 — append-only 스냅샷 로그. 로그가 아직 없으면 가짜 과거를 그리지 않고
+          "로깅 활성화 이후부터 쌓인다"는 안내만 노출한다(정직성). 로그가 쌓이면 보수적 표로 렌더. */}
+      <section id="history" className="scroll-mt-20">
+        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.historyHeading}</div>
+        {statusHistory.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/40 dark:bg-zinc-900/30 px-4 py-4">
+            <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t.historyPendingTitle}</div>
+            <p className="text-[12px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed break-words">{t.historyPendingBody}</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto -mx-3 px-3 md:mx-0 md:px-0">
+            <table className="w-full min-w-[420px] text-xs border-collapse">
+              <caption className="sr-only">{t.historyTableCaption}</caption>
+              <thead>
+                <tr className="text-left text-zinc-400 dark:text-zinc-500 border-b border-zinc-200 dark:border-zinc-800">
+                  <th scope="col" className="py-2 pr-3 font-medium">{t.historyColDate}</th>
+                  <th scope="col" className="py-2 pr-3 font-medium">{t.historyColAsOf}</th>
+                  <th scope="col" className="py-2 pr-3 font-medium">{t.historyColMetrics}</th>
+                  <th scope="col" className="py-2 pr-3 font-medium tabular-nums">{t.historyColSuspect}</th>
+                  <th scope="col" className="py-2 pr-0 font-medium tabular-nums">{t.historyColLag}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                {statusHistory.map((h) => (
+                  <tr key={h.generatedAt + h.asOfBusinessDate} className="text-zinc-700 dark:text-zinc-300">
+                    <td className="py-2 pr-3 tabular-nums whitespace-nowrap">{h.generatedAt.slice(0, 10)}</td>
+                    <td className="py-2 pr-3 tabular-nums whitespace-nowrap">{fmtYmd(h.asOfBusinessDate)}</td>
+                    <td className="py-2 pr-3 tabular-nums whitespace-nowrap">{h.metricsVersion ?? "—"}</td>
+                    <td className="py-2 pr-3 tabular-nums">{h.suspectCount ?? "—"}</td>
+                    <td className="py-2 pr-0 tabular-nums">{h.priceLagCount ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">{t.historyFootnote}</p>
       </section>
 
       {/* 데이터 소스 상태 */}

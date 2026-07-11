@@ -2,6 +2,7 @@ import { dataMetadata, isDataStale } from "@/lib/realStocks";
 import { dataStatus, dataStatusByLocale, metricsChangelogPath } from "@/lib/dataStatus";
 import { getAlertedTickers } from "@/lib/marketAlert";
 import { getPriceLagSummary } from "@/lib/priceLag";
+import { readStatusHistory } from "@/lib/statusHistory";
 import { StatusContent } from "@/components/status/StatusContent";
 
 export const metadata = {
@@ -47,6 +48,9 @@ export default async function StatusPage() {
   // 종목별 가격 기준일 불일치(전역 기준일보다 과거인 종목) — 기존 가격 파일에서만 파생, 데이터셋 무변경.
   const priceLag = getPriceLagSummary();
   const { kst: scoreTimeKst, utc: scoreTimeUtc } = formatScoreTimes(dataMetadata.generatedAt);
+  // 데이터 상태 이력(append-only 스냅샷 로그). 로그 파일이 아직 없으면 빈 배열 → 표시부는
+  // 가짜 과거를 그리지 않고 "로깅 활성화 이후부터 쌓인다"는 안내만 노출한다(정직성).
+  const statusHistory = readStatusHistory();
 
   // 다국어 v2: 데이터 파생값(dataStatusByLocale)·서버 계산값을 직렬화 props로 넘기고,
   // 페이지 크롬 번역은 클라이언트 표시부(StatusContent)가 statusCopy에서 읽는다.
@@ -59,6 +63,7 @@ export default async function StatusPage() {
       scoreTimeUtc={scoreTimeUtc}
       alertedCount={alertedCount}
       metricsChangelogPath={metricsChangelogPath}
+      statusHistory={statusHistory}
       priceLag={{
         count: priceLag.count,
         symbols: priceLag.lagged.map((l) => ({

@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [codex] Recover Task 153 data-status history scaffold
+- **Scope**: Recovered Task 153 after AI Center restart/provider fallback interrupted the local-only data-status history slice. The work starts history support honestly without fabricating past snapshots. No generated stock data, scoring, `metricsVersion`, DART/market-data collection, auth, notification sending, remote write, hosting, account-console, or live-release change.
+- **Changes**: Added `src/lib/statusHistory.ts` as the shared read/parse/merge/schema scaffold for `public/data/status-history.json` (missing or malformed file returns an empty history). `/status` now reads that append-only log and renders a new "데이터 상태 이력" section. If the log does not exist, it shows an explicit pending explanation that history begins only after snapshot logging is enabled. Added `scripts/test_statusHistory.ts` to lock validation, malformed-entry dropping, newest-first sorting, same-business-date replacement, cap handling, and absent-file fallback.
+- **Validation**: Recovery reran `npx tsc --noEmit`, `npx tsx scripts/test_statusHistory.ts`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, `npm run build`, local prod `verify:routes` 9/9, `smoke:check --all` 24/24, and a `/status` HTML spot check confirming the honest pending history copy. Edited files have 0 U+FFFD.
+- **Residual / next**: This is a scaffold/read surface only; no snapshot is appended yet, so future collection automation should write/merge `public/data/status-history.json` using the exported helpers or the documented schema. Continue with Task 154 final local verification/handoff. Local commit only; no push; main unchanged.
+
 ## 2026-07-11 - [claude] Task 152 chart overlay drawdown region + surge band
 
 - **Scope**: Advance the stock-detail price chart overlay (`StockPriceChart`) using only already-available truthful event data (existing close/volume arrays). Display-only slice; no scoring, `metricsVersion`, DART/market-data collection, generated datasets, auth, notification, remote-write, hosting, or live-release change. Ref: brief "디자인 최종 피드백 › 종목 상세" (차트 레이어) + `docs/ornscore-data-status-history-and-chart-markers-plan-2026-07-11.md` §2 "다음 작업".

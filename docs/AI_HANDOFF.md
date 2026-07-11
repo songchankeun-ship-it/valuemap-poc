@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T07:10:31.901Z
+Last updated: 2026-07-11T07:29:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 152 - ORNScore review residual 2026-07-11 J - stock chart overlay next layer
-- Run: 149
+- Task: 153 - ORNScore review residual 2026-07-11 K - data status history honest scaffold
+- Run: 150
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: Watchdog recovery completed local data-status history scaffold after AI Center restart/provider fallback interruption, reran finite gates, and committed locally.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-11 - Codex - Recovery for Task 153 data-status history scaffold
+- **Context**: AI Center restarted during Task 153 and fallback handling marked the run failed after the local scaffold files were written but before validation/commit. Recovery completed validation, documentation, commit, and queue handoff locally. No generated stock data, scoring, `metricsVersion`, DART/market-data collection, auth, notification sending, remote write, hosting, account-console, or live-release change.
+- **Changes**: Added `src/lib/statusHistory.ts` as the shared schema/read/parse/merge scaffold for the future append-only `public/data/status-history.json`. `/status` now passes `readStatusHistory()` into `StatusContent` and renders a "데이터 상태 이력" section. If the file is missing or malformed, the UI shows only an honest pending state explaining that history begins after logging is enabled, rather than inventing past snapshots. Added `scripts/test_statusHistory.ts` for coerce/parse/merge/build/read behavior.
+- **Validation**: Recovery reran `npx tsc --noEmit`, `npx tsx scripts/test_statusHistory.ts`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, `npm run build`, local prod `verify:routes` 9/9, `smoke:check --all` 24/24, and `/status` HTML spot checks for the new section and honest pending copy. Edited files have 0 U+FFFD.
+- **Residual / next**: The log writer is intentionally not active yet. Future collection automation should append/merge `public/data/status-history.json` through the documented schema/helpers before real rows appear. Continue with Task 154 final local verification/handoff. Local commit only; no push; main unchanged.
 
 ### 2026-07-11 - Claude - Task 152 chart overlay drawdown region + surge band
 - **Context**: Advance the stock-detail price chart overlay (`StockPriceChart`) using only already-available truthful event data (existing close/volume arrays), per brief "디자인 최종 피드백 › 종목 상세" (차트 레이어) + plan doc `docs/ornscore-data-status-history-and-chart-markers-plan-2026-07-11.md` §2. Display-only slice — no scoring, `metricsVersion`, DART/market-data collection, generated datasets, auth, notification, remote write, hosting, or live-release change.

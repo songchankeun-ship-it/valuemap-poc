@@ -21,6 +21,7 @@ export const statusCopy = {
       domains: "종류별 상태",
       limits: "알려진 제한",
       selfcheck: "자동 점검",
+      history: "상태 이력",
       sources: "데이터 소스",
       report: "오류 신고",
     },
@@ -74,6 +75,20 @@ export const statusCopy = {
     selfcheckFootnote:
       "이 수치는 현재 빌드에 포함된 데이터 풀에서 즉시 계산한 값입니다. 현재는 배포 시점 기준의 스냅샷 점검 결과를 제공하며, 점검 이력과 재수집 상태도 앞으로 단계적으로 공개할 예정입니다.",
 
+    // 데이터 상태 이력(append-only 스냅샷 로그)
+    historyHeading: "데이터 상태 이력",
+    historyPendingTitle: "이력 기록을 준비 중입니다.",
+    historyPendingBody:
+      "일자별 데이터 상태 이력은 스냅샷 로깅이 켜진 이후부터 쌓입니다. 과거 스냅샷을 지어내지 않기 위해, 로그가 아직 없는 지금은 위 '현재 데이터 스냅샷'만 실제 값으로 보여드립니다. 로깅이 활성화되면 이 자리에 생성일·기준일·산식 버전·검증 보류·가격 지연 종목 수가 일자별로 표시됩니다.",
+    historyTableCaption: "일자별 데이터 상태 스냅샷 이력",
+    historyColDate: "생성일",
+    historyColAsOf: "기준일",
+    historyColMetrics: "산식",
+    historyColSuspect: "검증 보류",
+    historyColLag: "가격 지연",
+    historyFootnote:
+      "각 행은 해당 생성 시점의 파이프라인 스냅샷입니다. '—'는 그 시점에 기록되지 않은 항목입니다. 이력은 최신 순으로 일정 개수까지만 보관합니다.",
+
     // 데이터 소스
     sourcesHeading: "데이터 소스",
     sources: {
@@ -105,6 +120,7 @@ export const statusCopy = {
       domains: "Status by type",
       limits: "Known limits",
       selfcheck: "Self-check",
+      history: "Status history",
       sources: "Data sources",
       report: "Report issue",
     },
@@ -153,6 +169,20 @@ export const statusCopy = {
       `${name}(${ticker}) · as of ${date}`,
     selfcheckFootnote:
       "These figures are computed instantly from the data pool included in the current build. For now we provide deploy-time snapshot check results, and we plan to progressively disclose check history and re-collection status over time.",
+
+    // Data status history (append-only snapshot log)
+    historyHeading: "Data status history",
+    historyPendingTitle: "History logging is being prepared.",
+    historyPendingBody:
+      "Per-day data status history accrues only after snapshot logging is enabled. To avoid fabricating past snapshots, while no log exists yet we show only the real 'Current data snapshot' above. Once logging is on, this section will list the generated date, reference date, formula version, pending-verification count, and price-lag count per day.",
+    historyTableCaption: "Per-day data status snapshot history",
+    historyColDate: "Generated",
+    historyColAsOf: "As of",
+    historyColMetrics: "Formula",
+    historyColSuspect: "Pending",
+    historyColLag: "Price lag",
+    historyFootnote:
+      "Each row is a pipeline snapshot at that generation time. '—' means the item was not recorded then. History is kept newest-first up to a fixed count.",
 
     sourcesHeading: "Data sources",
     sources: {
