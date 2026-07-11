@@ -135,6 +135,16 @@ export default async function NotificationSettingsPage() {
         </div>
       </div>
 
+      <noscript>
+        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg p-3.5 md:p-4 mb-5 md:mb-6">
+          <div className="text-xs md:text-[13px] text-amber-900 dark:text-amber-200 leading-relaxed break-words">
+            <strong>JavaScript 없이도 알림 범위와 채널 상태는 확인할 수 있어요.</strong> 저장한 조건 알림 목록과 켜기/끄기 관리는
+            로그인 후 브라우저 기능이 필요합니다. 현재 실제로 발송되는 제품 알림 채널은 이메일뿐이며, 카카오톡·웹·푸시 알림은 준비
+            중이라 메시지가 나가지 않습니다.
+          </div>
+        </div>
+      </noscript>
+
       {/* 1. 실제 발송되는 설정(로그인 시 저장) */}
       <div id="live-controls" className="scroll-mt-4">
         {userEmail ? (
@@ -177,7 +187,7 @@ export default async function NotificationSettingsPage() {
         )}
 
         <div className="mb-4 md:mb-6">
-          <ConditionAlertsManager />
+          <ConditionAlertsManager isLoggedIn={Boolean(userEmail)} />
         </div>
       </div>
 

@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [codex] Recover Task 148 notification fallback honesty
+- **Scope**: Recovered Task 148 after AI Center marked the run failed during a headless viewport probe even though the local notification fallback edits were in place. Local-only recovery; no notification sending behavior, cron, Resend/provider config, secrets, remote write, hosting, account console, scoring, generated data, or `metricsVersion` change.
+- **Changes**: `/settings/notifications` now includes a `<noscript>` explanation that saved-condition management needs login/browser features and that the live product channel is email only. `ConditionAlertsManager` accepts login state and replaces the generic `불러오는 중...` fallback with honest logged-in/non-login copy plus a login CTA. `NotificationToggle` loading state now reads as an email-alert settings placeholder instead of an unfinished spinner-only block.
+- **Validation**: Recovery reran finite local gates before commit: `npx tsc --noEmit`, `verify_metrics.py`, `git diff --check`, `npm run build`, and route/HTML spot checks for `/settings/notifications`. Headless first-screen probe from the failed run was treated as a tooling mismatch because lower-page notification sections are not required to be in the first viewport.
+- **Residual / next**: Email remains the only live notification channel. KakaoTalk/push/webhook/Slack sending remains future work and owner/provider gated. Continue with Task 149 compare accessibility text. Local commit only; no push; main unchanged.
+
 ## 2026-07-11 - [codex] Recover Task 147 SEO snippet/index hygiene
 - **Scope**: Recovered the interrupted Task 147 local SEO hygiene slice after AI Center restart/process cleanup left two validated files uncommitted. Local-only recovery; no remote write, hosting change, Search Console action, account/config/secret work, scoring, generated data, or `metricsVersion` change.
 - **Changes**: `src/app/page.tsx` homepage metadata keywords now use the current metric term `추세` instead of the legacy `모멘텀`. `scripts/verify-stocks-seo.mjs` now also verifies homepage and `/stocks` head metadata for legacy metric terms, and confirms `/backtest` remains index/follow with `nosnippet` so past-performance numbers are not exposed as cropped snippets.

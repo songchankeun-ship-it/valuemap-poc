@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T05:21:17.739Z
+Last updated: 2026-07-11T05:58:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 146 - ORNScore app launch 2026-07-11 D - standalone mobile login offline QA
-- Run: 143
+- Task: 148 - ORNScore review residual 2026-07-11 F - notifications fallback honesty
+- Run: 145
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: Watchdog recovery completed local notification fallback edits after a headless viewport probe/tooling mismatch, reran finite gates, and committed locally.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-11 - Codex - Recovery for Task 148 notification fallback honesty
+- **Context**: AI Center marked Task 148 failed during a headless viewport probe even though the requested notification fallback edits were already present. The failed probe treated lower-page notification sections as needing first-viewport visibility; this is a tooling mismatch for this task, not a product blocker. Recovery completed docs/validation/commit locally. No notification sending behavior, cron, provider config, secrets, remote write, hosting, account-console work, scoring, generated data, or `metricsVersion` change.
+- **Changes**: `/settings/notifications` now has a `<noscript>` notice explaining that saved-condition management needs login/browser features and that live product notifications are email-only for now. `ConditionAlertsManager` receives login state and replaces the generic loading-only fallback with logged-in/non-login honest copy plus a login CTA. `NotificationToggle` loading state is now an email-alert settings placeholder instead of an unfinished spinner-only block.
+- **Validation**: Recovery reran finite local gates before commit: `npx tsc --noEmit`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, `npm run build`, and route/HTML spot checks for `/settings/notifications`.
+- **Residual / next**: Email remains the only live notification channel. KakaoTalk/push/webhook/Slack sending remains future work and owner/provider gated. Continue with Task 149 compare accessibility text. Local commit only; no push; main unchanged.
 
 ### 2026-07-11 - Codex - Recovery for Task 147 SEO snippet/index hygiene
 - **Context**: AI Center recovered/restarted while Task 147 had already passed broad local checks and was stopping its temporary server, leaving two validated source changes uncommitted. Queue then paused before Task 148 because the worktree was dirty. Recovery completed the documentation/commit/DB handoff locally. No remote write, hosting change, Search Console action, account/config/secret work, scoring, generated data, or `metricsVersion` change.

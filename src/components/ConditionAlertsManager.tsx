@@ -23,7 +23,7 @@ function summarize(c: SavedSearchConfig): string {
   return parts.length ? parts.join(" · ") : "전체 종목";
 }
 
-export function ConditionAlertsManager() {
+export function ConditionAlertsManager({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [alerts, setAlerts] = useState<ConditionAlert[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,10 +54,24 @@ export function ConditionAlertsManager() {
       </p>
 
       {loading ? (
-        <p className="text-sm text-zinc-400 dark:text-zinc-500">불러오는 중...</p>
+        <div className="space-y-2">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            {isLoggedIn
+              ? "저장한 조건 알림을 확인하는 영역입니다. 브라우저 기능이 꺼져 있거나 연결이 느리면 목록 관리가 바로 표시되지 않을 수 있어요."
+              : "로그인하면 저장한 조건 알림을 볼 수 있어요. 현재 실제 발송 채널은 이메일뿐이며, 카카오톡·푸시 알림은 준비 중이라 메시지가 나가지 않습니다."}
+          </p>
+          {!isLoggedIn ? (
+            <Link
+              href="/login?next=/settings/notifications"
+              className="inline-flex items-center justify-center min-h-[44px] rounded-lg border border-zinc-200 dark:border-zinc-700 px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-300 dark:hover:border-blue-800 transition"
+            >
+              로그인하고 조건 알림 관리
+            </Link>
+          ) : null}
+        </div>
       ) : alerts.length === 0 ? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          아직 등록한 조건 알림이 없어요. <Link href="/stocks" className="text-blue-600 dark:text-blue-400 underline">종목 탐색</Link>에서 원하는 필터를 맞춘 뒤 <strong>“🔔 이 조건 알림”</strong>을 눌러보세요.
+          아직 등록한 조건 알림이 없어요. <Link href="/stocks" className="text-blue-600 dark:text-blue-400 underline">종목 탐색</Link>에서 원하는 필터를 맞춘 뒤 <strong>“이 조건 알림”</strong>을 눌러보세요.
         </p>
       ) : (
         <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">

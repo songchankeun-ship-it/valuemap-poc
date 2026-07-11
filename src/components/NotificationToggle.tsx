@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, BellOff, Loader2 } from "lucide-react";
+import { Bell, BellOff, Mail, Loader2 } from "lucide-react";
 import { getNotificationEnabled, setNotificationEnabled } from "@/lib/notifications";
 
 export function NotificationToggle() {
@@ -32,9 +32,14 @@ export function NotificationToggle() {
 
   if (enabled === null) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2.5 rounded-md text-sm text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800">
-        <Loader2 className="w-4 h-4 animate-spin" />
-        불러오는 중...
+      <div className="shrink-0 max-w-full px-4 py-2.5 rounded-md text-sm text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-2 font-medium text-zinc-600 dark:text-zinc-300">
+          <Mail className="w-4 h-4" />
+          이메일 알림 설정
+        </div>
+        <p className="mt-1 max-w-[18rem] text-[11px] leading-relaxed">
+          로그인 후 저장된 설정을 확인합니다. 현재 실제 발송 채널은 이메일뿐입니다.
+        </p>
       </div>
     );
   }
