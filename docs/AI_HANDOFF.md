@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T06:09:30.000Z
+Last updated: 2026-07-11T06:33:33.800Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 149 - ORNScore review residual 2026-07-11 G - compare accessibility text
-- Run: 146
+- Task: 150 - ORNScore review residual 2026-07-11 H - home search primacy follow-up
+- Run: 147
 - Status: completed
-- Agent: codex
-- Note: Watchdog recovery completed local compare accessibility semantics after AI Center restart/provider fallback interruption, reran finite gates, and committed locally.
+- Agent: claude
+- Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
 
