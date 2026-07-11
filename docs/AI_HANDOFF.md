@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T07:52:39.847Z
+Last updated: 2026-07-11T08:48:00.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 154 - ORNScore app review 2026-07-11 Z - local final verification handoff
-- Run: 151
+- Task: Release - 2026-07-11 app/review batch public deploy
+- Run: manual owner-approved Codex release
 - Status: completed
 - Agent: codex
-- Note: Watchdog recovery completed Task 154 after an AI Center restart/tester fallback false failure. Commit 29f6e69 plus logs show local gates green: tsc, verify_metrics, diff check, build, app:check, verify:routes, smoke --all, and verify:stocks-seo. No remote, hosting, store, account, Search Console, or live-release action was performed.
+- Note: Owner approved release in the Codex chat. Fast-forwarded main to b871363, pushed origin/main, confirmed https://ornscore.com has the new /status history section, and public gates passed: verify:routes 9/9, smoke --all 24/24, verify-stocks-seo 12/12. Store console, Search Console, real-device OAuth, and Android assetlinks remain owner-only external tasks.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-11 - Codex - Owner-approved public release for app/review batch
+- **Release**: Owner approved the live release in Codex. Local `main` was fast-forwarded from `origin/main` to `b871363` (task 154 recovery handoff), then pushed non-forced to `origin/main` (`d35cfdc..b871363`). Vercel auto-deploy was verified through the public site.
+- **Pre-push checks**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 0; `git diff --check` 0; `npm run app:check` pass with the expected owner-only `assetlinks.json` WAIT; `npm run build` 0 (existing `TrustLayer` ref cleanup warning only).
+- **Public verification**: `https://ornscore.com/status?deploycheck=...` contains the new `id="history"` section. `node scripts/verify-routes.mjs --base https://ornscore.com` passed 9/9; `node scripts/smoke-check.mjs --base https://ornscore.com --all` passed 24/24; `node scripts/verify-stocks-seo.mjs --base https://ornscore.com` passed 12/12.
+- **Still owner-only**: Android `/.well-known/assetlinks.json` needs the real package id and SHA-256 signing fingerprint before TWA address-bar hiding; real-device OAuth/standalone return, Store Console submission, Search Console reindex, and legal/account-console confirmations are external owner tasks.
 
 ### 2026-07-11 - Claude - Task 154 final local consolidation + release-ready handoff
 - **Context**: Final local-only consolidation pass closing the 2026-07-11 app-launch + review-residual batch (tasks 144–153). Confirms every prior task is committed with no open blockers, runs the broadest practical local validation, spot-checks key routes, and leaves an owner-approval release checklist. No source, scoring, `metricsVersion`, DART/market-data, generated dataset, auth, notification, remote-write, hosting, store/account-console, or live-release change. Working tree started clean at `147814a`; only PROGRESS.md + this handoff were edited.

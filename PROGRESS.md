@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [codex] Owner-approved public release for app/review batch
+- **Scope**: Release-only closeout after the completed 2026-07-11 app-launch + review-residual automation batch. Owner approved the live release in Codex. No source/scoring/data/auth/store-console/Search Console/account/assetlinks content change in this closeout note.
+- **Release action**: Fast-forwarded local `main` to release commit `b871363` (`[codex] recover task 154 final handoff status`) and pushed non-forced to `origin/main` (`d35cfdc..b871363`). Vercel auto-deploy was verified on the public domain.
+- **Pre-push checks**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 0; `git diff --check` 0; `npm run app:check` pass with expected owner-only `assetlinks.json` WAIT; `npm run build` 0 (existing `TrustLayer` ref cleanup warning only).
+- **Public verification**: `https://ornscore.com/status?deploycheck=...` contains the new `id="history"` section. `node scripts/verify-routes.mjs --base https://ornscore.com` 9/9; `node scripts/smoke-check.mjs --base https://ornscore.com --all` 24/24; `node scripts/verify-stocks-seo.mjs --base https://ornscore.com` 12/12.
+- **Remaining owner-only gates**: Android assetlinks requires real package id + SHA-256 signing fingerprint; real-device OAuth/standalone return, Store Console submission, Search Console reindex, and legal/account-console confirmations remain external owner work.
+
 ## 2026-07-11 - [claude] Task 154 final local consolidation + release-ready handoff
 - **Scope**: Final local-only consolidation pass after the 2026-07-11 app-launch + review-residual batch (tasks 144–153). No source, scoring, `metricsVersion`, DART/market-data collection, generated dataset, auth provider, notification sending, remote write, hosting, store/account console, or live-release change. Working tree started clean at `147814a`; this task adds only PROGRESS/handoff documentation.
 - **Batch state confirmed (all committed, no open blockers)**: `d28a932` task 144 assetlinks guard · `29fcdad`/`03ca479` task 145 store pack · `756ec2e`/`719a1e0` task 146 standalone mobile/login/offline · `8868df5` task 147 SEO snippet hygiene · `07de621` task 148 notification fallback · `32cad4b` task 149 compare accessibility · `de92ac7`/`ca94c83` task 150 home search primacy · `141e33f`/`27f0573` task 151 discover card/table split · `a8bbf7a`/`b0c88aa` task 152 chart overlay · `147814a` task 153 data-status history scaffold. `git status` clean.
