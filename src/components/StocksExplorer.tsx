@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Activity, AlertTriangle, Bell, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
-import { fmtMarketCap, fmtWon } from "@/lib/format";
+import { fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { addConditionAlert } from "@/lib/conditionAlerts";
@@ -682,35 +682,25 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
                 {s.sector ? <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">· {s.sector}</span> : null}
               </div>
-              <div className="flex items-baseline gap-2 mb-2 flex-wrap">
+              <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{fmtWon(s.currentPrice)}</span>
                 <span className={"text-[11px] tabular-nums " + (s.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>
                   {s.changePct >= 0 ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
                 </span>
-              </div>
-              <div className="flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums flex-wrap">
-                <span>{t.card.cap} {fmtMarketCap(s.marketCap)}</span>
-                <span>PER {s.per > 0 ? s.per.toFixed(1) + (locale === "ko" ? "배" : "x") : t.card.perDash}</span>
-                <span>PBR {s.pbr > 0 ? s.pbr.toFixed(2) + (locale === "ko" ? "배" : "x") : t.card.perDash}</span>
-                <span>ROE {s.roe > 0 ? s.roe.toFixed(1) + "%" : t.card.perDash}</span>
-                {s.dividendYield > 0 ? <span>{t.chip.div}{s.dividendYield.toFixed(1)}%</span> : null}
+                {s.dividendYield > 0 ? <span className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums">{t.chip.div}{s.dividendYield.toFixed(1)}%</span> : null}
               </div>
             </div>
-            <div className="text-right shrink-0 max-w-[11.5rem] sm:max-w-[14rem]">
-              <div className="flex items-baseline gap-1 justify-end mb-2">
-                <span className="text-lg font-bold text-blue-700 dark:text-blue-400 tabular-nums">{s.compositeScore || 0}</span>
+            <div className="text-right shrink-0">
+              <div className="flex items-baseline gap-1 justify-end">
+                <span className="text-2xl font-bold text-blue-700 dark:text-blue-400 tabular-nums leading-none">{s.compositeScore || 0}</span>
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
               </div>
-              <div className="flex gap-1 justify-end text-[10px] flex-wrap">
-                <span title={t.card.tip.momentum} className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.momentum} {s.momentum}</span>
-                <span title={t.card.tip.flow} className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.flow} {s.flow}</span>
-                <span title={t.card.tip.value} className="bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.value} {s.value}</span>
-                <span title={t.card.tip.vol} className="bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 px-1.5 py-0.5 rounded tabular-nums cursor-help whitespace-nowrap">{t.metric.vol} {s.vol}</span>
-              </div>
+              <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500">{t.table.composite}</div>
             </div>
           </div>
+          {/* 카드형(초보자용): 원점수·재무 나열 대신 '왜 후보인지(강점)·먼저 확인할 점(주의)'를 전면에. 세부 지표·재무 스캔은 표형이 담당. */}
           {strengths.length > 0 || warnings.length > 0 ? (
-            <div className="flex flex-col gap-1 mt-2">
+            <div className="flex flex-col gap-1.5 mt-2.5">
               {strengths.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0 md:min-w-[2.75rem]"><Check aria-hidden size={11} strokeWidth={2.5} />{t.card.strength}</span>
@@ -728,7 +718,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 </div>
               ) : null}
             </div>
-          ) : null}
+          ) : (
+            <div className="mt-2.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.card.neutral}</div>
+          )}
           {s.themes.length > 0 ? (
             <div className="flex gap-1 flex-wrap mt-2">
               {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">{t}</span>))}
@@ -1177,13 +1169,15 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
         <div role="group" aria-label={t.viewModeAria} className="hidden lg:inline-flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
           {([
-            { id: "card", label: t.viewCard },
-            { id: "table", label: t.viewTable },
-          ] as { id: ViewMode; label: string }[]).map((o) => (
+            { id: "card", label: t.viewCard, hint: t.viewCardHint },
+            { id: "table", label: t.viewTable, hint: t.viewTableHint },
+          ] as { id: ViewMode; label: string; hint: string }[]).map((o) => (
             <button
               key={o.id}
               type="button"
               aria-pressed={viewMode === o.id}
+              title={o.hint}
+              aria-label={o.label + " — " + o.hint}
               onClick={() => changeViewMode(o.id)}
               className={"px-3 py-2 text-sm transition " + (viewMode === o.id ? "bg-blue-600 text-white" : "text-zinc-600 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400")}
             >
@@ -1253,7 +1247,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         <section id="stock-results" aria-label={t.resultsRegionLabel} className="space-y-2 scroll-mt-20">
           {/* 결과 목록 제목 — 무JS/스크린리더가 필터 UI 다음에 '종목 목록' 시작을 바로 인지 + '138종목 내' 범위 재고지 */}
           {sorted.length > 0 ? (
-            <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 tabular-nums">{t.resultsHeading(sorted.length, total)}</h2>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 tabular-nums">{t.resultsHeading(sorted.length, total)}</h2>
+              {/* 현재 보기의 역할 한 줄 안내(데스크톱 전용) — 카드=초보자용, 표=숙련자용. 튜토리얼 벽 없이 compact. */}
+              <span className="hidden lg:block text-[11px] text-zinc-400 dark:text-zinc-500 shrink-0 truncate">{viewMode === "table" ? t.viewTableHint : t.viewCardHint}</span>
+            </div>
           ) : null}
           {sorted.length === 0 ? (() => {
             const sc = strongestConstraint();

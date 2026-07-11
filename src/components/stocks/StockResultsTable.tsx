@@ -94,7 +94,11 @@ export function StockResultsTable({ rows, laggedTickers = [] }: { rows: StockRow
             <th className={TH + " text-center"}>{t.table.flow}</th>
             <th className={TH + " text-center"}>{t.table.value}</th>
             <th className={TH + " text-center"}>{t.table.vol}</th>
-            <th className={TH}>{t.table.signal}</th>
+            <th className={TH + " text-right" + SEP}>{t.table.per}</th>
+            <th className={TH + " text-right"}>{t.table.pbr}</th>
+            <th className={TH + " text-right"}>{t.table.roe}</th>
+            <th className={TH + " text-right"}>{t.table.div}</th>
+            <th className={TH + SEP}>{t.table.signal}</th>
             <th className={TH + " text-right"}>{t.table.action}</th>
           </tr>
         </thead>
@@ -124,7 +128,11 @@ export function StockResultsTable({ rows, laggedTickers = [] }: { rows: StockRow
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.flow} /></td>
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.value} /></td>
                 <td className={TD + " text-center"}><ScoreHeatCell score={s.vol} /></td>
-                <td className={TD}>
+                <td className={TD + " text-right tabular-nums text-zinc-700 dark:text-zinc-300" + SEP}>{s.per > 0 ? s.per.toFixed(1) : "—"}</td>
+                <td className={TD + " text-right tabular-nums text-zinc-700 dark:text-zinc-300"}>{s.pbr > 0 ? s.pbr.toFixed(2) : "—"}</td>
+                <td className={TD + " text-right tabular-nums text-zinc-700 dark:text-zinc-300"}>{s.roe > 0 ? s.roe.toFixed(1) + "%" : "—"}</td>
+                <td className={TD + " text-right tabular-nums text-zinc-700 dark:text-zinc-300"}>{s.dividendYield > 0 ? s.dividendYield.toFixed(1) + "%" : "—"}</td>
+                <td className={TD + SEP}>
                   {chips.length > 0 ? (
                     <div className="flex gap-1 flex-wrap max-w-[180px]">
                       {strengths.slice(0, 1).map((label) => (
