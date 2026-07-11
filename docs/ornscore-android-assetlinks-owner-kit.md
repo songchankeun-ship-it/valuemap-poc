@@ -120,6 +120,13 @@ npm run app:check
 
 **실 지문은 오직 Play Console의 앱 서명 키(app-signing key) 또는 실제 서명 keystore에 대한 `keytool` 출력에서만 나온다.** 그 실값이 손에 들어오기 전까지는 `public/.well-known/assetlinks.json`을 **만들지도, 커밋하지도 않는다.** 예시 파일(`docs/templates/assetlinks.example.json`)은 서빙되지 않는 자리표시자 전용이며 건드리지 않는다.
 
+> 🔒 위 판별 규칙은 이제 **문서로만 남지 않고 코드로 강제된다.** 공통 검증 모듈 `scripts/lib/assetlinks.mjs`가
+> 세 판별을 담당하고, 두 곳에서 이를 쓴다:
+> - **생성기**(`app:assetlinks`)는 자리표시자·형식오류·**반복 단일바이트 더미(`AB:AB:…` 등)** 지문을 `--dry-run` 포함 **어떤 경우에도 파일로 쓰지 않고 거부**한다.
+> - **게이트**(`app:check`)는 커밋된 `public/.well-known/assetlinks.json`이 있으면 단순 문자열이 아니라 **구조·패키지명·지문**을 검사해, 형식만 맞춘 가짜 값(반복 바이트·자리표시자 패키지)도 `FAIL`로 잡는다.
+>
+> 즉, 실 서명 지문 없이 만든 어떤 assetlinks도 **로컬 게이트를 통과하지 못한다.** 다만 이 자동 검증은 "명백한 가짜"만 걸러내며, 임의의 형식적합 지문이 **실제 서명 인증서인지까지 증명하지는 못한다**(그건 운영자가 Play Console 값으로 대조). 그래서 실값 배치는 여전히 운영자 게이트로 남는다.
+
 ---
 
 ## 한 걸음 요약 (handoff)

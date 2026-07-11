@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { validatePublicStatements } from "./lib/assetlinks.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const rel = (p) => join(ROOT, p);
@@ -100,10 +101,14 @@ for (const path of sourceFiles) notIncludes(path, "serviceWorker.register", "ser
 // --dry-run must print parseable JSON and never touch public/.well-known.
 {
   const gen = rel("scripts/generate-assetlinks.mjs");
-  const dummyFingerprint = new Array(32).fill("AB").join(":"); // 32 valid hex bytes
+  // A varied (non-repeated-byte) hex value: passes format + the fake-dummy guard
+  // so --dry-run can prove the JSON shape without a real signing cert.
+  const smokeFingerprint = Array.from({ length: 32 }, (_, i) =>
+    i.toString(16).padStart(2, "0").toUpperCase(),
+  ).join(":");
   const dry = spawnSync(
     process.execPath,
-    [gen, "--package", "com.ornscore.app", "--fingerprint", dummyFingerprint, "--dry-run"],
+    [gen, "--package", "com.ornscore.app", "--fingerprint", smokeFingerprint, "--dry-run"],
     { cwd: ROOT, encoding: "utf8" },
   );
   let dryJsonOk = false;
@@ -111,7 +116,7 @@ for (const path of sourceFiles) notIncludes(path, "serviceWorker.register", "ser
     const parsed = JSON.parse(dry.stdout);
     dryJsonOk =
       parsed?.[0]?.target?.package_name === "com.ornscore.app" &&
-      parsed?.[0]?.target?.sha256_cert_fingerprints?.[0] === dummyFingerprint;
+      parsed?.[0]?.target?.sha256_cert_fingerprints?.[0] === smokeFingerprint;
   } catch {
     dryJsonOk = false;
   }
@@ -127,7 +132,28 @@ for (const path of sourceFiles) notIncludes(path, "serviceWorker.register", "ser
   if (placeholder.status !== 0) pass("assetlinks generator rejects placeholder fingerprint");
   else failure("assetlinks generator accepted a placeholder fingerprint");
 
-  // The dry-run/placeholder exercises must never have created the real file.
+  // A format-valid but obviously-fake dummy (single repeated byte, e.g. AB:AB:...)
+  // must also be rejected — this is the value that would silently publish a
+  // broken domain-verification file if the guard ever regressed.
+  const dummyFingerprint = new Array(32).fill("AB").join(":");
+  const dummy = spawnSync(
+    process.execPath,
+    [gen, "--package", "com.ornscore.app", "--fingerprint", dummyFingerprint],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  if (dummy.status !== 0) pass("assetlinks generator rejects repeated-byte dummy fingerprint");
+  else failure("assetlinks generator accepted a repeated-byte dummy fingerprint");
+
+  // The placeholder package id must be rejected regardless of fingerprint.
+  const badPackage = spawnSync(
+    process.execPath,
+    [gen, "--package", "com.example.ornscore", "--fingerprint", smokeFingerprint],
+    { cwd: ROOT, encoding: "utf8" },
+  );
+  if (badPackage.status !== 0) pass("assetlinks generator rejects placeholder package id");
+  else failure("assetlinks generator accepted the placeholder package id");
+
+  // None of the exercises above may create the real file.
   if (existsSync(join(ROOT, "public", ".well-known", "assetlinks.json"))) {
     failure("assetlinks generator wrote public/.well-known/assetlinks.json during dry-run check");
   } else {
@@ -179,11 +205,21 @@ notIncludes("docs/app-readiness-audit-2026-07-11.md", "Play Store에 등재됨",
 const publicAssetlinks = rel("public/.well-known/assetlinks.json");
 if (existsSync(publicAssetlinks)) {
   const deployed = readFileSync(publicAssetlinks, "utf8");
-  if (deployed.includes("REPLACE_WITH_REAL") || deployed.includes("com.example.ornscore")) {
-    failure("public assetlinks.json contains placeholder values");
+  let parsed;
+  try {
+    parsed = JSON.parse(deployed);
+  } catch {
+    parsed = undefined;
+  }
+  if (parsed === undefined) {
+    failure("public assetlinks.json is not valid JSON");
   } else {
-    JSON.parse(deployed);
-    pass("public assetlinks.json uses non-placeholder values");
+    // Structural guard: reject not just the exact placeholder strings but any
+    // fake/dummy fingerprint (repeated byte), placeholder package, or wrong
+    // shape — a format-valid dummy must never publish as if it were real.
+    const { ok, reasons } = validatePublicStatements(parsed);
+    if (ok) pass("public assetlinks.json uses real-looking, non-placeholder values");
+    else failure(`public assetlinks.json is not publishable: ${reasons.join("; ")}`);
   }
 } else {
   waiting("public/.well-known/assetlinks.json not generated yet; needs real Android package + SHA-256 fingerprint");

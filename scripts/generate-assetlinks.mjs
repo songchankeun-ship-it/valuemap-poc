@@ -12,6 +12,14 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  PACKAGE_RE,
+  FINGERPRINT_RE,
+  buildStatements,
+  isFakeFingerprint,
+  isPlaceholderPackage,
+  normalizeFingerprint,
+} from "./lib/assetlinks.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", ".well-known", "assetlinks.json");
@@ -22,43 +30,45 @@ function arg(name) {
 }
 
 const packageName = arg("--package") ?? process.env.ORNSCORE_ANDROID_PACKAGE;
-const fingerprint = (arg("--fingerprint") ?? process.env.ORNSCORE_ANDROID_SHA256 ?? "").toUpperCase();
+const fingerprint = normalizeFingerprint(arg("--fingerprint") ?? process.env.ORNSCORE_ANDROID_SHA256);
 const dryRun = process.argv.includes("--dry-run");
 
 // Reject the well-known placeholders outright with a pointer to the how-to kit,
 // so a template value can never be mistaken for a real signing fingerprint.
-if (fingerprint === "REPLACE_WITH_REAL_SHA256_FINGERPRINT" || packageName === "com.example.ornscore") {
+if (isPlaceholderPackage(packageName)) {
   console.error(
-    "FAIL placeholder values are not real. The SHA-256 must come from the Play Console " +
-      "app-signing key or `keytool` on the real keystore.\n" +
+    "FAIL placeholder package com.example.ornscore is a template value. Use the real " +
+      "package id (com.ornscore.app).\n" +
       "See docs/ornscore-android-assetlinks-owner-kit.md",
   );
   process.exit(1);
 }
 
-const packageOk = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(packageName ?? "");
-const fingerprintOk = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(fingerprint);
-
-if (!packageOk) {
+if (!PACKAGE_RE.test(packageName ?? "")) {
   console.error("FAIL package name must look like com.ornscore.app");
   process.exit(1);
 }
 
-if (!fingerprintOk) {
+if (!FINGERPRINT_RE.test(fingerprint)) {
   console.error("FAIL fingerprint must be 32 SHA-256 hex bytes separated by ':'");
   process.exit(1);
 }
 
-const statements = [
-  {
-    relation: ["delegate_permission/common.handle_all_urls"],
-    target: {
-      namespace: "android_app",
-      package_name: packageName,
-      sha256_cert_fingerprints: [fingerprint],
-    },
-  },
-];
+// A format-valid but obviously-fake fingerprint (the template placeholder, or a
+// single repeated byte like AB:AB:...:AB) must never be written or blessed —
+// even in --dry-run. Publishing it would fail TWA domain verification and expose
+// the address bar. The real value comes only from the app-signing key SHA-256.
+if (isFakeFingerprint(fingerprint)) {
+  console.error(
+    "FAIL fingerprint is a placeholder/dummy (repeated byte or template value), not a real " +
+      "signing cert. The SHA-256 must come from the Play Console app-signing key or `keytool` " +
+      "on the real keystore.\n" +
+      "See docs/ornscore-android-assetlinks-owner-kit.md",
+  );
+  process.exit(1);
+}
+
+const statements = buildStatements(packageName, fingerprint);
 
 const json = JSON.stringify(statements, null, 2) + "\n";
 

@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 · [claude] Android TWA assetlinks 안전장치 강화 (가짜 지문 게이트) (Task 144)
+- **범위**: 실 Digital Asset Links를 배포하지 않으면서 Android TWA 준비를 더 안전하게. **로컬 검증/스크립트/문서 전용** — 매니페스트/아이콘/UI/라우트/메타데이터/점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증·알림 동작 무변경. 실 assetlinks 생성·배포·원격 push·계정/콘솔 조치 0. 브랜치 `ai-center/task-144-ornscore-app-launch-2026-07-11-b-and`.
+- **문제(문서-코드 불일치)**: 운영자 키트(`ornscore-android-assetlinks-owner-kit.md`)는 `AB:AB:…:AB` 같은 **반복 단일바이트 더미**를 "가짜 = 커밋 금지"로 명시하지만, `check-app-packaging.mjs`의 공개파일 가드는 자리표시자 **문자열 2개**(`REPLACE_WITH_REAL`·`com.example.ornscore`)만 검사했다. 즉 `com.ornscore.app` + 전부-AB 지문 파일이 커밋되면 "non-placeholder values"로 **오탐 통과**(false green)했다 — 배포 시 TWA 도메인 검증 실패로 주소창 노출 위험.
+- **변경(스크립트 3 + 문서 1)**:
+  - `scripts/lib/assetlinks.mjs`(신규) — 생성기와 게이트가 공유하는 단일 검증 모듈. `isFakeFingerprint`(자리표시자·형식오류·반복 단일바이트 거부)·`isPlaceholderPackage`·`normalizeFingerprint`(`SHA256:` 접두어·공백 제거)·`validatePublicStatements`(구조·패키지명·지문 전수 검사)·`buildStatements`. 규칙 드리프트 원천 차단.
+  - `scripts/generate-assetlinks.mjs` — 공유 모듈 사용. 이제 자리표시자뿐 아니라 **반복바이트 더미 지문을 `--dry-run` 포함 어떤 경우에도 파일로 쓰지 않고 거부**. 지문 정규화 추가로 운영자 붙여넣기(접두어 포함) 관대 처리.
+  - `scripts/check-app-packaging.mjs` — (1) 공개 `assetlinks.json` 가드를 단순 문자열→`validatePublicStatements` 구조검사로 교체(형식만 맞춘 가짜도 `FAIL`). (2) `--dry-run` 스모크 지문을 반복-AB→**가변 hex(00:01:…:1F)**로 교체(생성기 가짜 가드와 양립). (3) 생성기가 **반복바이트 더미**·**자리표시자 패키지**를 거부하는지 확인하는 음성 테스트 2개 추가.
+  - `docs/ornscore-android-assetlinks-owner-kit.md` — "자리표시자 vs 실값" 섹션에 판별 규칙이 이제 **코드로 강제**됨(생성기+`app:check`)을 명시. 자동검증은 "명백한 가짜"만 걸러내고 실 인증서 여부는 운영자가 Play Console 값으로 대조한다는 한계도 함께 고지.
+- **검증(전부 통과)**: `npm run app:check` 통과(FAIL 0 · WAIT 1 = 의도된 assetlinks 외부 게이트, 신규 assetlinks assertion 6개 전부 OK) · `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF만). **가드 실증**: `com.ornscore.app`+전부-AB 가짜 `public/.well-known/assetlinks.json`을 임시 배치 → `app:check`가 `FAIL public assetlinks.json is not publishable: placeholder/dummy fingerprint …`로 정확히 차단 → 임시 파일 제거·작업트리 clean 복구 확인. 운영자 키트 한글 인코딩 정상(치환문자 0). 스크립트/문서 전용이라 build/smoke/routes/SEO는 이 슬라이스에 불필요.
+- **잔여 리스크 / 다음 큐**: 자동검증은 자리표시자·반복바이트 더미 등 **명백한 가짜만** 차단하며, 임의의 형식적합 지문이 **실 서명 인증서인지까지는 증명 불가**(원리적 한계) — 실값 대조·배치는 여전히 운영자 게이트(실 Android 앱 서명 SHA-256, `ornscore-android-assetlinks-owner-kit.md` 절차). `public/.well-known/assetlinks.json` `WAIT`은 그대로 유일 잔여 외부 게이트. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-11 · [claude] 앱/PWA/TWA 로컬 준비도 감사 단일 문서화 (Task 143)
 - **범위**: 흩어지고 날짜가 밀린 앱/PWA/TWA 문서를 **유지보수자 한 명이 문서 하나로 준비도를 파악**할 수 있게 정리. **표시·문서 전용** — 매니페스트/아이콘/스크립트 로직·점수 산식·수집 코드·생성 데이터셋·`metricsVersion`(2.4)·인증 설정·알림 동작 무변경. 외부 스토어/계정 조치 0. 브랜치 `ai-center/task-143-ornscore-app-launch-2026-07-11-a-pac`.
 - **현황 파악**: 기존 앱 문서(`app-packaging-readiness`·`-final-checklist`·`app-roadmap`·`app-store-submission-pack`·`ornscore-mobile-listing-prep-pack`·assetlinks/twa owner kit)는 내용은 정확하나 날짜가 밀려 있고(final-checklist 2026-06-28, readiness Task 77) 준비 상태가 6~7개 파일에 분산. `npm run app:check`는 **통과**(FAIL 0)하며 유일한 `WAIT`은 `assetlinks.json` 실 서명 지문 대기(의도된 외부 게이트). `manifest.ts`·4개 소스 SW 미등록·아이콘 4종·설치 프롬프트·오프라인·safe-area 모두 존재.
