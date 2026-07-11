@@ -2,6 +2,12 @@
 
 import { useMemo, useState } from "react";
 import type { PricePoint } from "@/lib/priceHistory";
+import {
+  VOLUME_SPIKE_BASELINE,
+  VOLUME_SPIKE_MULTIPLE,
+  SURGE_3M_THRESHOLD_PCT,
+  TRADING_DAYS_3M,
+} from "@/lib/priceSummary";
 
 type RangeKey = "1W" | "1M" | "3M" | "6M" | "1Y";
 
@@ -27,7 +33,7 @@ interface Props {
   points: PricePoint[];
 }
 
-type MarkerKind = "flow" | "drawdown";
+type MarkerKind = "flow" | "drawdown" | "surge";
 
 interface ChartMarker {
   idx: number; // filtered 내 인덱스
@@ -37,60 +43,102 @@ interface ChartMarker {
   tone: string;
 }
 
+/** 시작~끝 인덱스로 표시 구간을 음영으로 강조하는 밴드(점 마커와 별도 레이어). */
+interface ChartRegion {
+  fromIdx: number;
+  toIdx: number;
+  kind: MarkerKind;
+  label: string;
+  detail: string;
+  tone: string;
+}
+
+interface ChartOverlay {
+  markers: ChartMarker[];
+  regions: ChartRegion[];
+}
+
 const MARKER_META: Record<MarkerKind, { label: string; tone: string }> = {
   flow: { label: "거래량 급증", tone: "#f59e0b" },
-  drawdown: { label: "고점 대비 저점", tone: "#8b5cf6" },
+  drawdown: { label: "고점 대비 낙폭 구간", tone: "#8b5cf6" },
+  surge: { label: "3개월 급등(확인 유도)", tone: "#e11d48" },
 };
 
-/**
- * 가격 시계열에서 파생 가능한 주요 지점만 표시(비침습 마커 레이어).
- * - 새 데이터 수집·API 호출 없이 이미 받은 종가/거래량 배열에서만 계산 → 성능·요약 우선 흐름 유지.
- * - 현재 구현: (1) 거래량 급증(직전 20영업일 평균 대비 배수) (2) 기간 고점 대비 최대 낙폭 저점.
- * - 모바일 혼잡 방지를 위해 거래량 급증은 강도 상위 3개, 낙폭은 최저점 1개로 제한.
- * - 점수 변화·DART 공시·데이터 경보 마커는 후속(별도 데이터 정합 필요) — 문서화됨.
- */
-function computeMarkers(filtered: PricePoint[]): ChartMarker[] {
-  const out: ChartMarker[] = [];
-  const n = filtered.length;
-  if (n < 5) return out;
+function median(nums: number[]): number {
+  if (nums.length === 0) return 0;
+  const sorted = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
 
-  // (1) 거래량 급증 — 직전 20영업일(가능한 만큼) 평균 대비 2.5배 이상
-  const win = Math.min(20, n - 1);
+/**
+ * 가격 시계열에서 파생 가능한 주요 지점·구간만 표시(비침습 오버레이 레이어).
+ * - 새 데이터 수집·API 호출 없이 이미 받은 종가/거래량 배열에서만 계산 → 성능·요약 우선 흐름 유지.
+ * - 점 마커: 거래량 급증(직전 20거래일 중앙값 대비 배수, 강도 상위 3개) · 낙폭 저점(1개).
+ * - 구간 밴드: 고점→저점 낙폭 구간(음영) · 최근 약 3개월 급등 구간(임계 이상, 표시 범위에 3개월 이상 이력이 있을 때만).
+ * - 임계·정의는 텍스트 요약(priceSummary.computeChartEvents)과 동일 상수를 공유해 차트와 텍스트가 어긋나지 않게 한다.
+ * - 점수 변화·DART 공시 마커는 후속(별도 데이터 정합 필요) — 아직 차트에 데이터가 연결돼 있지 않아 지어내지 않는다(문서화됨).
+ */
+function computeMarkers(filtered: PricePoint[]): ChartOverlay {
+  const markers: ChartMarker[] = [];
+  const regions: ChartRegion[] = [];
+  const n = filtered.length;
+  if (n < 5) return { markers, regions };
+
+  // (1) 거래량 급증 — 직전 VOLUME_SPIKE_BASELINE(20)거래일 중앙값 대비 VOLUME_SPIKE_MULTIPLE(3)배 이상
+  const win = Math.min(VOLUME_SPIKE_BASELINE, n - 1);
   const flowCand: { idx: number; ratio: number }[] = [];
   for (let i = win; i < n; i++) {
-    let sum = 0;
-    for (let j = i - win; j < i; j++) sum += filtered[j].v;
-    const avg = sum / win;
-    if (avg > 0) {
-      const ratio = filtered[i].v / avg;
-      if (ratio >= 2.5) flowCand.push({ idx: i, ratio });
+    const base = median(
+      filtered.slice(i - win, i).map((p) => p.v).filter((v) => Number.isFinite(v) && v > 0),
+    );
+    const v = filtered[i].v;
+    if (base > 0 && Number.isFinite(v)) {
+      const ratio = v / base;
+      if (ratio >= VOLUME_SPIKE_MULTIPLE) flowCand.push({ idx: i, ratio });
     }
   }
   flowCand.sort((a, b) => b.ratio - a.ratio);
   for (const c of flowCand.slice(0, 3)) {
-    out.push({
+    markers.push({
       idx: c.idx,
       kind: "flow",
       label: MARKER_META.flow.label,
-      detail: `거래량 급증 · 직전 ${win}거래일 평균의 ${c.ratio.toFixed(1)}배`,
+      detail: `거래량 급증 · 직전 ${win}거래일 중앙값의 ${c.ratio.toFixed(1)}배`,
       tone: MARKER_META.flow.tone,
     });
   }
 
-  // (2) 고점 대비 최대 낙폭 — 저점 지점 1개(−10% 이상일 때만)
+  // (2) 고점 대비 최대 낙폭 — 고점→저점 구간 음영 + 저점 마커(−10% 이상일 때만)
   let peak = filtered[0].c;
+  let peakIdx = 0;
   let worst = 0;
   let worstIdx = -1;
+  let worstPeakIdx = 0;
   for (let i = 1; i < n; i++) {
-    if (filtered[i].c > peak) peak = filtered[i].c;
+    if (filtered[i].c > peak) {
+      peak = filtered[i].c;
+      peakIdx = i;
+    }
     const dd = peak > 0 ? (filtered[i].c - peak) / peak : 0;
     if (dd < worst) {
       worst = dd;
       worstIdx = i;
+      worstPeakIdx = peakIdx;
     }
   }
   if (worstIdx >= 0 && worst <= -0.1) {
-    out.push({
+    if (worstPeakIdx < worstIdx) {
+      regions.push({
+        fromIdx: worstPeakIdx,
+        toIdx: worstIdx,
+        kind: "drawdown",
+        label: MARKER_META.drawdown.label,
+        detail: `${filtered[worstPeakIdx].d} 고점 → ${filtered[worstIdx].d} 저점 · ${(worst * 100).toFixed(1)}% 하락 구간`,
+        tone: MARKER_META.drawdown.tone,
+      });
+    }
+    markers.push({
       idx: worstIdx,
       kind: "drawdown",
       label: MARKER_META.drawdown.label,
@@ -99,7 +147,28 @@ function computeMarkers(filtered: PricePoint[]): ChartMarker[] {
     });
   }
 
-  return out;
+  // (3) 최근 약 3개월(63거래일) 급등 구간 — 표시 범위에 3개월 이상 이력이 있고 등락률 ≥ 임계일 때만.
+  //     낙폭 구간과 달리 우측(최근) 구간을 밴드로 표시. 3개월 미만 표시 범위(예: 1주·1개월·3개월 토글)에서는
+  //     baseline 산정 불가 → 자동으로 표시되지 않음(6개월·1년 토글에서 최근 3개월 구간만 강조).
+  if (n - 1 >= TRADING_DAYS_3M) {
+    const fromIdx = n - 1 - TRADING_DAYS_3M;
+    const base = filtered[fromIdx].c;
+    if (base > 0) {
+      const pct = ((filtered[n - 1].c - base) / base) * 100;
+      if (pct >= SURGE_3M_THRESHOLD_PCT) {
+        regions.push({
+          fromIdx,
+          toIdx: n - 1,
+          kind: "surge",
+          label: MARKER_META.surge.label,
+          detail: `최근 약 3개월 +${pct.toFixed(1)}% — 변동성 확대·급등 사유 원본 확인`,
+          tone: MARKER_META.surge.tone,
+        });
+      }
+    }
+  }
+
+  return { markers, regions };
 }
 
 /**
@@ -123,18 +192,20 @@ export function StockPriceChart({ ticker, name, points }: Props) {
     return points.slice(-Math.min(lastBusinessDays, points.length));
   }, [points, range]);
 
-  // 표시 범위에서 파생한 주요 지점 마커(거래량 급증·낙폭). 데이터/API 추가 없음.
-  const markers = useMemo(() => computeMarkers(filtered), [filtered]);
+  // 표시 범위에서 파생한 주요 지점·구간(거래량 급증·낙폭 구간·3개월 급등). 데이터/API 추가 없음.
+  const { markers, regions } = useMemo(() => computeMarkers(filtered), [filtered]);
+  const hasOverlay = markers.length > 0 || regions.length > 0;
   const markerByIdx = useMemo(() => {
     const m = new Map<number, ChartMarker>();
     for (const mk of markers) m.set(mk.idx, mk);
     return m;
   }, [markers]);
-  const markerKinds = useMemo(() => {
+  const legendKinds = useMemo(() => {
     const kinds = new Set<MarkerKind>();
     for (const mk of markers) kinds.add(mk.kind);
+    for (const rg of regions) kinds.add(rg.kind);
     return [...kinds];
-  }, [markers]);
+  }, [markers, regions]);
 
   if (filtered.length < 2) {
     return (
@@ -185,6 +256,10 @@ export function StockPriceChart({ ticker, name, points }: Props) {
   // 호버
   const hoverPoint = hover !== null ? priceCoords[hover] : null;
   const hoverP = hoverPoint?.p;
+  const hoverRegion =
+    hover !== null && showMarkers
+      ? regions.find((r) => hover >= r.fromIdx && hover <= r.toIdx) ?? null
+      : null;
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
@@ -222,12 +297,17 @@ export function StockPriceChart({ ticker, name, points }: Props) {
       {hoverP ? (
         <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums mb-1">
           {hoverP.d} · 거래량 {hoverP.v.toLocaleString()}
-          {hover !== null && markerByIdx.has(hover) ? (
+          {hover !== null && showMarkers && markerByIdx.has(hover) ? (
             <span
               className="ml-1 font-medium"
               style={{ color: markerByIdx.get(hover)!.tone }}
             >
               · {markerByIdx.get(hover)!.detail}
+            </span>
+          ) : null}
+          {hoverRegion ? (
+            <span className="ml-1 font-medium" style={{ color: hoverRegion.tone }}>
+              · {hoverRegion.detail}
             </span>
           ) : null}
         </div>
@@ -237,12 +317,12 @@ export function StockPriceChart({ ticker, name, points }: Props) {
         </div>
       )}
 
-      {/* 주요 지점 마커 범례 + 토글 (해당 지점이 있을 때만) */}
-      {markers.length > 0 ? (
+      {/* 주요 지점·구간 범례 + 토글 (해당 오버레이가 있을 때만) */}
+      {hasOverlay ? (
         <div className="flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[10px] text-zinc-500 dark:text-zinc-400 mb-1.5">
-          <span className="text-zinc-400 dark:text-zinc-500">주요 지점</span>
+          <span className="text-zinc-400 dark:text-zinc-500">주요 지점·구간</span>
           {showMarkers
-            ? markerKinds.map((k) => (
+            ? legendKinds.map((k) => (
                 <span key={k} className="inline-flex items-center gap-1">
                   <span
                     className="inline-block w-2 h-2 rounded-full"
@@ -311,6 +391,42 @@ export function StockPriceChart({ ticker, name, points }: Props) {
 
           {/* 가격 영역 채우기 */}
           <path d={areaPath} fill={fillColor} />
+
+          {/* 주요 구간 밴드(낙폭 구간·3개월 급등) — 라인 뒤에 옅은 음영으로. 데이터 추가 없음 */}
+          {showMarkers
+            ? regions.map((rg) => {
+                const x1 = rg.fromIdx * stepX;
+                const x2 = rg.toIdx * stepX;
+                const w = Math.max(x2 - x1, 0.5);
+                const active =
+                  hover !== null && hover >= rg.fromIdx && hover <= rg.toIdx;
+                return (
+                  <g key={`region-${rg.kind}-${rg.fromIdx}-${rg.toIdx}`}>
+                    <rect
+                      x={x1.toFixed(1)}
+                      y={0}
+                      width={w.toFixed(1)}
+                      height={H_PRICE}
+                      fill={rg.tone}
+                      fillOpacity={active ? 0.16 : 0.09}
+                    />
+                    {[x1, x2].map((bx, bi) => (
+                      <line
+                        key={bi}
+                        x1={bx}
+                        y1={0}
+                        x2={bx}
+                        y2={H_PRICE}
+                        stroke={rg.tone}
+                        strokeOpacity={active ? 0.5 : 0.28}
+                        strokeWidth="1"
+                        strokeDasharray="2,3"
+                      />
+                    ))}
+                  </g>
+                );
+              })
+            : null}
 
           {/* 가격 라인 */}
           <path
@@ -449,7 +565,7 @@ export function StockPriceChart({ ticker, name, points }: Props) {
 
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center mt-2">
         출처: FinanceDataReader · 종가 기준 일별 데이터
-        {markers.length > 0 ? " · 주요 지점은 가격·거래량에서 자동 표시한 참고용 위치" : ""}
+        {hasOverlay ? " · 주요 지점·구간은 가격·거래량에서 자동 표시한 참고용 위치(호재·악재 판단 아님)" : ""}
       </p>
     </div>
   );
