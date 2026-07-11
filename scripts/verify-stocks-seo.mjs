@@ -7,6 +7,10 @@
 //   - 0건 조합 / 자유 검색어(q) / 다축 조합 / 과다·미인식 파라미터 URL 은 noindex + canonical=/stocks.
 //   - 종목 상세 description/OG/Twitter/JSON-LD 설명은 매일 바뀌는 점수·PER/PBR·수익률·옛 용어를
 //     노출하지 않고, 안정적인 지표/재무/공시/데이터 기준일/비자문 프레이밍을 유지한다.
+//   - 홈·발견(/stocks) head 메타(제목/설명/OG/Twitter/keywords)에 옛 지표명(모멘텀·변동성조정 등)이
+//     되살아나지 않는다.
+//   - 백테스트 페이지는 색인·발견은 유지하되(index/follow) robots nosnippet 을 유지해 과거 성과
+//     숫자가 검색·AI 스니펫에 맥락 없이 노출되지 않는다.
 // 이미 실행 중인 서버만 측정하며, 서버를 켜거나 끄지 않는다. 실패 시 exit 1.
 //
 // Usage:
@@ -203,6 +207,51 @@ function stockMetaDescriptions(html) {
   ];
 }
 
+// General-page snippet guard: pages other than stock-detail (home, discover) legitimately
+// mention PER/PBR/수익률 as feature copy, so the strict score/percentage patterns above do NOT
+// apply — but the RENAMED-AWAY legacy metric names must never resurface in any head metadata
+// (description/OG/Twitter/keywords/title). This catches regressions like a stray "모멘텀" keyword.
+const OLD_TERM_META_PATTERNS = [
+  { label: "old Korean metric term", re: /모멘텀|변동성조정|변동성 조정/ },
+  { label: "old English metric term", re: /\bmomentum\b|volatility-adjusted/i },
+];
+
+const GENERAL_META_CASES = [
+  { label: "homepage head metadata (no legacy metric terms)", path: "/" },
+  { label: "discover /stocks head metadata (no legacy metric terms)", path: "/stocks" },
+];
+
+// Backtest emits strong past-performance numbers (CAGR/총수익률/기여 종목/리밸런싱 예시). If a
+// search or AI preview crops those without the surrounding risk context they read as a "현재 추천".
+// The page therefore stays index/follow (in-app research resource) but must carry robots nosnippet.
+const NOSNIPPET_CASES = [
+  { label: "backtest page keeps robots nosnippet + stays indexable", path: "/backtest" },
+];
+
+// Head-metadata text fields to sweep for legacy-term regressions on general pages.
+function generalPageMetaValues(html) {
+  return [
+    { field: "title", value: (headOf(html).match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? null) },
+    { field: "meta description", value: metaContent(html, "description") },
+    { field: "meta keywords", value: metaContent(html, "keywords") },
+    { field: "og:title", value: metaContent(html, "og:title") },
+    { field: "og:description", value: metaContent(html, "og:description") },
+    { field: "twitter:title", value: metaContent(html, "twitter:title") },
+    { field: "twitter:description", value: metaContent(html, "twitter:description") },
+  ].map((d) => ({ ...d, value: d.value == null ? null : decodeHtml(d.value) }));
+}
+
+function validateGeneralPageMeta(html) {
+  const reasons = [];
+  const fields = generalPageMetaValues(html).filter((d) => typeof d.value === "string" && d.value.length > 0);
+  for (const { field, value } of fields) {
+    for (const { label, re } of OLD_TERM_META_PATTERNS) {
+      if (re.test(value)) reasons.push(`${field} contains forbidden ${label}: "${value}"`);
+    }
+  }
+  return reasons;
+}
+
 function validateStockDetailMeta(html) {
   const reasons = [];
   const descriptions = stockMetaDescriptions(html);
@@ -244,7 +293,10 @@ async function fetchHtml(path) {
 
 async function main() {
   console.log("OrnScore stocks SEO verification (real gate; exits 1 on any failure)");
-  console.log(`base=${BASE}  filter-cases=${CASES.length}  stock-detail-cases=${STOCK_DETAIL_CASES.length}`);
+  console.log(
+    `base=${BASE}  filter-cases=${CASES.length}  stock-detail-cases=${STOCK_DETAIL_CASES.length}` +
+      `  general-meta-cases=${GENERAL_META_CASES.length}  nosnippet-cases=${NOSNIPPET_CASES.length}`,
+  );
   console.log("");
 
   const results = [];
@@ -290,6 +342,44 @@ async function main() {
     if (canonical !== c.expectCanonical) reasons.push(`canonical "${canonical}" (expected "${c.expectCanonical}")`);
     reasons.push(...validateStockDetailMeta(body));
 
+    results.push({ ...c, ok: reasons.length === 0, status, reasons });
+  }
+
+  for (const c of GENERAL_META_CASES) {
+    // eslint-disable-next-line no-await-in-loop
+    let status, body;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      ({ status, body } = await fetchHtml(c.path));
+    } catch (err) {
+      results.push({ ...c, ok: false, unreachable: true, reasons: [`request failed: ${String(err?.message ?? err)}`] });
+      continue;
+    }
+    const reasons = [];
+    if (status !== 200) reasons.push(`status ${status} (expected 200)`);
+    reasons.push(...validateGeneralPageMeta(body));
+    results.push({ ...c, ok: reasons.length === 0, status, reasons });
+  }
+
+  for (const c of NOSNIPPET_CASES) {
+    // eslint-disable-next-line no-await-in-loop
+    let status, body;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      ({ status, body } = await fetchHtml(c.path));
+    } catch (err) {
+      results.push({ ...c, ok: false, unreachable: true, reasons: [`request failed: ${String(err?.message ?? err)}`] });
+      continue;
+    }
+    const reasons = [];
+    if (status !== 200) reasons.push(`status ${status} (expected 200)`);
+    const robots = robotsContent(body);
+    if (robots == null || !robots.includes("nosnippet")) {
+      reasons.push(`robots "${robots}" missing nosnippet — backtest performance numbers must stay out of snippets`);
+    }
+    if (isNoindex(body)) {
+      reasons.push(`unexpected noindex (robots="${robots}") — backtest must stay index/follow (nosnippet only)`);
+    }
     results.push({ ...c, ok: reasons.length === 0, status, reasons });
   }
 

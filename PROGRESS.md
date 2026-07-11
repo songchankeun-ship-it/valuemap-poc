@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [codex] Recover Task 147 SEO snippet/index hygiene
+- **Scope**: Recovered the interrupted Task 147 local SEO hygiene slice after AI Center restart/process cleanup left two validated files uncommitted. Local-only recovery; no remote write, hosting change, Search Console action, account/config/secret work, scoring, generated data, or `metricsVersion` change.
+- **Changes**: `src/app/page.tsx` homepage metadata keywords now use the current metric term `추세` instead of the legacy `모멘텀`. `scripts/verify-stocks-seo.mjs` now also verifies homepage and `/stocks` head metadata for legacy metric terms, and confirms `/backtest` remains index/follow with `nosnippet` so past-performance numbers are not exposed as cropped snippets.
+- **Validation**: Original Task 147 logs showed `verify:stocks-seo` 12/12, `verify:routes` 9/9, `smoke:check --all` 24/24, `app:check` PASS with only the intended assetlinks WAIT, plus broad local gates before the restart. Recovery reran finite gates before commit: `npx tsc --noEmit`, `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py`, `git diff --check`, and `npm run build` as applicable.
+- **Residual / next**: Search Console reindex remains owner-only. Continue queue with Task 148 notification fallback honesty, then compare accessibility and remaining UI/data-status slices. Local commit only; no push; main unchanged.
+
 ## 2026-07-11 · [claude] 앱모드·모바일 표면 점검 + app:check 날짜 가드 복구 (Task 146)
 - **범위**: 홈 화면(standalone/PWA) 사용자가 닿는 7표면(`/about`·`/offline`·`/login`·`/watchlist`·`/settings/notifications`·`/privacy`·`/terms`)을 **스토어 패키징 전에** 점검·검증·문서화. 앱 소스 카피/점수식/데이터/`direction`/`metricsVersion`/인증/알림 동작 무변경. 원격 push·호스팅·콘솔·서명·라이브 릴리스 0. 브랜치 `ai-center/task-146-ornscore-app-launch-2026-07-11-d-sta`.
 - **점검 결과(정직성 게이트 통과)**: 설치/도움말·오프라인·로그인 폴백 카피가 **스토어 출시 단정·미제공 푸시 과장** 0. 근거 — `about/page.tsx:129`("App Store·Play 스토어 출시 여부 아직 미정"), `PwaInstallHelper`(프롬프트 있을 때만 실버튼·가짜 버튼 0), `NotificationChannels`(푸시=`preparing`·"준비 중"·켜둬도 무발송), `auth/callback/route.ts`+`LoginContent`(standalone 복귀 실패를 `auth_callback_no_code`→친절 폴백으로 구분), privacy/terms "확정 예정/법률 자문" 0·푸시/스토어 문구 0. → **앱 소스 카피 무편집(선행 태스크에서 이미 정직 수렴, churn 회피).**
