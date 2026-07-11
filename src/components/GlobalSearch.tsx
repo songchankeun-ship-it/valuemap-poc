@@ -121,6 +121,12 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
+    // Escape 는 결과가 없을 때(빈 상태 패널)도 패널을 닫아야 하므로 조기 반환보다 먼저 처리한다.
+    if (e.key === "Escape") {
+      setOpen(false);
+      inputRef.current?.blur();
+      return;
+    }
     if (results.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -131,9 +137,6 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
     } else if (e.key === "Enter") {
       e.preventDefault();
       navigateToResult(results[selectedIndex]);
-    } else if (e.key === "Escape") {
-      setOpen(false);
-      inputRef.current?.blur();
     }
   }
 

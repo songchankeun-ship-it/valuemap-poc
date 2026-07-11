@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
@@ -26,6 +26,16 @@ export function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname() || "";
   const { copy } = useLanguage();
+
+  // 다른 메뉴(MobileNav·UserMenu)와 동일하게 Esc 로 더보기 시트를 닫는다(키보드 접근성).
+  useEffect(() => {
+    if (!moreOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMoreOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [moreOpen]);
   const HIDE = ["/login", "/terms", "/privacy"];
   if (HIDE.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");

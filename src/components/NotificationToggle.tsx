@@ -49,6 +49,8 @@ export function NotificationToggle() {
       type="button"
       onClick={toggle}
       disabled={saving}
+      aria-pressed={enabled}
+      aria-busy={saving}
       className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium border transition disabled:opacity-50 shrink-0 ${
         enabled
           ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"

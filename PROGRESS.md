@@ -2831,3 +2831,18 @@
 - **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`watchlist.ts` 저장/마이그레이션 로직·localStorage 키·cron/auth·`metricsVersion` 무변경. 편집 1파일(`AddToWatchlistButton.tsx`) copy-only, 신규 로직/프롭 0. 금칙어 신규 도입 0.
 - **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean · `npm run build` 0(SSG, `/watchlist` 12.8 kB) · 신규 카피 클라이언트 청크(7224) 번들 확인 · `smoke:check`(base 4455) 7/7 200(`/watchlist` 포함) · 편집 파일 U+FFFD 0.
 - **남은 소유자**: 실기기 390×844 첫 화면 육안·로그아웃 토스트 3줄 레이아웃 실측·로그인 왕복은 운영자 게이트(Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.
+
+
+### Task 158 — OrnScore 접근성/키보드 폴리시 패스 (2026-07-11, [claude])
+- **Scope**: 핵심 로컬 라우트(`/`·`/stocks`·`/stock/005930`·`/watchlist`·`/settings/notifications`·`/privacy`·`/terms`)의 키보드/포커스 경로를 재디자인 없이 작은 로컬 수정으로 개선. 브랜치 `ai-center/task-158-ornscore-continuity-2026-07-11-d-acc`. 편집 5파일 전부 마크업/ARIA 한정(로직·데이터·점수·copy 무변경).
+- **감사 결과(대부분 이미 성숙)**: `globals.css` `:focus-visible` 링·`.skip-link`·`main tabIndex=-1`, `MobileNav`/`UserMenu` 포커스 이동·Esc·복귀, `GlobalSearch` combobox(aria-activedescendant·화살표), `WatchlistClient` 정렬 버튼 `aria-pressed`·44px 탭타깃·아이콘 버튼 `aria-label`, SVG `aria-hidden`, 오버레이 `aria-hidden`+닫기버튼까지 선행 태스크에서 갖춰짐 → churn 회피, 실제 공백 5건만 보강.
+- **수정 5건(작은 로컬)**:
+  - **StockTabs.tsx** — 종목 상세 탭이 의미 없는 `<button>` 나열이라 스크린리더에 탭으로 안 읽히고 화살표 이동 불가였음. WAI-ARIA Tabs 패턴 적용: `role="tablist"`/`role="tab"`/`role="tabpanel"`·`aria-selected`·`aria-controls`/`aria-labelledby`·roving tabindex(활성 탭만 Tab 순서)·←/→/Home/End 이동(자동 활성화, 포커스 동반). 시각/레이아웃/해시 딥링크 동작 무변경. SSR에 tablist×1·tab×4·tabpanel×1·aria-selected×4 렌더 확인.
+  - **GlobalSearch.tsx** — 검색 결과 0건(빈 상태 패널 열림) 때 `handleKeyDown`의 `if(results.length===0)return` 조기 반환에 걸려 **Esc로 패널을 못 닫던 버그**. Esc 처리를 조기 반환보다 앞으로 이동해 결과 유무와 무관하게 닫히도록.
+  - **NotificationToggle.tsx** — 실제 켜기/끄기 토글 버튼에 상태 시맨틱 부재 → `aria-pressed={enabled}`·`aria-busy={saving}` 추가(라벨 텍스트만으로 안내되던 상태를 AT에도 노출).
+  - **WatchlistClient.tsx** — 관심 종목 간단/분석 보기 토글 버튼이 정렬 버튼(`aria-pressed` 있음)과 달리 눌림 상태 시맨틱이 없어 불일치 → `aria-pressed={view===...}` 2곳 추가.
+  - **MobileBottomNav.tsx** — 더보기 시트(role="menu")가 다른 메뉴와 달리 Esc 미지원 → `moreOpen`일 때 keydown Esc 리스너로 닫기(MobileNav·UserMenu와 동일 패턴). `useEffect` import 추가, 훅은 조건부 return 앞에 배치.
+- **의도적 무편집**: Explore 감사가 제시한 muted 소형 텍스트(`text-[10px]`/`text-zinc-400`) 대비 상향은 다수가 의도된 시각 위계라 광범위 변경 시 리디자인 리스크 → 이번 패스에서 제외(대비는 실기기/디자인 후속 소유자).
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`direction`·`watchlist.ts`/`notifications` 저장 로직·cron/auth·`metricsVersion`·기존 copy 무변경. 신규 UI 프레임워크·레이아웃 재작성 0·신규 npm 0.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean(StockTabs CRLF 정규화 후) · `npm run build` 0(138 SSG, 라우트 표 불변) · 로컬 prod 4478 7개 대상 라우트 200 · `/stock/005930` SSR 탭 ARIA 렌더 + 치명 마커 0 · 편집 5파일 U+FFFD 0. 리스너 PID 31060만 taskkill, AI Center 4310(PID 55144) 무중단.
+- **남은 소유자(실기기 QA)**: 실 브라우저/스크린리더에서 탭 ←/→ 이동·roving tabindex 체감, 모바일 더보기 시트 Esc, 알림 토글 `aria-pressed` 낭독, 390×844 오버플로 육안, muted 텍스트 대비 판정은 운영자 게이트(Playwright 미구성). 로컬 커밋만·push 미수행·main 무변경.
