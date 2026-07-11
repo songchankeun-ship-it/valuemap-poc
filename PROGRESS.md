@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] public web release for continuity batch 155-160
+- **Scope**: Owner paused Android/Play Console setup and approved going straight to the public website release. Released the completed continuity batch from `ai-center/task-160-ornscore-continuity-2026-07-11-f-own` to `main`; no app-store, Search Console, account, assetlinks, signing-key, or database action was performed.
+- **Release action**: Fast-forwarded `main` from `5f9b665` to `74be92e` and pushed non-forced to `origin/main`. Vercel auto-deploy was allowed to complete; `/status?deploycheck=...` showed the new `id="verify"` original-source verification section and KRX source marker.
+- **Pre-release validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `npm run app:check` pass with expected owner-only assetlinks WAIT; `git diff --check` clean; `npm run build` 0 with the existing `TrustLayer` cleanup warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4662` passed all real gates.
+- **Public verification**: `node scripts/verify-routes.mjs --base https://ornscore.com` 9/9; `node scripts/smoke-check.mjs --base https://ornscore.com --all` 24/24; `node scripts/verify-stocks-seo.mjs --base https://ornscore.com` 12/12.
+- **Remaining owner-only gates**: Android `/.well-known/assetlinks.json` still waits for the real package id + SHA-256 signing fingerprint; Play Console account verification/submission, real-device OAuth/standalone return, and Search Console reindex remain manual owner steps.
+
 ## 2026-07-11 - [claude] task 157: 검색 → 전체 목록 핸드오프(발견 동선 모호함 축소)
 - **목표**: 홈/헤더/모바일 검색(GlobalSearch)에서 종목 상세로 가는 실전 동선의 모호함을 줄인다. 점수·데이터셋 무변경(로컬 UI/카피만).
 - **간극**: GlobalSearch 자동완성은 종목 상위 4개 + 테마 2개만 노출한다. 부분일치 종목이 더 많아도(예: "삼성" → 삼성전자·삼성SDI·삼성물산…) 전체 결과를 목록에서 이어볼 경로가 없어, 검색어가 넓을 때 상위 몇 개에 갇혔다. `/stocks?q=` 핸드오프 규약은 이미 layout SearchAction·테마 페이지·watchlist에서 사용 중.
