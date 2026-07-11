@@ -237,6 +237,24 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
               ))}
             </ul>
           )}
+          {/* 자동완성은 상위 4개만 노출 → 부분 일치가 더 있을 수 있으므로 전체 결과를 목록(/stocks?q=)에서
+              이어보게 하는 핸드오프. 검색 → 전체 목록 → 종목 상세 동선의 모호함을 줄인다.
+              /stocks?q= 는 종목명·코드 부분일치로 거르므로, 종목 결과가 하나라도 있을 때만 노출한다
+              (테마만 걸린 검색어는 목록에서 0건이 되어 오히려 혼란 — 테마 행이 이미 테마 목록으로 안내). */}
+          {results.some((r) => r.type === "stock") ? (
+            <button
+              type="button"
+              onClick={() => {
+                router.push("/stocks?q=" + encodeURIComponent(query.trim()));
+                setQuery("");
+                setOpen(false);
+                inputRef.current?.blur();
+              }}
+              className="w-full text-left px-3 py-2 text-xs font-medium text-blue-700 dark:text-blue-400 border-t border-zinc-100 dark:border-zinc-800 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition truncate"
+            >
+              {copy.search.viewAllInList(query.trim())}
+            </button>
+          ) : null}
           <div className="px-3 py-1.5 text-[10px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 flex items-center justify-between">
             <span>{copy.search.help}</span>
             <span>{results.length}{copy.search.countSuffix}</span>

@@ -99,6 +99,7 @@ export const commonCopy = {
       emptyCoverageLine: (n: number) =>
         `오른스코어는 현재 약 ${n}개 종목만 분석 대상입니다. 전체 시장이 아니라 데이터 검증을 마친 종목부터 단계적으로 넓히고 있어요.`,
       emptyCoverageCta: "분석 대상 종목 둘러보기 →",
+      viewAllInList: (q: string) => `‘${q}’ 검색 결과 전체를 목록에서 보기 →`,
       theme: "테마",
       help: "↑↓ 이동 · Enter 선택 · Esc 닫기",
       countSuffix: "건",
@@ -179,6 +180,7 @@ export const commonCopy = {
       emptyCoverageLine: (n: number) =>
         `OrnScore currently analyzes about ${n} stocks — a curated set, not the whole market, expanding gradually as data is verified.`,
       emptyCoverageCta: "Browse covered stocks →",
+      viewAllInList: (q: string) => `See all ‘${q}’ results in the list →`,
       theme: "Theme",
       help: "↑↓ Move · Enter select · Esc close",
       countSuffix: " results",

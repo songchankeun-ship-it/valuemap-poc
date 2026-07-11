@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-11 - [claude] task 157: 검색 → 전체 목록 핸드오프(발견 동선 모호함 축소)
+- **목표**: 홈/헤더/모바일 검색(GlobalSearch)에서 종목 상세로 가는 실전 동선의 모호함을 줄인다. 점수·데이터셋 무변경(로컬 UI/카피만).
+- **간극**: GlobalSearch 자동완성은 종목 상위 4개 + 테마 2개만 노출한다. 부분일치 종목이 더 많아도(예: "삼성" → 삼성전자·삼성SDI·삼성물산…) 전체 결과를 목록에서 이어볼 경로가 없어, 검색어가 넓을 때 상위 몇 개에 갇혔다. `/stocks?q=` 핸드오프 규약은 이미 layout SearchAction·테마 페이지·watchlist에서 사용 중.
+- **변경**:
+  - `src/components/GlobalSearch.tsx`: 결과 패널에 "'{검색어}' 검색 결과 전체를 목록에서 보기 →" 행 추가 → `/stocks?q=<검색어>`로 이동(입력 초기화·패널 닫힘·blur, 기존 empty-state CTA와 동일 패턴). 리스트박스 밖 별도 버튼이라 ↑↓/Enter 키보드 모델은 무변경.
+  - **정확성 게이트**: `/stocks?q=` 는 종목명·코드 부분일치로만 필터하므로, **종목 결과가 하나라도 있을 때만**(`results.some(r => r.type === "stock")`) 노출한다. 테마만 걸린 검색어(예: "2차전지")는 목록에서 0건이 되어 오히려 혼란 → 노출 안 함(테마 행이 이미 `/stocks?theme=`로 안내). `w-full`+`truncate`로 390px 오버플로 없음.
+  - `src/lib/i18n.ts`: `search.viewAllInList(q)` ko/en 추가. 비자문 톤(결과 이동만, 매수·매도 판단 아님).
+- **검증**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · `npm run build` 0(라우트 표 무변경) · 로컬 prod :4655 `verify:routes` 9/9 · `smoke:check --all` 24/24 · 핸드오프 실측 `GET /stocks?q=삼성` 200 + SSR에 삼성전자 렌더(빈 목록 아님 확인). 편집 파일 U+FFFD 0.
+- **테스트**: GlobalSearch는 클라이언트 UI 컴포넌트로 기존 테스트 하네스(node/tsx 순수 lib 함수 테스트: price-summary·freshness·compare·statusHistory)와 결이 다름 → RTL/jsdom 미도입 상태라 UI 단위테스트 미추가(라우트 smoke + `?q=` 실측으로 대체). 기존 패턴에 맞는 테스트가 없어 추가하지 않음(과잉 도입 회피).
+- **잔여/다음**: 브라우저 하네스 없어 390×844 실측 스크린샷 없음(구성상 오버플로 위험 낮음 — 고정폭 없음, truncate). 작업 PC에서 홈 검색 드롭다운을 눈으로 1회 확인 권장. 후속 후보: 자동완성 종목 행에 종합점수 배지(스캔성 향상, searchStocks 페이로드에 표시용 score 추가 필요 — 헤더/모바일 호출부까지 배선). 로컬 커밋만; push 없음; main 무변경.
+
 ## 2026-07-11 - [claude] /status evidence cockpit: 원본 소스 직접 확인 섹션
 - **목표**: 사용자가 앱을 신뢰하기 전에 "무엇이 신선하고, 무엇이 제한적이며, 무엇을 원본에서 직접 확인할 수 있는가"를 1분 내 파악하도록 로컬 신뢰/근거 코크핏 강화. 점수 산식·데이터 수집은 무변경(로컬 UI/문서만).
 - **간극**: 기존 /status "데이터 소스" 섹션은 출처 이름만 나열하고 사용자가 **원본에서 직접 교차검증할 클릭 경로**가 없었음.
