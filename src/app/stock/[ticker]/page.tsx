@@ -162,6 +162,16 @@ function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
     bad: "text-rose-700 dark:text-rose-300",
     neutral: "text-zinc-800 dark:text-zinc-200",
   } as const;
+  const priorityItem =
+    items.find((item) => item.href && item.tone === "bad") ??
+    items.find((item) => item.href && item.tone === "good") ??
+    items.find((item) => item.href);
+  const priorityLabel =
+    priorityItem?.tone === "bad"
+      ? "주의 변화 먼저 확인"
+      : priorityItem?.tone === "good"
+        ? "강한 변화 먼저 확인"
+        : "변화 근거 먼저 확인";
   return (
     <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 md:p-4">
       <div className="flex items-baseline justify-between gap-3 flex-wrap mb-3">
@@ -188,6 +198,23 @@ function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
           );
         })}
       </div>
+      {priorityItem?.href ? (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+          <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-1 font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+            우선 확인
+          </span>
+          <a
+            href={priorityItem.href}
+            aria-label={`${priorityLabel}: ${priorityItem.label} ${priorityItem.value}. ${priorityItem.hint}`}
+            className="inline-flex min-h-[44px] min-w-0 flex-1 items-center gap-1.5 rounded-md px-1.5 font-medium text-blue-700 transition hover:text-blue-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-blue-400 dark:hover:text-blue-300 dark:focus-visible:ring-offset-zinc-900"
+          >
+            <span className="shrink-0">{priorityLabel}</span>
+            <span className="min-w-0 break-words text-zinc-500 dark:text-zinc-400">
+              {priorityItem.label} {priorityItem.value} · {priorityItem.hint}
+            </span>
+          </a>
+        </div>
+      ) : null}
     </section>
   );
 }
