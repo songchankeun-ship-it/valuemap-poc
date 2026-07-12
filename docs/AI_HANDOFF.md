@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T02:48:39+09:00
+Last updated: 2026-07-13T03:51:28+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock detail recent-change card links
+- Task: Direct Codex product slice - watchlist saved-filter rename
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only `/stock/[ticker]` recent-change cards now link to their relevant tabs and were verified; implementation commit `aca7ac8`; no push/deploy.
+- Note: Local `/watchlist` saved-filter rows now support inline rename and were verified; implementation commit `4b40122`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist saved-filter rename
+- **Context**: Continued the app-like saved-filter routine after stock-detail recent-change links. This slice changes local UI/client code only: no saved-search schema/RLS change, alert-delivery change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: Added `renameSavedSearch()` to update only a saved-filter display name through the existing saved-search persistence path. `/watchlist` saved-filter rows now include a 44px pencil button, inline name form, save/cancel controls, and failure status. Added `saved_filter_watchlist_rename` to the analytics map with structural metadata only; saved-filter names and raw query text are not tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4702 passed 4/4 real gates. In-app browser verified 390x844 `/stocks` save -> `/watchlist` rename with old name gone/new name present, mobile overflow 0; desktop 1280x900 reload kept renamed row and overflow 0. Browser test filters were removed afterward.
+- **Commit**: `4b40122` (`[codex] add saved filter rename`).
+- **Next**: Continue with another small local app-like polish slice, preferably stock-detail routine/checklist clarity or watchlist saved-filter empty-state guidance. Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Stock detail recent-change card links
 - **Context**: Continued the app-like stock-detail routine after the inline condition-alert slice. Local UI/navigation only: no scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.

@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] watchlist saved-filter rename
+- **Scope**: Added an inline rename flow for saved filters on `/watchlist`. No saved-search schema/RLS change, alert-delivery change, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
+- **Changes**: Added `renameSavedSearch()` for changing only a saved-filter display name through the existing local/Supabase saved-search path. `/watchlist` saved-filter rows now include a 44px pencil button, inline name form, save/cancel controls, failure status, and `saved_filter_watchlist_rename` analytics metadata without sending saved-filter names or raw query text. Updated the analytics event map.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4702 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks` save -> `/watchlist` row rename with old name gone/new name present and mobile overflow 0; desktop 1280x900 reload kept renamed row and overflow 0. Browser test filters were removed afterward.
+- **Commit**: `4b40122` (`[codex] add saved filter rename`).
+- **Next**: Continue with another small local app-like polish slice, preferably stock-detail routine/checklist clarity or watchlist saved-filter empty-state guidance. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stock detail recent-change card links
 - **Scope**: Made the `/stock/[ticker]` recent-change summary cards actionable. No scoring/data/DART/watchlist storage/Supabase/auth/deployment/push/remote changes.
 - **Changes**: `종합 점수` and `거래활성도` cards link to `#basis`, `3개월 수익률` links to `#summary`, and all recent-change card links now have a visible keyboard focus ring. Existing `최근 공시` link to `#disclosures` remains unchanged.
