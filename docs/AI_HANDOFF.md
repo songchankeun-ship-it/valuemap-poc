@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-12 - Codex - Search Console sitemap cleanup
+- **Context**: Owner approved proceeding through the recommended launch operation sequence. This completes item 2, Search Console cleanup, after the owner had already verified the `ornscore.com` property, submitted the real sitemap, and requested indexing for the priority URLs.
+- **External action**: In Google Search Console for the `ornscore.com` domain property (`contact@ornscore.com`), deleted the accidental sitemap rows `https://ornscore.com/stocks` and `https://ornscore.com/`. These were page URLs mistakenly submitted as sitemaps and both showed `오류 1개`.
+- **Current state**: Only `https://ornscore.com/sitemap.xml` remains in the Sitemaps table, with status `성공`, discovered pages `154`, videos `0`.
+- **Next**: Continue item 3 with SEO landing/search-intent expansion. Prioritize a small, indexable content slice over keyword stuffing: query-intent pages or sections for 저평가 주식, 배당주, PER 낮은 주식, ROE 높은 종목, 2차전지 관련주, and 반도체 소재 관련주.
+
 ### 2026-07-12 - Codex - Admin operation home dashboard
 - **Context**: Owner asked to proceed in order from the recommended launch operations plan. This slice handles item 1, the internal operation/admin surface, without changing scoring, data collection, DART logic, generated datasets, auth-provider setup, Search Console state, or deployment.
 - **Changes**: Added protected `/admin` as the operation home. It summarizes data base date, Metrics version match, per-stock price-lag count, status-history count, score generation time, report mode, and links to `/admin/status`, `/status`, `/stocks`, `/guide/metrics`, Search Console, and the public sitemap. Added `src/lib/adminAccess.ts` to share the server-component allowlist/redirect guard and refactored `/admin/status` to use it. Middleware still guards `/admin` and `/admin/*` before render.

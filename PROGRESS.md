@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] Search Console sitemap cleanup
+- **Scope**: Cleaned up Google Search Console sitemap registration after launch SEO setup. No repository source, scoring, generated datasets, Search Console property/DNS ownership, or deployment change.
+- **External action completed**: In the `ornscore.com` domain property under `contact@ornscore.com`, deleted the two accidental sitemap entries that were page URLs: `https://ornscore.com/stocks` and `https://ornscore.com/`.
+- **Remaining sitemap state**: Search Console now shows only `https://ornscore.com/sitemap.xml`, status `성공`, discovered pages `154`, videos `0`.
+- **Next**: Continue item 3 in the agreed order: SEO landing/search-intent expansion for high-value queries such as 저평가 주식, 배당주, PER 낮은 주식, ROE 높은 종목, 2차전지 관련주, and 반도체 소재 관련주.
+
 ## 2026-07-12 - [codex] admin operation home dashboard
 - **Scope**: Added a protected `/admin` operation home so launch/SEO/data checks have a single internal entry point. No scoring, generated datasets, DART parsing, market-data collection, auth-provider config, Search Console mutation, or deployment action.
 - **Admin UX**: New `/admin` shows data base date, formula version match, per-stock price-lag count, status-history count, score-generation time, report mode, and direct links to `/admin/status`, `/status`, `/stocks`, `/guide/metrics`, Search Console, and `sitemap.xml`. It is `noindex`, dynamic, and still protected by the existing `/admin` middleware.
