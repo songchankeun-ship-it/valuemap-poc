@@ -12,7 +12,7 @@ import {
 } from "@/lib/watchlist";
 import { addToCompare, COMPARE_MAX } from "@/lib/compare";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
-import { listSavedSearches, queueSavedSearchApply, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { listSavedSearches, queueSavedSearchApply, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
@@ -366,6 +366,18 @@ export function WatchlistClient({
     let n = 0;
     for (const s of matchPool) if (matchesConfig(s, config)) n += 1;
     return n;
+  }
+
+  async function removeSavedFilterFromRoutine(sv: SavedSearch, count: number) {
+    const ok = await removeSavedSearch(sv.id);
+    if (!ok) return;
+    setSavedSearches((prev) => prev.filter((item) => item.id !== sv.id));
+    trackEvent("saved_filter_watchlist_remove", {
+      count,
+      hasQuery: Boolean(sv.config.query),
+      hasSector: Boolean(sv.config.sector),
+      themeCount: sv.config.themes?.length ?? 0,
+    });
   }
 
   if (!hydrated) return null;
@@ -1110,32 +1122,42 @@ export function WatchlistClient({
               const count = matchCountOf(sv.config);
               return (
                 <li key={sv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                  <Link
-                    href="/stocks"
-                    onClick={() => {
-                      queueSavedSearchApply(sv);
-                      trackEvent("saved_filter_watchlist_open", {
-                        count,
-                        hasQuery: Boolean(sv.config.query),
-                        hasSector: Boolean(sv.config.sector),
-                        themeCount: sv.config.themes?.length ?? 0,
-                      });
-                    }}
-                    className="flex items-center justify-between gap-3 px-4 py-3 group"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
-                        {sv.name}
+                  <div className="flex items-stretch">
+                    <Link
+                      href="/stocks"
+                      onClick={() => {
+                        queueSavedSearchApply(sv);
+                        trackEvent("saved_filter_watchlist_open", {
+                          count,
+                          hasQuery: Boolean(sv.config.query),
+                          hasSector: Boolean(sv.config.sector),
+                          themeCount: sv.config.themes?.length ?? 0,
+                        });
+                      }}
+                      className="group flex min-w-0 flex-1 items-center justify-between gap-3 px-4 py-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium text-zinc-900 group-hover:text-blue-600 dark:text-zinc-100 dark:group-hover:text-blue-400">
+                          {sv.name}
+                        </div>
+                        <div className="mt-0.5 break-words text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">
+                          {describeConfig(sv.config)}
+                        </div>
                       </div>
-                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-words leading-snug mt-0.5">
-                        {describeConfig(sv.config)}
+                      <div className="shrink-0 text-right">
+                        <div className="text-sm font-semibold tabular-nums text-blue-700 dark:text-blue-400">{count}개</div>
+                        <div className="text-[10px] text-zinc-400 dark:text-zinc-500">현재 조건 충족</div>
                       </div>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <div className="text-sm font-semibold tabular-nums text-blue-700 dark:text-blue-400">{count}개</div>
-                      <div className="text-[10px] text-zinc-400 dark:text-zinc-500">현재 조건 충족</div>
-                    </div>
-                  </Link>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => { void removeSavedFilterFromRoutine(sv, count); }}
+                      aria-label={`${sv.name} 저장 필터 삭제`}
+                      className={`flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center border-l border-zinc-100 text-zinc-400 transition hover:bg-rose-50 hover:text-rose-600 dark:border-zinc-800 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 ${FOCUS_RING}`}
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </li>
               );
             })}
