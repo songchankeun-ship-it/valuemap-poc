@@ -37,6 +37,7 @@ interface Stock {
 }
 
 type ViewMode = "card" | "table";
+type SaveSearchStatus = "ok" | "error" | null;
 
 interface Props {
   stocks: Stock[];
@@ -271,6 +272,18 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const laggedSet = useMemo(() => new Set(laggedTickers), [laggedTickers]);
   const { locale } = useLanguage();
   const t = stocksCopy[locale];
+  const saveSearchStatusCopy =
+    locale === "ko"
+      ? {
+          ok: "조건을 저장했어요. 관심 화면에서 다시 열 수 있어요.",
+          error: "조건을 저장하지 못했어요. 잠시 뒤 다시 시도해 주세요.",
+          saving: "저장 중",
+        }
+      : {
+          ok: "Saved. You can reopen this setup from your watchlist.",
+          error: "Couldn't save this condition. Please try again in a moment.",
+          saving: "Saving",
+        };
   const total = totalCount ?? stocks.length;
   const [query, setQuery] = useState(initialQuery ?? "");
   const [sortKey, setSortKey] = useState<SortKey>("compositeScore");
@@ -300,6 +313,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
   const [saveSearchName, setSaveSearchName] = useState("");
+  const [saveSearchStatus, setSaveSearchStatus] = useState<SaveSearchStatus>(null);
+  const [saveSearchBusy, setSaveSearchBusy] = useState(false);
   const [alertFormOpen, setAlertFormOpen] = useState(false);
   const [alertName, setAlertName] = useState("");
   const [alertStatus, setAlertStatus] = useState<"login" | "ok" | "error" | null>(null);
@@ -389,6 +404,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     return base === t.defaultSavedName ? t.defaultAlertName : `${base} ${t.alertNameSuffix}`;
   }
   function openSaveSearchForm() {
+    setSaveSearchStatus(null);
     setSaveSearchName((prev) => prev.trim() || suggestedSavedSearchName());
     setSaveSearchOpen(true);
     window.setTimeout(() => document.getElementById("stocks-save-search-name")?.focus(), 0);
@@ -403,11 +419,17 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     event?.preventDefault();
     const name = saveSearchName.trim();
     if (!name) return;
-    const ok = await addSavedSearch(name, buildCurrentConfig());
+    setSaveSearchBusy(true);
+    setSaveSearchStatus(null);
+    const ok = await addSavedSearch(name, buildCurrentConfig()).catch(() => false);
+    setSaveSearchBusy(false);
     if (ok) {
       setSaveSearchOpen(false);
       setSaveSearchName("");
-      listSavedSearches().then(setSavedSearches);
+      setSaveSearchStatus("ok");
+      listSavedSearches().then(setSavedSearches).catch(() => {});
+    } else {
+      setSaveSearchStatus("error");
     }
   }
   async function handleRemoveSaved(id: string) {
@@ -1184,15 +1206,43 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               id="stocks-save-search-name"
               value={saveSearchName}
               onChange={(e) => setSaveSearchName(e.target.value)}
+              onInput={(e) => setSaveSearchName(e.currentTarget.value)}
               aria-label={t.saveNameAria}
               placeholder={t.saveNamePlaceholder}
+              disabled={saveSearchBusy}
               className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
             />
             <div className="flex gap-1.5">
-              <button type="submit" className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 transition ${FOCUS_RING}`}>{t.saveNameSubmit}</button>
-              <button type="button" onClick={() => setSaveSearchOpen(false)} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.saveNameCancel}</button>
+              <button
+                type="submit"
+                disabled={saveSearchBusy || !saveSearchName.trim()}
+                className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-900 transition ${FOCUS_RING}`}
+              >
+                {saveSearchBusy ? saveSearchStatusCopy.saving : t.saveNameSubmit}
+              </button>
+              <button
+                type="button"
+                disabled={saveSearchBusy}
+                onClick={() => { setSaveSearchOpen(false); setSaveSearchStatus(null); }}
+                className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-60 transition ${FOCUS_RING}`}
+              >
+                {t.saveNameCancel}
+              </button>
             </div>
           </form>
+        ) : null}
+        {saveSearchStatus ? (
+          <div
+            role="status"
+            className={
+              "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
+              (saveSearchStatus === "ok"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+                : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
+            }
+          >
+            {saveSearchStatus === "ok" ? saveSearchStatusCopy.ok : saveSearchStatusCopy.error}
+          </div>
         ) : null}
         {alertFormOpen ? (
           <form onSubmit={submitConditionAlert} className="mb-2 flex flex-col gap-2 sm:flex-row">
