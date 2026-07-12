@@ -6,6 +6,7 @@ import { ArrowRight, GitCompare } from "lucide-react";
 import { getCompareList, clearCompare, COMPARE_MAX } from "@/lib/compare";
 import { useLanguage } from "@/components/LanguageProvider";
 import { compareTrayCopy } from "@/lib/copy/stockDetail";
+import { trackEvent } from "@/lib/clientAnalytics";
 
 /**
  * 설계서 5-8: 종목 상세 하단 비교 유도.
@@ -42,6 +43,7 @@ export function CompareTray() {
   // 실제 비우기/브로드캐스트는 compare.ts가 소유하고, count는 basket-changed 이벤트로 갱신된다.
   function reset() {
     if (!confirm("비교함을 모두 비울까요?")) return;
+    trackEvent("compare_tray_reset", { count });
     void clearCompare();
   }
 
@@ -76,6 +78,8 @@ export function CompareTray() {
           <Link
             href="/compare"
             prefetch={false}
+            data-analytics-event="compare_tray_open"
+            data-analytics-count={String(count)}
             className="inline-flex items-center gap-1 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 text-white px-3 min-h-[44px] text-xs font-semibold whitespace-nowrap transition"
           >
             {t.cta}

@@ -4,6 +4,7 @@ import { useState, useEffect, useId, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
+import { trackEvent } from "@/lib/clientAnalytics";
 
 interface StockItem {
   ticker: string;
@@ -110,6 +111,13 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   }, []);
 
   function navigateToResult(result: SearchResult) {
+    trackEvent("search_result_open", {
+      source: variant,
+      resultType: result.type,
+      ticker: result.ticker,
+      theme: result.type === "theme" ? result.name : undefined,
+      queryLength: query.trim().length,
+    });
     if (result.type === "stock" && result.ticker) {
       router.push("/stock/" + result.ticker);
     } else {
@@ -182,6 +190,11 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
               <button
                 type="button"
                 onClick={() => {
+                  trackEvent("search_empty_open_stocks", {
+                    source: variant,
+                    queryLength: query.trim().length,
+                    stockCount: stocks.length,
+                  });
                   router.push("/stocks");
                   setQuery("");
                   setOpen(false);
@@ -248,6 +261,11 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
             <button
               type="button"
               onClick={() => {
+                trackEvent("search_view_all", {
+                  source: variant,
+                  queryLength: query.trim().length,
+                  resultCount: results.filter((r) => r.type === "stock").length,
+                });
                 router.push("/stocks?q=" + encodeURIComponent(query.trim()));
                 setQuery("");
                 setOpen(false);

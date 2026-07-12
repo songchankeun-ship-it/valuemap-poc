@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { dataStatus } from "@/lib/dataStatus";
 import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
+import { AnalyticsEventTracker } from "@/components/analytics/AnalyticsEventTracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ornscore.com"),
@@ -154,6 +155,7 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <LanguageProvider>
+            <AnalyticsEventTracker />
             <AppHeader />
             <div className="flex">
               <Sidebar />

@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { reportFormCopy } from "@/lib/copy/status";
+import { trackEvent } from "@/lib/clientAnalytics";
 
 const CATEGORY_VALUES = ["price", "financial", "disclosure", "score", "sector", "other"] as const;
+
+function analyticsTicker(value: string): string | undefined {
+  const trimmed = value.trim();
+  return /^\d{6}$/.test(trimmed) ? trimmed : undefined;
+}
 
 /**
  * 데이터 오류 신고 인앱 폼 (선택). 성공 시 data_reports 테이블에 저장.
@@ -35,8 +41,10 @@ export function ReportDataIssueForm({
     if (message.trim().length < 5) {
       setState("error");
       setErrorMsg(t.errorTooShort);
+      trackEvent("report_data_issue_result", { result: "too_short", category, ticker: analyticsTicker(ticker) });
       return;
     }
+    trackEvent("report_data_issue_submit", { category, ticker: analyticsTicker(ticker), hasEmail: email.trim().length > 0 });
     setState("sending");
     setErrorMsg("");
     try {
@@ -49,12 +57,15 @@ export function ReportDataIssueForm({
       if (!res.ok) {
         setState("error");
         setErrorMsg(json.error ?? t.errorSaveFail);
+        trackEvent("report_data_issue_result", { result: "server_error", category, ticker: analyticsTicker(ticker) });
         return;
       }
       setState("ok");
+      trackEvent("report_data_issue_result", { result: "ok", category, ticker: analyticsTicker(ticker) });
     } catch {
       setState("error");
       setErrorMsg(t.errorNetwork);
+      trackEvent("report_data_issue_result", { result: "network_error", category, ticker: analyticsTicker(ticker) });
     }
   }
 
@@ -62,7 +73,10 @@ export function ReportDataIssueForm({
     return (
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          trackEvent("report_data_issue_open", { ticker: analyticsTicker(prefillTicker) });
+          setOpen(true);
+        }}
         className="inline-flex items-center mt-2 min-h-[44px] px-3 text-[13px] text-blue-700 dark:text-blue-400 hover:underline"
       >
         {t.openButton}

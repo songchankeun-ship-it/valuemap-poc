@@ -25,12 +25,20 @@ export function AccountButtons() {
     <>
       <Link
         prefetch={false} href={`/login${next}`}
+        data-analytics-event="auth_cta_click"
+        data-analytics-source="header_login"
+        data-analytics-has-next={dest !== "/" ? "true" : "false"}
+        data-analytics-path={pathname ?? ""}
         className="hidden md:inline-flex items-center px-3 py-1.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition text-sm"
       >
         {copy.auth.login}
       </Link>
       <Link
         prefetch={false} href={`/login${next}`}
+        data-analytics-event="auth_cta_click"
+        data-analytics-source="header_start"
+        data-analytics-has-next={dest !== "/" ? "true" : "false"}
+        data-analytics-path={pathname ?? ""}
         className="hidden md:inline-flex items-center px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition text-sm font-medium"
       >
         {copy.auth.start}

@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { safeInternalPath } from "@/lib/auth/returnPath";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { trackEvent } from "@/lib/clientAnalytics";
 
 type Toast = { kind: "added" } | { kind: "removed" } | null;
 
@@ -97,10 +98,12 @@ export function AddToWatchlistButton({
     if (isAdded) {
       setIsAdded(false); // 낙관적 업데이트
       flashToast("removed");
+      trackEvent("watchlist_toggle", { action: "remove", ticker, compact, loggedOut: isLoggedOut });
       await removeFromWatchlist(ticker);
     } else {
       setIsAdded(true); // 낙관적 업데이트
       flashToast("added");
+      trackEvent("watchlist_toggle", { action: "add", ticker, compact, loggedOut: isLoggedOut });
       await addToWatchlist(ticker);
     }
   }
@@ -110,6 +113,7 @@ export function AddToWatchlistButton({
     if (toastTimer.current) clearTimeout(toastTimer.current);
     setToast(null);
     setIsAdded(true); // 낙관적 업데이트
+    trackEvent("watchlist_toggle", { action: "undo_remove", ticker, compact, loggedOut: isLoggedOut });
     await addToWatchlist(ticker);
   }
 
@@ -152,6 +156,8 @@ export function AddToWatchlistButton({
                 <span className="break-keep">{name} 관심 종목 추가됨</span>
                 <Link
                   href="/watchlist"
+                  data-analytics-event="watchlist_toast_open"
+                  data-analytics-ticker={ticker}
                   className="inline-flex items-center min-h-[44px] text-pink-300 hover:text-pink-200 font-medium"
                 >
                   목록 보기 →
@@ -165,6 +171,8 @@ export function AddToWatchlistButton({
                   <span className="break-keep">이 기기에 저장됨 · 로그인하면 다른 기기에서도 이어집니다</span>
                   <Link
                     href={loginHref}
+                    data-analytics-event="watchlist_login_cta"
+                    data-analytics-ticker={ticker}
                     className="inline-flex items-center min-h-[44px] text-blue-300 hover:text-blue-200 font-medium"
                   >
                     로그인 →

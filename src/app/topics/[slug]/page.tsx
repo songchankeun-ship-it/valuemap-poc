@@ -185,6 +185,8 @@ export default async function TopicPage({ params }: PageProps) {
           </div>
           <Link
             href={topic.stocksHref}
+            data-analytics-event="topic_all_stocks_click"
+            data-analytics-topic={topic.slug}
             className="inline-flex min-h-10 items-center gap-1 rounded-md border border-zinc-200 px-3 text-xs font-medium text-zinc-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-blue-700 dark:hover:text-blue-400"
           >
             전체 탐색
@@ -213,7 +215,13 @@ export default async function TopicPage({ params }: PageProps) {
                 return (
                   <tr key={stock.ticker} className="border-t border-zinc-100 dark:border-zinc-800">
                     <td className="px-4 py-3">
-                      <Link href={`/stock/${stock.ticker}`} className="group inline-flex min-w-0 flex-col">
+                      <Link
+                        href={`/stock/${stock.ticker}`}
+                        data-analytics-event="topic_stock_open"
+                        data-analytics-topic={topic.slug}
+                        data-analytics-ticker={stock.ticker}
+                        className="group inline-flex min-w-0 flex-col"
+                      >
                         <span className="font-semibold text-zinc-900 group-hover:text-blue-700 dark:text-zinc-100 dark:group-hover:text-blue-400">
                           {stock.name}
                         </span>
@@ -240,6 +248,9 @@ export default async function TopicPage({ params }: PageProps) {
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/stock/${stock.ticker}`}
+                        data-analytics-event="topic_stock_open"
+                        data-analytics-topic={topic.slug}
+                        data-analytics-ticker={stock.ticker}
                         className="inline-flex min-h-9 items-center rounded-md border border-zinc-200 px-2.5 text-[11px] font-medium text-zinc-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-blue-700 dark:hover:text-blue-400"
                       >
                         상세

@@ -43,6 +43,7 @@ export default function PrivacyPage() {
             <li><strong>소셜 로그인(카카오·구글·네이버) 사용 시</strong> — 제공자 계정 식별자, 닉네임·이름, 이메일, 프로필 사진 (제공자가 전달하는 항목에 한함)</li>
             <li><strong>이용 기록</strong> — 관심 종목, 비교 목록, 알림 설정</li>
             <li><strong>접속 정보</strong> — IP 주소, 브라우저 정보 (Vercel Analytics 기반)</li>
+            <li><strong>비식별 사용 이벤트</strong> — 검색 결과 선택, 주제 페이지 클릭, 비교함·관심종목 버튼, 로그인 CTA, 오류 제보 폼 상태 등 서비스 개선용 이벤트. 검색어 원문, 제보 메시지, 이메일 내용은 이벤트에 포함하지 않습니다.</li>
           </ul>
         </section>
 

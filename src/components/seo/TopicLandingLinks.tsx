@@ -29,6 +29,9 @@ export function TopicLandingLinks() {
           <Link
             key={topic.slug}
             href={`/topics/${topic.slug}`}
+            data-analytics-event="topic_link_click"
+            data-analytics-source="stocks_topic_links"
+            data-analytics-topic={topic.slug}
             className="group min-h-[86px] rounded-md border border-zinc-200 bg-white p-3 transition hover:border-blue-300 hover:bg-blue-50/40 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-700 dark:hover:bg-blue-950/20"
           >
             <span className="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-md bg-zinc-100 text-zinc-600 group-hover:bg-blue-100 group-hover:text-blue-700 dark:bg-zinc-800 dark:text-zinc-300 dark:group-hover:bg-blue-950 dark:group-hover:text-blue-400">

@@ -10,6 +10,7 @@ import {
   COMPARE_MAX,
 } from "@/lib/compare";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { trackEvent } from "@/lib/clientAnalytics";
 
 interface Props {
   ticker: string;
@@ -56,16 +57,20 @@ export function AddToCompareButton({ ticker, name, compact = false, label }: Pro
     if (inBasket) {
       setInBasket(false); // 낙관적
       await removeFromCompare(ticker);
+      trackEvent("compare_toggle", { action: "remove", ticker, compact });
       showToast(name + "을(를) 비교함에서 제거했습니다");
     } else {
       // 낙관적 업데이트 전에 결과 확인 필요 (최대 4개 제한)
       const result = await addToCompare(ticker);
       if (result.ok) {
         setInBasket(true);
+        trackEvent("compare_toggle", { action: result.reason === "already" ? "already" : "add", ticker, compact });
         showToast(name + "을(를) 비교함에 추가했습니다");
       } else if (result.reason === "max") {
+        trackEvent("compare_toggle", { action: "max_blocked", ticker, compact });
         showToast(`비교는 최대 ${COMPARE_MAX}개까지 가능해요 — 하나를 빼고 추가하세요`);
       } else {
+        trackEvent("compare_toggle", { action: "failed", ticker, compact });
         showToast("추가에 실패했습니다. 다시 시도해주세요.");
       }
     }
@@ -99,6 +104,8 @@ export function AddToCompareButton({ ticker, name, compact = false, label }: Pro
           <span className="truncate">{toast.msg}</span>
           <Link
             href="/compare"
+            data-analytics-event="compare_toast_open"
+            data-analytics-ticker={ticker}
             className="text-blue-300 hover:text-blue-200 hover:underline shrink-0 font-medium"
           >
             비교 보기 →

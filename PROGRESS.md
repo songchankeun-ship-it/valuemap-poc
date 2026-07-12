@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] analytics event instrumentation
+- **Scope**: Added local-safe conversion/event instrumentation on top of the existing Vercel Analytics package. No new vendor, dependency, env var, account setting, generated data, scoring, DART, auth provider, deployment config, or remote state change.
+- **Implementation**: Added `src/lib/clientAnalytics.ts` and `src/components/analytics/AnalyticsEventTracker.tsx`. Server-rendered links/buttons can now opt in with `data-analytics-event`; client-only product actions call `trackEvent()` directly. Events are non-blocking and swallow analytics errors.
+- **Events covered**: Search result open/view-all/empty CTA, `/stocks` topic link clicks, topic page stock-detail opens, topic "전체 탐색", compare add/remove/max-blocked/tray open/reset/toast open, watchlist add/remove/undo/toast open/login CTA, header login/start CTA, and data issue form open/submit/result. Added `docs/ornscore-analytics-event-map-2026-07-12.md` with event names and privacy rules.
+- **Privacy alignment**: Updated `/privacy` collection scope with "비식별 사용 이벤트". Raw search text, report message text, email contents, and arbitrary free-form report ticker input are not sent in analytics events.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with existing `TrustLayer` warning only; local prod `http://127.0.0.1:4675` `npm run verify:local -- --base http://127.0.0.1:4675 --no-perf` passed 4/4 real gates. HTML spot checks confirmed analytics markers on `/stocks`, `/topics/undervalued-stocks`, `/stock/005930`, and updated `/privacy`. Temp port 4675 was stopped.
+- **Next**: Continue item 5 with app/PWA readiness, local-only first: re-run `npm run app:check`, review manifest/offline/installability/assetlinks owner gate, confirm app store blockers remain external-owner tasks, and avoid Play Console/account/signing changes unless the owner explicitly resumes them.
+
 ## 2026-07-12 - [codex] SEO topic landing pages
 - **Scope**: Added indexable search-intent landing pages for high-value stock discovery queries without changing scoring, generated datasets, DART logic, market-data collection, auth, Search Console, deployment config, or remote state.
 - **New routes**: Added `/topics/undervalued-stocks`, `/topics/dividend-stocks`, `/topics/low-per-stocks`, `/topics/low-pbr-stocks`, `/topics/high-roe-stocks`, `/topics/battery-stocks`, and `/topics/semiconductor-stocks`. Each page has route-specific metadata, canonical URL, JSON-LD `CollectionPage`/`ItemList`, real candidate rows from the existing 138-stock pool, data-date context, and non-advisory copy.
