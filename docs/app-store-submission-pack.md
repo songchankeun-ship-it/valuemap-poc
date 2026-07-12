@@ -6,6 +6,8 @@
 
 이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 공개 약속하지 않는다. 2026-07-01 제품 결정 기준으로 1차 스토어 경로는 **Android TWA**이며, iOS 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
 
+Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-listing-worksheet-2026-07-12.md`를 우선 본다. 이 문서는 Play/App Store 공통 배경과 리스크 정리용으로 유지한다.
+
 공식 참고(2026-07-01 재확인):
 
 - [Google Play Console Help — preview assets](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en): feature graphic, screenshots, short description, videos.

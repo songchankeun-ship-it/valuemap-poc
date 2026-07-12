@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] Google Play listing worksheet
+- **Scope**: Prepared a local-only Google Play listing worksheet. No Play Console app creation, account/payment/signing action, assetlinks publishing, deployment, push, remote write, source-code change, scoring, generated data, DART, or auth-provider change.
+- **Deliverable**: Added `docs/google-play-listing-worksheet-2026-07-12.md` with official-baseline notes, ready-to-copy app name/short description/full description, public contact fields, reviewer notes, App content declaration worksheet, Data safety draft, Financial features declaration notes, current asset inventory, screenshot storyboard, and pre-submission checklist. Linked it from `docs/app-store-submission-pack.md`.
+- **Google Play baseline checked**: Official Play Console Help pages for store listing fields, preview assets, Data safety, App content review preparation, Financial features declaration, and Financial Services policy were checked on 2026-07-12.
+- **Validation**: Character-count script confirmed app name 5/30, short description 36/80, and full description about 455/4000. `git diff --check` clean; replacement-character scan clean.
+- **Next**: Highest-value local follow-up is a public data-deletion/help page if Play Console needs a direct deletion URL instead of only `mailto:contact@ornscore.com`. The owner-only gates remain Play Console account/payment, reviewer test account, screenshots, feature graphic, package/signing SHA-256, assetlinks, and final console declarations.
+
 ## 2026-07-12 - [codex] real-device app QA checklist
 - **Scope**: Added a manual real-device QA checklist for the PWA/TWA-ready app path. Docs-only local slice; no Play Console, signing, assetlinks publishing, app-store account, deployment, remote write, scoring, generated data, DART, or auth-provider change.
 - **Deliverable**: Added `docs/app-real-device-qa-checklist-2026-07-12.md` covering Android Chrome install/add-to-home-screen, standalone launch, safe-area/header spacing, core routes, topic-to-stock flow, watchlist/compare actions, login return, offline honesty, evidence capture, and the Android TWA owner-only gate.

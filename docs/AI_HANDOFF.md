@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T20:32:00+09:00
+Last updated: 2026-07-12T20:50:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - Google Play listing worksheet
+- **Context**: Owner asked to proceed with store-listing preparation after clarifying what "스토어 등록용" means. This is local-only preparation; no Play Console app/account/payment/signing/assetlinks/submission/deployment/remote change.
+- **Deliverable**: Added `docs/google-play-listing-worksheet-2026-07-12.md` and linked it from `docs/app-store-submission-pack.md`. The worksheet includes ready-to-copy Google Play app name, short/full descriptions, contact fields, reviewer notes, App content/Data safety/Financial features declaration prompts, current asset inventory, screenshot storyboard, and pre-submission checklist.
+- **References checked**: Official Google Play Help for store listing setup, preview assets, Data safety, app review/App content, Financial features declaration, and Financial Services policy were checked on 2026-07-12 and linked in the worksheet.
+- **Validation**: Character count script confirmed the app name, short description, and full description fit Play limits. `git diff --check` and replacement-character scan were clean.
+- **Next**: Local follow-up candidate is a public data-deletion/help page if Play Console needs a direct deletion URL. Owner-only gates remain Play Console payment/account, reviewer test account, screenshots/feature graphic, package/signing SHA-256, assetlinks, and final console declarations.
 
 ### 2026-07-12 - Codex - Real-device app QA checklist
 - **Context**: Continued the ordered post-launch/app-readiness sequence after the local app/PWA re-audit. This is a docs-only local slice for real-device testing; no Play Console/account/signing/assetlinks publishing/app-store submission/deployment/remote state change.
