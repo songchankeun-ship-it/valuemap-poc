@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] store release preflight handoff
+- **Scope**: Added a final local/owner gate checklist for the Android TWA / store-submission path. Docs-only slice; no Play Console app creation, asset upload, declaration submission, signing-key generation, `assetlinks.json` publishing, deployment, push, scoring, generated stock data, DART, auth-provider, or remote/account change.
+- **Deliverable**: Added `docs/ornscore-store-release-preflight-2026-07-12.md`. It summarizes completed local prep, owner-only gates, no-go rules, local verification commands, decision tree, and exact next automation entry for the real package id + app-signing SHA-256 path.
+- **Links**: Linked the preflight from `docs/app-store-submission-pack.md` and `docs/ornscore-owner-final-checklist.md` so store-console work can start from one checklist without relying on chat history.
+- **Next**: If owner external inputs are absent, do not generate `assetlinks.json` or keep polishing store-console docs. Wait for Play Console/account/signing/final screenshot data or move to product work. If owner supplies final package id + real app-signing SHA-256, run the documented `app:assetlinks --dry-run`, generate real `assetlinks.json`, run `npm run app:check`, and commit only after the gate passes and release approval is explicit.
+
 ## 2026-07-12 - [codex] OG/Twitter social share image metadata
 - **Scope**: Created and wired a public OG/Twitter `summary_large_image` asset for ORNScore sharing/search previews. No deployment, push, Play Console/App Store upload, account/payment/signing work, assetlinks publishing, scoring, generated stock data, DART, auth-provider, or manifest screenshot change.
 - **Generated asset**: Added reproducible source `docs/store-assets/2026-07-12/social-share/generate-og-share.py` plus `public/social/ornscore-og-1200x630.jpg`. The JPEG uses the real stock-detail UI screenshot, conservative non-advisory copy, and avoids performance/ranking/free/download/store-badge claims.

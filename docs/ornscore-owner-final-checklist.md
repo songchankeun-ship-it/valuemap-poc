@@ -8,6 +8,7 @@
 > - 실기기 standalone 로그인/복귀 8단계 절차 → `docs/app-roadmap.md` §5-1
 > - 패키징 경로 결정 트리·비용·반려 리스크·실기기 사전 점검표 → `docs/app-packaging-readiness.md`
 > - 스토어 등록 문구·개인정보 답변·스크린샷·리뷰 노트 초안 → `docs/app-store-submission-pack.md`
+> - 스토어 출시 직전 로컬/오너 게이트 프리플라이트 → `docs/ornscore-store-release-preflight-2026-07-12.md`
 > - 소셜 로그인 콘솔 설정 → `docs/auth-providers-setup.md`
 > - 유료/약관 법무 확정 추적 → `docs/legal-ai-commercial-readiness.md`
 

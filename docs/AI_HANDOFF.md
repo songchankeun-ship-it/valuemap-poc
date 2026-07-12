@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T23:54:50+09:00
+Last updated: 2026-07-12T23:57:37+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - Store release preflight handoff
+- **Context**: Continued the store-readiness sequence after OG/Twitter metadata. This is a docs-only local handoff slice; no Play Console app creation, asset upload, declaration submission, signing-key generation, `assetlinks.json` publishing, deployment, push, generated data, scoring, DART, auth-provider, or remote/account change.
+- **Deliverable**: Added `docs/ornscore-store-release-preflight-2026-07-12.md`. It summarizes completed local prep, owner-only gates, no-go rules, local verification commands, a decision tree, and the exact next automation entry when the owner provides final package id + real Play app-signing SHA-256.
+- **Links**: `docs/app-store-submission-pack.md` and `docs/ornscore-owner-final-checklist.md` now point to the preflight checklist.
+- **Next**: If no owner external inputs are available, stop store-console automation and move to product work or wait. If final package id + real app-signing SHA-256 are supplied, run `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<real SHA-256>" --dry-run`, then generate real `public/.well-known/assetlinks.json`, run `npm run app:check`, and commit only after the gate passes and owner release approval is explicit.
 
 ### 2026-07-12 - Codex - OG/Twitter social share image metadata
 - **Context**: Continued local store-readiness after the Google Play feature graphic draft. This slice creates a public share preview image and metadata wiring only. No deployment, push, store-console upload, account/payment/signing work, assetlinks publishing, scoring, generated stock data, DART, auth-provider, or manifest screenshot change.

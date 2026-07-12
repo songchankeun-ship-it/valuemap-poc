@@ -6,7 +6,7 @@
 
 이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 공개 약속하지 않는다. 2026-07-01 제품 결정 기준으로 1차 스토어 경로는 **Android TWA**이며, iOS 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
 
-Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-listing-worksheet-2026-07-12.md`를 우선 본다. 스토어 시각 자산 캡처 초안과 남은 feature graphic/Apple/manifest 게이트는 `docs/ornscore-store-visual-assets-pack-2026-07-12.md`를 본다. 이 문서는 Play/App Store 공통 배경과 리스크 정리용으로 유지한다.
+Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-listing-worksheet-2026-07-12.md`를 우선 본다. 스토어 시각 자산 캡처 초안과 남은 feature graphic/Apple/manifest 게이트는 `docs/ornscore-store-visual-assets-pack-2026-07-12.md`를 본다. 실제 콘솔·서명·배포로 넘어가기 직전에는 `docs/ornscore-store-release-preflight-2026-07-12.md`를 최종 게이트 체크리스트로 사용한다. 이 문서는 Play/App Store 공통 배경과 리스크 정리용으로 유지한다.
 
 공식 참고(2026-07-01 재확인):
 
