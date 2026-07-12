@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock checklist next-action CTA
+- **Scope**: Added a local stock-detail checklist next-step CTA. No checklist storage key/item id changes, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: `StockChecklist` now shows a 44px next-action link for the next unchecked checklist item, pointing to the existing section anchors and tracking `stock_checklist_next_open` with ticker plus fixed step id only. Once all items are checked, the next-action CTA disappears and the existing `/watchlist` routine CTA remains. Updated localized copy and the analytics event map.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4703 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` initial next CTA -> `#disclosures`, first checklist click -> `#financials`/`earnings`, all-done hides next CTA and keeps `/watchlist` routine CTA, reset restores initial state, and mobile/desktop overflow stayed 0.
+- **Commit**: `3c707aa` (`[codex] add stock checklist next action`).
+- **Next**: Continue with another small local app-like polish slice such as watchlist saved-filter empty-state guidance or stock-detail routine microcopy. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] watchlist saved-filter rename
 - **Scope**: Added an inline rename flow for saved filters on `/watchlist`. No saved-search schema/RLS change, alert-delivery change, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
 - **Changes**: Added `renameSavedSearch()` for changing only a saved-filter display name through the existing local/Supabase saved-search path. `/watchlist` saved-filter rows now include a 44px pencil button, inline name form, save/cancel controls, failure status, and `saved_filter_watchlist_rename` analytics metadata without sending saved-filter names or raw query text. Updated the analytics event map.

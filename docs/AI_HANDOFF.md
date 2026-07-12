@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T03:51:28+09:00
+Last updated: 2026-07-13T04:08:50+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist saved-filter rename
+- Task: Direct Codex product slice - stock checklist next-action CTA
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local `/watchlist` saved-filter rows now support inline rename and were verified; implementation commit `4b40122`; no push/deploy.
+- Note: Local `/stock/[ticker]` checklist now exposes the next unchecked step and was verified on mobile/desktop; implementation commit `3c707aa`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock checklist next-action CTA
+- **Context**: Continued the app-like stock-detail routine after watchlist saved-filter rename. This slice is local UI/client copy/docs only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `StockChecklist` now shows a 44px next-action link for the next unchecked checklist item, using the existing section anchors and analytics event `stock_checklist_next_open` with ticker plus fixed step id only. The next-action CTA disappears when all four items are checked, leaving the existing `/watchlist` routine CTA.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4703 passed 4/4 real gates. In-app browser verified 390x844 initial next CTA, first-click transition to financials, all-done routine CTA, reset, and desktop overflow 0.
+- **Commit**: `3c707aa` (`[codex] add stock checklist next action`).
+- **Next**: Continue with another small local product-polish slice such as watchlist saved-filter empty-state guidance or stock-detail routine microcopy. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Watchlist saved-filter rename
 - **Context**: Continued the app-like saved-filter routine after stock-detail recent-change links. This slice changes local UI/client code only: no saved-search schema/RLS change, alert-delivery change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
