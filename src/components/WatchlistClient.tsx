@@ -74,6 +74,47 @@ function readRecentSearches(): string[] {
 }
 
 const CAP_LABELS: Record<string, string> = { large: "대형주", mid: "중형주", small: "소형주" };
+const SAVED_FILTER_SORT_LABELS: Record<string, string> = {
+  compositeScore: "종합점수",
+  momentum: "추세",
+  flow: "거래활성도",
+  value: "밸류",
+  vol: "위험조정",
+  roe: "ROE",
+  per: "PER",
+  pbr: "PBR",
+  dividendYield: "배당",
+  marketCap: "시총",
+  r3m: "3개월",
+};
+
+function activeConfigCount(c: SavedSearchConfig): number {
+  let count = 0;
+  if (c.query?.trim()) count += 1;
+  if (typeof c.minComposite === "number") count += 1;
+  if (typeof c.valueMin === "number") count += 1;
+  if (typeof c.momentumMin === "number") count += 1;
+  if (typeof c.flowMin === "number") count += 1;
+  if (typeof c.volMin === "number") count += 1;
+  if (typeof c.roeMin === "number") count += 1;
+  if (typeof c.divYieldMin === "number") count += 1;
+  if (typeof c.perMin === "number") count += 1;
+  if (typeof c.perMax === "number") count += 1;
+  if (typeof c.pbrMin === "number") count += 1;
+  if (typeof c.pbrMax === "number") count += 1;
+  if (c.capBucket && c.capBucket !== "all") count += 1;
+  if (c.market && c.market !== "all") count += 1;
+  if (c.excludeLoss) count += 1;
+  if (c.sector) count += 1;
+  if ((c.themes?.length ?? 0) > 0) count += 1;
+  return count;
+}
+
+function sortSummary(c: SavedSearchConfig): string {
+  const label = SAVED_FILTER_SORT_LABELS[c.sortKey] ?? "사용자 정렬";
+  const dir = c.sortDir === "asc" ? "오름차순" : "내림차순";
+  return `${label} ${dir}`;
+}
 
 /** 저장 필터 조건을 짧은 자연어로 요약(표시용, 산식·점수 무관) */
 function describeConfig(c: SavedSearchConfig): string {
@@ -1220,6 +1261,7 @@ export function WatchlistClient({
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
             {savedSearches.map((sv) => {
               const count = matchCountOf(sv.config);
+              const conditionCount = activeConfigCount(sv.config);
               const isRenaming = renamingSavedSearchId === sv.id;
               const renameInputId = `saved-filter-rename-${sv.id}`;
               return (
@@ -1244,6 +1286,17 @@ export function WatchlistClient({
                         </div>
                         <div className="mt-0.5 break-words text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">
                           {describeConfig(sv.config)}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="rounded-full bg-zinc-100 px-2 py-1 dark:bg-zinc-800">
+                            {conditionCount > 0 ? `조건 ${conditionCount}개` : "전체 조건"}
+                          </span>
+                          <span className="rounded-full bg-zinc-100 px-2 py-1 dark:bg-zinc-800">
+                            정렬 {sortSummary(sv.config)}
+                          </span>
+                          <span className="rounded-full bg-zinc-100 px-2 py-1 dark:bg-zinc-800">
+                            저장 {fmtRelativeTime(sv.createdAt, { locale, absolute: "md" })}
+                          </span>
                         </div>
                       </div>
                       <div className="shrink-0 text-right">
