@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T07:24:39+09:00
+Last updated: 2026-07-13T07:47:54+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - recent change priority analytics
+- Task: Direct Codex product slice - saved filter notification shortcut
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stock/[ticker]` recent-change priority link now records structural analytics metadata only; implementation commit `8be7053`; no push/deploy.
+- Note: `/watchlist` saved-filter header now links to notification settings with count-only structural analytics metadata; implementation commit `58b518f`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved filter notification shortcut
+- **Context**: Continued the watchlist saved-filter routine after stock-detail recent-change analytics. This slice is local UI/instrumentation only: no saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/watchlist` saved-filter header now shows a 44px `알림 설정` shortcut beside `조건 추가` when saved filters exist. The shortcut opens `/settings/notifications` and records `saved_filter_notification_settings_open` with `count` only; saved-filter names, conditions, and raw query text are not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4717 passed 4/4 real gates. In-app browser created and deleted a temporary saved filter, then verified mobile 390x844 and desktop `/watchlist` shortcut href, analytics attrs, 44px target, and no horizontal overflow. Temp port 4717 was stopped.
+- **Commit**: `58b518f` (`[codex] add saved filter notification shortcut`).
+- **Next**: Continue with another small local app-like polish slice such as watchlist/saved-filter row readability or stock-detail recent-action/readability. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Recent change priority analytics
 - **Context**: Continued the stock-detail recent-action clarity path after adding the visible priority action row. This slice is local instrumentation/docs only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.

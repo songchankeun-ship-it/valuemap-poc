@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] saved filter notification shortcut
+- **Scope**: Added a saved-filter header shortcut on `/watchlist` for opening notification settings. No saved-search persistence, alert-delivery, Supabase schema/RLS, scoring/data/DART/auth/deployment/push/remote changes.
+- **Changes**: When saved filters exist, the saved-filter header now has two 44px actions: `알림 설정` to `/settings/notifications` and `조건 추가` to `/stocks`. The notification shortcut records `saved_filter_notification_settings_open` with `count` only; no saved-filter names, conditions, or raw query text are tracked. The analytics event map was updated.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4717 --no-perf` passed 4/4 real gates. In-app browser created a temporary saved filter from `/stocks?theme=반도체`, verified `/watchlist` at 390x844 and desktop shows `알림 설정` with `/settings/notifications`, `saved_filter_notification_settings_open`, count-only metadata, 44px target, and no horizontal overflow; the test saved filter was deleted and temp port 4717 was stopped.
+- **Commit**: `58b518f` (`[codex] add saved filter notification shortcut`).
+- **Next**: Continue with one small local app-like polish slice, preferably watchlist/saved-filter row readability, stock-detail recent-action/readability, or documentation if no safe local slice remains. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] recent change priority analytics
 - **Scope**: Added local analytics instrumentation to the stock-detail recent-change priority action. No analytics vendor/account/config change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: `RecentChangeSummary` now receives the ticker and assigns a fixed `kind` to each recent-change item. The single "우선 확인" priority link records `stock_recent_change_priority_open` with `ticker`, `kind`, `tone`, and `target` only; no score values, labels, raw text, or free-form user input are sent. The analytics event map documents the new event.
