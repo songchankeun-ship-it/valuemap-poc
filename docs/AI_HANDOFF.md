@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-11T16:28:56.787Z
+Last updated: 2026-07-12T20:20:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - App/PWA readiness re-audit
+- **Context**: Owner asked to continue the recommended launch sequence in order. This completes item 5 as a local-only app/PWA readiness re-audit after admin, Search Console cleanup, SEO topic landing pages, and analytics instrumentation. No Play Console/account/payment/signing/assetlinks publishing/service-worker/deployment/remote state change.
+- **Result**: `npm run app:check` passed with 1 expected external WAIT: `public/.well-known/assetlinks.json` is still absent because it needs the real Android package + SHA-256 app-signing fingerprint. This is an owner-only gate, not a code/test failure.
+- **Docs**: Added `docs/app-readiness-audit-2026-07-12.md`. It confirms the PWA manifest/icons/iOS metadata/safe-area/offline guidance remain ready, Android TWA remains the first store path, service worker remains intentionally absent, and placeholder assetlinks should not be generated.
+- **Next**: If continuing locally without external account work, create a real-device app-install QA checklist for Android Chrome install prompt, standalone launch, safe-area/header, login return, `/stocks`, `/stock/005930`, `/watchlist`, `/compare`, `/offline`, and `/privacy`. Actual Play Console registration/signing/submission remains owner-only.
 
 ### 2026-07-12 - Codex - Analytics event instrumentation
 - **Context**: Owner asked to proceed through the recommended post-launch sequence. This completes item 4, analytics/conversion tracking, after admin, Search Console cleanup, and SEO topic landing pages. No new vendor/dependency/env/account/deployment/remote state change.

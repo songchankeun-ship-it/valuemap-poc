@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] app/PWA readiness re-audit
+- **Scope**: Re-checked app/PWA readiness after the SEO topic pages and analytics instrumentation. Local-only audit/documentation slice; no Play Console, app signing, account setup, assetlinks publishing, service worker, deployment, remote write, generated data, scoring, DART, or auth-provider change.
+- **Result**: `npm run app:check` passed with the same expected external gate: `public/.well-known/assetlinks.json` is not generated yet because it requires the real Android package/signing SHA-256 fingerprint.
+- **Readiness state**: PWA icons, dynamic `src/app/manifest.ts`, Korean app name, standalone display, `/` start URL/scope, `ko-KR`, Today/Stocks/Disclosures shortcuts, iOS home-screen metadata, safe-area handling, and offline guidance remain in place. Service worker remains intentionally absent to avoid stale finance-data caches.
+- **Docs**: Added `docs/app-readiness-audit-2026-07-12.md` with the owner-only Android assetlinks gate, the dry-run/generate commands for the real SHA-256 fingerprint, and the actions automation should not perform automatically.
+- **Validation**: `npm run app:check` passed before the doc update with 1 expected external WAIT. Docs-only follow-up validation: run `git diff --check` and keep the new doc/handoff clean before commit.
+- **Next**: App store release remains owner-blocked on Play Console/payment/address/app-signing details. The next local slice, if continuing without external account work, is a real-device app-install QA checklist for Android Chrome install prompt, standalone launch, safe-area/header, login return, `/stocks`, `/stock/005930`, `/watchlist`, `/compare`, `/offline`, and `/privacy`.
+
 ## 2026-07-12 - [codex] analytics event instrumentation
 - **Scope**: Added local-safe conversion/event instrumentation on top of the existing Vercel Analytics package. No new vendor, dependency, env var, account setting, generated data, scoring, DART, auth provider, deployment config, or remote state change.
 - **Implementation**: Added `src/lib/clientAnalytics.ts` and `src/components/analytics/AnalyticsEventTracker.tsx`. Server-rendered links/buttons can now opt in with `data-analytics-event`; client-only product actions call `trackEvent()` directly. Events are non-blocking and swallow analytics errors.
