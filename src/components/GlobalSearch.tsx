@@ -47,6 +47,19 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   const panelClassName = isHero
     ? "absolute top-full mt-2 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-xl overflow-hidden z-50"
     : "absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50";
+  const preferredExampleTickers = ["005930", "000660", "005380"];
+  const emptyExamples = (() => {
+    const picked = new Map<string, StockItem>();
+    for (const ticker of preferredExampleTickers) {
+      const stock = stocks.find((s) => s.ticker === ticker);
+      if (stock) picked.set(stock.ticker, stock);
+    }
+    for (const stock of stocks) {
+      if (picked.size >= 3) break;
+      picked.set(stock.ticker, stock);
+    }
+    return Array.from(picked.values()).slice(0, 3);
+  })();
 
   function scoreBadge(score?: number) {
     if (!Number.isFinite(score)) return null;
@@ -147,6 +160,18 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
     inputRef.current?.blur();
   }
 
+  function openExampleSearch(stock: StockItem) {
+    trackEvent("search_empty_example_click", {
+      source: variant,
+      ticker: stock.ticker,
+      queryLength: query.trim().length,
+    });
+    setQuery(stock.name);
+    setOpen(true);
+    setSelectedIndex(0);
+    inputRef.current?.focus();
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     // Escape 는 결과가 없을 때(빈 상태 패널)도 패널을 닫아야 하므로 조기 반환보다 먼저 처리한다.
     if (e.key === "Escape") {
@@ -206,6 +231,25 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
               <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
                 {copy.search.emptyCoverageLine(stocks.length)}
               </p>
+              {emptyExamples.length > 0 ? (
+                <div className="mt-2">
+                  <p className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+                    {copy.search.emptyExamplesLabel}
+                  </p>
+                  <div className="mt-1.5 flex flex-wrap justify-center gap-1.5">
+                    {emptyExamples.map((stock) => (
+                      <button
+                        key={stock.ticker}
+                        type="button"
+                        onClick={() => openExampleSearch(stock)}
+                        className="min-h-8 max-w-full rounded-md border border-zinc-200 bg-white px-2 py-1 text-[11px] font-medium text-zinc-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-blue-900 dark:hover:bg-blue-950/40 dark:hover:text-blue-300"
+                      >
+                        <span className="block truncate">{stock.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               <button
                 type="button"
                 onClick={() => {

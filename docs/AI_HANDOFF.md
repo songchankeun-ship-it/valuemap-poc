@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T00:10:35+09:00
+Last updated: 2026-07-13T00:14:56+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Search empty-state examples
+- **Context**: Continued product polish after autocomplete score badges. This slice improves search no-result recovery only; no scoring, generated data, DART, auth, store-console, deployment, push, or remote/account state change.
+- **Changes**: GlobalSearch empty results now show localized covered-stock example chips. Preferred examples are `005930`, `000660`, and `005380` when present, with fallback to the first covered stocks. Clicking an example searches that stock name and tracks `search_empty_example_click` without sending the failed raw query text.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4689 passed 4/4 real gates; spot checks confirmed home payload includes Samsung example data and built output contains the empty-state copy/event. Temp port stopped.
+- **Next**: Move from search polish to a user-routine slice such as watchlist CSV/export polish or stock-detail CTA handoff. Store/signing/deployment remain owner-only.
 
 ### 2026-07-13 - Codex - Search autocomplete score badges
 - **Context**: Owner agreed to move from store-readiness gates back into product work. This slice improves the search-to-discovery path without touching scoring, generated data, DART, auth, store-console, deployment, push, or remote/account state.

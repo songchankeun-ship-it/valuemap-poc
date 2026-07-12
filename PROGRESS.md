@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] search empty-state examples
+- **Scope**: Improved the GlobalSearch no-result state with covered-stock example chips. No scoring formula, generated stock data, DART logic, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: Empty search results now show a short localized example row. If covered, the examples prefer Samsung Electronics, SK Hynix, and Hyundai Motor by ticker; otherwise they fall back to the first covered stocks. Clicking an example re-runs the search for that stock name and tracks `search_empty_example_click` without sending the failed raw query text.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4689 --no-perf` passed 4/4 real gates; spot checks confirmed home search payload has Samsung example data and built output contains the empty-state copy/event. Temp port 4689 was stopped.
+- **Next**: Search-discovery polish is now enough for this pass. Recommended next product slice: watchlist CSV/export polish or stock-detail CTA handoff for recently viewed/watchlist actions. Keep owner-only store/signing/deployment gates separate.
+
 ## 2026-07-13 - [codex] search autocomplete score badges
 - **Scope**: Improved GlobalSearch scanability by adding display-only composite score badges to stock autocomplete rows. No scoring formula, generated stock data, DART logic, auth-provider, store-console, deployment, push, or remote/account change.
 - **Changes**: Extended the lightweight search payload with `compositeScore` from the same 4-metric composite display formula already used elsewhere. `GlobalSearch` now renders compact localized score badges (`종합 N` / `Score N`) with the shared `scoreColorOf` visual bands and accessible aria text. Stock result rows now stack the theme hint under the name so the score badge does not crowd the ticker/name line.
