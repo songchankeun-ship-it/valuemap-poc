@@ -648,8 +648,10 @@ export const stockChecklistCopy = {
       sector: "업종 비교 확인",
     },
     checkedOf: (done: number, total: number) => `${done} / ${total} 확인함`,
+    progressLabel: (done: number, total: number) => `확인 진행률 ${done} / ${total}`,
     reset: "전체 지우기",
     allDone: "네 항목을 모두 확인했어요. 참고 정보이며 매수·매도 추천이 아닙니다.",
+    routineCta: "관심 화면",
     storageNote: "이 기기에만 저장돼요 · 로그인 동기화·알림은 없어요.",
   },
   en: {
@@ -662,8 +664,10 @@ export const stockChecklistCopy = {
       sector: "Checked the sector comparison",
     },
     checkedOf: (done: number, total: number) => `${done} / ${total} checked`,
+    progressLabel: (done: number, total: number) => `Review progress ${done} of ${total}`,
     reset: "Clear all",
     allDone: "You've checked all four items. Reference information, not a buy/sell recommendation.",
+    routineCta: "Routine view",
     storageNote: "Saved on this device only · no login sync or alerts.",
   },
 } as const satisfies Record<Locale, unknown>;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Check, ClipboardCheck, ArrowRight, RotateCcw } from "lucide-react";
 import {
   getChecklist,
@@ -44,6 +45,7 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
   const total = CHECKLIST_ITEMS.length;
   const done = CHECKLIST_ITEMS.reduce((n, item) => n + (checked[item.id] ? 1 : 0), 0);
   const allDone = done === total;
+  const progress = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
     <section
@@ -60,6 +62,19 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
         </span>
       </div>
       <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 leading-snug break-words">{t.purpose}</p>
+      <div
+        role="progressbar"
+        aria-label={t.progressLabel(done, total)}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-valuenow={done}
+        className="mb-3 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+      >
+        <div
+          className="h-full rounded-full bg-blue-600 dark:bg-blue-500 transition-[width]"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
 
       <ul className="divide-y divide-zinc-100 dark:divide-zinc-800 border border-zinc-100 dark:border-zinc-800 rounded-lg overflow-hidden">
         {CHECKLIST_ITEMS.map((item) => {
@@ -109,19 +124,32 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
         })}
       </ul>
 
-      <div className="mt-2.5 flex items-center justify-between gap-2">
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
         <p className="min-w-0 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
           {allDone ? t.allDone : t.storageNote}
         </p>
-        {done > 0 ? (
-          <button
-            type="button"
-            onClick={() => clearChecklist(ticker)}
-            className={`shrink-0 inline-flex items-center gap-1 min-h-[44px] px-2.5 rounded-md text-[11px] font-medium text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition ${FOCUS_RING}`}
-          >
-            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" /> {t.reset}
-          </button>
-        ) : null}
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
+          {allDone ? (
+            <Link
+              href="/watchlist"
+              data-analytics-event="stock_checklist_routine_open"
+              data-analytics-ticker={ticker}
+              className={`inline-flex items-center gap-1 min-h-[44px] px-2.5 rounded-md text-[11px] font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition ${FOCUS_RING}`}
+            >
+              {t.routineCta}
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+          ) : null}
+          {done > 0 ? (
+            <button
+              type="button"
+              onClick={() => clearChecklist(ticker)}
+              className={`inline-flex items-center gap-1 min-h-[44px] px-2.5 rounded-md text-[11px] font-medium text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition ${FOCUS_RING}`}
+            >
+              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" /> {t.reset}
+            </button>
+          ) : null}
+        </div>
       </div>
     </section>
   );

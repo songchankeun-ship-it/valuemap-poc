@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock checklist routine completion
+- **Scope**: Improved the stock-detail local checklist completion experience. No checklist storage key/item id changes, watchlist storage/migration logic, Supabase schema/RLS, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
+- **Changes**: `StockChecklist` now shows an accessible progress bar for 0-4 checked items. When all four items are checked, it shows a compact `관심 화면` CTA to `/watchlist`, preserving the reset action. Added localized copy and analytics event `stock_checklist_routine_open` with ticker only.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4696 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` progressbar 0 -> four checklist clicks -> progressbar 4, checklist routine CTA `href=/watchlist`, navigation reaches `/watchlist`, and mobile/desktop horizontal overflow is 0.
+- **Next**: Continue with a watchlist saved-filter/import planning slice or a conservative stock-detail recent-action panel. Keep Supabase sync, CSV import, app-store console, deployment, and push as owner-approved gates.
+
 ## 2026-07-13 - [codex] stock detail watchlist handoff CTA
 - **Scope**: Added a small saved-state handoff from stock detail to `/watchlist`. No watchlist storage/migration logic, Supabase schema/RLS, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
 - **Changes**: `AddToWatchlistButton` now shows a secondary `관심 화면` link only when a non-compact stock-detail watchlist button is already saved. The link points to `/watchlist`, keeps a 44px tap target, uses a lucide arrow icon, and records `watchlist_detail_open` with ticker only. Updated the analytics event map.

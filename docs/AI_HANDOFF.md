@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:32:07+09:00
+Last updated: 2026-07-13T01:39:04+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock detail watchlist handoff CTA
+- Task: Direct Codex product slice - stock checklist routine completion
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only saved-state `관심 화면` CTA added to stock detail and verified; no push/deploy.
+- Note: Local-only stock checklist progressbar and completion routine CTA added and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock checklist routine completion
+- **Context**: Continued the app-like stock-detail routine path after adding the saved-state watchlist handoff CTA. This slice is local UI/navigation only: no checklist storage key/item id changes, watchlist storage/migration logic, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `StockChecklist` now shows an accessible 0-4 progress bar. When all four checklist items are checked, it shows a compact `관심 화면` CTA to `/watchlist` while keeping the reset action available. Added localized copy and documented `stock_checklist_routine_open` in the analytics event map.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4696 passed 4/4 real gates. In-app browser verified 390x844 progressbar 0 -> four checklist clicks -> progressbar 4, routine CTA `href=/watchlist`, `/watchlist` navigation, and mobile/desktop overflow 0.
+- **Next**: Continue with a watchlist saved-filter/import planning slice or a conservative stock-detail recent-action panel. Supabase sync, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Stock detail watchlist handoff CTA
 - **Context**: Continued the app-like routine path after watchlist group summaries. This slice is local UI/navigation only: no watchlist storage/migration logic, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
