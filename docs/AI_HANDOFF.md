@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T06:28:00+09:00
+Last updated: 2026-07-13T06:51:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - saved filter meta chips
+- Task: Direct Codex product slice - saved search save status
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` saved-filter rows now show condition count, sort summary, and saved timing; implementation commit `873ddc8`; no push/deploy.
+- Note: `/stocks` saved-search creation now shows saving/success/failure feedback instead of silent failure; implementation commit `d4d0fa7`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved search save status
+- **Context**: Continued the saved-filter creation/status clarity path after adding saved-filter metadata chips. This slice is local UI/status only: no saved-search persistence semantics, Supabase schema/RLS, alert delivery, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/stocks` inline saved-search creation now has explicit saving, success, and failure status. Failed saves no longer look like a frozen form, successful saves show a short confirmation, and app/WebView-style input paths also update via `onInput`. Existing saved-search local/Supabase helpers and `/watchlist` behavior remain unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4714 passed 4/4 real gates. In-app browser verified 390x844 `/stocks?theme=반도체` saved-search form opens, save attempt renders a status message, test saved chip was removed, and desktop/mobile overflow stayed 0. Temp port 4714 was stopped.
+- **Commit**: `d4d0fa7` (`[codex] add saved search save status`).
+- **Next**: Continue with another small local app-like polish slice such as stock-detail recent-action clarity or a conservative watchlist/saved-filter routine affordance. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Saved filter meta chips
 - **Context**: Continued the watchlist saved-filter clarity path after the stock checklist completion hint. This slice is local UI/rendering only: no saved-search persistence change, Supabase schema/RLS, alert delivery, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.

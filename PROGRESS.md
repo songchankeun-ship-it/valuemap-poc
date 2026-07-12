@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] saved search save status
+- **Scope**: Added visible status handling to the `/stocks` saved-search creation form. No saved-search persistence semantics, Supabase schema/RLS, alert-delivery, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
+- **Changes**: The inline saved-search form now shows saving/success/failure feedback, disables the form while a save is in progress, keeps failures visible instead of silently leaving the form open, and clears the status when reopening/canceling the form. Input updates now also listen to `onInput` for app/WebView-style entry paths.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4714 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks?theme=반도체` save form opens, save attempt shows success/failure status, test saved chip was removed, and mobile/desktop overflow stayed 0; temp port 4714 was stopped.
+- **Commit**: `d4d0fa7` (`[codex] add saved search save status`).
+- **Next**: Continue with one small local app-like polish slice, preferably stock-detail recent-action clarity or another watchlist/saved-filter routine affordance. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] saved filter meta chips
 - **Scope**: Added compact metadata chips to `/watchlist` saved-filter rows. No saved-search persistence change, Supabase schema/RLS change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
 - **Changes**: Saved-filter rows now show active condition count, sort direction summary, and saved timing under the existing condition description. The row still uses the existing open/rename/remove controls and matching count logic.
