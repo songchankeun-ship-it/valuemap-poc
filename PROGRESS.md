@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] recent change basis link target
+- **Scope**: Enlarged the stock-detail recent-change `변화 근거 보기` link to a mobile-friendly touch target. No scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: `/stock/[ticker]` recent-change header now renders `변화 근거 보기` as a 44px `#basis` link with hover/focus states instead of a tiny text link. Existing destinations, priority action analytics, recent-change cards, scoring, and tabs are unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4720 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 and desktop `/stock/005930` show `변화 근거 보기` as `#basis` with 44px target and no horizontal overflow; temp port 4720 was stopped.
+- **Commit**: `fa9afb0` (`[codex] enlarge recent change basis link`).
+- **Next**: Continue with one small local app-like polish slice, preferably another conservative stock-detail recent-action/readability improvement or watchlist/saved-filter routine polish. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] recent change card action labels
 - **Scope**: Made stock-detail recent-change action cards easier to recognize as tappable cards. No scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: `/stock/[ticker]` recent-change cards with tab links now show a compact `관련 탭 보기` marker and include an explicit aria label. Existing card destinations, priority action analytics, scoring, and tab behavior are unchanged.
