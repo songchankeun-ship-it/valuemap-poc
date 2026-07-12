@@ -180,7 +180,7 @@ function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
               <div className="mt-1 text-[10px] leading-snug text-zinc-500 dark:text-zinc-400">{item.hint}</div>
             </>
           );
-          const className = "block h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5 hover:border-blue-300 dark:hover:border-blue-800 transition";
+          const className = "block h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5 hover:border-blue-300 dark:hover:border-blue-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900";
           return item.href ? (
             <a key={item.label} href={item.href} className={className}>{body}</a>
           ) : (
@@ -325,18 +325,21 @@ export default async function StockDetailPage({ params }: PageProps) {
       value: signedNumber(scoreDelta),
       hint: prevScorePoint ? `${prevScorePoint.date.slice(5)} 대비` : "점수 이력 부족",
       tone: toneOf(scoreDelta),
+      href: "#basis",
     },
     {
       label: "거래활성도",
       value: signedNumber(flowDelta),
       hint: prevScorePoint ? "최근 관심 변화 확인" : "점수 이력 부족",
       tone: toneOf(flowDelta),
+      href: "#basis",
     },
     {
       label: "3개월 수익률",
       value: signedPct(surge3m),
       hint: surge3m === null ? "가격 이력 부족" : "상승폭이 크면 사유 확인",
       tone: toneOf(surge3m, 1),
+      href: "#summary",
     },
     {
       label: "최근 공시",
