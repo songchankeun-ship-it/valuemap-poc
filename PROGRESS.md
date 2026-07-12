@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] recent change priority analytics
+- **Scope**: Added local analytics instrumentation to the stock-detail recent-change priority action. No analytics vendor/account/config change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: `RecentChangeSummary` now receives the ticker and assigns a fixed `kind` to each recent-change item. The single "우선 확인" priority link records `stock_recent_change_priority_open` with `ticker`, `kind`, `tone`, and `target` only; no score values, labels, raw text, or free-form user input are sent. The analytics event map documents the new event.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4716 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 and desktop `/stock/005930` render the priority link with `stock_recent_change_priority_open`, ticker `005930`, kind `return3m`, tone `good`, target `summary`, 44px mobile target, and no horizontal overflow; temp port 4716 was stopped.
+- **Commit**: `8be7053` (`[codex] track recent change priority action`).
+- **Next**: Continue with one small local app-like polish slice, preferably a user-facing stock-detail recent-action/readability affordance or a conservative watchlist/saved-filter routine improvement. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] recent change priority action
 - **Scope**: Added a small priority action row to the stock-detail `/stock/[ticker]` recent-change summary. No scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: `RecentChangeSummary` now derives one "우선 확인" target from the existing recent-change items: caution first, then strong positive movement, then the first linked evidence item. The row links to the existing tab anchor, keeps a 44px target, wraps safely on mobile, and includes an explicit `aria-label` so assistive tech does not read concatenated inline text.

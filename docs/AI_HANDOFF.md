@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T07:10:26+09:00
+Last updated: 2026-07-13T07:24:39+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - recent change priority action
+- Task: Direct Codex product slice - recent change priority analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stock/[ticker]` recent-change summary now surfaces one priority evidence/action link from existing items; implementation commit `956aedb`; no push/deploy.
+- Note: `/stock/[ticker]` recent-change priority link now records structural analytics metadata only; implementation commit `8be7053`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Recent change priority analytics
+- **Context**: Continued the stock-detail recent-action clarity path after adding the visible priority action row. This slice is local instrumentation/docs only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/stock/[ticker]` recent-change priority action now records `stock_recent_change_priority_open` through the existing `data-analytics-event` tracker. Properties are limited to `ticker`, fixed item `kind`, `tone`, and anchor `target`; score values, labels, raw text, and free-form user input are not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4716 passed 4/4 real gates. In-app browser verified 390x844 and desktop `/stock/005930` marker attributes (`005930`, `return3m`, `good`, `summary`), 44px mobile target, and no horizontal overflow. Temp port 4716 was stopped.
+- **Commit**: `8be7053` (`[codex] track recent change priority action`).
+- **Next**: Continue with another small local app-like polish slice such as a user-facing stock-detail recent-action/readability affordance or a conservative watchlist/saved-filter routine improvement. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Recent change priority action
 - **Context**: Continued the stock-detail recent-action clarity path after saved-search status feedback. This slice is local UI/rendering only: no scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
