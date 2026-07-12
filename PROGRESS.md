@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock checklist resume hint
+- **Scope**: Added a small resume hint to the stock-detail local checklist. No checklist storage key/item id change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: After a user checks at least one item but has not finished all four checklist items, `StockChecklist` now shows a compact hint explaining that they can stop for now and resume from the next unchecked item on the next visit. Korean and English copy were updated; the existing next-step CTA and local-only storage behavior are unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4707 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` first checklist click -> resume hint for `실적 확인`, next step `earnings`, progress 1/4, mobile/desktop overflow 0; test state was reset afterward.
+- **Commit**: `0ec475d` (`[codex] add stock checklist resume hint`).
+- **Next**: Continue with another small local app-like polish slice, preferably watchlist saved-filter/topic handoff clarity or stock-detail routine copy if it stays local. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] watchlist saved-filter empty starter links
 - **Scope**: Added first-visit starter links to the `/watchlist` saved-filter empty state. No saved-search schema/RLS change, saved-filter persistence change, recent-search storage change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
 - **Changes**: When there are no saved filters and no recent stock-search terms, the saved-filter empty state now shows three 44px starter links: `/stocks`, `/topics/undervalued-stocks`, and `/topics/dividend-stocks`. Added `saved_filter_empty_starter_open` analytics with only a fixed `kind` value; no raw query text is sent.

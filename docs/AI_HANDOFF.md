@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T04:50:09+09:00
+Last updated: 2026-07-13T05:07:25+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist saved-filter empty starter links
+- Task: Direct Codex product slice - stock checklist resume hint
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local `/watchlist` saved-filter empty state now offers first-visit starter links when there are no saved filters or recent searches; implementation commit `781933d`; no push/deploy.
+- Note: Local stock-detail checklist now shows a resume hint after partial progress; implementation commit `0ec475d`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock checklist resume hint
+- **Context**: Continued the app-like stock-detail routine after watchlist saved-filter starter links. This slice is local UI/client copy only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `StockChecklist` now shows a compact resume hint when the user has checked at least one item but has not finished all four. The hint names the next unchecked item, while the existing next-step CTA and local-only storage behavior remain unchanged. Korean and English checklist copy were updated.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4707 passed 4/4 real gates. In-app browser verified 390x844 first checklist click -> resume hint for `실적 확인`, next step `earnings`, progress 1/4, mobile/desktop overflow 0; test state was reset afterward.
+- **Commit**: `0ec475d` (`[codex] add stock checklist resume hint`).
+- **Next**: Continue with another small local product-polish slice such as watchlist saved-filter/topic handoff clarity or stock-detail routine copy if it stays local. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Watchlist saved-filter empty starter links
 - **Context**: Continued the app-like watchlist routine after recent-search starter chips. This slice is local UI/client docs only: no saved-search schema/RLS change, saved-filter persistence change, recent-search storage change, alert-delivery change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
