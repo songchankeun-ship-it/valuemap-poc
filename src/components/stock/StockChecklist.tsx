@@ -76,6 +76,11 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
           style={{ width: `${progress}%` }}
         />
       </div>
+      {done > 0 && nextItem ? (
+        <p className="mb-3 rounded-md bg-blue-50 px-3 py-2 text-[11px] leading-snug text-blue-700 dark:bg-blue-950/30 dark:text-blue-300">
+          {t.resumeHint(t.items[nextItem.id])}
+        </p>
+      ) : null}
 
       <ul className="divide-y divide-zinc-100 dark:divide-zinc-800 border border-zinc-100 dark:border-zinc-800 rounded-lg overflow-hidden">
         {CHECKLIST_ITEMS.map((item) => {
