@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] watchlist saved-filter empty starter links
+- **Scope**: Added first-visit starter links to the `/watchlist` saved-filter empty state. No saved-search schema/RLS change, saved-filter persistence change, recent-search storage change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
+- **Changes**: When there are no saved filters and no recent stock-search terms, the saved-filter empty state now shows three 44px starter links: `/stocks`, `/topics/undervalued-stocks`, and `/topics/dividend-stocks`. Added `saved_filter_empty_starter_open` analytics with only a fixed `kind` value; no raw query text is sent.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4706 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 empty saved-filter state has 3 starter links, recent-search chips 0, `/stocks` starter click navigates to `/stocks`, and mobile/desktop overflow 0.
+- **Commit**: `781933d` (`[codex] add saved filter empty starter links`).
+- **Next**: Continue with another small local app-like polish slice, preferably stock-detail routine microcopy or watchlist saved-filter/topic handoff clarity. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] watchlist saved-filter empty recent search
 - **Scope**: Improved the `/watchlist` saved-filter empty state with recent-search starter chips. No saved-search schema/RLS change, saved-filter persistence change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
 - **Changes**: When there are no saved filters but the browser has recent stock-search terms, the saved-filter empty state now shows up to three compact chips. Each chip opens `/stocks?q=...` so the user can add filters and save that condition. Added `saved_filter_empty_recent_search_open` analytics with only `index` and `count`; raw search text is not sent.
