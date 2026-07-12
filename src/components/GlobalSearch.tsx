@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
 import { trackEvent } from "@/lib/clientAnalytics";
+import { scoreColorOf } from "@/lib/scoreColor";
 
 interface StockItem {
   ticker: string;
   name: string;
   themes: string[];
+  compositeScore?: number;
 }
 
 interface SearchResult {
@@ -17,6 +19,7 @@ interface SearchResult {
   ticker?: string;
   name: string;
   themeHint?: string;
+  compositeScore?: number;
 }
 
 interface Props {
@@ -44,6 +47,21 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   const panelClassName = isHero
     ? "absolute top-full mt-2 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-xl overflow-hidden z-50"
     : "absolute top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-lg overflow-hidden z-50";
+
+  function scoreBadge(score?: number) {
+    if (!Number.isFinite(score)) return null;
+    const v = Math.round(score as number);
+    const color = scoreColorOf(v);
+    return (
+      <span
+        className={"shrink-0 inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tabular-nums whitespace-nowrap " + color.badge}
+        aria-label={copy.search.scoreAria(v, color.label)}
+        title={color.label}
+      >
+        {copy.search.scorePrefix} {v}
+      </span>
+    );
+  }
 
   const results: SearchResult[] = (() => {
     const q = query.trim().toLowerCase();
@@ -77,6 +95,7 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
         ticker: s.ticker,
         name: s.name,
         themeHint: s.themes[0],
+        compositeScore: s.compositeScore,
       }));
 
     // 테마: 같은 패턴
@@ -229,14 +248,17 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono shrink-0 tabular-nums">
                           {result.ticker}
                         </span>
-                        <span className="text-sm text-zinc-900 dark:text-zinc-100 truncate flex-1">
-                          {result.name}
-                        </span>
-                        {result.themeHint ? (
-                          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate shrink-0 max-w-[120px]">
-                            {result.themeHint}
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm text-zinc-900 dark:text-zinc-100 truncate">
+                            {result.name}
                           </span>
-                        ) : null}
+                          {result.themeHint ? (
+                            <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
+                              {result.themeHint}
+                            </span>
+                          ) : null}
+                        </span>
+                        {scoreBadge(result.compositeScore)}
                       </>
                     ) : (
                       <>

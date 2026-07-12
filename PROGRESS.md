@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] search autocomplete score badges
+- **Scope**: Improved GlobalSearch scanability by adding display-only composite score badges to stock autocomplete rows. No scoring formula, generated stock data, DART logic, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: Extended the lightweight search payload with `compositeScore` from the same 4-metric composite display formula already used elsewhere. `GlobalSearch` now renders compact localized score badges (`종합 N` / `Score N`) with the shared `scoreColorOf` visual bands and accessible aria text. Stock result rows now stack the theme hint under the name so the score badge does not crowd the ticker/name line.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4687 --no-perf` passed 4/4 real gates; spot check on local prod `:4688` confirmed the home payload includes search `compositeScore` and `/stocks?q=삼성` renders Samsung results. `git diff --check` clean except expected CRLF notices; replacement-character scan clean. Temp ports 4687/4688 were stopped.
+- **Next**: Safe product follow-up options: add a similarly compact “recently viewed / watchlist” handoff to stock-detail CTAs, improve search empty-state examples with real covered tickers, or add a small watchlist CSV/export polish slice. Keep owner-only store/signing/deployment gates separate.
+
 ## 2026-07-12 - [codex] store release preflight handoff
 - **Scope**: Added a final local/owner gate checklist for the Android TWA / store-submission path. Docs-only slice; no Play Console app creation, asset upload, declaration submission, signing-key generation, `assetlinks.json` publishing, deployment, push, scoring, generated stock data, DART, auth-provider, or remote/account change.
 - **Deliverable**: Added `docs/ornscore-store-release-preflight-2026-07-12.md`. It summarizes completed local prep, owner-only gates, no-go rules, local verification commands, decision tree, and exact next automation entry for the real package id + app-signing SHA-256 path.

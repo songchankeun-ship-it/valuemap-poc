@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { dataMetadata, allThemes, formatBizDateLong, formatBizDateMobile, businessDaysSince, isDataStale } from "@/lib/realStocks";
 import { getAllStocks } from "@/lib/mockData";
+import { compositeOf } from "@/lib/score";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNav } from "./MobileNav";
 import { GlobalSearch } from "./GlobalSearch";
@@ -56,6 +57,7 @@ export async function AppHeader() {
     ticker: s.ticker,
     name: s.name,
     themes: s.themes,
+    compositeScore: Math.round(compositeOf(s)),
   }));
   const themes = allThemes();
   const userEmail = await getUserEmail();

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T23:57:37+09:00
+Last updated: 2026-07-13T00:10:35+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Search autocomplete score badges
+- **Context**: Owner agreed to move from store-readiness gates back into product work. This slice improves the search-to-discovery path without touching scoring, generated data, DART, auth, store-console, deployment, push, or remote/account state.
+- **Changes**: `GlobalSearch` stock rows now show a compact localized composite score badge (`종합 N` / `Score N`) using the shared `scoreColorOf` bands and aria text. Search payloads from `AppHeader` and the home hero now include display-only `compositeScore` derived from the same 4-metric composite display formula. Stock rows stack the theme hint under the name to preserve narrow-header scanability.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4687 passed 4/4 real gates; spot check on port 4688 confirmed home search payload includes `compositeScore` and `/stocks?q=삼성` renders Samsung results. `git diff --check` clean except expected CRLF notices; replacement-character scan clean. Temp ports stopped.
+- **Next**: Product follow-up candidates: compact recent-view/watchlist handoff on stock-detail CTAs, search empty-state examples using real covered tickers, or watchlist CSV/export polish. Keep owner-only store/signing/deployment gates separate.
 
 ### 2026-07-12 - Codex - Store release preflight handoff
 - **Context**: Continued the store-readiness sequence after OG/Twitter metadata. This is a docs-only local handoff slice; no Play Console app creation, asset upload, declaration submission, signing-key generation, `assetlinks.json` publishing, deployment, push, generated data, scoring, DART, auth-provider, or remote/account change.

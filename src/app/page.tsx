@@ -150,7 +150,12 @@ export default async function HomePage() {
   const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? [], universeTickers);
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
-  const searchStocks = realStockPool.map((s) => ({ ticker: s.ticker, name: s.name, themes: s.themes }));
+  const searchStocks = realStockPool.map((s) => ({
+    ticker: s.ticker,
+    name: s.name,
+    themes: s.themes,
+    compositeScore: displayCompositeScore(s),
+  }));
 
   // ── 내 종목(관심·최근 본) 이어보기용 경량 룩업 — 이미 계산된 풀에서 파생(신규 점수 계산 없음) ──
   const poolLookup: Record<string, PoolEntry> = {};

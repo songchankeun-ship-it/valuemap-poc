@@ -5,7 +5,7 @@ import { GlobalSearch } from "./GlobalSearch";
 
 interface Props {
   data: {
-    stocks: Array<{ name: string; ticker: string; themes: string[] }>;
+    stocks: Array<{ name: string; ticker: string; themes: string[]; compositeScore?: number }>;
     themes: string[];
   };
 }
