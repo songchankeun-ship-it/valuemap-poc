@@ -189,11 +189,16 @@ function RecentChangeSummary({ ticker, items }: { ticker: string; items: RecentC
               <div className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{item.label}</div>
               <div className={"mt-0.5 text-lg font-bold tabular-nums " + toneClass[item.tone ?? "neutral"]}>{item.value}</div>
               <div className="mt-1 text-[10px] leading-snug text-zinc-500 dark:text-zinc-400">{item.hint}</div>
+              {item.href ? (
+                <div className="mt-2 inline-flex rounded-full bg-white px-2 py-1 text-[10px] font-semibold text-blue-700 dark:bg-zinc-900 dark:text-blue-300">
+                  관련 탭 보기
+                </div>
+              ) : null}
             </>
           );
           const className = "block h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2.5 hover:border-blue-300 dark:hover:border-blue-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900";
           return item.href ? (
-            <a key={item.label} href={item.href} className={className}>{body}</a>
+            <a key={item.label} href={item.href} aria-label={`${item.label} ${item.value}. ${item.hint}. 관련 탭 보기`} className={className}>{body}</a>
           ) : (
             <div key={item.label} className={className}>{body}</div>
           );
