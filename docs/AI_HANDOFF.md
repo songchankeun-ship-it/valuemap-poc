@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T05:45:00+09:00
+Last updated: 2026-07-13T06:03:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stocks topic save handoff
+- Task: Direct Codex product slice - stock checklist completion hint
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stocks?theme=...` and initial sector/theme entries now show a first-screen save handoff that opens the existing inline saved-filter form; implementation commit `bb86d8e`; no push/deploy.
+- Note: Stock-detail checklist completion now shows a compact routine-done banner before the existing `/watchlist` handoff; implementation commit `6e68d13`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock checklist completion hint
+- **Context**: Continued the stock-detail routine polish after the `/stocks` topic save handoff. This slice is local UI/client copy only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: When all four checklist items are complete, `StockChecklist` now shows a compact success banner above the checklist rows, making the completed routine state visible before the lower `/watchlist` CTA. The existing reset action, local-only storage note, and non-advice disclaimer remain unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4710 passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` four checklist clicks -> completion banner + `/watchlist` CTA, desktop overflow 0, and reset removed test state; temp port 4710 was stopped.
+- **Commit**: `6e68d13` (`[codex] add stock checklist completion hint`).
+- **Next**: Continue with another small local app-like polish slice such as watchlist saved-filter clarity or another stock-detail routine affordance. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Stocks topic save handoff
 - **Context**: Continued the saved-filter/topic routine after the topic-page CTA. This slice is local UI/client copy only: no saved-search persistence change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.

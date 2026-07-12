@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock checklist completion hint
+- **Scope**: Added a local completion hint to the stock-detail checklist routine. No checklist storage key/item id change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: When all four stock-detail checklist items are complete, `StockChecklist` now shows a compact success banner above the checklist rows saying the current stock routine is complete and can be reopened from the routine/watchlist view. The existing `/watchlist` CTA, reset action, local-only storage, and non-advice disclaimer remain unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4710 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` four checklist clicks -> completion banner + `/watchlist` CTA, desktop overflow 0, and reset removed the test state; temp port 4710 was stopped.
+- **Commit**: `6e68d13` (`[codex] add stock checklist completion hint`).
+- **Next**: Continue with another small local app-like polish slice, preferably watchlist saved-filter clarity or another stock-detail routine affordance that stays local. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stocks topic save handoff
 - **Scope**: Added a local `/stocks` follow-through handoff for users arriving from topic/sector entry points. No saved-search persistence change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: When `/stocks` opens with an initial theme or sector filter, a compact first-screen card now explains that the condition is already applied and offers `이 조건 저장하기`. The CTA reuses the existing inline saved-search form, prefilled with the applied topic/sector label, so topic CTA users can finish the routine without hunting for the lower saved-filter controls. Plain `/stocks` remains unchanged.
