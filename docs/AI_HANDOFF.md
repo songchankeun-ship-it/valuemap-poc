@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T00:23:35+09:00
+Last updated: 2026-07-13T01:00:11+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 160 - ORNScore continuity 2026-07-11 F - owner handoff and next-release checklist
-- Run: 157
+- Task: Direct Codex product slice - watchlist local group/memo UX
+- Run: manual thread
 - Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Agent: codex
+- Note: Local-only watchlist metadata controls added and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist local group/memo UX
+- **Context**: Continued Task 221 after the CSV MVP. This slice is browser-local only: no Supabase schema/RLS migration, cross-device sync, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.
+- **Changes**: Added `src/lib/watchlistMeta.ts` for normalized `ornscore_watchlist_meta_v1` sidecar storage, neutral preset groups, 500-char notes, and a `watchlist-meta-changed` event. `/watchlist` now has per-ticker group and memo controls outside the stock link target, displays local group/memo counts, and states group/memo/CSV stay in this browser. CSV export fills the existing `group` and `note` columns from local metadata. Added `watchlist_meta_update` analytics with field/value-presence metadata only.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4692 passed 4/4 real gates. Chrome/Playwright via bundled runtime verified mobile 390x844 controls visible and within width, Korean note/group persistence after reload, CSV group/note values, and desktop overflow 0. Temp port 4692 was stopped. Replacement-character scan clean.
+- **Next**: Continue the app-like daily routine path with watchlist group filter/collapse or a stock-detail CTA handoff into recent/watchlist actions. Supabase sync, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Watchlist CSV export MVP
 - **Context**: Continued product work after search autocomplete and empty-state polish. This slice implements the first Task 221 watchlist CSV MVP only; no Supabase schema migration, group/memo editor, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.

@@ -156,6 +156,13 @@ type WatchlistItem = {
 ## 2026-07-13 Implementation Note - CSV MVP
 
 - Implemented the first CSV-only slice in `src/lib/watchlistCsv.ts` and `/watchlist`.
-- Current export columns are `ticker,name,group,note,addedAt,compositeScore`; `group` and `note` are intentionally blank until the separate group/memo UX and schema decisions are made.
+- Current export columns are `ticker,name,group,note,addedAt,compositeScore`.
 - Export remains browser-local only through `Blob` download. It adds UTF-8 BOM, CSV escaping, and formula-injection defense.
-- Still not implemented: CSV import, inline group editor, memo editor, Supabase schema/RLS migration, cross-device group/memo sync.
+- Still not implemented: CSV import, Supabase schema/RLS migration, cross-device group/memo sync.
+
+## 2026-07-13 Implementation Note - Local Group/Memo Slice
+
+- Added browser-local group/memo metadata in `src/lib/watchlistMeta.ts` using `ornscore_watchlist_meta_v1`; this does not alter the existing local/Supabase watchlist membership schema.
+- `/watchlist` now lets users set neutral preset groups and short notes per saved ticker. The UI states that group/memo/CSV stay in this browser.
+- CSV export now fills `group` and `note` from that local metadata while preserving the existing client-only Blob export and CSV formula-injection defense.
+- Analytics added `watchlist_meta_update` with field/value-presence metadata only; memo content and raw custom labels are not sent.
