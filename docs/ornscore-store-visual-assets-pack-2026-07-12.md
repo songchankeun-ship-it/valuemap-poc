@@ -43,6 +43,25 @@ docs/store-assets/2026-07-12/google-play-feature-graphic/
 | `feature-graphic.html` | Reproducible source composition using `phone-03-stock-detail.jpg`. |
 | `feature-graphic-google-play-1024x500.jpg` | Exported Google Play feature graphic draft. |
 
+A public OG/Twitter share image was created from the same real ORNScore UI source.
+
+Directory:
+
+```text
+docs/store-assets/2026-07-12/social-share/
+```
+
+Public output:
+
+```text
+public/social/ornscore-og-1200x630.jpg
+```
+
+| File | Purpose |
+| --- | --- |
+| `generate-og-share.py` | Reproducible source generator for the public share image. |
+| `README.md` | Copy guardrails, source screenshot, and validation notes. |
+
 ## Local Screenshot Validation
 
 Generated file check:
@@ -135,6 +154,28 @@ When final public screenshots are ready:
 2. Add `screenshots` entries to `src/app/manifest.ts` with `src`, `sizes`, `type`, `form_factor: "narrow"`, and `label`.
 3. Re-run `npm run app:check`, `npm run build`, and local `verify:local`.
 
+## OG/Twitter Share Image
+
+The public share image is now available and wired through metadata:
+
+```text
+public/social/ornscore-og-1200x630.jpg
+```
+
+Local export validation:
+
+```text
+ornscore-og-1200x630.jpg  JPEG  RGB  1200x630  112923 bytes  alpha=False
+```
+
+Metadata references:
+
+- `src/app/layout.tsx`
+- `src/app/page.tsx`
+- Generic public pages that define their own `openGraph.images`
+
+The source generator is `docs/store-assets/2026-07-12/social-share/generate-og-share.py`. The image keeps the same conservative copy posture as the feature graphic and avoids ranking/performance/free/download/store-badge claims.
+
 ## Next Local Slice
 
-If continuing locally before owner console work, prepare final high-resolution Android standalone/TWA screenshots and decide whether the current feature graphic draft is approved as final. Owner-only gates remain Play Console upload, app signing/package details, `assetlinks.json`, account/payment/address steps, and deployment.
+If continuing locally before owner console work, prepare final high-resolution Android standalone/TWA screenshots and decide whether the current feature graphic/share image drafts are approved as final assets. Owner-only gates remain Play Console upload, app signing/package details, `assetlinks.json`, account/payment/address steps, and deployment.

@@ -28,11 +28,20 @@ export const metadata: Metadata = {
     siteName: "오른스코어",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/social/ornscore-og-1200x630.jpg",
+        width: 1200,
+        height: 630,
+        alt: "오른스코어 — 한국 주식 후보를 데이터로 좁히기",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "오른스코어 — 한국 주식 탐색 도구",
     description: "한국 주식 스크리닝 · 종목 검색 · PER/PBR/ROE · DART 공시 신호",
+    images: ["/social/ornscore-og-1200x630.jpg"],
   },
   robots: {
     index: true,

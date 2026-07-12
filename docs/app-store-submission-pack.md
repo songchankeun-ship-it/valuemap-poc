@@ -154,6 +154,8 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - 6장 JPEG 초안은 Google Play 기본 스크린샷 형식/치수/용량 검사를 통과했다. 단, 고해상도 추천 노출 자격과 Apple App Store Connect 업로드용 최종 자산은 아니다.
 - `docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg`
 - Google Play 피처 그래픽 초안은 실제 오른스코어 UI 기반으로 생성됐고 `1024x500` JPEG/RGB 검사를 통과했다. 최종 업로드 전 오너/디자인 검토는 남아 있다.
+- `public/social/ornscore-og-1200x630.jpg`
+- OG/Twitter 공유 카드 이미지는 실제 오른스코어 UI 기반으로 생성됐고 `1200x630` JPEG/RGB 검사를 통과했다. 루트/홈/공개 페이지 메타데이터에서 참조한다.
 
 스크린샷 캡처 체크리스트 (위 ‘스크린샷 후보’ URL 기준, 5~7장):
 
@@ -172,7 +174,7 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - [ ] 피처 그래픽 최종 업로드 승인 — 현재 파일은 draft upload candidate이며 오너/디자인 확인 필요.
 - [ ] 최종 고해상도 Android standalone/TWA 스크린샷 — 실기기 또는 TWA 캡처 필요(오너).
 - [ ] `src/app/manifest.ts`의 `screenshots[]` — 위 캡처가 선행되어야 채울 수 있음(오너/디자인). 캡처 없이 필드만 추가하면 깨진 참조가 되므로 지금은 넣지 않는다.
-- [ ] OG/Twitter 공유 카드 이미지 — `public/`에 공유 이미지 없음, 대표 이미지 1장 제작 필요(오너/디자인). `twitter.card`가 `summary_large_image`이나 `images` 미지정 상태이며, 이미지 없이 필드만 추가하지 않는다.
+- [x] OG/Twitter 공유 카드 이미지 — `public/social/ornscore-og-1200x630.jpg` 생성 및 메타데이터 연결 완료.
 
 ## 제출 전 리스크 점검
 

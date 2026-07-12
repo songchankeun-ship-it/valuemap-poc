@@ -1,7 +1,7 @@
 # 오른스코어 모바일 리스팅 준비 팩 (로컬 전용)
 
 작성일: 2026-07-03 (Task 145, Claude)
-갱신: 2026-07-11 — 리스팅 카피의 지표명을 현 사이트 용어(추세·거래활성도·밸류·위험조정)로 동기화. 문서 전용, 소스·동작 무변경.
+갱신: 2026-07-12 — OG/Twitter 공유 이미지 에셋(`public/social/ornscore-og-1200x630.jpg`) 생성·메타데이터 연결 상태 반영.
 
 > **로컬 전용 안내.** 이 문서는 미래 모바일 앱 스토어 등록을 **검토·준비하기 쉽게** 정리한 리뷰/준비 계층이다.
 > **제출·업로드·계정/결제/로그인 제공자/원격 설정을 전혀 건드리지 않는다.** 외부 서비스 액션 0.
@@ -111,17 +111,17 @@
 | `themeColor` (다크/라이트) | ✅ 있음 | `src/app/layout.tsx:66-69` · manifest `theme_color` `:22` |
 | `openGraph` (title/description/url/siteName/locale/type) | ✅ 있음 | `src/app/layout.tsx:21-28` |
 | `twitter` (`summary_large_image`) | ✅ 있음 | `src/app/layout.tsx:29-33` |
-| OG/Twitter **공유 이미지 에셋** | ⚠️ 없음 | ⑤ 오너/디자인. `twitter.card:"summary_large_image"`이나 `images` 미지정·`public/`에 공유 카드 없음. 대표 이미지 1장 제작이 필요한 **에셋 갭**(코드 결함 아님). |
+| OG/Twitter **공유 이미지 에셋** | ✅ 있음 | `public/social/ornscore-og-1200x630.jpg` · `src/app/layout.tsx`/`src/app/page.tsx` 및 공개 페이지 `openGraph.images`에서 참조. |
 | manifest `screenshots[]` | ⚠️ 없음 | ⑤ 오너/디자인. PWA 리치 설치 UI용 스크린샷 배열 미지정. §2.5 캡처가 선행되어야 채울 수 있음. |
 | 캡처된 모바일 스크린샷 | ⚠️ 없음 | ⑤ 오너. 실기기 standalone 캡처 필요. |
 
-**모든 ⚠️ 갭은 에셋 선행이 필요**하므로, 지금 코드로 안전하게 닫을 수 없다. §4 결정 참조.
+남은 ⚠️ 갭은 manifest `screenshots[]`와 실기기 캡처처럼 에셋 선행이 필요한 항목이다. OG/Twitter 공유 이미지는 2026-07-12 로컬 슬라이스에서 닫혔다.
 
 ---
 
 ## 4. 메타데이터 수정 결정
 
-**결정: 문서화 전용(documentation-only). 이번 Task에서 소스 코드는 변경하지 않는다.**
+**2026-07-12 상태 업데이트:** OG/Twitter 공유 이미지는 실제 오른스코어 UI 기반 정적 JPG로 생성하고 메타데이터에 연결했다. 아래 문단은 Task 145 당시의 의사결정 기록이다.
 
 근거:
 - 남은 갭(OG/Twitter 공유 이미지, manifest `screenshots[]`, 캡처 스크린샷)은 **전부 새 에셋 제작이 선행**되어야 한다. 에셋 없이 필드만 추가하면 깨진 참조가 되어 안전하지 않다.

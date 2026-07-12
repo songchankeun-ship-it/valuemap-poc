@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T23:34:08+09:00
+Last updated: 2026-07-12T23:54:50+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - OG/Twitter social share image metadata
+- **Context**: Continued local store-readiness after the Google Play feature graphic draft. This slice creates a public share preview image and metadata wiring only. No deployment, push, store-console upload, account/payment/signing work, assetlinks publishing, scoring, generated stock data, DART, auth-provider, or manifest screenshot change.
+- **Generated asset**: Added `docs/store-assets/2026-07-12/social-share/generate-og-share.py` and `public/social/ornscore-og-1200x630.jpg`. The exported JPEG is based on the real ORNScore stock-detail UI screenshot, uses conservative non-advisory copy, and avoids ranking/performance/free/download/store-badge claims.
+- **Metadata/tooling**: Root/home metadata and generic public pages now point to `/social/ornscore-og-1200x630.jpg`. Removed the broken root `src/app/opengraph-image.tsx`; stock-specific `src/app/stock/[ticker]/opengraph-image.tsx` remains. `scripts/check-app-packaging.mjs` now validates the OG/Twitter JPEG path, RGB component count, exact `1200x630` dimensions, and size.
+- **Docs**: Updated the visual asset pack, app-store submission pack, mobile listing prep pack, owner review checklist, and added the social-share asset README.
+- **Validation**: Visual inspection passed. PIL spot check: `JPEG`, `RGB`, `1200x630`, `112923` bytes. `npm run app:check` passed with expected external WAIT 1 for real Android `assetlinks.json`; `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; replacement-character scan clean; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with existing `TrustLayer` warning only. Local prod head check on port 4685 confirmed `/`, `/about`, and `/stocks` emit `https://ornscore.com/social/ornscore-og-1200x630.jpg` for `og:image`/`twitter:image` and do not emit `/opengraph-image`; temp server stopped.
+- **Next**: Safe local follow-up is a final store-release preflight/handoff checklist that cross-checks completed assets and lists remaining owner-only gates. Owner-only gates remain Android package/signing SHA-256, `assetlinks.json`, Play Console/account/payment/address steps, final high-resolution standalone/TWA screenshots, manifest `screenshots[]`, and any deployment.
 
 ### 2026-07-12 - Codex - Google Play feature graphic draft
 - **Context**: Continued local store-readiness after the draft screenshot pack. This slice creates a deliberate Google Play feature graphic from actual ORNScore UI only. No Play Console upload, app-store submission, account/payment/signing work, assetlinks publishing, deployment, push, scoring, generated stock data, DART, auth-provider, or production manifest screenshot change.

@@ -60,7 +60,7 @@
 
 ### 2. 데스크톱 (desktop)
 - [ ] `--all` 23라우트 SSR 200·치명 마커 0·앵커 존재 — 확인: `npm run smoke:check -- --base http://localhost:4455 --all`(로컬 prod 기동 후, 23/23 OK·exit 0). 기본 게이트는 7/7 유한.
-- [ ] 공개 페이지 검색 미리보기(OG·Twitter·canonical) 데스크톱 공유 시 브랜드 카드 유지 — 근거 **Task 190**(OG 상속 회귀 수정). 확인: `/about`·`/pricing` SSR `<head>` `og:image=/opengraph-image`.
+- [ ] 공개 페이지 검색 미리보기(OG·Twitter·canonical) 데스크톱 공유 시 브랜드 카드 유지 — 근거 **Task 190**(OG 상속 회귀 수정) + 2026-07-12 정적 공유 이미지. 확인: `/about`·`/pricing` SSR `<head>` `og:image=/social/ornscore-og-1200x630.jpg`.
 
 ### 3. 로그인 (login)
 - [ ] `/login` SSR 기본 한국어·제공자(카카오·구글·네이버·이메일) 렌더·noindex — 근거 **Task 190**(서버 래퍼+`LoginContent` 분할·robots noindex). 확인: `smoke:check`의 `/login` 앵커 / 실 OAuth 왕복은 **운영자 게이트**.

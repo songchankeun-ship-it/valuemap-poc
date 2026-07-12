@@ -121,11 +121,20 @@ export const metadata = {
     siteName: "오른스코어",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/social/ornscore-og-1200x630.jpg",
+        width: 1200,
+        height: 630,
+        alt: "오른스코어 — 한국 주식 후보를 데이터로 좁히기",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "오른스코어 — 한국 주식 탐색 도구",
     description: "한국 주식 스크리닝과 종목 검색, 4대 지표와 공시 신호를 한 화면에서.",
+    images: ["/social/ornscore-og-1200x630.jpg"],
   },
   alternates: {
     canonical: "https://ornscore.com",

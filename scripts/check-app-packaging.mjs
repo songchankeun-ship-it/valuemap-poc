@@ -112,6 +112,33 @@ function validateFeatureGraphic() {
   }
 }
 
+function validateSocialShareImage() {
+  const path = "public/social/ornscore-og-1200x630.jpg";
+  if (!existsSync(rel(path))) {
+    failure(`${path}: missing OG/Twitter share image`);
+    return;
+  }
+
+  const info = readJpegInfo(path);
+  const size = statSync(rel(path)).size;
+  if (
+    info?.width === 1200 &&
+    info?.height === 630 &&
+    info?.components === 3 &&
+    size > 0 &&
+    size < 5 * 1024 * 1024
+  ) {
+    pass(`${path}: JPEG/RGB 1200x630 OG/Twitter share image`);
+  } else {
+    failure(
+      `${path}: expected JPEG/RGB 1200x630 under 5MB, got ${JSON.stringify({
+        ...info,
+        bytes: size,
+      })}`,
+    );
+  }
+}
+
 const icons = spawnSync(process.execPath, [rel("scripts/check-icons.mjs")], {
   cwd: ROOT,
   encoding: "utf8",
@@ -138,6 +165,9 @@ notIncludes("src/app/manifest.ts", "?ㅻ", "mojibake app label");
 
 includes("src/app/layout.tsx", "/apple-touch-icon.png", "apple-touch-icon metadata");
 includes("src/app/layout.tsx", "/icon-512.png", "existing JSON-LD/logo-safe icon path");
+includes("src/app/layout.tsx", "/social/ornscore-og-1200x630.jpg", "root OG/Twitter share image metadata");
+includes("src/app/page.tsx", "/social/ornscore-og-1200x630.jpg", "home OG/Twitter share image metadata");
+validateSocialShareImage();
 // Standalone/PWA packaging properties — keep them from silently regressing.
 includes("src/app/layout.tsx", "export const viewport", "Next viewport export");
 includes("src/app/layout.tsx", 'viewportFit: "cover"', "viewport-fit cover for safe-area env()");

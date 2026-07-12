@@ -13,7 +13,7 @@ export const metadata = {
     siteName: "오른스코어",
     locale: "ko_KR",
     type: "website",
-    images: ["/opengraph-image"],
+    images: ["/social/ornscore-og-1200x630.jpg"],
   },
   twitter: {
     card: "summary_large_image",
