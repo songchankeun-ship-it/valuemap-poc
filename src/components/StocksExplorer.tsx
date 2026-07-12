@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { Activity, AlertTriangle, Bell, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
+import { Activity, AlertTriangle, Bell, BookmarkPlus, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
 import { fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, consumeQueuedSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
@@ -532,6 +532,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const qualityExcludedThemeStocks = useMemo(() => {
     return themeScopedStocks.filter((s) => defaultQualityReasonKeys(s).length > 0);
   }, [themeScopedStocks]);
+  const hasInitialThemeHandoff = (initialThemes?.length ?? 0) > 0 && selectedThemeLabels.length > 0;
+  const hasInitialSectorHandoff = !!initialSector && !!selectedSector;
+  const initialFilterHandoffLabel = hasInitialSectorHandoff ? selectedSector : hasInitialThemeHandoff ? selectedThemeSummary : "";
+  const showInitialFilterHandoff = initialFilterHandoffLabel.length > 0;
 
   // 각 프리셋의 '예상 결과 수' — 다른 활성 필터와 무관하게 전체 풀에 대해 독립 계산
   // (count-vs-full-pool 의미: 카드 숫자는 "그 프리셋만 적용했을 때 몇 개"를 뜻함).
@@ -1025,6 +1029,19 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
         />
       </div>
+
+      {showInitialFilterHandoff ? (
+        <div className="flex flex-col gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-200 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 gap-2">
+            <BookmarkPlus className="mt-0.5 h-4 w-4 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+            <div className="min-w-0">
+              <div className="font-semibold">{t.topicHandoffTitle(initialFilterHandoffLabel)}</div>
+              <p className="mt-0.5 leading-5 text-blue-800/80 dark:text-blue-200/80">{t.topicHandoffBody}</p>
+            </div>
+          </div>
+          <button type="button" onClick={openSaveSearchForm} className={`min-h-[44px] shrink-0 rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 ${FOCUS_RING}`}>{t.topicHandoffSave}</button>
+        </div>
+      ) : null}
 
       <section aria-label={t.entry.label} className="-mt-2">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5">
