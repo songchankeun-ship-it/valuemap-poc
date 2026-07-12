@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T00:14:56+09:00
+Last updated: 2026-07-13T00:23:35+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist CSV export MVP
+- **Context**: Continued product work after search autocomplete and empty-state polish. This slice implements the first Task 221 watchlist CSV MVP only; no Supabase schema migration, group/memo editor, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.
+- **Changes**: Added `src/lib/watchlistCsv.ts` for fixed-column CSV export (`ticker,name,group,note,addedAt,compositeScore`) with UTF-8 BOM, local-date filename, CSV escaping, and formula-injection defense. `/watchlist` now has a non-empty-state `CSV 저장` button that creates a browser-local Blob download and does not upload data to the server. Added analytics event `watchlist_csv_export` with count/login/sort metadata only.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; CSV sample check passed for BOM/header, filename, and formula guard; `npm run build` 0 with the existing `TrustLayer` warning only; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; local prod `verify:local --no-perf` on port 4690 passed 4/4 real gates. Temp port 4690 was stopped.
+- **Next**: Continue the watchlist product bet with local-only group/memo UX if keeping this thread on watchlist, or move to stock-detail CTA handoff. Any Supabase schema/RLS work for group/memo sync remains owner-gated.
 
 ### 2026-07-13 - Codex - Search empty-state examples
 - **Context**: Continued product polish after autocomplete score badges. This slice improves search no-result recovery only; no scoring, generated data, DART, auth, store-console, deployment, push, or remote/account state change.

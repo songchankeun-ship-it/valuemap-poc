@@ -27,6 +27,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `watchlist_toggle` | Add/remove/undo watchlist button | `action`, `ticker`, `compact`, `loggedOut` | User saves or removes a watchlist candidate. |
 | `watchlist_toast_open` | Watchlist toast link | `ticker` | User follows save toast to `/watchlist`. |
 | `watchlist_login_cta` | Watchlist logged-out guidance | `ticker` | User sees local-save value and chooses login. |
+| `watchlist_csv_export` | `/watchlist` CSV export button | `count`, `loggedIn`, `sort` | User exports their current watchlist locally as a CSV file. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |
 | `report_data_issue_submit` | Data issue form submit | `category`, `ticker`, `hasEmail` | User submits a data quality report attempt. |

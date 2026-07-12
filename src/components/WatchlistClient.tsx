@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -17,6 +17,8 @@ import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
 import { fmtRelativeTime } from "@/lib/format";
+import { buildWatchlistCsv, watchlistCsvFilename } from "@/lib/watchlistCsv";
+import { trackEvent } from "@/lib/clientAnalytics";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 
 const RECENT_KEY = "ornscore_recent_views";
@@ -267,6 +269,22 @@ export function WatchlistClient({
     window.dispatchEvent(new CustomEvent("recent-views-changed"));
   }
 
+  function downloadWatchlistCsv() {
+    if (watchlist.length === 0 || typeof window === "undefined") return;
+
+    const csv = buildWatchlistCsv(sortedWatchlist, allStocks);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = watchlistCsvFilename();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
+    trackEvent("watchlist_csv_export", { count: watchlist.length, loggedIn: isLoggedIn, sort });
+  }
+
   function matchCountOf(config: SavedSearchConfig): number {
     if (matchPool.length === 0) return 0;
     let n = 0;
@@ -458,7 +476,7 @@ export function WatchlistClient({
 
       {/* 관심 종목 */}
       <section>
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
             <Heart className="w-4 h-4 text-pink-600" fill="currentColor" />
             관심 종목
@@ -467,9 +485,21 @@ export function WatchlistClient({
             </span>
           </h2>
           {watchlist.length > 0 ? (
-            <div className="flex gap-0.5 text-[11px] bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
-              <button type="button" onClick={() => changeView("simple")} aria-pressed={view === "simple"} className={"px-2.5 py-1 rounded-md transition " + (view === "simple" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>간단</button>
-              <button type="button" onClick={() => changeView("analysis")} aria-pressed={view === "analysis"} className={"px-2.5 py-1 rounded-md transition " + (view === "analysis" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>분석</button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={downloadWatchlistCsv}
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+                aria-label="관심 종목 CSV 파일로 저장"
+                title="CSV로 저장"
+              >
+                <Download className="h-3.5 w-3.5" />
+                CSV 저장
+              </button>
+              <div className="flex gap-0.5 text-[11px] bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
+                <button type="button" onClick={() => changeView("simple")} aria-pressed={view === "simple"} className={"px-2.5 py-1 rounded-md transition " + (view === "simple" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>간단</button>
+                <button type="button" onClick={() => changeView("analysis")} aria-pressed={view === "analysis"} className={"px-2.5 py-1 rounded-md transition " + (view === "analysis" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>분석</button>
+              </div>
             </div>
           ) : null}
         </div>
@@ -512,6 +542,12 @@ export function WatchlistClient({
         ) : watchlist.length > 0 ? (
           <p className="mb-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
             로그인 됨 · 여러 기기에서 같은 관심 종목을 이어봐요.
+          </p>
+        ) : null}
+
+        {watchlist.length > 0 ? (
+          <p className="mb-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+            CSV는 이 브라우저에서만 만들어지는 참고용 파일이며 서버로 업로드하지 않아요.
           </p>
         ) : null}
 

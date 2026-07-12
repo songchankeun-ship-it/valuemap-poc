@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] watchlist CSV export MVP
+- **Scope**: Added a client-only CSV export for `/watchlist`. No Supabase schema change, group/memo editor, CSV import, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
+- **Changes**: Added `src/lib/watchlistCsv.ts` with fixed columns `ticker,name,group,note,addedAt,compositeScore`, UTF-8 BOM, RFC-style CSV escaping, local-date filename `ornscore-watchlist-YYYYMMDD.csv`, and formula-injection defense for cells beginning with `=`, `+`, `-`, `@`, tab, CR, or LF. `/watchlist` now shows a 44px `CSV 저장` button for non-empty lists, downloads a browser-local Blob only, and records `watchlist_csv_export` with count/login/sort metadata only.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; CSV sample check passed for BOM/header, filename, and formula guard; `npm run build` 0 with the existing `TrustLayer` warning only; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; local prod `npm run verify:local -- --base http://127.0.0.1:4690 --no-perf` passed 4/4 real gates. Temp port 4690 was stopped.
+- **Next**: Continue the watchlist product bet with either local-only group/memo UX design/implementation or a smaller stock-detail CTA handoff. Group/memo sync remains a separate owner/schema gate; do not add Supabase migrations automatically.
+
 ## 2026-07-13 - [codex] search empty-state examples
 - **Scope**: Improved the GlobalSearch no-result state with covered-stock example chips. No scoring formula, generated stock data, DART logic, auth-provider, store-console, deployment, push, or remote/account change.
 - **Changes**: Empty search results now show a short localized example row. If covered, the examples prefer Samsung Electronics, SK Hynix, and Hyundai Motor by ticker; otherwise they fall back to the first covered stocks. Clicking an example re-runs the search for that stock name and tracks `search_empty_example_click` without sending the failed raw query text.

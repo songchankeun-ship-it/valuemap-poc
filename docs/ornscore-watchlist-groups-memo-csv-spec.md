@@ -150,3 +150,12 @@ type WatchlistItem = {
 ---
 
 *작성: 2026-07-06 (Task 221, Claude). 문서 전용 · 소스 무변경. 로컬 커밋만 · 구현 착수/푸시/배포·Supabase 마이그레이션은 오너.*
+
+---
+
+## 2026-07-13 Implementation Note - CSV MVP
+
+- Implemented the first CSV-only slice in `src/lib/watchlistCsv.ts` and `/watchlist`.
+- Current export columns are `ticker,name,group,note,addedAt,compositeScore`; `group` and `note` are intentionally blank until the separate group/memo UX and schema decisions are made.
+- Export remains browser-local only through `Blob` download. It adds UTF-8 BOM, CSV escaping, and formula-injection defense.
+- Still not implemented: CSV import, inline group editor, memo editor, Supabase schema/RLS migration, cross-device group/memo sync.
