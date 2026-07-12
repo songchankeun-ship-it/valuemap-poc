@@ -152,6 +152,8 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - `docs/ornscore-store-visual-assets-pack-2026-07-12.md`
 - `docs/store-assets/2026-07-12/google-play-draft/`
 - 6장 JPEG 초안은 Google Play 기본 스크린샷 형식/치수/용량 검사를 통과했다. 단, 고해상도 추천 노출 자격과 Apple App Store Connect 업로드용 최종 자산은 아니다.
+- `docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg`
+- Google Play 피처 그래픽 초안은 실제 오른스코어 UI 기반으로 생성됐고 `1024x500` JPEG/RGB 검사를 통과했다. 최종 업로드 전 오너/디자인 검토는 남아 있다.
 
 스크린샷 캡처 체크리스트 (위 ‘스크린샷 후보’ URL 기준, 5~7장):
 
@@ -166,6 +168,8 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 미확보 에셋 게이트 (현재 저장소에 자산 없음 — 제작 전까지 비워 둔다):
 
 - [x] Google Play용 로컬 draft 모바일 스크린샷 6장 — 실제 UI 캡처 완료(`docs/store-assets/2026-07-12/google-play-draft/`).
+- [x] Google Play용 로컬 피처 그래픽 초안 — 실제 UI 기반 `1024x500` JPEG 생성 완료(`docs/store-assets/2026-07-12/google-play-feature-graphic/`).
+- [ ] 피처 그래픽 최종 업로드 승인 — 현재 파일은 draft upload candidate이며 오너/디자인 확인 필요.
 - [ ] 최종 고해상도 Android standalone/TWA 스크린샷 — 실기기 또는 TWA 캡처 필요(오너).
 - [ ] `src/app/manifest.ts`의 `screenshots[]` — 위 캡처가 선행되어야 채울 수 있음(오너/디자인). 캡처 없이 필드만 추가하면 깨진 참조가 되므로 지금은 넣지 않는다.
 - [ ] OG/Twitter 공유 카드 이미지 — `public/`에 공유 이미지 없음, 대표 이미지 1장 제작 필요(오너/디자인). `twitter.card`가 `summary_large_image`이나 `images` 미지정 상태이며, 이미지 없이 필드만 추가하지 않는다.
@@ -185,4 +189,4 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 2. Android TWA 1차 진행 결정은 완료. 패키지명 기본값은 `com.ornscore.app`이며, Play Console 생성 직전 최종 확인한다.
 3. Play Console 등록, 앱 생성, 서명 SHA-256 지문을 확보한다.
 4. 확보 후 `npm run app:assetlinks -- --package com.ornscore.app --fingerprint "<SHA-256>"`를 실행하고 `npm run app:check`를 통과시킨다.
-5. 스크린샷 5~7장을 캡처하고 이 문서의 등록 초안을 최종 문구로 다듬는다.
+5. 최종 고해상도 스크린샷 5~7장을 캡처하고, 피처 그래픽 초안 승인 여부와 이 문서의 등록 문구를 최종 확인한다.

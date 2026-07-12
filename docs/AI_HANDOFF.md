@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T20:50:00+09:00
+Last updated: 2026-07-12T23:34:08+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - Google Play feature graphic draft
+- **Context**: Continued local store-readiness after the draft screenshot pack. This slice creates a deliberate Google Play feature graphic from actual ORNScore UI only. No Play Console upload, app-store submission, account/payment/signing work, assetlinks publishing, deployment, push, scoring, generated stock data, DART, auth-provider, or production manifest screenshot change.
+- **Generated asset**: Added `docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic.html` and `feature-graphic-google-play-1024x500.jpg`. The exported JPEG uses the real stock-detail screenshot `phone-03-stock-detail.jpg`, conservative copy (`한국 주식 후보를 데이터로 좁히기`, `투자 추천이 아닌 탐색 도구`), and avoids ranking/performance/free/download/store-badge claims.
+- **Docs/tooling**: Updated the visual asset pack, Google Play listing worksheet, and app-store submission pack to mark the feature graphic draft complete while keeping final upload approval owner/design-gated. Added a local asset README. Extended `scripts/check-app-packaging.mjs` to verify the feature graphic path, JPEG signature/SOF dimensions, RGB component count, and size.
+- **Validation**: Visual inspection passed. PIL spot check: `JPEG`, `RGB`, `1024x500`, `61114` bytes. `npm run app:check` passed with the expected 1 external WAIT for real Android `assetlinks.json`; `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices.
+- **Next**: If continuing locally before owner console work, create an OG/Twitter `summary_large_image` draft from the same real UI source and wire metadata only after the asset exists, or prepare final high-resolution Android standalone/TWA screenshots when owner/device context is available. Owner-only gates remain Play Console upload, signing/package details, `assetlinks.json`, account/payment/address steps, and deployment.
 
 ### 2026-07-12 - Codex - Store visual assets draft pack
 - **Context**: Continued local store-readiness after adding the Google Play account/data deletion resource. This slice prepares visual assets and handoff docs only. No Play Console/App Store Connect upload, account/payment/signing action, assetlinks publishing, deployment, push, scoring, generated stock data, DART, auth-provider, or production manifest screenshot change.

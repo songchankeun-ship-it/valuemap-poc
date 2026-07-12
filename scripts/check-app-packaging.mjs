@@ -3,7 +3,7 @@
 // This validates the local PWA/TWA preparation files without requiring store
 // accounts, Android signing fingerprints, or a running server.
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,6 +43,73 @@ function notIncludes(path, needle, label = needle) {
   const text = read(path);
   if (!text.includes(needle)) pass(`${path}: no ${label}`);
   else failure(`${path}: contains ${label}`);
+}
+
+function readJpegInfo(path) {
+  const buf = readFileSync(rel(path));
+  if (buf.length < 4 || buf[0] !== 0xff || buf[1] !== 0xd8) return undefined;
+
+  let offset = 2;
+  while (offset < buf.length) {
+    while (buf[offset] === 0xff) offset += 1;
+    const marker = buf[offset];
+    offset += 1;
+
+    if (marker === 0xd9 || marker === undefined) break;
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+    if (offset + 2 > buf.length) break;
+
+    const segmentLength = buf.readUInt16BE(offset);
+    if (segmentLength < 2 || offset + segmentLength > buf.length) break;
+
+    const isStartOfFrame =
+      (marker >= 0xc0 && marker <= 0xc3) ||
+      (marker >= 0xc5 && marker <= 0xc7) ||
+      (marker >= 0xc9 && marker <= 0xcb) ||
+      (marker >= 0xcd && marker <= 0xcf);
+
+    if (isStartOfFrame) {
+      const start = offset + 2;
+      return {
+        precision: buf[start],
+        height: buf.readUInt16BE(start + 1),
+        width: buf.readUInt16BE(start + 3),
+        components: buf[start + 5],
+      };
+    }
+
+    offset += segmentLength;
+  }
+
+  return undefined;
+}
+
+function validateFeatureGraphic() {
+  const path =
+    "docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg";
+  if (!existsSync(rel(path))) {
+    failure(`${path}: missing Google Play feature graphic`);
+    return;
+  }
+
+  const info = readJpegInfo(path);
+  const size = statSync(rel(path)).size;
+  if (
+    info?.width === 1024 &&
+    info?.height === 500 &&
+    info?.components === 3 &&
+    size > 0 &&
+    size < 15 * 1024 * 1024
+  ) {
+    pass(`${path}: JPEG/RGB 1024x500 feature graphic`);
+  } else {
+    failure(
+      `${path}: expected JPEG/RGB 1024x500 under 15MB, got ${JSON.stringify({
+        ...info,
+        bytes: size,
+      })}`,
+    );
+  }
 }
 
 const icons = spawnSync(process.execPath, [rel("scripts/check-icons.mjs")], {
@@ -179,6 +246,22 @@ includes("docs/app-store-submission-pack.md", "현재 유료 결제 없음", "no
 includes("docs/app-store-submission-pack.md", "Supabase, Vercel, Resend, Kakao, Google, Naver", "store privacy processors match public policy");
 includes("docs/app-store-submission-pack.md", "docs/ornscore-store-visual-assets-pack-2026-07-12.md", "store visual assets pack linked");
 includes("docs/ornscore-store-visual-assets-pack-2026-07-12.md", "phone-01-home.jpg", "store visual pack records draft screenshots");
+includes(
+  "docs/ornscore-store-visual-assets-pack-2026-07-12.md",
+  "feature-graphic-google-play-1024x500.jpg",
+  "store visual pack records feature graphic draft",
+);
+includes(
+  "docs/google-play-listing-worksheet-2026-07-12.md",
+  "[x] Create a 1024x500 feature graphic draft from actual UI.",
+  "Google Play worksheet marks feature graphic draft complete",
+);
+includes(
+  "docs/app-store-submission-pack.md",
+  "Google Play용 로컬 피처 그래픽 초안",
+  "store pack records feature graphic draft",
+);
+validateFeatureGraphic();
 includes("docs/ornscore-store-visual-assets-pack-2026-07-12.md", "Do not add `screenshots[]` to `src/app/manifest.ts` yet.", "store visual pack keeps manifest screenshots gated");
 includes("docs/app-packaging-readiness.md", "제품 결정 — Android TWA 우선", "Android TWA first decision locked");
 includes("docs/app-packaging-readiness.md", "iOS 정식 래퍼는 보류", "iOS native wrapper deferred");

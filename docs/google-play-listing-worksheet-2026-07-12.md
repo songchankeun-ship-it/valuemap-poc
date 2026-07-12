@@ -165,12 +165,12 @@ Important: if Play Console forces a selection that treats stock research as a fi
 | Launcher icon 192 | `public/icon-192.png` | Available. |
 | Maskable icon | `public/icon-512-maskable.png` | Available. |
 | Apple touch icon | `public/apple-touch-icon.png` | Available. |
+| Feature graphic draft | `docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg` | Available as a local Google Play draft; owner/design review before upload. |
 
 ### Missing Before Store Submission
 
 | Asset | Required / recommended shape | Proposed source |
 | --- | --- | --- |
-| Feature graphic | 1024x500 JPEG or 24-bit PNG, no alpha | Create from real ORNScore UI, not a fake marketing mock. |
 | Phone screenshots | Minimum 2; recommended 4+ at 1080x1920 portrait | Capture installed standalone/TWA-like mobile screens. |
 | Screenshot alt text | Up to 140 characters each | Use the storyboard below. |
 | Optional preview video | YouTube URL, public or unlisted, not private/age-restricted | Defer until real app install flow is stable. |
@@ -180,6 +180,8 @@ Local draft screenshot pack:
 - `docs/ornscore-store-visual-assets-pack-2026-07-12.md`
 - `docs/store-assets/2026-07-12/google-play-draft/`
 - Six JPEG screenshots were captured from real local ORNScore UI and passed basic Google Play screenshot shape checks. They are local drafts; final high-resolution Android standalone/TWA captures are still recommended before upload.
+- `docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg`
+- The feature graphic draft was exported from actual ORNScore UI as JPEG/RGB at exactly `1024x500`; final owner/design review is still recommended before upload.
 
 ## Screenshot Storyboard
 
@@ -211,8 +213,9 @@ Capture guidance:
 - [ ] Confirm contact email `contact@ornscore.com` receives mail.
 - [x] Add a dedicated `/data-deletion` page for the Play Console account/data deletion URL.
 - [x] Capture 6 local Google Play draft screenshots from real ORNScore UI.
+- [x] Create a 1024x500 feature graphic draft from actual UI.
 - [ ] Capture final high-resolution Android standalone/TWA screenshots for upload.
-- [ ] Create a 1024x500 feature graphic from actual UI.
+- [ ] Owner/design approve the feature graphic draft as final upload asset.
 - [ ] Prepare reviewer test account only inside Play Console, not in the repo.
 - [ ] Complete App content declarations manually.
 - [ ] Complete Data safety manually and reconcile with `/privacy`.
@@ -222,4 +225,4 @@ Capture guidance:
 
 ## Next Local Automation Slice
 
-Create a real 1024x500 Google Play feature graphic source/export from actual ORNScore UI, then verify exact dimensions, format, no alpha, and conservative non-advisory copy. Do not upload it or change Play Console without owner action.
+Prepare final high-resolution Android standalone/TWA screenshots for upload and keep the current feature graphic draft under owner/design review. Do not upload assets or change Play Console without owner action.

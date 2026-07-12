@@ -30,6 +30,19 @@ docs/store-assets/2026-07-12/google-play-draft/
 | `phone-05-compare.jpg` | `/compare` | 후보 종목을 나란히 비교 | Compare screen explaining how to add and review multiple stock candidates. |
 | `phone-06-status.jpg` | `/status` | 데이터 기준일과 원본 확인 | Data status screen showing source freshness and verification context. |
 
+A local Google Play feature graphic draft was also created from actual ORNScore UI.
+
+Directory:
+
+```text
+docs/store-assets/2026-07-12/google-play-feature-graphic/
+```
+
+| File | Purpose |
+| --- | --- |
+| `feature-graphic.html` | Reproducible source composition using `phone-03-stock-detail.jpg`. |
+| `feature-graphic-google-play-1024x500.jpg` | Exported Google Play feature graphic draft. |
+
 ## Local Screenshot Validation
 
 Generated file check:
@@ -65,7 +78,11 @@ Still recommended before final upload:
 
 ## Feature Graphic Plan
 
-Google Play requires a feature graphic to publish the store listing.
+Google Play requires a feature graphic to publish the store listing. A local draft is now available at:
+
+```text
+docs/store-assets/2026-07-12/google-play-feature-graphic/feature-graphic-google-play-1024x500.jpg
+```
 
 Required shape:
 
@@ -74,15 +91,22 @@ Required shape:
 - Keep important content centered to avoid cutoff.
 - Avoid ranking, price, promotion, Play Store badges, or time-sensitive claims.
 
-Recommended ORNScore composition:
+Used ORNScore composition:
 
 - Background: clean off-white or very light neutral, not pure white.
-- Left: cropped real UI from `phone-01-home.jpg` or `phone-03-stock-detail.jpg`.
-- Right: short Korean value line, for example `한국 주식 후보를 데이터로 좁히기`.
+- Right: cropped real UI from `phone-03-stock-detail.jpg`.
+- Left: short Korean value line `한국 주식 후보를 데이터로 좁히기`.
+- Supporting line: `점수 근거 · 공시 신호 · 데이터 기준일을 한 화면에서 확인합니다.`
 - Footer/small line: `투자 추천이 아닌 탐색 도구`.
 - Avoid using "무료", "1위", "TOP", "수익률 보장", "지금 다운로드".
 
-This slice did not generate a feature graphic because the final one should be a deliberate design asset, not an accidental browser screenshot crop.
+Local export validation:
+
+```text
+feature-graphic-google-play-1024x500.jpg  JPEG  RGB  1024x500  61114 bytes  alpha=False
+```
+
+The feature graphic is a draft upload candidate, but owner/design review is still recommended before final Play Console upload.
 
 ## Apple App Store Status
 
@@ -113,4 +137,4 @@ When final public screenshots are ready:
 
 ## Next Local Slice
 
-If continuing locally before owner console work, create a real 1024x500 feature-graphic source and export path. Keep it generated from actual ORNScore UI and conservative copy, then verify exact dimensions and no-alpha/format before considering it upload-ready.
+If continuing locally before owner console work, prepare final high-resolution Android standalone/TWA screenshots and decide whether the current feature graphic draft is approved as final. Owner-only gates remain Play Console upload, app signing/package details, `assetlinks.json`, account/payment/address steps, and deployment.

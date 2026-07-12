@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024, initial-scale=1" />
+    <title>ORNScore Google Play Feature Graphic</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #172033;
+        --muted: #536174;
+        --blue: #1766d1;
+        --cyan: #10a7d9;
+        --green: #0f9f6e;
+        --line: #dce4ee;
+        --surface: #f7fafc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1024px;
+        height: 500px;
+        margin: 0;
+        overflow: hidden;
+        background: #eef3f7;
+        font-family:
+          "Pretendard",
+          "Inter",
+          "Apple SD Gothic Neo",
+          "Malgun Gothic",
+          system-ui,
+          sans-serif;
+        letter-spacing: 0;
+      }
+
+      .stage {
+        position: relative;
+        width: 1024px;
+        height: 500px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 78% 20%, rgba(16, 167, 217, 0.18), transparent 30%),
+          linear-gradient(135deg, #fbfcfe 0%, #eef5fb 52%, #e8f1f7 100%);
+        color: var(--ink);
+      }
+
+      .stage::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background-image:
+          linear-gradient(rgba(23, 32, 51, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(23, 32, 51, 0.035) 1px, transparent 1px);
+        background-size: 32px 32px;
+        mask-image: linear-gradient(90deg, #000 0%, transparent 72%);
+      }
+
+      .copy {
+        position: absolute;
+        left: 62px;
+        top: 64px;
+        width: 470px;
+        z-index: 2;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        height: 44px;
+        margin-bottom: 40px;
+        color: #1b2637;
+        font-size: 26px;
+        font-weight: 800;
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: linear-gradient(145deg, #216bea, #12a7d7);
+        color: white;
+        font-size: 21px;
+        font-weight: 900;
+        box-shadow: 0 12px 30px rgba(27, 107, 234, 0.22);
+      }
+
+      h1 {
+        max-width: 440px;
+        margin: 0;
+        font-size: 56px;
+        line-height: 1.06;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .subhead {
+        margin: 26px 0 0;
+        color: var(--muted);
+        font-size: 23px;
+        line-height: 1.55;
+        font-weight: 700;
+      }
+
+      .proofs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 36px;
+      }
+
+      .proof {
+        height: 40px;
+        padding: 9px 14px;
+        border: 1px solid rgba(23, 32, 51, 0.1);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #223047;
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(31, 53, 84, 0.08);
+      }
+
+      .guardrail {
+        margin-top: 24px;
+        color: #4d5a6d;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .ui-shell {
+        position: absolute;
+        right: 52px;
+        top: 27px;
+        width: 390px;
+        height: 446px;
+        overflow: hidden;
+        border: 1px solid rgba(28, 40, 61, 0.14);
+        border-radius: 20px;
+        background: white;
+        box-shadow:
+          0 26px 64px rgba(28, 40, 61, 0.2),
+          0 8px 24px rgba(28, 40, 61, 0.12);
+      }
+
+      .ui-shell::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+        pointer-events: none;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+      }
+
+      .ui-shot {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .data-ribbon {
+        position: absolute;
+        right: 353px;
+        bottom: 42px;
+        z-index: 3;
+        min-width: 230px;
+        padding: 16px 18px;
+        border: 1px solid rgba(15, 159, 110, 0.2);
+        border-radius: 13px;
+        background: rgba(247, 253, 251, 0.94);
+        color: #155f49;
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 16px 34px rgba(15, 78, 62, 0.13);
+      }
+
+      .data-ribbon strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #0f6f51;
+        font-size: 24px;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage" aria-label="ORNScore Google Play feature graphic">
+      <section class="copy">
+        <div class="brand">
+          <span class="mark">O</span>
+          <span>오른스코어</span>
+        </div>
+        <h1>한국 주식 후보를 데이터로 좁히기</h1>
+        <p class="subhead">점수 근거 · 공시 신호 · 데이터 기준일을 한 화면에서 확인합니다.</p>
+        <div class="proofs" aria-hidden="true">
+          <span class="proof">점수 근거</span>
+          <span class="proof">DART 공시</span>
+          <span class="proof">데이터 기준일</span>
+        </div>
+        <p class="guardrail">투자 추천이 아닌 탐색 도구</p>
+      </section>
+
+      <aside class="ui-shell" aria-hidden="true">
+        <img class="ui-shot" src="../google-play-draft/phone-03-stock-detail.jpg" alt="" />
+      </aside>
+
+      <div class="data-ribbon" aria-hidden="true">
+        <strong>138개</strong>
+        공개 데이터 기반 종목 탐색
+      </div>
+    </main>
+  </body>
+</html>
