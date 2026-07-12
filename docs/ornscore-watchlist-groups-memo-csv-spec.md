@@ -173,3 +173,9 @@ type WatchlistItem = {
 - The selected filter is stored in `ornscore_watchlist_group_filter`; it only changes visible rows and does not alter watchlist membership, group metadata, scoring, or CSV rows.
 - CSV remains an all-watchlist export to avoid accidental hidden-row exports. Group-level CSV export remains a separate future slice.
 - Analytics added `watchlist_group_filter_change` with `all`/`ungrouped`/`group` kind and count only; raw group labels are not sent.
+
+## 2026-07-13 Implementation Note - Local Group Summary Slice
+
+- `/watchlist` now shows compact group summary buttons with count, changed ticker count, memo count, and a short ticker-name preview.
+- Summary buttons reuse the existing group filter action; they do not create, rename, delete, or sync groups.
+- Changed counts are display-only and use the same available daily delta/disclosure-signal signals already shown on the page.

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:15:05+09:00
+Last updated: 2026-07-13T01:22:49+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist local group filter
+- Task: Direct Codex product slice - watchlist group summary buttons
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only watchlist group filter added and verified; no push/deploy.
+- Note: Local-only watchlist group summary buttons added and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist group summary buttons
+- **Context**: Continued the app-like watchlist routine path after local group filters. This slice is local display/navigation only: no Supabase schema/RLS migration, cross-device sync, group creation/rename/delete, group-level CSV export, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.
+- **Changes**: `/watchlist` now renders `그룹 요약` when any ticker has a group. Each summary button shows ticker count, changed ticker count, memo count, and a short ticker-name preview. Clicking a summary reuses the existing local group filter action, narrowing visible rows without changing membership or metadata.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4694 passed 4/4 real gates. Chrome/Playwright via bundled runtime verified mobile 390x844 summary visibility, summary click -> selected group filter persistence, visible row narrowing to 1 item, and desktop overflow 0.
+- **Next**: Continue with stock-detail CTA handoff into recent/watchlist actions, or add a conservative group-collapse affordance if the summary/list stack feels too long. Supabase sync, group-level CSV export, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Watchlist local group filter
 - **Context**: Continued the app-like watchlist routine path after local group/memo controls. This slice is browser-local UI only: no Supabase schema/RLS migration, cross-device sync, group-level CSV export, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.

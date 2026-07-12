@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download, FolderOpen } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -505,6 +505,29 @@ export function WatchlistClient({
   });
   const activeGroupFilterLabel = groupFilterOptions.find((option) => option.value === activeGroupFilter)?.label ?? "전체";
   const showGroupFilters = watchlist.length > 0 && (groupedWatchlistCount > 0 || activeGroupFilter !== GROUP_FILTER_ALL);
+  const groupSummarySources = [
+    ...(ungroupedWatchlistCount > 0
+      ? [{ value: GROUP_FILTER_UNGROUPED, label: "미분류", items: sortedWatchlistWithMeta.filter((item) => !item.group) }]
+      : []),
+    ...groupsInUse.map((group) => ({
+      value: group,
+      label: group,
+      items: sortedWatchlistWithMeta.filter((item) => item.group === group),
+    })),
+  ];
+  const groupSummaries = groupSummarySources.map((entry) => {
+    const changedCount = entry.items.filter((item) => {
+      const delta = Math.round(tickerToDelta[item.ticker] ?? 0);
+      return delta !== 0 || tickerToSignal[item.ticker] !== undefined;
+    }).length;
+    const noteCount = entry.items.filter((item) => item.note).length;
+    const preview = entry.items
+      .slice(0, 2)
+      .map((item) => allStocks.find((stock) => stock.ticker === item.ticker)?.name ?? item.ticker)
+      .join(" · ");
+    return { ...entry, count: entry.items.length, changedCount, noteCount, preview };
+  });
+  const showGroupSummaries = groupedWatchlistCount > 0 && groupSummaries.length > 0;
 
   // 관심 종목 비교하기 CTA — 담아둔 종목 앞에서부터 최대 COMPARE_MAX개를 비교 화면에 시드
   const compareSeed = filteredWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
@@ -700,6 +723,47 @@ export function WatchlistClient({
             그룹 지정 {groupedWatchlistCount}개 · 메모 {notedWatchlistCount}개
             {activeGroupFilter !== GROUP_FILTER_ALL ? <> · 현재 {activeGroupFilterLabel} {filteredWatchlist.length}개 표시</> : null}
           </p>
+        ) : null}
+
+        {showGroupSummaries ? (
+          <div className="mb-4">
+            <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+              <FolderOpen className="h-3.5 w-3.5" />
+              그룹 요약
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {groupSummaries.map((summary) => {
+                const active = activeGroupFilter === summary.value;
+                return (
+                  <button
+                    key={summary.value}
+                    type="button"
+                    onClick={() => changeGroupFilter(summary.value, summary.count)}
+                    aria-pressed={active}
+                    aria-label={`${summary.label} 그룹 ${summary.count}개 보기`}
+                    className={
+                      "min-w-0 rounded-lg border px-3 py-2 text-left transition " +
+                      (active
+                        ? "border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40"
+                        : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700")
+                    }
+                  >
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="min-w-0 truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{summary.label}</span>
+                      <span className="shrink-0 text-xs tabular-nums text-zinc-500 dark:text-zinc-400">{summary.count}개</span>
+                    </span>
+                    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+                      <span>변화 {summary.changedCount}</span>
+                      <span>메모 {summary.noteCount}</span>
+                    </span>
+                    <span className="mt-1 block truncate text-[11px] text-zinc-400 dark:text-zinc-500">
+                      {summary.preview || "종목 없음"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         ) : null}
 
         {/* 비교함 담기 피드백 — aria-live로 결과만 안내(3초) */}
