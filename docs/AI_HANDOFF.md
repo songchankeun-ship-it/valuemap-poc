@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T07:47:54+09:00
+Last updated: 2026-07-13T08:05:05+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - saved filter notification shortcut
+- Task: Direct Codex product slice - saved filter open action
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` saved-filter header now links to notification settings with count-only structural analytics metadata; implementation commit `58b518f`; no push/deploy.
+- Note: `/watchlist` saved-filter rows now show a clearer `조건 열기` open marker beside the match count; implementation commit `cba91b2`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved filter open action
+- **Context**: Continued the watchlist saved-filter routine after adding the notification-settings shortcut. This slice is local UI/readability only: no saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, analytics account/config, or remote/account change.
+- **Changes**: `/watchlist` saved-filter rows now show a compact `조건 열기` marker beside the current match count, making the existing row link destination clearer while leaving open, rename, remove, and analytics behavior unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4718 passed 4/4 real gates. In-app browser created and deleted a temporary saved filter, then verified mobile 390x844 and desktop `/watchlist` row marker text, `/stocks` row href, and no horizontal overflow. Temp port 4718 was stopped.
+- **Commit**: `cba91b2` (`[codex] clarify saved filter open action`).
+- **Next**: Continue with another small local app-like polish slice such as stock-detail recent-action/readability or another conservative watchlist/saved-filter routine improvement. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Saved filter notification shortcut
 - **Context**: Continued the watchlist saved-filter routine after stock-detail recent-change analytics. This slice is local UI/instrumentation only: no saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.

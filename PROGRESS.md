@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] saved filter open action
+- **Scope**: Added a clearer open affordance to saved-filter rows on `/watchlist`. No saved-search persistence, alert-delivery, Supabase schema/RLS, scoring/data/DART/auth/deployment/push/remote changes.
+- **Changes**: Each saved-filter row now shows a compact `조건 열기` pill beside the current match count, making the tappable row destination clearer without changing the existing row link, rename, remove, or analytics behavior.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4718 --no-perf` passed 4/4 real gates. In-app browser created a temporary saved filter from `/stocks?theme=반도체`, verified `/watchlist` at 390x844 and desktop shows the `조건 열기` marker inside the `/stocks` row link with no horizontal overflow, then deleted the test filter and stopped temp port 4718.
+- **Commit**: `cba91b2` (`[codex] clarify saved filter open action`).
+- **Next**: Continue with one small local app-like polish slice, preferably stock-detail recent-action/readability or another conservative watchlist/saved-filter routine improvement. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] saved filter notification shortcut
 - **Scope**: Added a saved-filter header shortcut on `/watchlist` for opening notification settings. No saved-search persistence, alert-delivery, Supabase schema/RLS, scoring/data/DART/auth/deployment/push/remote changes.
 - **Changes**: When saved filters exist, the saved-filter header now has two 44px actions: `알림 설정` to `/settings/notifications` and `조건 추가` to `/stocks`. The notification shortcut records `saved_filter_notification_settings_open` with `count` only; no saved-filter names, conditions, or raw query text are tracked. The analytics event map was updated.
