@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download, FolderOpen } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download, FolderOpen, Pencil, Check } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -12,7 +12,7 @@ import {
 } from "@/lib/watchlist";
 import { addToCompare, COMPARE_MAX } from "@/lib/compare";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
-import { listSavedSearches, queueSavedSearchApply, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { listSavedSearches, queueSavedSearchApply, removeSavedSearch, renameSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
@@ -30,7 +30,7 @@ import {
   type WatchlistMetaByTicker,
 } from "@/lib/watchlistMeta";
 import { trackEvent } from "@/lib/clientAnalytics";
-import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -142,6 +142,10 @@ export function WatchlistClient({
   const [recent, setRecent] = useState<RecentView[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [renamingSavedSearchId, setRenamingSavedSearchId] = useState<string | null>(null);
+  const [renamingSavedSearchName, setRenamingSavedSearchName] = useState("");
+  const [renamingSavedSearchBusy, setRenamingSavedSearchBusy] = useState(false);
+  const [renameSavedSearchErrorId, setRenameSavedSearchErrorId] = useState<string | null>(null);
   const [watchlistMeta, setWatchlistMeta] = useState<WatchlistMetaByTicker>({});
   const watchlistMetaRef = useRef<WatchlistMetaByTicker>({});
   const [loading, setLoading] = useState(true);
@@ -368,9 +372,49 @@ export function WatchlistClient({
     return n;
   }
 
+  function openSavedFilterRename(sv: SavedSearch) {
+    setRenamingSavedSearchId(sv.id);
+    setRenamingSavedSearchName(sv.name);
+    setRenameSavedSearchErrorId(null);
+    window.setTimeout(() => document.getElementById(`saved-filter-rename-${sv.id}`)?.focus(), 0);
+  }
+
+  function closeSavedFilterRename() {
+    setRenamingSavedSearchId(null);
+    setRenamingSavedSearchName("");
+    setRenameSavedSearchErrorId(null);
+  }
+
+  async function submitSavedFilterRename(event: FormEvent<HTMLFormElement>, sv: SavedSearch, count: number) {
+    event.preventDefault();
+    const nextName = renamingSavedSearchName.trim();
+    if (!nextName) return;
+    if (nextName === sv.name) {
+      closeSavedFilterRename();
+      return;
+    }
+    setRenamingSavedSearchBusy(true);
+    setRenameSavedSearchErrorId(null);
+    const ok = await renameSavedSearch(sv.id, nextName);
+    setRenamingSavedSearchBusy(false);
+    if (!ok) {
+      setRenameSavedSearchErrorId(sv.id);
+      return;
+    }
+    setSavedSearches((prev) => prev.map((item) => (item.id === sv.id ? { ...item, name: nextName } : item)));
+    closeSavedFilterRename();
+    trackEvent("saved_filter_watchlist_rename", {
+      count,
+      hasQuery: Boolean(sv.config.query),
+      hasSector: Boolean(sv.config.sector),
+      themeCount: sv.config.themes?.length ?? 0,
+    });
+  }
+
   async function removeSavedFilterFromRoutine(sv: SavedSearch, count: number) {
     const ok = await removeSavedSearch(sv.id);
     if (!ok) return;
+    if (renamingSavedSearchId === sv.id) closeSavedFilterRename();
     setSavedSearches((prev) => prev.filter((item) => item.id !== sv.id));
     trackEvent("saved_filter_watchlist_remove", {
       count,
@@ -1120,6 +1164,8 @@ export function WatchlistClient({
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
             {savedSearches.map((sv) => {
               const count = matchCountOf(sv.config);
+              const isRenaming = renamingSavedSearchId === sv.id;
+              const renameInputId = `saved-filter-rename-${sv.id}`;
               return (
                 <li key={sv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                   <div className="flex items-stretch">
@@ -1151,6 +1197,15 @@ export function WatchlistClient({
                     </Link>
                     <button
                       type="button"
+                      onClick={() => openSavedFilterRename(sv)}
+                      aria-label={`${sv.name} 저장 필터 이름 바꾸기`}
+                      title="이름 바꾸기"
+                      className={`flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center border-l border-zinc-100 text-zinc-400 transition hover:bg-blue-50 hover:text-blue-600 dark:border-zinc-800 dark:hover:bg-blue-950/20 dark:hover:text-blue-400 ${FOCUS_RING}`}
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => { void removeSavedFilterFromRoutine(sv, count); }}
                       aria-label={`${sv.name} 저장 필터 삭제`}
                       className={`flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center border-l border-zinc-100 text-zinc-400 transition hover:bg-rose-50 hover:text-rose-600 dark:border-zinc-800 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 ${FOCUS_RING}`}
@@ -1158,6 +1213,43 @@ export function WatchlistClient({
                       <X className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
+                  {isRenaming ? (
+                    <form onSubmit={(event) => { void submitSavedFilterRename(event, sv, count); }} className="border-t border-zinc-100 bg-zinc-50/80 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950/40">
+                      <label htmlFor={renameInputId} className="sr-only">저장 필터 이름</label>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <input
+                          id={renameInputId}
+                          value={renamingSavedSearchName}
+                          onChange={(event) => setRenamingSavedSearchName(event.target.value)}
+                          className={`min-h-[44px] min-w-0 flex-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 ${INPUT_FOCUS}`}
+                          maxLength={40}
+                        />
+                        <div className="grid grid-cols-2 gap-1.5 sm:flex">
+                          <button
+                            type="submit"
+                            disabled={renamingSavedSearchBusy || !renamingSavedSearchName.trim()}
+                            title="저장"
+                            className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 ${FOCUS_RING}`}
+                          >
+                            <Check className="h-4 w-4" aria-hidden="true" /> 저장
+                          </button>
+                          <button
+                            type="button"
+                            onClick={closeSavedFilterRename}
+                            title="취소"
+                            className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-600 transition hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-600 ${FOCUS_RING}`}
+                          >
+                            <X className="h-4 w-4" aria-hidden="true" /> 취소
+                          </button>
+                        </div>
+                      </div>
+                      {renameSavedSearchErrorId === sv.id ? (
+                        <p className="mt-2 text-[11px] leading-snug text-rose-600 dark:text-rose-400" role="status">
+                          이름을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.
+                        </p>
+                      ) : null}
+                    </form>
+                  ) : null}
                 </li>
               );
             })}

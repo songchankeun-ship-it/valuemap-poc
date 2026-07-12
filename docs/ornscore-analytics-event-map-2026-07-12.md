@@ -33,6 +33,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `watchlist_group_filter_change` | `/watchlist` local group filter chips | `filter`, `count`, `loggedIn` | User narrows the visible watchlist by all/ungrouped/group; raw group labels are not sent. |
 | `saved_filter_watchlist_open` | `/watchlist` saved-filter card | `count`, `hasQuery`, `hasSector`, `themeCount` | User opens `/stocks` from a saved filter; no saved-filter name or raw query is sent. |
 | `saved_filter_watchlist_remove` | `/watchlist` saved-filter remove button | `count`, `hasQuery`, `hasSector`, `themeCount` | User removes a saved filter from the routine page; no saved-filter name or raw query is sent. |
+| `saved_filter_watchlist_rename` | `/watchlist` saved-filter rename form | `count`, `hasQuery`, `hasSector`, `themeCount` | User renames a saved filter from the routine page; no saved-filter name or raw query is sent. |
 | `stock_checklist_routine_open` | Stock detail checklist completion CTA | `ticker` | User finishes the local stock checklist and opens the personal routine page. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |

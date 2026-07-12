@@ -121,6 +121,30 @@ export async function removeSavedSearch(id: string): Promise<boolean> {
   }
 }
 
+/** 저장 필터의 조건은 그대로 두고 표시 이름만 바꾼다. */
+export async function renameSavedSearch(id: string, name: string): Promise<boolean> {
+  const nextName = name.trim();
+  if (!nextName) return false;
+
+  const uid = await getUserId();
+  if (!uid) {
+    writeLocal(readLocal().map((s) => (s.id === id ? { ...s, name: nextName } : s)));
+    return true;
+  }
+  try {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("saved_searches")
+      .update({ name: nextName })
+      .eq("id", id)
+      .eq("user_id", uid);
+    if (!error && typeof window !== "undefined") window.dispatchEvent(new CustomEvent("saved-searches-changed"));
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 /** `/watchlist` 등 다른 루틴 화면에서 `/stocks`로 들어갈 때 저장 필터를 1회 적용하기 위한 세션 브리지. */
 export function queueSavedSearchApply(search: SavedSearch): boolean {
   if (typeof window === "undefined") return false;
