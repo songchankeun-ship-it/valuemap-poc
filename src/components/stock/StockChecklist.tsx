@@ -81,6 +81,15 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
           {t.resumeHint(t.items[nextItem.id])}
         </p>
       ) : null}
+      {allDone ? (
+        <div
+          role="status"
+          className="mb-3 flex items-start gap-2 rounded-md border border-emerald-100 bg-emerald-50 px-3 py-2 text-[11px] leading-snug text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+        >
+          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <p>{t.allDoneHint}</p>
+        </div>
+      ) : null}
 
       <ul className="divide-y divide-zinc-100 dark:divide-zinc-800 border border-zinc-100 dark:border-zinc-800 rounded-lg overflow-hidden">
         {CHECKLIST_ITEMS.map((item) => {
