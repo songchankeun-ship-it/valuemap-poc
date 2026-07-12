@@ -20,6 +20,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `topic_link_click` | `/stocks` topic links | `source`, `topic` | User enters a search-intent landing page. |
 | `topic_stock_open` | `/topics/[slug]` stock links | `topic`, `ticker` | Topic page successfully drives stock-detail exploration. |
 | `topic_all_stocks_click` | `/topics/[slug]` "전체 탐색" CTA | `topic` | User moves from landing page to broader explorer. |
+| `topic_saved_filter_start` | `/topics/[slug]` saved-filter handoff CTA | `topic`, `filtered` | User moves from a topic landing page toward saving a reusable stock filter. |
 | `compare_toggle` | Add/remove compare button | `action`, `ticker`, `compact` | User attempts to build a comparison set. |
 | `compare_toast_open` | Compare toast link | `ticker` | User follows a compare add/remove toast to `/compare`. |
 | `compare_tray_open` | Floating compare tray CTA | `count` | User opens `/compare` after collecting candidates. |

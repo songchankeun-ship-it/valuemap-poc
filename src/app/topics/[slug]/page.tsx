@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, BarChart3, Database, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, BarChart3, BookmarkPlus, Database, Search, ShieldCheck } from "lucide-react";
 import { dataMetadata, formatBizDateLong, type RealStock } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
 import { getSeoTopic, seoTopics } from "@/lib/seoTopics";
@@ -168,6 +168,27 @@ export default async function TopicPage({ params }: PageProps) {
               </dd>
             </div>
           </dl>
+          <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+            <div className="flex gap-2 text-xs">
+              <BookmarkPlus className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <div>
+                <div className="font-semibold text-zinc-900 dark:text-zinc-100">이 주제를 루틴으로 남기기</div>
+                <p className="mt-1 leading-5 text-zinc-500 dark:text-zinc-400">
+                  종목 탐색에서 조건을 더한 뒤 <strong className="font-semibold text-zinc-700 dark:text-zinc-200">조건 저장</strong>을 누르면 관심 화면에서 다시 불러올 수 있어요.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={topic.stocksHref}
+              data-analytics-event="topic_saved_filter_start"
+              data-analytics-topic={topic.slug}
+              data-analytics-filtered={topic.stocksHref.includes("?") ? "true" : "false"}
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            >
+              조건 저장하러 가기
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </div>
         </aside>
       </section>
 
