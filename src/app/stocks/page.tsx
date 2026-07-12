@@ -4,6 +4,7 @@ import { sectorOf } from "@/lib/sector";
 import { getPriceLagSummary } from "@/lib/priceLag";
 import { StocksExplorer } from "@/components/StocksExplorer";
 import { CompareTray } from "@/components/stock/CompareTray";
+import { TopicLandingLinks } from "@/components/seo/TopicLandingLinks";
 import { metricKeywords, stockDiscoveryKeywords, themeKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const revalidate = 3600;
@@ -188,6 +189,7 @@ export default async function StocksPage({ searchParams }: PageProps) {
         dataStale={isDataStale(dataMetadata.asOfBusinessDate)}
         laggedTickers={laggedTickers}
       />
+      <TopicLandingLinks />
       {/* 설계서 §8-3·§12-5: 발견에서 담은 종목을 비교함 N/4로 이어가는 트레이. 담기는 각 카드가
           소유하고, 트레이는 담긴 수 반영 + /compare 이동만 담당(count 0이면 자동 숨김). */}
       <CompareTray />

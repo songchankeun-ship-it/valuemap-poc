@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { mockTopNeglectedThemes } from "@/lib/mockData";
+import { seoTopics } from "@/lib/seoTopics";
 
 const SITE = "https://ornscore.com";
 
@@ -101,6 +102,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.55,
   }));
 
+  const topicPages: MetadataRoute.Sitemap = seoTopics.map((topic) => ({
+    url: `${SITE}/topics/${topic.slug}`,
+    lastModified: dataDate,
+    changeFrequency: "weekly" as const,
+    priority: 0.62,
+  }));
+
   const stockPages: MetadataRoute.Sitemap = realStockPool.map((s) => ({
     url: `${SITE}/stock/${s.ticker}`,
     lastModified: dataDate,
@@ -109,5 +117,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.marketCap >= 5_000_000_000_000 ? 0.8 : s.marketCap >= 1_000_000_000_000 ? 0.7 : 0.6,
   }));
 
-  return [...staticPages, ...themePages, ...stockPages];
+  return [...staticPages, ...themePages, ...topicPages, ...stockPages];
 }

@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] SEO topic landing pages
+- **Scope**: Added indexable search-intent landing pages for high-value stock discovery queries without changing scoring, generated datasets, DART logic, market-data collection, auth, Search Console, deployment config, or remote state.
+- **New routes**: Added `/topics/undervalued-stocks`, `/topics/dividend-stocks`, `/topics/low-per-stocks`, `/topics/low-pbr-stocks`, `/topics/high-roe-stocks`, `/topics/battery-stocks`, and `/topics/semiconductor-stocks`. Each page has route-specific metadata, canonical URL, JSON-LD `CollectionPage`/`ItemList`, real candidate rows from the existing 138-stock pool, data-date context, and non-advisory copy.
+- **Discovery**: Added `src/lib/seoTopics.ts` as the shared topic definition/selector map. `sitemap.xml` now includes all 7 `/topics/*` URLs, increasing the local sitemap from 154 to 161 public URLs after deployment. `/stocks` now contains an internal "검색어별 종목 탐색" link section pointing to the topic pages.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with the existing `TrustLayer` cleanup warning only; local prod `http://127.0.0.1:4674` `npm run verify:local -- --base http://127.0.0.1:4674 --no-perf` passed 4/4 real gates. Spot checks confirmed 7 topic pages return 200, sitemap contains each `/topics/*`, and `/stocks` renders 7 topic links. Browser QA: 390x844 topic page and 1280px desktop topic/stocks-link views had no horizontal overflow.
+- **Next**: Continue the agreed sequence with item 4: analytics/conversion tracking. Keep it local/config-safe first: define events and placement for search, topic clicks, stock-detail opens, compare adds, watchlist intent, login/start clicks, and error/report clicks; do not change external analytics/account settings without owner approval. Push/deploy remains owner-approved only.
+
 ## 2026-07-12 - [codex] Search Console sitemap cleanup
 - **Scope**: Cleaned up Google Search Console sitemap registration after launch SEO setup. No repository source, scoring, generated datasets, Search Console property/DNS ownership, or deployment change.
 - **External action completed**: In the `ornscore.com` domain property under `contact@ornscore.com`, deleted the two accidental sitemap entries that were page URLs: `https://ornscore.com/stocks` and `https://ornscore.com/`.

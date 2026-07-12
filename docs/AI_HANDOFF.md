@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-12 - Codex - SEO topic landing pages
+- **Context**: Owner approved continuing the launch operations sequence in order. This completes item 3, SEO landing/search-intent expansion, after item 1 admin operation home and item 2 Search Console sitemap cleanup. No scoring, generated dataset, DART, auth, Search Console, hosting, deployment, account, or remote state change.
+- **Changes**: Added `src/lib/seoTopics.ts`, `/topics/[slug]`, and `TopicLandingLinks`. The topic set is: `undervalued-stocks`, `dividend-stocks`, `low-per-stocks`, `low-pbr-stocks`, `high-roe-stocks`, `battery-stocks`, and `semiconductor-stocks`. Each page uses real `realStockPool` candidates, route-specific metadata/canonical, JSON-LD `CollectionPage`/`ItemList`, data-date context, and non-advisory copy. `/stocks` now links to the 7 topic pages, and `sitemap.xml` includes them.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with existing `TrustLayer` warning; local prod `:4674` `verify:local --no-perf` passed all 4 real gates. Spot checks: all 7 `/topics/*` routes 200, sitemap contains every topic URL, `/stocks` contains 7 topic links. Browser QA: 390x844 topic and desktop topic/stocks-link views showed no horizontal overflow. Temp port 4674 was stopped.
+- **Next**: Item 4 in the agreed sequence is analytics/conversion tracking. Suggested local-only slice: add an event map/spec and instrument internal UI events that already exist (search submit, topic link click, stock detail open, compare tray add/open, watchlist intent, login/start clicks, report-data-issue click) using the existing analytics stack only. Do not create/change external analytics accounts, env vars, deployment, or remote settings without owner approval.
+
 ### 2026-07-12 - Codex - Search Console sitemap cleanup
 - **Context**: Owner approved proceeding through the recommended launch operation sequence. This completes item 2, Search Console cleanup, after the owner had already verified the `ornscore.com` property, submitted the real sitemap, and requested indexing for the priority URLs.
 - **External action**: In Google Search Console for the `ornscore.com` domain property (`contact@ornscore.com`), deleted the accidental sitemap rows `https://ornscore.com/stocks` and `https://ornscore.com/`. These were page URLs mistakenly submitted as sitemaps and both showed `오류 1개`.
