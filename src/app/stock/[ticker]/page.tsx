@@ -180,7 +180,12 @@ function RecentChangeSummary({ ticker, items }: { ticker: string; items: RecentC
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">최근 변화</h2>
           <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">점수·거래활성도·가격 흐름을 먼저 확인할 수 있게 요약했어요.</p>
         </div>
-        <a href="#basis" className="text-[11px] font-medium text-blue-700 dark:text-blue-400 hover:underline">변화 근거 보기</a>
+        <a
+          href="#basis"
+          className="inline-flex min-h-[44px] items-center rounded-md px-2 text-[11px] font-medium text-blue-700 transition hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-blue-400 dark:hover:bg-blue-950/20 dark:hover:text-blue-300 dark:focus-visible:ring-offset-zinc-900"
+        >
+          변화 근거 보기
+        </a>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         {items.map((item) => {
