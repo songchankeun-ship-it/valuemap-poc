@@ -25,6 +25,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `compare_tray_open` | Floating compare tray CTA | `count` | User opens `/compare` after collecting candidates. |
 | `compare_tray_reset` | Floating compare tray reset | `count` | User clears a comparison set. |
 | `watchlist_toggle` | Add/remove/undo watchlist button | `action`, `ticker`, `compact`, `loggedOut` | User saves or removes a watchlist candidate. |
+| `watchlist_detail_open` | Stock detail saved-state CTA | `ticker` | User opens `/watchlist` from a stock that is already saved. |
 | `watchlist_toast_open` | Watchlist toast link | `ticker` | User follows save toast to `/watchlist`. |
 | `watchlist_login_cta` | Watchlist logged-out guidance | `ticker` | User sees local-save value and chooses login. |
 | `watchlist_csv_export` | `/watchlist` CSV export button | `count`, `loggedIn`, `sort` | User exports their current watchlist locally as a CSV file. |

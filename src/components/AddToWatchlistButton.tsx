@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react";
 import {
   addToWatchlist,
   removeFromWatchlist,
@@ -141,6 +141,17 @@ export function AddToWatchlistButton({
           <span className="truncate">{label ?? (isAdded ? "관심 등록됨" : "관심 종목")}</span>
         )}
       </button>
+      {isAdded && !compact && !loading ? (
+        <Link
+          href="/watchlist"
+          data-analytics-event="watchlist_detail_open"
+          data-analytics-ticker={ticker}
+          className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 min-h-[44px] rounded-md border border-pink-200 dark:border-pink-900 bg-white dark:bg-zinc-950 text-sm font-medium text-pink-700 dark:text-pink-300 hover:bg-pink-50 dark:hover:bg-pink-950/30 transition ${FOCUS_RING}`}
+        >
+          <span className="truncate">관심 화면</span>
+          <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
+        </Link>
+      ) : null}
 
       {/* 토스트 영역 — 항상 렌더해 스크린리더가 변화를 읽도록 aria-live 유지.
           모바일에서는 하단 탭바(MobileBottomNav) 위로 띄우고 데스크톱은 bottom-6. */}

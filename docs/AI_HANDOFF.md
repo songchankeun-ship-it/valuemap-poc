@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:22:49+09:00
+Last updated: 2026-07-13T01:32:07+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist group summary buttons
+- Task: Direct Codex product slice - stock detail watchlist handoff CTA
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only watchlist group summary buttons added and verified; no push/deploy.
+- Note: Local-only saved-state `관심 화면` CTA added to stock detail and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock detail watchlist handoff CTA
+- **Context**: Continued the app-like routine path after watchlist group summaries. This slice is local UI/navigation only: no watchlist storage/migration logic, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `AddToWatchlistButton` now shows a secondary `관심 화면` link when the non-compact stock detail button is already saved. The link goes to `/watchlist`, keeps a 44px tap target, and records `watchlist_detail_open` with ticker only. `docs/ornscore-analytics-event-map-2026-07-12.md` documents the new event.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4695 passed 4/4 real gates. In-app browser verified 390x844 save -> link appears -> `/watchlist` navigation, plus mobile/desktop overflow 0.
+- **Next**: Continue with a stock-detail recent-action panel or a watchlist saved-filter/import planning slice. Supabase sync, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Watchlist group summary buttons
 - **Context**: Continued the app-like watchlist routine path after local group filters. This slice is local display/navigation only: no Supabase schema/RLS migration, cross-device sync, group creation/rename/delete, group-level CSV export, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.

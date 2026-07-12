@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock detail watchlist handoff CTA
+- **Scope**: Added a small saved-state handoff from stock detail to `/watchlist`. No watchlist storage/migration logic, Supabase schema/RLS, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
+- **Changes**: `AddToWatchlistButton` now shows a secondary `관심 화면` link only when a non-compact stock-detail watchlist button is already saved. The link points to `/watchlist`, keeps a 44px tap target, uses a lucide arrow icon, and records `watchlist_detail_open` with ticker only. Updated the analytics event map.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4695 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` save -> `관심 화면` link appears, `href=/watchlist`, navigation reaches `/watchlist`, and mobile/desktop horizontal overflow is 0.
+- **Next**: Continue the app-like routine path with a conservative stock-detail recent-action panel or a watchlist saved-filter/import planning slice. Keep Supabase sync, CSV import, app-store console, deployment, and push as owner-approved gates.
+
 ## 2026-07-13 - [codex] watchlist group summary buttons
 - **Scope**: Added compact group summary buttons to `/watchlist` after local group filters. No Supabase schema/RLS migration, cross-device sync, group creation/rename/delete, group-level CSV export, CSV import, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
 - **Changes**: `/watchlist` now shows `그룹 요약` when any ticker has a group. Each summary button displays ticker count, changed ticker count, memo count, and a short ticker-name preview. Clicking a summary reuses the existing local group filter action, so it narrows the visible rows without changing membership or metadata. Changed counts use only existing daily delta/disclosure-signal fields already rendered on the page.
