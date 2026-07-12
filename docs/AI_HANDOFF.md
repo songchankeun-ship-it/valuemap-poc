@@ -42,6 +42,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-12 - Codex - Admin operation home dashboard
+- **Context**: Owner asked to proceed in order from the recommended launch operations plan. This slice handles item 1, the internal operation/admin surface, without changing scoring, data collection, DART logic, generated datasets, auth-provider setup, Search Console state, or deployment.
+- **Changes**: Added protected `/admin` as the operation home. It summarizes data base date, Metrics version match, per-stock price-lag count, status-history count, score generation time, report mode, and links to `/admin/status`, `/status`, `/stocks`, `/guide/metrics`, Search Console, and the public sitemap. Added `src/lib/adminAccess.ts` to share the server-component allowlist/redirect guard and refactored `/admin/status` to use it. Middleware still guards `/admin` and `/admin/*` before render.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with existing `TrustLayer` cleanup warning; local prod `:4672` confirmed anonymous `/admin` and `/admin/status` 307 redirects to login; `npm run verify:local -- --base http://127.0.0.1:4672 --no-perf` passed all 4 real gates. Temp port 4672 was stopped.
+- **Next**: Item 2 in the agreed order is Search Console cleanup: delete the accidental sitemap entries for `https://ornscore.com/` and `https://ornscore.com/stocks`, keeping only `https://ornscore.com/sitemap.xml`, then continue with SEO landing expansion.
+
 ### 2026-07-12 - Codex - SEO keyword expansion for launch pages
 - **Context**: Owner asked to add more search keywords after confirming the public site can be searched by brand/site queries. This slice expands keyword coverage in a non-stuffing way: page metadata, visible explanatory copy, internal theme language, and FAQ structured data. No scoring, data collection, DART logic, generated dataset, auth, account, Search Console, deployment config, or remote action.
 - **Keyword source**: Added `src/lib/seoKeywords.ts` with reusable clusters for brand, stock discovery, PER/PBR/ROE metrics, DART disclosures, trust/source status, and theme aliases (`2차전지 관련주`, `반도체 관련주`, `바이오 관련주`, `조선 관련주`, `로봇 관련주`).

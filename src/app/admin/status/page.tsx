@@ -10,12 +10,11 @@
  * 검색 노출 차단(noindex). ADMIN_ENABLED=1 일 때만 신고 목록을 조회한다(개인정보 보호).
  */
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { realStockPool } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { dataStatus } from "@/lib/dataStatus";
+import { requireAdminAccess } from "@/lib/adminAccess";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "내부 데이터 상태판 — 오른스코어",
@@ -32,27 +31,6 @@ interface DataReport {
   message: string;
   email: string | null;
   status: string;
-}
-
-const FALLBACK_ADMIN_EMAILS = ["contact@ornscore.com"];
-
-function adminEmailSet(): Set<string> {
-  const configured = (process.env.ADMIN_EMAILS ?? process.env.ORNSCORE_ADMIN_EMAILS ?? "")
-    .split(/[,\s]+/)
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-  const emails = configured.length > 0 ? configured : FALLBACK_ADMIN_EMAILS;
-  return new Set(emails.map((email) => email.toLowerCase()));
-}
-
-async function requireAdminAccess(): Promise<{ email: string; allowed: boolean }> {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  const email = data.user?.email?.trim().toLowerCase();
-  if (!email) {
-    redirect(`/login?next=${encodeURIComponent("/admin/status")}`);
-  }
-  return { email, allowed: adminEmailSet().has(email) };
 }
 
 async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
@@ -76,7 +54,7 @@ async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
 }
 
 export default async function AdminStatusPage() {
-  const admin = await requireAdminAccess();
+  const admin = await requireAdminAccess("/admin/status");
   if (!admin.allowed) {
     return (
       <div className="max-w-2xl mx-auto px-3 md:px-4 py-10">

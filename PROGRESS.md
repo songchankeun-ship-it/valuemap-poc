@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] admin operation home dashboard
+- **Scope**: Added a protected `/admin` operation home so launch/SEO/data checks have a single internal entry point. No scoring, generated datasets, DART parsing, market-data collection, auth-provider config, Search Console mutation, or deployment action.
+- **Admin UX**: New `/admin` shows data base date, formula version match, per-stock price-lag count, status-history count, score-generation time, report mode, and direct links to `/admin/status`, `/status`, `/stocks`, `/guide/metrics`, Search Console, and `sitemap.xml`. It is `noindex`, dynamic, and still protected by the existing `/admin` middleware.
+- **Code hygiene**: Added `src/lib/adminAccess.ts` for the server-component admin allowlist/redirect guard and reused it from `/admin/status`. Middleware remains the before-render gate for `/admin` and `/admin/*`; page-level guards remain defense in depth.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; `npm run build` 0 with the existing `TrustLayer` cleanup warning only; local prod `http://127.0.0.1:4672` confirmed `/admin` 307 to `/login?next=%2Fadmin` and `/admin/status` 307 to `/login?next=%2Fadmin%2Fstatus`; `npm run verify:local -- --base http://127.0.0.1:4672 --no-perf` passed 4/4 real gates.
+- **Next**: Continue the agreed order with Search Console cleanup: remove the accidental sitemap rows for `https://ornscore.com/` and `https://ornscore.com/stocks`, leaving only `https://ornscore.com/sitemap.xml`, then move to SEO landing expansion.
+
 ## 2026-07-12 - [codex] SEO keyword expansion for launch pages
 - **Scope**: Expanded organic-search coverage for the public website without changing scoring, data collection, DART parsing, generated datasets, auth, account settings, Search Console, or deployment configuration.
 - **Keyword system**: Added `src/lib/seoKeywords.ts` as a shared source for brand, stock-screening, PER/PBR/ROE, DART disclosure, trust/source, and theme-related keyword clusters. The implementation uses page titles/descriptions/body copy/structured data instead of relying on keyword stuffing.
