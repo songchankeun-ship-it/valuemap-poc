@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-12T20:20:00+09:00
+Last updated: 2026-07-12T20:32:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-12 - Codex - Real-device app QA checklist
+- **Context**: Continued the ordered post-launch/app-readiness sequence after the local app/PWA re-audit. This is a docs-only local slice for real-device testing; no Play Console/account/signing/assetlinks publishing/app-store submission/deployment/remote state change.
+- **Deliverable**: Added `docs/app-real-device-qa-checklist-2026-07-12.md`. It covers Android Chrome install/add-to-home-screen, standalone launch, core route pass, safe-area/header behavior, search/topic-to-stock flow, watchlist/compare actions, login return, offline honesty, evidence capture, and known owner-only Android TWA verification gates.
+- **Next**: If staying local, prepare store-listing copy/screenshot requirements from existing public copy and the QA checklist. If moving toward actual Android release, owner must provide Play Console/signing/package data first; do not create placeholder assetlinks or perform account/submission work automatically.
 
 ### 2026-07-12 - Codex - App/PWA readiness re-audit
 - **Context**: Owner asked to continue the recommended launch sequence in order. This completes item 5 as a local-only app/PWA readiness re-audit after admin, Search Console cleanup, SEO topic landing pages, and analytics instrumentation. No Play Console/account/payment/signing/assetlinks publishing/service-worker/deployment/remote state change.

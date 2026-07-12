@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-12 - [codex] real-device app QA checklist
+- **Scope**: Added a manual real-device QA checklist for the PWA/TWA-ready app path. Docs-only local slice; no Play Console, signing, assetlinks publishing, app-store account, deployment, remote write, scoring, generated data, DART, or auth-provider change.
+- **Deliverable**: Added `docs/app-real-device-qa-checklist-2026-07-12.md` covering Android Chrome install/add-to-home-screen, standalone launch, safe-area/header spacing, core routes, topic-to-stock flow, watchlist/compare actions, login return, offline honesty, evidence capture, and the Android TWA owner-only gate.
+- **Validation**: Docs-only change. Run `git diff --check` and replacement-character scan before commit; app packaging was already rechecked in the preceding readiness slice with `npm run app:check`.
+- **Next**: If staying local, prepare store-listing assets/text from existing public copy and screenshots. If moving to real Android release, owner must provide Play Console/signing/package data first; automation should not create placeholder assetlinks or perform account/submission work.
+
 ## 2026-07-12 - [codex] app/PWA readiness re-audit
 - **Scope**: Re-checked app/PWA readiness after the SEO topic pages and analytics instrumentation. Local-only audit/documentation slice; no Play Console, app signing, account setup, assetlinks publishing, service worker, deployment, remote write, generated data, scoring, DART, or auth-provider change.
 - **Result**: `npm run app:check` passed with the same expected external gate: `public/.well-known/assetlinks.json` is not generated yet because it requires the real Android package/signing SHA-256 fingerprint.
