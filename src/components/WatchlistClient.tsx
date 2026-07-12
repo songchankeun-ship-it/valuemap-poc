@@ -51,6 +51,11 @@ const SORT_LABELS: Record<SortKey, string> = {
   name: "가나다순",
 };
 const SORT_ORDER: SortKey[] = ["recent", "change", "score", "name"];
+const SAVED_FILTER_STARTERS = [
+  { kind: "stocks", label: "종목 탐색", href: "/stocks" },
+  { kind: "value", label: "저평가 후보", href: "/topics/undervalued-stocks" },
+  { kind: "dividend", label: "배당 후보", href: "/topics/dividend-stocks" },
+] as const;
 
 function groupFilterKind(value: GroupFilterKey): "all" | "ungrouped" | "group" {
   if (value === GROUP_FILTER_ALL) return "all";
@@ -1182,6 +1187,31 @@ export function WatchlistClient({
                 </div>
                 <p className="mt-2 text-[11px] leading-snug text-zinc-400 dark:text-zinc-500">
                   이동한 페이지에서 필요한 필터를 더한 뒤 저장하면 다음 방문 때 여기서 불러올 수 있어요.
+                </p>
+              </div>
+            ) : null}
+            {recentSearches.length === 0 ? (
+              <div className="mt-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 p-3 text-left">
+                <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                  처음이면 이렇게 시작하세요
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {SAVED_FILTER_STARTERS.map((starter) => (
+                    <Link
+                      key={starter.kind}
+                      href={starter.href}
+                      data-analytics-event="saved_filter_empty_starter_open"
+                      data-analytics-kind={starter.kind}
+                      className={`inline-flex min-h-[44px] items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+                    >
+                      <Search className="h-3 w-3" aria-hidden="true" />
+                      <span>{starter.label}</span>
+                    </Link>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-snug text-zinc-400 dark:text-zinc-500">
+                  후보를 둘러본 뒤 종목 탐색에서 필요한 조건을 더하고 저장하면 이 화면에서 바로 불러올 수 있어요.
                 </p>
               </div>
             ) : null}
