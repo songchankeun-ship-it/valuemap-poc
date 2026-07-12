@@ -175,6 +175,12 @@ Important: if Play Console forces a selection that treats stock research as a fi
 | Screenshot alt text | Up to 140 characters each | Use the storyboard below. |
 | Optional preview video | YouTube URL, public or unlisted, not private/age-restricted | Defer until real app install flow is stable. |
 
+Local draft screenshot pack:
+
+- `docs/ornscore-store-visual-assets-pack-2026-07-12.md`
+- `docs/store-assets/2026-07-12/google-play-draft/`
+- Six JPEG screenshots were captured from real local ORNScore UI and passed basic Google Play screenshot shape checks. They are local drafts; final high-resolution Android standalone/TWA captures are still recommended before upload.
+
 ## Screenshot Storyboard
 
 Use real app UI. Avoid stock-price promises, "best", "#1", "free", "top", "download now", or return-performance claims. Keep any added tagline under 20% of the image area, or skip taglines entirely and let the UI speak.
@@ -204,7 +210,8 @@ Capture guidance:
 - [ ] Confirm public privacy policy and terms pages are live.
 - [ ] Confirm contact email `contact@ornscore.com` receives mail.
 - [x] Add a dedicated `/data-deletion` page for the Play Console account/data deletion URL.
-- [ ] Capture 4-7 real mobile screenshots.
+- [x] Capture 6 local Google Play draft screenshots from real ORNScore UI.
+- [ ] Capture final high-resolution Android standalone/TWA screenshots for upload.
 - [ ] Create a 1024x500 feature graphic from actual UI.
 - [ ] Prepare reviewer test account only inside Play Console, not in the repo.
 - [ ] Complete App content declarations manually.
@@ -215,4 +222,4 @@ Capture guidance:
 
 ## Next Local Automation Slice
 
-The highest-value local follow-up is a small public data-deletion/help page if the owner wants Play Console to have a direct URL instead of only `mailto:contact@ornscore.com`. That can be done without Play Console, signing, or deployment changes.
+Create a real 1024x500 Google Play feature graphic source/export from actual ORNScore UI, then verify exact dimensions, format, no alpha, and conservative non-advisory copy. Do not upload it or change Play Console without owner action.

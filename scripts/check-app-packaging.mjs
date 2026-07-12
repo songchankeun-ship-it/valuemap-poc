@@ -173,10 +173,13 @@ if (
   failure("assetlinks example placeholder changed unexpectedly");
 }
 
-includes("docs/app-store-submission-pack.md", "마지막 갱신: 2026-07-11", "current store submission pack date");
+includes("docs/app-store-submission-pack.md", "마지막 갱신: 2026-07-12", "current store submission pack date");
 includes("docs/app-store-submission-pack.md", "로그인 방식: 이메일 매직링크, Kakao, Google, Naver.", "active auth providers in store pack");
 includes("docs/app-store-submission-pack.md", "현재 유료 결제 없음", "no in-app payments in store pack");
 includes("docs/app-store-submission-pack.md", "Supabase, Vercel, Resend, Kakao, Google, Naver", "store privacy processors match public policy");
+includes("docs/app-store-submission-pack.md", "docs/ornscore-store-visual-assets-pack-2026-07-12.md", "store visual assets pack linked");
+includes("docs/ornscore-store-visual-assets-pack-2026-07-12.md", "phone-01-home.jpg", "store visual pack records draft screenshots");
+includes("docs/ornscore-store-visual-assets-pack-2026-07-12.md", "Do not add `screenshots[]` to `src/app/manifest.ts` yet.", "store visual pack keeps manifest screenshots gated");
 includes("docs/app-packaging-readiness.md", "제품 결정 — Android TWA 우선", "Android TWA first decision locked");
 includes("docs/app-packaging-readiness.md", "iOS 정식 래퍼는 보류", "iOS native wrapper deferred");
 includes("docs/app-store-submission-pack.md", "1차 스토어 경로는 **Android TWA**", "store pack uses Android TWA first path");

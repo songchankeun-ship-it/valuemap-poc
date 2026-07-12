@@ -1,12 +1,12 @@
 # 오른스코어 스토어 제출 준비 패키지
 
-마지막 갱신: 2026-07-11
+마지막 갱신: 2026-07-12
 
 ## 목적
 
 이 문서는 Play Store나 App Store로 넘어갈 때 바로 복사·검토할 수 있는 등록 자료 초안이다. 아직 스토어 출시를 공개 약속하지 않는다. 2026-07-01 제품 결정 기준으로 1차 스토어 경로는 **Android TWA**이며, iOS 정식 래퍼는 Android TWA와 실사용 피드백 이후 검토한다.
 
-Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-listing-worksheet-2026-07-12.md`를 우선 본다. 이 문서는 Play/App Store 공통 배경과 리스크 정리용으로 유지한다.
+Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-listing-worksheet-2026-07-12.md`를 우선 본다. 스토어 시각 자산 캡처 초안과 남은 feature graphic/Apple/manifest 게이트는 `docs/ornscore-store-visual-assets-pack-2026-07-12.md`를 본다. 이 문서는 Play/App Store 공통 배경과 리스크 정리용으로 유지한다.
 
 공식 참고(2026-07-01 재확인):
 
@@ -147,6 +147,12 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - 스크린샷 내 주요 문구는 “탐색”, “점수 근거”, “공시 신호”, “데이터 기준일”, “투자 추천 아님” 중심으로 둔다.
 - 실제 스토어 출시가 확정되기 전에는 App Store/Play Store 배지를 공개 이미지에 넣지 않는다(현재 스토어 미출시).
 
+현재 로컬 캡처 초안:
+
+- `docs/ornscore-store-visual-assets-pack-2026-07-12.md`
+- `docs/store-assets/2026-07-12/google-play-draft/`
+- 6장 JPEG 초안은 Google Play 기본 스크린샷 형식/치수/용량 검사를 통과했다. 단, 고해상도 추천 노출 자격과 Apple App Store Connect 업로드용 최종 자산은 아니다.
+
 스크린샷 캡처 체크리스트 (위 ‘스크린샷 후보’ URL 기준, 5~7장):
 
 - [ ] `/` 홈 — 오늘의 후보와 데이터 기준일
@@ -159,7 +165,8 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 
 미확보 에셋 게이트 (현재 저장소에 자산 없음 — 제작 전까지 비워 둔다):
 
-- [ ] 캡처된 모바일 standalone 스크린샷 — 실기기 캡처 필요(오너).
+- [x] Google Play용 로컬 draft 모바일 스크린샷 6장 — 실제 UI 캡처 완료(`docs/store-assets/2026-07-12/google-play-draft/`).
+- [ ] 최종 고해상도 Android standalone/TWA 스크린샷 — 실기기 또는 TWA 캡처 필요(오너).
 - [ ] `src/app/manifest.ts`의 `screenshots[]` — 위 캡처가 선행되어야 채울 수 있음(오너/디자인). 캡처 없이 필드만 추가하면 깨진 참조가 되므로 지금은 넣지 않는다.
 - [ ] OG/Twitter 공유 카드 이미지 — `public/`에 공유 이미지 없음, 대표 이미지 1장 제작 필요(오너/디자인). `twitter.card`가 `summary_large_image`이나 `images` 미지정 상태이며, 이미지 없이 필드만 추가하지 않는다.
 
