@@ -34,6 +34,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `saved_filter_watchlist_open` | `/watchlist` saved-filter card | `count`, `hasQuery`, `hasSector`, `themeCount` | User opens `/stocks` from a saved filter; no saved-filter name or raw query is sent. |
 | `saved_filter_watchlist_remove` | `/watchlist` saved-filter remove button | `count`, `hasQuery`, `hasSector`, `themeCount` | User removes a saved filter from the routine page; no saved-filter name or raw query is sent. |
 | `saved_filter_watchlist_rename` | `/watchlist` saved-filter rename form | `count`, `hasQuery`, `hasSector`, `themeCount` | User renames a saved filter from the routine page; no saved-filter name or raw query is sent. |
+| `saved_filter_empty_recent_search_open` | `/watchlist` saved-filter empty-state recent-search chip | `index`, `count` | User opens `/stocks?q=...` from a recent-search chip to create a saved filter; raw search text is not sent. |
 | `stock_checklist_next_open` | Stock detail checklist next-step CTA | `ticker`, `step` | User follows the next unchecked checklist item; only ticker and fixed checklist step id are sent. |
 | `stock_checklist_routine_open` | Stock detail checklist completion CTA | `ticker` | User finishes the local stock checklist and opens the personal routine page. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |

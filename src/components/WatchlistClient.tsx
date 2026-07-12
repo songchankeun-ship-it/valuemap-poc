@@ -1159,6 +1159,32 @@ export function WatchlistClient({
             <Link href="/stocks" className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
               종목 탐색에서 조건 만들기 <ArrowRight className="w-3 h-3" />
             </Link>
+            {recentSearches.length > 0 ? (
+              <div className="mt-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 p-3 text-left">
+                <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
+                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                  최근 검색으로 조건 만들기
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {recentSearches.slice(0, 3).map((term, idx) => (
+                    <Link
+                      key={`${term}-${idx}`}
+                      href={`/stocks?q=${encodeURIComponent(term)}`}
+                      data-analytics-event="saved_filter_empty_recent_search_open"
+                      data-analytics-index={idx + 1}
+                      data-analytics-count={recentSearches.length}
+                      className={`inline-flex min-h-[36px] items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+                    >
+                      <Search className="h-3 w-3" aria-hidden="true" />
+                      <span className="max-w-[9rem] truncate">{term}</span>
+                    </Link>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-snug text-zinc-400 dark:text-zinc-500">
+                  이동한 페이지에서 필요한 필터를 더한 뒤 저장하면 다음 방문 때 여기서 불러올 수 있어요.
+                </p>
+              </div>
+            ) : null}
           </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
