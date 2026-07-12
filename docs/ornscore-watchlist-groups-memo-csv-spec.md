@@ -166,3 +166,10 @@ type WatchlistItem = {
 - `/watchlist` now lets users set neutral preset groups and short notes per saved ticker. The UI states that group/memo/CSV stay in this browser.
 - CSV export now fills `group` and `note` from that local metadata while preserving the existing client-only Blob export and CSV formula-injection defense.
 - Analytics added `watchlist_meta_update` with field/value-presence metadata only; memo content and raw custom labels are not sent.
+
+## 2026-07-13 Implementation Note - Local Group Filter Slice
+
+- `/watchlist` now adds local group filter chips for `전체`, `미분류`, and in-use groups when at least one ticker has a group.
+- The selected filter is stored in `ornscore_watchlist_group_filter`; it only changes visible rows and does not alter watchlist membership, group metadata, scoring, or CSV rows.
+- CSV remains an all-watchlist export to avoid accidental hidden-row exports. Group-level CSV export remains a separate future slice.
+- Analytics added `watchlist_group_filter_change` with `all`/`ungrouped`/`group` kind and count only; raw group labels are not sent.

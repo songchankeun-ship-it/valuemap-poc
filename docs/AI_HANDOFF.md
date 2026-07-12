@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:00:11+09:00
+Last updated: 2026-07-13T01:15:05+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist local group/memo UX
+- Task: Direct Codex product slice - watchlist local group filter
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only watchlist metadata controls added and verified; no push/deploy.
+- Note: Local-only watchlist group filter added and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist local group filter
+- **Context**: Continued the app-like watchlist routine path after local group/memo controls. This slice is browser-local UI only: no Supabase schema/RLS migration, cross-device sync, group-level CSV export, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.
+- **Changes**: `/watchlist` now has persisted `ornscore_watchlist_group_filter` chips for `전체`, `미분류`, and in-use groups. The visible list and compare CTA use the selected filter; CSV stays the full watchlist export to avoid hidden-row data loss. Added an empty filtered-group recovery state and `watchlist_group_filter_change` analytics with filter kind/count only.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4693 passed 4/4 real gates. Chrome/Playwright via bundled runtime verified mobile 390x844 group filter chips, group and ungrouped filtering counts, persisted selected filter, current-filter copy, and desktop overflow 0.
+- **Next**: Continue app-like watchlist work with group collapse/summary cards or move to stock-detail CTA handoff into recent/watchlist actions. Supabase sync, group-level CSV export, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Watchlist local group/memo UX
 - **Context**: Continued Task 221 after the CSV MVP. This slice is browser-local only: no Supabase schema/RLS migration, cross-device sync, CSV import, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account state change.

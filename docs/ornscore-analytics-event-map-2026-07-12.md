@@ -29,6 +29,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `watchlist_login_cta` | Watchlist logged-out guidance | `ticker` | User sees local-save value and chooses login. |
 | `watchlist_csv_export` | `/watchlist` CSV export button | `count`, `loggedIn`, `sort` | User exports their current watchlist locally as a CSV file. |
 | `watchlist_meta_update` | `/watchlist` local group/note controls | `field`, `ticker`, `hasValue`, `loggedIn` | User updates browser-local watchlist metadata; note text and custom labels are not sent. |
+| `watchlist_group_filter_change` | `/watchlist` local group filter chips | `filter`, `count`, `loggedIn` | User narrows the visible watchlist by all/ungrouped/group; raw group labels are not sent. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |
 | `report_data_issue_submit` | Data issue form submit | `category`, `ticker`, `hasEmail` | User submits a data quality report attempt. |

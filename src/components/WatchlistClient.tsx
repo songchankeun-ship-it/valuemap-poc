@@ -36,10 +36,14 @@ const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
 const LEGACY_VIEW_KEY = "valuemap_watchlist_view";
 const SORT_KEY = "ornscore_watchlist_sort";
+const GROUP_FILTER_KEY = "ornscore_watchlist_group_filter";
+const GROUP_FILTER_ALL = "__all__";
+const GROUP_FILTER_UNGROUPED = "__ungrouped__";
 // StocksExplorer가 저장하는 최근 검색어 키를 그대로 읽어(표시 전용) 루틴 화면에서 재검색으로 잇는다.
 const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
 
 type SortKey = "recent" | "change" | "score" | "name";
+type GroupFilterKey = string;
 const SORT_LABELS: Record<SortKey, string> = {
   recent: "최신순",
   change: "변화순",
@@ -47,6 +51,12 @@ const SORT_LABELS: Record<SortKey, string> = {
   name: "가나다순",
 };
 const SORT_ORDER: SortKey[] = ["recent", "change", "score", "name"];
+
+function groupFilterKind(value: GroupFilterKey): "all" | "ungrouped" | "group" {
+  if (value === GROUP_FILTER_ALL) return "all";
+  if (value === GROUP_FILTER_UNGROUPED) return "ungrouped";
+  return "group";
+}
 
 function readRecentSearches(): string[] {
   if (typeof window === "undefined") return [];
@@ -138,6 +148,7 @@ export function WatchlistClient({
   const [loadError, setLoadError] = useState(false);
   const [view, setView] = useState<"simple" | "analysis">("simple");
   const [sort, setSort] = useState<SortKey>("recent");
+  const [groupFilter, setGroupFilter] = useState<GroupFilterKey>(GROUP_FILTER_ALL);
   const [hydrated, setHydrated] = useState(false);
   // 방금 제거한 종목 — 실수로 뺀 경우 되돌리기(5초 자동 소멸, compare와 동일 패턴)
   const [undoStock, setUndoStock] = useState<{ ticker: string; name: string } | null>(null);
@@ -161,6 +172,12 @@ export function WatchlistClient({
     } catch {
       // 저장소 사용 불가 — 기본 정렬(recent) 유지
     }
+    try {
+      const g = typeof window !== "undefined" ? localStorage.getItem(GROUP_FILTER_KEY) : null;
+      if (g === GROUP_FILTER_ALL || g === GROUP_FILTER_UNGROUPED || (g && g.length <= 40)) setGroupFilter(g);
+    } catch {
+      // 저장소 사용 불가 — 기본 그룹 필터(전체) 유지
+    }
     setRecentSearches(readRecentSearches());
     const storedMeta = readWatchlistMeta();
     watchlistMetaRef.current = storedMeta;
@@ -176,6 +193,22 @@ export function WatchlistClient({
         // 저장 실패 — 이번 세션에는 정렬이 반영되지만 새로고침 시 복원되지 않음
       }
     }
+  }
+
+  function changeGroupFilter(next: GroupFilterKey, count: number) {
+    setGroupFilter(next);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(GROUP_FILTER_KEY, next);
+      } catch {
+        // 저장 실패 — 이번 세션에는 필터가 반영되지만 새로고침 시 복원되지 않음
+      }
+    }
+    trackEvent("watchlist_group_filter_change", {
+      filter: groupFilterKind(next),
+      count,
+      loggedIn: isLoggedIn,
+    });
   }
 
   function changeView(v: "simple" | "analysis") {
@@ -434,9 +467,47 @@ export function WatchlistClient({
   const sortedWatchlistWithMeta = attachWatchlistMeta(sortedWatchlist, watchlistMeta);
   const groupedWatchlistCount = sortedWatchlistWithMeta.filter((item) => item.group).length;
   const notedWatchlistCount = sortedWatchlistWithMeta.filter((item) => item.note).length;
+  const ungroupedWatchlistCount = sortedWatchlistWithMeta.length - groupedWatchlistCount;
+  const groupCounts = new Map<string, number>();
+  for (const item of sortedWatchlistWithMeta) {
+    if (!item.group) continue;
+    groupCounts.set(item.group, (groupCounts.get(item.group) ?? 0) + 1);
+  }
+  const presetGroupSet = new Set<string>(WATCHLIST_GROUP_OPTIONS);
+  const customGroups = Array.from(groupCounts.keys())
+    .filter((group) => !presetGroupSet.has(group))
+    .sort((a, b) => a.localeCompare(b, "ko"));
+  const groupsInUse = [
+    ...WATCHLIST_GROUP_OPTIONS.filter((group) => groupCounts.has(group)),
+    ...customGroups,
+  ];
+  const groupFilterOptions: { value: GroupFilterKey; label: string; count: number }[] = [
+    { value: GROUP_FILTER_ALL, label: "전체", count: sortedWatchlistWithMeta.length },
+    ...(ungroupedWatchlistCount > 0 || groupFilter === GROUP_FILTER_UNGROUPED
+      ? [{ value: GROUP_FILTER_UNGROUPED, label: "미분류", count: ungroupedWatchlistCount }]
+      : []),
+    ...groupsInUse.map((group) => ({ value: group, label: group, count: groupCounts.get(group) ?? 0 })),
+  ];
+  if (
+    groupFilter !== GROUP_FILTER_ALL &&
+    groupFilter !== GROUP_FILTER_UNGROUPED &&
+    !groupFilterOptions.some((option) => option.value === groupFilter)
+  ) {
+    groupFilterOptions.push({ value: groupFilter, label: groupFilter, count: 0 });
+  }
+  const activeGroupFilter = groupFilterOptions.some((option) => option.value === groupFilter)
+    ? groupFilter
+    : GROUP_FILTER_ALL;
+  const filteredWatchlist = sortedWatchlistWithMeta.filter((item) => {
+    if (activeGroupFilter === GROUP_FILTER_ALL) return true;
+    if (activeGroupFilter === GROUP_FILTER_UNGROUPED) return !item.group;
+    return item.group === activeGroupFilter;
+  });
+  const activeGroupFilterLabel = groupFilterOptions.find((option) => option.value === activeGroupFilter)?.label ?? "전체";
+  const showGroupFilters = watchlist.length > 0 && (groupedWatchlistCount > 0 || activeGroupFilter !== GROUP_FILTER_ALL);
 
   // 관심 종목 비교하기 CTA — 담아둔 종목 앞에서부터 최대 COMPARE_MAX개를 비교 화면에 시드
-  const compareSeed = sortedWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
+  const compareSeed = filteredWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
   const todayCompareHref =
     todayCompareTickers.length >= 2
       ? `/compare?stocks=${todayCompareTickers.slice(0, 3).join(",")}`
@@ -572,6 +643,37 @@ export function WatchlistClient({
           </div>
         ) : null}
 
+        {/* 그룹 필터 — 로컬 메타데이터만 사용해 화면 표시를 좁힌다. CSV는 전체 목록 기준 유지. */}
+        {showGroupFilters ? (
+          <div className="mb-3 flex items-center gap-2 overflow-x-auto -mx-0.5 px-0.5 pb-0.5">
+            <span className="flex shrink-0 items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+              그룹
+            </span>
+            <div className="flex shrink-0 gap-1" role="group" aria-label="관심 종목 그룹 필터">
+              {groupFilterOptions.map((option) => {
+                const active = activeGroupFilter === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => changeGroupFilter(option.value, option.count)}
+                    aria-pressed={active}
+                    className={
+                      "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3 text-xs font-medium whitespace-nowrap transition " +
+                      (active
+                        ? "border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
+                        : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700")
+                    }
+                  >
+                    <span>{option.label}</span>
+                    <span className="tabular-nums text-[11px] text-zinc-400 dark:text-zinc-500">{option.count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
         {/* 로그인 전/후 저장 안내 — 상태별 한 문장으로 통일(비로그인=이 기기 저장·로그인 시 이어짐, 로그인=다기기, 압박·팝업 없음) */}
         {!isLoggedIn ? (
           <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 text-xs">
@@ -593,9 +695,10 @@ export function WatchlistClient({
 
         {watchlist.length > 0 ? (
           <p className="mb-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-            그룹·메모·CSV는 이 브라우저에서만 저장·생성되며 서버로 업로드하지 않아요.
+            그룹·메모는 이 브라우저에만 저장되고, CSV는 전체 관심 목록 기준으로 이 브라우저에서 만들어져요.
             {" "}
             그룹 지정 {groupedWatchlistCount}개 · 메모 {notedWatchlistCount}개
+            {activeGroupFilter !== GROUP_FILTER_ALL ? <> · 현재 {activeGroupFilterLabel} {filteredWatchlist.length}개 표시</> : null}
           </p>
         ) : null}
 
@@ -762,9 +865,21 @@ export function WatchlistClient({
               <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
             </div>
           </div>
+        ) : filteredWatchlist.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-5 text-center">
+            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">이 그룹에 표시할 종목이 없어요.</p>
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 break-keep">그룹을 바꾸었거나 마지막 종목을 다른 그룹으로 옮긴 상태예요.</p>
+            <button
+              type="button"
+              onClick={() => changeGroupFilter(GROUP_FILTER_ALL, sortedWatchlistWithMeta.length)}
+              className={`mt-3 inline-flex min-h-[44px] items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+            >
+              전체 보기
+            </button>
+          </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
-            {sortedWatchlistWithMeta.map((item) => {
+            {filteredWatchlist.map((item) => {
               const info = allStocks.find((s) => s.ticker === item.ticker);
               const name = info?.name ?? item.ticker;
               const signal = tickerToSignal[item.ticker];
@@ -880,7 +995,7 @@ export function WatchlistClient({
         )}
 
         {/* 관심 종목 비교하기 — 담아둔 종목 앞에서부터 최대 N개를 한 번에 비교 화면에 시드(1탭 이동) */}
-        {watchlist.length > 1 ? (
+        {filteredWatchlist.length > 1 ? (
           <div className="mt-3">
             <Link
               href={`/compare?stocks=${compareSeed.join(",")}`}
@@ -889,7 +1004,7 @@ export function WatchlistClient({
               <Scale className="w-4 h-4" /> 관심 종목 비교하기
             </Link>
             <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-              앞에서부터 최대 {COMPARE_MAX}개를 비교 화면에 담아요 · 비교는 참고용이며 매수·매도 추천이 아닙니다.
+              {activeGroupFilter === GROUP_FILTER_ALL ? "앞에서부터" : `${activeGroupFilterLabel}에서 앞에서부터`} 최대 {COMPARE_MAX}개를 비교 화면에 담아요 · 비교는 참고용이며 매수·매도 추천이 아닙니다.
             </p>
           </div>
         ) : null}
