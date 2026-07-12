@@ -1316,6 +1316,9 @@ export function WatchlistClient({
                       <div className="shrink-0 text-right">
                         <div className="text-sm font-semibold tabular-nums text-blue-700 dark:text-blue-400">{count}개</div>
                         <div className="text-[10px] text-zinc-400 dark:text-zinc-500">현재 조건 충족</div>
+                        <div className="mt-1 inline-flex items-center justify-end gap-0.5 rounded-full bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-700 dark:bg-blue-950/30 dark:text-blue-300">
+                          조건 열기 <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                        </div>
                       </div>
                     </Link>
                     <button
