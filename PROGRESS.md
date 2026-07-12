@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] watchlist saved-filter empty recent search
+- **Scope**: Improved the `/watchlist` saved-filter empty state with recent-search starter chips. No saved-search schema/RLS change, saved-filter persistence change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
+- **Changes**: When there are no saved filters but the browser has recent stock-search terms, the saved-filter empty state now shows up to three compact chips. Each chip opens `/stocks?q=...` so the user can add filters and save that condition. Added `saved_filter_empty_recent_search_open` analytics with only `index` and `count`; raw search text is not sent.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4705 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks` recent search -> `/watchlist` empty saved-filter starter chip, structural analytics attrs without raw query, chip navigation to `/stocks?q=...`, and mobile/desktop overflow 0.
+- **Commit**: `2a5703e` (`[codex] add saved filter empty recent search`).
+- **Next**: Continue with another small local app-like polish slice, preferably stock-detail routine microcopy or watchlist saved-filter starter guidance for empty recent-search state. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stock checklist next-action CTA
 - **Scope**: Added a local stock-detail checklist next-step CTA. No checklist storage key/item id changes, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: `StockChecklist` now shows a 44px next-action link for the next unchecked checklist item, pointing to the existing section anchors and tracking `stock_checklist_next_open` with ticker plus fixed step id only. Once all items are checked, the next-action CTA disappears and the existing `/watchlist` routine CTA remains. Updated localized copy and the analytics event map.

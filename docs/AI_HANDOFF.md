@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T04:08:50+09:00
+Last updated: 2026-07-13T04:32:50+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock checklist next-action CTA
+- Task: Direct Codex product slice - watchlist saved-filter empty recent search
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local `/stock/[ticker]` checklist now exposes the next unchecked step and was verified on mobile/desktop; implementation commit `3c707aa`; no push/deploy.
+- Note: Local `/watchlist` saved-filter empty state now offers recent-search starter chips and was verified on mobile/desktop; implementation commit `2a5703e`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist saved-filter empty recent search
+- **Context**: Continued the app-like watchlist routine after stock checklist next-action CTA. This slice is local UI/client docs only: no saved-search schema/RLS change, saved-filter persistence change, alert-delivery change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: The `/watchlist` saved-filter empty state now shows up to three recent-search chips when there are no saved filters. Chips open `/stocks?q=...` so the user can add filters and save the condition. Added `saved_filter_empty_recent_search_open` with `index` and `count` only; raw search text is not tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4705 passed 4/4 real gates. In-app browser verified 390x844 recent search -> saved-filter empty starter chip, structural analytics attrs without raw query, chip navigation to `/stocks?q=...`, and desktop overflow 0.
+- **Commit**: `2a5703e` (`[codex] add saved filter empty recent search`).
+- **Next**: Continue with another small local product-polish slice such as stock-detail routine microcopy or a clearer saved-filter starter state when there are no recent searches. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Stock checklist next-action CTA
 - **Context**: Continued the app-like stock-detail routine after watchlist saved-filter rename. This slice is local UI/client copy/docs only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
