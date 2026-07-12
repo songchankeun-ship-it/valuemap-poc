@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T05:31:05+09:00
+Last updated: 2026-07-13T05:45:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - topic saved-filter handoff
+- Task: Direct Codex product slice - stocks topic save handoff
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Topic pages now expose an early saved-filter handoff CTA into the existing `/stocks`/`/stocks?theme=...` save flow; implementation commit `8c749c1`; no push/deploy.
+- Note: `/stocks?theme=...` and initial sector/theme entries now show a first-screen save handoff that opens the existing inline saved-filter form; implementation commit `bb86d8e`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stocks topic save handoff
+- **Context**: Continued the saved-filter/topic routine after the topic-page CTA. This slice is local UI/client copy only: no saved-search persistence change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/stocks` now detects initial theme/sector entry and shows a compact first-screen handoff card explaining that the condition is applied. The `이 조건 저장하기` button reuses `openSaveSearchForm`, so the existing inline saved-search form opens with the topic/sector label prefilled. Plain `/stocks` stays unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4709 passed 4/4 real gates. In-app browser verified 390x844 `/stocks?theme=반도체` first-viewport placement, save form focus/value `반도체`, plain `/stocks` absence, desktop overflow 0; temp port 4709 was stopped.
+- **Commit**: `bb86d8e` (`[codex] add stocks topic save handoff`).
+- **Next**: Continue with another small local app-like polish slice such as stock-detail routine copy or watchlist saved-filter clarity. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Topic saved-filter handoff
 - **Context**: Continued the app-like saved-filter/topic routine after stock checklist resume hint. This slice is local UI/navigation/docs only: no saved-search persistence change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.

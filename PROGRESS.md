@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stocks topic save handoff
+- **Scope**: Added a local `/stocks` follow-through handoff for users arriving from topic/sector entry points. No saved-search persistence change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: When `/stocks` opens with an initial theme or sector filter, a compact first-screen card now explains that the condition is already applied and offers `이 조건 저장하기`. The CTA reuses the existing inline saved-search form, prefilled with the applied topic/sector label, so topic CTA users can finish the routine without hunting for the lower saved-filter controls. Plain `/stocks` remains unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4709 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks?theme=반도체` handoff in first viewport, CTA opens the existing save form focused with value `반도체`, plain `/stocks` has no handoff, desktop overflow 0; temp port 4709 was stopped.
+- **Commit**: `bb86d8e` (`[codex] add stocks topic save handoff`).
+- **Next**: Continue with another small local app-like polish slice, preferably stock-detail routine copy or watchlist saved-filter clarity that stays local. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] topic saved-filter handoff
 - **Scope**: Added a local topic-page handoff toward saved filters. No saved-search persistence change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: `/topics/[slug]` now shows an early "이 주제를 루틴으로 남기기" CTA inside the topic criteria panel. The CTA sends users to the existing `/stocks` or topic-specific `/stocks?theme=...` route so they can add conditions and use the existing `조건 저장` flow. Added `topic_saved_filter_start` analytics with `topic` and `filtered` only.
