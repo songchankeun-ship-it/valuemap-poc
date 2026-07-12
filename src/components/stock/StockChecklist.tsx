@@ -46,6 +46,7 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
   const done = CHECKLIST_ITEMS.reduce((n, item) => n + (checked[item.id] ? 1 : 0), 0);
   const allDone = done === total;
   const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+  const nextItem = CHECKLIST_ITEMS.find((item) => checked[item.id] !== true);
 
   return (
     <section
@@ -129,6 +130,18 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
           {allDone ? t.allDone : t.storageNote}
         </p>
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
+          {!allDone && nextItem ? (
+            <a
+              href={nextItem.anchor}
+              data-analytics-event="stock_checklist_next_open"
+              data-analytics-ticker={ticker}
+              data-analytics-step={nextItem.id}
+              className={`inline-flex items-center gap-1 min-h-[44px] px-2.5 rounded-md text-[11px] font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition ${FOCUS_RING}`}
+            >
+              {t.nextCta(t.items[nextItem.id])}
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </a>
+          ) : null}
           {allDone ? (
             <Link
               href="/watchlist"
