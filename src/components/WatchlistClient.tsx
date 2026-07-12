@@ -1187,9 +1187,23 @@ export function WatchlistClient({
             </span>
           </h2>
           {savedSearches.length > 0 ? (
-            <Link href="/stocks" className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-0.5">
-              조건 추가 <ArrowRight className="w-3 h-3" />
-            </Link>
+            <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+              <Link
+                href="/settings/notifications"
+                data-analytics-event="saved_filter_notification_settings_open"
+                data-analytics-count={savedSearches.length}
+                className={`inline-flex min-h-[44px] items-center gap-1 rounded-md px-2.5 text-xs font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 ${FOCUS_RING}`}
+              >
+                <Bell className="h-3.5 w-3.5" aria-hidden="true" />
+                알림 설정
+              </Link>
+              <Link
+                href="/stocks"
+                className={`inline-flex min-h-[44px] items-center gap-1 rounded-md px-2.5 text-xs font-medium text-blue-600 transition hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/20 dark:hover:text-blue-300 ${FOCUS_RING}`}
+              >
+                조건 추가 <ArrowRight className="w-3 h-3" aria-hidden="true" />
+              </Link>
+            </div>
           ) : null}
         </div>
 
