@@ -1,10 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stock detail recent-change card links
+- **Scope**: Made the `/stock/[ticker]` recent-change summary cards actionable. No scoring/data/DART/watchlist storage/Supabase/auth/deployment/push/remote changes.
+- **Changes**: `종합 점수` and `거래활성도` cards link to `#basis`, `3개월 수익률` links to `#summary`, and all recent-change card links now have a visible keyboard focus ring. Existing `최근 공시` link to `#disclosures` remains unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4701 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stock/005930` recent score card -> `#basis` with selected tab `점수 근거`, recent 3-month card -> `#summary` with selected tab `요약`, mobile overflow 0; desktop 1280x900 recent-card links present and overflow 0.
+- **Commit**: `aca7ac8` (`[codex] link recent change cards to tabs`).
+- **Next**: Continue with a small local saved-filter rename affordance or another conservative stock-detail routine polish only if it stays local. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stocks inline condition alert form
 - **Scope**: Replaced the `/stocks` condition-alert browser dialog flow with an inline form/status path. No condition-alert schema/RLS change, alert-delivery change, saved-search persistence change, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
 - **Changes**: `이 조건 알림` now opens an inline name form with a suggested alert name. Submitting still calls the existing `addConditionAlert(name, buildCurrentConfig())` path, but login-required, success, and error states render inline instead of using `window.prompt()`, `window.confirm()`, or `window.alert()`. The login-required state links to `/login?next=/stocks`.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4700 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks` alert form opens without a JS dialog, submit shows inline login-required status with one `/login?next=/stocks` link, mobile overflow 0; desktop 1280x900 alert form opens without a JS dialog, overflow 0.
-- **Commit**: pending in this local `[codex]` slice; final automation heartbeat reports the exact hash after commit.
+- **Commit**: `86e41ba` (`[codex] add inline condition alert form`).
 - **Next**: Continue with a conservative stock-detail recent-action panel or saved-filter rename only if it stays local and small. Keep Supabase schema/RLS work, alert-delivery changes, CSV import, app-store console, deployment, push, and remote/account changes as owner-approved gates.
 
 ## 2026-07-13 - [codex] watchlist saved filter removal
