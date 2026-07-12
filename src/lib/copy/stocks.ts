@@ -66,6 +66,14 @@ export const stocksCopy = {
     saveNamePlaceholder: "예: 저PER 배당주",
     saveNameSubmit: "저장",
     saveNameCancel: "취소",
+    defaultAlertName: "내 조건 알림",
+    alertNameSuffix: "알림",
+    alertNameAria: "조건 알림 이름",
+    alertNamePlaceholder: "예: 저PER 배당주 신규",
+    alertNameSubmit: "알림 만들기",
+    alertNameCancel: "취소",
+    alertLoginRequired: "조건 알림은 로그인 후 받을 수 있어요. 현재는 이메일 발송, 카카오톡 알림은 준비 중입니다.",
+    alertLoginCta: "로그인",
 
     // ── prompt / confirm / alert ──
     promptSaveName: "이 검색 조건의 이름을 정해주세요 (예: 저PER 배당주)",
@@ -403,6 +411,14 @@ export const stocksCopy = {
     saveNamePlaceholder: "e.g., Low PER dividend stocks",
     saveNameSubmit: "Save",
     saveNameCancel: "Cancel",
+    defaultAlertName: "My condition alert",
+    alertNameSuffix: "alert",
+    alertNameAria: "Condition alert name",
+    alertNamePlaceholder: "e.g., New low-PER dividend stocks",
+    alertNameSubmit: "Create alert",
+    alertNameCancel: "Cancel",
+    alertLoginRequired: "Condition alerts are delivered after sign-in. Email is available for now; KakaoTalk alerts are in the works.",
+    alertLoginCta: "Sign in",
 
     // ── prompt / confirm / alert ──
     promptSaveName: "Name this search (e.g., Low PER dividend stocks)",

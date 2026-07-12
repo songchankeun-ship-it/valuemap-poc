@@ -300,6 +300,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
   const [saveSearchName, setSaveSearchName] = useState("");
+  const [alertFormOpen, setAlertFormOpen] = useState(false);
+  const [alertName, setAlertName] = useState("");
+  const [alertStatus, setAlertStatus] = useState<"login" | "ok" | "error" | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [recentViews, setRecentViews] = useState<RecentView[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("card");
@@ -381,10 +384,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     if (minComposite > 0) return `${t.metric.composite} ${minComposite}+`;
     return t.defaultSavedName;
   }
+  function suggestedAlertName(): string {
+    const base = suggestedSavedSearchName();
+    return base === t.defaultSavedName ? t.defaultAlertName : `${base} ${t.alertNameSuffix}`;
+  }
   function openSaveSearchForm() {
     setSaveSearchName((prev) => prev.trim() || suggestedSavedSearchName());
     setSaveSearchOpen(true);
     window.setTimeout(() => document.getElementById("stocks-save-search-name")?.focus(), 0);
+  }
+  function openAlertForm() {
+    setAlertName((prev) => prev.trim() || suggestedAlertName());
+    setAlertStatus(null);
+    setAlertFormOpen(true);
+    window.setTimeout(() => document.getElementById("stocks-alert-name")?.focus(), 0);
   }
   async function submitSaveSearch(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
@@ -401,18 +414,19 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     const ok = await removeSavedSearch(id);
     if (ok) setSavedSearches((prev) => prev.filter((sv) => sv.id !== id));
   }
-  async function handleCreateAlert() {
-    const name = (typeof window !== "undefined" ? window.prompt(t.promptAlertName) : "")?.trim();
+  async function submitConditionAlert(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    const name = alertName.trim();
     if (!name) return;
     const r = await addConditionAlert(name, buildCurrentConfig());
     if (r === "login") {
-      if (typeof window !== "undefined" && window.confirm(t.confirmAlertLogin)) {
-        window.location.href = "/login?next=/stocks";
-      }
+      setAlertStatus("login");
     } else if (r === "ok") {
-      if (typeof window !== "undefined") window.alert(t.alertCreated);
+      setAlertStatus("ok");
+      setAlertFormOpen(false);
+      setAlertName("");
     } else {
-      if (typeof window !== "undefined") window.alert(t.alertFailed);
+      setAlertStatus("error");
     }
   }
 
@@ -1144,7 +1158,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
           <div className="flex gap-1.5">
             <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
-            <button type="button" onClick={handleCreateAlert} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
+            <button type="button" onClick={openAlertForm} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
           </div>
         </div>
         {saveSearchOpen ? (
@@ -1162,6 +1176,42 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               <button type="button" onClick={() => setSaveSearchOpen(false)} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.saveNameCancel}</button>
             </div>
           </form>
+        ) : null}
+        {alertFormOpen ? (
+          <form onSubmit={submitConditionAlert} className="mb-2 flex flex-col gap-2 sm:flex-row">
+            <input
+              id="stocks-alert-name"
+              value={alertName}
+              onChange={(e) => setAlertName(e.target.value)}
+              aria-label={t.alertNameAria}
+              placeholder={t.alertNamePlaceholder}
+              className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
+            />
+            <div className="flex gap-1.5">
+              <button type="submit" className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 transition ${FOCUS_RING}`}>{t.alertNameSubmit}</button>
+              <button type="button" onClick={() => { setAlertFormOpen(false); setAlertStatus(null); }} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.alertNameCancel}</button>
+            </div>
+          </form>
+        ) : null}
+        {alertStatus ? (
+          <div
+            role="status"
+            className={
+              "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
+              (alertStatus === "ok"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+                : alertStatus === "login"
+                  ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-300"
+                  : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
+            }
+          >
+            {alertStatus === "ok" ? t.alertCreated : alertStatus === "login" ? (
+              <>
+                {t.alertLoginRequired}{" "}
+                <Link href="/login?next=/stocks" className="font-semibold underline underline-offset-2">{t.alertLoginCta}</Link>
+              </>
+            ) : t.alertFailed}
+          </div>
         ) : null}
         {savedSearches.length === 0 ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.savedEmpty}</p>
@@ -1271,7 +1321,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           </div>
           <div className="flex gap-1.5 shrink-0 flex-wrap">
             <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap">{t.saveCond}</button>
-            <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap">{t.alertCondShort}</button>
+            <button type="button" onClick={openAlertForm} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap">{t.alertCondShort}</button>
             <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition whitespace-nowrap " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>{t.reset}</button>
           </div>
         </div>

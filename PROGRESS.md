@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] stocks inline condition alert form
+- **Scope**: Replaced the `/stocks` condition-alert browser dialog flow with an inline form/status path. No condition-alert schema/RLS change, alert-delivery change, saved-search persistence change, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
+- **Changes**: `이 조건 알림` now opens an inline name form with a suggested alert name. Submitting still calls the existing `addConditionAlert(name, buildCurrentConfig())` path, but login-required, success, and error states render inline instead of using `window.prompt()`, `window.confirm()`, or `window.alert()`. The login-required state links to `/login?next=/stocks`.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4700 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/stocks` alert form opens without a JS dialog, submit shows inline login-required status with one `/login?next=/stocks` link, mobile overflow 0; desktop 1280x900 alert form opens without a JS dialog, overflow 0.
+- **Commit**: pending in this local `[codex]` slice; final automation heartbeat reports the exact hash after commit.
+- **Next**: Continue with a conservative stock-detail recent-action panel or saved-filter rename only if it stays local and small. Keep Supabase schema/RLS work, alert-delivery changes, CSV import, app-store console, deployment, push, and remote/account changes as owner-approved gates.
+
 ## 2026-07-13 - [codex] watchlist saved filter removal
 - **Scope**: Added an inline remove affordance for saved filters on `/watchlist`. No saved-search schema/RLS change, `/stocks` saved-filter creation logic change, alert-delivery change, scoring formula, generated stock data, DART logic, auth-provider, deployment, push, or remote/account change.
 - **Changes**: `/watchlist` saved-filter rows are now valid link + remove-button siblings. The row still opens `/stocks` through the saved-filter bridge, while the 44px remove button calls the existing `removeSavedSearch` helper, updates local state, and tracks `saved_filter_watchlist_remove` with structural metadata only.

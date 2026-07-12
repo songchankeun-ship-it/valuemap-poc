@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:57:22+09:00
+Last updated: 2026-07-13T02:28:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - watchlist saved filter removal
+- Task: Direct Codex product slice - stocks inline condition alert form
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only `/watchlist` saved-filter remove affordance added and verified; no push/deploy.
+- Note: Local-only `/stocks` condition-alert inline form/status added and verified; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stocks inline condition alert form
+- **Context**: Continued the app-like `/stocks` routine path after saved-filter removal. This slice is local UI/status only: no condition-alert schema/RLS change, alert-delivery change, saved-search persistence change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/stocks` condition-alert creation no longer depends on browser dialogs. `이 조건 알림` opens an inline name form, submits through the existing `addConditionAlert(name, buildCurrentConfig())` helper, and renders success/error/login-required status inline. The login-required status keeps the user in flow with a `/login?next=/stocks` link.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4700 passed 4/4 real gates. In-app browser verified 390x844 alert form open + submit without JS dialog, inline login-required status/link, overflow 0; desktop 1280x900 alert form open without JS dialog, overflow 0.
+- **Commit**: pending in this local `[codex]` slice; final automation heartbeat reports the exact hash after commit.
+- **Next**: Continue with a conservative stock-detail recent-action panel or saved-filter rename only if it stays local and small. Supabase schema/RLS work, alert-delivery changes, CSV import, app-store console, deployment, push, and remote/account changes remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Watchlist saved filter removal
 - **Context**: Continued the app-like personal routine path after making saved filters load from `/watchlist`. This slice is local UI/state only: no saved-search schema/RLS change, `/stocks` saved-filter creation logic change, alert-delivery change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
