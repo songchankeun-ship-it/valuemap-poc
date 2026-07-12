@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T08:05:05+09:00
+Last updated: 2026-07-13T08:24:42+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - saved filter open action
+- Task: Direct Codex product slice - recent change card action labels
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` saved-filter rows now show a clearer `조건 열기` open marker beside the match count; implementation commit `cba91b2`; no push/deploy.
+- Note: `/stock/[ticker]` recent-change cards now show `관련 탭 보기` markers and explicit aria labels; implementation commit `e3bf367`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Recent change card action labels
+- **Context**: Continued the stock-detail recent-action/readability path after the watchlist saved-filter row polish. This slice is local UI/accessibility only: no scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, analytics account/config, or remote/account change.
+- **Changes**: `/stock/[ticker]` recent-change cards with tab links now show a compact `관련 탭 보기` marker and have explicit aria labels. Existing destinations, priority action analytics, scoring, and tab behavior are unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4719 passed 4/4 real gates. In-app browser verified mobile 390x844 and desktop `/stock/005930` markers, first card href/aria label, and no horizontal overflow. Temp port 4719 was stopped.
+- **Commit**: `e3bf367` (`[codex] clarify recent change card actions`).
+- **Next**: Continue with another small local app-like polish slice such as a conservative stock-detail recent-action/readability improvement or watchlist/saved-filter routine polish. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Saved filter open action
 - **Context**: Continued the watchlist saved-filter routine after adding the notification-settings shortcut. This slice is local UI/readability only: no saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, analytics account/config, or remote/account change.
