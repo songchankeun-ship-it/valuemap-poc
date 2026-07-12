@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] saved filter meta chips
+- **Scope**: Added compact metadata chips to `/watchlist` saved-filter rows. No saved-search persistence change, Supabase schema/RLS change, alert-delivery change, scoring/data/DART/watchlist storage/auth/deployment/push/remote changes.
+- **Changes**: Saved-filter rows now show active condition count, sort direction summary, and saved timing under the existing condition description. The row still uses the existing open/rename/remove controls and matching count logic.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4711 --no-perf` passed 4/4 real gates. In-app browser verified `/watchlist` at 390x844 and desktop loads the saved-filter section with no horizontal overflow; current browser had no saved-filter row available for a seeded live-row check.
+- **Commit**: `873ddc8` (`[codex] add saved filter meta chips`).
+- **Next**: Continue with another small local app-like polish slice. Good candidates: stock-detail recent-action clarity, watchlist saved-filter creation/status clarity, or a conservative saved-filter row polish. If touching saved-filter creation, first inspect the current local browser behavior where the save form can stay open; do not change persistence semantics without a narrow UX decision. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stock checklist completion hint
 - **Scope**: Added a local completion hint to the stock-detail checklist routine. No checklist storage key/item id change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: When all four stock-detail checklist items are complete, `StockChecklist` now shows a compact success banner above the checklist rows saying the current stock routine is complete and can be reopened from the routine/watchlist view. The existing `/watchlist` CTA, reset action, local-only storage, and non-advice disclaimer remain unchanged.

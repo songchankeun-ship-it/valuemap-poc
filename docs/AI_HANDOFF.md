@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T06:03:00+09:00
+Last updated: 2026-07-13T06:28:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock checklist completion hint
+- Task: Direct Codex product slice - saved filter meta chips
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Stock-detail checklist completion now shows a compact routine-done banner before the existing `/watchlist` handoff; implementation commit `6e68d13`; no push/deploy.
+- Note: `/watchlist` saved-filter rows now show condition count, sort summary, and saved timing; implementation commit `873ddc8`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved filter meta chips
+- **Context**: Continued the watchlist saved-filter clarity path after the stock checklist completion hint. This slice is local UI/rendering only: no saved-search persistence change, Supabase schema/RLS, alert delivery, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/watchlist` saved-filter rows now display compact metadata chips for active condition count, sort summary, and saved timing under the existing condition description. Existing open, rename, remove, and match-count behavior is unchanged.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4711 passed 4/4 real gates. In-app browser verified 390x844 and desktop `/watchlist` saved-filter section loads with horizontal overflow 0. Current browser did not have a saved-filter row available for a live-row chip fixture.
+- **Commit**: `873ddc8` (`[codex] add saved filter meta chips`).
+- **Next**: Continue with a small local product-polish slice such as stock-detail recent-action clarity, watchlist saved-filter creation/status clarity, or another conservative saved-filter row polish. If touching saved-filter creation, first inspect the local behavior where the save form can stay open. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Stock checklist completion hint
 - **Context**: Continued the stock-detail routine polish after the `/stocks` topic save handoff. This slice is local UI/client copy only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
