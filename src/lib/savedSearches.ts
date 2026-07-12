@@ -33,6 +33,7 @@ export interface SavedSearch {
 
 const LOCAL_KEY = "ornscore_saved_searches";
 const LEGACY_LOCAL_KEY = "valuemap_saved_searches";
+const PENDING_APPLY_KEY = "ornscore_pending_saved_search_apply";
 
 function readLocal(): SavedSearch[] {
   if (typeof window === "undefined") return [];
@@ -117,5 +118,36 @@ export async function removeSavedSearch(id: string): Promise<boolean> {
     return !error;
   } catch {
     return false;
+  }
+}
+
+/** `/watchlist` 등 다른 루틴 화면에서 `/stocks`로 들어갈 때 저장 필터를 1회 적용하기 위한 세션 브리지. */
+export function queueSavedSearchApply(search: SavedSearch): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    window.sessionStorage.setItem(PENDING_APPLY_KEY, JSON.stringify(search));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function consumeQueuedSavedSearch(): SavedSearch | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(PENDING_APPLY_KEY);
+    window.sessionStorage.removeItem(PENDING_APPLY_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    if (typeof parsed.name !== "string" || !parsed.config || typeof parsed.config !== "object") return null;
+    return {
+      id: typeof parsed.id === "string" ? parsed.id : "pending",
+      name: parsed.name,
+      config: parsed.config as SavedSearchConfig,
+      createdAt: typeof parsed.createdAt === "string" ? parsed.createdAt : new Date().toISOString(),
+    };
+  } catch {
+    return null;
   }
 }

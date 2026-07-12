@@ -12,7 +12,7 @@ import {
 } from "@/lib/watchlist";
 import { addToCompare, COMPARE_MAX } from "@/lib/compare";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
-import { listSavedSearches, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { listSavedSearches, queueSavedSearchApply, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { matchesConfig, type StockForMatch } from "@/lib/matchConfig";
 import { useLanguage } from "@/components/LanguageProvider";
 import { commonCopy } from "@/lib/i18n";
@@ -1110,7 +1110,19 @@ export function WatchlistClient({
               const count = matchCountOf(sv.config);
               return (
                 <li key={sv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                  <Link href="/stocks" className="flex items-center justify-between gap-3 px-4 py-3 group">
+                  <Link
+                    href="/stocks"
+                    onClick={() => {
+                      queueSavedSearchApply(sv);
+                      trackEvent("saved_filter_watchlist_open", {
+                        count,
+                        hasQuery: Boolean(sv.config.query),
+                        hasSector: Boolean(sv.config.sector),
+                        themeCount: sv.config.themes?.length ?? 0,
+                      });
+                    }}
+                    className="flex items-center justify-between gap-3 px-4 py-3 group"
+                  >
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">
                         {sv.name}
@@ -1132,7 +1144,7 @@ export function WatchlistClient({
         {savedSearches.length > 0 ? (
           <div className="mt-2 space-y-1">
             <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-              충족 종목 수는 현재 점수 기준 참고 정보예요 · 종목을 누르면 종목 탐색에서 저장한 필터를 불러올 수 있어요 · 매수·매도 추천이 아닙니다.
+              충족 종목 수는 현재 점수 기준 참고 정보예요 · 종목을 누르면 종목 탐색에서 저장한 필터를 바로 불러와요 · 매수·매도 추천이 아닙니다.
             </p>
             {/* 저장 필터 → 조건 충족 알림 다리(무료 기능 경로 일관 · 압박·매매 문구 없음) */}
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug break-words">

@@ -61,6 +61,11 @@ export const stocksCopy = {
     alertThis: "이 조건 알림",
     savedEmpty: "자주 쓰는 필터 조합을 저장해 한 번에 불러올 수 있어요. 로그인하면 기기 간 동기화돼요.",
     removeSaved: "삭제",
+    defaultSavedName: "내 검색 조건",
+    saveNameAria: "저장할 검색 조건 이름",
+    saveNamePlaceholder: "예: 저PER 배당주",
+    saveNameSubmit: "저장",
+    saveNameCancel: "취소",
 
     // ── prompt / confirm / alert ──
     promptSaveName: "이 검색 조건의 이름을 정해주세요 (예: 저PER 배당주)",
@@ -393,6 +398,11 @@ export const stocksCopy = {
     alertThis: "Alert on this",
     savedEmpty: "Save filter combinations you use often and recall them in one tap. Sign in to sync across devices.",
     removeSaved: "Remove",
+    defaultSavedName: "My search",
+    saveNameAria: "Saved search name",
+    saveNamePlaceholder: "e.g., Low PER dividend stocks",
+    saveNameSubmit: "Save",
+    saveNameCancel: "Cancel",
 
     // ── prompt / confirm / alert ──
     promptSaveName: "Name this search (e.g., Low PER dividend stocks)",

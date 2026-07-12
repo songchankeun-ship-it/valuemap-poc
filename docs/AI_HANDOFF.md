@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T01:39:04+09:00
+Last updated: 2026-07-13T01:51:42+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock checklist routine completion
+- Task: Direct Codex product slice - saved filter handoff from watchlist
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local-only stock checklist progressbar and completion routine CTA added and verified; no push/deploy.
+- Note: Local-only saved filter handoff from `/watchlist` to `/stocks` added and verified; inline saved-filter naming replaced prompt for filter saves; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved filter handoff from watchlist
+- **Context**: Continued the app-like personal routine path after stock-detail checklist completion. This slice is local UI/session navigation only: no saved-search schema/RLS change, alert creation flow change, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: Added a one-time session bridge in `savedSearches.ts`; `/watchlist` saved-filter cards queue the selected filter and `/stocks` consumes it through the existing `applySavedConfig` state path. `/stocks` now uses an inline saved-search naming form instead of `window.prompt()` for filter saves, which keeps the flow usable in app/browser shells where prompt dialogs are unsupported. Documented `saved_filter_watchlist_open`.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4698 passed 4/4 real gates. In-app browser verified 390x844 `/stocks` search `삼성` -> inline save `브리지테스트2` -> `/watchlist` saved-filter card -> click returns to `/stocks` with search input restored to `삼성`, overflow 0.
+- **Next**: Continue app-like routine polish with saved-filter delete/rename inline affordances or a conservative stock-detail recent-action panel. Supabase schema work, alert-delivery changes, CSV import, app-store console, deployment, and push remain owner-approved gates.
 
 ### 2026-07-13 - Codex - Stock checklist routine completion
 - **Context**: Continued the app-like stock-detail routine path after adding the saved-state watchlist handoff CTA. This slice is local UI/navigation only: no checklist storage key/item id changes, watchlist storage/migration logic, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.

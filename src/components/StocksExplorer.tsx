@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, type FormEvent } from "react";
 import Link from "next/link";
 import { Activity, AlertTriangle, Bell, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
 import { fmtWon } from "@/lib/format";
-import { listSavedSearches, addSavedSearch, removeSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
+import { listSavedSearches, addSavedSearch, removeSavedSearch, consumeQueuedSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { addConditionAlert } from "@/lib/conditionAlerts";
 import { DataStatusBadge, DataLagBadge } from "@/components/trust/badges";
@@ -298,6 +298,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [showQuickPresets, setShowQuickPresets] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
+  const [saveSearchOpen, setSaveSearchOpen] = useState(false);
+  const [saveSearchName, setSaveSearchName] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [recentViews, setRecentViews] = useState<RecentView[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("card");
@@ -358,6 +360,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     setSelectedThemes(new Set(c.themes ?? []));
     setSelectedSector(c.sector ?? "");
   }
+  useEffect(() => {
+    const queued = consumeQueuedSavedSearch();
+    if (!queued) return;
+    applySavedConfig(queued.config);
+  }, []);
   function rememberRecentSearch(raw: string) {
     const value = raw.trim();
     if (value.length < 2) return;
@@ -365,11 +372,30 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     setRecentSearches(next);
     writeRecentSearches(next);
   }
-  async function handleSaveSearch() {
-    const name = (typeof window !== "undefined" ? window.prompt(t.promptSaveName) : "")?.trim();
+  function suggestedSavedSearchName(): string {
+    const term = query.trim();
+    if (term) return term.length > 24 ? term.slice(0, 24) : term;
+    if (selectedSector) return selectedSector;
+    const firstTheme = [...selectedThemes][0];
+    if (firstTheme) return firstTheme;
+    if (minComposite > 0) return `${t.metric.composite} ${minComposite}+`;
+    return t.defaultSavedName;
+  }
+  function openSaveSearchForm() {
+    setSaveSearchName((prev) => prev.trim() || suggestedSavedSearchName());
+    setSaveSearchOpen(true);
+    window.setTimeout(() => document.getElementById("stocks-save-search-name")?.focus(), 0);
+  }
+  async function submitSaveSearch(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    const name = saveSearchName.trim();
     if (!name) return;
     const ok = await addSavedSearch(name, buildCurrentConfig());
-    if (ok) listSavedSearches().then(setSavedSearches);
+    if (ok) {
+      setSaveSearchOpen(false);
+      setSaveSearchName("");
+      listSavedSearches().then(setSavedSearches);
+    }
   }
   async function handleRemoveSaved(id: string) {
     const ok = await removeSavedSearch(id);
@@ -1117,10 +1143,26 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
           <div className="flex gap-1.5">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
+            <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
             <button type="button" onClick={handleCreateAlert} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
           </div>
         </div>
+        {saveSearchOpen ? (
+          <form onSubmit={submitSaveSearch} className="mb-2 flex flex-col gap-2 sm:flex-row">
+            <input
+              id="stocks-save-search-name"
+              value={saveSearchName}
+              onChange={(e) => setSaveSearchName(e.target.value)}
+              aria-label={t.saveNameAria}
+              placeholder={t.saveNamePlaceholder}
+              className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
+            />
+            <div className="flex gap-1.5">
+              <button type="submit" className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 transition ${FOCUS_RING}`}>{t.saveNameSubmit}</button>
+              <button type="button" onClick={() => setSaveSearchOpen(false)} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.saveNameCancel}</button>
+            </div>
+          </form>
+        ) : null}
         {savedSearches.length === 0 ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.savedEmpty}</p>
         ) : (
@@ -1228,7 +1270,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug">{describeConditions()}</p>
           </div>
           <div className="flex gap-1.5 shrink-0 flex-wrap">
-            <button type="button" onClick={handleSaveSearch} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap">{t.saveCond}</button>
+            <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap">{t.saveCond}</button>
             <button type="button" onClick={handleCreateAlert} className="text-[11px] px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap">{t.alertCondShort}</button>
             <button type="button" onClick={handleResetWithConfirm} disabled={!hasAnyCondition} className={"text-[11px] px-2.5 py-1.5 rounded-md border transition whitespace-nowrap " + (hasAnyCondition ? "border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-600" : "border-zinc-200 dark:border-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed")}>{t.reset}</button>
           </div>
