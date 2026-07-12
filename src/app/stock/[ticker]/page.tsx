@@ -105,6 +105,7 @@ interface ReasonV2 {
 }
 
 interface RecentChangeItem {
+  kind: "score" | "flow" | "return3m" | "disclosure";
   label: string;
   value: string;
   hint: string;
@@ -156,7 +157,7 @@ function toneOf(value: number | null, neutralBand = 0.5): "good" | "bad" | "neut
   return value > 0 ? "good" : "bad";
 }
 
-function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
+function RecentChangeSummary({ ticker, items }: { ticker: string; items: RecentChangeItem[] }) {
   const toneClass = {
     good: "text-emerald-700 dark:text-emerald-300",
     bad: "text-rose-700 dark:text-rose-300",
@@ -206,6 +207,11 @@ function RecentChangeSummary({ items }: { items: RecentChangeItem[] }) {
           <a
             href={priorityItem.href}
             aria-label={`${priorityLabel}: ${priorityItem.label} ${priorityItem.value}. ${priorityItem.hint}`}
+            data-analytics-event="stock_recent_change_priority_open"
+            data-analytics-ticker={ticker}
+            data-analytics-kind={priorityItem.kind}
+            data-analytics-tone={priorityItem.tone ?? "neutral"}
+            data-analytics-target={priorityItem.href.replace(/^#/, "")}
             className="inline-flex min-h-[44px] min-w-0 flex-1 items-center gap-1.5 rounded-md px-1.5 font-medium text-blue-700 transition hover:text-blue-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-blue-400 dark:hover:text-blue-300 dark:focus-visible:ring-offset-zinc-900"
           >
             <span className="shrink-0">{priorityLabel}</span>
@@ -348,6 +354,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   const flowDelta = prevScorePoint ? s.flow - prevScorePoint.flow : null;
   const recentChangeItems: RecentChangeItem[] = [
     {
+      kind: "score",
       label: "종합 점수",
       value: signedNumber(scoreDelta),
       hint: prevScorePoint ? `${prevScorePoint.date.slice(5)} 대비` : "점수 이력 부족",
@@ -355,6 +362,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       href: "#basis",
     },
     {
+      kind: "flow",
       label: "거래활성도",
       value: signedNumber(flowDelta),
       hint: prevScorePoint ? "최근 관심 변화 확인" : "점수 이력 부족",
@@ -362,6 +370,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       href: "#basis",
     },
     {
+      kind: "return3m",
       label: "3개월 수익률",
       value: signedPct(surge3m),
       hint: surge3m === null ? "가격 이력 부족" : "상승폭이 크면 사유 확인",
@@ -369,6 +378,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       href: "#summary",
     },
     {
+      kind: "disclosure",
       label: "최근 공시",
       value: "공시 탭",
       hint: "원문과 확인 포인트 보기",
@@ -465,7 +475,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         leadCheck={leadCheckSignal}
       />
 
-      <RecentChangeSummary items={recentChangeItems} />
+      <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
 
       <StockTabs
         tabs={[
