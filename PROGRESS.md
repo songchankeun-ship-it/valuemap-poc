@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] topic saved-filter handoff
+- **Scope**: Added a local topic-page handoff toward saved filters. No saved-search persistence change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: `/topics/[slug]` now shows an early "이 주제를 루틴으로 남기기" CTA inside the topic criteria panel. The CTA sends users to the existing `/stocks` or topic-specific `/stocks?theme=...` route so they can add conditions and use the existing `조건 저장` flow. Added `topic_saved_filter_start` analytics with `topic` and `filtered` only.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` ref warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4708 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 `/topics/undervalued-stocks` CTA in first viewport, `/stocks` navigation, desktop overflow 0, and `/topics/semiconductor-stocks` filtered CTA -> `/stocks?theme=반도체`.
+- **Commit**: `8c749c1` (`[codex] add topic saved filter handoff`).
+- **Next**: Continue with another small local app-like polish slice, preferably saved-filter/topic follow-through copy on `/stocks` or stock-detail routine copy if it stays local. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] stock checklist resume hint
 - **Scope**: Added a small resume hint to the stock-detail local checklist. No checklist storage key/item id change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
 - **Changes**: After a user checks at least one item but has not finished all four checklist items, `StockChecklist` now shows a compact hint explaining that they can stop for now and resume from the next unchecked item on the next visit. Korean and English copy were updated; the existing next-step CTA and local-only storage behavior are unchanged.

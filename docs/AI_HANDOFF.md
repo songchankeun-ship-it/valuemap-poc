@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T05:07:25+09:00
+Last updated: 2026-07-13T05:31:05+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - stock checklist resume hint
+- Task: Direct Codex product slice - topic saved-filter handoff
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Local stock-detail checklist now shows a resume hint after partial progress; implementation commit `0ec475d`; no push/deploy.
+- Note: Topic pages now expose an early saved-filter handoff CTA into the existing `/stocks`/`/stocks?theme=...` save flow; implementation commit `8c749c1`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Topic saved-filter handoff
+- **Context**: Continued the app-like saved-filter/topic routine after stock checklist resume hint. This slice is local UI/navigation/docs only: no saved-search persistence change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/topics/[slug]` now shows an early "이 주제를 루틴으로 남기기" handoff inside the topic criteria panel. The CTA links to the existing `/stocks` route or the topic-specific `/stocks?theme=...` route and tells users to finish by using the existing `조건 저장` flow. Documented `topic_saved_filter_start` with only `topic` and `filtered` metadata.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4708 passed 4/4 real gates. In-app browser verified 390x844 `/topics/undervalued-stocks` CTA first-viewport placement, `/stocks` navigation, desktop overflow 0, and `/topics/semiconductor-stocks` filtered CTA -> `/stocks?theme=반도체`.
+- **Commit**: `8c749c1` (`[codex] add topic saved filter handoff`).
+- **Next**: Continue with another small local product-polish slice such as saved-filter/topic follow-through copy on `/stocks` or stock-detail routine copy. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, and remote/account changes.
 
 ### 2026-07-13 - Codex - Stock checklist resume hint
 - **Context**: Continued the app-like stock-detail routine after watchlist saved-filter starter links. This slice is local UI/client copy only: no checklist storage key/item id change, scoring, generated data, DART, watchlist storage, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
