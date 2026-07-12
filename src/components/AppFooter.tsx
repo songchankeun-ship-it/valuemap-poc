@@ -53,6 +53,9 @@ export function AppFooter({
       <Link href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
         {copy.footer.privacy}
       </Link>
+      <Link href="/data-deletion" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+        {copy.footer.dataDeletion}
+      </Link>
       <Link href="/status#report" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
         {copy.footer.report}
       </Link>

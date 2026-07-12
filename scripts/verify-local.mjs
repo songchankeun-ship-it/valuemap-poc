@@ -11,7 +11,7 @@
 // prod preview you started yourself on a dedicated high port.
 //
 // Gates run (in order):
-//   1. smoke:check --all       (real gate) 24 SSR content-anchor routes
+//   1. smoke:check --all       (real gate) 25 SSR content-anchor routes
 //   2. verify:routes           (real gate) 9 cache-busted public routes + data date
 //   3. verify:stocks-seo       (real gate) head robots/canonical contract
 //   4. verify:login-preflight  (real gate) SSR-stable /login states

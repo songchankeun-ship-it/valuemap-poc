@@ -137,6 +137,8 @@ export default function TermsPage() {
         <Link href="/about" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">서비스 소개</Link>
         <span className="mx-2">·</span>
         <Link href="/privacy" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">개인정보처리방침</Link>
+        <span className="mx-2">·</span>
+        <Link href="/data-deletion" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">데이터 삭제 요청</Link>
       </div>
     </div>
   );

@@ -71,6 +71,7 @@ Character count: approximately 455 / 4000.
 - Developer email: `contact@ornscore.com`
 - Website: `https://ornscore.com`
 - Privacy policy: `https://ornscore.com/privacy`
+- Account/data deletion URL: `https://ornscore.com/data-deletion`
 - Terms: `https://ornscore.com/terms`
 - Phone: leave blank unless the owner wants it publicly exposed.
 
@@ -139,8 +140,8 @@ This section is a worksheet, not a final legal filing. The final Play Console an
 ### Security / Deletion Notes
 
 - Data is transmitted over HTTPS.
-- Privacy policy states deletion/contact requests go to `contact@ornscore.com`.
-- If Play Console requires a dedicated account/data deletion URL, add a small public page such as `/account/delete` or `/data-deletion` before final submission instead of relying only on email copy.
+- Privacy policy and `https://ornscore.com/data-deletion` state deletion/contact requests go to `contact@ornscore.com`.
+- If Play Console asks for the account/data deletion URL, use `https://ornscore.com/data-deletion`.
 
 ## Financial Features Declaration Notes
 
@@ -202,7 +203,7 @@ Capture guidance:
 - [ ] Confirm app name and short description still fit Play limits.
 - [ ] Confirm public privacy policy and terms pages are live.
 - [ ] Confirm contact email `contact@ornscore.com` receives mail.
-- [ ] Decide whether to add a dedicated `/data-deletion` or `/account/delete` page.
+- [x] Add a dedicated `/data-deletion` page for the Play Console account/data deletion URL.
 - [ ] Capture 4-7 real mobile screenshots.
 - [ ] Create a 1024x500 feature graphic from actual UI.
 - [ ] Prepare reviewer test account only inside Play Console, not in the repo.

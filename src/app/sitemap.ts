@@ -92,6 +92,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    {
+      url: `${SITE}/data-deletion`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.25,
+    },
   ];
 
   // 2. 종목 페이지 (138개)

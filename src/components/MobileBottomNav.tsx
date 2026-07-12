@@ -36,7 +36,7 @@ export function MobileBottomNav() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [moreOpen]);
-  const HIDE = ["/login", "/terms", "/privacy"];
+  const HIDE = ["/login", "/terms", "/privacy", "/data-deletion"];
   if (HIDE.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
   const active = (href: string) => pathname === href || pathname.startsWith(href + "/");
 

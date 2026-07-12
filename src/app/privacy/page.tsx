@@ -161,7 +161,10 @@ export default function PrivacyPage() {
             <li>본인 개인정보 사본(다운로드) 요청</li>
             <li>알림 수신 거부</li>
           </ul>
-          <p className="mt-2">행사 방법: <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a>으로 이메일</p>
+          <p className="mt-2">
+            행사 방법: <Link href="/data-deletion" className="text-blue-600 dark:text-blue-400 underline">계정 및 데이터 삭제 요청 안내</Link>를
+            확인하거나 <a href="mailto:contact@ornscore.com" className="text-blue-600 dark:text-blue-400 underline">contact@ornscore.com</a>으로 이메일
+          </p>
         </section>
 
         <section>
@@ -181,6 +184,8 @@ export default function PrivacyPage() {
         <Link href="/about" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">서비스 소개</Link>
         <span className="mx-2">·</span>
         <Link href="/terms" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">이용약관</Link>
+        <span className="mx-2">·</span>
+        <Link href="/data-deletion" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">데이터 삭제 요청</Link>
       </div>
     </div>
   );

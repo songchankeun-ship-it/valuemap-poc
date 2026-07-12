@@ -19,7 +19,7 @@ npx next start -p 4459
 npm run verify:local -- --base http://localhost:4459
 ```
 
-- **집계 규칙:** 진짜 게이트 4개(`smoke:check --all` 24 · `verify:routes` 9 · `verify:stocks-seo` 12 · `verify:login-preflight` 5) 중 하나라도 실패하면 전체 `exit 1`. `perf:check`는 **권고(advisory)** — 자체가 항상 exit 0이라 집계 결과를 바꾸지 않고, 같은 패스에서 라우트별 타이밍만 찍는다.
+- **집계 규칙:** 진짜 게이트 4개(`smoke:check --all` 25 · `verify:routes` 9 · `verify:stocks-seo` 12 · `verify:login-preflight` 5) 중 하나라도 실패하면 전체 `exit 1`. `perf:check`는 **권고(advisory)** — 자체가 항상 exit 0이라 집계 결과를 바꾸지 않고, 같은 패스에서 라우트별 타이밍만 찍는다.
 - **서버 미기동 시:** 5개 ERR 표 대신 **선(先) 도달성 체크**로 한 줄 안내 후 `exit 1`.
 - **오케스트레이션만:** 형제 스크립트처럼 서버를 **켜거나 끄지 않는다**(상시 AI Center `:4310` 리스너 보호). 내가 띄운 prod 프리뷰의 `--base`만 넘긴다.
 - **옵션:** `--samples <n>`(perf 표본 수, 기본 3) · `--no-perf`(권고 perf 생략) · `--data <path>`(verify:routes 기준일 소스 오버라이드). 환경변수 `VERIFY_BASE_URL`/`SMOKE_BASE_URL`/`PERF_BASE_URL`로도 base 지정(플래그 우선).
@@ -55,7 +55,7 @@ npm run smoke:check -- --base http://localhost:4455
 
 - `--base` 기본값 `http://localhost:4455`. 환경변수 `SMOKE_BASE_URL`로도 지정 가능(플래그가 우선).
 - 서버에 못 붙으면 라우트 표에 `ERR`를 찍고 `"is the local prod server running at <base>?"` 힌트 후 `exit 1`.
-- `--all` 플래그: 기본 7개에 **추가 공개 라우트 + 부정/폴백 검사 + 비로그인 플로우**를 덧붙인다. 공개 라우트는 과거 12라우트 패스(`/compare /pricing /status /backtest /manifest.webmanifest`)에 런칭 핵심 공개 페이지(`/about /guide/metrics /guide/metrics/changelog /universe /terms /privacy /theme/battery`)를 더한 것. **기본 실행은 항상 유한한 7라우트**로 유지 — `--all`은 부가 검사일 뿐 기본 게이트를 바꾸지 않는다.
+- `--all` 플래그: 기본 7개에 **추가 공개 라우트 + 부정/폴백 검사 + 비로그인 플로우**를 덧붙인다. 공개 라우트는 과거 12라우트 패스(`/compare /pricing /status /backtest /manifest.webmanifest`)에 런칭 핵심 공개 페이지(`/about /guide/metrics /guide/metrics/changelog /universe /terms /privacy /data-deletion /theme/battery`)를 더한 것. **기본 실행은 항상 유한한 7라우트**로 유지 — `--all`은 부가 검사일 뿐 기본 게이트를 바꾸지 않는다.
 
 ---
 
@@ -94,6 +94,7 @@ npm run smoke:check -- --base http://localhost:4455
 | `/universe` | `분석 대상` | 유니버스 페이지가 '분석 대상 종목' 헤딩 렌더 |
 | `/terms` | `이용약관` | 이용약관 헤딩 렌더 |
 | `/privacy` | `개인정보처리방침` | 개인정보처리방침 헤딩 렌더 |
+| `/data-deletion` | `계정 및 데이터 삭제 요청` | Play Console 계정·데이터 삭제 요청 리소스 렌더 |
 | `/theme/battery` | `2차전지` | 실존 슬러그 `battery` 테마 상세가 '2차전지' 이름 렌더 |
 
 ### 부정/폴백 검사 (404·무효 티커)

@@ -24,6 +24,7 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - 긴 이름: 오른스코어 — 한국 주식 탐색 도구
 - 웹 URL: `https://ornscore.com`
 - 개인정보처리방침: `https://ornscore.com/privacy`
+- 계정 및 데이터 삭제 요청: `https://ornscore.com/data-deletion`
 - 이용약관: `https://ornscore.com/terms`
 - 문의: `contact@ornscore.com` (현 라이브 사이트 전 페이지·`src/lib/dataStatus.ts`가 쓰는 대표 수신 주소). 리뷰에서 `support@ornscore.com`으로의 통일을 제안했으나, 저장소에 다른 대표 메일함 근거가 없으므로 오너가 새 메일함을 개설·리다이렉트하기 전까지 `contact@`를 그대로 유지한다.
 - 카테고리 후보: Finance
@@ -82,7 +83,7 @@ Google Play에 바로 입력할 필드별 워크시트는 `docs/google-play-list
 - 공유/위탁 후보: Supabase, Vercel, Resend, Kakao, Google, Naver. `https://ornscore.com/privacy`의 위탁 처리 표와 일치해야 한다.
 - 결제 정보: 현재 앱 내 결제 없음.
 - 광고/추적: 현재 광고성 추적 목적 없음으로 운영자가 확인.
-- 삭제 요청: 회원 탈퇴/삭제 요청은 `contact@ornscore.com`으로 처리. Play Console이 공개 데이터 삭제 URL을 요구하면 `/privacy` 또는 별도 삭제 안내 URL을 추가한 뒤 제출한다.
+- 삭제 요청: 회원 탈퇴/삭제 요청은 `https://ornscore.com/data-deletion` 또는 `contact@ornscore.com`으로 처리. Play Console의 공개 데이터 삭제 URL에는 `https://ornscore.com/data-deletion`을 사용한다.
 - 주의: 공개 베타에서는 AI 분석 기능을 전면에 노출하지 않는다. AI 기능을 다시 공개하면 `privacy`와 Data safety/App Privacy 답변에 AI 처리 제공자와 보관 항목을 복구해야 한다.
 
 ## App Store 등록 초안

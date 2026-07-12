@@ -85,6 +85,7 @@ const EXTRA_ROUTES = [
   { path: "/universe", anchor: "분석 대상", why: "universe page renders the '분석 대상 종목' heading" },
   { path: "/terms", anchor: "이용약관", why: "terms page renders its '이용약관' heading" },
   { path: "/privacy", anchor: "개인정보처리방침", why: "privacy page renders its '개인정보처리방침' heading" },
+  { path: "/data-deletion", anchor: "계정 및 데이터 삭제 요청", why: "data deletion page renders its Play Console deletion-resource heading" },
   { path: "/theme/battery", anchor: "2차전지", why: "theme detail for the real 'battery' slug renders its '2차전지' name" },
 ];
 

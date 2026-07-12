@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LogOut, Heart, GitCompare, Bell, Loader2 } from "lucide-react";
+import { LogOut, Heart, GitCompare, Bell, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -102,6 +102,15 @@ export function UserMenu({ email }: { email: string }) {
           >
             <Bell className="w-4 h-4" />
             {copy.menuNotifications}
+          </Link>
+          <Link
+            href="/data-deletion"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          >
+            <Trash2 className="w-4 h-4" />
+            {copy.menuDataDeletion}
           </Link>
           <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
           <button
