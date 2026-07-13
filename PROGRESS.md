@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] recent view reopen action
+- **Scope**: Clarified `/watchlist` recent-view rows as a return path into stock detail. No recent-view storage semantics, saved-search persistence, analytics vendor/account/config, Supabase schema/RLS, scoring/data/DART/auth/deployment/push/remote changes.
+- **Changes**: Recent-view rows now include a visible `다시 보기` marker, an explicit `aria-label`, and `watchlist_recent_stock_open` analytics with `ticker` and row `rank` only. The analytics event map documents that stock names and raw browsing text are not sent.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4724 --no-perf` passed 4/4 real gates. In-app browser visited `/stock/005930`, verified `/watchlist` at 390x844 and 1280x900 shows `다시 보기` with `href=/stock/005930`, `watchlist_recent_stock_open`, `ticker=005930`, `rank=1`, explicit aria label, and no horizontal overflow; the temporary recent view was cleared.
+- **Commit**: `d6908ef` (`[codex] clarify recent view reopen action`).
+- **Next**: Continue with one small local app-like polish slice, preferably another watchlist routine affordance or a conservative stock-detail recent-action/readability improvement. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] saved filter add action analytics
 - **Scope**: Instrumented the `/watchlist` saved-filter header `조건 추가` action. No analytics vendor/account/config change, saved-search persistence, alert-delivery, Supabase schema/RLS, scoring/data/DART/auth/deployment/push/remote changes.
 - **Changes**: When saved filters exist, the header `조건 추가` link now has an explicit `aria-label` and records `saved_filter_add_open` with `count` only. The analytics event map documents that no saved-filter names, conditions, or raw query text are sent.

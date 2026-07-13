@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T09:48:28+09:00
+Last updated: 2026-07-13T10:06:16+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - saved filter add action analytics
+- Task: Direct Codex product slice - recent view reopen action
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` saved-filter `조건 추가` now records `saved_filter_add_open` with count only and has an explicit aria label; implementation commit `92d7f38`; no push/deploy.
+- Note: `/watchlist` recent-view rows now show a `다시 보기` marker and record `watchlist_recent_stock_open` with ticker and rank only; implementation commit `d6908ef`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Recent view reopen action
+- **Context**: Continued the watchlist routine after saved-filter add-action analytics. This slice is local UI/instrumentation/accessibility only: no recent-view storage semantics, analytics vendor/account/config change, saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/watchlist` recent-view rows now show a visible `다시 보기` marker, have an explicit aria label, and record `watchlist_recent_stock_open` with `ticker` and row `rank` only. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`; stock names and raw browsing text are not tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4724 passed 4/4 real gates. In-app browser visited `/stock/005930`, verified mobile 390x844 and desktop `/watchlist` show `다시 보기` with `/stock/005930`, `watchlist_recent_stock_open`, ticker `005930`, rank `1`, aria label, and no horizontal overflow; the temporary recent view was cleared.
+- **Commit**: `d6908ef` (`[codex] clarify recent view reopen action`).
+- **Next**: Continue with another small local app-like polish slice such as a conservative watchlist routine affordance or stock-detail recent-action/readability improvement. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Saved filter add action analytics
 - **Context**: Continued the watchlist saved-filter routine after stock-detail recent-change card analytics. This slice is local instrumentation/accessibility only: no analytics vendor/account/config change, saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
