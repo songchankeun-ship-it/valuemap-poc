@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T08:47:22+09:00
+Last updated: 2026-07-13T09:04:53+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - recent change basis link target
+- Task: Direct Codex product slice - recent change basis link analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stock/[ticker]` recent-change header now renders `변화 근거 보기` as a 44px `#basis` target; implementation commit `fa9afb0`; no push/deploy.
+- Note: `/stock/[ticker]` recent-change `변화 근거 보기` action now records `stock_recent_change_basis_open` with ticker and fixed target only; implementation commit `81b5296`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Recent change basis link analytics
+- **Context**: Continued the stock-detail recent-action/readability path after enlarging the basis link target. This slice is local instrumentation/accessibility only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/stock/[ticker]` recent-change `변화 근거 보기` link now has an explicit aria label and records `stock_recent_change_basis_open` with `ticker` and fixed `target=basis` only. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`; no score values, labels, raw text, or free-form input are tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4721 passed 4/4 real gates. In-app browser verified mobile 390x844 and desktop `/stock/005930` show `stock_recent_change_basis_open`, ticker `005930`, target `basis`, 44px target, and no horizontal overflow. Temp port 4721 was stopped.
+- **Commit**: `81b5296` (`[codex] track recent change basis link`).
+- **Next**: Continue with another small local app-like polish slice such as a conservative stock-detail recent-action/readability improvement or watchlist/saved-filter routine polish. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Recent change basis link target
 - **Context**: Continued the stock-detail recent-action/readability path after recent-change card action labels. This slice is local UI/accessibility only: no scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, analytics account/config, or remote/account change.
