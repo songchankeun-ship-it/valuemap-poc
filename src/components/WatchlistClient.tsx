@@ -1199,6 +1199,9 @@ export function WatchlistClient({
               </Link>
               <Link
                 href="/stocks"
+                aria-label="저장 필터 조건 추가"
+                data-analytics-event="saved_filter_add_open"
+                data-analytics-count={savedSearches.length}
                 className={`inline-flex min-h-[44px] items-center gap-1 rounded-md px-2.5 text-xs font-medium text-blue-600 transition hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/20 dark:hover:text-blue-300 ${FOCUS_RING}`}
               >
                 조건 추가 <ArrowRight className="w-3 h-3" aria-hidden="true" />
