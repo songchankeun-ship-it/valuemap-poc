@@ -113,9 +113,13 @@ export function AlertTypeCatalog() {
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 md:p-5">
       <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">알림 종류</h2>
-      <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
+      <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2 leading-relaxed">
         받을 수 있는 알림 종류예요. <strong className="text-emerald-700 dark:text-emerald-400">사용 중</strong> 표시는 지금 이메일로 동작하고,
         <strong className="text-amber-700 dark:text-amber-400"> 준비 중</strong> 표시는 설정 개념만 미리 체험할 수 있어요(아직 발송 안 함).
+      </p>
+      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed break-words">
+        ‘준비 중’ 알림의 미리 설정은 지금 이 브라우저에만 저장되고 어떤 메시지도 보내지 않아요. 실제 발송은 채널이 준비된 뒤
+        로그인 계정에 연결될 때 시작되며, 그전까지는 미리 켜둬도 발송되지 않습니다.
       </p>
       <div className="space-y-5">
         {groups.map((g) => (
