@@ -182,6 +182,10 @@ function RecentChangeSummary({ ticker, items }: { ticker: string; items: RecentC
         </div>
         <a
           href="#basis"
+          aria-label={`${ticker} 변화 근거 보기: 점수 근거 섹션으로 이동`}
+          data-analytics-event="stock_recent_change_basis_open"
+          data-analytics-ticker={ticker}
+          data-analytics-target="basis"
           className="inline-flex min-h-[44px] items-center rounded-md px-2 text-[11px] font-medium text-blue-700 transition hover:bg-blue-50 hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:text-blue-400 dark:hover:bg-blue-950/20 dark:hover:text-blue-300 dark:focus-visible:ring-offset-zinc-900"
         >
           변화 근거 보기
