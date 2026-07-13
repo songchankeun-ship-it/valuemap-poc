@@ -23,7 +23,11 @@ const stepBullet = "text-zinc-400 dark:text-zinc-500 shrink-0";
 
 function ManualSteps() {
   return (
-    <ul className="space-y-1.5 text-sm text-zinc-700 dark:text-zinc-300">
+    <div className="space-y-2">
+      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+        이 브라우저에는 한 번에 설치하는 버튼이 없어요. 아래 단계로 홈 화면에 추가하면 앱처럼 실행됩니다.
+      </p>
+      <ul className="space-y-1.5 text-sm text-zinc-700 dark:text-zinc-300">
       <li className="flex gap-2">
         <span className={stepBullet}>•</span>
         <span>
@@ -36,7 +40,8 @@ function ManualSteps() {
           <strong className="text-zinc-900 dark:text-zinc-100">Android(Chrome)</strong> — 메뉴(⋮) → <strong>앱 설치</strong> 또는 <strong>홈 화면에 추가</strong>
         </span>
       </li>
-    </ul>
+      </ul>
+    </div>
   );
 }
 
