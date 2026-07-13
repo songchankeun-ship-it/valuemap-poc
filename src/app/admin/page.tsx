@@ -133,6 +133,7 @@ export default async function AdminHomePage() {
       tone: "neutral",
     },
   ] satisfies Array<{ label: string; value: string; detail: string; tone: "ok" | "warn" | "neutral" }>;
+  const liveVerifyCommand = `npm run verify:local -- --base ${publicBaseUrl} --no-perf`;
 
   return (
     <div className="mx-auto max-w-5xl px-3 py-4 md:px-4 md:py-8">
@@ -226,6 +227,23 @@ export default async function AdminHomePage() {
         <p className="mt-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
           로그인 SSR 검증은 로컬과 운영의 OAuth 제공자 상태 차이를 반영합니다. 실제 OAuth 왕복과 외부 콘솔 변경은 사람 확인 게이트로 남겨둡니다.
         </p>
+        <div className="mt-3 rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">운영 URL 게이트</p>
+              <code className="mt-1 block break-words rounded-md bg-white px-2 py-1.5 font-mono text-[11px] text-zinc-800 dark:bg-zinc-900 dark:text-zinc-100">
+                {liveVerifyCommand}
+              </code>
+            </div>
+            <span className="inline-flex min-h-[32px] shrink-0 items-center justify-center rounded-md border border-emerald-200 bg-emerald-50 px-2 text-[11px] font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-200">
+              자동 검증
+            </span>
+          </div>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <MiniCheck label="자동 통과 기준" value="공개 라우트 · SEO · 로그인 SSR" />
+            <MiniCheck label="남은 사람 확인" value="OAuth 왕복 · 외부 콘솔" />
+          </div>
+        </div>
         <div className="mt-3 grid gap-2 lg:grid-cols-3">
           {releaseGates.map((gate) => (
             <GateCard key={gate.label} {...gate} />

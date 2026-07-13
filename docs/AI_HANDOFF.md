@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T11:30:08+09:00
+Last updated: 2026-07-13T11:35:01+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex docs slice - live release route-health docs
+- Task: Direct Codex admin slice - live release command
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `docs/ornscore-route-smoke-checklist.md` now documents live `verify:local --base https://ornscore.com --no-perf` with provider-aware Naver state handling; docs commit `9c05e06`; no push/deploy.
+- Note: `/admin` release panel now surfaces the exact live `verify:local -- --base {publicBaseUrl} --no-perf` command and separates automated pass criteria from remaining human gates; local route-health passed 4/4; commit pending; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Admin live release command
+- **Context**: Continued automatically while the owner was away after documenting the live route-health command. The admin release panel had gate cards but did not show the exact command to run after release. This is admin-only UI work: no scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: `/admin` "배포 검증" now renders the operating URL command `npm run verify:local -- --base {publicBaseUrl} --no-perf`, an "자동 검증" marker, and compact summaries for automated pass criteria versus remaining human checks.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4728 passed 4/4; unauthenticated `/admin` returned 307 to `/login?next=%2Fadmin`; temp port 4728 was stopped.
+- **Commit**: pending (`[codex] surface live release gate command`).
+- **Next**: Continue with a small local-only app-polish slice, preferably a watchlist or stock-detail routine affordance. Push/deploy remains owner-approved only.
 
 ### 2026-07-13 - Codex - Live release route-health docs
 - **Context**: Continued automatically while the owner was away after admin release gate hints. The provider-aware login preflight behavior was working, but the route-health checklist still read as mostly local-only. This is docs-only operations work: no UI, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.

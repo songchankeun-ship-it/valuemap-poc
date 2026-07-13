@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] admin live release command
+- **Scope**: Made the `/admin` release panel more explicit about the exact live route-health command and the remaining human gates. Admin-only UI slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
+- **Changes**: `/admin` "배포 검증" now shows `npm run verify:local -- --base {publicBaseUrl} --no-perf` as the operating URL gate, plus compact summaries for automated pass criteria and remaining human checks.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4728 --no-perf` passed 4/4; unauthenticated `/admin` returned 307 to `/login?next=%2Fadmin`; temp port 4728 was stopped.
+- **Commit**: pending (`[codex] surface live release gate command`).
+- **Next**: Continue with a small local-only app-polish slice, preferably a watchlist or stock-detail routine affordance. Push/deploy remains owner-approved only.
+
 ## 2026-07-13 - [codex] live release route-health docs
 - **Scope**: Documented the provider-aware live release verification command so the post-deploy check no longer depends on chat memory. Docs-only operations slice: no UI, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: `docs/ornscore-route-smoke-checklist.md` now has a "배포 후 라이브 확인" section with `npm run verify:local -- --base https://ornscore.com --no-perf`, explains local `naverState=planned` versus live `naverState=either`, documents explicit `--naver-state planned|enabled|either`, and keeps real OAuth/app-store/console/DNS/Search Console as manual gates.
