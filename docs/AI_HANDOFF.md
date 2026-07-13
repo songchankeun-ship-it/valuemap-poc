@@ -46,7 +46,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Context**: Owner said "출시하자" after the web/product-polish release. The live web/PWA path is deployed, but actual Google Play launch still needs owner-only account/app/signing inputs. This slice consolidates the scattered store-prep docs into a single owner action sheet without performing any external account or store-console action.
 - **Changes**: Added `docs/ornscore-play-console-action-pack-2026-07-13.md` with ready-to-copy listing text, public URLs, review notes, app-content answer prompts, prepared asset inventory, exact Play Console steps, and the values the owner must send back (`package id`, real Play app-signing SHA-256, optional upload-key SHA-256).
 - **Validation**: `npm run app:check` passed with the expected 1 external WAIT for real Android `assetlinks.json`; `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean; replacement-character scan clean.
-- **Commit**: pending (`[codex] prepare Play Console action pack`).
+- **Commit**: `62541d3` (`[codex] prepare Play Console action pack`).
 - **Next**: Owner completes Play Console account/app setup and returns the real Play app-signing key SHA-256. Do not create `public/.well-known/assetlinks.json` until that real value is available.
 
 ### 2026-07-13 - Codex - Product polish batch release

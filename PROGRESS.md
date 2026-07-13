@@ -4,7 +4,7 @@
 - **Scope**: Consolidated the Android Google Play launch handoff into a one-page owner action pack. Docs-only local store-readiness slice: no Play Console app creation, account/payment/address/profile action, asset upload, declaration submission, signing-key generation, `assetlinks.json` publishing, push, deployment, scoring/data/DART/Supabase schema/RLS/auth-provider config, DNS, email, or account changes.
 - **Changes**: Added `docs/ornscore-play-console-action-pack-2026-07-13.md` with current launch state, ready-to-copy app name/short/full descriptions, public URLs, review notes, app-content answer prompts, prepared asset inventory, exact owner console steps, and the package id + app-signing SHA-256 handoff format needed before Codex can generate real Android `assetlinks.json`.
 - **Validation**: `npm run app:check` passed with the expected 1 external WAIT for real Android `assetlinks.json`; `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean; replacement-character scan clean.
-- **Commit**: pending (`[codex] prepare Play Console action pack`).
+- **Commit**: `62541d3` (`[codex] prepare Play Console action pack`).
 - **Next**: Owner completes Play Console account/app setup, keeps package id `com.ornscore.app` unless deliberately changed before app creation, then sends the real Play **app-signing key** SHA-256 fingerprint back to Codex. Until then, do not generate `public/.well-known/assetlinks.json`.
 
 ## 2026-07-13 - [codex] release product-polish batch
