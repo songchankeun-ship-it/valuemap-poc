@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T12:08:41+09:00
+Last updated: 2026-07-13T12:30:18+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Heartbeat Codex watchlist slice - recent-search analytics
+- Task: Heartbeat Codex watchlist slice - recent clear action
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` recent-search chips now record privacy-safe `watchlist_recent_search_open` with index/count only and explicit aria labels; local route-health passed 4/4; commit `4468f6a`; no push/deploy.
+- Note: `/watchlist` recent-view clear action now records privacy-safe `watchlist_recent_clear` with count only and has an explicit aria label plus 44px target; local route-health passed 4/4; commit pending; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist recent clear analytics
+- **Context**: Heartbeat continuation while the owner was away. The `/watchlist` `최근 본 종목` clear action was a routine-maintenance action but had no explicit instrumentation or mobile-sized focus target. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, recent-view storage semantics, saved-search persistence, watchlist storage, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: The recent-view `전체 삭제` button now has an explicit aria label, a 44px target/focus ring, and records `watchlist_recent_clear` with only `count`. `docs/ornscore-analytics-event-map-2026-07-12.md` documents that tickers, names, and raw browsing text are not sent.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4731 passed 4/4; Chrome CDP confirmed `/watchlist` at 390x844 and 1280x900 renders the clear button with `watchlist_recent_clear`, `data-analytics-count=2`, explicit aria label, 44px height, two recent rows, and horizontal overflow 0; temp port 4731 was stopped.
+- **Commit**: pending (`[codex] track watchlist recent clear`).
+- **Next**: Continue with one small local-only app-polish slice, preferably stock-detail routine clarity or another conservative watchlist action affordance. Push/deploy remains owner-approved only.
 
 ### 2026-07-13 - Codex - Watchlist recent-search analytics
 - **Context**: Heartbeat continuation while the owner was away. The `/watchlist` recent-search chips were useful routine re-entry points but were not instrumented like the other watchlist/saved-filter actions. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, saved-search persistence, watchlist storage, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.

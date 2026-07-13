@@ -1413,7 +1413,10 @@ export function WatchlistClient({
             <button
               type="button"
               onClick={clearRecent}
-              className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
+              aria-label={`최근 본 종목 ${recent.length}개 전체 삭제`}
+              data-analytics-event="watchlist_recent_clear"
+              data-analytics-count={recent.length}
+              className={`inline-flex min-h-[44px] items-center rounded-md px-2 text-xs text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 ${FOCUS_RING}`}
             >
               전체 삭제
             </button>
