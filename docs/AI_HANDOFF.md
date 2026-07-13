@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T17:37:32+09:00
+Last updated: 2026-07-14T00:34:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: ORNScore Play Console action pack
-- Run: manual thread
+- Task: 237 - ORNScore app-first-use 2026-07-14 A - PWA install entry and app copy
+- Run: 238
 - Status: completed
-- Agent: codex
-- Note: Added `docs/ornscore-play-console-action-pack-2026-07-13.md` as the owner-facing Google Play launch sheet. `npm run app:check` passes with the expected external WAIT for real Android `assetlinks.json`; owner must provide Play app-signing SHA-256 before Codex can generate it. No Play Console/account/signing/deploy/push action performed.
+- Agent: claude
+- Note: Completed PWA install fallback copy polish with local commits `78f82a7` and `ddf49cf`. Development logs show local gates passed; the later tester failure was an AI Center restart interruption, not a product validation failure. Continue with task 238.
 
 ## Next Agent Checklist
 
