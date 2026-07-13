@@ -1471,10 +1471,14 @@ export function WatchlistClient({
             <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">최근 검색</h2>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {recentSearches.map((term) => (
+            {recentSearches.map((term, idx) => (
               <Link
                 key={term}
                 href={`/stocks?q=${encodeURIComponent(term)}`}
+                aria-label={`최근 검색 ${term} 다시 열기`}
+                data-analytics-event="watchlist_recent_search_open"
+                data-analytics-index={idx + 1}
+                data-analytics-count={recentSearches.length}
                 className="inline-flex items-center gap-1 min-h-[36px] px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-600 dark:text-zinc-300 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition"
               >
                 <Search className="w-3 h-3" />{term}

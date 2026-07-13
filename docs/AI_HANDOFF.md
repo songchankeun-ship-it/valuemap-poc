@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T11:41:04+09:00
+Last updated: 2026-07-13T12:08:41+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex public copy slice - app launch copy
+- Task: Heartbeat Codex watchlist slice - recent-search analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/about` app-install copy now says web app/PWA first and app-market release under review/preparation without promising store availability; local route-health passed 4/4; commit `eced906`; no push/deploy.
+- Note: `/watchlist` recent-search chips now record privacy-safe `watchlist_recent_search_open` with index/count only and explicit aria labels; local route-health passed 4/4; commit pending; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Watchlist recent-search analytics
+- **Context**: Heartbeat continuation while the owner was away. The `/watchlist` recent-search chips were useful routine re-entry points but were not instrumented like the other watchlist/saved-filter actions. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, saved-search persistence, watchlist storage, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: Recent-search chips on `/watchlist` now have explicit aria labels and record `watchlist_recent_search_open` with only `index` and `count`. `docs/ornscore-analytics-event-map-2026-07-12.md` documents that raw search text is not sent.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4730 passed 4/4; Chrome headless confirmed `/watchlist` at 390x844 and 1280x900 renders two recent-search chips with `watchlist_recent_search_open`, index/count metadata, explicit aria labels, and horizontal overflow 0; temp port 4730 was stopped.
+- **Commit**: pending (`[codex] track watchlist recent search opens`).
+- **Next**: Continue with one small local-only app-polish slice, preferably stock-detail or watchlist routine clarity. Push/deploy remains owner-approved only.
 
 ### 2026-07-13 - Codex - About app launch copy
 - **Context**: Continued automatically while the owner was away after the admin release command slice. The public `/about` app-install section still said store release status was undecided, which no longer matched the current app-launch preparation. This is public copy-only work: no scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
