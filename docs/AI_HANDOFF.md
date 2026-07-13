@@ -46,7 +46,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Context**: Owner returned and explicitly approved pushing/deploying the accumulated local product-polish commits. Heartbeat automation `ornscore-product-polish-continuation` was deleted so it would not keep adding local commits after release.
 - **Changes**: Pushed `main` to `origin/main`, moving `f172470..273bf77` and publishing the local commits through `[codex] record stock checklist reset commit`.
 - **Validation**: Live `https://ornscore.com` returned 200; `npm run verify:local -- --base https://ornscore.com --no-perf` passed 4/4 real gates (`smoke:check --all`, `verify:routes`, `verify:stocks-seo`, `verify:login-preflight` with `naverState=either`); Chrome CDP confirmed live `/stock/005930` exposes `stock_checklist_reset` with ticker `005930`, `done=2`, `total=4`, 44px height, and horizontal overflow 0.
-- **Commit**: `8b0c098` (`[codex] record product polish release`).
+- **Commit**: `2d5dffd` (`[codex] record product polish release`).
 - **Next**: Continue only after owner direction. Good local-only candidates remain stock-detail/watchlist polish; app-store/account/Search Console/DNS/email/Supabase changes stay owner-gated.
 
 ### 2026-07-13 - Codex - Stock checklist reset analytics
