@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] admin release gate hints
+- **Scope**: Clarified the operator-facing `/admin` release panel so automated checks and owner/manual gates are visually separated. Admin-only UI copy/layout slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
+- **Changes**: Added three compact gate cards inside `/admin` "배포 검증": automated verification (`verify:local --no-perf` routes/SEO/login SSR), manual OAuth real round-trip, and owner-approved external settings. Updated the surrounding copy to explain that login SSR can account for local/live provider differences while real OAuth and console changes stay manual.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4727 --no-perf` passed 4/4; unauthenticated `/admin` returned 307. Authenticated admin-only panel visual QA was not captured because no admin browser session is available in this thread. Temp port 4727 was stopped.
+- **Commit**: `1958eb1` (`[codex] clarify admin release gates`).
+- **Next**: Continue with another local-only operations slice, such as documenting the provider-aware live release command in `docs/ornscore-route-smoke-checklist.md`, or push/deploy the accumulated commits only after owner approval.
+
 ## 2026-07-13 - [codex] provider-aware login preflight
 - **Scope**: Removed the false production login-preflight failure caused by Naver being enabled on the live site while the repo-local default still expects a planned "설정 필요" marker. Script-only verification improvement: no UI, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: `scripts/verify-login-preflight.mjs` now keeps localhost/127.0.0.1 strict with `naverState=planned`, while non-local bases default to `naverState=either`, accepting either the planned Naver marker or the enabled "네이버로 시작하기" button. Added `--naver-state planned|enabled|either` / `VERIFY_NAVER_STATE` override and prints the selected state in the gate header.

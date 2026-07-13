@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T11:17:08+09:00
+Last updated: 2026-07-13T11:24:39+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex verification slice - provider-aware login preflight
+- Task: Direct Codex admin slice - release gate hints
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `verify-login-preflight` now treats local Naver as strict planned but live/non-local Naver as either planned or enabled; local and live `verify:local --no-perf` both pass 4/4; implementation commit `932210a`; no push/deploy.
+- Note: `/admin` release panel now separates automated route/SEO/login-SSR checks from manual OAuth round-trip and owner-approved external settings; local `verify:local --no-perf` passed 4/4; implementation commit `1958eb1`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Admin release gate hints
+- **Context**: Continued automatically while the owner was away from the provider-aware login preflight next entry point. The goal was to make the admin release panel clearer about what automated route-health proves versus what remains owner/manual. This is admin-only UI copy/layout: no scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: `/admin` "배포 검증" now includes three compact gate cards: automated verification (`verify:local --no-perf` routes/SEO/login SSR), manual OAuth real round-trip, and owner-approved external settings. The explanatory copy now states that login SSR verification accounts for local/live provider state differences while real OAuth and console changes stay manual.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4727 passed 4/4; unauthenticated `/admin` returned 307. Authenticated admin-only panel visual QA was not captured because no admin browser session is available in this thread. Temp port 4727 was stopped.
+- **Commit**: `1958eb1` (`[codex] clarify admin release gates`).
+- **Next**: Continue with another local-only operations slice, such as documenting the provider-aware live release command in `docs/ornscore-route-smoke-checklist.md`, or push/deploy the accumulated commits only after owner approval.
 
 ### 2026-07-13 - Codex - Provider-aware login preflight
 - **Context**: Continued from the admin release panel next entry point. The live site had passed smoke/routes/stocks-seo but login-preflight was failing only because production enabled Naver while the repo-local script expected the planned `설정 필요` marker. This slice is script-only verification work: no UI, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
