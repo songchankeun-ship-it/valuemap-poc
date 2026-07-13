@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] recent change card analytics
+- **Scope**: Instrumented stock-detail recent-change summary card opens. No analytics vendor/account/config change, scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote changes.
+- **Changes**: Linked recent-change cards on `/stock/[ticker]` now record `stock_recent_change_card_open` with `ticker`, fixed item `kind`, `tone`, and anchor `target` only. The analytics event map documents the event; no score values, labels, raw text, or free-form input are tracked.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4722 --no-perf` passed 4/4 real gates. In-app browser verified 390x844 and desktop `/stock/005930` show 4 tracked recent-change cards (`score`, `flow`, `return3m`, `disclosure`), ticker `005930`, targets `basis`/`summary`/`disclosures`, visible `관련 탭 보기`, and no horizontal overflow; temp port 4722 was stopped.
+- **Commit**: `d158f72` (`[codex] track recent change card opens`).
+- **Next**: Continue with one small local app-like polish slice, preferably another conservative stock-detail recent-action/readability improvement or watchlist/saved-filter routine polish. Keep Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes owner-approved.
+
 ## 2026-07-13 - [codex] recent change basis link analytics
 - **Scope**: Instrumented the stock-detail recent-change `변화 근거 보기` header action without changing scoring/data/DART/watchlist storage/Supabase schema/RLS/auth/deployment/push/remote settings.
 - **Changes**: `/stock/[ticker]` now records `stock_recent_change_basis_open` when the recent-change header link opens `#basis`, with only `ticker` and fixed `target=basis`. The link also has an explicit aria label. The analytics event map documents the event; no score values, labels, or free-form text are tracked.

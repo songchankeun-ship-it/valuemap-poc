@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T09:04:53+09:00
+Last updated: 2026-07-13T09:24:47+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - recent change basis link analytics
+- Task: Direct Codex product slice - recent change card analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stock/[ticker]` recent-change `변화 근거 보기` action now records `stock_recent_change_basis_open` with ticker and fixed target only; implementation commit `81b5296`; no push/deploy.
+- Note: `/stock/[ticker]` recent-change cards now record `stock_recent_change_card_open` with ticker, fixed kind, tone, and anchor target only; implementation commit `d158f72`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Recent change card analytics
+- **Context**: Continued the stock-detail recent-action/readability path after instrumenting the basis header link. This slice is local instrumentation only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: Linked recent-change cards on `/stock/[ticker]` now record `stock_recent_change_card_open` with `ticker`, fixed card `kind`, `tone`, and anchor `target` only. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`; no score values, labels, raw text, or free-form input are tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4722 passed 4/4 real gates. In-app browser verified mobile 390x844 and desktop `/stock/005930` show 4 tracked recent-change cards (`score`, `flow`, `return3m`, `disclosure`), ticker `005930`, targets `basis`/`summary`/`disclosures`, visible `관련 탭 보기`, and no horizontal overflow. Temp port 4722 was stopped.
+- **Commit**: `d158f72` (`[codex] track recent change card opens`).
+- **Next**: Continue with another small local app-like polish slice such as a conservative stock-detail recent-action/readability improvement or watchlist/saved-filter routine polish. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Recent change basis link analytics
 - **Context**: Continued the stock-detail recent-action/readability path after enlarging the basis link target. This slice is local instrumentation/accessibility only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
