@@ -4,7 +4,7 @@
 - **Scope**: Made the `/admin` release panel more explicit about the exact live route-health command and the remaining human gates. Admin-only UI slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: `/admin` "배포 검증" now shows `npm run verify:local -- --base {publicBaseUrl} --no-perf` as the operating URL gate, plus compact summaries for automated pass criteria and remaining human checks.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4728 --no-perf` passed 4/4; unauthenticated `/admin` returned 307 to `/login?next=%2Fadmin`; temp port 4728 was stopped.
-- **Commit**: pending (`[codex] surface live release gate command`).
+- **Commit**: `7d719f6` (`[codex] surface live release gate command`).
 - **Next**: Continue with a small local-only app-polish slice, preferably a watchlist or stock-detail routine affordance. Push/deploy remains owner-approved only.
 
 ## 2026-07-13 - [codex] live release route-health docs
