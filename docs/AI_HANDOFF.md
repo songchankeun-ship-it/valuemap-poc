@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T11:27:42+09:00
+Last updated: 2026-07-13T11:30:08+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -25,7 +25,7 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `docs/ornscore-route-smoke-checklist.md` now documents live `verify:local --base https://ornscore.com --no-perf` with provider-aware Naver state handling; docs commit pending; no push/deploy.
+- Note: `docs/ornscore-route-smoke-checklist.md` now documents live `verify:local --base https://ornscore.com --no-perf` with provider-aware Naver state handling; docs commit `9c05e06`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -46,7 +46,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Context**: Continued automatically while the owner was away after admin release gate hints. The provider-aware login preflight behavior was working, but the route-health checklist still read as mostly local-only. This is docs-only operations work: no UI, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
 - **Changes**: `docs/ornscore-route-smoke-checklist.md` now includes a "배포 후 라이브 확인" section with `npm run verify:local -- --base https://ornscore.com --no-perf`, explains local `naverState=planned` versus live `naverState=either`, documents explicit `--naver-state planned|enabled|either`, and keeps real OAuth/app-store/console/DNS/Search Console as manual gates.
 - **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean.
-- **Commit**: pending (`[codex] document live release route health`).
+- **Commit**: `9c05e06` (`[codex] document live release route health`).
 - **Next**: Continue with a small local-only operations or app-polish slice, or pause for owner approval before pushing accumulated local commits.
 
 ### 2026-07-13 - Codex - Admin release gate hints

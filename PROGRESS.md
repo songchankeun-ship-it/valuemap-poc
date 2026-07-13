@@ -4,7 +4,7 @@
 - **Scope**: Documented the provider-aware live release verification command so the post-deploy check no longer depends on chat memory. Docs-only operations slice: no UI, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: `docs/ornscore-route-smoke-checklist.md` now has a "배포 후 라이브 확인" section with `npm run verify:local -- --base https://ornscore.com --no-perf`, explains local `naverState=planned` versus live `naverState=either`, documents explicit `--naver-state planned|enabled|either`, and keeps real OAuth/app-store/console/DNS/Search Console as manual gates.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean.
-- **Commit**: pending (`[codex] document live release route health`).
+- **Commit**: `9c05e06` (`[codex] document live release route health`).
 - **Next**: Continue with a small local-only operations or app-polish slice. Good candidates: add the same owner-gate reminder to a compact admin/status help link, or pause for owner approval before pushing the accumulated local commits.
 
 ## 2026-07-13 - [codex] admin release gate hints
