@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T09:24:47+09:00
+Last updated: 2026-07-13T09:48:28+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex product slice - recent change card analytics
+- Task: Direct Codex product slice - saved filter add action analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/stock/[ticker]` recent-change cards now record `stock_recent_change_card_open` with ticker, fixed kind, tone, and anchor target only; implementation commit `d158f72`; no push/deploy.
+- Note: `/watchlist` saved-filter `조건 추가` now records `saved_filter_add_open` with count only and has an explicit aria label; implementation commit `92d7f38`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Saved filter add action analytics
+- **Context**: Continued the watchlist saved-filter routine after stock-detail recent-change card analytics. This slice is local instrumentation/accessibility only: no analytics vendor/account/config change, saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
+- **Changes**: `/watchlist` saved-filter header `조건 추가` now has an explicit `aria-label` and records `saved_filter_add_open` with `count` only. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`; no saved-filter names, conditions, raw query text, or free-form input are tracked.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notices; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4723 passed 4/4 real gates. In-app browser created and removed a temporary saved filter, then verified mobile 390x844 and desktop `/watchlist` show `조건 추가` with `/stocks`, `saved_filter_add_open`, count-only metadata, `aria-label`, 44px target, and no horizontal overflow.
+- **Commit**: `92d7f38` (`[codex] track saved filter add action`).
+- **Next**: Continue with another small local app-like polish slice such as a conservative watchlist/saved-filter routine affordance or stock-detail recent-action/readability improvement. Owner gates remain Supabase schema/RLS, alert-delivery, CSV import, app-store console, deployment, push, analytics account/config, and remote/account changes.
 
 ### 2026-07-13 - Codex - Recent change card analytics
 - **Context**: Continued the stock-detail recent-action/readability path after instrumenting the basis header link. This slice is local instrumentation only: no analytics vendor/account/config change, scoring, generated data, DART, watchlist storage, saved-search persistence, Supabase schema/RLS, auth-provider, store-console, deployment, push, or remote/account change.
