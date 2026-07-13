@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T12:48:51+09:00
+Last updated: 2026-07-13T13:09:41+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Heartbeat Codex stock-detail slice - checklist reset analytics
+- Task: Owner-approved ORNScore product-polish release
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Stock-detail checklist reset now records privacy-safe `stock_checklist_reset` with ticker/done/total only and has an explicit aria label; local route-health passed 4/4; commit `e2427d1`; no push/deploy.
+- Note: Owner returned and approved push/deploy. `git push origin main` moved `f172470..273bf77`; live `https://ornscore.com` returned 200; live `verify:local --no-perf` passed 4/4; Chrome CDP confirmed live `/stock/005930` has `stock_checklist_reset`. Heartbeat automation `ornscore-product-polish-continuation` was deleted.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Product polish batch release
+- **Context**: Owner returned and explicitly approved pushing/deploying the accumulated local product-polish commits. Heartbeat automation `ornscore-product-polish-continuation` was deleted so it would not keep adding local commits after release.
+- **Changes**: Pushed `main` to `origin/main`, moving `f172470..273bf77` and publishing the local commits through `[codex] record stock checklist reset commit`.
+- **Validation**: Live `https://ornscore.com` returned 200; `npm run verify:local -- --base https://ornscore.com --no-perf` passed 4/4 real gates (`smoke:check --all`, `verify:routes`, `verify:stocks-seo`, `verify:login-preflight` with `naverState=either`); Chrome CDP confirmed live `/stock/005930` exposes `stock_checklist_reset` with ticker `005930`, `done=2`, `total=4`, 44px height, and horizontal overflow 0.
+- **Commit**: `8b0c098` (`[codex] record product polish release`).
+- **Next**: Continue only after owner direction. Good local-only candidates remain stock-detail/watchlist polish; app-store/account/Search Console/DNS/email/Supabase changes stay owner-gated.
 
 ### 2026-07-13 - Codex - Stock checklist reset analytics
 - **Context**: Heartbeat continuation while the owner was away. The stock-detail local checklist already supported reset, next-step, and routine CTA flows; reset was a routine-maintenance action but was not instrumented. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, checklist storage semantics, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.

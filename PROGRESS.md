@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] release product-polish batch
+- **Scope**: Pushed the accumulated local product-polish batch to `origin/main` after fresh owner approval. Release/verification record only: no app runtime code, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, or email changes in this record commit.
+- **Changes**: `git push origin main` moved `f172470..273bf77`, publishing the local commits through `[codex] record stock checklist reset commit`.
+- **Validation**: Live `https://ornscore.com` returned 200; `npm run verify:local -- --base https://ornscore.com --no-perf` passed 4/4 real gates (`smoke:check --all`, `verify:routes`, `verify:stocks-seo`, `verify:login-preflight` with `naverState=either`); Chrome CDP confirmed live `/stock/005930` exposes the new `stock_checklist_reset` behavior at 390x844 with ticker `005930`, `done=2`, `total=4`, 44px height, and horizontal overflow 0.
+- **Commit**: `8b0c098` (`[codex] record product polish release`).
+- **Next**: With this release reflected, the next local slice can return to stock-detail/watchlist polish, or pause for owner-directed app-store/account work. External/app-store/Search Console/DNS/email/Supabase changes remain owner-gated.
+
 ## 2026-07-13 - [codex] track stock checklist reset
 - **Scope**: Added privacy-safe instrumentation to the stock-detail local checklist reset action. Local UI/instrumentation/docs slice: no analytics vendor/account/config change, checklist storage semantics, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: The stock-detail checklist `전체 지우기` button now has an explicit aria label and records `stock_checklist_reset` with only `ticker`, completed `done`, and `total`; checklist labels, notes, and free-form text are not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
