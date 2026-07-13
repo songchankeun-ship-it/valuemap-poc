@@ -113,6 +113,27 @@ export default async function AdminHomePage() {
     { href: `${publicBaseUrl}/data-deletion`, label: "데이터 삭제" },
   ];
 
+  const releaseGates = [
+    {
+      label: "자동 검증",
+      value: "라우트 · SEO · 로그인 SSR",
+      detail: "verify:local --no-perf로 공개 경로와 로그인 HTML 계약을 확인합니다.",
+      tone: "ok",
+    },
+    {
+      label: "사람 확인",
+      value: "OAuth 실왕복",
+      detail: "카카오 · 구글 · 네이버 · 이메일 링크는 실제 계정으로 마지막에 확인합니다.",
+      tone: "warn",
+    },
+    {
+      label: "소유자 승인",
+      value: "외부 설정",
+      detail: "스토어 · DNS · Search Console · Supabase schema/RLS · 이메일/계정 변경은 승인 후 진행합니다.",
+      tone: "neutral",
+    },
+  ] satisfies Array<{ label: string; value: string; detail: string; tone: "ok" | "warn" | "neutral" }>;
+
   return (
     <div className="mx-auto max-w-5xl px-3 py-4 md:px-4 md:py-8">
       <header className="mb-5">
@@ -203,8 +224,13 @@ export default async function AdminHomePage() {
           <MiniCheck label="수동 게이트" value="로그인 왕복" />
         </div>
         <p className="mt-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-          로컬과 운영의 OAuth 제공자 상태가 다르면 login-preflight의 계획 제공자 기대값은 별도 해석이 필요합니다.
+          로그인 SSR 검증은 로컬과 운영의 OAuth 제공자 상태 차이를 반영합니다. 실제 OAuth 왕복과 외부 콘솔 변경은 사람 확인 게이트로 남겨둡니다.
         </p>
+        <div className="mt-3 grid gap-2 lg:grid-cols-3">
+          {releaseGates.map((gate) => (
+            <GateCard key={gate.label} {...gate} />
+          ))}
+        </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {releaseLinks.map((link) => (
             <a
@@ -244,6 +270,38 @@ export default async function AdminHomePage() {
           </a>
         </div>
       </section>
+    </div>
+  );
+}
+
+function GateCard({
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  tone: "ok" | "warn" | "neutral";
+}) {
+  const toneClass =
+    tone === "ok"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100"
+      : tone === "warn"
+        ? "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"
+        : "border-zinc-200 bg-zinc-50 text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-100";
+
+  return (
+    <div className={`rounded-md border p-3 ${toneClass}`}>
+      <div className="flex items-start gap-2">
+        <ToneDot tone={tone} />
+        <div className="min-w-0">
+          <p className="text-[11px] font-medium opacity-75">{label}</p>
+          <p className="mt-0.5 break-words text-sm font-semibold">{value}</p>
+        </div>
+      </div>
+      <p className="mt-2 text-[11px] leading-relaxed opacity-75">{detail}</p>
     </div>
   );
 }
