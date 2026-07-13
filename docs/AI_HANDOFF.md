@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T12:31:21+09:00
+Last updated: 2026-07-13T12:47:57+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Heartbeat Codex watchlist slice - recent clear action
+- Task: Heartbeat Codex stock-detail slice - checklist reset analytics
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/watchlist` recent-view clear action now records privacy-safe `watchlist_recent_clear` with count only and has an explicit aria label plus 44px target; local route-health passed 4/4; commit `8bbed5f`; no push/deploy.
+- Note: Stock-detail checklist reset now records privacy-safe `stock_checklist_reset` with ticker/done/total only and has an explicit aria label; local route-health passed 4/4; commit pending; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Stock checklist reset analytics
+- **Context**: Heartbeat continuation while the owner was away. The stock-detail local checklist already supported reset, next-step, and routine CTA flows; reset was a routine-maintenance action but was not instrumented. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, checklist storage semantics, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: The checklist `전체 지우기` button now has an explicit aria label and records `stock_checklist_reset` with only `ticker`, `done`, and `total`. `docs/ornscore-analytics-event-map-2026-07-12.md` documents that checklist labels, notes, and free-form text are not sent.
+- **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4732 passed 4/4; Chrome CDP confirmed `/stock/005930` at 390x844 and 1280x900 renders the reset button with `stock_checklist_reset`, ticker `005930`, `done=2`, `total=4`, explicit aria label, 44px height, two checked items, and horizontal overflow 0; temp port 4732 was stopped.
+- **Commit**: pending (`[codex] track stock checklist reset`).
+- **Next**: Continue with one small local-only app-polish slice, preferably stock-detail routine clarity or another conservative watchlist/saved-filter affordance. Push/deploy remains owner-approved only.
 
 ### 2026-07-13 - Codex - Watchlist recent clear analytics
 - **Context**: Heartbeat continuation while the owner was away. The `/watchlist` `최근 본 종목` clear action was a routine-maintenance action but had no explicit instrumentation or mobile-sized focus target. This is local UI/instrumentation/docs work: no analytics vendor/account/config change, recent-view storage semantics, saved-search persistence, watchlist storage, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.

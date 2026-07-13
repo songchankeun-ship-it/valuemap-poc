@@ -171,6 +171,11 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
             <button
               type="button"
               onClick={() => clearChecklist(ticker)}
+              aria-label={t.reset}
+              data-analytics-event="stock_checklist_reset"
+              data-analytics-ticker={ticker}
+              data-analytics-done={done}
+              data-analytics-total={total}
               className={`inline-flex items-center gap-1 min-h-[44px] px-2.5 rounded-md text-[11px] font-medium text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition ${FOCUS_RING}`}
             >
               <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" /> {t.reset}

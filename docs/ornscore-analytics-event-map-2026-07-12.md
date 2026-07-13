@@ -47,6 +47,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `stock_recent_change_priority_open` | Stock detail recent-change priority action | `ticker`, `kind`, `tone`, `target` | User follows the single prioritized recent-change evidence link; no score values, labels, or free-form text are sent. |
 | `stock_checklist_next_open` | Stock detail checklist next-step CTA | `ticker`, `step` | User follows the next unchecked checklist item; only ticker and fixed checklist step id are sent. |
 | `stock_checklist_routine_open` | Stock detail checklist completion CTA | `ticker` | User finishes the local stock checklist and opens the personal routine page. |
+| `stock_checklist_reset` | Stock detail local checklist reset button | `ticker`, `done`, `total` | User clears local checklist progress for one stock; no checklist labels, notes, or free-form text are sent. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |
 | `report_data_issue_submit` | Data issue form submit | `category`, `ticker`, `hasEmail` | User submits a data quality report attempt. |
