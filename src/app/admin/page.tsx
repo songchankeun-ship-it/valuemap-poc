@@ -22,6 +22,11 @@ function formatGeneratedAt(iso?: string): string {
   return `${kst.getUTCFullYear()}-${pad(kst.getUTCMonth() + 1)}-${pad(kst.getUTCDate())} ${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())} KST`;
 }
 
+function normalizeBaseUrl(value?: string): string {
+  const raw = (value || "https://ornscore.com").replace(/\/+$/, "");
+  return raw.startsWith("http://") || raw.startsWith("https://") ? raw : `https://${raw}`;
+}
+
 function ToneDot({ tone }: { tone: "ok" | "warn" | "neutral" }) {
   const cls =
     tone === "ok"
@@ -61,6 +66,9 @@ export default async function AdminHomePage() {
   const history = readStatusHistory();
   const commitSha = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local";
   const vercelEnv = process.env.VERCEL_ENV ?? "local";
+  const publicBaseUrl = normalizeBaseUrl(
+    process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL,
+  );
   const reportMode = process.env.ADMIN_ENABLED === "1" ? "신고 조회 켜짐" : "신고 조회 꺼짐";
 
   const health = [
@@ -95,6 +103,14 @@ export default async function AdminHomePage() {
     { href: "/status", title: "공개 상태 페이지", desc: "사용자에게 보이는 기준일과 출처", Icon: ShieldCheck },
     { href: "/stocks", title: "종목 목록", desc: "검색 유입 첫 화면 점검", Icon: BarChart3 },
     { href: "/guide/metrics", title: "지표 가이드", desc: "PER/PBR/ROE 검색 유입 점검", Icon: FileSearch },
+  ];
+
+  const releaseLinks = [
+    { href: `${publicBaseUrl}/`, label: "홈" },
+    { href: `${publicBaseUrl}/stocks`, label: "종목" },
+    { href: `${publicBaseUrl}/watchlist`, label: "관심" },
+    { href: `${publicBaseUrl}/login`, label: "로그인" },
+    { href: `${publicBaseUrl}/data-deletion`, label: "데이터 삭제" },
   ];
 
   return (
@@ -175,6 +191,36 @@ export default async function AdminHomePage() {
         )}
       </section>
 
+      <section aria-label="배포 검증" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 text-zinc-700 dark:text-zinc-300" aria-hidden="true" />
+          <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">배포 검증</h2>
+        </div>
+        <div className="mt-3 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
+          <MiniCheck label="공개 기준" value={publicBaseUrl} />
+          <MiniCheck label="배포 환경" value={vercelEnv} />
+          <MiniCheck label="커밋" value={commitSha} />
+          <MiniCheck label="수동 게이트" value="로그인 왕복" />
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+          로컬과 운영의 OAuth 제공자 상태가 다르면 login-preflight의 계획 제공자 기대값은 별도 해석이 필요합니다.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {releaseLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+            >
+              {link.label}
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section aria-label="외부 운영 도구" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
         <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">외부 운영 도구</h2>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -206,7 +252,7 @@ function MiniCheck({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{label}</p>
-      <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-zinc-100">{value}</p>
+      <p className="mt-1 break-words text-sm font-medium text-zinc-900 dark:text-zinc-100">{value}</p>
     </div>
   );
 }
