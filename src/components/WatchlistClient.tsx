@@ -941,7 +941,14 @@ export function WatchlistClient({
               </p>
             </div>
           ) : (
-            <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400 break-words">오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요.</p>
+            <div className="mb-4">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 break-words leading-snug">
+                오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요. 이렇게 한 번에 확인하는 게 관심 목록의 쓸모예요 — 이 기기에 저장돼 있어 다시 들를 때마다 오늘 바뀐 것만 빠르게 볼 수 있어요.
+              </p>
+              <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 break-words leading-snug">
+                아래 목록에서 종목을 열어 지표·공시를 살펴보거나, 정렬·비교로 이어볼 수 있어요.
+              </p>
+            </div>
           )
         ) : null}
 
