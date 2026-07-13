@@ -17,8 +17,11 @@
 // What it asserts per state (all derived from the running server's HTML only):
 //   (a) HTTP 200,
 //   (b) NONE of the critical runtime-failure markers appear,
-//   (c) the enabled provider buttons render (Kakao + Google labels),
-//   (d) the planned/"설정 필요" (Naver) marker renders (no fake success path),
+//   (c) the baseline enabled provider buttons render (Kakao + Google labels),
+//   (d) Naver renders in the expected provider state:
+//       - local URLs default to strict planned/"설정 필요" mode,
+//       - non-local URLs default to either planned OR enabled mode, because
+//         production can legitimately enable custom:naver before local env does,
 //   (e) required per-state copy renders (previous-page context, contextFallback,
 //       friendly Korean error text),
 //   (f) NO raw provider error string leaks (e.g. "provider is not enabled"),
@@ -42,6 +45,8 @@
 //   # deliberate negative self-check (prove the gate can FAIL): point --login-path
 //   # at a page that is NOT the login form; every state then FAILs and it exits 1:
 //   node scripts/verify-login-preflight.mjs --base http://localhost:4463 --login-path /about
+//   # provider-state override:
+//   node scripts/verify-login-preflight.mjs --base https://ornscore.com --naver-state either
 
 // --- args -------------------------------------------------------------------
 function argValue(flag, fallback) {
@@ -54,6 +59,26 @@ const BASE = (argValue("--base", process.env.VERIFY_BASE_URL) || "http://localho
 // Mount path of the login form. Default "/login"; override ONLY to run the
 // deliberate negative self-check (e.g. --login-path /about proves the asserts bite).
 const LOGIN_PATH = argValue("--login-path", "/login").replace(/\/+$/, "") || "/login";
+
+function isLocalBase(base) {
+  try {
+    const host = new URL(base).hostname;
+    return host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]" || host.endsWith(".localhost");
+  } catch {
+    return false;
+  }
+}
+
+function normalizeNaverState(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "planned" || normalized === "enabled" || normalized === "either") return normalized;
+  console.error(`Invalid --naver-state "${value}". Expected planned, enabled, or either.`);
+  process.exit(2);
+}
+
+const NAVER_STATE = normalizeNaverState(
+  argValue("--naver-state", process.env.VERIFY_NAVER_STATE || (isLocalBase(BASE) ? "planned" : "either")),
+);
 
 // --- shared marker contracts ------------------------------------------------
 // Critical runtime-failure markers (shared contract with smoke-check/verify-routes).
@@ -79,10 +104,11 @@ const RAW_PROVIDER_ERROR_MARKERS = [
   "provider_disabled",
 ];
 
-// Buttons + planned marker that must be present in EVERY /login state (enabled
-// providers = Kakao + Google in local env; Naver stays a "설정 필요" planned item).
+// Baseline buttons that must be present in EVERY /login state. Naver can be
+// planned locally or enabled in production, so it is checked separately below.
 const ENABLED_BUTTON_MARKERS = ["카카오로 시작하기", "구글로 시작하기"];
-const PLANNED_MARKER = "설정 필요";
+const NAVER_ENABLED_MARKER = "네이버로 시작하기";
+const NAVER_PLANNED_MARKER = "설정 필요";
 
 // --- states -----------------------------------------------------------------
 // Each state is a query variant of LOGIN_PATH plus the SSR-stable copy it must show.
@@ -153,14 +179,22 @@ async function checkState(state) {
   const critHits = CRITICAL_MARKERS.filter((m) => body.includes(m));
   if (critHits.length) reasons.push(`critical marker(s): ${critHits.join(", ")}`);
 
-  // (c) enabled provider buttons present
+  // (c) baseline enabled provider buttons present
   for (const m of ENABLED_BUTTON_MARKERS) {
     if (!body.includes(m)) reasons.push(`missing enabled provider button "${m}"`);
   }
 
-  // (d) planned marker present (no fake success path)
-  if (!body.includes(PLANNED_MARKER)) {
-    reasons.push(`missing planned-provider marker "${PLANNED_MARKER}"`);
+  // (d) Naver provider state: strict planned on local, flexible on live unless overridden.
+  const hasNaverEnabled = body.includes(NAVER_ENABLED_MARKER);
+  const hasNaverPlanned = body.includes("네이버") && body.includes(NAVER_PLANNED_MARKER);
+  if (NAVER_STATE === "planned" && !hasNaverPlanned) {
+    reasons.push(`missing Naver planned-provider marker "${NAVER_PLANNED_MARKER}"`);
+  }
+  if (NAVER_STATE === "enabled" && !hasNaverEnabled) {
+    reasons.push(`missing enabled provider button "${NAVER_ENABLED_MARKER}"`);
+  }
+  if (NAVER_STATE === "either" && !hasNaverPlanned && !hasNaverEnabled) {
+    reasons.push(`missing Naver provider state: expected planned marker "${NAVER_PLANNED_MARKER}" or enabled button "${NAVER_ENABLED_MARKER}"`);
   }
 
   // (e) per-state copy present
@@ -192,7 +226,7 @@ function padStart(str, width) {
 
 async function main() {
   console.log("OrnScore /login SSR preflight (repo-local gate; exits 1 on any failure)");
-  console.log(`base=${BASE}  loginPath=${LOGIN_PATH}  states=${STATES.length}`);
+  console.log(`base=${BASE}  loginPath=${LOGIN_PATH}  states=${STATES.length}  naverState=${NAVER_STATE}`);
   console.log("NOTE: real provider round-trip / magic-link / callback remain an OWNER gate.");
   console.log("");
 
