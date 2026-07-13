@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T10:49:10+09:00
+Last updated: 2026-07-13T10:53:30+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -25,7 +25,7 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Accumulated local product-polish commits were pushed to `origin/main`; `/admin` now has a compact "배포 검증" panel for public release checks; implementation commit `967a095`; docs update pending push.
+- Note: Accumulated local product-polish commits plus the admin release verification panel were pushed to `origin/main`; live smoke/routes/stocks-seo passed; live login-preflight differs only because production provider state lacks the repo-local planned-provider marker; implementation commit `967a095`.
 
 ## Next Agent Checklist
 
@@ -45,9 +45,9 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 ### 2026-07-13 - Codex - Admin release verification panel
 - **Context**: Owner approved pushing/deploying, then chose the recommended next slice: make the existing `/admin` page more useful for post-release operations. This slice is local UI/documentation only after the approved push path: no scoring, generated data, DART, Supabase schema/RLS, auth-provider, app-store, Search Console, DNS/email/account/config, or destructive git changes.
 - **Changes**: `/admin` now includes a "배포 검증" section with public base URL normalization, deployment environment, short commit, the manual login round-trip gate, and direct public links for home/stocks/watchlist/login/data-deletion checks. `MiniCheck` values wrap safely for long preview or production URLs.
-- **Validation**: Earlier in the session, `git push origin main` succeeded and live `https://ornscore.com` returned 200. Live `verify:local --base https://ornscore.com --no-perf` passed smoke/routes/stocks-seo; login-preflight differed only because production provider state did not match the repo-local planned-provider expectation. For this slice: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4725 passed 4/4 real gates; unauthenticated `/admin` returns 307 to `/login?next=%2Fadmin`. In-app browser responsive inspection was attempted but the webview failed to attach twice, so authenticated admin-only panel screenshot/overflow verification remains unrecorded.
-- **Commit**: `967a095` (`[codex] add admin release verification panel`).
-- **Next**: Push the admin/docs commits to `origin/main`, verify live site once more, then consider a provider-state-aware live login preflight or release-check note so production OAuth state differences do not look like a release failure.
+- **Validation**: Earlier in the session, accumulated local product-polish commits were pushed and live `https://ornscore.com` returned 200. For this slice: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4725 passed 4/4 real gates; unauthenticated `/admin` returns 307 to `/login?next=%2Fadmin`. Post-push live check moved `e601004..234cb67`, live home returned 200, live `/admin` returned 307, and live `verify:local --base https://ornscore.com --no-perf` passed smoke/routes/stocks-seo but failed login-preflight only because production no longer shows the repo-local planned-provider marker `설정 필요`. In-app browser responsive inspection was attempted but the webview failed to attach twice, so authenticated admin-only panel screenshot/overflow verification remains unrecorded.
+- **Commit**: `967a095` (`[codex] add admin release verification panel`); docs/handoff commit `234cb67` was pushed with it.
+- **Next**: Consider a provider-state-aware live login preflight or release-check note so production OAuth state differences do not look like a release failure. Owner gates remain OAuth real round-trip, app-store console, account/DNS/Search Console/email settings, Supabase schema/RLS, and any external config change.
 
 ### 2026-07-13 - Codex - Recent view reopen action
 - **Context**: Continued the watchlist routine after saved-filter add-action analytics. This slice is local UI/instrumentation/accessibility only: no recent-view storage semantics, analytics vendor/account/config change, saved-search persistence, alert delivery, Supabase schema/RLS, scoring, generated data, DART, auth-provider, store-console, deployment, push, or remote/account change.
