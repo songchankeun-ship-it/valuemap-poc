@@ -358,6 +358,7 @@ export const loginCopy = {
     noAds: "로그인 링크 외에 광고성 메일은 보내지 않습니다.",
     noAdsSecond: "알림 메일도 사용자가 직접 설정할 때만 발송됩니다.",
     benefitsTitle: "로그인하면 가능해요",
+    benefitsLocalNote: "관심 종목·비교·저장 필터는 로그인 없이 지금 이 기기에서 바로 돼요. 로그인은 이 기록을 여러 기기·알림으로 넓혀줘요:",
     benefits: [
       "관심 종목을 여러 기기에서 이어보기",
       "비교 목록 저장하기",
@@ -412,6 +413,7 @@ export const loginCopy = {
     noAds: "We do not send promotional email just because you sign in.",
     noAdsSecond: "Notification email is sent only when you explicitly enable it.",
     benefitsTitle: "With login, you can",
+    benefitsLocalNote: "Watchlist, compare, and saved filters already work on this device without login. Login extends them across devices and to alerts:",
     benefits: [
       "Keep your watchlist across devices",
       "Save comparison lists",

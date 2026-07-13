@@ -307,7 +307,9 @@ function LoginForm() {
         )}
 
         <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-          <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">{copy.benefitsTitle}</h3>
+          <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">{copy.benefitsTitle}</h3>
+          {/* 로컬 계정 경계 명시 — 관심/비교/저장 필터는 로그인 없이 이 기기에서 이미 동작하고, 로그인은 그걸 넓혀줌(정직 프레이밍) */}
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed mb-3">{copy.benefitsLocalNote}</p>
           <ul className="space-y-2.5">
             <li className="flex items-start gap-2.5">
               <Heart className="w-4 h-4 text-pink-600 shrink-0 mt-0.5" fill="currentColor" />
