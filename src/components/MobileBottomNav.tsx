@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
@@ -26,6 +26,7 @@ export function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname() || "";
   const { copy } = useLanguage();
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
 
   // 다른 메뉴(MobileNav·UserMenu)와 동일하게 Esc 로 더보기 시트를 닫는다(키보드 접근성).
   useEffect(() => {
@@ -35,6 +36,21 @@ export function MobileBottomNav() {
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
+  }, [moreOpen]);
+
+  // 시트가 닫히면 포커스를 더보기 토글 버튼으로 되돌린다(MobileNav 와 동일 패턴).
+  // 되돌리지 않으면 Esc·백드롭으로 닫을 때 포커스가 body 로 떨어져 키보드/스크린리더
+  // 사용자가 맥락을 잃는다. 최초 마운트(moreOpen=false)에서는 포커스를 건드리지 않는다.
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (moreOpen) {
+      wasOpenRef.current = true;
+      return;
+    }
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      moreButtonRef.current?.focus();
+    }
   }, [moreOpen]);
   const HIDE = ["/login", "/terms", "/privacy", "/data-deletion"];
   if (HIDE.some((p) => pathname === p || pathname.startsWith(p + "/"))) return null;
@@ -80,6 +96,7 @@ export function MobileBottomNav() {
           </Link>
         ))}
         <button
+          ref={moreButtonRef}
           type="button"
           onClick={() => setMoreOpen((v) => !v)}
           className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (moreOpen ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
