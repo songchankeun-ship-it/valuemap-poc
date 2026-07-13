@@ -247,6 +247,43 @@ function RecentChangeSummary({ ticker, items }: { ticker: string; items: RecentC
           </a>
         </div>
       ) : null}
+      {/* 다음 한 걸음 — 신호를 본 뒤의 결정(추적할지 / 나중에 확인할지)을 이 자리에서 바로 이어준다.
+          담기 토글은 상단 히어로의 '관심 종목'이 단일 소유(중복 CTA 방지) → 여기서는 이동만 한다.
+          관심 목록(=담아 둔 종목의 변화 추적)과 요약 탭 확인 체크리스트(=나중에 확인)로 각각 연결. */}
+      <div className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+        <div className="flex flex-wrap items-center gap-2 text-[11px]">
+          <span className="shrink-0 rounded-full bg-blue-50 px-2 py-1 font-semibold text-blue-700 dark:bg-blue-950/30 dark:text-blue-300">
+            다음 한 걸음
+          </span>
+          <span className="min-w-0 break-words text-zinc-500 dark:text-zinc-400">
+            신호를 확인했다면 계속 지켜볼지 지금 정해요 · 관심 종목에 담아 두면 변화를 모아 봐요.
+          </span>
+        </div>
+        <div className="mt-2 grid grid-cols-1 min-[380px]:grid-cols-2 gap-2">
+          <a
+            href="/watchlist"
+            aria-label={`${ticker} 관심 목록으로 이동: 담아 둔 종목의 점수·공시 변화 추적`}
+            data-analytics-event="stock_recent_change_track_open"
+            data-analytics-ticker={ticker}
+            data-analytics-target="watchlist"
+            className="min-h-[44px] inline-flex items-center justify-between gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2 text-[11px] font-semibold text-zinc-800 dark:text-zinc-100 hover:border-blue-300 dark:hover:border-blue-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900"
+          >
+            <span className="min-w-0 break-words">관심 목록에서 변화 추적</span>
+            <span aria-hidden="true" className="shrink-0 text-blue-600 dark:text-blue-400">→</span>
+          </a>
+          <a
+            href="#summary"
+            aria-label={`${ticker} 요약 탭 확인 체크리스트로 이동: 나중에 확인할 항목 남기기`}
+            data-analytics-event="stock_recent_change_checklater_open"
+            data-analytics-ticker={ticker}
+            data-analytics-target="summary"
+            className="min-h-[44px] inline-flex items-center justify-between gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-3 py-2 text-[11px] font-semibold text-zinc-800 dark:text-zinc-100 hover:border-blue-300 dark:hover:border-blue-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900"
+          >
+            <span className="min-w-0 break-words">확인 체크리스트에 남기기</span>
+            <span aria-hidden="true" className="shrink-0 text-blue-600 dark:text-blue-400">→</span>
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
