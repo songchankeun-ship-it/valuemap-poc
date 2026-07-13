@@ -4,7 +4,7 @@
 - **Scope**: Added privacy-safe instrumentation to the `/watchlist` recent-search routine chips. Local UI/instrumentation/docs slice: no analytics vendor/account/config change, saved-search persistence, watchlist storage, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: Recent-search chips on `/watchlist` now include an explicit aria label and record `watchlist_recent_search_open` with only chip `index` and total `count`; raw search text is not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4730 --no-perf` passed 4/4; Chrome headless confirmed `/watchlist` at 390x844 and 1280x900 renders two recent-search chips with `watchlist_recent_search_open`, index/count metadata, explicit aria labels, and horizontal overflow 0; temp port 4730 was stopped.
-- **Commit**: pending (`[codex] track watchlist recent search opens`).
+- **Commit**: `4468f6a` (`[codex] track watchlist recent search opens`).
 - **Next**: Continue with one small local-only app-polish slice, preferably stock-detail or watchlist routine clarity. Push/deploy remains owner-approved only.
 
 ## 2026-07-13 - [codex] align about app launch copy
