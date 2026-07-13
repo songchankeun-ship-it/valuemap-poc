@@ -9,6 +9,7 @@ import { getRecentViews, type RecentView } from "@/lib/recentViews";
 import { addConditionAlert } from "@/lib/conditionAlerts";
 import { DataStatusBadge, DataLagBadge } from "@/components/trust/badges";
 import { StockResultsTable, deriveSignals } from "@/components/stocks/StockResultsTable";
+import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stocksCopy } from "@/lib/copy/stocks";
 import type { Locale } from "@/lib/i18n";
@@ -738,7 +739,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       const { strengths, warnings } = deriveSignals(s, t.signal);
       const lagged = laggedSet.has(s.ticker);
       return (
-        <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
+        <div key={s.ticker} className="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
+          {/* 카드 전체는 상세 링크(stretched-link: ::after가 카드를 덮어 어디를 눌러도 상세로 이동).
+              담기 버튼만 z-10으로 그 위에 떠 별도 클릭을 받아, 중첩된 인터랙티브 요소 없이 목록에서 바로 관심 담기. */}
+          <Link prefetch={false} href={"/stock/" + s.ticker} className="block rounded-lg after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline gap-2 mb-1 flex-wrap">
@@ -793,7 +797,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400 dark:text-zinc-500">+{s.themes.length - 3}</span>) : null}
             </div>
           ) : null}
-        </Link>
+          </Link>
+          <div className="relative z-10 mt-3 flex justify-end">
+            <AddToWatchlistButton ticker={s.ticker} name={s.name} compact label={t.card.save} />
+          </div>
+        </div>
       );
     });
   }
