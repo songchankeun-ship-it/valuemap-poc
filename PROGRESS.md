@@ -4,7 +4,7 @@
 - **Scope**: Added privacy-safe instrumentation and a mobile-sized target to the `/watchlist` recent-view clear action. Local UI/instrumentation/docs slice: no analytics vendor/account/config change, recent-view storage semantics, saved-search persistence, watchlist storage, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: The `최근 본 종목` `전체 삭제` button now has an explicit aria label, a 44px touch target/focus ring, and records `watchlist_recent_clear` with only the current `count`; tickers, names, and raw browsing text are not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4731 --no-perf` passed 4/4; Chrome CDP confirmed `/watchlist` at 390x844 and 1280x900 renders the clear button with `watchlist_recent_clear`, `data-analytics-count=2`, explicit aria label, 44px height, two recent rows, and horizontal overflow 0; temp port 4731 was stopped.
-- **Commit**: pending (`[codex] track watchlist recent clear`).
+- **Commit**: `8bbed5f` (`[codex] track watchlist recent clear`).
 - **Next**: Continue with one small local-only app-polish slice, preferably stock-detail routine clarity or another conservative watchlist action affordance. Push/deploy remains owner-approved only.
 
 ## 2026-07-13 - [codex] track watchlist recent search opens
