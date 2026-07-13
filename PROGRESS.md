@@ -4,7 +4,7 @@
 - **Scope**: Added privacy-safe instrumentation to the stock-detail local checklist reset action. Local UI/instrumentation/docs slice: no analytics vendor/account/config change, checklist storage semantics, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: The stock-detail checklist `전체 지우기` button now has an explicit aria label and records `stock_checklist_reset` with only `ticker`, completed `done`, and `total`; checklist labels, notes, and free-form text are not sent. Updated `docs/ornscore-analytics-event-map-2026-07-12.md`.
 - **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4732 --no-perf` passed 4/4; Chrome CDP confirmed `/stock/005930` at 390x844 and 1280x900 renders the reset button with `stock_checklist_reset`, ticker `005930`, `done=2`, `total=4`, explicit aria label, 44px height, two checked items, and horizontal overflow 0; temp port 4732 was stopped.
-- **Commit**: pending (`[codex] track stock checklist reset`).
+- **Commit**: `e2427d1` (`[codex] track stock checklist reset`).
 - **Next**: Continue with one small local-only app-polish slice, preferably stock-detail routine clarity or another conservative watchlist/saved-filter affordance. Push/deploy remains owner-approved only.
 
 ## 2026-07-13 - [codex] track watchlist recent clear
