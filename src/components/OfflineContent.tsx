@@ -20,6 +20,9 @@ export function OfflineContent() {
         <p className="text-[12px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
           {t.addBodyBefore}<strong>{t.addBodyStrong}</strong>{t.addBodyAfter}
         </p>
+        <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-500 leading-relaxed">
+          {t.addNote}
+        </p>
       </div>
 
       <div className="mt-6 flex gap-2 justify-center flex-wrap">

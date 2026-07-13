@@ -465,6 +465,8 @@ export const offlineCopy = {
     addBodyStrong: "홈 화면에 추가",
     addBodyAfter:
       "(iOS: 공유 → 홈 화면에 추가 / Android: 메뉴 → 앱 설치)를 선택하면 앱처럼 실행할 수 있어요.",
+    addNote:
+      "홈 화면에 추가해도 실행은 더 빨라질 뿐, 점수·시세 데이터는 열 때마다 연결이 필요해요. 아직 오프라인 저장은 지원하지 않습니다.",
     retryButton: "다시 시도",
     homeButton: "홈으로 돌아가기",
   },
@@ -477,6 +479,8 @@ export const offlineCopy = {
     addBodyStrong: "Add to Home Screen",
     addBodyAfter:
       " (iOS: Share → Add to Home Screen / Android: Menu → Install app) to launch it like an app.",
+    addNote:
+      "Adding to the home screen only makes launching faster — score and price data still need a connection each time you open it. Offline storage isn't supported yet.",
     retryButton: "Try again",
     homeButton: "Back to home",
   },

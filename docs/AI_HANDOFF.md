@@ -21,10 +21,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 241 - ORNScore app-first-use 2026-07-14 E - stock detail decision bridge
-- Run: 243
+- Task: 242 - ORNScore app-first-use 2026-07-14 F - offline app shell honesty
+- Run: 244
 - Status: completed
-- Agent: claude
+- Agent: codex
 - Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Codex - Offline app shell honesty (task 242)
+- **Context**: app-first-use on the standalone/offline shell. Inspected `/offline` (`OfflineContent` + `offlineCopy`), `manifest.ts`, `PwaInstallHelper`, the `/settings/notifications` login/notification fallback, and the `/about` PWA paragraph for over-promises. Most is already honest — the notification page is explicit that only 2 product alerts send (email is a temporary beta channel; KakaoTalk/web/push are "준비 중" and won't send), the manifest makes no false claims, and `PwaInstallHelper` documents that no service worker is registered. The one genuine over-promise: the `/offline` "홈 화면에 추가" card sold an "앱처럼 실행" experience but never said installing caches nothing without a service worker, so a user could expect offline data after installing.
+- **Change (UI/copy only)**: `src/lib/i18n.ts` `offlineCopy` — added one `addNote` key (ko+en) stating that adding to the home screen only speeds up launching, that score/price data still needs a connection each open, and that offline storage isn't supported yet. `src/components/OfflineContent.tsx` — rendered `t.addNote` as an additive muted `<p className="mt-2 text-[11px] ...">` below the existing add-to-home-screen paragraph in the same card. No service worker, no assetlinks, no auth/manifest change, no push implication; message *reduces* the PWA/offline promise. No new logic/props/state/imports; no forbidden advisory wording.
+- **Gates (all green)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138 stocks / 0 errors / 0 forbidden / Metrics 2.4 · `npm run build` 0 (route table unchanged, `/offline` ƒ 801 B / 102 kB) · prod on :4471 `/offline` 200, SSR renders the new KO note verbatim · `git diff --check` clean · replacement-character scan 0 on both edited files. Temp listener PID 32712 stopped; AI Center 4310 untouched.
+- **390px / overlap**: text-only `<p>` added below the existing paragraph in the same bordered card (`leading-relaxed`, wraps) — vertical height only, no horizontal overflow; EN string switches via the shared i18n client bundle.
+- **Commit**: local `[codex] improve offline app shell honesty`. No push; main unchanged.
+- **Owner gate**: real-device 390×844 pixel pass and EN language-switch visual remain owner gates (language switch is client-side; no Playwright).
+- **Next candidate**: mirror the same "installing doesn't enable offline yet" honesty in the `/about` PWA paragraph (still says the `/offline` guide "표시됩니다" on disconnect — not literally automatic without a service worker); any real offline support needs a deliberate service-worker decision per `docs/app-roadmap.md` §4 (out of scope here).
 
 ### 2026-07-14 - Codex - Stock detail daily decision bridge (task 241)
 - **Context**: app-first-use on `/stock/[ticker]` as an app-like daily decision screen. Inspected the conclusion hero, `PriorityScoreCard`, `RecentChangeSummary`, watchlist CTA, and tabs. That surface is mature — hero owns conclusion + `AddToWatchlistButton` (track) + `AddToCompareButton` + `ShareButton`; the "다음으로 확인할 것" nav and `StockDetailActionButtons` route to tabs; `RecentChangeSummary` summarizes recent moves with a "우선 확인" link to the relevant tab (check-now); the summary tab hosts `StockChecklist` (check-later). The genuine gap: after reading the recent-signal summary there was **no bridge from that spot to the track / check-later decision** — the watchlist toggle sits far up in the hero and the checklist is buried in the summary tab, so a daily returning user finished "what changed" with only tab-jump links and no "keep watching this?" step.
