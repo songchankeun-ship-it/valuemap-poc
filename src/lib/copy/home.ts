@@ -170,12 +170,13 @@ export const homeCopy = {
     },
     howItWorks: {
       heading: "오른스코어는 이렇게 사용하세요",
-      sub: "점수로 좁히고, 이유를 보고, 원문으로 검증하는 3단계입니다.",
+      sub: "점수로 좁히고 이유·원문을 확인한 뒤, 관심 종목으로 저장해 매일 다시 보는 흐름입니다.",
       start: "종목 탐색 시작하기 →",
       steps: [
         { title: "오늘 후보 확인", body: "종합 점수와 급변 지표로 오늘 먼저 볼 종목을 좁힙니다." },
         { title: "이유 확인", body: "추세·거래활성도·밸류·위험조정 지표를 나눠 보며 근거를 점검합니다." },
         { title: "원문 검증", body: "공시·재무·차트를 함께 확인하고 최종 판단은 직접 합니다." },
+        { title: "저장하고 다시 확인", body: "눈여겨본 종목은 관심 목록에 저장해 두고, 다시 들를 때 점수·공시 변화를 확인합니다." },
       ],
     },
     dataSource: {
@@ -335,12 +336,13 @@ export const homeCopy = {
     },
     howItWorks: {
       heading: "How to use OrnScore",
-      sub: "Three steps: narrow by score, see the reasons, verify in the original.",
+      sub: "Narrow by score, check the reasons and the original, then save to your watchlist and check back daily.",
       start: "Start exploring stocks →",
       steps: [
         { title: "Check today's candidates", body: "Narrow today's stocks to check first using the composite score and rapid-change metrics." },
         { title: "See the reasons", body: "Review the trend, trading-activity, value, and risk-adjusted metrics separately to check the basis." },
         { title: "Verify the original", body: "Check disclosures, financials, and charts together, and make the final call yourself." },
+        { title: "Save & check back", body: "Save stocks you're watching to your watchlist, and check the score and disclosure changes when you return." },
       ],
     },
     dataSource: {

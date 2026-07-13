@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T00:34:00+09:00
+Last updated: 2026-07-14T10:00:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 237 - ORNScore app-first-use 2026-07-14 A - PWA install entry and app copy
-- Run: 238
+- Task: 238 - ORNScore app-first-use 2026-07-14 B - home first action routine clarity
+- Run: 239
 - Status: completed
 - Agent: claude
-- Note: Completed PWA install fallback copy polish with local commits `78f82a7` and `ddf49cf`. Development logs show local gates passed; the later tester failure was an AI Center restart interruption, not a product validation failure. Continue with task 238.
+- Note: Finalized the home "How to use" routine slice left uncommitted by the interrupted prior run. Reworked the section from 3 steps to 4 (added "저장하고 다시 확인 / Save & check back") so the first-use loop reads search/narrow → reasons → verify → save & return daily, and updated the section sub copy. All local gates green; committed locally as `[codex] clarify home first action routine`.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Claude - Home first action routine clarity (task 238)
+- **Context**: The prior run (239) for this task was interrupted ("Development process exited with code 1", an AI Center restart, not a product failure) and left a coherent but uncommitted slice in the worktree plus a handoff reset to "failed". This session finalized that slice — no new direction needed.
+- **Change (copy/layout only)**: `src/components/home/HowItWorksSection.tsx` + `src/lib/copy/home.ts` — the home "How to use OrnScore" section now spells out the full first-use loop in 4 steps instead of 3: added a closing "저장하고 다시 확인 / Save & check back" step (`CalendarCheck` icon) and updated the section sub copy to "...관심 종목으로 저장해 매일 다시 보는 흐름입니다 / ...then save to your watchlist and check back daily". Grid changed `md:grid-cols-3` → `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`. No new logic/props; ko+en parity kept; no forbidden advisory wording.
+- **First viewport**: untouched — the hero (search-first entry) is unchanged; this section sits below the fold. At 390px the section grid is `grid-cols-1`, so the 4 cards stack single-column with `gap-3` and cannot overlap.
+- **Gates (all green)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / 0 forbidden / Metrics 2.4 · `npm run build` 0 (route table unchanged) · prod smoke on :4487 home 200 with all 4 KO step titles + updated sub in SSR · en routine strings present in client chunk `5977-*.js` · `npm run verify:local --no-perf` 4/4 real gates · `git diff --check` clean · replacement-character scan 0 on both edited files.
+- **Commit**: local `[codex] clarify home first action routine`. No push; main unchanged.
+- **Owner gate**: real-device 390×844 pixel pass and EN language-switch visual remain owner gates (no Playwright configured).
 
 ### 2026-07-13 - Codex - Play Console action pack
 - **Context**: Owner said "출시하자" after the web/product-polish release. The live web/PWA path is deployed, but actual Google Play launch still needs owner-only account/app/signing inputs. This slice consolidates the scattered store-prep docs into a single owner action sheet without performing any external account or store-console action.

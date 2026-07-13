@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ListChecks, BarChart3, FileSearch } from "lucide-react";
+import { ListChecks, BarChart3, FileSearch, CalendarCheck } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { homeCopy } from "@/lib/copy/home";
 
@@ -9,7 +9,7 @@ import { homeCopy } from "@/lib/copy/home";
 export function HowItWorksSection() {
   const { locale } = useLanguage();
   const h = homeCopy[locale].howItWorks;
-  const icons = [ListChecks, BarChart3, FileSearch];
+  const icons = [ListChecks, BarChart3, FileSearch, CalendarCheck];
   const steps = h.steps.map((s, i) => ({ icon: icons[i], step: `STEP ${i + 1}`, title: s.title, body: s.body }));
   return (
     <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 md:p-6">
@@ -22,7 +22,7 @@ export function HowItWorksSection() {
           {h.start}
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {steps.map(({ icon: Icon, step, title, body }) => (
           <div key={step} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 p-4">
             <div className="flex items-center gap-2 mb-2">
