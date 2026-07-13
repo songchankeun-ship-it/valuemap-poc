@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T13:09:41+09:00
+Last updated: 2026-07-13T17:37:32+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Owner-approved ORNScore product-polish release
+- Task: ORNScore Play Console action pack
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Owner returned and approved push/deploy. `git push origin main` moved `f172470..273bf77`; live `https://ornscore.com` returned 200; live `verify:local --no-perf` passed 4/4; Chrome CDP confirmed live `/stock/005930` has `stock_checklist_reset`. Heartbeat automation `ornscore-product-polish-continuation` was deleted.
+- Note: Added `docs/ornscore-play-console-action-pack-2026-07-13.md` as the owner-facing Google Play launch sheet. `npm run app:check` passes with the expected external WAIT for real Android `assetlinks.json`; owner must provide Play app-signing SHA-256 before Codex can generate it. No Play Console/account/signing/deploy/push action performed.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Play Console action pack
+- **Context**: Owner said "출시하자" after the web/product-polish release. The live web/PWA path is deployed, but actual Google Play launch still needs owner-only account/app/signing inputs. This slice consolidates the scattered store-prep docs into a single owner action sheet without performing any external account or store-console action.
+- **Changes**: Added `docs/ornscore-play-console-action-pack-2026-07-13.md` with ready-to-copy listing text, public URLs, review notes, app-content answer prompts, prepared asset inventory, exact Play Console steps, and the values the owner must send back (`package id`, real Play app-signing SHA-256, optional upload-key SHA-256).
+- **Validation**: `npm run app:check` passed with the expected 1 external WAIT for real Android `assetlinks.json`; `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean; replacement-character scan clean.
+- **Commit**: pending (`[codex] prepare Play Console action pack`).
+- **Next**: Owner completes Play Console account/app setup and returns the real Play app-signing key SHA-256. Do not create `public/.well-known/assetlinks.json` until that real value is available.
 
 ### 2026-07-13 - Codex - Product polish batch release
 - **Context**: Owner returned and explicitly approved pushing/deploying the accumulated local product-polish commits. Heartbeat automation `ornscore-product-polish-continuation` was deleted so it would not keep adding local commits after release.
