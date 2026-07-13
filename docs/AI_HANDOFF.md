@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T10:53:30+09:00
+Last updated: 2026-07-13T11:17:08+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: Direct Codex release/admin slice - admin release verification panel
+- Task: Direct Codex verification slice - provider-aware login preflight
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: Accumulated local product-polish commits plus the admin release verification panel were pushed to `origin/main`; live smoke/routes/stocks-seo passed; live login-preflight differs only because production provider state lacks the repo-local planned-provider marker; implementation commit `967a095`.
+- Note: `verify-login-preflight` now treats local Naver as strict planned but live/non-local Naver as either planned or enabled; local and live `verify:local --no-perf` both pass 4/4; implementation commit `932210a`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-13 - Codex - Provider-aware login preflight
+- **Context**: Continued from the admin release panel next entry point. The live site had passed smoke/routes/stocks-seo but login-preflight was failing only because production enabled Naver while the repo-local script expected the planned `설정 필요` marker. This slice is script-only verification work: no UI, scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
+- **Changes**: `scripts/verify-login-preflight.mjs` now auto-selects `naverState=planned` for localhost/127.0.0.1/::1 and `naverState=either` for non-local bases. It accepts either planned Naver copy or the enabled `네이버로 시작하기` button on live bases, and exposes `--naver-state planned|enabled|either` plus `VERIFY_NAVER_STATE` for explicit checks.
+- **Validation**: `npm run verify:login-preflight -- --base https://ornscore.com` passed 5/5 with `naverState=either`; `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4726 passed 4/4 with `naverState=planned`; live `verify:local --base https://ornscore.com --no-perf` passed 4/4 with `naverState=either`. Temp port 4726 was stopped.
+- **Commit**: `932210a` (`[codex] make login preflight provider-aware`).
+- **Next**: A good next local slice is a compact release-runbook/admin hint for owner-only gates now that automated live route-health is green. Owner gates remain real OAuth round-trip, app-store console, account/DNS/Search Console/email settings, Supabase schema/RLS, and any external config change.
 
 ### 2026-07-13 - Codex - Admin release verification panel
 - **Context**: Owner approved pushing/deploying, then chose the recommended next slice: make the existing `/admin` page more useful for post-release operations. This slice is local UI/documentation only after the approved push path: no scoring, generated data, DART, Supabase schema/RLS, auth-provider, app-store, Search Console, DNS/email/account/config, or destructive git changes.
