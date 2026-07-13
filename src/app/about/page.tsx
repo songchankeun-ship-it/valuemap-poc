@@ -127,7 +127,7 @@ export default function AboutPage() {
         </p>
         <PwaInstallHelper />
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
-          점수·시세·공시는 항상 최신 데이터를 불러오므로 실행 시 인터넷 연결이 필요합니다. 연결이 끊기면 <Link href="/offline" className="text-blue-600 dark:text-blue-400 underline">안내 화면</Link>이 표시됩니다. 앱 마켓(App Store·Play 스토어) 출시 여부는 아직 정해지지 않았습니다.
+          점수·시세·공시는 항상 최신 데이터를 불러오므로 실행 시 인터넷 연결이 필요합니다. 연결이 끊기면 <Link href="/offline" className="text-blue-600 dark:text-blue-400 underline">안내 화면</Link>이 표시됩니다. 현재는 웹앱(PWA)으로 먼저 제공하며, 앱 마켓 출시는 별도 검토·준비 중입니다.
         </p>
       </section>
 

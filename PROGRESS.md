@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] align about app launch copy
+- **Scope**: Aligned the public `/about` app-install copy with the current app-launch direction without promising a store release. Public copy-only slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
+- **Changes**: The "앱처럼 설치하기" note now says ORNScore is provided first as a PWA/web app and that app-market release is under separate review/preparation, replacing the stale "출시 여부 미정" wording.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `npm run verify:local -- --base http://127.0.0.1:4729 --no-perf` passed 4/4; Chrome headless confirmed `/about` at 390x844 and 1280x900 shows the new copy once with horizontal overflow 0; temp port 4729 was stopped.
+- **Commit**: pending (`[codex] align about app launch copy`).
+- **Next**: Continue with one small local-only app-polish slice, preferably watchlist or stock-detail routine clarity. Push/deploy remains owner-approved only.
+
 ## 2026-07-13 - [codex] admin live release command
 - **Scope**: Made the `/admin` release panel more explicit about the exact live route-health command and the remaining human gates. Admin-only UI slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: `/admin` "배포 검증" now shows `npm run verify:local -- --base {publicBaseUrl} --no-perf` as the operating URL gate, plus compact summaries for automated pass criteria and remaining human checks.
