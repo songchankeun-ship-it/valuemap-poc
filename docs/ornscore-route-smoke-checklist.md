@@ -25,6 +25,19 @@ npm run verify:local -- --base http://localhost:4459
 - **옵션:** `--samples <n>`(perf 표본 수, 기본 3) · `--no-perf`(권고 perf 생략) · `--data <path>`(verify:routes 기준일 소스 오버라이드). 환경변수 `VERIFY_BASE_URL`/`SMOKE_BASE_URL`/`PERF_BASE_URL`로도 base 지정(플래그 우선).
 - 개별 게이트를 따로 돌리고 싶으면 아래 각 절의 단독 커맨드를 그대로 쓰면 된다(`verify:local`은 이들을 감쌀 뿐 대체하지 않음).
 
+### 배포 후 라이브 확인
+
+배포가 끝난 뒤에는 같은 집계 게이트를 운영 URL에 직접 돌린다. 이때 `verify:login-preflight`는 로컬과 운영의 네이버 제공자 상태 차이를 자동 해석한다.
+
+```bash
+npm run verify:local -- --base https://ornscore.com --no-perf
+```
+
+- 로컬/127.0.0.1에서는 네이버가 기본적으로 `naverState=planned`라서 `설정 필요` 비활성 항목을 기대한다.
+- 운영 같은 비로컬 URL에서는 `naverState=either`라서 `설정 필요` 비활성 항목과 `네이버로 시작하기` 활성 버튼 중 하나를 정상으로 본다.
+- 강제로 특정 상태를 확인해야 하면 단독 게이트에 `--naver-state planned|enabled|either`를 붙인다. 예: `npm run verify:login-preflight -- --base https://ornscore.com --naver-state enabled`.
+- 그래도 이 검증은 SSR HTML 계약만 본다. 실제 카카오·구글·네이버·이메일 왕복, 앱스토어/콘솔/DNS/Search Console 같은 외부 설정은 아래 사람 확인 게이트로 남는다.
+
 ### 알려진 느림/취약 라우트 (perf 판독 시 정상 신호)
 
 `perf:check`는 **TTFB(응답 헤더까지)** 기준으로 예산을 판정하지만, 카테고리 B 라우트의 실제 지연은 **본문 다운로드(total)** 에 있다 — 요청 시점 Supabase 왕복이 스트리밍 중에 일어나기 때문. 그래서 로컬에서 다음 패턴은 **정상**이며 회귀가 아니다:

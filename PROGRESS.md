@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-13 - [codex] live release route-health docs
+- **Scope**: Documented the provider-aware live release verification command so the post-deploy check no longer depends on chat memory. Docs-only operations slice: no UI, scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
+- **Changes**: `docs/ornscore-route-smoke-checklist.md` now has a "배포 후 라이브 확인" section with `npm run verify:local -- --base https://ornscore.com --no-perf`, explains local `naverState=planned` versus live `naverState=either`, documents explicit `--naver-state planned|enabled|either`, and keeps real OAuth/app-store/console/DNS/Search Console as manual gates.
+- **Validation**: `npx tsc --noEmit` 0; `PYTHONUTF8=1 python scripts/verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean.
+- **Commit**: pending (`[codex] document live release route health`).
+- **Next**: Continue with a small local-only operations or app-polish slice. Good candidates: add the same owner-gate reminder to a compact admin/status help link, or pause for owner approval before pushing the accumulated local commits.
+
 ## 2026-07-13 - [codex] admin release gate hints
 - **Scope**: Clarified the operator-facing `/admin` release panel so automated checks and owner/manual gates are visually separated. Admin-only UI copy/layout slice: no scoring/data/DART/Supabase schema/RLS/auth-provider config, app-store, Search Console, account, DNS, email, push, or deployment changes.
 - **Changes**: Added three compact gate cards inside `/admin` "배포 검증": automated verification (`verify:local --no-perf` routes/SEO/login SSR), manual OAuth real round-trip, and owner-approved external settings. Updated the surrounding copy to explain that login SSR can account for local/live provider differences while real OAuth and console changes stay manual.
