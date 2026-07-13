@@ -25,7 +25,7 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 - Run: manual thread
 - Status: completed
 - Agent: codex
-- Note: `/about` app-install copy now says web app/PWA first and app-market release under review/preparation without promising store availability; local route-health passed 4/4; commit pending; no push/deploy.
+- Note: `/about` app-install copy now says web app/PWA first and app-market release under review/preparation without promising store availability; local route-health passed 4/4; commit `eced906`; no push/deploy.
 
 ## Next Agent Checklist
 
@@ -46,7 +46,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Context**: Continued automatically while the owner was away after the admin release command slice. The public `/about` app-install section still said store release status was undecided, which no longer matched the current app-launch preparation. This is public copy-only work: no scoring, generated data, DART, Supabase schema/RLS, auth-provider config, app-store, Search Console, account/DNS/email, deployment, push, or external setting change.
 - **Changes**: The "앱처럼 설치하기" note now says ORNScore is provided first as a PWA/web app and that app-market release is under separate review/preparation. It does not add store badges or promise a release date.
 - **Validation**: `npx tsc --noEmit` 0; `verify_metrics.py` 138 stocks / 0 errors / Metrics 2.4; `git diff --check` clean except expected CRLF notice; replacement-character scan clean; `npm run build` 0 with the existing `TrustLayer` warning only; local prod `verify:local --no-perf` on port 4729 passed 4/4; Chrome headless confirmed `/about` at 390x844 and 1280x900 shows the new copy once with horizontal overflow 0; temp port 4729 was stopped.
-- **Commit**: pending (`[codex] align about app launch copy`).
+- **Commit**: `eced906` (`[codex] align about app launch copy`).
 - **Next**: Continue with one small local-only app-polish slice, preferably watchlist or stock-detail routine clarity. Push/deploy remains owner-approved only.
 
 ### 2026-07-13 - Codex - Admin live release command
