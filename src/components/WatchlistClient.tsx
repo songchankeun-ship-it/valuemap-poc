@@ -1434,10 +1434,14 @@ export function WatchlistClient({
           </div>
         ) : (
           <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
-            {recent.map((item) => (
+            {recent.map((item, index) => (
               <li key={item.ticker} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                 <Link
                   href={`/stock/${item.ticker}`}
+                  aria-label={`${item.name} 최근 본 종목 다시 보기`}
+                  data-analytics-event="watchlist_recent_stock_open"
+                  data-analytics-ticker={item.ticker}
+                  data-analytics-rank={index + 1}
                   className="flex items-center justify-between px-4 py-3 group"
                 >
                   <div className="flex-1 min-w-0">
@@ -1448,7 +1452,10 @@ export function WatchlistClient({
                       {item.ticker} · {fmtRelativeTime(item.viewedAt, { locale, absolute: "md" })}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-300 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition" />
+                  <div className="ml-3 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-zinc-400 transition group-hover:text-blue-600 dark:text-zinc-500 dark:group-hover:text-blue-400">
+                    <span>다시 보기</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
                 </Link>
               </li>
             ))}

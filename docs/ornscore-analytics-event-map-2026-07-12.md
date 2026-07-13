@@ -29,6 +29,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `watchlist_detail_open` | Stock detail saved-state CTA | `ticker` | User opens `/watchlist` from a stock that is already saved. |
 | `watchlist_toast_open` | Watchlist toast link | `ticker` | User follows save toast to `/watchlist`. |
 | `watchlist_login_cta` | Watchlist logged-out guidance | `ticker` | User sees local-save value and chooses login. |
+| `watchlist_recent_stock_open` | `/watchlist` recent-view row | `ticker`, `rank` | User reopens a recently viewed stock from the routine page; stock names and raw browsing text are not sent. |
 | `watchlist_csv_export` | `/watchlist` CSV export button | `count`, `loggedIn`, `sort` | User exports their current watchlist locally as a CSV file. |
 | `watchlist_meta_update` | `/watchlist` local group/note controls | `field`, `ticker`, `hasValue`, `loggedIn` | User updates browser-local watchlist metadata; note text and custom labels are not sent. |
 | `watchlist_group_filter_change` | `/watchlist` local group filter chips | `filter`, `count`, `loggedIn` | User narrows the visible watchlist by all/ungrouped/group; raw group labels are not sent. |
