@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T16:38:13.718Z
+Last updated: 2026-07-13T16:48:16.676Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,10 +21,10 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 242 - ORNScore app-first-use 2026-07-14 F - offline app shell honesty
+- Task: 242 - ORNScore app-first-use 2026-07-14 F - standalone offline and app shell honesty
 - Run: 244
 - Status: completed
-- Agent: codex
+- Agent: claude
 - Note: Development and all quality gates completed.
 
 ## Next Agent Checklist
