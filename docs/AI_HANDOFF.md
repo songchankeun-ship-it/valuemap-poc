@@ -1,9 +1,9 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T16:42:55.819Z
+Last updated: 2026-07-14T16:51:16.816Z
 Project: OrnScore
-Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
+Path: C:\dev\OrnScore
 
 ## Operating Agreement
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 280 - ORNScore first-run UX rebuild H - full journey recertification and handoff
-- Run: 284
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: n/a
+- Run: n/a
+- Status: connected
+- Agent: n/a
+- Note: Project folder connected in AI Dev Center.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-15 - Codex - Canonical workspace migration
+- OneDrive 실행본을 멈춘 뒤 `C:\dev\OrnScore`로 Git 저장소를 독립 복제했다. source/target HEAD와 tree(`64e02b1`), tracked files 550개, `.env.local` SHA-256이 모두 일치했고 `git fsck --full`도 손상 없이 통과했다.
+- `origin`은 `https://github.com/songchankeun-ship-it/valuemap-poc.git`로 유지했고 AI Dev Center project #1 등록 경로를 `C:\dev\OrnScore`로 전환했다. OneDrive 원본은 복구 확인 전까지 삭제하지 않는다.
+- 새 경로에서 `npm ci`, `npx tsc --noEmit`, `verify-first-run-ux`, `verify_metrics.py`(138종목/오류0/Metrics 2.4), `npm run build`(187 pages)를 통과했다. 빌드의 기존 TrustLayer/Supabase Edge 경고는 유지됐고, `npm ci`가 보고한 의존성 취약점 7건은 호환성 검토가 필요한 별도 보안 업데이트로 남긴다.
+- 다음 작업은 반드시 이 경로에서 시작한다. 기존 첫 방문 UX A-H는 완료 상태이며, 배포/main 병합은 별도 소유자 결정으로 남긴다.
 
 ### 2026-07-15 - Codex - First-run UX rebuild Slice H: re-authenticate the full journey (task 280)
 - **Context**: Implements only **Slice H** of `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` (§18 full-journey re-authentication + §20 final judgement). **No new product features** — this is the closeout audit of the completed A–G flow (home → find/candidate → detail → watchlist/compare → login/admin boundary) as a first-time user, re-running every local gate and freezing the journey contract as one static guard. The audit found **zero regressions** (no source under audit needed changing); the only code change is one verifier file. Branch `ai-center/task-280-ornscore-first-run-ux-rebuild-h-full` (resumed from tested HEAD `b8840ff` = Slice G, clean worktree).
