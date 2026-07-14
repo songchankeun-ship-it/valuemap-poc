@@ -10,8 +10,9 @@ import { getRecentViews } from "@/lib/recentViews";
 import { fmtRelativeTime } from "@/lib/format";
 
 // 홈 대시보드의 재방문 개인화 진입점 — 관심 종목·최근 본 종목을 컴팩트 행으로 이어보게 한다.
-// 서버/마운트 전에는 null(하이드레이션 불일치 방지), 로딩 중 스켈레톤, 데이터 없으면 차분한 빈 상태.
-// 점수 로직은 건드리지 않고 서버가 넘긴 풀 룩업(name·sector·score·changePct)만 사용한다.
+// 첫 방문 UX 대정리 Slice C(설계서 §5.4·§6.2): 개인 데이터가 실제로 있을 때만 렌더한다.
+// 서버/마운트 전·로딩 중·데이터 없음은 모두 null을 반환해, 처음 온 사용자에게 빈 개인화 섹션이나
+// 스켈레톤 깜빡임을 홈에 남기지 않는다. 점수 로직은 건드리지 않고 서버가 넘긴 풀 룩업만 사용한다.
 
 export interface PoolEntry {
   name: string;
@@ -32,7 +33,6 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
   const t = homeCopy[locale].myStocks;
 
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
@@ -73,13 +73,9 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
       }
       if (active) {
         setRows(next.slice(0, 8));
-        setLoading(false);
       }
     }
     build();
-
-    // 무한 로딩 방지 — 8초 후 강제 종료(관심 종목 리더가 Supabase를 거칠 수 있음)
-    const timeout = setTimeout(() => { if (active) setLoading(false); }, 8000);
 
     function refresh() { build(); }
     window.addEventListener("watchlist-changed", refresh);
@@ -87,14 +83,14 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
 
     return () => {
       active = false;
-      clearTimeout(timeout);
       window.removeEventListener("watchlist-changed", refresh);
       window.removeEventListener("recent-views-changed", refresh);
     };
   }, [mounted, lookup]);
 
-  // 서버·마운트 전에는 렌더하지 않아 하이드레이션 불일치를 피한다.
-  if (!mounted) return null;
+  // 개인 데이터가 있을 때만 홈에 노출한다(설계서 §5.4·§6.2). 서버·마운트 전, 저장/최근 데이터가
+  // 아직 없거나 조회 실패로 비어 있으면 섹션 자체를 렌더하지 않아 빈 개인화 카드를 남기지 않는다.
+  if (!mounted || rows.length === 0) return null;
 
   return (
     <section>
@@ -106,36 +102,13 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
             {t.heading}
           </h2>
         </div>
-        {rows.length > 0 ? (
-          <Link prefetch={false} href="/watchlist" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-            {t.viewAll}
-          </Link>
-        ) : (
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.sub}</span>
-        )}
+        <Link prefetch={false} href="/watchlist" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+          {t.viewAll}
+        </Link>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" aria-busy="true" aria-label={t.loading}>
-          {[0, 1].map((i) => (
-            <div key={i} className="h-[52px] rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 animate-pulse" />
-          ))}
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 p-5 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-          <p className="break-words">{t.emptyLine}</p>
-          <div className="mt-3 flex items-center gap-3 flex-wrap">
-            <Link prefetch={false} href="/stocks" className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 hover:underline">
-              {t.emptyExplore} <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <Link prefetch={false} href="/watchlist" className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:underline">
-              {t.emptyWatchlist}
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {rows.map((r, i) => (
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {rows.map((r, i) => (
             <li key={r.ticker}>
               <Link
                 prefetch={false}
@@ -178,25 +151,22 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
             </li>
           ))}
         </ul>
-      )}
 
-      {rows.length > 0 ? (
-        <div className="mt-2.5 flex items-center gap-x-3 gap-y-1 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
-          <span className="font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap">{t.nextPrompt}</span>
-          <ul className="flex items-center gap-x-3 gap-y-1 flex-wrap list-none">
-            <li>
-              <Link prefetch={false} href="#today-candidates" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-                {t.nextCandidates} <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </li>
-            <li>
-              <Link prefetch={false} href="/disclosures" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-                {t.nextDisclosures} <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </li>
-          </ul>
-        </div>
-      ) : null}
+      <div className="mt-2.5 flex items-center gap-x-3 gap-y-1 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
+        <span className="font-medium text-zinc-500 dark:text-zinc-400 whitespace-nowrap">{t.nextPrompt}</span>
+        <ul className="flex items-center gap-x-3 gap-y-1 flex-wrap list-none">
+          <li>
+            <Link prefetch={false} href="#today-candidates" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+              {t.nextCandidates} <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </li>
+          <li>
+            <Link prefetch={false} href="/disclosures" className="inline-flex items-center gap-1 min-h-[44px] py-2 font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
+              {t.nextDisclosures} <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </li>
+        </ul>
+      </div>
     </section>
   );
 }

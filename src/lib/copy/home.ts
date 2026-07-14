@@ -180,6 +180,9 @@ export const homeCopy = {
       ],
     },
     dataSource: {
+      // 첫 방문 UX 대정리 Slice C — 큰 위험 고지 카드를 없애고, 짧은 비자문 한 줄을 데이터 출처
+      // 푸터로 통합한다(설계서 §5.5·§6.2). 히어로 안전 문구와 같은 문장을 반복하지 않는다.
+      notAdvice: "제공하는 점수·지표·공시 분류는 종목 탐색을 돕는 참고 정보이며, 매수·매도 추천이나 수익 보장이 아닙니다. 최종 투자 판단과 책임은 이용자 본인에게 있습니다.",
       label: "데이터 출처:",
       bodyA:
         "KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 가격 보조 데이터, DART 공시 실데이터. ",
@@ -346,6 +349,7 @@ export const homeCopy = {
       ],
     },
     dataSource: {
+      notAdvice: "The scores, metrics, and disclosure classifications provided are reference information to aid stock exploration — not buy/sell recommendations or profit guarantees. Final investment decisions and their consequences are your own.",
       label: "Data sources:",
       bodyA:
         "KRX daily close (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance auxiliary price data, DART disclosure data. ",

@@ -1,56 +1,25 @@
 import { allThemes, dataMetadata, realStockPool, formatBizDateShort, isDataStale } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
 import { getPriceLagSummary } from "@/lib/priceLag";
-import { WelcomeOnboarding } from "@/components/WelcomeOnboarding";
-import { getRecentSignals } from "@/lib/recentSignals";
 import { fmtWon } from "@/lib/format";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
-import { volumeSpikeCount } from "@/lib/homeSnapshot";
 import { HomeHero } from "@/components/home/HomeHero";
-import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
 import { TopCandidateSection } from "@/components/home/TopCandidateSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
 import { MyStocksSection, type PoolEntry } from "@/components/home/MyStocksSection";
-import { DisclosureSignalSection } from "@/components/home/DisclosureSignalSection";
-import type { DisclosureSignalVM } from "@/components/home/DisclosureSignalCard";
-import { FeatureCards } from "@/components/home/FeatureCards";
-import { HowItWorksSection } from "@/components/home/HowItWorksSection";
-import { RiskNotice } from "@/components/home/RiskNotice";
 import { HomeDataSourceFooter } from "@/components/home/HomeDataSourceFooter";
 import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
 import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
-interface RecentSignal {
-  signalType: string;
-  signalLabel: string;
-  strength: number;
-  disclosure: {
-    corp_name: string;
-    stock_code: string;
-    report_nm: string;
-    rcept_no: string;
-    rcept_dt: string;
-  };
-}
-
 // 캐시 갱신: 1시간 (정적 빌드 캐시가 너무 오래 안 갱신되는 문제 방지)
 export const revalidate = 3600;
 
-function pickTopSignals(n: number, all: RecentSignal[], universe?: Set<string>): RecentSignal[] {
-  // 종목별 최강 신호 1개씩만. universe가 주어지면 분석 대상 종목 공시만(설계서 §15 — 홈은 분석 대상 중심).
-  const byStock = new Map<string, RecentSignal>();
-  for (const s of all) {
-    const code = s.disclosure?.stock_code;
-    if (!code) continue;
-    if (universe && !universe.has(code)) continue;
-    const cur = byStock.get(code);
-    if (!cur || s.strength > cur.strength) byStock.set(code, s);
-  }
-  return Array.from(byStock.values())
-    .sort((a, b) => b.strength - a.strength)
-    .slice(0, n);
-}
+// 첫 방문 UX 대정리 Slice C(설계서 §6.2): 홈 기본 본문을 네 구간(시작 영역 · 실제 후보
+// 미리보기 최대 3개 · 확인 순서 · 조건부 개인 루틴)으로 제한한다. 시장 스냅샷 카드/공시 목록/
+// 온보딩/기능 소개/사용법/큰 위험 고지는 홈 기본 흐름에서 제거하거나 /today·상세로 이동시켰다.
+// 공시 신호(getRecentSignals)와 시장 요약 통계(volumeSpikeCount)는 홈에서 더는 렌더하지
+// 않으므로 여기서 계산하지 않는다(데이터/점수 산식 무변경, /today가 변화 중심으로 담당).
 
 // 오늘 후보·Top 목록 정책(재검수 P0 #2):
 //  - 검증 보류(isSuspect) 종목 제외(기존)
@@ -142,12 +111,9 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const recentSig = await getRecentSignals(7);
-  const universeTickers = new Set(realStockPool.map((x) => x.ticker));
   // 가격 기준일 지연(최신 배치 미반영) 종목은 오늘 후보·Top 카드에서 제외(정책은 pickTopStocks 주석 참조).
   const laggedTickers = new Set(getPriceLagSummary().laggedTickers);
   const topCandidates = pickTopStocks(3, laggedTickers);
-  const topSignals = pickTopSignals(3, (recentSig.signals as unknown as RecentSignal[]) ?? [], universeTickers);
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
   const searchStocks = realStockPool.map((s) => ({
@@ -168,10 +134,8 @@ export default async function HomePage() {
     };
   }
 
-  // ── 오늘의 데이터 요약 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
+  // ── 오늘 후보 관계 문구용 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
   const strongCount = realStockPool.filter((s) => displayCompositeScore(s) >= 80 && !isSuspect(s)).length;
-  const spikeCount = volumeSpikeCount(realStockPool);
-  const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
 
   // ── 후보 카드 뷰모델 ──
   const candidates: StockCandidate[] = topCandidates.map((s, i) => {
@@ -210,24 +174,9 @@ export default async function HomePage() {
       ? `/compare?stocks=${topCandidates.slice(0, 3).map((s) => s.ticker).join(",")}`
       : undefined;
 
-  // ── 공시 신호 카드 뷰모델 (note는 호재/악재 표현이 섞일 수 있어 중립 확인 포인트로 대체) ──
-  const signalVMs: DisclosureSignalVM[] = topSignals.map((s) => {
-    const code = s.disclosure.stock_code;
-    const date = s.disclosure.rcept_dt;
-    const fmtDate = date.length === 8 ? date.slice(4, 6) + "." + date.slice(6, 8) : date;
-    return {
-      rceptNo: s.disclosure.rcept_no,
-      signalType: s.signalType,
-      signalLabel: s.signalLabel,
-      corpName: s.disclosure.corp_name,
-      reportNm: s.disclosure.report_nm,
-      dateLabel: fmtDate + " · DART",
-      inUniv: universeTickers.has(code),
-      code,
-      dartUrl: "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=" + s.disclosure.rcept_no,
-    };
-  });
-
+  // 홈 기본 본문 4구간(설계서 §6.2): 1) 시작 영역(HomeHero) · 2) 실제 후보 미리보기 최대 3개 +
+  // 3) 확인 순서(TopCandidateSection이 카드 아래 컴팩트 가이드로 함께 렌더) · 4) 조건부 개인 루틴
+  // (MyStocksSection은 로컬 관심/최근 데이터가 있을 때만 스스로 렌더). 하단은 짧은 비자문 + 데이터 출처.
   return (
     <div className="space-y-5 md:space-y-7">
       <HomeHero
@@ -238,26 +187,9 @@ export default async function HomePage() {
         searchThemes={allThemes()}
       />
 
-      <MarketSnapshotCards
-        totalCount={dataMetadata.count}
-        strongCount={strongCount}
-        volumeSpikeCount={spikeCount}
-        signalCount={signalCount}
-      />
-
       <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} strongCount={strongCount} />
 
-      <DisclosureSignalSection signals={signalVMs} universeCount={dataMetadata.count} />
-
-      <WelcomeOnboarding />
-
       <MyStocksSection lookup={poolLookup} />
-
-      <FeatureCards strongCount={strongCount} signalCount={signalCount} />
-
-      <HowItWorksSection />
-
-      <RiskNotice />
 
       <HomeDataSourceFooter count={dataMetadata.count} dataAsOf={dataAsOf} />
     </div>

@@ -3667,3 +3667,18 @@
 - **화면 검증 한계**: 이 환경엔 headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측은 미지원(SSR 라벨 렌더 + 축약 라벨 2자 + truncate/max-w-full로 하단 바 overflow 위험 없음으로 판단). 실기기 픽셀 확인은 오너 게이트로 남김.
 - **다음 진입점(Slice B)**: HomeHero를 단일 시작 영역으로 축소(우측 미리보기 패널 제거, 제목/설명/검색/기본 CTA/짧은 안전 문구 정렬), 390x844 첫 화면 위치 검증. 홈 섹션을 실제 제거하기 시작하는 Slice C부터 verify-first-run-ux.ts의 REMOVED_HOME_SECTIONS에 제거 컴포넌트명을 추가한다.
 - **커밋**: 로컬 [codex] add first-run UX Slice A nav wording + static verifier (브랜치 ai-center/task-273-ornscore-first-run-ux-rebuild-a-ia-t). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice A"로 확인.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice C (홈 본문 중복 제거) [codex]
+
+- **Scope**: 설계서 docs/ornscore-first-run-ux-rebuild-2026-07-14.md §18 Slice C만. 홈 기본 본문을 설계된 네 구간(1 시작 영역 · 2 실제 후보 미리보기 최대 3개 · 3 확인 순서 · 4 조건부 개인 루틴)으로 제한하고, 중복/과밀 섹션을 홈 기본 흐름에서 제거하거나 /today·상세로 이동. 데이터/점수 산식·/today 무변경.
+- **변경(수정 5)**:
+  - src/app/page.tsx — 홈 렌더를 HomeHero → TopCandidateSection → MyStocksSection → HomeDataSourceFooter 4개만 남김. MarketSnapshotCards·DisclosureSignalSection·WelcomeOnboarding·FeatureCards·HowItWorksSection·RiskNotice 렌더/임포트 제거. 이에 딸린 서버 계산도 제거: getRecentSignals·pickTopSignals·RecentSignal 인터페이스·signalVMs·universeTickers·volumeSpikeCount(spikeCount)·signalCount. strongCount(오늘 후보 관계 문구용)·topCandidates·poolLookup은 유지. 확인 순서(근거→비교→담기) 컴팩트 가이드는 TopCandidateSection이 카드 아래에 이미 렌더하므로 그대로 3구간 역할.
+  - src/components/home/MyStocksSection.tsx — 개인 데이터가 실제로 있을 때만 렌더(설계서 §5.4·§6.2). 로딩 스켈레톤·빈-상태 카드 제거하고 `if (!mounted || rows.length === 0) return null`로 통일 → 처음 온 사용자에게 빈 개인화 섹션/스켈레톤 깜빡임을 홈에 남기지 않음. loading state·8초 타임아웃 제거(가시 동작이 null로 동일). 헤더/다음-내비 무조건 렌더로 단순화.
+  - src/components/home/HomeDataSourceFooter.tsx + src/lib/copy/home.ts — 큰 위험 고지(RiskNotice) 카드를 없애는 대신 짧은 비자문 한 줄(dataSource.notAdvice, ko/en)을 데이터 출처 푸터 상단으로 통합(설계서 §5.5·§6.2 "푸터 전 짧은 1문장"). 히어로 안전 문구(homeHeroCopy.note)와 다른 문장을 써 §5.5 반복 금지 준수.
+  - scripts/verify-first-run-ux.ts — REMOVED_HOME_SECTIONS에 5개(MarketSnapshotCards·DisclosureSignalSection·FeatureCards·HowItWorksSection·RiskNotice) 추가 + WelcomeOnboarding(@/components/ 경로라 home/* 정규식 밖)용 전용 임포트 가드 1개. 이후 슬라이스/무관 편집이 이들을 홈에 재도입하면 오프라인에서 FAIL. PASS 메시지 removed-section guard 수 갱신(6).
+- **불변식**: public/data/*·stocks.json·점수식·metricsVersion·DART 수집·Supabase 스키마/RLS/OAuth·크론·배포·의존성 무변경. 라우트 경로 무변경(홈 본문 구성/카피만). /today 무변경. 삭제 대신 임포트만 제거 — 6개 컴포넌트 파일은 데드코드로 남기고 가드로 재도입 차단(Slice A 노트가 정한 패턴).
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · verify-first-run-ux PASS(6 removed-section guard) · npm run build 0(라우트 표 불변) · 로컬 prod :4823 verify:local --no-perf 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access). SSR 홈 확인: h1 1개, 제거 4섹션(시장 스냅샷·공시 신호·핵심 기능·사용법) 부재, 유지 마커(오늘 먼저 볼 후보·확인 순서 가이드·푸터 비자문·데이터 출처) 존재.
+- **화면 검증 한계**: headless 브라우저 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 섹션 제거(콘텐츠 감소)와 푸터 짧은 텍스트 2줄 추가뿐이라 가로 overflow/겹침 위험 낮음(레이아웃 폭 불변). 실기기 픽셀 확인은 오너 게이트로 남김.
+- **다음 진입점(Slice D)**: /today를 변화 중심으로 재구성 — 홈과 중복되는 서비스 소개 제거, 후보/공시/관심 변화 순서 정리, 변화 데이터 없을 때 현재 강점과 구분. 홈에서 제거한 공시 신호/시장 요약은 /today가 변화 관점으로 담당하는지 점검.
+- **커밋**: 로컬 [codex] first-run UX Slice C: trim home body to four regions (브랜치 ai-center/task-275-ornscore-first-run-ux-rebuild-c-remo). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice C"로 확인.

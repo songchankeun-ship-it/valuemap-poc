@@ -90,8 +90,18 @@ check("HomeHero labels the search entry (copy.searchLabel)", heroSrc.includes("c
 // --- 5. Prohibited reintroduction of removed home sections -------------------
 // Later slices (C/D) remove some home sections. As each is removed, append its
 // component name here; this guard then fails if a future edit re-imports it into
-// the home page. Empty in Slice A — nothing is removed yet.
-const REMOVED_HOME_SECTIONS: string[] = [];
+// the home page.
+// Slice C (spec §6.2): the home default body is capped at four regions (start
+// area, up to 3 candidate previews, one compact verification-order block, and an
+// optional personal routine). These sections were removed from / or relocated to
+// /today, so re-importing any of them into the home page must fail here.
+const REMOVED_HOME_SECTIONS: string[] = [
+  "MarketSnapshotCards",
+  "DisclosureSignalSection",
+  "FeatureCards",
+  "HowItWorksSection",
+  "RiskNotice",
+];
 
 function homeSectionImports(src: string): Set<string> {
   const names = new Set<string>();
@@ -111,6 +121,15 @@ for (const removed of REMOVED_HOME_SECTIONS) {
   check(`removed home section "${removed}" is NOT re-imported by the home page`, !imported.has(removed));
 }
 
+// WelcomeOnboarding lives at "@/components/WelcomeOnboarding" (not the home/*
+// folder the regex above scans), so guard it directly. Slice C folded its 3-step
+// onboarding into the top verification-order block, so the home page must not
+// re-import the standalone onboarding banner.
+check(
+  "removed home section \"WelcomeOnboarding\" is NOT imported by the home page",
+  !/import\s+\{[^}]*\bWelcomeOnboarding\b[^}]*\}\s+from\s+["']@\/components\/WelcomeOnboarding["']/.test(pageSrc),
+);
+
 // Self-test: prove the guard actually fires, even while REMOVED_HOME_SECTIONS is
 // empty. If the detector or the "prohibited present" logic ever breaks, this
 // fails loudly instead of the guard silently passing forever.
@@ -126,5 +145,5 @@ if (failed > 0) {
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length} removed-section guard(s)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s)`,
 );

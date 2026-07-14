@@ -2870,3 +2870,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **화면 검증 한계**: 이 환경엔 headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측은 미지원(SSR 라벨 렌더 + 축약 라벨 2자 + truncate/max-w-full로 하단 바 overflow 위험 없음으로 판단). 실기기 픽셀 확인은 오너 게이트로 남김.
 - **다음 진입점(Slice B)**: HomeHero를 단일 시작 영역으로 축소(우측 미리보기 패널 제거, 제목/설명/검색/기본 CTA/짧은 안전 문구 정렬), 390x844 첫 화면 위치 검증. 홈 섹션을 실제 제거하기 시작하는 Slice C부터 verify-first-run-ux.ts의 REMOVED_HOME_SECTIONS에 제거 컴포넌트명을 추가한다.
 - **커밋**: 로컬 [codex] add first-run UX Slice A nav wording + static verifier (브랜치 ai-center/task-273-ornscore-first-run-ux-rebuild-a-ia-t). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice A"로 확인.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice C: 홈 본문 네 구간 축소 ([codex])
+
+- **무엇**: 설계서 §6.2대로 홈 기본 본문을 네 구간으로 제한했다. 시작 영역(HomeHero) → 실제 후보 미리보기 최대 3개 + 확인 순서 컴팩트 가이드(TopCandidateSection) → 조건부 개인 루틴(MyStocksSection, 로컬 관심/최근 데이터가 있을 때만) → 짧은 비자문 + 데이터 출처 푸터(HomeDataSourceFooter). 정보 과밀·중복의 원인이던 MarketSnapshotCards·DisclosureSignalSection·WelcomeOnboarding·FeatureCards·HowItWorksSection·큰 RiskNotice는 홈 기본 흐름에서 제거(공시/시장 요약은 /today가 변화 관점으로 담당).
+- **변경 파일(5)**: src/app/page.tsx(6섹션 렌더/임포트 제거 + 딸린 서버 계산 제거), src/components/home/MyStocksSection.tsx(데이터 있을 때만 렌더 — 빈 상태/스켈레톤 제거), src/components/home/HomeDataSourceFooter.tsx + src/lib/copy/home.ts(비자문 한 줄 dataSource.notAdvice ko/en을 푸터로 통합), scripts/verify-first-run-ux.ts(REMOVED_HOME_SECTIONS 5 + WelcomeOnboarding 가드).
+- **후보 카드**: name/code/sector · 현재가/등락 · 탐색점수 · 가장 강한 이유 한 줄 · 먼저 확인할 것 · 상세 보기 · 비교 담기를 그대로 유지(중복 CTA 없음). 카드 자체는 무변경.
+- **불변식**: 점수 산식·public/data/*·DART·Supabase·크론·배포·의존성·라우트 경로·/today 무변경. 6개 제거 컴포넌트 파일은 삭제하지 않고 데드코드로 남기며 verify-first-run-ux 가드가 재도입을 차단(Slice A 패턴).
+- **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(6 guard) · build 0 · verify:local :4823 6/6 OK · SSR 홈 h1=1·제거4섹션 부재·유지 마커 존재. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트.
+- **다음(Slice D)**: /today 변화 중심 재구성(홈과 중복 서비스 소개 제거, 후보/공시/관심 변화 순서, 변화 데이터 없을 때 현재 강점과 구분).
+- **커밋**: 로컬 [codex] first-run UX Slice C: trim home body to four regions. push/main 무변경.
