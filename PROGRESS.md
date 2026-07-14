@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] outline admin traffic telemetry plan
+- **Scope**: 로컬 전용 설계 노트 배치(task 251-B). 관리자 화면에서 **Supabase Auth 로그인 활동**과 **익명 페이지뷰·유입(referrer)** 을 헷갈리지 않게 분리하고, 앞으로 익명 트래픽을 관리자 안으로 가져올지 결정할 때의 선택지를 문서로 고정. **새 추적 미구현** — 새 테이블·API 라우트·외부 계정·분석 설정 변경 0. 코드/UI/라우트 무변경(문서만).
+- **Changes**: 신규 `docs/ornscore-admin-traffic-telemetry-plan.md` — (1) (A)로그인 활동 vs (B)익명 접속을 원본(Supabase Auth vs Vercel Analytics)·조회위치(`/admin/users` vs 외부 대시보드)·식별성으로 분리한 표 + "로그인 수 ≠ 방문자 수" 경고, (2) 현행 코드 인벤토리(`admin/users/page.tsx` service role·`layout.tsx` `<Analytics />`·`clientAnalytics.ts`·기존 InfoBlock 카피), (3) 프라이버시·데이터 보존 주의 6항(referrer 축약·IP/UA 집계만·자유입력 금지·보존기간 30~90일 후 원시 삭제·`/privacy` 고지 일관성·동의/법적 근거), (4) 미래 관리자 트래픽 대시보드 4선택지(A 현행유지 → B 딥링크 → C 벤더 API 풀 → D 자체 이벤트 테이블) + 권장 경로, 전부 오너 게이트. 기존 `/admin/users` InfoBlock을 대체하지 않고 배경 근거·다음 단계만 문서화.
+- **Validation**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · 편집 3문서(신규 노트 + PROGRESS + AI_HANDOFF) U+FFFD 0. UI/라우트 무변경이라 build/verify:local 생략(문서만). 로컬 커밋만·push 미수행·main 무변경.
+- **Risks / next**: 문서-코드 드리프트가 유일 리스크 — `/admin/users` InfoBlock 카피나 `layout.tsx` Analytics 배선을 바꾸면 이 노트 §1 인벤토리도 함께 갱신. 다음 진입점: 오너가 "(A)+(B)를 한 화면에서 보고 싶다"고 결정하면 §3 옵션 B(정책 변화 0)부터. 자체 수집(C/D)으로 가기 전 반드시 §2 프라이버시·보존·동의 항목을 `/privacy`와 함께 선결(오너·법무 게이트).
+
 ## 2026-07-14 - [codex] document admin operations checklist
 - **Scope**: 로컬 전용 문서 배치(task 250). 관리자 화면 보호 방식·필요 env·시크릿 비노출 접근 확인·남은 운영자 게이트를 운영자 한 명이 채팅 기록 없이 볼 수 있게 단일 체크리스트로 정리. **설정/값 무변경** — 코드·데이터·스키마·env 실값 손대지 않음(문서만).
 - **Changes**: 신규 `docs/ornscore-admin-operations-checklist.md` — (1) `/admin`·`/admin/users`·`/admin/status` 이중 보호(미들웨어 307/403 + 페이지 `requireAdminAccess`)와 검색 비노출, (2) 런타임 env 표(`ADMIN_EMAILS`/`ORNSCORE_ADMIN_EMAILS`·`NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_ANON_KEY`·`SUPABASE_SERVICE_ROLE_KEY`·`ADMIN_ENABLED`과 각 부재 시 graceful 동작), (3) 시크릿 노출 없이 비로그인/비허용/허용 계정 접근을 확인하는 절차, (4) 운영자 게이트로 남는 항목. `ornscore-admin-status-backlog.md` §3 관련 문서에 역링크 1줄 추가.
