@@ -23,6 +23,10 @@ export type NavKey =
   | "about"
   | "more";
 
+// 모바일 하단 바처럼 폭이 좁은 곳에서 쓰는 축약 라벨 키(설계서 §12.2).
+// 데스크톱/드로어는 역할이 드러나는 긴 라벨(nav)을, 하단 바는 이 짧은 라벨(navShort)을 쓴다.
+export type NavShortKey = "today" | "stocks" | "watchlist" | "disclosures";
+
 export const commonCopy = {
   ko: {
     brand: "오른스코어",
@@ -34,17 +38,26 @@ export const commonCopy = {
       enFull: "English",
     },
     nav: {
-      today: "오늘",
-      stocks: "발견",
+      // 역할이 드러나는 데스크톱/드로어 라벨(설계서 §12.1). 홈(로고), /today, /stocks 가
+      // 서로 다른 단어로 구분되도록 "오늘 브리핑"/"종목 찾기"로 명시한다.
+      today: "오늘 브리핑",
+      stocks: "종목 찾기",
       disclosures: "공시",
       backtest: "실험실",
       pricing: "서비스 안내",
-      watchlist: "관심",
+      watchlist: "관심종목",
       compare: "비교",
       history: "분석 기록",
       metricsGuide: "도움말",
       about: "서비스 소개",
       more: "더보기",
+    },
+    // 모바일 하단 바 축약 라벨(설계서 §12.2): 오늘 · 찾기 · 관심 · 공시.
+    navShort: {
+      today: "오늘",
+      stocks: "찾기",
+      watchlist: "관심",
+      disclosures: "공시",
     },
     auth: {
       login: "로그인",
@@ -120,8 +133,10 @@ export const commonCopy = {
       enFull: "English",
     },
     nav: {
-      today: "Today",
-      stocks: "Discover",
+      // Role-forward desktop/drawer labels (spec §12.1) so home, /today and
+      // /stocks read as three distinct destinations.
+      today: "Today briefing",
+      stocks: "Find stocks",
       disclosures: "Disclosures",
       backtest: "Lab",
       pricing: "Service info",
@@ -131,6 +146,13 @@ export const commonCopy = {
       metricsGuide: "Help",
       about: "About",
       more: "More",
+    },
+    // Compact mobile bottom-bar labels (spec §12.2).
+    navShort: {
+      today: "Today",
+      stocks: "Find",
+      watchlist: "Saved",
+      disclosures: "Filings",
     },
     auth: {
       login: "Log in",

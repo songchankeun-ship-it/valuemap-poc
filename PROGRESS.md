@@ -3641,3 +3641,18 @@
 - **설계서**: `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` 신규. 제품 계약, 경로별 단일 역할, 용어 캐논, 홈 4구간 제한, `/today` 변화 중심 구조, 종목 찾기/상세/관심/비교, 로그인·관리자 경계, 상태/접근성/분석 이벤트, 구현 금지 범위와 Slice A-H 완료 조건을 확정했다.
 - **불변식**: 이번 단계는 문서 전용. 점수식·`public/data/*`·DART·Supabase 스키마/RLS/OAuth·외부 서비스·배포 무변경.
 - **다음에 바로 실행할 작업**: 설계서 Slice A부터 H까지 AI Center 프로젝트 #1에 순서대로 등록하고 로컬 전용 큐로 실행한다. 각 작업은 작은 로컬 커밋, 필수 게이트, 390x844/1440x900 검증, `PROGRESS.md`/`docs/AI_HANDOFF.md` 갱신을 남긴다. 전체 완료 후에만 별도 오너 승인으로 push/배포를 검토한다.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice A (IA/용어·회귀 기준 고정) [codex]
+
+- **Scope**: 설계서 docs/ornscore-first-run-ux-rebuild-2026-07-14.md §18 Slice A만. 공유 내비게이션(데스크톱 Sidebar·모바일 하단 MobileBottomNav·모바일 드로어 MobileNav)을 경로 역할 중심 용어로 정렬하고, 첫 방문 계약 회귀를 잡는 정적 검증기를 추가. 데이터/점수/인증/생성 파일 무변경, 라우트 경로 무변경, HomeHero 재설계 없음.
+- **변경(수정 4 + 신규 1)**:
+  - src/lib/i18n.ts — nav 라벨을 역할형으로: today "오늘"→"오늘 브리핑", stocks "발견"→"종목 찾기", watchlist "관심"→"관심종목"(공시/비교 유지). EN도 동일(Today briefing·Find stocks). 하단 바 축약용 navShort(오늘·찾기·관심·공시 / Today·Find·Saved·Filings)와 NavShortKey 타입 신규. 홈(브랜드)·/today·/stocks가 카피에서 서로 다른 단어로 구분됨.
+  - src/components/MobileBottomNav.tsx — PRIMARY 항목이 copy.navShort[key]를 쓰도록(폭 좁은 하단 바 축약). 더보기 시트/버튼은 copy.nav 유지. Sidebar·MobileNav는 copy.nav(긴 역할 라벨) 그대로.
+  - scripts/verify-first-run-ux.ts(신규) — 정적 회귀 검증기: (1) 공유 nav 라벨 드리프트(5 역할 + 4 축약, ko/en 캐논 동결), (2) 홈/today/stocks 카피 상호 구분, (3) 홈 H1 정확히 1개(HomeHero 소유·page.tsx 0개), (4) 홈 기본행동+검색 계약(#today-candidates·copy.primaryCta·variant=hero·copy.searchLabel), (5) 후속 슬라이스에서 제거될 홈 섹션 재도입 금지(REMOVED_HOME_SECTIONS, Slice A에선 비어있고 self-test로 탐지 로직 실증). 실패 시 exit 1.
+  - package.json — verify:first-run-ux(tsx) 1줄. scripts/release-preflight.mjs — 오프라인 게이트 목록/주석에 신규 검증기 1줄(기존 tsx 검증기 패턴과 동일 통합).
+- **불변식**: public/data/*·stocks.json·점수식·metricsVersion·DART·Supabase 스키마/RLS/OAuth·크론·배포·의존성 무변경. 라우트 경로 무변경(라벨 텍스트만). MobileMenu.tsx(미마운트 데드코드)는 스코프 최소화 위해 미변경.
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · npm run build 0(라우트 표 불변) · 로컬 prod :4519 verify:local --no-perf 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access) · release:preflight --offline-only 6/6 OK(신규 게이트 포함). 검증기 음성 테스트: nav.today 드리프트 주입 시 FAIL·복원 시 PASS 확인. SSR 확인: 사이드바=오늘 브리핑/종목 찾기/관심종목, 하단 바=오늘/찾기/관심.
+- **화면 검증 한계**: 이 환경엔 headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측은 미지원(SSR 라벨 렌더 + 축약 라벨 2자 + truncate/max-w-full로 하단 바 overflow 위험 없음으로 판단). 실기기 픽셀 확인은 오너 게이트로 남김.
+- **다음 진입점(Slice B)**: HomeHero를 단일 시작 영역으로 축소(우측 미리보기 패널 제거, 제목/설명/검색/기본 CTA/짧은 안전 문구 정렬), 390x844 첫 화면 위치 검증. 홈 섹션을 실제 제거하기 시작하는 Slice C부터 verify-first-run-ux.ts의 REMOVED_HOME_SECTIONS에 제거 컴포넌트명을 추가한다.
+- **커밋**: 로컬 [codex] add first-run UX Slice A nav wording + static verifier (브랜치 ai-center/task-273-ornscore-first-run-ux-rebuild-a-ia-t). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice A"로 확인.

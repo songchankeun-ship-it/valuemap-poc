@@ -4,15 +4,17 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
-import type { NavKey } from "@/lib/i18n";
+import type { NavKey, NavShortKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
 
+// 하단 바는 폭이 좁아 축약 라벨(navShort)을 쓴다. 데스크톱/드로어(Sidebar·MobileNav)는
+// 같은 경로에 역할 라벨(nav)을 쓴다 — 설계서 §12.1/§12.2.
 const PRIMARY = [
   { href: "/today", Icon: CalendarDays, key: "today" },
   { href: "/stocks", Icon: Search, key: "stocks" },
   { href: "/watchlist", Icon: Heart, key: "watchlist" },
   { href: "/disclosures", Icon: Megaphone, key: "disclosures" },
-] satisfies Array<{ href: string; Icon: LucideIcon; key: NavKey }>;
+] satisfies Array<{ href: string; Icon: LucideIcon; key: NavShortKey }>;
 
 const MORE = [
   { href: "/compare", Icon: GitCompare, key: "compare" },
@@ -92,7 +94,7 @@ export function MobileBottomNav() {
             className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (active(href) ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
           >
             <Icon className="w-5 h-5" />
-            <span className="max-w-full truncate px-0.5">{copy.nav[key]}</span>
+            <span className="max-w-full truncate px-0.5">{copy.navShort[key]}</span>
           </Link>
         ))}
         <button

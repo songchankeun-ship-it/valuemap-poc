@@ -16,7 +16,8 @@
 //   3. verify:route-analytics  sanitized route_view_public classifier contract
 //   4. verify:click-analytics  data-analytics-event click contract
 //   5. verify:admin-traffic-metrics  future-dashboard boundary vs event map
-//   6. build                 next build
+//   6. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
+//   7. build                 next build
 //
 // The server-DEPENDENT route-health gate (smoke + verify:routes + stocks-seo +
 // public-seo + login-preflight + admin-access) is delegated to the existing
@@ -92,6 +93,7 @@ const OFFLINE_GATES = [
   { name: "verify:route-analytics", command: "npm", args: ["run", "verify:route-analytics"], shell: true },
   { name: "verify:click-analytics", command: "npm", args: ["run", "verify:click-analytics"], shell: true },
   { name: "verify:admin-traffic-metrics", command: "npm", args: ["run", "verify:admin-traffic-metrics"], shell: true },
+  { name: "verify:first-run-ux", command: "npm", args: ["run", "verify:first-run-ux"], shell: true },
 ];
 if (RUN_BUILD) {
   OFFLINE_GATES.push({ name: "build", command: "npm", args: ["run", "build"], shell: true });
