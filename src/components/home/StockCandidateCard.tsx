@@ -121,6 +121,10 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         <Link
           prefetch={false}
           href={"/stock/" + c.ticker}
+          data-analytics-event="home_candidate_open"
+          data-analytics-ticker={c.ticker}
+          data-analytics-rank={String(c.rank)}
+          data-analytics-slot={featured ? "featured" : "list"}
           className="flex-1 min-w-0 text-center px-3 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
         >
           <span className="truncate">{t.topCandidate.viewStock}</span>

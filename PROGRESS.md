@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] add home candidate open funnel event (task 257-C)
+- **Scope**: 공개 런치 퍼널을 `docs/ornscore-analytics-event-map-2026-07-12.md`에 대조해 홈 최상단(top-of-funnel)에서 유일하게 누락돼 있던 CTA 클릭 커버리지 1개를 추가. 홈 "오늘의 후보" 카드의 기본 CTA(상세 보기 → `/stock/[ticker]`)는 지금까지 클릭 이벤트가 없어, 후보 카드가 실제로 종목 상세 탐색을 유도하는지(홈→상세 전환) 측정 공백이었음. 검색어 원문·이름·자유입력 무전송, 공개 ticker + 고정 rank + 레이아웃 슬롯만. 새 벤더·네트워크·env·의존성·저장값·점수식 0.
+- **Changes**:
+  - `src/components/home/StockCandidateCard.tsx` — 하단 기본 CTA `Link`(항상 렌더되는 상세보기)에 기존 위임 패턴(`data-analytics-event` + `data-analytics-*`, `AnalyticsEventTracker`의 전역 클릭 핸들러가 수집)으로 `home_candidate_open` 이벤트 배선. 속성 `ticker`(공개 식별자)·`rank`(1/2/3 고정 순위)·`slot`(`featured`/`list` 고정 enum)만. 마크업/스타일/네비게이션 무변경(속성만 추가), 이벤트는 네비게이션을 블로킹하지 않음.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — Event Names 표에 `home_candidate_open` 행 추가(소스=홈 오늘의 후보 카드 기본 CTA, privacy-safe 속성 범위 명시).
+- **Validation**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 2파일 U+FFFD 0 · `npm run build` 0(라우트 표 불변) · `npm run verify:route-analytics` PASS(23케이스·15 route kind) · 로컬 prod 127.0.0.1:49870 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5). 임시 next 서버(PID 41248) taskkill 종료·포트 닫힘 확인, 상시 AI Center 무중단.
+- **Risks / next**: 데이터-속성 위임은 `datasetToAnalyticsProps`가 `analytics*` dataset을 그대로 전송하므로 새 속성이 모두 고정/공개 값인지 리뷰가 유일한 리스크(이번 3속성 모두 안전). Vercel 대시보드 실수치는 배포 후 실클릭 필요(불변). 후속 후보: 홈의 나머지 상세 유입 링크(`MyStocksSection` 관심/최근 본 → 상세, `DisclosureSignalSection` → 상세)와 `home_candidate_open`의 인라인 폴백 링크(lead 결측 시)도 동일 이벤트로 확장. 로컬 커밋만·push 미수행·main 무변경(브랜치 `ai-center/task-257-ornscore-analytics-ops-2026-07-14-c-`).
+
 ## 2026-07-14 - [codex] extract route analytics classifier + verify (task 256-B)
 - **Scope**: sanitized `route_view_public` 분류를 유지·검증하기 쉽게 만드는 작은 슬라이스. 기존에 `AnalyticsEventTracker.tsx` 안에 인라인으로 있던 라우트→안전속성 분류 로직을 순수 헬퍼로 분리하고, 오프라인 검증 스크립트 + 경로별 안전속성 문서를 추가. 동작·전송 이벤트·프라이버시 경계 무변경(순수 리팩터 + 가드 추가). 새 벤더·네트워크·env·의존성·저장값 0.
 - **Changes**:
