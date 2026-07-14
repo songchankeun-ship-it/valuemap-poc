@@ -3696,3 +3696,18 @@
 - **화면 검증 한계**: headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 섹션 제거(2개)+순서 재배치+짧은 문구 교체라 레이아웃 폭 불변, 가로 overflow/겹침 위험 낮음으로 판단. 실기기 픽셀 확인은 오너 게이트로 남김.
 - **다음 진입점(Slice E)**: 종목 찾기/내비 명료화 — 발견→종목 찾기/찾기 라벨은 Slice A에서 이미 정렬됨. §8대로 /stocks 검색·결과수·프리셋·활성 필터의 시각 순서 정리와 0건 결과 회복 동선(조건 완화+초기화) 검증이 남음.
 - **커밋**: 로컬 [codex] first-run UX Slice D: rework /today into a change briefing (브랜치 ai-center/task-276-ornscore-first-run-ux-rebuild-d-make). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice D"로 확인.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice E (/stocks 종목 찾기 명료화) [codex]
+
+- **Scope**: 설계서 docs/ornscore-first-run-ux-rebuild-2026-07-14.md §18 Slice E + §8만. /stocks가 '종목을 찾는 화면'으로 바로 읽히게: (1) 페이지 H1 용어를 nav canon과 일치, (2) 모바일에서 질문형 프리셋이 결과 목록을 첫 화면 밖으로 밀지 않도록 접힘 처리. 필터 수식·유니버스·결과 데이터·정렬 의미 무변경.
+- **이미 충족(§8 확인)**: 검색 먼저(상단 type=search) · 결과 수(헤더 matchCount/qualityHeadline + 현재조건 바 matchCountShort + 필터패널 filterLiveCount) · 질문형 프리셋 5개(QUESTION_PRESETS, 실제 필터 config 적용) · 활성 필터 요약(현재 조건 바의 상세필터 칩 + ×제거, 초기화 버튼) · 0건 회복(strongestConstraint '가장 강한 조건 완화' + resetFilters + 검색어만일 때 clearSearch) · 모바일 상세필터는 이미 바텀시트(drawer)로 제공. → Slice E 대부분은 A~기존 구현에서 이미 성립. 남은 갭은 H1 용어와 모바일 프리셋 높이 2건뿐.
+- **변경(수정 3)**:
+  - src/lib/copy/stocks.ts — ko headerTitle "발견" → "종목 찾기"(설계서 §4·§8.1: '발견 단독 표기' 축소, nav canon '종목 찾기'와 일치). en headerTitle("Find stocks to review today")은 이미 finding 프레이밍이라 유지. 화면 H1이 메뉴명과 같은 단어로 읽혀 역할이 즉시 드러남.
+  - src/components/StocksExplorer.tsx — 질문형 프리셋 카드 그리드를 모바일 기본 접힘으로. showMobilePresets state 신규(기본 false). 헤더에 lg:hidden 펼치기 토글(aria-expanded/aria-controls="question-presets", t.expand/t.collapse 재사용) 추가. 카드 grid className을 `(showMobilePresets?"grid":"hidden") + " lg:grid ..."`로 → 모바일은 접힘/펼침, 데스크톱(lg+)은 항상 grid. 카드는 항상 DOM에 렌더(hidden=display:none)라 SSR/SEO/무JS에서 프리셋 텍스트 유지. 5개 세로 카드(~650px)가 밀던 결과 수·현재 조건 바·목록이 모바일 첫 화면 안으로 들어옴. 빠른 프리셋(showQuickPresets)·상세필터(drawer)와 동일한 접힘 idiom.
+  - scripts/verify-first-run-ux.ts — §8 Slice E 정적 가드 추가(7a~7d): H1 ko가 '찾기' 포함·'발견' 아님 + en 비어있지 않음 / 검색 input 상단 유지 / qPreset 3~5개 / QUESTION_PRESETS.map 렌더 / 0건 relax+reset(t.relaxStrongest·resetFilters) / 모바일 접힘(showMobilePresets·id=question-presets·lg:grid). stocksCopy import 추가, PASS 메시지에 stocks find-screen 항목 추가.
+- **불변식**: public/data/*·stocks.json·점수식·metricsVersion·DART 수집·유니버스(138)·Supabase 스키마/RLS/OAuth·크론·배포·의존성·라우트 경로 무변경. matchesConfig/PRESETS/QUESTION_PRESETS config·정렬·결과 데이터 무변경(표시 순서/밀도/H1 문구만). SEO 메타(제목/canonical/robots)·serverResultCount 무변경.
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 3파일 U+FFFD 0 · verify-first-run-ux PASS(stocks find-screen: H1 term·search-first·5 question presets·zero-result relax+reset·mobile-collapsible presets) · npm run build 0(/stocks 26.2kB, 라우트 표 불변) · 로컬 prod :4844 verify:local --no-perf 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access). SSR /stocks 확인: H1 '종목 찾기'=1·옛 '발견' H1=0·질문 헤딩 present·검색 placeholder present·id=question-presets present·프리셋 라벨(싸 보이는 종목) present(DOM 유지)·펼치기 토글 present. 시작한 :4844만 taskkill로 종료.
+- **화면 검증 한계**: headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 레이아웃 폭 불변(모바일 프리셋을 display:none으로 접고 H1 텍스트만 교체) — 가로 overflow/겹침 위험 없음, 세로 높이는 감소 방향. 실기기 픽셀(모바일 첫 화면에 결과 수/현재 조건 바 노출)은 오너 게이트로 남김.
+- **다음 진입점(Slice F)**: 종목 상세(/stock/[ticker]) 첫 행동 정리 — 상단 정보와 요약 탭 중복 제거, 결론→근거→최근 변화→공시 순서 고정, 관심/비교/공유 우선순위·모바일 위치·sticky 겹침 확인(§9, §18 Slice F).
+- **커밋**: 로컬 [codex] first-run UX Slice E: make /stocks read as find-stocks (부모 HEAD ce16af7, 브랜치 ai-center/task-277-ornscore-first-run-ux-rebuild-e-clar). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice E"로 확인.

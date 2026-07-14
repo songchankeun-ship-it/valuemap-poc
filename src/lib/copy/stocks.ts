@@ -8,7 +8,8 @@ import type { Locale } from "@/lib/i18n";
 export const stocksCopy = {
   ko: {
     // ── 페이지 헤더 ──
-    headerTitle: "발견",
+    // 화면 제목은 내비게이션 canon(종목 찾기)과 일치시켜 '검색으로 종목을 찾는 화면'임을 바로 읽히게 한다(설계서 §4·§8.1).
+    headerTitle: "종목 찾기",
     matchCount: (n: number, total: number) => ({ a: `검색·필터 결과 ${n}개 `, b: `/ 분석 대상 ${total}종목` }),
     // 기본 품질 필터(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
     qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 ${shown}개 `, b: `/ 분석 대상 ${total}종목` }),

@@ -2892,3 +2892,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(today change-briefing 포함) · build 0 · verify:local :4837 6/6 OK · SSR /today h1=1·변화 요약/공시 헤딩/현재 강점 캡션 present·routine/checklist/정적 소개문 부재. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트.
 - **다음(Slice E)**: /stocks 첫 상태(검색·결과수·프리셋·활성 필터) 시각 순서 정리와 0건 결과 회복 동선 검증(§8).
 - **커밋**: 로컬 [codex] first-run UX Slice D: rework /today into a change briefing. push/main 무변경.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice E: /stocks 종목 찾기 명료화 ([codex])
+
+- **무엇**: 설계서 §8대로 /stocks가 '종목을 찾는 화면'으로 즉시 읽히게 정리. (1) 페이지 H1 ko "발견"→"종목 찾기"로 nav canon과 일치(§4·§8.1). (2) 모바일에서 질문형 프리셋 5개(세로 ~650px)가 결과 수·현재 조건 바·목록을 첫 화면 밖으로 밀던 것을 기본 접힘으로 바꿔, lg+는 항상 펼침. §8의 나머지(검색 먼저·결과 수·프리셋 실필터 적용·활성 필터 칩 요약·0건 relax+reset·모바일 상세필터 바텀시트)는 기존 구현에서 이미 성립함을 확인.
+- **변경 파일(3)**: src/lib/copy/stocks.ts(ko headerTitle "발견"→"종목 찾기", en 유지), src/components/StocksExplorer.tsx(showMobilePresets state + lg:hidden 펼치기 토글 + 카드 grid를 `(showMobilePresets?"grid":"hidden") lg:grid`로 — 카드는 항상 DOM 렌더/모바일만 display:none), scripts/verify-first-run-ux.ts(§8 Slice E 가드 7a~7d + stocksCopy import).
+- **불변식**: matchesConfig·PRESETS·QUESTION_PRESETS config·정렬·결과 데이터·유니버스(138)·점수식·public/data/*·SEO 메타·라우트 경로 무변경. 표시 순서/밀도/H1 문구만. 데드코드 없음(기존 접힘 idiom 재사용, 신규 copy 키 0 — t.expand/t.collapse 재사용).
+- **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(stocks find-screen 포함) · build 0(/stocks 26.2kB) · verify:local :4844 6/6 OK · SSR /stocks H1 '종목 찾기'=1·옛 '발견' H1=0·프리셋 라벨 DOM 유지·검색/토글 present. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트(폭 불변·세로 감소 방향).
+- **다음(Slice F)**: 종목 상세 첫 행동 정리 — 상단/요약 탭 중복 제거, 결론→근거→최근 변화→공시 순서 고정, 관심/비교/공유 모바일 위치·sticky 겹침 확인(§9).
+- **커밋**: 로컬 [codex] first-run UX Slice E: make /stocks read as find-stocks. push/main 무변경.

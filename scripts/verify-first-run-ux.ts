@@ -29,6 +29,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { commonCopy } from "../src/lib/i18n";
 import { todayCopy } from "../src/lib/copy/today";
+import { stocksCopy } from "../src/lib/copy/stocks";
 
 const ROOT = join(__dirname, "..");
 function read(rel: string): string {
@@ -192,11 +193,47 @@ for (const locale of ["ko", "en"] as const) {
   }
 }
 
+// --- 7. /stocks reads as "Find stocks" (spec §8, Slice E) --------------------
+// Slice E: /stocks must read as the stock-finding screen — search first, a small
+// set of question-style presets that apply real filters, a concise active-filter
+// summary, and a recoverable zero-result state. On mobile the preset controls
+// must not push the result list off the first useful viewport, so they collapse
+// while desktop (lg+) keeps them open.
+const stocksSrc = read("src/components/StocksExplorer.tsx");
+
+// 7a. The page H1 uses the role-forward term, not the bare legacy "발견" (spec §4/§8.1),
+// and agrees with the nav canon (stocks == "종목 찾기").
+const stocksH1Ko: string = stocksCopy.ko.headerTitle;
+check(
+  "stocks H1 (ko) reads as a finding label, not the legacy 발견",
+  stocksH1Ko.includes("찾기") && stocksH1Ko !== "발견",
+);
+check(
+  "stocks H1 (en) is a non-empty finding label",
+  typeof stocksCopy.en.headerTitle === "string" && stocksCopy.en.headerTitle.length > 0,
+);
+
+// 7b. Search-first with 3–5 question presets that apply real filters.
+check("stocks keeps a search input up top", stocksSrc.includes('type="search"') && stocksSrc.includes("t.searchPlaceholder"));
+const qPresetCount = Object.keys(stocksCopy.ko.qPreset).length;
+check("stocks offers 3–5 question presets", qPresetCount >= 3 && qPresetCount <= 5);
+check("stocks renders the question presets", stocksSrc.includes("QUESTION_PRESETS.map"));
+
+// 7c. Recoverable zero-result: relax the strongest single condition + full reset.
+check("stocks zero-result offers relax + reset", stocksSrc.includes("t.relaxStrongest") && stocksSrc.includes("resetFilters"));
+
+// 7d. Mobile: question presets collapse (open on lg+) so they don't push results
+// off the first useful viewport (spec §8.3).
+check(
+  "stocks question presets are mobile-collapsible, open on lg+",
+  stocksSrc.includes("showMobilePresets") && stocksSrc.includes('id="question-presets"') && stocksSrc.includes("lg:grid"),
+);
+
 // --- result ------------------------------------------------------------------
 if (failed > 0) {
   console.error(`first-run-ux verification FAILED (${failed} check${failed === 1 ? "" : "s"})`);
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets)`,
 );

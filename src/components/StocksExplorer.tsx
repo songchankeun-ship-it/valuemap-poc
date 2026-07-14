@@ -310,6 +310,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showQuickPresets, setShowQuickPresets] = useState(false);
+  // 모바일에서 질문형 프리셋 카드가 결과 목록을 첫 화면 밖으로 밀지 않도록 기본 접힘(제목·펼치기만 노출).
+  // 데스크톱(lg+)은 CSS로 항상 펼쳐 첫 상태에 프리셋을 그대로 노출한다(설계서 §8.2/§8.3).
+  const [showMobilePresets, setShowMobilePresets] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
@@ -1115,10 +1118,25 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       </section>
 
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
+      {/* 모바일은 기본 접힘(제목 + 펼치기 토글) → 결과 수·현재 조건·목록이 첫 화면 안으로 들어온다.
+          데스크톱(lg+)은 항상 grid로 노출(빠른 프리셋 접힘 패턴과 동일한 idiom). */}
       <section>
-        <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 mb-3 leading-snug">{t.questionDesc}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{t.questionDesc}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowMobilePresets((v) => !v)}
+            aria-expanded={showMobilePresets}
+            aria-controls="question-presets"
+            className={`lg:hidden shrink-0 inline-flex min-h-[36px] items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+          >
+            {showMobilePresets ? t.collapse : t.expand}
+          </button>
+        </div>
+        <div id="question-presets" className={(showMobilePresets ? "grid" : "hidden") + " lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-3"}>
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
             const badges = badgesFromConfig(p.config, t);
