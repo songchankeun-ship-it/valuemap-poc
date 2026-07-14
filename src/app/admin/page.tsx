@@ -70,6 +70,7 @@ export default async function AdminHomePage() {
     process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL,
   );
   const reportMode = process.env.ADMIN_ENABLED === "1" ? "신고 조회 켜짐" : "신고 조회 꺼짐";
+  const analyticsMode = process.env.VERCEL ? "Vercel Analytics 수집 중" : "로컬에서는 수집 비활성";
 
   const health = [
     {
@@ -268,7 +269,20 @@ export default async function AdminHomePage() {
 
       <section aria-label="외부 운영 도구" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
         <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">외부 운영 도구</h2>
+        <div className="mt-3 grid gap-2 md:grid-cols-2">
+          <MiniCheck label="익명 방문·이벤트 수집" value={analyticsMode} />
+          <MiniCheck label="관리자 내부 수집" value="로그인 활동은 /admin/users" />
+        </div>
         <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href="https://vercel.com/analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+          >
+            Vercel Analytics
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
           <a
             href="https://search.google.com/search-console?resource_id=sc-domain:ornscore.com"
             target="_blank"

@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-14 - Codex - Sanitized route analytics + admin analytics entry
+- **Context**: After the admin ops release push, owner asked to also attach the real collection tool. The repo already had `@vercel/analytics`, `<Analytics />`, `<SpeedInsights />`, and click-event tracking; this slice adds a small first-party route signal on top of the existing Vercel Analytics vendor without adding a new vendor, DB table, Supabase schema/RLS, or env real-value change.
+- **Change**:
+  - `src/components/analytics/AnalyticsEventTracker.tsx` now emits `route_view_public` once per public route view. It excludes `/admin*` and sends only sanitized props: `routeKind`, public `ticker`/`topic` where applicable, boolean `hasQuery`/`hasFilters`, and `compareCount`; it does not send raw search text, full URLs, emails, or auth/account identifiers. Existing `data-analytics-event` click delegation remains unchanged.
+  - `src/app/admin/page.tsx` now shows "익명 방문·이벤트 수집" status based on `process.env.VERCEL`, a `Vercel Analytics` link, and a reminder that logged-in account activity lives in `/admin/users`.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` documents the new event and privacy-safe property boundary.
+- **Gates**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138 / 0 errors / 0 forbidden / Metrics 2.4 · `git diff --check` 0 (CRLF warnings only) · edited-file U+FFFD clean · `npm run build` 0 (existing `TrustLayer` lint warning only) · local prod :57029 `verify:local --no-perf` real gates 4/4 · unauth `/admin/users` 307 to login. Temp next PID 14696 stopped.
+- **Next**: Push this analytics slice after commit and verify live. Seeing actual event counts requires production traffic in Vercel Analytics. In-admin raw anonymous traffic numbers still require a separate owner-gated Vercel API token or self-hosted event table with privacy/retention policy.
+
 ### 2026-07-14 - Codex - Admin report triage workflow clarity (task 252-C)
 - **Context**: Local-only slice to help the owner triage user data reports (`data_reports`) on `/admin/status` without reading chat history. Display clarity + docs only. In-scope guardrails held: no new columns, no update API, no change to report submission (`report-data-issue`) behavior; status transitions still happen in Supabase (owner-gated), since there is no in-app update UI.
 - **Change**:

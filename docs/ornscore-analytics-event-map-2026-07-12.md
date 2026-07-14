@@ -14,6 +14,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 
 | Event | Source | Properties | Meaning |
 | --- | --- | --- | --- |
+| `route_view_public` | Root client analytics tracker | `routeKind`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount` | Sanitized public route visit signal for launch review. Admin routes are excluded; raw search text, full URLs, and auth/account identifiers are not sent. |
 | `search_result_open` | Global search result click/Enter | `source`, `resultType`, `ticker`, `theme`, `queryLength` | User found a stock/theme through autocomplete. |
 | `search_view_all` | Global search "view all" row | `source`, `queryLength`, `resultCount` | User broadens autocomplete into `/stocks?q=...`. |
 | `search_empty_open_stocks` | Global search empty state CTA | `source`, `queryLength`, `stockCount` | User searches something outside autocomplete and opens the explorer. |
@@ -56,6 +57,6 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 ## Implementation Notes
 
 - `src/lib/clientAnalytics.ts` wraps `track()` and swallows analytics errors.
-- `src/components/analytics/AnalyticsEventTracker.tsx` captures server-rendered links/buttons that opt in with `data-analytics-event`.
+- `src/components/analytics/AnalyticsEventTracker.tsx` sends one sanitized `route_view_public` event per public route view and captures server-rendered links/buttons that opt in with `data-analytics-event`.
 - Client-only flows call `trackEvent()` directly where the product action result is known.
 - The first review target after deploy is not raw traffic volume. It is funnel shape: topic page -> stock detail, search -> stock detail, compare/watchlist intent, and login CTA intent.

@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] add sanitized route analytics
+- **Scope**: 배포 후 owner 요청("실제 수집도구도 붙여야지")에 맞춰, 새 벤더·새 DB·Supabase schema/RLS·env 실값 변경 없이 **기존 Vercel Analytics 배선에 공개 라우트 진입 이벤트를 추가**. `/admin` 계열은 제외하고, 검색어 원문·전체 URL·이메일·계정 식별자는 보내지 않음. 운영 홈에는 실제 수집 확인 위치(Vercel Analytics)와 로그인 활동 위치(`/admin/users`)를 명확히 노출.
+- **Changes**:
+  - `src/components/analytics/AnalyticsEventTracker.tsx` — 클라이언트 라우트 진입 시 `route_view_public`을 1회 전송. props는 `routeKind` 중심이며 stock detail은 공개 ticker, topic은 공개 slug, `/stocks`는 `hasQuery`/`hasFilters`, `/compare`는 `compareCount`만 보냄. `/admin*`은 null 처리로 추적 제외. 기존 `data-analytics-event` 클릭 위임은 유지.
+  - `src/app/admin/page.tsx` — 외부 운영 도구 섹션에 "익명 방문·이벤트 수집" 상태(`process.env.VERCEL` 기준)와 `Vercel Analytics` 링크 추가. 로그인/가입자 활동은 `/admin/users`에서 본다는 경계도 함께 표시.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — 신규 `route_view_public` 이벤트와 privacy-safe 속성 범위 문서화.
+- **Validation**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` 0(CRLF 경고만) · 편집 3파일 U+FFFD 0 · `npm run build` 0(기존 `TrustLayer` lint warning만) · 로컬 prod 127.0.0.1:57029 → `npm run verify:local -- --no-perf` real gates 4/4(smoke 25/25·routes 9/9·stocks-seo 12/12·login-preflight 5/5) · 비로그인 `/admin/users` 307 → `/login?next=%2Fadmin%2Fusers`. 임시 next 서버 PID 14696 종료.
+- **Risks / next**: Vercel 대시보드에 실제 수치가 보이는 것은 운영 배포 후 실제 방문/클릭이 발생해야 확인 가능. 관리자 화면 내부에서 raw 익명 트래픽 숫자를 직접 집계하려면 여전히 Vercel API 연동 또는 자체 이벤트 테이블이 필요하며, 이는 별도 토큰/스키마/보존정책 owner-gated 작업.
+
 ## 2026-07-14 - [codex] record admin operations handoff
 - **Scope**: ORNScore admin operations 배치(task 250-253, A-D)의 로컬 전용 최종 클로징(task 254-Z). 베이스라인 커밋 89f22b5(가입자 개요)·4ac0150(로그인 활동 지표) 위에 A-D 슬라이스가 쌓인 현재 워크트리를 채팅 기록 없이 넘겨받을 수 있게 **광범위 로컬 게이트를 재실행해 배치가 내부 일관·재현 가능함을 인증**하고, 존재하는 산출물·통과한 검증·소유자 게이트로 남는 항목·다음 안전 진입점을 기록. docs 전용(신규 소스/데이터/점수식/`metricsVersion`/설정/의존성/스토어팩 무변경). 브랜치 `ai-center/task-254-ornscore-admin-ops-2026-07-14-z-admi`.
 - **인증한 배치 커밋(로컬만, push 없음)**: `[codex] add admin user overview`(89f22b5, `/admin/users` 서버 페이지 신규 — service-role로 Auth 가입자/waitlist/저장기능 사용량, env·테이블 부재 시 graceful), `[codex] expand admin login activity metrics`(4ac0150, KST 오늘/7일/30일 로그인·미로그인·최근 로그인 리스트 + 로그인활동≠익명방문 안내), `[codex] document admin operations checklist`(81b4ee2/250-A, `docs/ornscore-admin-operations-checklist.md`), `[codex] outline admin traffic telemetry plan`(a2c1aad/251-B, `docs/ornscore-admin-traffic-telemetry-plan.md`), `[codex] clarify admin report workflow`(a01ed1f/252-C, `/admin/status` 신고 status/category 한글 뱃지·라벨 + `docs/ornscore-admin-report-triage-workflow.md`), `[codex] harden admin users visual states`(47580bd/253-D, `/admin/users` 표 키보드-region + sr-only caption WCAG 2.1.1). 각 슬라이스는 위에 개별 상세 엔트리가 있고, 이 슬라이스는 집계 인증·핸드오프만 함.
