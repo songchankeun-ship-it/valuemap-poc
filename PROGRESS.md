@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] harden /admin/status tables for keyboard/screen-reader (task 261-A)
+- **Scope**: 소유자 전용 `/admin/status` 데이터 상태판을 `/admin/users` 하드닝과 같은 결의 **접근성 폴리시** 1슬라이스. 가로 스크롤 표를 키보드로 스크롤할 수 있게 포커스 가능한 region으로 만들고, 스크린리더용 `sr-only` 표 캡션을 추가. 데이터/신고 읽기 동작·기존 분류(`REPORT_CATEGORY_LABELS`/`REPORT_STATUS_META`)·selfCheck 지표·copy 0 변경. 편집 1파일(`src/app/admin/status/page.tsx`) 마크업/클래스/ARIA 한정. 브랜치 `ai-center/task-261-ornscore-ops-quality-2026-07-14-a-ad`.
+- **문제(공백)**: 이 페이지의 3개 표(검증 보류 종목·PER·PBR 결측 종목은 공유 `RowList`, 접수 신고는 별도 표)가 `overflow-x-auto`만 있고 `/admin/users` 표에 이미 적용된 **포커스 가능 스크롤 region + 시각적 focus ring + `<caption class="sr-only">`** 패턴이 없었음 → 좁은 뷰포트에서 표가 가로로 넘칠 때 키보드만 쓰는 사용자가 스크롤 못 하고, 스크린리더에 표 목적 안내가 없었음.
+- **Changes** (`src/app/admin/status/page.tsx`, 클래스/마크업/ARIA만):
+  - 공유 `RowList`에 `caption` prop 추가 → 스크롤 컨테이너를 `role="region"` + `aria-label="{caption} (가로 스크롤)"` + `tabIndex={0}` + `focus-visible:ring-2`로 감싸고, 표에 `<caption className="sr-only">{caption}: 종목명, 코드, PER, PBR, ROE</caption>` 추가. 두 호출부는 각각 `caption="검증 보류 종목"`·`caption="PER·PBR 결측 종목"` 전달(패널 제목과 동일 어휘).
+  - 접수 신고 표의 `overflow-x-auto` div를 동일 패턴으로: `role="region"`·`aria-label="데이터 오류 신고 목록 (가로 스크롤)"`·`tabIndex={0}`·focus ring + `<caption className="sr-only">접수된 데이터 오류 신고: 접수일, 분류, 종목, 내용, 상태</caption>`.
+  - `sr-only`는 Tailwind 내장 유틸(커스텀 정의 불요, `/admin/users`와 동일). 시각 레이아웃·컬럼·copy·빈/에러 상태·상태 뱃지 무변경.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표 산출·`dataStatus.selfCheck`·`loadReports` 조회 로직·신고 분류/상태 라벨·auth(`requireAdminAccess`)·cron·`metricsVersion`·`robots:noindex` 무변경. 신규 npm 0.
+- **Validation**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python scripts/verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · 편집 1파일 U+FFFD 0 · `npm run build` 0(`/admin/status` dynamic ƒ 유지) · 로컬 prod 127.0.0.1:3117 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5) · **비로그인 `/admin/status` 307 → `/login?next=%2Fadmin%2Fstatus` 실측 확인**. 임시 next 리스너(PID 60832) taskkill 종료·포트 3117 닫힘(000) 확인, 상시 AI Center(:4310) 무중단.
+- **Risks / next**: 실 브라우저/스크린리더에서 표 region 포커스·`Tab`→화살표 스크롤·`sr-only` 캡션 낭독·390px 육안은 여전히 오너 게이트(Playwright 미구성). 후속 후보: 남은 소유자 표/맨링크에 동일 패턴이 없으면 확장. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-14 - [codex] close out analytics ops batch A–E (task 260-Z)
 - **Scope**: 분석 운영 배치(task 255–259, 슬라이스 A–E)의 로컬 전용 최종 클로징. 채팅 기록 없이 넘겨받는 다음 에이전트를 위해 배치가 내부적으로 일관·재현 가능함을 광범위 로컬 게이트로 재인증하고, 산출물·통과 검증·소유자 게이트로 남는 항목·다음 안전 진입점을 기록. **제품 기능 무추가**(docs 전용 클로징) — 신규 소스/데이터/점수식/`metricsVersion`/env/의존성/수집 규칙/`<Analytics />` 배선 0 변경. 브랜치 `ai-center/task-260-ornscore-analytics-ops-2026-07-14-z-`.
 - **인증한 배치 슬라이스(로컬 커밋만, push 없음)**:

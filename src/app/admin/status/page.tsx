@@ -130,7 +130,7 @@ export default async function AdminStatusPage() {
         {suspects.length === 0 ? (
           <Empty>검증 보류 종목이 없습니다.</Empty>
         ) : (
-          <RowList rows={suspects.map((s) => ({ ticker: s.ticker, name: s.name, per: s.per, pbr: s.pbr, roe: s.roe }))} />
+          <RowList caption="검증 보류 종목" rows={suspects.map((s) => ({ ticker: s.ticker, name: s.name, per: s.per, pbr: s.pbr, roe: s.roe }))} />
         )}
       </Panel>
 
@@ -138,7 +138,7 @@ export default async function AdminStatusPage() {
         {missing.length === 0 ? (
           <Empty>결측 종목이 없습니다.</Empty>
         ) : (
-          <RowList rows={missing.map((s) => ({ ticker: s.ticker, name: s.name, per: s.per, pbr: s.pbr, roe: s.roe }))} />
+          <RowList caption="PER·PBR 결측 종목" rows={missing.map((s) => ({ ticker: s.ticker, name: s.name, per: s.per, pbr: s.pbr, roe: s.roe }))} />
         )}
       </Panel>
 
@@ -148,8 +148,14 @@ export default async function AdminStatusPage() {
         ) : reports.length === 0 ? (
           <Empty>접수된 신고가 없습니다.</Empty>
         ) : (
-          <div className="overflow-x-auto -mx-1 px-1">
+          <div
+            role="region"
+            aria-label="데이터 오류 신고 목록 (가로 스크롤)"
+            tabIndex={0}
+            className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+          >
             <table className="min-w-[560px] w-full text-left text-xs">
+              <caption className="sr-only">접수된 데이터 오류 신고: 접수일, 분류, 종목, 내용, 상태</caption>
               <thead className="text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
                 <tr>
                   <th className="py-1.5 pr-3 font-medium whitespace-nowrap">접수</th>
@@ -233,10 +239,16 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function RowList({ rows }: { rows: { ticker: string; name: string; per: number; pbr: number; roe: number }[] }) {
+function RowList({ rows, caption }: { rows: { ticker: string; name: string; per: number; pbr: number; roe: number }[]; caption: string }) {
   return (
-    <div className="overflow-x-auto -mx-1 px-1">
+    <div
+      role="region"
+      aria-label={`${caption} (가로 스크롤)`}
+      tabIndex={0}
+      className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+    >
       <table className="min-w-[360px] w-full text-left text-xs">
+        <caption className="sr-only">{caption}: 종목명, 코드, PER, PBR, ROE</caption>
         <thead className="text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
           <tr>
             <th className="py-1.5 pr-3 font-medium">종목</th>
