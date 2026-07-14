@@ -408,7 +408,7 @@ export default async function AdminUsersPage() {
           {recentLoginUsers.length === 0 ? (
             <Empty>아직 로그인 이력이 있는 계정이 없습니다.</Empty>
           ) : (
-            <div className="space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
               {recentLoginUsers.map((user) => (
                 <div key={`login-${user.id}`} className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
                   <p className="break-all text-sm font-medium text-zinc-900 dark:text-zinc-100">{user.email}</p>
@@ -425,7 +425,7 @@ export default async function AdminUsersPage() {
           {overview.waitlist.rows.length === 0 ? (
             <Empty>{overview.waitlist.note || "아직 대기 신청이 없습니다."}</Empty>
           ) : (
-            <div className="space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
               {overview.waitlist.rows.map((row, index) => (
                 <div key={`${row.email ?? "unknown"}-${row.created_at ?? index}`} className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
                   <p className="break-all text-sm font-medium text-zinc-900 dark:text-zinc-100">{row.email ?? "email 없음"}</p>
