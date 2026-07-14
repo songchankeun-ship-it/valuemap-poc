@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] extract route analytics classifier + verify (task 256-B)
+- **Scope**: sanitized `route_view_public` 분류를 유지·검증하기 쉽게 만드는 작은 슬라이스. 기존에 `AnalyticsEventTracker.tsx` 안에 인라인으로 있던 라우트→안전속성 분류 로직을 순수 헬퍼로 분리하고, 오프라인 검증 스크립트 + 경로별 안전속성 문서를 추가. 동작·전송 이벤트·프라이버시 경계 무변경(순수 리팩터 + 가드 추가). 새 벤더·네트워크·env·의존성·저장값 0.
+- **Changes**:
+  - `src/lib/routeAnalytics.ts`(신규) — 순수(React/DOM/window 무의존) 헬퍼. `classifyRoute(pathname, search)`, 선언형 `ROUTE_CLASSIFIERS` 테이블(경로 소유 판정 + path 세그먼트/param 존재만으로 안전속성 파생), `SAFE_ROUTE_PROP_KEYS` allow-list(routeKind/ticker/topic/hasQuery/hasFilters/compareCount), `ROUTE_KINDS`, `ROUTE_VIEW_EVENT`, `FALLBACK_ROUTE_KIND`. `/admin*`는 `null`. 로직은 기존과 1:1 동치.
+  - `src/components/analytics/AnalyticsEventTracker.tsx` — 인라인 `routeAnalyticsProps`/타입 삭제하고 `classifyRoute`+`ROUTE_VIEW_EVENT` import로 교체. 컴포넌트는 이제 배선만 담당(라우트 진입 1회 전송 + `data-analytics-event` 클릭 위임 유지).
+  - `scripts/verify-route-analytics.ts`(신규) + `package.json` `verify:route-analytics`(tsx) — 실제 헬퍼를 import해 (1) 대표 경로 23케이스가 기대 props와 일치, (2) 모든 방출 키가 `SAFE_ROUTE_PROP_KEYS` 안, (3) `?q=…비밀…&email=…&ref=https://…` 프라이버시 스트레스 쿼리가 방출 값에 절대 echo 안 됨, (4) 모든 `routeKind`가 케이스로 커버됨을 assert. 오프라인·비정상종료 on FAIL.
+  - `docs/ornscore-route-analytics-classification-2026-07-14.md`(신규) — 경로 패턴→routeKind→안전속성 표 + "보내지 않는 것" 경계 + 검증 명령 + 라우트 추가 시 갱신할 4곳(헬퍼·verify 케이스·이 문서·이벤트 맵 행) 안내.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — Implementation Notes에 헬퍼/검증 스크립트/분류 문서 상호링크 추가.
+- **Validation**: `npx tsc --noEmit` 0 · `npm run verify:route-analytics` PASS(23케이스·15 route kind 커버) · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 4파일 U+FFFD 0 · `npm run build` 0(라우트 표 불변) · 로컬 prod 127.0.0.1:65454 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5). 임시 next 서버(TaskStop) 종료·포트 닫힘, 상시 AI Center 무중단.
+- **Risks / next**: 순수 동치 리팩터라 런타임 전송 페이로드 무변경 — Vercel 대시보드 실수치는 배포 후 실방문 필요(불변). 후속: 클릭 위임(`data-analytics-event`) 속성도 동일하게 allow-list/검증으로 가드하거나, `datasetToAnalyticsProps` 화이트리스트 도입 고려(현재는 `analyticsEvent` 외 dataset 전량 전달). 로컬 커밋만·push 미수행·main 무변경(브랜치 `ai-center/task-256-ornscore-analytics-ops-2026-07-14-b-`).
+
 ## 2026-07-14 - [codex] add admin traffic overview page
 - **Scope**: 소유자 전용 트래픽·이벤트 개요 진입점 1개(task 255-A). 기존 운영 영역(`/admin`) 아래 새 `/admin/traffic` 서버 페이지를 추가해 "지금 무엇을 어떻게 수집하는지"를 운영자가 채팅 기록 없이 한 화면에서 보게 함. 외부 API 호출·새 저장값·새 추적 0. 기존 `@vercel/analytics` + `route_view_public` 배선을 **설명·요약**만 하고 실제 수치는 외부 대시보드로 링크. `/admin` 계열은 여전히 공개 분석 수집에서 제외.
 - **Changes**:

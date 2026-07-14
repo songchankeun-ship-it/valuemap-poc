@@ -15,6 +15,7 @@
     "verify:routes": "node scripts/verify-routes.mjs",
     "verify:stocks-seo": "node scripts/verify-stocks-seo.mjs",
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
+    "verify:route-analytics": "tsx scripts/verify-route-analytics.ts",
     "test:freshness": "tsx scripts/test_freshness.ts",
     "test:compare": "tsx scripts/test_compare_query.ts",
     "test:price-summary": "tsx scripts/test_priceSummary.ts",

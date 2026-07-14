@@ -58,6 +58,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 
 - `src/lib/clientAnalytics.ts` wraps `track()` and swallows analytics errors.
 - `src/components/analytics/AnalyticsEventTracker.tsx` sends one sanitized `route_view_public` event per public route view and captures server-rendered links/buttons that opt in with `data-analytics-event`.
+- The `route_view_public` path→safe-props classification lives in the pure helper `src/lib/routeAnalytics.ts` (`classifyRoute`, `ROUTE_CLASSIFIERS`, `SAFE_ROUTE_PROP_KEYS`). It is verified offline by `npm run verify:route-analytics` and mapped path-by-path in `docs/ornscore-route-analytics-classification-2026-07-14.md`. Update all four (helper, verify case, classification doc, the row above) when adding or renaming a route.
 - Client-only flows call `trackEvent()` directly where the product action result is known.
 - The first review target after deploy is not raw traffic volume. It is funnel shape: topic page -> stock detail, search -> stock detail, compare/watchlist intent, and login CTA intent.
 - `src/app/admin/traffic/page.tsx` is an owner-only (`requireAdminAccess`, `robots: noindex`) operator overview that restates these event groups compactly and links to the Vercel Analytics dashboard. It calls no outside API and stores nothing; it is display-only. When an event is added/renamed here, update its `EVENT_GROUPS` list too.
