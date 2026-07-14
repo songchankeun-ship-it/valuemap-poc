@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, AlertTriangle, BarChart3, CheckCircle2, Database, ExternalLink, FileSearch, ShieldCheck } from "lucide-react";
+import { Activity, AlertTriangle, BarChart3, CheckCircle2, Database, ExternalLink, FileSearch, ShieldCheck, Users } from "lucide-react";
 import { dataMetadata } from "@/lib/realStocks";
 import { dataStatus } from "@/lib/dataStatus";
 import { requireAdminAccess } from "@/lib/adminAccess";
@@ -99,6 +99,7 @@ export default async function AdminHomePage() {
   ] satisfies Array<{ label: string; value: string; detail: string; tone: "ok" | "warn" | "neutral" }>;
 
   const links = [
+    { href: "/admin/users", title: "가입자 운영 현황", desc: "최근 가입, 대기 신청, 저장 기능 사용", Icon: Users },
     { href: "/admin/status", title: "데이터 상태판", desc: "검증 보류, 결측, 신고 목록", Icon: Database },
     { href: "/status", title: "공개 상태 페이지", desc: "사용자에게 보이는 기준일과 출처", Icon: ShieldCheck },
     { href: "/stocks", title: "종목 목록", desc: "검색 유입 첫 화면 점검", Icon: BarChart3 },

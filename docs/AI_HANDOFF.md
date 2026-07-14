@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-13T18:08:28.540Z
+Last updated: 2026-07-14T10:42:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Codex - Admin user overview
+- **Context**: Owner pointed out the missing admin page for checking who signed up. Existing `/admin` and `/admin/status` protection already existed, so this slice added the missing operational page without changing auth providers, Supabase schema/RLS, service configuration, push, or deployment.
+- **Change**: new `src/app/admin/users/page.tsx` protected by `requireAdminAccess("/admin/users")`. It uses the server-only `createAdminClient()` service role to list Supabase Auth users (recent signup/login/provider/confirmation), recent `waitlist` rows, and logged-in feature usage counts for `watchlists`, `compare_basket`, `saved_searches`, `notification_preferences`, and `condition_alerts`. Missing service-role env/table states render as warnings, not crashes. `src/app/admin/page.tsx` now links to "가입자 운영 현황".
+- **Security / routing**: `/admin/users` remains behind middleware + `ADMIN_EMAILS` allow-list; service role is never imported by client components. Unauthenticated local prod access returns 307 to `/login?next=%2Fadmin%2Fusers`.
+- **Gates**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138 / 0 errors / 0 forbidden / Metrics 2.4 · `git diff --check` exit 0 (CRLF notice only) · edited-file U+FFFD scan clean · `npm run build` 0 (`/admin/users` dynamic route registered; existing `TrustLayer` lint warning only) · local prod :57627 `verify:local --no-perf` real gates 4/4 (smoke 25/25, routes 9/9, stocks-seo 12/12, login-preflight 5/5). Temp server on :57627 stopped and verified closed.
+- **Risk / next**: Real admin data rendering depends on production `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` and the app tables existing. Logged-in admin visual QA is admin-session gated; unauth redirect is verified. Next safe local slice: document/admin-check the production envs (`ADMIN_EMAILS`, service-role key) or add the later `data_reports` workflow UI.
 
 ### 2026-07-14 - Codex - Overnight app launch buffer closeout (task 249)
 - **Context**: Final local-only closeout for the 2026-07-14 app batch — app-first-use slices (tasks 237–243, A–Z) and app-launch-buffer slices (tasks 244–248, G–K). Ran the broad local gate suite over the current worktree to certify the batch is internally consistent and reproducible from this file alone, then recorded the completed local commits, the owner-gated remainder, and the next safe automation entry. Docs-only: no source/data/scoring/`metricsVersion`/config/dependency/store-pack copy change.
