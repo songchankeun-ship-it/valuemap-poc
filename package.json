@@ -15,6 +15,7 @@
     "verify:routes": "node scripts/verify-routes.mjs",
     "verify:stocks-seo": "node scripts/verify-stocks-seo.mjs",
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
+    "verify:admin-access": "node scripts/verify-admin-access.mjs",
     "verify:route-analytics": "tsx scripts/verify-route-analytics.ts",
     "verify:click-analytics": "tsx scripts/verify-click-analytics.ts",
     "test:freshness": "tsx scripts/test_freshness.ts",

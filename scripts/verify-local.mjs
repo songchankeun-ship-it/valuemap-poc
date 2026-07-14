@@ -15,7 +15,9 @@
 //   2. verify:routes           (real gate) 9 cache-busted public routes + data date
 //   3. verify:stocks-seo       (real gate) head robots/canonical contract
 //   4. verify:login-preflight  (real gate) SSR-stable /login states
-//   5. perf:check              (ADVISORY)  per-route median TTFB / total timings
+//   5. verify:admin-access     (real gate) owner-only /admin routes redirect
+//                                          logged-out visitors to /login
+//   6. perf:check              (ADVISORY)  per-route median TTFB / total timings
 //
 // A non-zero exit from any REAL gate fails the whole run (exit 1). perf:check is
 // advisory (always exits 0 itself) and never changes the aggregate result — its
@@ -64,6 +66,7 @@ const GATES = [
   { name: "verify:routes", script: "verify-routes.mjs", args: DATA ? ["--data", DATA] : [], advisory: false },
   { name: "verify:stocks-seo", script: "verify-stocks-seo.mjs", args: [], advisory: false },
   { name: "verify:login-preflight", script: "verify-login-preflight.mjs", args: [], advisory: false },
+  { name: "verify:admin-access", script: "verify-admin-access.mjs", args: [], advisory: false },
   { name: "perf:check", script: "perf-check.mjs", args: ["--samples", SAMPLES], advisory: true },
 ];
 
