@@ -29,6 +29,7 @@ export type ClickAnalyticsProps = Record<string, ClickAnalyticsValue>;
 export const CLICK_EVENT_PROP_KEYS: Record<string, readonly string[]> = {
   // Home funnel
   home_candidate_open: ["ticker", "rank", "slot"],
+  home_mystocks_open: ["ticker", "source", "rank", "slot"],
   // Topic landing → explorer / detail
   topic_link_click: ["source", "topic"],
   topic_stock_open: ["topic", "ticker"],

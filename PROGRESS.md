@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] track home my-stocks re-entry funnel event (task 264-D)
+- **Scope**: 공개 경로에서 `/stock/[ticker]`로 들어가는 주요 진입점(홈·관심·최근/저장 종목·공시·검색·연관 섹션)을 감사해 **안전 클릭 이벤트가 빠진 중요한 경로 1곳**을 채운 1슬라이스. 감사 결과 대부분은 이미 계약된 이벤트로 커버(홈 후보 `home_candidate_open`·검색 `search_result_open`·관심 최근행 `watchlist_recent_stock_open`·주제 `topic_stock_open`·상세 근거/체크리스트 등)돼 있었으나, **홈 "내 종목"(관심·최근 본 종목) 재진입 섹션**(`MyStocksSection`)만 재방문 사용자를 상세로 되돌리는데도 이벤트가 없었음 → 리텐션 퍼널의 공백. 이벤트 이름·네비게이션·수집 벤더(`@vercel/analytics`)·점수식·`compositeScore`·`metricsVersion`·env·의존성·`<Analytics />` 배선 0 변경. 브랜치 `ai-center/task-264-ornscore-ops-quality-2026-07-14-d-pu`.
+- **Changes** (편집 4파일, 이벤트 1개 additive):
+  - `src/components/home/MyStocksSection.tsx` — 관심·최근 행 `/stock/[ticker]` 링크에 `data-analytics-event="home_mystocks_open"` + 고정·공개 속성 4개(`data-analytics-ticker`=공개 ticker, `data-analytics-source`=`watchlist`/`recent` 고정 enum, `data-analytics-rank`=행 순번(1-based), `data-analytics-slot="mystocks"` 고정 레이아웃 슬롯). `rows.map((r) => …)` → `rows.map((r, i) => …)`로 순번만 확보. 종목명·업종·점수·브라우징 원문 미전송. 위임 스캐너 가정대로 속성은 인접 줄에 모음.
+  - `src/lib/clickAnalytics.ts` — `CLICK_EVENT_PROP_KEYS`에 `home_mystocks_open: ["ticker", "source", "rank", "slot"]` 추가(Home 퍼널 그룹). 4키 모두 `FORBIDDEN_PROP_KEY_SUBSTRINGS`(email/query/name/…) 비해당.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — `home_candidate_open` 아래 `home_mystocks_open` 행 추가(속성·의미·미전송 항목 명시).
+  - `scripts/verify-click-analytics.ts` — sanitizer가 `home_mystocks_open`의 `source`(신규 키) 포함 4키만 통과시키고 junk(email·q)를 드롭함을 assert하는 단위 체크 추가(소스-사용 스캔은 신규 이벤트를 자동 커버).
+- **불변식**: 오늘 시점 전송 페이로드는 새 이벤트 1개 추가만 — 기존 이벤트/속성·라우트 분류·수집 규칙·`public/data/*`·`stocks.json`·점수식·auth·cron 무변경. 신규 npm 스크립트 0, 런타임 의존성 0.
+- **Validation**: `npx tsc --noEmit` 0 · `npm run verify:click-analytics` PASS(27 이벤트·29 사용처) · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 4파일 U+FFFD 0 · `npm run build` 0(라우트 표 불변) · 로컬 prod 127.0.0.1:49560 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo·login-preflight 5/5). 임시 next 서버(PID 66604) taskkill 종료·포트 49560 닫힘(000) 확인, 상시 AI Center(:4310) 무중단.
+- **Commit**: 브랜치 `ai-center/task-264-ornscore-ops-quality-2026-07-14-d-pu` 팁의 단일 `[codex]` 커밋(로컬만·push 미수행·main 무변경).
+- **Risks / next**: `admin/traffic`의 `EVENT_GROUPS`에는 형제 `home_candidate_open`도 미등재라 동일 선례를 따라 손대지 않음 — 홈 전용 그룹 신설은 별도(오너 판단) 후속. Vercel 대시보드 실수치는 배포 후 실클릭 필요(불변). 후속 후보: 남은 상세 진입점(공시 카드 `DisclosureSignalCard`·`SignalStockCard`·`SectorComparison` 등)은 route-level `route_view_public`로 진입은 잡히나 클릭 소스 구분이 필요하면 동일 패턴으로 확장. **다음 안전 진입점**: 그 후속 카드 클릭 이벤트를 추가하려면 본 슬라이스와 동형(컴포넌트→`CLICK_EVENT_PROP_KEYS`→이벤트 맵→verify 4곳 동기화).
+
 ## 2026-07-14 - [codex] guard delegated click analytics with allow-list + verifier (task 263-C)
 - **Scope**: task 256-B가 남긴 후속(“클릭 위임 속성도 route-analytics처럼 allow-list/검증으로 가드”)을 이행한 1슬라이스. `route_view_public`은 이미 `routeAnalytics.ts` allow-list + 오프라인 verify로 가드돼 있었으나, **`data-analytics-event` 클릭 위임**은 `datasetToAnalyticsProps`가 `analyticsEvent` 외 `data-analytics-*` dataset을 **전량** 전송 → 실수로 붙인 `data-analytics-email`/원문 쿼리/자유입력 라벨이 새어 나갈 여지가 있었음. 이벤트 이름·네비게이션 동작·수집 벤더(`@vercel/analytics`)·점수식·`metricsVersion`·env·의존성 0 변경. 브랜치 `ai-center/task-263-ornscore-ops-quality-2026-07-14-c-an`.
 - **Changes**:

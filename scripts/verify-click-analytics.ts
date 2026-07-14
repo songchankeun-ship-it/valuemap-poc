@@ -52,6 +52,24 @@ for (const secret of ["user@example.com", "s3cr3t-search-term", "free-form user 
   check(`sanitized props do not leak "${secret}"`, !cleanedSerialized.includes(secret));
 }
 
+// Home re-entry event: the fixed public source/rank/slot survive; junk is dropped.
+const myStocks = sanitizeClickProps("home_mystocks_open", {
+  ticker: "005930",
+  source: "watchlist",
+  rank: "1",
+  slot: "mystocks",
+  email: "user@example.com",
+  q: "s3cr3t-search-term",
+});
+check(
+  "home_mystocks_open keeps only ticker,source,rank,slot",
+  Object.keys(myStocks).sort().join(",") === "rank,slot,source,ticker",
+);
+check("home_mystocks_open keeps source", myStocks.source === "watchlist");
+for (const secret of ["user@example.com", "s3cr3t-search-term"]) {
+  check(`home_mystocks_open drops "${secret}"`, !JSON.stringify(myStocks).includes(secret));
+}
+
 // Unknown event: name still usable by caller, but no props are forwarded.
 check(
   "unknown event emits no props",

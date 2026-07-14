@@ -135,11 +135,16 @@ export function MyStocksSection({ lookup }: { lookup: Record<string, PoolEntry> 
         </div>
       ) : (
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {rows.map((r) => (
+          {rows.map((r, i) => (
             <li key={r.ticker}>
               <Link
                 prefetch={false}
                 href={"/stock/" + r.ticker}
+                data-analytics-event="home_mystocks_open"
+                data-analytics-ticker={r.ticker}
+                data-analytics-source={r.source}
+                data-analytics-rank={String(i + 1)}
+                data-analytics-slot="mystocks"
                 className="flex items-center gap-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2.5 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-sm transition group"
               >
                 <span
