@@ -3634,3 +3634,10 @@
 - **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scriptserify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · `verify:admin-traffic-metrics` PASS(15 route kinds·4 funnel stages·7 funnel events) · `verify:route-analytics` PASS(23 cases) · `verify:click-analytics` PASS(27 events). UI/라우팅 무변경이라 `npm run build`/`verify:local` 미해당(신규 lib가 어떤 page/route에도 import 안 됨).
 - **남은 소유자/다음 진입점**: 실제 옵션 C 통합(벤더 API 토큰·새 서버 라우트·캐시 TTL·레이트리밋·보존 정책)은 오너 게이트 — `TrafficMetricsProvider` 구현 1개 + `/admin/traffic`에 `isTrafficMetricsReady` 분기 대시보드 셸 추가가 다음 진입점. 자체 수집(옵션 D) 전 §2 프라이버시·보존·동의를 `/privacy`와 선결.
 - **커밋**: 로컬 `[codex] add typed traffic-metrics boundary for future owner dashboard`(브랜치 `ai-center/task-271-ornscore-launch-hardening-2026-07-14`).
+
+### 2026-07-14 — 첫 방문 UX 대정리 설계 기준선
+
+- **배경**: 공개 홈은 정상 응답하지만 히어로·시장 카드·후보·공시·온보딩·기능 소개·사용법·주의 고지가 한 페이지에 겹쳐 처음 온 사용자의 첫 행동이 약해졌다. 로컬 관리자 로그인 점검 중 Supabase 자리표시자 오류도 공개 서비스 장애처럼 인식될 수 있음을 확인했다.
+- **설계서**: `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` 신규. 제품 계약, 경로별 단일 역할, 용어 캐논, 홈 4구간 제한, `/today` 변화 중심 구조, 종목 찾기/상세/관심/비교, 로그인·관리자 경계, 상태/접근성/분석 이벤트, 구현 금지 범위와 Slice A-H 완료 조건을 확정했다.
+- **불변식**: 이번 단계는 문서 전용. 점수식·`public/data/*`·DART·Supabase 스키마/RLS/OAuth·외부 서비스·배포 무변경.
+- **다음에 바로 실행할 작업**: 설계서 Slice A부터 H까지 AI Center 프로젝트 #1에 순서대로 등록하고 로컬 전용 큐로 실행한다. 각 작업은 작은 로컬 커밋, 필수 게이트, 390x844/1440x900 검증, `PROGRESS.md`/`docs/AI_HANDOFF.md` 갱신을 남긴다. 전체 완료 후에만 별도 오너 승인으로 push/배포를 검토한다.

@@ -2835,3 +2835,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · `verify:admin-traffic-metrics` PASS(15 route kinds·4 funnel·7 events) · `verify:route-analytics`/`verify:click-analytics` PASS. UI/라우팅 무변경이라 build/verify:local 미해당.
 - **남은 소유자/다음 진입점**: 실제 옵션 C 통합(벤더 토큰·서버 라우트·캐시 TTL·보존 정책)은 오너 게이트 — 다음 진입점은 `TrafficMetricsProvider` 구현 1개 + `/admin/traffic`에 `isTrafficMetricsReady` 분기 대시보드 셸.
 - **커밋**: 로컬 `[codex] add typed traffic-metrics boundary for future owner dashboard`(브랜치 `ai-center/task-271-ornscore-launch-hardening-2026-07-14`). push 없음·main 무변경.
+
+### 2026-07-14 — 공개 첫 방문 UX 대정리 설계/자동화 진입점 ([codex])
+
+- 공개 홈과 로컬 인증 경계를 다시 검수한 결과, 서버 장애보다 **첫 방문 정보 과밀과 화면 역할 중복**이 큰 제품 리스크라고 판단했다. 홈은 정상 응답했지만 히어로·시장 요약·후보·공시·온보딩·기능 소개·사용법·위험 고지가 연속 노출되고, `오늘`/`발견`/홈의 역할 및 로그인 가치가 즉시 구분되지 않았다.
+- 신규 기준 문서: `docs/ornscore-first-run-ux-rebuild-2026-07-14.md`. 핵심 문장("오늘 확인할 한국 주식 후보를 줄이고 이유와 원문 확인 순서를 보여주는 탐색 도구"), 경로별 단일 역할, 용어 기준, 홈 기본 4구간, 모바일 390x844 첫 화면, 로그인 미설정 복구, owner-only admin 경계, 이벤트/접근성/상태 계약을 확정했다.
+- 자동화는 문서 §18의 Slice A-H 순서를 지킨다: IA/용어/검증 기준 → 홈 시작 영역 → 홈 중복 제거 → `/today` 변화 중심 → 종목 찾기 → 종목 상세 → 관심/비교/로그인 경계 → 전체 여정 재인증.
+- 모든 구현 작업은 로컬 저장소 범위다. 점수식·생성 데이터·DART 수집·Supabase 스키마/RLS/OAuth·Vercel/도메인/Search Console/앱스토어·push/deploy를 건드리지 않는다. 새 의존성도 추가하지 않는다.
+- 필수 게이트: `npx tsc --noEmit`, `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py`, `git diff --check`, U+FFFD 검사, `npm run build`; UI 변경은 free high port의 local prod에서 `verify:local --no-perf`와 390x844/1440x900 overflow/핵심 위치 검증. 각 작업 후 `[codex]` 커밋과 두 인수인계 문서 갱신.
+- **다음 진입점**: AI Center project #1에 Slice A-H를 중복 없이 순차 등록하고 큐 시작. 전체 완료 후 로컬 결과를 오너가 확인하기 전 push/배포하지 않는다.
