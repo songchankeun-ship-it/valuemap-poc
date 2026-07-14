@@ -14,6 +14,7 @@
     "verify:local": "node scripts/verify-local.mjs",
     "verify:routes": "node scripts/verify-routes.mjs",
     "verify:stocks-seo": "node scripts/verify-stocks-seo.mjs",
+    "verify:public-seo": "node scripts/verify-public-seo.mjs",
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
     "verify:admin-access": "node scripts/verify-admin-access.mjs",
     "verify:route-analytics": "tsx scripts/verify-route-analytics.ts",
