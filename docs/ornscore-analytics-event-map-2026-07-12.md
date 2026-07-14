@@ -47,6 +47,8 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `stock_recent_change_basis_open` | Stock detail recent-change basis header link | `ticker`, `target` | User opens the score-basis section from the recent-change header; no score values, labels, or free-form text are sent. |
 | `stock_recent_change_card_open` | Stock detail recent-change summary card | `ticker`, `kind`, `tone`, `target` | User opens one of the recent-change summary cards; no score values, labels, raw text, or free-form text are sent. |
 | `stock_recent_change_priority_open` | Stock detail recent-change priority action | `ticker`, `kind`, `tone`, `target` | User follows the single prioritized recent-change evidence link; no score values, labels, or free-form text are sent. |
+| `stock_recent_change_track_open` | Stock detail recent-change "관심 목록에서 변화 추적" CTA | `ticker`, `target` | User moves from the recent-change footer to `/watchlist` to track the change; only public ticker and fixed `target` (`watchlist`) are sent. |
+| `stock_recent_change_checklater_open` | Stock detail recent-change "확인 체크리스트에 남기기" CTA | `ticker`, `target` | User jumps to the summary checklist to note the change for later; only public ticker and fixed `target` (`summary`) are sent. |
 | `stock_checklist_next_open` | Stock detail checklist next-step CTA | `ticker`, `step` | User follows the next unchecked checklist item; only ticker and fixed checklist step id are sent. |
 | `stock_checklist_routine_open` | Stock detail checklist completion CTA | `ticker` | User finishes the local stock checklist and opens the personal routine page. |
 | `stock_checklist_reset` | Stock detail local checklist reset button | `ticker`, `done`, `total` | User clears local checklist progress for one stock; no checklist labels, notes, or free-form text are sent. |
@@ -59,6 +61,16 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 
 - `src/lib/clientAnalytics.ts` wraps `track()` and swallows analytics errors.
 - `src/components/analytics/AnalyticsEventTracker.tsx` sends one sanitized `route_view_public` event per public route view and captures server-rendered links/buttons that opt in with `data-analytics-event`.
+- Delegated click props pass through the allow-list `src/lib/clickAnalytics.ts` (`CLICK_EVENT_PROP_KEYS`, `sanitizeClickProps`) before reaching the vendor: only keys listed for that event are emitted, so a stray `data-analytics-*` attribute (email, raw query, free-form label) can never leak. It is verified offline by `npm run verify:click-analytics`, which also scans component source to fail on any `data-analytics-event`/attribute that has no contract entry.
+
+### Adding or changing a delegated click event (checklist)
+
+Any link/button that opts in with `data-analytics-event` fans out to four places — update all four so the offline gate stays green:
+
+1. **Component** — add `data-analytics-event="<name>"` plus only fixed, public `data-analytics-*` attributes (public identifiers like `ticker`/`topic`/`kind`/`target`, fixed enums, counts/ranks/booleans). Never bind raw search text, emails, names, notes, or other free-form input.
+2. **Contract** — add/adjust the `<name>: [...keys]` row in `CLICK_EVENT_PROP_KEYS` (`src/lib/clickAnalytics.ts`). Kebab attribute suffixes map to camelCase keys (`data-analytics-has-next` → `hasNext`). Keys must avoid the sensitive-substring denylist (`FORBIDDEN_PROP_KEY_SUBSTRINGS`).
+3. **Event map** — add/adjust the matching row in the Event Names table above.
+4. **Verify** — run `npm run verify:click-analytics` (source usage ↔ contract ↔ denylist) and `npx tsc --noEmit`. The runtime guard drops any attribute not in the contract even if a step is missed, but the verifier is what catches the drift at build time.
 - The `route_view_public` path→safe-props classification lives in the pure helper `src/lib/routeAnalytics.ts` (`classifyRoute`, `ROUTE_CLASSIFIERS`, `SAFE_ROUTE_PROP_KEYS`). It is verified offline by `npm run verify:route-analytics` and mapped path-by-path in `docs/ornscore-route-analytics-classification-2026-07-14.md`. Update all four (helper, verify case, classification doc, the row above) when adding or renaming a route.
 - Client-only flows call `trackEvent()` directly where the product action result is known.
 - The first review target after deploy is not raw traffic volume. It is funnel shape: topic page -> stock detail, search -> stock detail, compare/watchlist intent, and login CTA intent.

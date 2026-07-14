@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { datasetToAnalyticsProps, trackEvent } from "@/lib/clientAnalytics";
+import { sanitizeClickProps } from "@/lib/clickAnalytics";
 import { ROUTE_VIEW_EVENT, classifyRoute } from "@/lib/routeAnalytics";
 
 export function AnalyticsEventTracker() {
@@ -28,7 +29,10 @@ export function AnalyticsEventTracker() {
       if (!tracked) return;
       const eventName = tracked.dataset.analyticsEvent;
       if (!eventName) return;
-      trackEvent(eventName, datasetToAnalyticsProps(tracked.dataset));
+      // Narrow the dataset to the event's fixed, public allow-list before
+      // sending, so a stray `data-analytics-*` attribute can never leak.
+      const rawProps = datasetToAnalyticsProps(tracked.dataset);
+      trackEvent(eventName, sanitizeClickProps(eventName, rawProps));
     }
 
     document.addEventListener("click", onClick, true);
