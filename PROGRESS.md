@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] polish traffic surface for mobile/keyboard (task 259-E)
+- **Scope**: 분석 운영 배치 E. 슬라이스 A–D로 만든 `/admin/traffic` 소유자 화면을 **모바일·키보드 사용성** 관점에서 폴리시. 390px 밀도·터치/키보드 타깃·중첩 카드 과다·스크롤/오버플로를 점검. 데이터 로직·추적 동작·수집 규칙·점수식·env·의존성 0 변경. 시각/접근성 소폭 수정만.
+- **Changes** (`src/app/admin/traffic/page.tsx` 1파일, 클래스만):
+  - 헤더 "← 운영 홈" 뒤로가기 링크가 `text-xs` 맨링크라 모바일 터치 타깃이 44px 미만이던 것 → `inline-flex min-h-[44px] items-center self-start … md:min-h-0`: 모바일에서 완전한 44px 탭 타깃, 데스크톱은 기존처럼 컴팩트. 밑줄/hover 스타일 동일.
+  - 이벤트 그룹의 긴 `font-mono` 이벤트명(예: `saved_filter_notification_settings_open` 39자)이 오버플로 가드가 없어 아주 좁은(≤320px) 뷰포트에서 가로 오버플로를 밀 수 있던 것 → 이벤트명 `<p>`에 `break-words` 추가로 토큰이 넘치지 않고 줄바꿈.
+  - 마크업 구조·카피·이벤트 맵·`EVENT_GROUPS` 데이터 무변경(속성 클래스 2곳만).
+- **Validation**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 1파일 U+FFFD 0 · `npm run build` 0(라우트 표 불변, `/admin/traffic` dynamic ƒ 유지) · 로컬 prod 127.0.0.1:49183 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5) · 비로그인 `/admin/traffic` 307(→ /login). 임시 next 서버(PID 21468) taskkill 종료·포트 닫힘 확인, 상시 AI Center 무중단.
+- **Risks / next**: 인증된 실제 트래픽 표의 실기기 픽셀·스크린리더 QA는 여전히 오너 게이트(Playwright 미구성). 후속 후보: 동일 터치타깃/`break-words` 폴리시를 `/admin/users`·`/admin/status`에 유사 맨링크·긴 토큰이 있으면 확장. 로컬 커밋만·push 미수행·main 무변경(브랜치 `ai-center/task-259-ornscore-analytics-ops-2026-07-14-e-`).
+
 ## 2026-07-14 - [codex] add first-72h launch analytics playbook (task 258-D)
 - **Scope**: 분석 운영 배치 D. 출시 직후 오너가 **첫 24–72시간** 동안 런치 분석을 어떻게 리뷰할지를 한 장으로 정리. 어디서 보는지·어떤 기존 이벤트가 먼저 중요한지·건강한 vs 우려되는 모양·운영 영역 안 직접 숫자 대시보드로 남는 오너 게이트를 명시. Docs-first + `/admin/traffic`에 압축 인라인 요약 섹션 1개. 외부 API 호출·수집 규칙·새 벤더/계정/env/의존성/저장값·점수식 0.
 - **Changes**:

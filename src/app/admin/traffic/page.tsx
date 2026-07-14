@@ -202,7 +202,7 @@ export default async function AdminTrafficPage() {
               지금 무엇을 어떻게 수집하는지, 실제 수치는 어디서 보는지 한 화면에 정리했습니다.
             </p>
           </div>
-          <Link href="/admin" className="text-xs text-zinc-500 underline hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
+          <Link href="/admin" className="inline-flex min-h-[44px] items-center self-start text-xs text-zinc-500 underline hover:text-zinc-700 md:min-h-0 dark:text-zinc-400 dark:hover:text-zinc-200">
             ← 운영 홈
           </Link>
         </div>
@@ -325,7 +325,7 @@ export default async function AdminTrafficPage() {
             <ul className="mt-3 space-y-2">
               {events.map((event) => (
                 <li key={event.name} className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
-                  <p className="font-mono text-[11px] font-medium text-zinc-800 dark:text-zinc-100">{event.name}</p>
+                  <p className="break-words font-mono text-[11px] font-medium text-zinc-800 dark:text-zinc-100">{event.name}</p>
                   <p className="mt-0.5 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">{event.meaning}</p>
                 </li>
               ))}
