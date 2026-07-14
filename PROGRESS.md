@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] clarify admin report workflow
+- **Scope**: 로컬 전용 배치(task 252-C). `/admin/status`의 `data_reports` 처리(triage)를 운영자가 채팅 기록 없이 이해·수행할 수 있게 **표시 명확화 + 문서**만 추가. 범위 준수: 컬럼 추가·update API·신고 제출(`report-data-issue`) 동작 변경 0. 상태 전이 UI/인증/스키마 무변경 — 상태 갱신은 여전히 Supabase 직접(소유자 게이트).
+- **Changes**:
+  - `src/app/admin/status/page.tsx` — 신고 표의 `status`를 원값 텍스트 대신 한글 뱃지로(신규 접수/확인 중/처리 완료/반려, 색 구분; 알 수 없는 코드는 회색 원값). `category`도 사용자 폼(reportFormCopy)과 동일 어휘의 한글 라벨로 매핑(price→가격·거래량 등). 신고 패널 하단에 상태 단계 범례(new→reviewing→resolved/dismissed 뱃지)와 "상태 변경은 인앱 기능이 없어 Supabase `data_reports.status`에서 직접 갱신(소유자 게이트) · 절차는 workflow 문서 참조" 안내 1블록 추가. 표시 전용 매핑 2개(`REPORT_CATEGORY_LABELS`·`REPORT_STATUS_META`) + `StatusBadge` 컴포넌트 신규. 데이터/조회 로직·`loadReports`·`ADMIN_ENABLED` 가드 무변경.
+  - 신규 `docs/ornscore-admin-report-triage-workflow.md` — 어디서 보나(조회 조건 `ADMIN_ENABLED=1`)·상태 4단계 의미표·분류 어휘·triage 절차(원본 대조처)·상태 전이 방법(Supabase Studio/SQL, service role만)·백로그 역링크. `data_report_notes`·인앱 전이 UI는 백로그로 명시.
+- **Validation**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · 편집 파일 U+FFFD 0(page.tsx·신규 doc) · `npm run build` 0(라우트 표 무변경) · 로컬 prod 127.0.0.1:4571 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo·login-preflight). 비로그인 `/admin/status`는 307 → `/login`(기대). 임시 리스너 PID 63824 taskkill로 종료·확인.
+- **Risks / next**: 표시 매핑은 백로그 SQL의 status 어휘(new/reviewing/resolved/dismissed)에 의존 — 상태 어휘를 바꾸면 `REPORT_STATUS_META`·workflow 문서도 함께 갱신(알 수 없는 코드는 회색 원값으로 안전 표시). 다음 진입점: 소유자 승인 후 인앱 상태 전이(update API + `/admin/status` 액션 + `data_report_notes`)를 별도 batch로. 그 전까지 상태 변경은 Supabase 직접.
+
 ## 2026-07-14 - [codex] outline admin traffic telemetry plan
 - **Scope**: 로컬 전용 설계 노트 배치(task 251-B). 관리자 화면에서 **Supabase Auth 로그인 활동**과 **익명 페이지뷰·유입(referrer)** 을 헷갈리지 않게 분리하고, 앞으로 익명 트래픽을 관리자 안으로 가져올지 결정할 때의 선택지를 문서로 고정. **새 추적 미구현** — 새 테이블·API 라우트·외부 계정·분석 설정 변경 0. 코드/UI/라우트 무변경(문서만).
 - **Changes**: 신규 `docs/ornscore-admin-traffic-telemetry-plan.md` — (1) (A)로그인 활동 vs (B)익명 접속을 원본(Supabase Auth vs Vercel Analytics)·조회위치(`/admin/users` vs 외부 대시보드)·식별성으로 분리한 표 + "로그인 수 ≠ 방문자 수" 경고, (2) 현행 코드 인벤토리(`admin/users/page.tsx` service role·`layout.tsx` `<Analytics />`·`clientAnalytics.ts`·기존 InfoBlock 카피), (3) 프라이버시·데이터 보존 주의 6항(referrer 축약·IP/UA 집계만·자유입력 금지·보존기간 30~90일 후 원시 삭제·`/privacy` 고지 일관성·동의/법적 근거), (4) 미래 관리자 트래픽 대시보드 4선택지(A 현행유지 → B 딥링크 → C 벤더 API 풀 → D 자체 이벤트 테이블) + 권장 경로, 전부 오너 게이트. 기존 `/admin/users` InfoBlock을 대체하지 않고 배경 근거·다음 단계만 문서화.

@@ -33,6 +33,24 @@ interface DataReport {
   status: string;
 }
 
+// 신고 분류 코드 → 한글 라벨. 사용자 폼(reportFormCopy)과 동일 어휘로 맞춘다.
+const REPORT_CATEGORY_LABELS: Record<string, string> = {
+  price: "가격·거래량",
+  financial: "재무(PER·PBR·ROE)",
+  disclosure: "공시",
+  score: "점수·순위",
+  sector: "업종 분류",
+  other: "기타",
+};
+
+// 신고 상태 코드 → 한글 라벨 + 뱃지 색. 상태 전이는 인앱 API가 없어 Supabase에서 직접 갱신한다(소유자 게이트).
+const REPORT_STATUS_META: Record<string, { label: string; badge: string }> = {
+  new: { label: "신규 접수", badge: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300" },
+  reviewing: { label: "확인 중", badge: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-300" },
+  resolved: { label: "처리 완료", badge: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300" },
+  dismissed: { label: "반려", badge: "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" },
+};
+
 async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
   if (process.env.ADMIN_ENABLED !== "1") {
     return { rows: [], note: "ADMIN_ENABLED=1 설정 시 신고 목록을 표시합니다(개인정보 보호)." };
@@ -145,16 +163,32 @@ export default async function AdminStatusPage() {
                 {reports.map((r) => (
                   <tr key={r.id} className="border-b border-zinc-100 dark:border-zinc-800">
                     <td className="py-1.5 pr-3 whitespace-nowrap tabular-nums">{r.created_at?.slice(0, 10)}</td>
-                    <td className="py-1.5 pr-3 whitespace-nowrap">{r.category}</td>
+                    <td className="py-1.5 pr-3 whitespace-nowrap">{REPORT_CATEGORY_LABELS[r.category] ?? r.category}</td>
                     <td className="py-1.5 pr-3 whitespace-nowrap">{r.ticker ?? "—"}</td>
                     <td className="py-1.5 pr-3 break-words max-w-[260px]">{r.message}</td>
-                    <td className="py-1.5 pr-0 whitespace-nowrap">{r.status}</td>
+                    <td className="py-1.5 pr-0 whitespace-nowrap"><StatusBadge status={r.status} /></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
+        <div className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">상태 단계</span>
+            <StatusBadge status="new" />
+            <span aria-hidden="true" className="text-zinc-300 dark:text-zinc-600">→</span>
+            <StatusBadge status="reviewing" />
+            <span aria-hidden="true" className="text-zinc-300 dark:text-zinc-600">→</span>
+            <StatusBadge status="resolved" />
+            <span className="text-zinc-300 dark:text-zinc-600">/</span>
+            <StatusBadge status="dismissed" />
+          </div>
+          <p className="mt-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+            상태 변경은 아직 인앱 기능이 없어 Supabase <code className="text-[10px]">data_reports.status</code>에서 직접 갱신합니다(소유자 게이트).
+            분류·전이 절차는 <code className="text-[10px]">docs/ornscore-admin-report-triage-workflow.md</code> 참조.
+          </p>
+        </div>
       </Panel>
     </div>
   );
@@ -187,6 +221,16 @@ function Panel({ title, desc, children }: { title: string; desc: string; childre
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="text-xs text-zinc-500 dark:text-zinc-400 py-2">{children}</p>;
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const meta = REPORT_STATUS_META[status];
+  const cls = meta?.badge ?? "border-zinc-200 bg-zinc-50 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+  return (
+    <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${cls}`}>
+      {meta?.label ?? status}
+    </span>
+  );
 }
 
 function RowList({ rows }: { rows: { ticker: string; name: string; per: number; pbr: number; roe: number }[] }) {
