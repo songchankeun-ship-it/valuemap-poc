@@ -1,5 +1,20 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] close out ops-quality batch A–E (task 266-Z)
+- **Scope**: ops-quality 배치(task 261–265, 슬라이스 A–E)의 로컬 전용 최종 클로징. 채팅 기록 없이 넘겨받는 다음 에이전트를 위해 배치가 내부적으로 일관·재현 가능함을 광범위 로컬 게이트로 재인증하고, 산출물·통과 검증·소유자 게이트로 남는 항목·다음 안전 진입점을 기록. **제품 기능 무추가**(docs 전용 클로징) — 신규 소스/데이터/점수식/`metricsVersion`/env/의존성/수집 규칙/auth·cron 배선 0 변경. 브랜치 `ai-center/task-266-ornscore-ops-quality-2026-07-14-z-fi`.
+- **인증한 배치 슬라이스(로컬 커밋만, push 없음)**:
+  - **A (261)** `[codex] harden /admin/status tables for keyboard/screen-reader`(6163bc5) — 소유자 전용 `/admin/status` 3개 표를 포커스 가능 스크롤 region(`role="region"`·`tabIndex=0`·focus ring) + `<caption class="sr-only">`로 접근성 폴리시. 마크업/ARIA만, 데이터·신고 읽기·분류·`selfCheck` 무변경.
+  - **B (262)** `[codex] make admin users recent-login/waitlist cards responsive`(f3cd613) — `/admin/users` '최근 로그인'·'출시 대기 신청' 카드 리스트를 `space-y-2` → `grid gap-2 sm:grid-cols-2 lg:grid-cols-1`로 태블릿 밀도 개선. 마크업만, 서버 조회·가드·프라이버시 경계 무변경. (엔트리는 PROGRESS 말미 `### Task 262 —`에 append 형태로 존재 — 유실 아님.)
+  - **C (263)** `[codex] guard delegated click analytics with allow-list + verifier`(9180952) — `src/lib/clickAnalytics.ts`(순수) `CLICK_EVENT_PROP_KEYS` allow-list + `sanitizeClickProps` + 민감어 denylist로 `data-analytics-*` 클릭 위임 전송을 좁힘. `verify:click-analytics`(오프라인 드리프트 게이트) + 이벤트 맵 드리프트 2행 교정. 현행 전송 페이로드 무변경(미래 실수 안전망).
+  - **D (264)** `[codex] track home my-stocks re-entry funnel event`(50b8ce1) — 홈 "내 종목"(관심·최근) 재진입 섹션에 `home_mystocks_open` 이벤트 1개 additive 배선(공개 ticker·고정 source/rank/slot enum만). 상세 진입점 감사 후 유일 공백 1곳 보강.
+  - **E (265)** `[codex] add local verifier for owner-only admin route guard`(5677180) — `scripts/verify-admin-access.mjs` 신규(익명 방문자 4개 admin 라우트가 307→`/login?next=…`로 차단됨을 assert, admin 콘텐츠 마커 누출 없음까지) + `verify:local` 오케스트레이터에 실게이트로 배선. libuv exit 오염 로컬 버그도 `connection:close`+`process.exitCode`로 수정.
+- **재인증한 게이트(이번 슬라이스, 클린 워크트리 위)**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · `npm run build` 0(라우트 표 불변: `/admin`·`/admin/status`·`/admin/traffic`·`/admin/users` 모두 dynamic ƒ) · `npm run verify:route-analytics` PASS(23케이스·15 route kind) · `npm run verify:click-analytics` PASS(27 이벤트·29 사용처) · 로컬 prod 127.0.0.1:4487 → `npm run verify:local -- --no-perf` real gates **5/5**(smoke 24/24·routes **9/9**·stocks-seo 12/12·login-preflight 5/5·admin-access 4/4).
+- **인증 보호 확인(비로그인)**: 실측 307 → `/admin`·`/admin/status`·`/admin/traffic`·`/admin/users` 4개 모두 `/login?next=<경로>`로 리다이렉트(admin-access 게이트 4/4). 로그아웃 계약 그대로 유지 — 허용/비허용 로그인 계정 인가 측면은 소유자 게이트(실 Supabase 세션+OAuth).
+- **선재 드리프트 해소 메모**: 262-B 당시 `verify:routes` 3/9 FAIL(사이트 기준일 상수 `2026.07.10` vs `stocks.json` `2026.07.13` 드리프트, 편집 무관)로 기록됐으나, 이번 재인증에서 `verify:routes` **9/9 PASS**로 회복 — 이후 상수/데이터 동기화됨. 잔여 데이터-날짜 드리프트 없음.
+- **정리**: 임시 next 서버(PID 27972) taskkill 종료·포트 4487 닫힘 확인, 상시 AI Center(:4310) 무중단.
+- **Commit**: 브랜치 `ai-center/task-266-ornscore-ops-quality-2026-07-14-z-fi` 팁의 단일 `[codex]` docs/closeout 커밋(로컬만·push 미수행·main 무변경).
+- **Risks / next**: 배치 산출물은 접근성/반응형 UI·클릭 분석 allow-list·admin 로그아웃 게이트로, 전부 로컬 재현 가능. 남는 소유자 게이트 — (1) admin 인가 측면(허용 계정 대시보드/비허용 거부)은 실 Supabase+OAuth 왕복, (2) 실기기 390×844 접근성/태블릿 2열 육안·스크린리더 낭독(Playwright 미구성), (3) Vercel 대시보드 실 클릭 수치는 배포 후. **다음 안전 진입점**: 배포 후 `verify:admin-access`·`verify:local`을 `--base https://ornscore.com`로 재실행해 라이브 익명 307 재확인(오너), 또는 남은 상세 진입점 카드(`DisclosureSignalCard`·`SignalStockCard`·`SectorComparison`)에 D 슬라이스와 동형 클릭 이벤트 확장(컴포넌트→`CLICK_EVENT_PROP_KEYS`→이벤트 맵→verify 4곳 동기화).
+
 ## 2026-07-14 - [codex] add local verifier for owner-only /admin route guard (task 265-E)
 - **Scope**: 릴리스 프리플라이트에서 **소유자 전용 `/admin` 라우트가 로그아웃 상태에서 공개로 읽히지 않음**을 자동으로 증명하는 로컬 검증 경로 1건 추가. 지금까지 각 배치가 손으로 `curl`해 "비로그인 307" 을 확인해 왔으나(재현 가능한 게이트 아님), 이를 sibling 검증 스크립트(`verify:routes`·`verify:login-preflight`)와 동형의 실게이트로 승격. auth 로직·점수식·`metricsVersion`·`public/data/*`·cron 무변경, 신규 스크립트 1 + npm 커맨드 1 + 오케스트레이터 배선만. 브랜치 `ai-center/task-265-ornscore-ops-quality-2026-07-14-e-ad`.
 - **Changes** (편집 2 + 신규 1):
