@@ -3722,3 +3722,19 @@
 - **화면 검증 한계**: headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 레이아웃 폭 불변(모바일 프리셋을 display:none으로 접고 H1 텍스트만 교체) — 가로 overflow/겹침 위험 없음, 세로 높이는 감소 방향. 실기기 픽셀(모바일 첫 화면에 결과 수/현재 조건 바 노출)은 오너 게이트로 남김.
 - **다음 진입점(Slice F)**: 종목 상세(/stock/[ticker]) 첫 행동 정리 — 상단 정보와 요약 탭 중복 제거, 결론→근거→최근 변화→공시 순서 고정, 관심/비교/공유 우선순위·모바일 위치·sticky 겹침 확인(§9, §18 Slice F).
 - **커밋**: 로컬 [codex] first-run UX Slice E: make /stocks read as find-stocks (부모 HEAD ce16af7, 브랜치 ai-center/task-277-ornscore-first-run-ux-rebuild-e-clar). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice E"로 확인.
+
+
+### 2026-07-15 — 첫 방문 UX 대정리 Slice G (관심/비교/로그인 경계 정리) [codex]
+
+- **Scope**: 설계서 docs/ornscore-first-run-ux-rebuild-2026-07-14.md §18 Slice G + §10~§11만. 관심/비교 빈 상태를 실제 시작 행동 소수로 좁히고, 비로그인 로컬 저장 vs 로그인 동기화 가치를 명시하고, 로그인 가치 카피를 여러 기기 연속성으로 재구성(비로그인 공개 탐색·로컬 저장 유지 명시)하고, 자리표시자 Supabase 가드·공개 탈출 링크와 오너 전용 /admin 경계를 검증. 인증/데이터스토어 설정·점수식·public/data·유니버스·크론·의존성 무변경.
+- **변경(수정 4)**:
+  - src/lib/i18n.ts — loginCopy.ko/en title을 '오른스코어 로그인'/'Log in to OrnScore' → 여러 기기 연속성 가치 문장('관심종목과 기록을 여러 기기에서 이어보세요' / 'Keep your watchlist and history across devices')로(§11.1). emailOnlyLead·lead(providers)에 '로그인 없이도 공개 탐색과 이 기기 저장(관심·비교)은 그대로 돼요' / 'Public exploration and on-device saving … stay open without login' 추가 — 비로그인 공개 탐색+로컬 저장 유지 확인. 로그인 컨텍스트/폴백/에러 카피는 무변경(login-preflight 앵커 보존).
+  - src/components/WatchlistClient.tsx — 빈 상태 상단 CTA를 3개(샘플 보기·오늘 후보 3개 비교(→/compare)·종목 직접 찾기)에서 §10.1의 두 행동으로 축소: '오늘 후보에서 담기'(exampleStocks 있으면 인페이지 #watchlist-samples 앵커, 없으면 /today) + '종목 찾아보기'(/stocks). 담을 종목이 없는 빈 상태에서 의미 없는 비교 CTA 제거. 이제 미사용이 된 todayCompareHref 계산 제거(todayCompareTickers prop 시그니처는 서버 무변경 위해 유지). 하단 최근 본 이어담기·예시 담기·검색 담기(실데이터 1탭 추가)와 로그아웃 로컬 저장 안내(syncLocalNote)는 유지.
+  - src/components/CompareClient.tsx — 빈 상태 헤더에 로컬/로그인 경계 한 줄 추가('비교 목록은 로그인 없이 이 기기에 저장돼요. 로그인하면 여러 기기에서 이어봅니다.') — 기능 잠금 오해 방지. 검색/오늘 후보/관심에서 시작하는 기존 세 소스(§10.2)는 무변경.
+  - scripts/verify-first-run-ux.ts — §9 Slice G 정적 가드 추가(9a~9e): 로그인 title/lead 가치 재구성(ko '여러 기기'·'이어'/en devices·across, ko lead '로그인 없이'+'저장'/en 'without login'+sav), 관심 빈 상태 두 행동 존재+off-role 비교 CTA 부재, 비교 빈 상태 세 소스+로컬/로그인 경계 문구, 로그인 Supabase 가드(isSupabaseBrowserConfigured/if(!supabaseConfigured))+공개 탈출 링크(/ , /stocks), 공개 nav 6종 /admin 미링크 + verify-public-seo가 /admin private 취급. loginCopy import 추가, PASS 메시지에 Slice G 항목 추가.
+- **이미 충족(검증만)**: LoginContent 자리표시자 Supabase 가드(비활성 시 외부 인증 요청 0)·공개 홈/종목 탈출 링크·benefitsLocalNote(로컬 계정 경계)는 기존 구현. middleware.ts가 /admin 비로그인 → /login?next= 리다이렉트, 공개 nav/UserMenu에 /admin 링크 없음, sitemap/robots에서 /admin 제외 — 전부 기존. verify:local의 admin-access(4/4 로그인 redirect)·public-seo·login-preflight 런타임 게이트가 이를 계속 검증.
+- **불변식**: NEXT_PUBLIC_SUPABASE_*/OAuth/미들웨어/RLS·점수식·metricsVersion·public/data/*·DART·유니버스(138)·크론·배포·의존성·라우트 경로·SEO 메타 무변경. 카피·빈 상태 행동 수·정적 가드만.
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 4파일 U+FFFD 0 · verify-first-run-ux PASS(watchlist/compare/login boundary 포함) · npm run build 0(/watchlist 16.7kB·/compare 라우트 표 불변) · 로컬 prod :4871 verify:local --no-perf 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access 4/4). SSR 확인: /login 새 title·lead present, /login?next=/watchlist 컨텍스트 유지, /compare 로컬/로그인 경계 문구+오늘 후보 소스 present. 시작한 :4871만 taskkill(PID 지정)로 종료.
+- **화면 검증 한계**: headless 브라우저 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 카피 교체+빈 상태 버튼 3→2 축소(레이아웃 폭 불변·세로 감소 방향)로 가로 overflow/겹침 위험 없음. 관심 빈 상태는 클라이언트 하이드레이션 렌더라 정적 가드로 소스 계약을 고정. 실기기 픽셀은 오너 게이트로 남김.
+- **다음 진입점(Slice H)**: 전체 사용자 여정 재인증 — 홈→검색/후보→상세→관심/비교→로그인 경계 E2E, 모바일/데스크톱 overflow·핵심 위치, 공개 카피·분석 이벤트·관리자 보호 최종 검증, PROGRESS/AI_HANDOFF 최종 정리.
+- **커밋**: 로컬 [codex] first-run UX Slice G: watchlist/compare empty states + login boundary. push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice G"로 확인.

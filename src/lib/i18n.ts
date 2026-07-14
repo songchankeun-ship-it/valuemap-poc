@@ -350,10 +350,10 @@ export const loginCopy = {
   ko: {
     backHome: "홈으로",
     backPrevious: "이전 페이지로",
-    title: "오른스코어 로그인",
-    emailOnlyLead: "로그인 없이도 탐색·분석은 그대로 쓸 수 있어요. 이메일로 로그인 링크를 받으세요.",
+    title: "관심종목과 기록을 여러 기기에서 이어보세요",
+    emailOnlyLead: "로그인 없이도 공개 탐색과 이 기기 저장(관심·비교)은 그대로 돼요. 이메일로 로그인 링크를 받으세요.",
     lead: (providers: string) =>
-      `로그인 없이도 탐색·분석은 그대로 쓸 수 있어요. ${providers}로 시작하거나 이메일로 로그인 링크를 받으세요.`,
+      `로그인 없이도 공개 탐색과 이 기기 저장(관심·비교)은 그대로 돼요. ${providers}로 시작하거나 이메일로 로그인 링크를 받으세요.`,
     contexts: {
       "/history": "요약 기록을 보려면 로그인하세요. 로그인 후 자동으로 돌아갑니다.",
       "/watchlist": "관심 종목을 여러 기기에서 이어보려면 로그인하세요.",
@@ -405,10 +405,10 @@ export const loginCopy = {
   en: {
     backHome: "Home",
     backPrevious: "Previous page",
-    title: "Log in to OrnScore",
-    emailOnlyLead: "Browsing and analysis stay open without login. Get a sign-in link by email.",
+    title: "Keep your watchlist and history across devices",
+    emailOnlyLead: "Public exploration and on-device saving (watchlist, compare) stay open without login. Get a sign-in link by email.",
     lead: (providers: string) =>
-      `Browsing and analysis stay open without login. Start with ${providers}, or get a sign-in link by email.`,
+      `Public exploration and on-device saving stay open without login. Start with ${providers}, or get a sign-in link by email.`,
     contexts: {
       "/history": "Log in to view saved summaries. You will return here after signing in.",
       "/watchlist": "Log in to keep your watchlist synced across devices.",

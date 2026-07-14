@@ -27,7 +27,7 @@
 //      page. Empty in Slice A; later slices append as they remove sections.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { commonCopy } from "../src/lib/i18n";
+import { commonCopy, loginCopy } from "../src/lib/i18n";
 import { todayCopy } from "../src/lib/copy/today";
 import { stocksCopy } from "../src/lib/copy/stocks";
 
@@ -272,11 +272,98 @@ check(
   !beginnerSrc.includes("t.currentLabel"),
 );
 
+// --- 9. Watchlist / compare / login boundary (spec §10-11, Slice G) ----------
+// Slice G tightens the watchlist + compare empty states to a small set of real
+// start actions, states the logged-out on-device storage vs login sync value,
+// keeps compare startable from search/today/watchlist, reframes the login value
+// copy around cross-device continuity while confirming public/local use stays
+// open, and holds the placeholder-Supabase guard + public escape links and the
+// owner-only /admin boundary (absent from public nav/SEO).
+const watchSrc = read("src/components/WatchlistClient.tsx");
+const compareSrc = read("src/components/CompareClient.tsx");
+const loginSrc = read("src/app/login/LoginContent.tsx");
+
+// 9a. Login value copy reframes around cross-device continuity (spec §11.1) and
+// confirms public exploration + on-device save remain available without login.
+check(
+  "login title (ko) frames cross-device continuity value, not a bare 'login' label",
+  loginCopy.ko.title.includes("여러 기기") && loginCopy.ko.title.includes("이어"),
+);
+check(
+  "login title (en) frames cross-device continuity value",
+  /devices?/i.test(loginCopy.en.title) && /across/i.test(loginCopy.en.title),
+);
+check(
+  "login lead (ko) confirms without-login public exploration + on-device save",
+  loginCopy.ko.emailOnlyLead.includes("로그인 없이") && loginCopy.ko.emailOnlyLead.includes("저장"),
+);
+check(
+  "login lead (en) confirms without-login public exploration + on-device save",
+  /without login/i.test(loginCopy.en.emailOnlyLead) && /sav/i.test(loginCopy.en.emailOnlyLead),
+);
+
+// 9b. Watchlist empty state offers the two spec §10.1 start actions (add from
+// today candidates + find stocks) and no longer competes with an off-role
+// compare CTA in the empty row.
+check(
+  "watchlist empty state keeps the two start actions (오늘 후보에서 담기 · 종목 찾아보기)",
+  watchSrc.includes("오늘 후보에서 담기") && watchSrc.includes("종목 찾아보기"),
+);
+check(
+  "watchlist empty state drops the off-role compare CTA (오늘 후보 3개 비교)",
+  !watchSrc.includes("오늘 후보 3개 비교"),
+);
+
+// 9c. Compare stays startable from search/today/watchlist (spec §10.2) and now
+// states the logged-out on-device storage vs login sync boundary.
+check(
+  "compare empty state can start from search + today + watchlist sources",
+  compareSrc.includes("StockSearchBox") &&
+    compareSrc.includes("오늘 후보에서 고르기") &&
+    compareSrc.includes("watchlistAddable"),
+);
+check(
+  "compare empty state states the on-device save vs login boundary",
+  compareSrc.includes("이 기기에 저장") && compareSrc.includes("로그인"),
+);
+
+// 9d. Placeholder-Supabase guard + public escape links preserved (spec §11.2):
+// login never fires an external request when unconfigured, and the disabled
+// panel links back to the public home + stocks screens.
+check(
+  "login guards on isSupabaseBrowserConfigured before any auth request",
+  loginSrc.includes("isSupabaseBrowserConfigured") && loginSrc.includes("if (!supabaseConfigured)"),
+);
+check(
+  "login unconfigured panel keeps public escape links (home + stocks)",
+  loginSrc.includes('href="/"') && loginSrc.includes('href="/stocks"'),
+);
+
+// 9e. Owner-only /admin is absent from public navigation and the public SEO
+// surface (spec §11.3). The public nav components must not link to /admin, and
+// the sitemap/robots gate (verify-public-seo) must treat /admin as private.
+const NAV_SOURCES = [
+  "src/components/Sidebar.tsx",
+  "src/components/AppHeader.tsx",
+  "src/components/MobileNav.tsx",
+  "src/components/MobileBottomNav.tsx",
+  "src/components/MobileMenu.tsx",
+  "src/components/UserMenu.tsx",
+];
+for (const rel of NAV_SOURCES) {
+  check(`public nav "${rel}" does not link to /admin`, !read(rel).includes("/admin"));
+}
+const publicSeoSrc = read("scripts/verify-public-seo.mjs");
+check(
+  "verify-public-seo treats /admin as a private route (kept out of sitemap/robots)",
+  publicSeoSrc.includes('"/admin"'),
+);
+
 // --- result ------------------------------------------------------------------
 if (failed > 0) {
   console.error(`first-run-ux verification FAILED (${failed} check${failed === 1 ? "" : "s"})`);
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup), watchlist/compare/login boundary (two empty-state actions, on-device vs login value, Supabase guard + escape links, /admin absent from public nav/SEO)`,
 );

@@ -633,10 +633,9 @@ export function WatchlistClient({
 
   // 관심 종목 비교하기 CTA — 담아둔 종목 앞에서부터 최대 COMPARE_MAX개를 비교 화면에 시드
   const compareSeed = filteredWatchlist.slice(0, COMPARE_MAX).map((i) => i.ticker);
-  const todayCompareHref =
-    todayCompareTickers.length >= 2
-      ? `/compare?stocks=${todayCompareTickers.slice(0, 3).join(",")}`
-      : "/compare";
+  // 빈 상태 1순위 행동(§10.1) — 오늘 후보에서 담기: 서버가 실데이터로 고른 후보 목록(있으면 인페이지 앵커),
+  // 없으면 오늘 브리핑으로. 비교는 담을 종목이 없는 빈 상태의 시작 행동이 아니므로 여기서 노출하지 않는다.
+  const addFromCandidatesHref = exampleStocks.length > 0 ? "#watchlist-samples" : "/today";
 
   const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
 
@@ -959,20 +958,16 @@ export function WatchlistClient({
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-keep">
               관심에 담으면 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화 · 공시 신호 · 저평가 여부</strong>를 이 화면에서 바로 확인할 수 있어요.
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-2xl mx-auto">
-              {exampleStocks.length > 0 ? (
-                <a
-                  href="#watchlist-samples"
-                  className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition whitespace-nowrap ${FOCUS_RING}`}
-                >
-                  <Heart className="w-3.5 h-3.5" /> 샘플 관심목록 보기
-                </a>
-              ) : null}
-              <Link href={todayCompareHref} className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap ${FOCUS_RING}`}>
-                <Scale className="w-3.5 h-3.5" /> 오늘 후보 3개 비교
-              </Link>
-              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-zinc-400 dark:hover:border-zinc-600 transition whitespace-nowrap ${FOCUS_RING}`}>
-                종목 직접 찾기
+            {/* 시작 행동은 두 가지만(§10.1): 오늘 후보에서 담기 · 종목 찾아보기. 비교는 담은 종목이 있어야 의미가 있어 빈 상태에서는 노출하지 않는다. */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
+              <a
+                href={addFromCandidatesHref}
+                className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition whitespace-nowrap ${FOCUS_RING}`}
+              >
+                <Heart className="w-3.5 h-3.5" /> 오늘 후보에서 담기
+              </a>
+              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap ${FOCUS_RING}`}>
+                종목 찾아보기
               </Link>
             </div>
             {/* 자동 저장 없이 미리보기와 개별 추가만 제공한다. 사용자가 담기를 누른 종목만 이 기기에 저장된다. */}

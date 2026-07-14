@@ -346,6 +346,10 @@ export function CompareClient({
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
             <strong className="text-zinc-700 dark:text-zinc-300">최소 2개 · 최대 4개</strong>를 고르면 종합 점수 · PER/PBR/ROE · 수익률 · 위험을 나란히 비교합니다.
           </p>
+          {/* 로컬 저장/로그인 경계(§10.1) — 비교는 로그인 없이 이 기기에서 그대로 되고, 로그인은 기록을 넓혀준다(기능 잠금 아님) */}
+          <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-snug break-keep">
+            비교 목록은 로그인 없이 이 기기에 저장돼요. 로그인하면 여러 기기에서 이어봅니다.
+          </p>
         </div>
 
         <div className="max-w-2xl mx-auto space-y-5">

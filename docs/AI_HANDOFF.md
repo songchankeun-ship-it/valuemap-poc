@@ -2913,3 +2913,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(stocks find-screen 포함) · build 0(/stocks 26.2kB) · verify:local :4844 6/6 OK · SSR /stocks H1 '종목 찾기'=1·옛 '발견' H1=0·프리셋 라벨 DOM 유지·검색/토글 present. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트(폭 불변·세로 감소 방향).
 - **다음(Slice F)**: 종목 상세 첫 행동 정리 — 상단/요약 탭 중복 제거, 결론→근거→최근 변화→공시 순서 고정, 관심/비교/공유 모바일 위치·sticky 겹침 확인(§9).
 - **커밋**: 로컬 [codex] first-run UX Slice E: make /stocks read as find-stocks. push/main 무변경.
+
+
+### 2026-07-15 — 첫 방문 UX 대정리 Slice G: 관심/비교/로그인 경계 정리 ([codex])
+
+- **무엇**: 설계서 §10~§11대로 관심/비교 빈 상태와 로그인 경계를 정리했다. (1) 관심 빈 상태 상단 CTA를 §10.1의 두 행동('오늘 후보에서 담기' → exampleStocks 있으면 #watchlist-samples 앵커·없으면 /today, '종목 찾아보기' → /stocks)으로 축소하고 off-role 비교 CTA(→/compare)를 제거. (2) 비교 빈 상태에 로컬/로그인 경계 한 줄('비교 목록은 로그인 없이 이 기기에 저장돼요. 로그인하면 여러 기기에서 이어봅니다.')을 추가(§10.1 경계, 기능 잠금 오해 방지). (3) 로그인 title/lead를 여러 기기 연속성 가치 + 비로그인 공개 탐색·로컬 저장 유지 확인으로 재구성(§11.1). (4) 자리표시자 Supabase 가드·공개 탈출 링크·오너 전용 /admin 경계(비로그인 리다이렉트·공개 nav/SEO 비노출)는 기존 구현을 정적/런타임 게이트로 검증.
+- **변경 파일(4)**: src/lib/i18n.ts(loginCopy ko/en title·emailOnlyLead·lead), src/components/WatchlistClient.tsx(빈 상태 두 행동·todayCompareHref 제거), src/components/CompareClient.tsx(빈 상태 로컬/로그인 경계 문구), scripts/verify-first-run-ux.ts(§9 Slice G 가드 9a~9e + loginCopy import).
+- **불변식**: 인증/데이터스토어 설정(NEXT_PUBLIC_SUPABASE_*/OAuth/middleware/RLS)·점수식·public/data/*·DART·유니버스(138)·크론·배포·의존성·라우트 경로·SEO 메타 무변경. 로그인 컨텍스트/폴백/에러 카피 무변경(login-preflight 앵커 보존). todayCompareTickers prop 시그니처는 서버 무변경 위해 유지(미사용).
+- **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0(편집 4파일) · verify-first-run-ux PASS(watchlist/compare/login boundary) · build 0 · verify:local :4871 6/6 OK(admin-access 4/4 로그인 redirect·public-seo·login-preflight 포함). SSR: /login 새 title·lead·/compare 경계 문구·오늘 후보 소스 present, /login?next=/watchlist 컨텍스트 유지. 시작한 :4871만 종료.
+- **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측 미지원(카피 교체+버튼 3→2 축소라 폭 불변·세로 감소, overflow 위험 없음). 관심 빈 상태는 클라 하이드레이션 렌더라 정적 가드로 소스 계약 고정. 실기기 픽셀은 오너 게이트.
+- **다음 진입점(Slice H)**: 전체 사용자 여정 재인증(E2E·overflow·핵심 위치·공개 카피/이벤트/관리자 보호) + PROGRESS/AI_HANDOFF 최종 정리.
+- **커밋**: 로컬 [codex] first-run UX Slice G: watchlist/compare empty states + login boundary (브랜치 ai-center/task-279-ornscore-first-run-ux-rebuild-g-alig). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice G"로 확인.
