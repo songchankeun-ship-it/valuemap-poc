@@ -1,5 +1,22 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] close out analytics ops batch A–E (task 260-Z)
+- **Scope**: 분석 운영 배치(task 255–259, 슬라이스 A–E)의 로컬 전용 최종 클로징. 채팅 기록 없이 넘겨받는 다음 에이전트를 위해 배치가 내부적으로 일관·재현 가능함을 광범위 로컬 게이트로 재인증하고, 산출물·통과 검증·소유자 게이트로 남는 항목·다음 안전 진입점을 기록. **제품 기능 무추가**(docs 전용 클로징) — 신규 소스/데이터/점수식/`metricsVersion`/env/의존성/수집 규칙/`<Analytics />` 배선 0 변경. 브랜치 `ai-center/task-260-ornscore-analytics-ops-2026-07-14-z-`.
+- **인증한 배치 슬라이스(로컬 커밋만, push 없음)**:
+  - **A (255)** `[codex] add admin traffic overview page`(5171944) — `/admin/traffic` 소유자 전용 서버 페이지 신규. 수집 요약 4칸(Vercel Analytics 활성 여부·`route_view_public`·이벤트 종수·외부 대시보드 링크), 개인정보 안전 경계, `EVENT_GROUPS` 8그룹 이벤트 맵. `requireAdminAccess` + `robots:noindex` + `force-dynamic`.
+  - **B (256)** `[codex] extract sanitized route analytics classifier + offline verify`(02c498d) — `src/lib/routeAnalytics.ts` 순수 헬퍼(`classifyRoute`·`ROUTE_CLASSIFIERS`·`SAFE_ROUTE_PROP_KEYS` allow-list) 분리, `AnalyticsEventTracker`가 이를 import. `scripts/verify-route-analytics.ts` + `verify:route-analytics`(23케이스·15 route kind·프라이버시 스트레스 쿼리 non-echo assert), 분류 문서 신규.
+  - **C (257)** `[codex] track home candidate open funnel event`(e00ec8c) — 홈 "오늘의 후보" 카드 기본 CTA에 `home_candidate_open` 이벤트 배선(공개 ticker·고정 rank·slot enum만). 이벤트 맵 행 추가.
+  - **D (258)** `[codex] add first-72h launch analytics review playbook`(d081839) — `docs/ornscore-launch-analytics-first-72h-playbook.md` 신규(어디서 보나·24/48/72h·퍼널 순 이벤트·건강/우려 모양·오너 게이트) + `/admin/traffic` 인라인 요약 섹션 1개 + 이벤트 맵 상호링크.
+  - **E (259)** `[codex] polish admin traffic surface for mobile/keyboard`(b79a18e) — `/admin/traffic` 390px 폴리시(뒤로가기 링크 44px 탭 타깃, 긴 mono 이벤트명 `break-words`). 클래스 2곳만, 데이터·추적 무변경.
+- **재인증한 게이트(이번 슬라이스, 클린 워크트리 위)**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · `npm run build` 0(라우트 표: `/admin`·`/admin/traffic`·`/admin/users`·`/admin/status` 모두 dynamic ƒ) · `npm run verify:route-analytics` PASS(23케이스·15 route kind) · 로컬 prod 127.0.0.1:51843 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5).
+- **인증 보호 확인(비로그인)**: `requireAdminAccess`는 세션 이메일 부재 시 `/login?next=…`로 redirect. 실측 307 → `/admin/users`·`/admin/traffic`·`/admin/status`·`/admin` 4개 모두 `/login?next=<경로>`로 리다이렉트. 신규 운영 트래픽 라우트(`/admin/traffic`) 포함 전부 소유자 게이트.
+- **정리**: 임시 next 서버(PID 39996) taskkill 종료·포트 51843 닫힘 확인, 상시 AI Center(:4310) 200 무중단.
+- **다음 안전 진입점 (owner-gated, 별도 배치)**: 운영 영역 안 **직접 숫자 대시보드**는 여전히 자동화 범위 밖 — 두 경로 중 택1이며 둘 다 오너 승인/시크릿/저장 설정이 선행:
+  1. **Vercel Analytics API 연동** — 읽기 토큰(신규 시크릿) + 저장 설정 필요. 서버에서 집계 수치를 fetch해 `/admin/traffic`에 표로 렌더. 토큰/레이트리밋/캐시 정책은 오너 결정.
+  2. **자체 이벤트 테이블** — Supabase에 익명 이벤트 테이블 + RLS/보존·동의 설계 선행(스키마 변경 = 오너 게이트). 수집은 기존 `route_view_public`/클릭 위임 페이로드 재사용 가능.
+  - 착수 시 시작점: `src/app/admin/traffic/page.tsx`(표 렌더 위치), `src/lib/routeAnalytics.ts`(안전속성 계약), `docs/ornscore-launch-analytics-first-72h-playbook.md`(판독 기준), `docs/ornscore-admin-traffic-telemetry-plan.md`(원안). 어느 경로든 `SAFE_ROUTE_PROP_KEYS` allow-list와 `/admin*` 추적 제외 경계를 유지할 것.
+- **Risks / next**: 이번 슬라이스는 docs 전용이라 런타임 무변경. `EVENT_GROUPS`·인라인 요약·플레이북은 이벤트 개명 시 함께 갱신(드리프트만이 리스크). Vercel 대시보드 실수치·실기기/스크린리더 QA는 배포 후 실트래픽·오너 게이트로 남음. 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-14 - [codex] polish traffic surface for mobile/keyboard (task 259-E)
 - **Scope**: 분석 운영 배치 E. 슬라이스 A–D로 만든 `/admin/traffic` 소유자 화면을 **모바일·키보드 사용성** 관점에서 폴리시. 390px 밀도·터치/키보드 타깃·중첩 카드 과다·스크롤/오버플로를 점검. 데이터 로직·추적 동작·수집 규칙·점수식·env·의존성 0 변경. 시각/접근성 소폭 수정만.
 - **Changes** (`src/app/admin/traffic/page.tsx` 1파일, 클래스만):
