@@ -368,8 +368,14 @@ export default async function AdminUsersPage() {
           {overview.users.length === 0 ? (
             <Empty>아직 조회된 가입자가 없거나 Supabase Auth Admin 조회가 필요합니다.</Empty>
           ) : (
-            <div className="-mx-1 overflow-x-auto px-1">
+            <div
+              role="region"
+              aria-label="가입자 목록 표 (가로 스크롤)"
+              tabIndex={0}
+              className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+            >
               <table className="min-w-[680px] w-full text-left text-xs">
+                <caption className="sr-only">가입자 목록: 이메일, 가입일시, 최근 로그인, 인증 상태, 로그인 제공자</caption>
                 <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
                   <tr>
                     <th className="py-1.5 pr-3 font-medium">이메일</th>

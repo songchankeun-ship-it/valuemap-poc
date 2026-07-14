@@ -1,5 +1,10 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] harden admin users visual states
+- **Scope**: 로컬 전용 배치(task 253-D). `/admin/users`(89f22b5·4ac0150 이후)에 소유자 사용성용 **작은 접근성/반응형 폴리시 1건**만 반영. 서버 전용·소유자 보호 유지, 새 추적·Supabase 정책/auth 설정 변경 0.
+- **Changes**: `src/app/admin/users/page.tsx` — 최근 가입자 표의 가로 스크롤 컨테이너(`min-w-[680px]`, 390px에서 넘침)를 키보드 접근 가능하게 `role="region"` + `aria-label="가입자 목록 표 (가로 스크롤)"` + `tabIndex={0}` + `focus-visible` 링(zinc)으로 감싸고, `<table>`에 스크린리더용 `<caption className="sr-only">`(이메일·가입·최근 로그인·인증·제공자) 추가. 마우스 없이도 숨은 컬럼까지 스크롤 가능(WCAG 2.1.1). 데이터/조회 로직·컬럼·집계·`requireAdminAccess` 가드·InfoBlock 무변경. 표시/마크업 전용 1슬라이스.
+- **Validation**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scriptserify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(LF→CRLF 경고만) · 편집 파일 U+FFFD 0 · `npm run build` 0(라우트 표 무변경, `/admin/users` 여전히 dynamic) · 로컬 prod 127.0.0.1:53713 → `npm run verify:local -- --no-perf` real gates 4/4(smoke 24/24·routes·stocks-seo·login-preflight 5/5). 비로그인 `/admin/users` 307 → `/login`(기대). 임시 리스너 PID 48948 taskkill 종료·확인, AI Center 4310 무중단.
+- **Risks / next**: 실제 표 렌더(region/caption)는 admin 인증+데이터가 있어야 보여 390px 육안·키보드/스크린리더 체감은 소유자 게이트로 남음(마크업은 tsc/build로 검증). 다음 진입점: 동일 패턴을 `/admin/status`의 다른 `overflow-x-auto` 표(151·238행)에도 적용, 또는 '최근 로그인' 12장 카드 밀도/`sm:grid-cols-2` 390px 정렬 폴리시. 로컬 커밋만·push 미수행·main 무변경.
 ## 2026-07-14 - [codex] clarify admin report workflow
 - **Scope**: 로컬 전용 배치(task 252-C). `/admin/status`의 `data_reports` 처리(triage)를 운영자가 채팅 기록 없이 이해·수행할 수 있게 **표시 명확화 + 문서**만 추가. 범위 준수: 컬럼 추가·update API·신고 제출(`report-data-issue`) 동작 변경 0. 상태 전이 UI/인증/스키마 무변경 — 상태 갱신은 여전히 Supabase 직접(소유자 게이트).
 - **Changes**:

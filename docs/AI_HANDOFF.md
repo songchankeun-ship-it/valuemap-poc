@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T02:27:13.227Z
+Last updated: 2026-07-14T02:33:29.000Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 252 - ORNScore admin ops 2026-07-14 C - admin data report workflow polish
-- Run: 254
+- Task: 253 - ORNScore admin ops 2026-07-14 D - admin users visual states hardening
+- Run: 255
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: /admin/users 표 가로 스크롤 컨테이너를 키보드 접근 region + sr-only caption으로 폴리시. tsc·verify_metrics·build·verify:local(--no-perf) 4/4 green.
 
 ## Next Agent Checklist
 
@@ -2597,3 +2597,11 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표·`direction`·`watchlist.ts`/`notifications`·cron/auth 제공자·콜백·Supabase 설정·세션 로직·`metricsVersion` 무변경. 편집 2파일(i18n.ts + LoginContent.tsx) + 문서 2.
 - **게이트(전부 통과, base=http://127.0.0.1:56210)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts/verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean · 편집 2파일 U+FFFD 0 · `npm run build` 0(138 SSG, 라우트 표 불변) · 로컬 prod `npm run verify:local -- --no-perf` 진짜 게이트 4/4(smoke 24/24·verify:routes 9/9·stocks-seo 12/12·login-preflight 5/5) · `/login` SSR에 KO 노트(기본 로케일)+benefitsTitle 렌더, KO+EN 문자열 모두 클라이언트 청크 `3897-*.js`에 존재. 임시 리스너 :56210(PID 51172) taskkill, AI Center 4310 무중단.
 - **남은 소유자/다음 진입점**: 실기기 390×844 육안 + EN 언어전환(클라이언트 토글, Playwright 미구성), 실 OAuth 왕복/매직링크/콜백은 오너 게이트 유지. 후속 후보: `/about` PWA 문단(계정 경계 프레이밍 부재)에 로컬 베이스라인 한 줄 반영, 또는 `/compare` 빈 상태 동일 프레이밍. 로컬 커밋만·push 미수행·main 무변경.
+
+### Task 253 — 관리자 가입자 화면 비주얼 상태 하드닝 (2026-07-14, [codex])
+- **Scope**: app-first-use·관리자 운영 배치(237–252) 이후 로컬 오버나이트 버퍼(task 253-D). 커밋 89f22b5(가입자 개요)·4ac0150(로그인 활동 지표) 이후 `/admin/users`를 점검하고 **소유자 사용성용 작은 접근성/반응형 폴리시 1건**만 반영. 페이지는 서버 전용·소유자 보호 유지, 새 추적·Supabase 정책/auth 설정 변경 금지. 브랜치 `ai-center/task-253-ornscore-admin-ops-2026-07-14-d-admi`.
+- **판단**: 최근 가입자 표는 `min-w-[680px]` + `overflow-x-auto`라 390px에서 가로 넘침이 의도된 스크롤이나, 스크롤 컨테이너가 포커스 불가라 **키보드 전용 소유자가 숨은 컬럼(제공자 등)에 도달할 수 없었음**(WCAG 2.1.1 위반). 표에 접근성 `<caption>`도 없었음. 나머지 요약/사용량 카드·빈 상태·링크 라벨은 이미 양호.
+- **변경**: `src/app/admin/users/page.tsx` — 가로 스크롤 `<div>`에 `role="region"` + `aria-label="가입자 목록 표 (가로 스크롤)"` + `tabIndex={0}` + `focus-visible:ring-2 ring-zinc-400/500` + `rounded-md` 추가(키보드 스크롤·초점 가시화), `<table>` 첫 자식으로 `<caption className="sr-only">가입자 목록: 이메일, 가입일시, 최근 로그인, 인증 상태, 로그인 제공자</caption>` 추가. 기존 코드베이스 패턴 준수(CompareTray `role=region`, CompareClient/StatusContent `caption.sr-only`). 데이터·조회·컬럼·집계·`requireAdminAccess`·InfoBlock·추적 무변경. 신규 컴포넌트/prop/의존성/라우트 0.
+- **불변식**: `public/data/*`·`stocks.json`·점수식·`compositeScore`/지표·`metricsVersion`·auth/제공자/콜백/Supabase 정책·cron·배포 설정 무변경. 편집 1파일(page.tsx) + 문서 2.
+- **게이트(전부 통과, base=http://127.0.0.1:53713)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scriptserify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `git diff --check` clean(LF→CRLF 경고만) · 편집 파일 U+FFFD 0 · `npm run build` 0(138 SSG, 라우트 표 불변, `/admin/users` dynamic 유지) · 로컬 prod `npm run verify:local -- --no-perf` real gates 4/4(smoke 24/24·verify:routes·stocks-seo 12/12·login-preflight 5/5). 비로그인 `/admin/users` 307 → `/login`(기대, 500 아님). 임시 리스너 :53713(PID 48948) taskkill 종료·확인, AI Center 4310 무중단.
+- **남은 소유자/다음 진입점**: 실제 표(region/caption)는 admin 인증+Supabase 데이터가 있어야 렌더되어 390×844 육안·키보드/스크린리더(VoiceOver/TalkBack) 체감은 오너 게이트(Playwright 미구성) 유지. 후속 후보: 동일 키보드-region 패턴을 `/admin/status` 두 `overflow-x-auto` 표(151·238행)에 적용, 또는 '최근 로그인' 12장 카드 밀도·`sm:grid-cols-2` 390px 정렬 폴리시. 로컬 커밋만·push 미수행·main 무변경.
