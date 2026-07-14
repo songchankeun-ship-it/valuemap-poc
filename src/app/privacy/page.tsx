@@ -42,6 +42,7 @@ export default function PrivacyPage() {
             <li><strong>이메일 주소</strong> — 로그인, 알림 발송, 계정 식별</li>
             <li><strong>소셜 로그인(카카오·구글·네이버) 사용 시</strong> — 제공자 계정 식별자, 닉네임·이름, 이메일, 프로필 사진 (제공자가 전달하는 항목에 한함)</li>
             <li><strong>이용 기록</strong> — 관심 종목, 비교 목록, 알림 설정</li>
+            <li><strong>이용자 제출 정보(선택)</strong> — 데이터 오류 제보 시 입력한 제보 유형·종목 코드·제보 내용과 회신용 이메일(선택), 유료 출시 대기 신청 시 입력한 이메일. 로그인 없이도 제출할 수 있으며, 회신·문의 처리 및 데이터 품질 개선·출시 안내 목적으로만 이용합니다.</li>
             <li><strong>접속 정보</strong> — IP 주소, 브라우저 정보 (Vercel Analytics 기반)</li>
             <li><strong>비식별 사용 이벤트</strong> — 검색 결과 선택, 주제 페이지 클릭, 비교함·관심종목 버튼, 로그인 CTA, 오류 제보 폼 상태 등 서비스 개선용 이벤트. 검색어 원문, 제보 메시지, 이메일 내용은 이벤트에 포함하지 않습니다.</li>
           </ul>
@@ -64,6 +65,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>접속 로그·분석 데이터</strong>: 통계 목적으로만 사용하며 최대 12개월 내 파기 또는 익명화.</li>
             <li><strong>알림 메일 관련 이메일</strong>: 사용자가 알림 기능을 직접 켠 경우 발송 목적에 한해 이용하며, 알림 해제·회원 탈퇴 시 처리 중단.</li>
+            <li><strong>오류 제보·출시 대기 신청 내역</strong>: 회신·문의 처리 및 출시 안내 목적으로 보관하며, 처리 완료 또는 <Link href="/data-deletion" className="text-blue-600 dark:text-blue-400 underline">삭제 요청</Link> 시 파기.</li>
           </ul>
         </section>
 
@@ -80,7 +82,7 @@ export default function PrivacyPage() {
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">5. 위탁 처리 (Processors)</h2>
           <p>서비스 제공을 위해 다음 외부 서비스를 이용합니다. 각 서비스는 자체 개인정보처리방침을 따르며, 아래 링크에서 확인할 수 있습니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
-            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심 종목·비교 목록·알림 설정 / 목적: 인증·데이터 저장 — <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
+            <li><strong>인증·저장 제공자 — Supabase</strong> (일본 Tokyo) — 항목: 이메일·계정 식별자·관심 종목·비교 목록·알림 설정·오류 제보 내역·출시 대기 신청 / 목적: 인증·데이터 저장 — <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>호스팅 제공자 — Vercel</strong> (미국) — 항목: IP·접속정보 / 목적: 호스팅·익명 통계 — <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>메일 발송 제공자 — Resend</strong> (미국) — 항목: 이메일 주소 / 목적: 알림 메일 발송 — <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
             <li><strong>소셜 로그인 제공자 — Kakao</strong> (대한민국) — 항목: 카카오 계정 식별자·닉네임 / 목적: 소셜 로그인(선택 시) — <a href="https://policy.kakao.com/ko/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">처리방침 ↗</a></li>
@@ -110,7 +112,7 @@ export default function PrivacyPage() {
                 <tr className="border-b border-zinc-100 dark:border-zinc-800">
                   <td className="py-2 pr-3 font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">Supabase</td>
                   <td className="py-2 pr-3 whitespace-nowrap">일본</td>
-                  <td className="py-2 pr-3">이메일·계정 식별자·관심 종목·비교 목록·알림 설정</td>
+                  <td className="py-2 pr-3">이메일·계정 식별자·관심 종목·비교 목록·알림 설정·오류 제보 내역·출시 대기 신청</td>
                   <td className="py-2 pr-3">인증·데이터 저장</td>
                   <td className="py-2 pr-3">회원가입·서비스 이용 시</td>
                   <td className="py-2 pr-3 whitespace-nowrap">탈퇴 시까지</td>

@@ -3569,3 +3569,12 @@
 - **비로그인 접근 확인**: `/admin/users` 307 → `/login?next=%2Fadmin%2Fusers`(기대, 500 아님), `/admin/status` 307. 임시 리스너 :51947 taskkill 종료·포트 닫힘 확인, 상시 AI Center 무중단.
 - **남은 소유자/다음 진입점**: 실제 카드 그리드는 admin 인증+Supabase 데이터가 있어야 렌더되어 390×844 육안·태블릿 2열 정렬 체감은 오너 게이트(Playwright 미구성). 선재 데이터-날짜 드리프트(`2026.07.10` vs `2026.07.13`) 동기화는 별도 오너 게이트. 후속 후보: 253-D 키보드-region+caption 패턴을 `/admin/status` 나머지 `overflow-x-auto` 표에 확장, 또는 요약 Stat 카드(`lg:grid-cols-4`에 7장이라 마지막 행 3장) 정렬 폴리시. 로컬 커밋만·push 미수행·main 무변경.
 - **커밋**: 로컬 `[codex] make admin users recent-login/waitlist cards responsive`(브랜치 `ai-center/task-262-ornscore-ops-quality-2026-07-14-b-ad`). push 없음·main 무변경.
+
+
+### Task 268 — 비로그인 제보·대기 신청 수집 흐름을 개인정보처리방침/데이터안전 문서와 정합 (2026-07-14, [codex])
+- **Scope**: 공개 애널리틱스·로그인/관심종목·문의/제보 흐름·소유자 전용 화면을 공개 개인정보/약관/소개/스토어 문서와 대조해 출시·앱심사 리스크를 줄이는 로컬 문구 슬라이스 1건. 점수식·생성 마켓 파일·로그인 제공자·크론·배포·`metricsVersion` 무변경. 브랜치 `ai-center/task-268-ornscore-launch-hardening-2026-07-14`.
+- **드리프트**: 비로그인으로도 제출되어 Supabase에 저장되는 두 수집 흐름이 공개 문서에 미공개 — (1) 데이터 오류 제보(`/api/report-data-issue`→`data_reports`: 카테고리·종목·메시지 2000자·선택 이메일), (2) 유료 출시 대기 신청(`/api/waitlist`→`waitlist`: 이메일·source). `/privacy` §1 수집목록·§5 위탁 Supabase 항목·§5-1 국외이전 표·앱스토어 팩 Data safety/App Privacy 초안 모두 누락. 애널리틱스 자체는 정확(제보 메시지/이메일 원문 이벤트 미포함) — 갭은 저장 사실의 미공개.
+- **변경(문구/문서 2파일)**: `src/app/privacy/page.tsx`(§1 "이용자 제출 정보(선택)" 추가·§3 보관/파기 1줄·§5+§5-1 Supabase 항목에 제보·대기 신청 추가), `docs/app-store-submission-pack.md`(Data safety 초안 수집후보·목적·비로그인 수집 주의 + App Privacy Contact Info/User Content 반영). EN 요약은 본문 표 위임형이라 무변경. 코드 로직 0줄.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목·0오류·금칙0·Metrics 2.4 · `git diff --check` clean · 편집 2파일 U+FFFD 0 · `npm run build` 0(`/privacy` static 유지·라우트 표 불변) · 로컬 prod 127.0.0.1:4519 `verify:local --no-perf` real gates 6/6(smoke·routes 9/9·stocks-seo·public-seo·login-preflight·admin-access). 임시 리스너 :4519 종료·포트 닫힘, AI Center :4310 무중단.
+- **남은 소유자/다음**: Play/App Store 콘솔 Data safety·App Privacy 실제 답변 제출은 오너 게이트. 후속 후보: `data_reports`/`waitlist` 익명 insert RLS 정책 확정(Supabase 콘솔), §6 이용자 권리에 제보/대기 신청 내역 열람·삭제 경로 명시. 로컬 커밋만·push 미수행·main 무변경.
+- **커밋**: 로컬 `[codex] disclose report/waitlist collection in privacy + store data-safety`(브랜치 `ai-center/task-268-ornscore-launch-hardening-2026-07-14`).
