@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] document admin operations checklist
+- **Scope**: 로컬 전용 문서 배치(task 250). 관리자 화면 보호 방식·필요 env·시크릿 비노출 접근 확인·남은 운영자 게이트를 운영자 한 명이 채팅 기록 없이 볼 수 있게 단일 체크리스트로 정리. **설정/값 무변경** — 코드·데이터·스키마·env 실값 손대지 않음(문서만).
+- **Changes**: 신규 `docs/ornscore-admin-operations-checklist.md` — (1) `/admin`·`/admin/users`·`/admin/status` 이중 보호(미들웨어 307/403 + 페이지 `requireAdminAccess`)와 검색 비노출, (2) 런타임 env 표(`ADMIN_EMAILS`/`ORNSCORE_ADMIN_EMAILS`·`NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_ANON_KEY`·`SUPABASE_SERVICE_ROLE_KEY`·`ADMIN_ENABLED`과 각 부재 시 graceful 동작), (3) 시크릿 노출 없이 비로그인/비허용/허용 계정 접근을 확인하는 절차, (4) 운영자 게이트로 남는 항목. `ornscore-admin-status-backlog.md` §3 관련 문서에 역링크 1줄 추가.
+- **Validation**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · 편집 2문서 U+FFFD 0. UI/라우트 무변경이라 build/verify:local 생략(문서만). 로컬 커밋만·push 미수행·main 무변경.
+- **Risks / next**: 문서-코드 드리프트가 유일 리스크 — 미들웨어/`adminAccess.ts`의 env 이름·allowlist·403 동작을 바꾸면 이 문서도 함께 갱신. 다음 진입점: 운영자가 Vercel에 `ADMIN_EMAILS` 실계정 명시 + 실 OAuth 왕복으로 허용/비허용 접근 최종 확인(운영자 게이트, Playwright 미구성).
+
 ## 2026-07-14 - [codex] expand admin login activity metrics
 - **Scope**: Owner clarified that the site-owner admin page should show access/login activity, not just who signed up. Local-only admin UI enhancement: no new tracking table, no Supabase schema/RLS/auth-provider/config change, no analytics vendor/account change, no push/deploy.
 - **Changes**: `/admin/users` now shows KST "오늘 로그인", 최근 7일 로그인, 최근 30일 로그인, 아직 로그인 없음, and a recent-login list sorted by `last_sign_in_at`. Added a clear operating note: logged-in activity comes from Supabase Auth, while anonymous visits/pageviews/referrers remain in Vercel Analytics unless a separately designed event table is approved.

@@ -78,6 +78,7 @@ create table if not exists data_reports (
 
 ## 3. 관련 문서
 
+- `docs/ornscore-admin-operations-checklist.md` — 운영자용 관리자 보호 방식·필요 env·접근 확인 절차·남은 게이트 요약.
 - `docs/data-source-commercial-risk.md` — 데이터 소스 리스크·전환 로드맵(§10 모니터링과 교차).
 - `docs/legal-ai-commercial-readiness.md` — 오류 신고·약관 항목.
 - `docs/ornscore-spec-coverage.md` — 설계서 전 항목 상태 추적(§10·§14 행).
