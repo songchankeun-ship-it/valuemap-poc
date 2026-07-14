@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T13:32:37.516Z
+Last updated: 2026-07-14T13:57:06.560Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,8 +21,8 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 273 - ORNScore first-run UX rebuild A - IA terminology and regression contract
-- Run: 276
+- Task: 274 - ORNScore first-run UX rebuild B - simplify home start area
+- Run: 277
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
