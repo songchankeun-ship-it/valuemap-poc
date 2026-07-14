@@ -62,6 +62,9 @@ function LoginForm() {
   const contextMsg =
     (copy.contexts as Record<string, string>)[next] ??
     (next !== "/" ? copy.contextFallback : undefined);
+  const adminLoginBlocked = !supabaseConfigured && next.startsWith("/admin");
+  const backHref = adminLoginBlocked ? "/" : next;
+  const backLabel = backHref === "/" ? copy.backHome : copy.backPrevious;
 
   const providers = enabledOAuthProviders();
   // "설정 필요"로만 노출하는 제공자(네이버 등) — env/콘솔 설정 전에는 클릭 불가.
@@ -152,11 +155,11 @@ function LoginForm() {
   return (
     <div className="max-w-md mx-auto px-3 md:px-4 py-6 md:py-12">
       <Link
-        href={next}
+        href={backHref}
         className="inline-flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        {next === "/" ? copy.backHome : copy.backPrevious}
+        {backLabel}
       </Link>
 
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 md:p-8">
@@ -173,9 +176,25 @@ function LoginForm() {
             role="status"
             className="mb-5 text-xs text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md px-3 py-2 leading-relaxed"
           >
-            {locale === "ko"
-              ? "현재 로컬 로그인은 예시 Supabase URL로 설정되어 있어 비활성화되어 있습니다. 공개 화면 확인은 가능하고, 관리자 로그인 확인은 실제 Supabase 환경변수를 설정한 뒤 진행해야 합니다."
-              : "Local login is disabled because Supabase is still configured with a placeholder URL. Public pages can be reviewed now; admin login needs real Supabase env vars."}
+            <p>
+              {locale === "ko"
+                ? "현재 로컬 로그인은 예시 Supabase URL로 설정되어 있어 비활성화되어 있습니다. 공개 화면 확인은 가능하고, 관리자 로그인 확인은 실제 Supabase 환경변수를 설정한 뒤 진행해야 합니다."
+                : "Local login is disabled because Supabase is still configured with a placeholder URL. Public pages can be reviewed now; admin login needs real Supabase env vars."}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href="/"
+                className="inline-flex min-h-[36px] items-center justify-center rounded-md bg-amber-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 dark:bg-amber-300 dark:text-amber-950 dark:hover:bg-amber-200"
+              >
+                {locale === "ko" ? "공개 홈 보기" : "Open public home"}
+              </Link>
+              <Link
+                href="/stocks"
+                className="inline-flex min-h-[36px] items-center justify-center rounded-md border border-amber-300 bg-white/70 px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-white dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-950"
+              >
+                {locale === "ko" ? "종목 목록 보기" : "Open stocks"}
+              </Link>
+            </div>
           </div>
         ) : null}
 
