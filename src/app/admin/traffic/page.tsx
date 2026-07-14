@@ -8,6 +8,7 @@ import {
   Eye,
   FileWarning,
   GitCompare,
+  ListChecks,
   Route,
   Search,
   ShieldCheck,
@@ -276,6 +277,33 @@ export default async function AdminTrafficPage() {
         <p className="mt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
           로그인 활동(가입·최근 로그인)은 별도로 <Link href="/admin/users" className="font-medium underline">가입자 운영 현황</Link>에서 봅니다.
           운영 페이지(/admin 계열)는 공개 분석 수집에서 제외됩니다. 정본은 <span className="font-mono">docs/ornscore-analytics-event-map-2026-07-12.md</span>.
+        </p>
+      </section>
+
+      <section aria-label="출시 후 리뷰 순서" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2">
+          <ListChecks className="h-4 w-4 text-zinc-700 dark:text-zinc-300" aria-hidden="true" />
+          <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">출시 후 24–72시간: 무엇을 먼저 보나</h2>
+        </div>
+        <p className="mt-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+          첫 리뷰의 목표는 방문 총량이 아니라 <span className="font-medium text-zinc-700 dark:text-zinc-200">퍼널 모양</span>입니다 — 발견에서 실제 행동으로 넘어가는지.
+        </p>
+        <ol className="mt-3 space-y-2 text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-300">
+          <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+            <span className="font-medium text-zinc-800 dark:text-zinc-100">1. 진입</span> — <span className="font-mono">route_view_public</span>이 뜨는지(생존 확인). 0이면 배포·환경부터 의심.
+          </li>
+          <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+            <span className="font-medium text-zinc-800 dark:text-zinc-100">2. 발견 → 상세</span> — <span className="font-mono">home_candidate_open</span> · <span className="font-mono">search_result_open</span> · <span className="font-mono">topic_stock_open</span>. 가장 중요한 전환 지점.
+          </li>
+          <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+            <span className="font-medium text-zinc-800 dark:text-zinc-100">3. 비교·관심 의도</span> — <span className="font-mono">compare_toggle</span> · <span className="font-mono">watchlist_toggle</span>. 상세는 오는데 이게 0에 가까우면 다음 행동 유도 점검.
+          </li>
+          <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+            <span className="font-medium text-zinc-800 dark:text-zinc-100">4. 계정 의도</span> — <span className="font-mono">auth_cta_click</span>. 실제 가입은 <Link href="/admin/users" className="font-medium underline">가입자 운영 현황</Link>과 교차 확인.
+          </li>
+        </ol>
+        <p className="mt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+          절대 수치가 아니라 <span className="font-medium">비율·방향·전일 대비 변화</span>로 읽습니다(베타 초기 표본은 작음). 운영 영역 안의 직접 숫자 대시보드는 외부 API 토큰·저장 설정이 필요해 오너 게이트로 남습니다. 리뷰 순서·건강/우려 신호 정본은 <span className="font-mono">docs/ornscore-launch-analytics-first-72h-playbook.md</span>.
         </p>
       </section>
 

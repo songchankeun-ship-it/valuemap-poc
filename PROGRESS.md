@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] add first-72h launch analytics playbook (task 258-D)
+- **Scope**: 분석 운영 배치 D. 출시 직후 오너가 **첫 24–72시간** 동안 런치 분석을 어떻게 리뷰할지를 한 장으로 정리. 어디서 보는지·어떤 기존 이벤트가 먼저 중요한지·건강한 vs 우려되는 모양·운영 영역 안 직접 숫자 대시보드로 남는 오너 게이트를 명시. Docs-first + `/admin/traffic`에 압축 인라인 요약 섹션 1개. 외부 API 호출·수집 규칙·새 벤더/계정/env/의존성/저장값·점수식 0.
+- **Changes**:
+  - `docs/ornscore-launch-analytics-first-72h-playbook.md`(신규) — (1) 어디서 보나 3곳(Vercel Analytics 대시보드=실수치, `/admin/traffic`=수집 지도, `/admin/users`=로그인·가입), (2) 24/48/72시간 시점별 볼 것, (3) 먼저 볼 이벤트를 퍼널 순서로(진입 `route_view_public` → 발견→상세 `home_candidate_open`·`search_result_open`·`topic_stock_open` → 탐색 확장 → 비교·관심 `compare_*`·`watchlist_*` → 계정 `auth_cta_click` → 데이터 신고), (4) 건강한 vs 우려되는 모양 표(절대 수치 아닌 비율·방향으로 판독), (5) 오너 게이트로 남는 것(운영 영역 안 직접 숫자 대시보드 = Vercel Analytics API 토큰·저장 설정 또는 자체 이벤트 테이블 필요 → 외부 계정·시크릿·수집 규칙 변경이라 자동화 범위 밖).
+  - `src/app/admin/traffic/page.tsx` — 이벤트 그룹 위에 "출시 후 24–72시간: 무엇을 먼저 보나" 섹션 1개 추가(퍼널 4단계 순서 요약 + 비율·방향 판독 원칙 + 직접 숫자 대시보드=오너 게이트 명시 + 플레이북 문서 정본 인용). `ListChecks` 아이콘 import 1개. 표시 전용, 외부 호출·저장 무변경.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — Implementation Notes에 플레이북 문서와 `/admin/traffic` 인라인 요약 상호링크 1줄 추가.
+- **Validation**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 3파일 U+FFFD 0 · `npm run build` 0(라우트 표 불변, `/admin/traffic` dynamic ƒ 유지) · 로컬 prod 127.0.0.1:62514 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5) · 비로그인 `/admin/traffic` 307(→ /login). 임시 next 서버(PID 37972) taskkill 종료·포트 닫힘 확인, 상시 AI Center 무중단.
+- **Risks / next**: 인라인 요약은 이벤트 이름을 문자열로 인용하므로 이벤트 개명 시 플레이북·요약 섹션·이벤트 맵을 함께 갱신(드리프트만이 리스크). Vercel 대시보드 실수치·건강/우려 모양 판정은 배포 후 실트래픽 필요(불변). 후속 후보: 운영 영역 안 직접 숫자 대시보드(Vercel Analytics API 연동 또는 자체 이벤트 테이블)는 오너 승인 후 별도 batch. 로컬 커밋만·push 미수행·main 무변경(브랜치 `ai-center/task-258-ornscore-analytics-ops-2026-07-14-d-`).
+
 ## 2026-07-14 - [codex] add home candidate open funnel event (task 257-C)
 - **Scope**: 공개 런치 퍼널을 `docs/ornscore-analytics-event-map-2026-07-12.md`에 대조해 홈 최상단(top-of-funnel)에서 유일하게 누락돼 있던 CTA 클릭 커버리지 1개를 추가. 홈 "오늘의 후보" 카드의 기본 CTA(상세 보기 → `/stock/[ticker]`)는 지금까지 클릭 이벤트가 없어, 후보 카드가 실제로 종목 상세 탐색을 유도하는지(홈→상세 전환) 측정 공백이었음. 검색어 원문·이름·자유입력 무전송, 공개 ticker + 고정 rank + 레이아웃 슬롯만. 새 벤더·네트워크·env·의존성·저장값·점수식 0.
 - **Changes**:
