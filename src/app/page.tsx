@@ -234,13 +234,8 @@ export default async function HomePage() {
         dataAsOf={dataAsOf}
         dataAsOfRaw={dataMetadata.asOfBusinessDate ?? ""}
         dataStale={dataStale}
-        totalCount={dataMetadata.count}
-        strongCount={strongCount}
-        volumeSpikeCount={spikeCount}
-        signalCount={signalCount}
         searchStocks={searchStocks}
         searchThemes={allThemes()}
-        previewCandidates={candidates.slice(0, 3)}
       />
 
       <MarketSnapshotCards
