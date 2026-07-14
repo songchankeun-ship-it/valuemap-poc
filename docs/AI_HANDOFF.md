@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T10:42:00+09:00
+Last updated: 2026-07-14T10:49:00+09:00
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Codex - Admin login activity metrics
+- **Context**: Owner clarified that the admin page should also answer "how many people logged in" and where access/traffic is observed, not just list signups. This remains a local-only admin UI slice: no new telemetry table, no Supabase schema/RLS/auth-provider/config, no analytics account/vendor change, no push/deploy.
+- **Change**: `/admin/users` now adds KST "오늘 로그인", 최근 7일 로그인, 최근 30일 로그인, 아직 로그인 없음, and a recent-login list sorted by Supabase Auth `last_sign_in_at`. It also adds an explicit operating note that logged-in activity is Supabase Auth-based while anonymous visits/pageviews/referrers currently live in Vercel Analytics; in-admin anonymous traffic requires a separately approved event-table/API design.
+- **Gates**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138 / 0 errors / 0 forbidden / Metrics 2.4 · `git diff --check` exit 0 (CRLF notice only) · edited-file U+FFFD clean · `npm run build` 0 (`/admin/users` route registered; existing `TrustLayer` lint warning only) · local prod :55017 `verify:local --no-perf` real gates 4/4 (smoke 25/25, routes 9/9, stocks-seo 12/12, login-preflight 5/5) · unauth `/admin/users` 307 to `/login?next=%2Fadmin%2Fusers`. Temp server :55017 stopped and verified closed.
+- **Next automation batch**: queue small local/admin slices for Claude: (1) admin production env checklist/docs (`ADMIN_EMAILS`, service role, Vercel analytics link), (2) anonymous traffic telemetry strategy/design without schema change, (3) `data_reports` status workflow UI or docs-first plan, (4) admin logged-in visual QA and empty/error-state hardening. Any real tracking table, Supabase policy, or external analytics API remains owner-gated.
 
 ### 2026-07-14 - Codex - Admin user overview
 - **Context**: Owner pointed out the missing admin page for checking who signed up. Existing `/admin` and `/admin/status` protection already existed, so this slice added the missing operational page without changing auth providers, Supabase schema/RLS, service configuration, push, or deployment.

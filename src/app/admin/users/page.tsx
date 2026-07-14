@@ -6,6 +6,7 @@ import {
   Bookmark,
   Clock3,
   Database,
+  ExternalLink,
   GitCompare,
   Mail,
   Search,
@@ -122,6 +123,17 @@ function isRecent(iso?: string | null, days = 7): boolean {
   const time = new Date(iso).getTime();
   if (Number.isNaN(time)) return false;
   return Date.now() - time <= days * 24 * 60 * 60 * 1000;
+}
+
+function isTodayKst(iso?: string | null): boolean {
+  if (!iso) return false;
+  const time = new Date(iso).getTime();
+  if (Number.isNaN(time)) return false;
+
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const startKstUtc = Date.UTC(kstNow.getUTCFullYear(), kstNow.getUTCMonth(), kstNow.getUTCDate()) - 9 * 60 * 60 * 1000;
+  return time >= startKstUtc && time < startKstUtc + 24 * 60 * 60 * 1000;
 }
 
 function normalizeAuthUser(user: User): AuthUserRow {
@@ -277,8 +289,15 @@ export default async function AdminUsersPage() {
 
   const overview = await loadOverview();
   const recentSignups = overview.users.filter((user) => isRecent(user.createdAt)).length;
-  const recentLogins = overview.users.filter((user) => isRecent(user.lastSignInAt)).length;
+  const todayLogins = overview.users.filter((user) => isTodayKst(user.lastSignInAt)).length;
+  const recentLogins = overview.users.filter((user) => isRecent(user.lastSignInAt, 7)).length;
+  const monthlyLogins = overview.users.filter((user) => isRecent(user.lastSignInAt, 30)).length;
   const confirmedUsers = overview.users.filter((user) => user.confirmedAt).length;
+  const neverSignedIn = overview.users.filter((user) => !user.lastSignInAt).length;
+  const recentLoginUsers = overview.users
+    .filter((user) => user.lastSignInAt)
+    .sort((a, b) => new Date(b.lastSignInAt ?? 0).getTime() - new Date(a.lastSignInAt ?? 0).getTime())
+    .slice(0, 12);
 
   return (
     <div className="mx-auto max-w-6xl px-3 py-4 md:px-4 md:py-8">
@@ -312,21 +331,36 @@ export default async function AdminUsersPage() {
       <section aria-label="가입자 요약" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="조회된 가입자" value={`${overview.users.length}명`} detail={`${confirmedUsers}명 인증 완료`} tone={overview.users.length > 0 ? "ok" : "neutral"} Icon={Users} />
         <Stat label="최근 7일 가입" value={`${recentSignups}명`} detail="Auth created_at 기준" tone={recentSignups > 0 ? "ok" : "neutral"} Icon={UserCheck} />
+        <Stat label="오늘 로그인" value={`${todayLogins}명`} detail="KST 오늘 00:00 이후" tone={todayLogins > 0 ? "ok" : "neutral"} Icon={Clock3} />
         <Stat label="최근 7일 로그인" value={`${recentLogins}명`} detail="last_sign_in_at 기준" tone={recentLogins > 0 ? "ok" : "neutral"} Icon={Clock3} />
+        <Stat label="최근 30일 로그인" value={`${monthlyLogins}명`} detail="월간 활성 계정 근사치" tone={monthlyLogins > 0 ? "ok" : "neutral"} Icon={UserCheck} />
+        <Stat label="아직 로그인 없음" value={`${neverSignedIn}명`} detail="가입 후 로그인 이력 없음" tone={neverSignedIn > 0 ? "warn" : "neutral"} Icon={AlertTriangle} />
         <Stat label="출시 대기 신청" value={overview.waitlist.count === null ? "확인 필요" : `${overview.waitlist.count}건`} detail="waitlist 테이블 기준" tone={overview.waitlist.count && overview.waitlist.count > 0 ? "ok" : "neutral"} Icon={Mail} />
       </section>
 
-      <section aria-label="운영 안내" className="mt-5 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex items-start gap-2">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-300" aria-hidden="true" />
-          <div>
-            <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">보호 방식</h2>
-            <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+      <section aria-label="운영 안내" className="mt-5 grid gap-2 lg:grid-cols-2">
+        <InfoBlock
+          Icon={ShieldCheck}
+          title="보호 방식"
+          body={
+            <>
               이 화면은 `/admin` 미들웨어와 <code>ADMIN_EMAILS</code> 허용 목록으로 막고, 서버에서만 service role로 조회합니다.
               공개 화면이나 클라이언트 번들에는 가입자 목록과 service role 키가 노출되지 않습니다.
-            </p>
-          </div>
-        </div>
+            </>
+          }
+        />
+        <InfoBlock
+          Icon={ExternalLink}
+          title="전체 접속·페이지뷰"
+          body={
+            <>
+              이 화면의 로그인 수는 Supabase Auth 기준입니다. 비로그인 방문자, 페이지뷰, 유입 경로는 현재 Vercel Analytics 대시보드가 원본입니다.
+              관리자 화면 안에 익명 방문 로그까지 넣으려면 별도 이벤트 테이블/정책 설계가 필요합니다.
+            </>
+          }
+          href="https://vercel.com/analytics"
+          hrefLabel="Vercel Analytics 열기"
+        />
       </section>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
@@ -360,6 +394,23 @@ export default async function AdminUsersPage() {
               {overview.users.length > 50 ? (
                 <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">표는 최근 50명만 표시합니다.</p>
               ) : null}
+            </div>
+          )}
+        </Panel>
+
+        <Panel title="최근 로그인" desc="Auth last_sign_in_at 기준 최근 12명">
+          {recentLoginUsers.length === 0 ? (
+            <Empty>아직 로그인 이력이 있는 계정이 없습니다.</Empty>
+          ) : (
+            <div className="space-y-2">
+              {recentLoginUsers.map((user) => (
+                <div key={`login-${user.id}`} className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
+                  <p className="break-all text-sm font-medium text-zinc-900 dark:text-zinc-100">{user.email}</p>
+                  <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                    마지막 로그인 {formatKst(user.lastSignInAt)} · {user.providers}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
         </Panel>
@@ -473,6 +524,43 @@ function Panel({ title, desc, children }: { title: string; desc: string; childre
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="py-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{children}</p>;
+}
+
+function InfoBlock({
+  Icon,
+  title,
+  body,
+  href,
+  hrefLabel,
+}: {
+  Icon: typeof ShieldCheck;
+  title: string;
+  body: React.ReactNode;
+  href?: string;
+  hrefLabel?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex items-start gap-2">
+        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700 dark:text-zinc-300" aria-hidden="true" />
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">{title}</h2>
+          <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{body}</p>
+          {href && hrefLabel ? (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-[36px] items-center gap-2 rounded-md border border-zinc-300 px-2.5 text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+            >
+              {hrefLabel}
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function UsageCard({ metric }: { metric: UsageMetric }) {
