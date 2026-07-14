@@ -28,6 +28,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { commonCopy } from "../src/lib/i18n";
+import { todayCopy } from "../src/lib/copy/today";
 
 const ROOT = join(__dirname, "..");
 function read(rel: string): string {
@@ -139,11 +140,63 @@ check("self-test: import extractor finds a home section", selftestImports.has("F
 check("self-test: guard flags a prohibited section when present", selftestImports.has("FeatureCards") === true);
 check("self-test: guard ignores a section that is not prohibited", !selftestImports.has("HowItWorksSection"));
 
+// --- 6. /today is a returning-user change briefing, not a second home --------
+// Slice D (spec §7): /today leads with a change-first one-line summary, orders
+// content as summary → candidates+change → current-strength lists → disclosure
+// signals → data caveat, drops the home-duplicating how-to marketing (the routine
+// scan-order block and the candidate checklist), and — when no day-over-day delta
+// exists — labels the list as current strength instead of inventing a change.
+const todaySrc = read("src/components/today/TodayContent.tsx");
+
+// 6a. Change-first summary replaces the static product-intro headerDesc.
+check(
+  "today leads with a change-first summary (hasDeltas ? summaryWithDeltas : summaryNoDeltas)",
+  todaySrc.includes("t.summaryWithDeltas") && todaySrc.includes("t.summaryNoDeltas"),
+);
+check("today no longer renders the static product-intro headerDesc", !todaySrc.includes("t.headerDesc"));
+
+// 6b. How-to marketing duplicated from home is gone (routine scan-order + checklist).
+check("today drops the how-to routine scan-order block", !todaySrc.includes("t.routine"));
+check("today drops the candidate checklist marketing block", !todaySrc.includes("t.checklist"));
+
+// 6c. Honest current-strength fallback when there is no previous-day delta.
+check(
+  "today labels no-delta candidates as current strength (no fabricated change)",
+  todaySrc.includes("t.strengthFallbackNote") && todaySrc.includes("t.noChangeNote"),
+);
+
+// 6d. Spec §7 render order: summary → change → current-strength lists → disclosure → caveat.
+const iSummary = todaySrc.indexOf("t.summaryWithDeltas");
+const iChange = todaySrc.indexOf("t.changeTitle");
+const iStrength = todaySrc.indexOf("t.signalsStrengthNote");
+const iDisclosure = todaySrc.indexOf("t.disclosureHeading");
+const iCaveat = todaySrc.indexOf("t.sourceNote");
+check(
+  "today order: summary → change → current-strength lists → disclosure → caveat",
+  iSummary >= 0 && iChange > iSummary && iStrength > iChange && iDisclosure > iStrength && iCaveat > iDisclosure,
+);
+
+// 6e. The new change-briefing copy keys exist in both locales.
+const TODAY_KEYS = [
+  "summaryWithDeltas",
+  "summaryNoDeltas",
+  "strengthFallbackNote",
+  "noChangeNote",
+  "signalsStrengthNote",
+  "disclosureHeading",
+] as const;
+for (const locale of ["ko", "en"] as const) {
+  const c = todayCopy[locale] as Record<string, unknown>;
+  for (const key of TODAY_KEYS) {
+    check(`today copy.${key} (${locale}) is a non-empty string`, typeof c[key] === "string" && (c[key] as string).length > 0);
+  }
+}
+
 // --- result ------------------------------------------------------------------
 if (failed > 0) {
   console.error(`first-run-ux verification FAILED (${failed} check${failed === 1 ? "" : "s"})`);
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change)`,
 );

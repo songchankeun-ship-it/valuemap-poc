@@ -3682,3 +3682,17 @@
 - **화면 검증 한계**: headless 브라우저 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 섹션 제거(콘텐츠 감소)와 푸터 짧은 텍스트 2줄 추가뿐이라 가로 overflow/겹침 위험 낮음(레이아웃 폭 불변). 실기기 픽셀 확인은 오너 게이트로 남김.
 - **다음 진입점(Slice D)**: /today를 변화 중심으로 재구성 — 홈과 중복되는 서비스 소개 제거, 후보/공시/관심 변화 순서 정리, 변화 데이터 없을 때 현재 강점과 구분. 홈에서 제거한 공시 신호/시장 요약은 /today가 변화 관점으로 담당하는지 점검.
 - **커밋**: 로컬 [codex] first-run UX Slice C: trim home body to four regions (브랜치 ai-center/task-275-ornscore-first-run-ux-rebuild-c-remo). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice C"로 확인.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice D (/today 변화 중심 재구성) [codex]
+
+- **Scope**: 설계서 docs/ornscore-first-run-ux-rebuild-2026-07-14.md §18 Slice D + §7만. /today를 반복 방문자용 변화 브리핑으로 재구성. 홈과 중복되는 서비스 소개/사용법 마케팅 제거, 콘텐츠를 (1)오늘 한 줄 요약 (2)오늘 후보+전일 대비 변화 (3)관심종목 변화(데이터 있을 때만) (4)확인할 공시 신호 (5)데이터 주의 순서로 정렬. 전일 대비 델타가 없으면 '현재 강점' 기준임을 명시(가짜 변화 금지). 데이터 소스·점수 산식 무변경.
+- **변경(수정 3)**:
+  - src/lib/copy/today.ts — 변화 중심 카피 6키 신규(ko/en): summaryWithDeltas·summaryNoDeltas(첫 문장 = 오늘 한 줄 요약, hasDeltas로 분기)·strengthFallbackNote·noChangeNote(변화 없을 때 현재 강점 명시)·signalsStrengthNote(현재 강점 목록 캡션)·disclosureHeading("확인할 공시 신호"). 기존 headerDesc/routine/checklist 키는 미사용으로 남김(가역).
+  - src/components/today/TodayContent.tsx — 렌더 순서를 §7 5구간으로 재정렬. 구간1: 헤더 첫 문장을 정적 headerDesc → 변화 중심 summary로 교체 + 상태바 + 시장 KPI + 브리핑. 구간2: Top3 + (hasChangeRows면 오늘의 변화, 아니면 현재 강점 fallback 문구) + 현재 강점 기준 신호 목록 5종(종합·거래·밸류·추세·과열)에 "변화 아님" 캡션. 구간3: 관심종목 변화는 /today에 데이터 소스가 없어 의도적 생략(빈 카드 금지). 구간4: 공시 신호 전용 섹션(disclosureHeading). 구간5: 데이터 출처/주의. 제거: 오늘 확인 순서(routine, 홈 확인순서와 중복)·후보 체크리스트(checklist, 사용법 마케팅).
+  - scripts/verify-first-run-ux.ts — §6 today 변화 브리핑 가드 추가: 첫 문장 summary 분기·headerDesc 미렌더·routine/checklist 미렌더·현재 강점 fallback 존재·5구간 순서(summary→change→강점목록→disclosure→caveat)·신규 6키 ko/en 존재. PASS 메시지에 today 항목 추가.
+- **불변식**: public/data/*·stocks.json·점수식·metricsVersion·DART 수집·Supabase 스키마/RLS/OAuth·크론·배포·의존성·라우트 경로 무변경. /today 서버(page.tsx) 데이터 계산 무변경 — 표시 순서/카피만 클라이언트에서 재배치. 관심종목 변화 데이터 소스는 신규 추가하지 않음(Slice G/후속에서 다룰 여지).
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 3파일 U+FFFD 0 · verify-first-run-ux PASS(6 removed-section guard + today change-briefing) · npm run build 0(/today 10.3kB, 라우트 표 불변) · 로컬 prod :4837 verify:local --no-perf 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access). SSR /today 확인: h1=1 · 변화 요약 문장 present · "확인할 공시 신호" present · "현재 강점(점수·지표) 기준" 캡션 present · "오늘 확인 순서"/"후보를 볼 때 체크리스트"/"탐색 대시보드입니다"(정적 소개문) 부재. 서버는 시작한 :4837만 종료.
+- **화면 검증 한계**: headless 브라우저(puppeteer/playwright) 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 섹션 제거(2개)+순서 재배치+짧은 문구 교체라 레이아웃 폭 불변, 가로 overflow/겹침 위험 낮음으로 판단. 실기기 픽셀 확인은 오너 게이트로 남김.
+- **다음 진입점(Slice E)**: 종목 찾기/내비 명료화 — 발견→종목 찾기/찾기 라벨은 Slice A에서 이미 정렬됨. §8대로 /stocks 검색·결과수·프리셋·활성 필터의 시각 순서 정리와 0건 결과 회복 동선(조건 완화+초기화) 검증이 남음.
+- **커밋**: 로컬 [codex] first-run UX Slice D: rework /today into a change briefing (브랜치 ai-center/task-276-ornscore-first-run-ux-rebuild-d-make). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice D"로 확인.

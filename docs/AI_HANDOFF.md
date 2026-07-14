@@ -2881,3 +2881,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(6 guard) · build 0 · verify:local :4823 6/6 OK · SSR 홈 h1=1·제거4섹션 부재·유지 마커 존재. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트.
 - **다음(Slice D)**: /today 변화 중심 재구성(홈과 중복 서비스 소개 제거, 후보/공시/관심 변화 순서, 변화 데이터 없을 때 현재 강점과 구분).
 - **커밋**: 로컬 [codex] first-run UX Slice C: trim home body to four regions. push/main 무변경.
+
+
+### 2026-07-14 — 첫 방문 UX 대정리 Slice D: /today 변화 브리핑 재구성 ([codex])
+
+- **무엇**: 설계서 §7대로 /today를 반복 방문자용 변화 브리핑으로 재구성했다. 홈과 겹치던 서비스 소개/사용법(오늘 확인 순서 routine·후보 체크리스트 checklist)을 제거하고, 순서를 (1)오늘 한 줄 요약(변화 중심 첫 문장) (2)오늘 후보+전일 대비 변화 (3)관심종목 변화(데이터 있을 때만·현재 없음) (4)확인할 공시 신호 (5)데이터 주의로 고정했다. 전일 대비 델타가 없으면 후보 목록이 '변화'가 아니라 '현재 강점' 기준임을 요약 문장과 fallback 문구로 명시(가짜 전일 델타 금지).
+- **변경 파일(3)**: src/lib/copy/today.ts(변화 중심 카피 6키 ko/en 신규), src/components/today/TodayContent.tsx(렌더 순서 5구간 재정렬·routine/checklist/headerDesc 제거·현재 강점 fallback 추가·공시 전용 섹션 분리), scripts/verify-first-run-ux.ts(§6 today 변화 브리핑 정적 가드 6항목 추가).
+- **honest 원칙**: hasDeltas true → summaryWithDeltas + 오늘의 변화 칩(실제 델타). hasDeltas false → summaryNoDeltas + strengthFallbackNote("현재 강점 기준, 변화 아님"). hasDeltas true인데 유의미 변화 행이 없으면 noChangeNote. 현재 강점 기준 신호 목록(종합·거래·밸류·추세·과열)에는 signalsStrengthNote 캡션으로 "변화 아님" 표기.
+- **불변식**: 점수 산식·public/data/*·DART·Supabase·크론·배포·의존성·라우트 경로·/today 서버 데이터 계산 무변경. 관심종목 변화 데이터 소스는 신규 추가하지 않아 빈 카드 묶음을 노출하지 않음. headerDesc/routine/checklist 카피 키는 삭제하지 않고 미사용으로 남겨 가역성 확보.
+- **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0 · verify-first-run-ux PASS(today change-briefing 포함) · build 0 · verify:local :4837 6/6 OK · SSR /today h1=1·변화 요약/공시 헤딩/현재 강점 캡션 present·routine/checklist/정적 소개문 부재. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트.
+- **다음(Slice E)**: /stocks 첫 상태(검색·결과수·프리셋·활성 필터) 시각 순서 정리와 0건 결과 회복 동선 검증(§8).
+- **커밋**: 로컬 [codex] first-run UX Slice D: rework /today into a change briefing. push/main 무변경.

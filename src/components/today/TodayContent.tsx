@@ -228,13 +228,22 @@ export function TodayContent(props: TodayContentProps) {
   );
   const disclosureVMs = props.disclosure.map((d) => toVM(d.raw, t.reason.disclosureNote(d.signalLabel)));
 
+  // 전일 대비 실제 변화 행이 하나라도 있는지(가짜 변화 금지 — 없으면 '현재 강점' 문구로 구분).
+  const hasChangeRows =
+    props.hasDeltas &&
+    (props.newEntrants.length > 0 ||
+      props.dropouts.length > 0 ||
+      props.rankRisers.length > 0 ||
+      props.bigMovers.length > 0);
+
   return (
     <div className="space-y-5 md:space-y-7">
+      {/* ── 구간 1 · 오늘 한 줄 요약(변화 중심) ── */}
       <header className="border-b border-zinc-200 dark:border-zinc-800 pb-3 md:pb-4">
         <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">{t.eyebrow}</div>
         <h1 className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{today}</h1>
         <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2">
-          {t.headerDesc}
+          {props.hasDeltas ? t.summaryWithDeltas : t.summaryNoDeltas}
         </p>
         {props.isClosed ? (
           <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1.5">{t.closedNoticePrefix}<strong className="tabular-nums">{props.dataAsOf}</strong>{t.closedNoticeSuffix}</p>
@@ -244,56 +253,16 @@ export function TodayContent(props: TodayContentProps) {
         ) : null}
       </header>
 
-      {/* 1. 데이터 상태 바 (타 에이전트가 현지화) */}
+      {/* 데이터 상태 바 (타 에이전트가 현지화) */}
       <TodayStatusBar />
 
-      {/* 1.5 오늘 확인 순서 — 재방문 스캔 순서(1·2·3) 안내 */}
-      <section aria-label={t.routine.title} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
-        <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2">{t.routine.title}</div>
-        <ol className="flex flex-wrap gap-2">
-          {t.routine.items.map((item, i) => (
-            <li key={item.href}>
-              <Link
-                prefetch={false}
-                href={item.href}
-                className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-[12px] font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap"
-              >
-                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-bold tabular-nums shrink-0">{i + 1}</span>
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ol>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">{t.routine.note}</p>
-      </section>
-
-      {/* 2. 시장 요약 KPI 카드 */}
+      {/* 시장 요약 KPI 카드 */}
       <MarketSnapshotCards
         totalCount={props.totalCount}
         strongCount={props.strongCount}
         volumeSpikeCount={props.spikeCount}
         signalCount={props.signalCount}
       />
-
-      {/* 3. 오늘의 Top 3 */}
-      <TodayTopSection candidates={top3Candidates} />
-
-      {/* 4. 신호별 종목 섹션 */}
-      <section className="space-y-5 md:space-y-6">
-        <div className="flex items-baseline justify-between gap-2">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.signalsHeading}</h2>
-          <Link prefetch={false} href="/stocks" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap">
-            {t.exploreAll}
-          </Link>
-        </div>
-
-        <SignalSection title={t.sections.composite.title} caption={t.sections.composite.caption} items={compositeVMs} footnote={t.sections.composite.footnote} emptyText={t.sectionEmpty} />
-        <SignalSection title={t.sections.volume.title} caption={t.sections.volume.caption} items={volumeVMs} footnote={t.sections.volume.footnote} emptyText={t.sectionEmpty} />
-        <SignalSection title={t.sections.value.title} caption={t.sections.value.caption} items={valueVMs} footnote={t.sections.value.footnote} emptyText={t.sectionEmpty} />
-        <SignalSection title={t.sections.momentum.title} caption={t.sections.momentum.caption} items={momentumVMs} footnote={t.sections.momentum.footnote} emptyText={t.sectionEmpty} />
-        <SignalSection title={t.sections.overheated.title} caption={t.sections.overheated.caption} items={overheatedVMs} footnote={t.sections.overheated.footnote} emptyText={t.sectionEmpty} />
-        <SignalSection title={t.sections.disclosure.title} caption={t.sections.disclosure.caption} items={disclosureVMs} footnote={t.sections.disclosure.footnote} emptyText={t.sectionEmpty} />
-      </section>
 
       {/* 오늘의 브리핑 */}
       <section className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-100 dark:border-blue-900 rounded-lg p-3 md:p-4">
@@ -337,7 +306,10 @@ export function TodayContent(props: TodayContentProps) {
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">{t.breadthLine(props.breadthPct)}</p>
       </section>
 
-      {props.hasDeltas && (props.newEntrants.length > 0 || props.dropouts.length > 0 || props.rankRisers.length > 0 || props.bigMovers.length > 0) ? (
+      {/* ── 구간 2 · 오늘 후보와 전일 대비 변화 ── */}
+      <TodayTopSection candidates={top3Candidates} />
+
+      {hasChangeRows ? (
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
           <div className="flex items-center gap-1.5 mb-3">
             <span className="text-sm">🔔</span>
@@ -399,22 +371,40 @@ export function TodayContent(props: TodayContentProps) {
           ) : null}
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">{t.watchHint}</p>
         </section>
-      ) : null}
+      ) : (
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2">
+          {props.hasDeltas ? t.noChangeNote : t.strengthFallbackNote}
+        </p>
+      )}
 
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
-        <div className="flex items-center gap-1.5 mb-2">
-          <span className="text-sm">✅</span>
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.checklistTitle}</h2>
+      {/* 현재 강점 기준 후보 목록 — 전일 대비 변화가 아님을 캡션으로 구분 */}
+      <section className="space-y-5 md:space-y-6">
+        <div className="flex items-baseline justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.signalsHeading}</h2>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.signalsStrengthNote}</p>
+          </div>
+          <Link prefetch={false} href="/stocks" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0">
+            {t.exploreAll}
+          </Link>
         </div>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">{t.checklistDesc}</p>
-        <ul className="space-y-1.5 text-[12px] text-zinc-600 dark:text-zinc-300">
-          {t.checklist.map((item, i) => (
-            <li key={i} className="flex gap-2"><span className="text-blue-500 dark:text-blue-400 shrink-0 tabular-nums">{i + 1}.</span><span>{item.before}<strong className="text-zinc-800 dark:text-zinc-100">{item.strong}</strong>{item.after}</span></li>
-          ))}
-        </ul>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">{t.checklistNote}</p>
+
+        <SignalSection title={t.sections.composite.title} caption={t.sections.composite.caption} items={compositeVMs} footnote={t.sections.composite.footnote} emptyText={t.sectionEmpty} />
+        <SignalSection title={t.sections.volume.title} caption={t.sections.volume.caption} items={volumeVMs} footnote={t.sections.volume.footnote} emptyText={t.sectionEmpty} />
+        <SignalSection title={t.sections.value.title} caption={t.sections.value.caption} items={valueVMs} footnote={t.sections.value.footnote} emptyText={t.sectionEmpty} />
+        <SignalSection title={t.sections.momentum.title} caption={t.sections.momentum.caption} items={momentumVMs} footnote={t.sections.momentum.footnote} emptyText={t.sectionEmpty} />
+        <SignalSection title={t.sections.overheated.title} caption={t.sections.overheated.caption} items={overheatedVMs} footnote={t.sections.overheated.footnote} emptyText={t.sectionEmpty} />
       </section>
 
+      {/* ── 구간 3 · 관심종목 변화는 /today에 데이터 소스가 없어 의도적으로 생략(가짜 빈 카드 금지) ── */}
+
+      {/* ── 구간 4 · 확인할 공시 신호 ── */}
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.disclosureHeading}</h2>
+        <SignalSection title={t.sections.disclosure.title} caption={t.sections.disclosure.caption} items={disclosureVMs} footnote={t.sections.disclosure.footnote} emptyText={t.sectionEmpty} />
+      </section>
+
+      {/* ── 구간 5 · 데이터 기준/주의 사항 ── */}
       <section className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-3">
         {t.sourceNote}
       </section>
