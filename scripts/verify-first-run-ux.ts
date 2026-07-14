@@ -359,11 +359,82 @@ check(
   publicSeoSrc.includes('"/admin"'),
 );
 
+// --- 10. Full first-run journey re-authentication (spec §18, Slice H) --------
+// Slice H is the closeout audit: it re-authenticates the whole first-run journey
+// (home → find/candidate → detail → watchlist/compare → login/admin boundary) as
+// one contract instead of per-slice pieces. It freezes the four facts the closeout
+// records — the final home section count, the single home primary CTA, route-role
+// separation, and the owner-gate auth fallback wiring — so a later edit cannot
+// quietly re-inflate the home body, add a competing primary action, blur two route
+// roles, or unhook an /admin guard.
+
+// 10a. Final home section count: the home body renders exactly the four spec §6.2
+// regions (start area, candidate previews, verification-order, optional personal
+// routine) and no other @/components/home/* section.
+const EXPECTED_HOME_REGIONS = ["HomeHero", "TopCandidateSection", "MyStocksSection", "HomeDataSourceFooter"];
+function homeValueSections(src: string): Set<string> {
+  // value (non-type) component imports from @/components/home/*
+  const names = new Set<string>();
+  const re = /import\s+(type\s+)?\{([^}]*)\}\s+from\s+["']@\/components\/home\/[^"']+["']/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src))) {
+    if (m[1]) continue; // whole `import type { ... }` — types, not rendered sections
+    for (const raw of m[2].split(",")) {
+      const id = raw.trim();
+      if (!id || id.startsWith("type ")) continue; // inline `type X` specifier
+      names.add(id);
+    }
+  }
+  return names;
+}
+const renderedHomeSections = [...homeValueSections(pageSrc)].filter((n) => new RegExp(`<${n}[\\s/>]`).test(pageSrc));
+check(
+  "home renders exactly the four spec §6.2 regions (no extra or removed home section)",
+  renderedHomeSections.length === EXPECTED_HOME_REGIONS.length &&
+    EXPECTED_HOME_REGIONS.every((n) => renderedHomeSections.includes(n)),
+);
+
+// 10b. Single home primary CTA: the hero keeps exactly one primary action into
+// today's candidates, so no second CTA competes for the first-screen focus.
+check(
+  "home hero keeps exactly one primary CTA (single #today-candidates action)",
+  (heroSrc.match(/#today-candidates/g) ?? []).length === 1,
+);
+
+// 10c. Route-role separation: the home brand plus the five primary nav roles are
+// mutually distinct in visible copy, and home/today do not render each other's
+// primary surface (home is a start screen, /today a change briefing).
+for (const locale of ["ko", "en"] as const) {
+  const { brand, nav } = commonCopy[locale];
+  const roles = [brand, nav.today, nav.stocks, nav.watchlist, nav.disclosures, nav.compare];
+  check(`route roles are mutually distinct in copy (${locale})`, new Set(roles).size === roles.length);
+}
+check("home does not render the /today change-briefing surface", !pageSrc.includes("TodayContent"));
+check("/today does not render the home hero surface", !todaySrc.includes("HomeHero"));
+
+// 10d. Auth fallback wiring (static half of the runtime admin-access gate): the
+// owner-only guard redirects unauthenticated visitors to /login?next=…, and every
+// /admin page routes through it before rendering owner content.
+const adminAccessSrc = read("src/lib/adminAccess.ts");
+check(
+  "admin guard redirects unauthenticated visitors to /login?next=…",
+  adminAccessSrc.includes("redirect(") && adminAccessSrc.includes("/login?next="),
+);
+const ADMIN_PAGES = [
+  "src/app/admin/page.tsx",
+  "src/app/admin/status/page.tsx",
+  "src/app/admin/traffic/page.tsx",
+  "src/app/admin/users/page.tsx",
+];
+for (const rel of ADMIN_PAGES) {
+  check(`admin page "${rel}" routes through requireAdminAccess`, read(rel).includes("requireAdminAccess"));
+}
+
 // --- result ------------------------------------------------------------------
 if (failed > 0) {
   console.error(`first-run-ux verification FAILED (${failed} check${failed === 1 ? "" : "s"})`);
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup), watchlist/compare/login boundary (two empty-state actions, on-device vs login value, Supabase guard + escape links, /admin absent from public nav/SEO)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup), watchlist/compare/login boundary (two empty-state actions, on-device vs login value, Supabase guard + escape links, /admin absent from public nav/SEO), full-journey re-authentication (home = 4 regions, single primary CTA, 6 distinct route roles x2 locales, home↔today separation, admin auth-fallback wiring)`,
 );
