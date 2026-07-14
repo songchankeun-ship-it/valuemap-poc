@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T15:07:50.026Z
+Last updated: 2026-07-14T15:18:10.517Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 277 - ORNScore first-run UX rebuild E - clarify stock finding workflow
-- Run: 280
-- Status: completed
+- Task: 278 - ORNScore first-run UX rebuild F - clarify stock detail first action
+- Run: 281
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-15 - Codex - First-run UX rebuild Slice F: clarify stock detail first action (task 278)
+- **Context**: Implements only **Slice F** of `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` (§9.2/§9.3, §18). Fixes the deeper (below-conclusion) reading order on `/stock/[ticker]` to **evidence → recent change → disclosures → financial/value → chart/additional analysis** and removes top/summary duplication. Tabs are preserved for progressive disclosure. **No score/data/disclosure calculation changes** — render order/placement only. The prior run of this task (run 281) exited with code 1 leaving no code change; resumed from the tested HEAD (Slice E, `18839f0`). Branch `ai-center/task-278-ornscore-first-run-ux-rebuild-f-clar`.
+- **Changes (3 files)**:
+  - `src/app/stock/[ticker]/page.tsx` — reordered the `StockTabs` array from `summary → financials → disclosures → basis` to **`basis` (score basis / evidence, now the default/first tab) → `disclosures` → `financials` → `summary` (chart + beginner reading + checklist + metric detail + data basis)**, so the left-to-right tab order matches the spec §9.3 sequence. Moved the always-visible `<RecentChangeSummary>` (previously between hero and tabs) **into the `basis` tab, right after `<ScoreBasisBreakdown>`**, giving the exact order conclusion(hero) → evidence → recent change. Tab ids are unchanged, so the hero jump-nav (`#disclosures/#financials/#basis/#summary`) and hash deep-links still resolve. The price chart / additional analysis now lives in the last (`summary`) tab per §9.3 item 5.
+  - `src/components/BeginnerReading.tsx` — removed the duplicate conclusion headline block (`t.currentLabel` + `checklist.headline`) that restated the hero's "현재 이 종목은" conclusion card (spec §18 Slice F: remove top/summary duplication). Kept the unique confirm-order STEP cards and "특히 볼 것"; `checklist` is still used for the latter.
+  - `scripts/verify-first-run-ux.ts` — added a **§8 stock-detail order guard** to the slice regression contract: asserts the tab order (basis→disclosures→financials→summary), evidence-before-recent-change (`ScoreBasisBreakdown` precedes `RecentChangeSummary`, both before the disclosures tab), chart lives in the last tab (after the financials tab), and the beginner-reading duplicate headline is gone (`t.currentLabel` absent). Refreshed the PASS message.
+- **Invariants**: score formulas, `compositeScore`/metrics, `metricsVersion`, `public/data/*`, `stocks.json`, DART collection/pipeline, coverage, auth/providers/Supabase, cron, published settings, env, npm deps all unchanged. `StockTabs` sticky (`top-0 z-10`) position, container, tab ids, analytics `data-analytics-event`s, and `RecentChangeSummary` internal logic unchanged (only its render location moved).
+- **Validation**: `npx tsc --noEmit` 0 · `npx tsx scripts/verify-first-run-ux.ts` PASS (§1–§8 incl. the new stock-detail order guard) · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138 / 0 / 0 / Metrics 2.4 · `git diff --check` clean (CRLF only) · edited 3 files U+FFFD 0 · `npm run build` 0 (`/stock/[ticker]` SSG 138 paths, route table unchanged) · local prod 127.0.0.1:4837 `npm run verify:local -- --no-perf` real gates **6/6** (smoke `--all`, routes, stocks-seo, public-seo, login-preflight, admin-access; the smoke `/stock/034730` "상위" anchor still passes because the new default SSR tab `basis`/`ScoreBasisBreakdown` renders the top/bottom-percentile block). SSR HTML check of `/stock/034730`: exactly one rendered tabpanel (`tabpanel-basis`, the default), tab buttons in order `basis→disclosures→financials→summary`, and within tabpanel-basis `종합 점수 근거` (evidence) precedes `최근 변화` (EVIDENCE_BEFORE_CHANGE=True); inactive tab bodies not SSR-rendered. Temp server (listener PID 64236) taskkill `/T`'d, port 4837 closed (000); always-on AI Center (:4310) untouched.
+- **Commit**: single `[codex]` commit at the tip of branch `ai-center/task-278-ornscore-first-run-ux-rebuild-f-clar` (local only; not pushed; main untouched).
+- **Risks / next**: (1) **Mobile 390×844 / desktop 1440×900 pixel-fold & sticky-overlap inspection is unsupported locally** (no puppeteer/playwright; new deps forbidden) → owner gate. The 390×844 first-screen essentials (name, price, exploration score, one-line reason = top-strength/check-first, and a usable action = watchlist/compare/share) all live in the always-visible `StockConclusionHero`, and the tab sticky positioning is unchanged by this slice, so overlap behavior matches the prior tested state. (2) The default SSR tab changed from `summary` (chart) to `basis` (evidence); the spec §9.3 line "keep the default tab as summary" conflicts with its own numbered order (evidence first) and this task's explicit instruction ("evidence first, chart last") — resolved in favor of the task (evidence first). The `summary` tab label is left unchanged (i18n churn avoided). (3) **Next safe entry = Slice G** (§18): trim watchlist/compare empty-state actions & copy, distinguish logged-out local save vs. logged-in sync value, verify login-unconfigured/error/forbidden recovery paths, and confirm admin links are not exposed in public nav.
 
 ### 2026-07-14 - Codex - First-run UX rebuild Slice B: simplify HomeHero start area (task 274)
 - **Context**: Implements only **Slice B** of `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` (§6.3/§6.5/§6.6, §18). Collapses HomeHero into one start area: approved product definition (title) → short support copy → stock search → a single visually dominant primary action (today's candidates) → a textual all-stocks link → one short non-advisory sentence. Removes the desktop right-side duplicate candidate/KPI preview panel. Remaining home body sections are **not** removed in this slice (only code made unreachable solely by the deleted preview). Branch `ai-center/task-274-ornscore-first-run-ux-rebuild-b-simp` (HEAD `01ecc57`).

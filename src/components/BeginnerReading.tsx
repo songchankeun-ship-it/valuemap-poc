@@ -70,11 +70,8 @@ export function BeginnerReading({ s }: { s: StockShape }) {
         </div>
       </div>
 
-      {/* 헤드라인 — 점수 패턴 요약 */}
-      <div className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-md p-3 mb-3">
-        <div className="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-1.5 uppercase tracking-wider">{t.currentLabel}</div>
-        <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">{checklist.headline}</div>
-      </div>
+      {/* 상단 히어로의 결론 카드('현재 이 종목은' + 강점/확인할 점)가 종목 요약을 단일 소유한다.
+          여기서 같은 헤드라인을 반복하지 않고(설계서 §18 Slice F: 상단·요약 중복 제거) 확인 순서만 남긴다. */}
 
       {/* 먼저 확인할 것 — 점수 → 공시 → 재무 STEP 카드(설계서 §9.5·§3 번호 중복 제거). ol 자동 번호 대신 STEP n 단일 표기 */}
       <div className="rounded-md border border-blue-100 dark:border-blue-950 bg-blue-50/40 dark:bg-blue-950/20 p-3 mb-3">

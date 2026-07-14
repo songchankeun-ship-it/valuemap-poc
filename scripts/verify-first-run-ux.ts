@@ -229,11 +229,54 @@ check(
   stocksSrc.includes("showMobilePresets") && stocksSrc.includes('id="question-presets"') && stocksSrc.includes("lg:grid"),
 );
 
+// --- 8. Stock detail leads with the deeper order (spec §9.3, Slice F) --------
+// Slice F: after the conclusion hero, the deeper content is ordered
+// evidence → recent change → disclosures → financial/value → chart/additional,
+// with the tabs preserved for progressive disclosure. Freeze that order so a
+// later edit can't silently shuffle the score-basis tab back behind the chart or
+// detach the recent-change summary from the evidence it explains. Also guard the
+// top/summary de-duplication (the beginner reading must not restate the hero's
+// "현재 이 종목은" conclusion headline).
+const detailSrc = read("src/app/stock/[ticker]/page.tsx");
+const iBasisTab = detailSrc.indexOf('id: "basis"');
+const iDisclosuresTab = detailSrc.indexOf('id: "disclosures"');
+const iFinancialsTab = detailSrc.indexOf('id: "financials"');
+const iSummaryTab = detailSrc.indexOf('id: "summary"');
+check(
+  "stock detail tab order is basis → disclosures → financials → summary (evidence first, chart last)",
+  iBasisTab >= 0 && iDisclosuresTab > iBasisTab && iFinancialsTab > iDisclosuresTab && iSummaryTab > iFinancialsTab,
+);
+
+// Evidence (ScoreBasisBreakdown) precedes the recent-change summary, and the
+// recent-change summary sits inside the (default) basis tab — before disclosures.
+const iScoreBasis = detailSrc.indexOf("<ScoreBasisBreakdown");
+const iRecentChange = detailSrc.indexOf("<RecentChangeSummary");
+check(
+  "stock detail places recent change right after the score basis (evidence → recent change)",
+  iScoreBasis >= 0 && iRecentChange > iScoreBasis && iRecentChange < iDisclosuresTab,
+);
+
+// Chart / additional analysis is the last depth: it lives in the summary tab,
+// after the financials tab in source order.
+const iChart = detailSrc.indexOf("<StockPriceChartLazy");
+check(
+  "stock detail keeps the price chart in the last (summary) tab, not the landing depth",
+  iChart >= 0 && iChart > iFinancialsTab,
+);
+
+// Top/summary de-duplication: the beginner reading no longer restates the hero
+// conclusion headline (copy.currentLabel).
+const beginnerSrc = read("src/components/BeginnerReading.tsx");
+check(
+  "beginner reading drops the duplicate hero conclusion headline (t.currentLabel)",
+  !beginnerSrc.includes("t.currentLabel"),
+);
+
 // --- result ------------------------------------------------------------------
 if (failed > 0) {
   console.error(`first-run-ux verification FAILED (${failed} check${failed === 1 ? "" : "s"})`);
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets)`,
+  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup)`,
 );

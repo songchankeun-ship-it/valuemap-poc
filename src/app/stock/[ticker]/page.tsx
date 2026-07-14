@@ -538,16 +538,59 @@ export default async function StockDetailPage({ params }: PageProps) {
         leadCheck={leadCheckSignal}
       />
 
-      <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
-
+      {/* Slice F(설계서 §9.3): 결론(히어로) 다음의 '더 깊은 순서'를 근거 → 최근 변화 → 공시 →
+          재무/밸류 → 차트/추가 분석으로 고정한다. 탭은 점진적 공개 수단으로 유지하되 좌→우 순서를
+          이 순서에 맞춰 재배열하고(점수 근거가 기본/첫 탭), 항상 노출되던 '최근 변화' 요약은 근거 바로
+          뒤(점수 근거 탭 내부)로 옮겨 근거→변화 순서를 지킨다. 점수·데이터·공시 계산은 무변경. */}
       <StockTabs
         tabs={[
+          {
+            id: "basis",
+            labelKey: "basis",
+            content: (
+              <>
+      <DataWarningsBanner warnings={dataWarnings} />
+
+      {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2). 결론 다음 첫 깊이 = 근거 */}
+      <ScoreBasisBreakdown basis={scoreBasis} />
+
+      {/* 최근 변화 — 근거 바로 뒤(설계서 §9.3 순서 2). 점수·거래활성도·가격·공시 변화 요약. */}
+      <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
+
+      {scoreHistory.length > 0 ? (
+        <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
+      ) : null}
+      <section><StockEventTimelineLazy ticker={s.ticker} scores={scoreHistory} /></section>
+              </>
+            ),
+          },
+          {
+            id: "disclosures",
+            labelKey: "disclosures",
+            content: (
+              <>
+      <section><StockDisclosuresLazy ticker={s.ticker} /></section>              </>
+            ),
+          },
+          {
+            id: "financials",
+            labelKey: "financials",
+            content: (
+              <FinancialsSection
+                per={s.per}
+                pbr={s.pbr}
+                roe={s.roe}
+                dividendYield={s.dividendYield}
+                themes={s.themes}
+              />
+            ),
+          },
           {
             id: "summary",
             labelKey: "summary",
             content: (
               <>
-      {/* 주가 차트 (가격 데이터 있을 때만) */}
+      {/* 주가 차트 (가격 데이터 있을 때만) — 설계서 §9.3 순서 5: 차트/추가 분석은 마지막 깊이 */}
       {priceHistory && priceHistory.points.length >= 2 ? (
         <>
           <StockPriceChartLazy ticker={s.ticker} name={s.name} points={priceHistory.points} />
@@ -557,7 +600,8 @@ export default async function StockDetailPage({ params }: PageProps) {
         </>
       ) : null}
 
-      {/* 초보자 해석 — 설계서 5-3/5-4: 요약 탭 첫 화면에서 '현재 해석 → 먼저 확인할 것'이 먼저 읽히게 차트 바로 뒤로 승격 */}
+      {/* 초보자 해석 — 확인 순서(점수 → 공시 → 재무) 가이드. 상단 히어로가 '현재 이 종목은' 결론을
+          소유하므로 여기서는 중복 헤드라인을 빼고(설계서 §18 Slice F: 상단·요약 중복 제거) 확인 순서만 남긴다. */}
       <BeginnerReading s={{
         momentum: s.momentum,
         flow: s.flow,
@@ -618,44 +662,6 @@ export default async function StockDetailPage({ params }: PageProps) {
         formulaVersion={dataStatus.metricsVersionLabel}
       />
 
-              </>
-            ),
-          },
-          {
-            id: "financials",
-            labelKey: "financials",
-            content: (
-              <FinancialsSection
-                per={s.per}
-                pbr={s.pbr}
-                roe={s.roe}
-                dividendYield={s.dividendYield}
-                themes={s.themes}
-              />
-            ),
-          },
-          {
-            id: "disclosures",
-            labelKey: "disclosures",
-            content: (
-              <>
-      <section><StockDisclosuresLazy ticker={s.ticker} /></section>              </>
-            ),
-          },
-          {
-            id: "basis",
-            labelKey: "basis",
-            content: (
-              <>
-      <DataWarningsBanner warnings={dataWarnings} />
-
-      {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2) */}
-      <ScoreBasisBreakdown basis={scoreBasis} />
-
-      {scoreHistory.length > 0 ? (
-        <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
-      ) : null}
-      <section><StockEventTimelineLazy ticker={s.ticker} scores={scoreHistory} /></section>
               </>
             ),
           },
