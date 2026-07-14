@@ -20,6 +20,7 @@
     "verify:admin-access": "node scripts/verify-admin-access.mjs",
     "verify:route-analytics": "tsx scripts/verify-route-analytics.ts",
     "verify:click-analytics": "tsx scripts/verify-click-analytics.ts",
+    "verify:admin-traffic-metrics": "tsx scripts/verify-admin-traffic-metrics.ts",
     "test:freshness": "tsx scripts/test_freshness.ts",
     "test:compare": "tsx scripts/test_compare_query.ts",
     "test:price-summary": "tsx scripts/test_priceSummary.ts",

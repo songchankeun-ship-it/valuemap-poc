@@ -66,6 +66,7 @@
 - 장점: (A)+(B)를 한 화면에. 자체 보존 부담 없음(캐시만).
 - 필요 조건(전부 오너 게이트): 벤더 API 토큰(새 env·계정 권한), 새 서버 라우트, 레이트리밋·에러 폴백 설계, 캐시 TTL. → **새 API 라우트·외부 계정 작업이라 이 배치 범위 밖.**
 - 리스크: 벤더 API 스키마 의존·비용·요율 한도. 토큰 유출 시 트래픽 데이터 노출.
+- **선구현된 타입 경계(외부 호출 0)**: 옵션 C로 갈 때 재설계 없이 어댑터 1개만 구현하면 되도록 `src/lib/adminTrafficMetrics.ts`에 미래 대시보드의 타입 경계가 이미 고정돼 있다 — `TrafficMetricsProvider` 어댑터 인터페이스(`getSummary(window)` 비동기), `TrafficMetricsResult` 판별 유니온(`ready`/`not_configured`/`unavailable`), 요약 shape(`routeViews`는 `ROUTE_KINDS`에서 파생), 4단계 런치 퍼널(`FUNNEL_STAGE_DEFS`). 기본 제공자 `notConfiguredTrafficMetricsProvider`는 **호출 0으로 항상 `not_configured` 빈-상태**를 돌려주므로, 대시보드 셸을 먼저 붙여도 외부 의존이 생기지 않는다(오늘의 로컬 현실 = 빈 상태). `scripts/verify-admin-traffic-metrics.ts`가 이 경계를 이벤트 맵·`ROUTE_KINDS`와 정합 검증(gate: `npm run verify:admin-traffic-metrics`, release-preflight 오프라인 게이트에 포함). 실제 벤더 풀·토큰·라우트·캐시 TTL은 여전히 오너 게이트.
 
 ### 옵션 D — 자체 이벤트 테이블 (최대 비용·최대 책임)
 - Supabase에 익명 페이지뷰/유입 이벤트 테이블을 신설하고 우리가 직접 적재·집계.
