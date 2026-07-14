@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] finish admin report-triage summary on /admin/status (task 270-D)
+- **Scope**: task 270의 직전 실행이 코드 1로 실패(AI_HANDOFF 관리블록 참조)하며 `src/app/admin/status/page.tsx`를 **깨진 WIP**로 남김 — 소유자 전용 신고 트리아지 요약(미처리 배지·상태별 카운트·분류별 카운트·트리아지 정렬 표)을 넣다 말아 (a) 신고 패널 `<>` 프래그먼트 미닫힘, (b) 정의 안 된 `StatusCount` 참조, (c) `triagedReports` 계산했으나 표는 여전히 미정렬 `reports`를 매핑 → `tsc` JSX 오류 4건. 이 슬라이스는 **그 WIP를 동작하는 소유자 전용 로컬 개선으로 완성**. 라이브 쓰기 액션·신규 데이터 조회 0 — 전부 이미 조회한 `reports` 행에서 파생. 점수식·`compositeScore`·`metricsVersion`·`public/data/*`·auth/제공자·cron·게시 설정 무변경. 브랜치 `ai-center/task-270-ornscore-launch-hardening-2026-07-14`.
+- **Changes** (1 파일 `src/app/admin/status/page.tsx`):
+  - 신고 패널 `<>…</>` 프래그먼트를 닫음(삼항 종료 앞에 누락된 `</>` 추가) → 패널 컴파일 회복.
+  - 누락된 `StatusCount` 컴포넌트 정의 — `REPORT_STATUS_META` 뱃지 색을 재사용한 상태별 집계 칩, 0건은 흐리게(`opacity-45`)해 "없음"이 한눈에. 4개 정규 상태는 항상 렌더(레이아웃 안정), 미지의 코드는 뒤에 덧붙임.
+  - 표를 미정렬 `reports` 대신 트리아지 정렬 `triagedReports`로 매핑(미처리 new→reviewing 먼저, 이후 resolved→dismissed; 그룹 내 접수일 내림차순은 쿼리 `order(desc)`+안정 정렬로 보존).
+  - 종료(resolved/dismissed) 행은 `opacity-55`로 흐리게 → 상단 미처리 그룹이 시각 블록으로 도드라짐.
+- **불변식**: 읽기 전용·소유자 게이트(`requireAdminAccess`) 페이지의 가드·데이터 조회 무변경. `loadReports`는 여전히 `ADMIN_ENABLED=1` 게이트 뒤. 신규 Supabase 쿼리·쓰기/상태 전이 액션 무추가. 상태 전이는 여전히 문서화된 **소유자 게이트**(Supabase `data_reports.status` 직접 갱신; 절차 `docs/ornscore-admin-report-triage-workflow.md`) — 설계상 인앱 미구현.
+- **Validation**: `npx tsc --noEmit` 0(직전 JSX 오류 4건 해소) · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 파일 U+FFFD 0 · `npm run build` 0(`/admin/status` 여전히 dynamic ƒ, 라우트 표 불변) · 로컬 prod 127.0.0.1:4493 `npm run verify:local -- --no-perf` real gates **6/6**(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access — `/admin/status` 여전히 307→`/login?next=%2Fadmin%2Fstatus`). 임시 next 서버(PID 59124) taskkill 종료·포트 4493 닫힘 확인, 상시 AI Center(:4310) 무중단.
+- **Commit**: 브랜치 `ai-center/task-270-ornscore-launch-hardening-2026-07-14` 팁의 단일 `[codex]` 커밋(로컬만·push 미수행·main 무변경).
+- **Risks / next**: 이미 조회한 행 위의 표현 전용 — 신규 실패 표면·조회·쓰기 0. 요약+정렬은 `ADMIN_ENABLED=1`이고 `data_reports`가 행을 반환할 때만 실체화되므로 실 Supabase 세션 없이는 운영자 뷰를 로컬 검증 불가(소유자 게이트). 다음 안전 진입점: 인앱 상태 전이가 필요해지면 클라이언트 액션이 아니라 **소유자 게이트**된 인증 뮤테이션(POST + `requireAdminAccess` + RLS)으로 추가해야 함 — 현재는 `docs/ornscore-admin-report-triage-workflow.md`에 문서화, 의도적으로 범위 밖.
+
 ## 2026-07-14 - [codex] add local verifier for public SEO surface (task 267)
 - **Scope**: 릴리스 프리플라이트에서 **공개 크롤 표면**(사이트 전역 `/sitemap.xml` + `/robots.txt`)이 의도한 계약대로 방출됨을 자동 증명하는 로컬 검증 경로 1건 추가. 기존 `verify:stocks-seo`는 페이지별 `<head>` robots/canonical만 보고, 두 사이트 전역 크롤 제어 파일은 어떤 게이트도 파싱하지 않던 공백을 메움. 소스 앱 코드 0 변경(신규 스크립트 1 + npm 커맨드 1 + `verify:local` 오케스트레이터 배선). 점수식·`compositeScore`·`metricsVersion`·`public/data/*`·auth/제공자·cron·게시 설정 무변경. **라이브 Search Console/크롤 툴 호출 없음**(로컬 서버만 페치). 브랜치 `ai-center/task-267-ornscore-launch-hardening-2026-07-14`.
 - **Changes** (신규 1 + 편집 2):

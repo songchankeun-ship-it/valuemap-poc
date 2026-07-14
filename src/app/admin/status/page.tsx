@@ -102,6 +102,35 @@ export default async function AdminStatusPage() {
   const sc = dataStatus.selfCheck;
   const { rows: reports, note: reportNote } = await loadReports();
 
+  // triage 정렬·집계 — 이미 조회한 rows에서만 파생(추가 조회·쓰기 없음).
+  // 표는 미처리(new→reviewing) 먼저, 종료(resolved→dismissed) 뒤. 그룹 내 접수일 내림차순은
+  // 쿼리 order(desc)가 안정 정렬로 보존된다(V8 Array.sort는 stable).
+  const STATUS_TRIAGE_ORDER: Record<string, number> = { new: 0, reviewing: 1, resolved: 2, dismissed: 3 };
+  const triagedReports = [...reports].sort(
+    (a, b) => (STATUS_TRIAGE_ORDER[a.status] ?? 9) - (STATUS_TRIAGE_ORDER[b.status] ?? 9),
+  );
+  const statusCounts = reports.reduce<Record<string, number>>((acc, r) => {
+    acc[r.status] = (acc[r.status] ?? 0) + 1;
+    return acc;
+  }, {});
+  const categoryCounts = reports.reduce<Record<string, number>>((acc, r) => {
+    acc[r.category] = (acc[r.category] ?? 0) + 1;
+    return acc;
+  }, {});
+  const openReportCount = (statusCounts.new ?? 0) + (statusCounts.reviewing ?? 0);
+  // 상태 뱃지는 4단계 고정 순서로 항상 노출(0건도) → 레이아웃 안정. 미지의 코드는 뒤에 덧붙임.
+  const CANONICAL_STATUS_ORDER = ["new", "reviewing", "resolved", "dismissed"];
+  const statusSummary = [
+    ...CANONICAL_STATUS_ORDER,
+    ...Object.keys(statusCounts).filter((s) => !CANONICAL_STATUS_ORDER.includes(s)),
+  ];
+  // 분류는 존재하는 것만, 사용자 폼과 동일한 어휘 순서로.
+  const CANONICAL_CATEGORY_ORDER = ["price", "financial", "disclosure", "score", "sector", "other"];
+  const categorySummary = [
+    ...CANONICAL_CATEGORY_ORDER.filter((c) => categoryCounts[c]),
+    ...Object.keys(categoryCounts).filter((c) => !CANONICAL_CATEGORY_ORDER.includes(c)),
+  ];
+
   return (
     <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 space-y-6">
       <header>
@@ -142,18 +171,48 @@ export default async function AdminStatusPage() {
         )}
       </Panel>
 
-      <Panel title={`접수된 데이터 오류 신고 (${reports.length})`} desc="data_reports 최근 50건">
+      <Panel title={`접수된 데이터 오류 신고 (${reports.length})`} desc="data_reports 최근 50건 · 미처리(신규·확인 중) 우선 정렬">
         {reportNote ? (
           <Empty>{reportNote}</Empty>
         ) : reports.length === 0 ? (
           <Empty>접수된 신고가 없습니다.</Empty>
         ) : (
-          <div
-            role="region"
-            aria-label="데이터 오류 신고 목록 (가로 스크롤)"
-            tabIndex={0}
-            className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
-          >
+          <>
+            <div className="mb-3 space-y-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span
+                  className={
+                    "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold " +
+                    (openReportCount > 0
+                      ? "border-amber-300 bg-amber-100 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+                      : "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300")
+                  }
+                >
+                  {openReportCount > 0 ? `미처리 ${openReportCount}건` : "미처리 없음"}
+                </span>
+                <span aria-hidden="true" className="text-zinc-300 dark:text-zinc-600">·</span>
+                {statusSummary.map((s) => (
+                  <StatusCount key={s} status={s} count={statusCounts[s] ?? 0} />
+                ))}
+              </div>
+              {categorySummary.length > 0 && (
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                  <span className="font-medium">분류별</span>
+                  {categorySummary.map((c) => (
+                    <span key={c} className="whitespace-nowrap">
+                      {REPORT_CATEGORY_LABELS[c] ?? c}{" "}
+                      <span className="tabular-nums font-semibold text-zinc-700 dark:text-zinc-300">{categoryCounts[c]}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div
+              role="region"
+              aria-label="데이터 오류 신고 목록 (가로 스크롤)"
+              tabIndex={0}
+              className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+            >
             <table className="min-w-[560px] w-full text-left text-xs">
               <caption className="sr-only">접수된 데이터 오류 신고: 접수일, 분류, 종목, 내용, 상태</caption>
               <thead className="text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
@@ -166,8 +225,15 @@ export default async function AdminStatusPage() {
                 </tr>
               </thead>
               <tbody className="text-zinc-700 dark:text-zinc-300 align-top">
-                {reports.map((r) => (
-                  <tr key={r.id} className="border-b border-zinc-100 dark:border-zinc-800">
+                {triagedReports.map((r) => (
+                  <tr
+                    key={r.id}
+                    className={
+                      "border-b border-zinc-100 dark:border-zinc-800 " +
+                      // 종료(처리완료·반려) 행은 흐리게 → 상단의 미처리 그룹이 시각적으로 도드라짐.
+                      (r.status === "resolved" || r.status === "dismissed" ? "opacity-55" : "")
+                    }
+                  >
                     <td className="py-1.5 pr-3 whitespace-nowrap tabular-nums">{r.created_at?.slice(0, 10)}</td>
                     <td className="py-1.5 pr-3 whitespace-nowrap">{REPORT_CATEGORY_LABELS[r.category] ?? r.category}</td>
                     <td className="py-1.5 pr-3 whitespace-nowrap">{r.ticker ?? "—"}</td>
@@ -177,7 +243,8 @@ export default async function AdminStatusPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
         <div className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-3">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -235,6 +302,18 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${cls}`}>
       {meta?.label ?? status}
+    </span>
+  );
+}
+
+// 상태별 집계 칩 — 뱃지 색은 StatusBadge와 동일 어휘. 0건은 흐리게 표시해 "없음"을 한눈에.
+function StatusCount({ status, count }: { status: string; count: number }) {
+  const meta = REPORT_STATUS_META[status];
+  const cls = meta?.badge ?? "border-zinc-200 bg-zinc-50 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium ${cls} ${count === 0 ? "opacity-45" : ""}`}>
+      {meta?.label ?? status}
+      <span className="tabular-nums font-semibold">{count}</span>
     </span>
   );
 }

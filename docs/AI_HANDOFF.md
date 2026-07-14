@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T09:27:47.218Z
+Last updated: 2026-07-14T09:29:50.350Z
 Project: OrnScore
 Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 269 - ORNScore launch hardening 2026-07-14 C - release verification command consolidation
-- Run: 271
-- Status: completed
+- Task: 270 - ORNScore launch hardening 2026-07-14 D - admin report triage operator polish
+- Run: 272
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,18 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Codex - Finish admin report-triage summary on /admin/status (task 270-D)
+- **Context**: The prior run of task 270 exited with code 1 (see managed block above) and left `src/app/admin/status/page.tsx` in a **broken WIP** state in the worktree: it introduced a triage summary (open-count badge, per-status counts, per-category counts, triage-sorted table) but (a) left the JSX report `<>` fragment unclosed, (b) referenced a `StatusCount` component that was never defined, and (c) computed `triagedReports` but still mapped the unsorted `reports` in the table — so `tsc` failed with 4 JSX errors. This slice **completes that WIP into a working, owner-only local improvement**. No new live write actions, no new data reads — everything is derived from the already-fetched `reports` rows. Score formulas / `compositeScore` / `metricsVersion` / `public/data/*` / auth / providers / cron / published settings all unchanged. Branch `ai-center/task-270-ornscore-launch-hardening-2026-07-14`.
+- **Changes** (1 file, `src/app/admin/status/page.tsx`):
+  - Closed the report-panel `<>…</>` fragment (added the missing `</>` before the ternary close) so the panel compiles.
+  - Defined the missing `StatusCount` component — a per-status chip reusing `REPORT_STATUS_META` badge colors, dimmed (`opacity-45`) at count 0 so "none" reads at a glance. The 4 canonical statuses always render (stable layout), unknown codes appended.
+  - Table now maps the triage-sorted `triagedReports` (unprocessed new→reviewing first, then resolved→dismissed; within-group recency preserved by the query's `order(desc)` + stable sort) instead of the raw `reports`.
+  - Closed (resolved/dismissed) rows render at `opacity-55` so the unprocessed group at the top stands out as a visual block.
+- **Invariants**: read-only, owner-gated (`requireAdminAccess`) page unchanged in its guard and its data reads; `loadReports` still gated behind `ADMIN_ENABLED=1`; no new Supabase query, no write/status-transition action added. Status transitions remain a documented **owner gate** (Supabase `data_reports.status` direct update; procedure in `docs/ornscore-admin-report-triage-workflow.md`) — not implemented in-app by design.
+- **Validation**: `npx tsc --noEmit` 0 (was 4 JSX errors) · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138 / 0 / 0 / Metrics 2.4 · `git diff --check` clean (CRLF only) · U+FFFD scan 0 on the edited file · `npm run build` 0 (`/admin/status` still dynamic ƒ, route table unchanged) · local prod 127.0.0.1:4493 `npm run verify:local -- --no-perf` real gates **6/6** (smoke, routes, stocks-seo, public-seo, login-preflight, admin-access — `/admin/status` still 307→`/login?next=%2Fadmin%2Fstatus`). Temp next server (PID 59124) taskkill'd, port 4493 confirmed closed; always-on AI Center (:4310) untouched.
+- **Commit**: single `[codex]` commit at the tip of branch `ai-center/task-270-ornscore-launch-hardening-2026-07-14` (local only; not pushed; main unchanged).
+- **Risks / next entry point**: Presentation-only over already-fetched rows — no new failure surface, no reads/writes added. The summary + sort only materialize when `ADMIN_ENABLED=1` and `data_reports` returns rows, so the operator view can't be verified locally without a real Supabase session (owner gate). Safe next step: if in-app status transitions are ever wanted, they must be added as an **owner-gated** authenticated mutation (POST + `requireAdminAccess` + RLS), not a client action — currently documented in `docs/ornscore-admin-report-triage-workflow.md` and intentionally out of scope here.
 
 ### 2026-07-14 - Codex - Add local verifier for public SEO surface (task 267)
 - **Context**: Added one local-only release gate proving the **public crawl surface** (site-wide `/sitemap.xml` + `/robots.txt`) is emitted as intended for the ORNScore launch. `verify:stocks-seo` already covers per-page `<head>` robots/canonical, but no gate parsed the two site-wide crawl-control files — this fills that gap. Zero source app changes (1 new script + 1 npm command + `verify:local` wiring). No changes to score formulas / `compositeScore` / `metricsVersion` / `public/data/*` / auth / providers / cron / published settings / `sitemap.ts` / `robots.ts`. **No live Search Console / crawl tool** — fetches the local server only. Branch `ai-center/task-267-ornscore-launch-hardening-2026-07-14`.
