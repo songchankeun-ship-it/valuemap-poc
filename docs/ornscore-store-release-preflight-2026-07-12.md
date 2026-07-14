@@ -49,18 +49,21 @@ These are not automation tasks until the owner provides the real external inputs
 
 Run these from `C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc` after the owner-only asset/signing inputs are present and before requesting a public release.
 
+The canonical, one-command code-gate sequence lives in `npm run release:preflight` (typecheck → metrics verifier → route-analytics → click-analytics → build, then route-health via `verify:local` when `--base` is supplied). See README §0 for the full two-phase flow. Use it instead of remembering the individual gates:
+
 ```powershell
 git status --short
-npm run app:check
-npx tsc --noEmit
-$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'; python scripts\verify_metrics.py
-npm run build
+npm run app:check                                   # store/TWA packaging (this doc's path)
+npm run release:preflight                            # offline gates + build (no server)
+# then start a prod server on a dedicated high port (NOT 3000 / NOT 4310) and add route-health:
+npx next start -p 4478
+npm run release:preflight -- --base http://127.0.0.1:4478 --no-perf
 git diff --check
 ```
 
 If a local production server is started for route checks, stop only the exact listener process for that port afterward.
 
-Recommended local release smoke once a prod server is up:
+The route-health step above already runs `verify:local` (smoke + verify:routes + stocks-seo + public-seo + login-preflight + admin-access). To run just that aggregator against an already-running server:
 
 ```powershell
 npm run verify:local -- --base http://127.0.0.1:<port> --no-perf

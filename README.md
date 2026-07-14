@@ -29,6 +29,30 @@ API 키 없으면 `public/disclosure-samples/`의 사전 생성 샘플로 폴백
 
 ---
 
+## 0. 출시 전 로컬 프리플라이트 (release preflight)
+
+배포를 승인/요청하기 **전에 로컬에서 딱 이 순서**만 통과시키면 됩니다. 개별 게이트(tsc·지표 검증·애널리틱스 계약·빌드·라우트 헬스)를 하나씩 기억하지 말고, `release:preflight` 한 명령으로 묶어 실행합니다. **로컬 전용·결정적**이며 서버를 절대 직접 띄우거나 종료하지 않습니다(상시 AI Center :4310 보호). push/deploy/라이브 호출도 하지 않습니다.
+
+```powershell
+# 1단계 — 오프라인 게이트 + 빌드 (서버 불필요):
+#   typecheck → verify:metrics(python) → verify:route-analytics → verify:click-analytics → build
+npm run release:preflight
+
+# 2단계 — 방금 빌드로 전용 하이포트(3000/4310 금지) prod 서버를 직접 띄운 뒤,
+#   --base 를 붙여 재실행하면 라우트 헬스(verify:local)까지 포함됩니다.
+#   verify:local = smoke:check --all · verify:routes · stocks-seo · public-seo
+#                  · login-preflight · admin-access(오너 전용 라우트 접근)
+npx next start -p 4478
+npm run release:preflight -- --base http://127.0.0.1:4478 --no-perf
+# → 끝나면 방금 띄운 그 리스너만 종료. 전체 초록이면 로컬 프리플라이트 완료.
+```
+
+- `--base` 를 주면 서버가 이미 빌드·기동됐다는 뜻이라 `build` 는 자동 생략(강제하려면 `--build`).
+- 어떤 실게이트든 실패하면 exit 1. `--base` 없이 실행하면 오프라인 게이트만 통과 후 "ROUTE-HEALTH: NOT RUN" 다음 단계 안내를 출력(절반만 돈 걸 완료로 착각 방지).
+- 지표 검증만 별도로: `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py`. 스토어/TWA 제출 경로 체크리스트는 `docs/ornscore-store-release-preflight-2026-07-12.md`.
+
+---
+
 ## 1. 빠른 시작 (5분)
 
 ```bash
@@ -179,4 +203,4 @@ const result = computeStockMetrics({
 
 ## 8. 배포 권장 스택
 
-| 컴포넌트 | 추천 | 비�
+| 컴포넌트 | 추천 | 비�
