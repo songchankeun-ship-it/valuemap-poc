@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseBrowserConfigured } from "@/lib/supabase/client";
 import {
   enabledOAuthProviders,
   plannedProviders,
@@ -53,6 +53,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const { locale } = useLanguage();
   const copy = loginCopy[locale];
+  const supabaseConfigured = isSupabaseBrowserConfigured();
   // next 는 URL 에서 온 조작 가능 입력 → 내부 경로만 허용(open-redirect 방지).
   // 뒤로가기 링크·OAuth/이메일 redirectTo 모두 이 정규화된 값에서 파생된다.
   const next = safeInternalPath(searchParams.get("next"));
@@ -81,6 +82,15 @@ function LoginForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabaseConfigured) {
+      setStatus("error");
+      setErrorMsg(
+        locale === "ko"
+          ? "로그인 환경변수가 아직 실제 Supabase 프로젝트로 설정되지 않았습니다. 로컬에서는 NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY를 먼저 설정해야 합니다."
+          : "Login is not connected to a real Supabase project yet. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY for local testing.",
+      );
+      return;
+    }
     if (!email) return;
 
     setStatus("sending");
@@ -103,6 +113,17 @@ function LoginForm() {
   }
 
   async function handleOAuthLogin(provider: OAuthProviderId) {
+    if (!supabaseConfigured) {
+      setStatus("error");
+      setRedirectingProvider(null);
+      setErrorMsg(
+        locale === "ko"
+          ? "로그인 환경변수가 아직 실제 Supabase 프로젝트로 설정되지 않아 외부 로그인으로 이동하지 않았습니다."
+          : "Login is not connected to a real Supabase project yet, so no external OAuth redirect was started.",
+      );
+      return;
+    }
+
     setStatus("oauth_redirecting");
     setRedirectingProvider(provider);
     setErrorMsg("");
@@ -147,6 +168,17 @@ function LoginForm() {
           </div>
         ) : <div className="mb-3" />}
 
+        {!supabaseConfigured ? (
+          <div
+            role="status"
+            className="mb-5 text-xs text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md px-3 py-2 leading-relaxed"
+          >
+            {locale === "ko"
+              ? "현재 로컬 로그인은 예시 Supabase URL로 설정되어 있어 비활성화되어 있습니다. 공개 화면 확인은 가능하고, 관리자 로그인 확인은 실제 Supabase 환경변수를 설정한 뒤 진행해야 합니다."
+              : "Local login is disabled because Supabase is still configured with a placeholder URL. Public pages can be reviewed now; admin login needs real Supabase env vars."}
+          </div>
+        ) : null}
+
         {status === "sent" ? (
           <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg p-4">
             <div className="flex items-start gap-3">
@@ -177,7 +209,7 @@ function LoginForm() {
                       key={p.id}
                       type="button"
                       onClick={() => handleOAuthLogin(p.id)}
-                      disabled={oauthBusy || emailBusy}
+                      disabled={oauthBusy || emailBusy || !supabaseConfigured}
                       aria-busy={isRedirecting}
                       className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] rounded-md text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${p.brandClasses}`}
                     >
@@ -263,6 +295,7 @@ function LoginForm() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
+                    disabled={!supabaseConfigured}
                     autoComplete="email"
                     aria-invalid={status === "error"}
                     aria-describedby={status === "error" && errorMsg ? "email-help email-error" : "email-help"}
@@ -290,7 +323,7 @@ function LoginForm() {
 
               <button
                 type="submit"
-                disabled={emailBusy || oauthBusy}
+                disabled={emailBusy || oauthBusy || !supabaseConfigured}
                 aria-busy={emailBusy}
                 className="w-full flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
