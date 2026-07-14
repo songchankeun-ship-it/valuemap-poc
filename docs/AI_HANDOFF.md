@@ -21,11 +21,11 @@ Path: C:\Users\dongy\OneDrive\바탕 화면\valuemap-poc
 
 ## Last AI Center Event
 
-- Task: 254 - ORNScore admin ops 2026-07-14 Z - admin ops verification handoff
-- Run: 256
+- Task: 255 - ORNScore analytics ops 2026-07-14 A - admin traffic overview page
+- Run: 257
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Added owner-only /admin/traffic overview; all quality gates green.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-14 - Codex - Admin traffic/analytics overview page (task 255-A)
+- **Context**: After the sanitized `route_view_public` slice, the owner still had no single in-admin place explaining *what* the existing analytics package collects and *where* the real numbers live. This slice adds a protected owner-only overview entry point under the existing operations area — no outside API call, no new stored value, no new tracking. Operations pages (`/admin*`) stay excluded from public analytics.
+- **Change**:
+  - `src/app/admin/traffic/page.tsx` (new) — `requireAdminAccess("/admin/traffic")` + `robots: noindex` + `force-dynamic`, mirroring `/admin`'s not-allowed block. Shows a collection summary (Vercel Analytics + `process.env.VERCEL` active-state, `route_view_public` entry signal, event-type count, "real numbers live in the external dashboard"), a privacy-safe boundary (sends anonymous/public identifiers; never raw search text, email/message bodies, full URLs, or account identifiers), the event map compressed into 8 operator-friendly `EVENT_GROUPS` (route/search/topic/compare/watchlist/saved-filter/stock-detail/auth-report, each event name + property summary from the event-map doc), and links to Vercel Analytics + `/admin/users`. Display-only; calls no outside API and stores nothing.
+  - `src/app/admin/page.tsx` — one new operations link "트래픽·이벤트 개요" → `/admin/traffic` (Activity icon).
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — Implementation Notes now name `/admin/traffic` as the owner-only restatement surface and remind to keep `EVENT_GROUPS` in sync when events change.
+- **Invariants**: `public/data/*`·stocks.json·score formulas·`metricsVersion`·auth/cron·Supabase schema/RLS·env real values·`<Analytics />` wiring·`route_view_public` sanitization all unchanged. Edited files: new page + `admin/page.tsx` link + event-map doc + PROGRESS + this handoff. No new tracking, table, API route, or stored config.
+- **Gates**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 python scripts\verify_metrics.py` 138 / 0 errors / 0 forbidden / Metrics 2.4 · `git diff --check` clean (CRLF warnings only) · edited-file U+FFFD 0 · `npm run build` 0 (`/admin/traffic` registered dynamic ƒ; route table otherwise unchanged) · local prod 127.0.0.1:54209 `verify:local --no-perf` real gates 4/4 (smoke, routes, stocks-seo 12/12, login-preflight 5/5) · unauth `/admin/traffic` 307 → `/login?next=%2Fadmin%2Ftraffic`. Temp server stopped, port closed; AI Center untouched.
+- **Next**: In-admin raw anonymous traffic *counts* still need a separately-approved Vercel API token or self-hosted event table with retention/consent policy (owner-gated). Keep `EVENT_GROUPS` in sync with the event-map doc when events are added/renamed. Logged-in visual QA of the rendered page stays owner/admin-session gated (unauth redirect verified). Local commit only; not pushed; main untouched.
 
 ### 2026-07-14 - Codex - Sanitized route analytics + admin analytics entry
 - **Context**: After the admin ops release push, owner asked to also attach the real collection tool. The repo already had `@vercel/analytics`, `<Analytics />`, `<SpeedInsights />`, and click-event tracking; this slice adds a small first-party route signal on top of the existing Vercel Analytics vendor without adding a new vendor, DB table, Supabase schema/RLS, or env real-value change.

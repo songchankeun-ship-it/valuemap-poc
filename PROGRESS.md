@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-14 - [codex] add admin traffic overview page
+- **Scope**: 소유자 전용 트래픽·이벤트 개요 진입점 1개(task 255-A). 기존 운영 영역(`/admin`) 아래 새 `/admin/traffic` 서버 페이지를 추가해 "지금 무엇을 어떻게 수집하는지"를 운영자가 채팅 기록 없이 한 화면에서 보게 함. 외부 API 호출·새 저장값·새 추적 0. 기존 `@vercel/analytics` + `route_view_public` 배선을 **설명·요약**만 하고 실제 수치는 외부 대시보드로 링크. `/admin` 계열은 여전히 공개 분석 수집에서 제외.
+- **Changes**:
+  - `src/app/admin/traffic/page.tsx`(신규) — `requireAdminAccess("/admin/traffic")` 게이트 + `robots: { index:false, follow:false }` + `dynamic="force-dynamic"`. 상단 수집 요약 4칸(수집 도구=Vercel Analytics·`process.env.VERCEL` 기준 활성 여부, 진입 신호=`route_view_public`, 추적 이벤트 종수, 실제 수치는 외부 대시보드), 개인정보 안전 경계(보냄=익명·공개 식별자 / 보내지 않음=검색어 원문·이메일·본문·전체 URL·계정 식별자), 이벤트 맵을 8개 그룹으로 압축한 `EVENT_GROUPS`(라우트 진입·검색 유입·주제/랜딩·비교·관심 종목·저장 필터·종목 상세 행동·계정/신고, 각 이벤트명+privacy-safe 속성 요약), Vercel Analytics + `/admin/users` 링크. 표시 전용, 외부 호출 없음.
+  - `src/app/admin/page.tsx` — 운영 진입점 목록에 "트래픽·이벤트 개요"(`/admin/traffic`, Activity 아이콘) 1줄 추가.
+  - `docs/ornscore-analytics-event-map-2026-07-12.md` — Implementation Notes에 `/admin/traffic`가 이벤트 그룹을 재진술하는 owner-only 표시 화면임을 명시(이벤트 추가/개명 시 `EVENT_GROUPS`도 함께 갱신).
+- **Validation**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 3파일 U+FFFD 0 · `npm run build` 0(`/admin/traffic` 라우트 dynamic ƒ 등록, 나머지 라우트 표 불변) · 로컬 prod 127.0.0.1:54209 → `npm run verify:local -- --no-perf` real gates 4/4(smoke·routes·stocks-seo 12/12·login-preflight 5/5) · 비로그인 `/admin/traffic` 307 → `/login?next=%2Fadmin%2Ftraffic`. 임시 next 서버 종료·포트 닫힘 확인, 상시 AI Center 무중단.
+- **Risks / next**: `EVENT_GROUPS`는 이벤트 맵 문서에 의존하는 표시 전용 목록 — 이벤트를 추가/개명하면 문서와 함께 갱신(드리프트만이 유일 리스크). 관리자 화면 안에서 raw 익명 트래픽 숫자를 직접 집계하려면 여전히 Vercel API 연동/자체 이벤트 테이블이 필요(owner-gated). 실제 표 렌더는 admin 인증이 있어야 보여 육안 QA는 소유자 게이트로 남음(마크업은 tsc/build로 검증). 로컬 커밋만·push 미수행·main 무변경.
+
 ## 2026-07-14 - [codex] add sanitized route analytics
 - **Scope**: 배포 후 owner 요청("실제 수집도구도 붙여야지")에 맞춰, 새 벤더·새 DB·Supabase schema/RLS·env 실값 변경 없이 **기존 Vercel Analytics 배선에 공개 라우트 진입 이벤트를 추가**. `/admin` 계열은 제외하고, 검색어 원문·전체 URL·이메일·계정 식별자는 보내지 않음. 운영 홈에는 실제 수집 확인 위치(Vercel Analytics)와 로그인 활동 위치(`/admin/users`)를 명확히 노출.
 - **Changes**:
