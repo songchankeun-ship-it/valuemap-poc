@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-15 - [codex] Metrics 2.5.1 반박 검토와 shadow-only 보정 설계
+- **입력**: 개발자 인수인계 ZIP `ornscore_developer_handoff_metrics_v2_5.zip`의 원안 Markdown/YAML을 전부 검토하고 원본 SHA-256 `A8150AE5D48F58458887240D38E7EF7C35F351210D93C28477B3D76DB22B2E7F`와 두 파일을 `docs/metrics-v2.5-source/`에 증거로 보존했다. 원안 YAML은 `status: draft`, `effective_market_date: null`이므로 공개 승인본으로 취급하지 않는다.
+- **반박/보정**: 원안의 단일 Python 엔진·불변 스냅샷·결측 은폐 금지 방향은 채택하되, 5거래일만으로 252일 지표를 검증하는 약한 OR 게이트, 단일 universeVersion의 과잉 비교 차단, YAML이 실행 의미까지 소유하는 구조, 현재 재무값을 과거에 복사할 때의 미래정보 누출을 보정했다. 선언된 YAML 런타임 의존성이 없는 저장소 특성도 반영해 수신 YAML은 증거로 보존하고 실행 설정은 JSON Schema로 검증되는 canonical JSON으로 확정한다. `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md`에 정본 책임 분리, factor별 모집단 해시, raw/factor/composite/rank 비교 capability, manifest 기반 원자적 shadow pointer, 252시장일 결정성 검증 + 5연속 실제 거래일 + P0 0의 AND 게이트를 확정했다.
+- **현행 영향 근거**: 현재 138종목 중 PER·PBR 모두 양수는 137종목이지만 PER>100 24종목, PER>500 8종목, PBR>20 2종목, |ROE|>100 5종목이 있어 단순 결측보다 소스 품질·기준일·이상값 사유 코드가 먼저 필요하다. 임의 상한으로 자동 제외하지 않고 baseline 영향 보고서가 공개 판단을 선행하도록 했다.
+- **안전 경계**: Metrics 2.4와 `public/data/*`는 무변경이다. Metrics 2.5.1은 private/local shadow 전용이며 `public/`, 공개 API, sitemap에 노출하지 않는다. 현재 재무 스냅샷으로 과거 밸류·종합 성과를 주장하지 않으며, push/deploy/외부 설정/데이터스토어 스키마·RLS/공개 적용일 결정은 자동화 범위 밖이다.
+- **다음에 바로 실행할 작업**: 설계서 Slice A~L을 AI Center project #1에 Claude·planner off·fallback off·quality gates on으로 순서 등록한다. A는 138종목 baseline 영향 분석기이며, L은 Metrics 2.4 공개 바이트 불변을 포함한 로컬 결정 dossier까지다. A~L 완료 뒤에도 공개 전환은 별도 소유자 검수·승인이다.
+
 ## 2026-07-15 - [codex] 공개 배포 후 sitemap 시간대 불변성 수정
 - **발견**: 검증된 재감사 HEAD `50cdfca`를 `origin/main`에 fast-forward 푸시한 뒤 `https://ornscore.com` 실검증에서 6개 게이트 중 5개는 통과했으나 `verify:public-seo`가 실패했다. 데이터의 시간대 없는 `generatedAt`(`2026-07-14T09:46:19.697282`)을 로컬 KST에서는 `00:46Z`, Vercel UTC에서는 `09:46Z`로 서로 다르게 해석해 sitemap 162개 URL의 `lastmod`가 환경마다 달라진 것이 원인이다.
 - **수정**: `src/lib/datasetTimestamp.ts`에 시간대 불변 파서를 추가했다. 시간대 없는 Python ISO 생성 시각은 명시적으로 KST(`+09:00`)로 해석하고, `Z`/명시적 오프셋은 그대로 존중하며, 잘못된 형식은 `undefined`로 fail-closed 처리한다. `src/app/sitemap.ts`가 이 파서를 사용하고 `scripts/verify-public-seo.mjs`도 같은 기대값 계약으로 정합했다. `scripts/test_seoStability.ts`에 naive KST·명시적 UTC·명시적 KST·잘못된 형식 회귀 케이스를 추가했다.

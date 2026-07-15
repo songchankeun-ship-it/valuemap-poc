@@ -1,0 +1,170 @@
+spec:
+  id: ornscore-metrics
+  version: "2.5.0"
+  status: draft
+  effective_market_date: null
+  market: XKRX
+  config_hash_algorithm: sha256
+
+rounding:
+  stored_score_decimals: 1
+  mode: ROUND_HALF_UP
+  raw_storage_decimals_minimum: 6
+  display_integer_from_stored_score: true
+
+universe:
+  id: ornscore_kr_v1
+  version_strategy: sha256_of_normalized_constituents_and_eligibility
+  require_same_version_for_score_delta: true
+  require_same_version_for_rank_delta: true
+
+percentile:
+  method: average_rank
+  formula: "100 * (average_rank_1_based - 1) / (valid_count - 1)"
+  tie_handling: average_rank
+  single_value_score: 50.0
+  min_score: 0.0
+  max_score: 100.0
+
+metrics:
+  momentum:
+    input: adjusted_close
+    minimum_price_points: 127
+    lookbacks_trading_days:
+      r1m: 21
+      r3m: 63
+      r6m: 126
+    weights:
+      r1m: 0.30
+      r3m: 0.40
+      r6m: 0.30
+    raw_formula: "0.30*r21 + 0.40*r63 + 0.30*r126"
+    score_mapping: universe_percentile
+    missing_policy: null
+
+  activity:
+    input: share_volume
+    minimum_volume_points: 20
+    numerator: average_last_5_trading_days
+    denominator: average_last_20_trading_days
+    raw_formula: "avg_volume_5 / avg_volume_20"
+    score_mapping:
+      type: piecewise_fixed
+      rules:
+        - when: "ratio < 0.5"
+          score: "10"
+        - when: "0.5 <= ratio < 1.0"
+          score: "10 + (ratio - 0.5) * 80"
+        - when: "1.0 <= ratio < 3.0"
+          score: "50 + (ratio - 1.0) * 25"
+        - when: "ratio >= 3.0"
+          score: "100"
+    missing_policy: null
+
+  value:
+    inputs:
+      - per
+      - pbr
+    validity:
+      per: "> 0"
+      pbr: "> 0"
+    score_mapping:
+      per_score: "100 - percentile(per)"
+      pbr_score: "100 - percentile(pbr)"
+      value_score: "(per_score + pbr_score) / 2"
+    industry_adjustment_in_composite: false
+    missing_policy: null
+
+  risk_adjusted:
+    input: adjusted_close_daily_returns
+    minimum_price_points: 253
+    required_daily_returns: 252
+    annualization_factor: 252
+    risk_free_rate_annual: 0.035
+    stddev: population
+    raw_formula: "(mean_daily_return*252 - 0.035) / (population_std_daily_return*sqrt(252))"
+    score_mapping: universe_percentile
+    missing_policy: null
+
+composite:
+  required_metrics:
+    - momentum
+    - activity
+    - value
+    - risk_adjusted
+  weights:
+    momentum: 0.25
+    activity: 0.25
+    value: 0.25
+    risk_adjusted: 0.25
+  missing_policy: withhold_composite_and_ranking
+  formula: "mean(momentum, activity, value, risk_adjusted)"
+
+comparison:
+  require_previous_krx_trading_day: true
+  require_same_metrics_version: true
+  require_same_config_hash: true
+  require_same_universe_version_for_score_delta: true
+  require_same_universe_version_for_rank_delta: true
+  hide_delta_when_not_comparable: true
+
+semantic_rules:
+  direction_flat_threshold_pct: 1.0
+
+  activity_states:
+    - id: VERY_LOW
+      min_inclusive: null
+      max_exclusive: 0.50
+      copy: "거래량이 크게 줄었습니다"
+    - id: DECREASED
+      min_inclusive: 0.50
+      max_exclusive: 0.80
+      copy: "거래량이 평소보다 줄었습니다"
+    - id: NORMAL
+      min_inclusive: 0.80
+      max_exclusive: 1.20
+      copy: "거래량이 평소와 비슷합니다"
+    - id: INCREASED
+      min_inclusive: 1.20
+      max_exclusive: 1.50
+      copy: "거래량이 평소보다 늘었습니다"
+    - id: SIGNIFICANT_INCREASE
+      min_inclusive: 1.50
+      max_exclusive: 2.00
+      copy: "거래량이 뚜렷하게 늘었습니다"
+    - id: SURGE
+      min_inclusive: 2.00
+      max_exclusive: null
+      copy: "거래량이 급증했습니다"
+
+  risk_efficiency_bands:
+    - id: LOW
+      min_inclusive: 0.0
+      max_exclusive: 30.0
+    - id: NEUTRAL
+      min_inclusive: 30.0
+      max_exclusive: 70.0
+    - id: HIGH
+      min_inclusive: 70.0
+      max_exclusive: 100.0001
+
+quality:
+  publish_blockers:
+    - latest_market_date_mismatch
+    - source_date_mismatch
+    - duplicate_ticker
+    - score_out_of_range
+    - composite_invariant_failure
+    - metrics_version_config_mismatch
+    - config_hash_failure
+    - universe_snapshot_missing
+    - published_row_count_mismatch
+    - generated_docs_config_mismatch
+
+status:
+  severity_order:
+    - NORMAL
+    - LIMITED
+    - DEGRADED
+    - OUTAGE
+  overall_rule: maximum_child_severity
