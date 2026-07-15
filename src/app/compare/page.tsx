@@ -82,14 +82,14 @@ export default async function ComparePage({ searchParams }: PageProps) {
   const byTicker = new Map(allStocks.map((s) => [s.ticker, s]));
 
   // 의미 있는 동종 피어 쌍. 두 종목이 모두 풀에 존재하고 검증 보류가 아닐 때만 노출한다.
-  // 첫 방문자에게 항상 보여줄 대표 예시 3쌍(반도체 대형주 · 플랫폼 · 완성차 vs 금융).
+  // 첫 방문자에게 항상 보여줄 대표 예시 2쌍은 모두 같은 업종 피어다(반도체 대형주 · 플랫폼).
   // 비교는 순위·후보 산출이 아니라 중립적 나란히 보기(비자문)이고, 검색으로는 이미 어떤 종목이든
   // 담아 비교할 수 있으므로, 이 손수 고른 예시 쌍은 isSuspect(예: 카카오 고PER) 여부와 무관하게
   // 노출한다 — 단 두 종목이 실제로 풀에 있을 때만(가짜 세트 없음).
+  // 업종이 다른 교차 프리셋(예: 완성차 vs 금융)은 비교 근거가 약해 예시에서 제외한다(Slice J).
   const NAMED_EXAMPLE_PAIRS: ReadonlyArray<readonly [string, string]> = [
     ["005930", "000660"], // 삼성전자 vs SK하이닉스 (반도체 대형주)
     ["035420", "035720"], // NAVER vs 카카오 (플랫폼)
-    ["005380", "105560"], // 현대차 vs KB금융 (완성차 vs 금융 — 업종 교차 예시)
   ];
   // 그 외 자동 큐레이션 쌍은 검증 보류(isSuspect) 종목이 끼면 자동 제외한다.
   const CURATED_PAIRS: ReadonlyArray<readonly [string, string]> = [

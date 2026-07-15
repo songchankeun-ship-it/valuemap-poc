@@ -62,6 +62,8 @@ export const commonCopy = {
     auth: {
       login: "로그인",
       start: "시작하기",
+      // 로그아웃 상태의 1차 CTA — 목적지는 /login이지만 재방문 로그인과 구분되게 '동기화 의도'를 드러낸다(Slice J).
+      syncStart: "관심종목 동기화",
       loginStart: "로그인 / 시작하기",
       loggedIn: "로그인 됨",
       logout: "로그아웃",
@@ -157,6 +159,8 @@ export const commonCopy = {
     auth: {
       login: "Log in",
       start: "Start",
+      // Logged-out primary CTA — routes to /login but reads as sync intent, distinct from returning-user log in (Slice J).
+      syncStart: "Sync watchlist",
       loginStart: "Log in / Start",
       loggedIn: "Signed in",
       logout: "Log out",

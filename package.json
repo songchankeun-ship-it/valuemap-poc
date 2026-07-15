@@ -34,6 +34,7 @@
     "test:momentum-regime": "tsx scripts/test_momentumRegime.ts",
     "test:seo-stability": "tsx scripts/test_seoStability.ts",
     "test:stocks-discovery": "tsx scripts/test_stocksDiscovery.ts",
+    "test:compare-entry": "tsx scripts/test_compareEntry.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

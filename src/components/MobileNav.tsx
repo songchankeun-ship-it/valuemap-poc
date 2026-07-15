@@ -185,13 +185,24 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                   </button>
                 </>
               ) : (
-                <Link
-                  href={`/login${loginNext}`}
-                  onClick={() => setOpen(false)}
-                  className="block w-full px-3 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
-                >
-                  {copy.auth.loginStart}
-                </Link>
+                // 두 링크는 같은 /login으로 가지만 의도를 구분한다(Slice J): 1차=관심종목 동기화 시작, 2차=재방문 로그인.
+                // '로그인 / 시작' 한 목적지의 두 이름 대신 동기화 의도와 재방문 로그인을 시각·라벨로 분리.
+                <div className="space-y-1.5">
+                  <Link
+                    href={`/login${loginNext}`}
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-3 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+                  >
+                    {copy.auth.syncStart}
+                  </Link>
+                  <Link
+                    href={`/login${loginNext}`}
+                    onClick={() => setOpen(false)}
+                    className="block w-full px-3 py-2 text-zinc-600 dark:text-zinc-400 rounded-md text-sm text-center hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
+                  >
+                    {copy.auth.login}
+                  </Link>
+                </div>
               )}
             </div>
 

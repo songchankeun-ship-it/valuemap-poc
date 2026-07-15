@@ -23,6 +23,8 @@ export function AccountButtons() {
 
   return (
     <>
+      {/* 두 CTA는 같은 /login으로 가지만 의도를 구분한다(Slice J): 왼쪽=재방문 로그인, 오른쪽=관심종목 동기화 시작.
+          '로그인/시작' 같은 한 목적지의 두 이름 대신, 재방문 로그인과 동기화 의도를 라벨로 분리한다. */}
       <Link
         prefetch={false} href={`/login${next}`}
         data-analytics-event="auth_cta_click"
@@ -41,7 +43,7 @@ export function AccountButtons() {
         data-analytics-path={pathname ?? ""}
         className="hidden md:inline-flex items-center px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition text-sm font-medium"
       >
-        {copy.auth.start}
+        {copy.auth.syncStart}
       </Link>
     </>
   );
