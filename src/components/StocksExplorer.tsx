@@ -74,10 +74,13 @@ type MarketFilter = "all" | "KOSPI" | "KOSDAQ";
 const CAP_LARGE = 5_000_000_000_000;
 const CAP_MID = 1_000_000_000_000;
 
-// 기본 품질 필터(PER≤200·PBR≤30)를 해제하고 전체 138개를 볼 때 PER/PBR 상한에 쓰는 '사실상 상한 없음' 값.
+// 극단값 제외(PER≤200·PBR≤30)를 해제하고 전체 138개를 볼 때 PER/PBR 상한에 쓰는 '사실상 상한 없음' 값.
 const NO_MAX = 999999;
 const DEFAULT_PER_MAX = 200;
 const DEFAULT_PBR_MAX = 30;
+// 첫 표시 결과 수(20개) — 이후 '더 보기'로 LOAD_MORE_STEP만큼 필터·정렬을 유지한 채 유한하게 늘린다.
+const INITIAL_VISIBLE = 20;
+const LOAD_MORE_STEP = 20;
 const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
 
 function readRecentSearches(): string[] {
@@ -325,6 +328,8 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [recentViews, setRecentViews] = useState<RecentView[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("card");
+  // 첫 표시는 INITIAL_VISIBLE개로 제한, '더 보기'로 유한 증가(필터·정렬·검색 변경 시 20으로 리셋).
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   useEffect(() => {
     let alive = true;
@@ -534,6 +539,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     });
   }, [filtered, sortKey, sortDir]);
 
+  // 필터·정렬·검색이 바뀌면 첫 화면을 다시 20개로 되돌린다(첫 렌더는 항상 20개로 제한).
+  useEffect(() => { setVisibleCount(INITIAL_VISIBLE); }, [sorted]);
+
   const recentViewLinks = useMemo(() => recentViews.slice(0, 4), [recentViews]);
 
   const popularEntryStocks = useMemo(() => {
@@ -594,10 +602,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const activeFilterCount = nonThemeFilterCount + themeFilterCount + sectorFilterCount;
   const hasAnyCondition = activeFilterCount > 0 || !!query || !!activePreset;
 
-  // 기본 품질 필터(PER≤200·PBR≤30) 적용 여부 — 해제하면 전체 138개가 보인다.
+  // 극단값 제외(PER≤200·PBR≤30) 적용 여부 — 해제하면 전체 138개가 보인다.
   const qualityFilterOn = perMax <= 200 && pbrMax <= 30;
   // 프리셋·검색·상세 필터가 전혀 없는 '순수 기본 탐색' 상태(기본 123개 또는 전체 138개 보기).
-  // 이 상태에서만 헤더에 기본 품질 헤드라인과 전체/기본 보기 토글을 노출한다.
+  // 이 상태에서만 헤더에 극단값 제외 헤드라인과 전체/기본 보기 토글을 노출한다.
   const pureBrowse = nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && !activePreset;
   const themeOnlyZero =
     sorted.length === 0 &&
@@ -613,13 +621,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     qualityExcludedThemeStocks.length === themeScopedStocks.length;
   const showThemeNoMatchEmpty = themeOnlyZero && themeScopedStocks.length === 0;
 
-  // 기본 품질 필터 해제 → 전체 138개 보기(PER/PBR 상한 제거).
+  // 극단값 제외 해제 → 전체 138개 보기(PER/PBR 상한 제거).
   function viewAllStocks() {
     setActivePreset(null);
     setPerMax(NO_MAX);
     setPbrMax(NO_MAX);
   }
-  // 전체 보기 → 기본 품질 필터(PER≤200·PBR≤30)로 복귀.
+  // 전체 보기 → 극단값 제외(PER≤200·PBR≤30)로 복귀.
   function backToDefaultView() {
     setActivePreset(null);
     setPerMax(200);
@@ -738,7 +746,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
 
   // 카드형 결과 목록 — 모바일/데스크톱 공용. 신호 칩은 표형과 동일한 deriveSignals 사용.
   function renderCards() {
-    return sorted.slice(0, 100).map((s) => {
+    return sorted.slice(0, visibleCount).map((s) => {
       const { strengths, warnings } = deriveSignals(s, t.signal);
       const lagged = laggedSet.has(s.ticker);
       return (
@@ -1385,7 +1393,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCountShort(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCountShort(sorted.length, total).b}</span></span>
             </div>
             <div className="flex flex-col gap-1 text-[11px] mb-1.5">
-              {/* (a) 기본 품질 필터 행 — 사용자 상세 필터와 명확히 분리 */}
+              {/* (a) 극단값 제외 행 — 사용자 상세 필터와 명확히 분리 */}
               <div className="text-zinc-500 dark:text-zinc-400">{qualityFilterOn ? t.qualityRowOn : t.qualityRowOff}</div>
               {/* (b) 상세 필터 행 — 칩이 있으면 칩, 없으면 '없음' */}
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -1523,13 +1531,30 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           })() : viewMode === "table" ? (
             <>
               {/* 표형: 데스크톱은 점수 히트맵 테이블, 모바일(<lg)은 카드형 유지 */}
-              <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, 100)} laggedTickers={laggedTickers} /></div>
+              <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, visibleCount)} laggedTickers={laggedTickers} /></div>
               <div className="lg:hidden space-y-2">{renderCards()}</div>
             </>
           ) : (
             renderCards()
           )}
-          {sorted.length > 100 ? (<div className="text-xs text-zinc-500 text-center py-3">{t.topCapNote(sorted.length, total)}</div>) : null}
+          {/* 유한 '더 보기' — 첫 20개 이후 남은 결과를 필터·정렬 유지한 채 이어서 보고, 표시량은 상태(status)로 안내. */}
+          {sorted.length > 0 ? (
+            <div className="flex flex-col items-center gap-2 pt-1">
+              {sorted.length > visibleCount ? (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((v) => Math.min(sorted.length, v + LOAD_MORE_STEP))}
+                  aria-controls="stock-results"
+                  className={`inline-flex min-h-[44px] items-center justify-center rounded-md border border-blue-300 dark:border-blue-800 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition ${FOCUS_RING}`}
+                >
+                  {t.showMore(sorted.length - visibleCount)}
+                </button>
+              ) : null}
+              <p role="status" aria-live="polite" className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">
+                {t.showingCount(Math.min(visibleCount, sorted.length), sorted.length)}
+              </p>
+            </div>
+          ) : null}
         </section>
       </div>
 

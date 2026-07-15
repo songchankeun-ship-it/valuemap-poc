@@ -11,19 +11,19 @@ export const stocksCopy = {
     // 화면 제목은 내비게이션 canon(종목 찾기)과 일치시켜 '검색으로 종목을 찾는 화면'임을 바로 읽히게 한다(설계서 §4·§8.1).
     headerTitle: "종목 찾기",
     matchCount: (n: number, total: number) => ({ a: `검색·필터 결과 ${n}개 `, b: `/ 분석 대상 ${total}종목` }),
-    // 기본 품질 필터(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
-    qualityHeadline: (shown: number, total: number) => ({ a: `기본 품질 필터 ${shown}개 `, b: `/ 분석 대상 ${total}종목` }),
+    // 극단값 제외(PER≤200·PBR≤30)만 켜진 순수 기본 상태에서 헤더에 쓰는 문구
+    qualityHeadline: (shown: number, total: number) => ({ a: `극단값 제외 후 ${shown}개 `, b: `/ 분석 대상 ${total}종목` }),
     viewAllToggle: (total: number) => `전체 ${total}개 보기`,
-    backToDefaultToggle: "기본 품질 보기",
+    backToDefaultToggle: "기본 보기",
     // 결과 리스트 접근성(랜드마크 라벨·목록 제목·바로가기) — 무JS/스크린리더에서도 목록 시작을 명확히 안내
     resultsRegionLabel: "종목 목록",
     resultsHeading: (shown: number, total: number) => `종목 목록 · 분석 대상 ${total}종목 내 ${shown}개`,
     skipToList: "종목 목록 바로가기",
     headerDesc: (total: number) => `질문·필터로 먼저 볼 후보를 좁혀보세요.`,
     searchIntent: {
-      title: "많이 찾는 탐색어",
+      title: "무엇부터 좁혀볼까요?",
       body:
-        "주식 스크리닝, 종목 검색, PER/PBR/ROE 비교, 저평가 주식 찾기, 배당수익률 높은 주식, 코스피·코스닥 종목 분석을 같은 목록에서 좁혀볼 수 있습니다.",
+        "종목명·코드로 바로 검색하거나, 아래 질문을 골라 밸류·추세·배당 조건으로 후보를 좁혀보세요.",
     },
     marketCloseSuffix: "장마감",
     metricsPrefix: "Metrics",
@@ -121,9 +121,9 @@ export const stocksCopy = {
     // ── 현재 조건 요약 바 ──
     currentCond: "현재 조건",
     matchCountShort: (n: number, total: number) => ({ a: `검색·필터 결과 ${n} `, b: `/ 분석 대상 ${total}종목` }),
-    // 현재 조건 블록 3행: 기본 품질 필터 / 상세 필터 / 정렬 (기본 품질과 사용자 상세를 명확히 분리)
-    qualityRowOn: "기본 품질 필터: PER ≤ 200, PBR ≤ 30",
-    qualityRowOff: "기본 품질 필터: 해제됨 (전체 보기)",
+    // 현재 조건 블록 3행: 극단값 제외 / 상세 필터 / 정렬 (극단값 제외와 사용자 상세를 명확히 분리)
+    qualityRowOn: "극단값 제외: PER ≤ 200, PBR ≤ 30",
+    qualityRowOff: "극단값 제외: 해제됨 (전체 보기)",
     detailRowLabel: "상세 필터",
     detailRowNone: "없음",
     sortRowLabel: "정렬",
@@ -147,21 +147,23 @@ export const stocksCopy = {
     clearSearch: "검색어 지우기",
     relaxStrongest: "가장 강한 조건 완화",
     viewAll: "전체 종목 보기",
-    themeQualityEmptyTitle: (theme: string) => `${theme} 테마 종목은 있지만 기본 품질 필터에서 제외됐어요.`,
+    themeQualityEmptyTitle: (theme: string) => `${theme} 테마 종목은 있지만 극단값 제외(PER/PBR 상한)에서 빠졌어요.`,
     themeQualityEmptyHint: (excluded: number, total: number) =>
-      `현재 소속 ${total}개 종목 중 ${excluded}개가 PER/PBR 기본 상한 밖이라 결과 목록에서 빠졌습니다.`,
+      `현재 소속 ${total}개 종목 중 ${excluded}개가 PER/PBR 극단값 상한 밖이라 결과 목록에서 빠졌습니다.`,
     themeQualityReasonTitle: "제외 이유",
     themeQualityPerReason: (value: string) => `PER ${value}배 > 200배`,
     themeQualityPbrReason: (value: string) => `PBR ${value}배 > 30배`,
-    themeQualityMore: (n: number) => `외 ${n}개 종목도 기본 품질 필터 밖입니다.`,
+    themeQualityMore: (n: number) => `외 ${n}개 종목도 극단값 상한 밖입니다.`,
     themeQualityAction: "필터를 풀고 보기",
     themeQualityCaveat: "필터 해제는 표시 범위를 넓히는 동작이며 투자 판단이 아닙니다.",
     themeNoMatchTitle: (theme: string) => `${theme} 테마와 연결된 실데이터 종목이 없습니다.`,
     themeNoMatchHint: "테마명이 바뀌었거나 현재 138개 분석 대상에 포함되지 않았을 수 있습니다. 종목명·코드 검색으로 확인해보세요.",
     themeNoMatchAction: "종목 검색으로 이동",
 
-    // ── 결과 푸터 ──
-    topCapNote: (n: number, total: number) => `분석 대상 ${total}종목 내 조건에 맞는 ${n}개 중 상위 100개만 표시 · 조건을 좁히면 비교하기 쉬워요.`,
+    // ── 결과 푸터(더 보기) ──
+    // 첫 표시는 20개로 제한하고, 유한한 '더 보기'로 남은 결과를 필터·정렬 유지한 채 이어서 본다.
+    showMore: (remaining: number) => `남은 ${remaining}개 더 보기`,
+    showingCount: (shown: number, matched: number) => `조건에 맞는 ${matched}개 중 ${shown}개 표시 중`,
 
     // ── 상세 필터 패널 ──
     filterDetailTitle: "상세 필터",
@@ -256,7 +258,7 @@ export const stocksCopy = {
     describeManual: "사용자가 직접 설정한 PER, PBR, ROE, 시가총액 등 조건으로 후보를 좁혔습니다.",
     describeAll: (shown: number, total: number) =>
       shown < total
-        ? `현재 ${shown}개 종목을 종합점수 기준으로 보고 있습니다. 전체 ${total}개를 보려면 기본 품질 필터를 해제하세요.`
+        ? `현재 ${shown}개 종목을 종합점수 기준으로 보고 있습니다. 전체 ${total}개를 보려면 극단값 제외를 해제하세요.`
         : `전체 ${total}개 종목을 종합점수 기준으로 보고 있습니다.`,
 
     // ── 가장 강한 조건(strongestConstraint) ──
@@ -361,7 +363,7 @@ export const stocksCopy = {
     // ── Page header ──
     headerTitle: "Find stocks to review today",
     matchCount: (n: number, total: number) => ({ a: `Filtered results ${n} `, b: `/ within ${total} analyzed` }),
-    qualityHeadline: (shown: number, total: number) => ({ a: `Default quality filter ${shown} `, b: `/ within ${total} analyzed` }),
+    qualityHeadline: (shown: number, total: number) => ({ a: `After extreme-value exclusion ${shown} `, b: `/ within ${total} analyzed` }),
     viewAllToggle: (total: number) => `View all ${total}`,
     backToDefaultToggle: "Default view",
     // Results-list accessibility (landmark label · list heading · skip link) — surface the list start for no-JS/screen readers
@@ -370,9 +372,9 @@ export const stocksCopy = {
     skipToList: "Skip to stock list",
     headerDesc: (total: number) => `Use questions or filters to narrow down candidates to look at first.`,
     searchIntent: {
-      title: "Common search intents",
+      title: "Where do you want to start?",
       body:
-        "Use one list to narrow Korean stock screening, stock search, PER/PBR/ROE comparison, undervalued stock ideas, dividend-yield screens, and KOSPI/KOSDAQ stock analysis.",
+        "Search by name or ticker, or pick a question below to narrow candidates by value, trend, or dividend.",
     },
     marketCloseSuffix: "market close",
     metricsPrefix: "Metrics",
@@ -470,8 +472,8 @@ export const stocksCopy = {
     // ── Current condition bar ──
     currentCond: "Current conditions",
     matchCountShort: (n: number, total: number) => ({ a: `Results ${n} `, b: `/ within ${total} analyzed` }),
-    qualityRowOn: "Default quality filter: PER ≤ 200, PBR ≤ 30",
-    qualityRowOff: "Default quality filter: Off (viewing all)",
+    qualityRowOn: "Extreme-value exclusion: PER ≤ 200, PBR ≤ 30",
+    qualityRowOff: "Extreme-value exclusion: Off (viewing all)",
     detailRowLabel: "Detail filters",
     detailRowNone: "None",
     sortRowLabel: "Sort",
@@ -495,21 +497,23 @@ export const stocksCopy = {
     clearSearch: "Clear search",
     relaxStrongest: "Relax strongest condition",
     viewAll: "View all stocks",
-    themeQualityEmptyTitle: (theme: string) => `${theme} has stocks, but the default quality filter is hiding them.`,
+    themeQualityEmptyTitle: (theme: string) => `${theme} has stocks, but the extreme-value exclusion (PER/PBR caps) is hiding them.`,
     themeQualityEmptyHint: (excluded: number, total: number) =>
-      `${excluded} of ${total} theme stocks are outside the default PER/PBR caps, so they are not shown in the result list.`,
+      `${excluded} of ${total} theme stocks are outside the extreme-value PER/PBR caps, so they are not shown in the result list.`,
     themeQualityReasonTitle: "Reason hidden",
     themeQualityPerReason: (value: string) => `PER ${value} > 200`,
     themeQualityPbrReason: (value: string) => `PBR ${value} > 30`,
-    themeQualityMore: (n: number) => `${n} more stocks are also outside the default quality filter.`,
+    themeQualityMore: (n: number) => `${n} more stocks are also outside the extreme-value caps.`,
     themeQualityAction: "View without filter",
     themeQualityCaveat: "Turning this off only broadens the display range; it is not investment advice.",
     themeNoMatchTitle: (theme: string) => `No live data stocks are linked to the ${theme} theme.`,
     themeNoMatchHint: "The theme name may have changed, or it may not be part of the current 138-stock universe. Try searching by stock name or ticker.",
     themeNoMatchAction: "Go to stock search",
 
-    // ── Results footer ──
-    topCapNote: (n: number, total: number) => `Within ${total} analyzed, showing the top 100 of ${n} matches · narrow the conditions to compare more easily.`,
+    // ── Results footer (show more) ──
+    // First render caps at 20; a finite "show more" reveals the rest while keeping filters and sorting.
+    showMore: (remaining: number) => `Show ${remaining} more`,
+    showingCount: (shown: number, matched: number) => `Showing ${shown} of ${matched}`,
 
     // ── Detailed filter panel ──
     filterDetailTitle: "Detailed filters",
@@ -604,7 +608,7 @@ export const stocksCopy = {
     describeManual: "You've narrowed the candidates with custom PER, PBR, ROE, market cap and other conditions.",
     describeAll: (shown: number, total: number) =>
       shown < total
-        ? `You're viewing ${shown} stocks by composite score. To see all ${total}, turn off the default quality filter.`
+        ? `You're viewing ${shown} stocks by composite score. To see all ${total}, turn off the extreme-value exclusion.`
         : `Viewing all ${total} stocks by composite score.`,
 
     // ── Strongest constraint ──
