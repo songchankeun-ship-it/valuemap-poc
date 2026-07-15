@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T05:14:18.769Z
+Last updated: 2026-07-15T05:38:45.526Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,8 +21,8 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 286 - ORNScore public reaudit F - correct comparative score and completeness language
-- Run: 290
+- Task: 287 - ORNScore public reaudit G - expose momentum regime risk meaning and sector context
+- Run: 291
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
