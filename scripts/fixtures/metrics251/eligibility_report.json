@@ -1,0 +1,216 @@
+{
+  "primary": {
+    "configHash": "7bf1e3a1f989e68e059f0b9f8fafb77b5f295ae0558da3bc2cd2dda5f881f293",
+    "consistency": {
+      "factorCountsMatch": true,
+      "noErasure": true,
+      "noExcludedWithoutReason": true,
+      "rankingCountMatch": true,
+      "rankingHashMatch": true,
+      "rankingIntersectionMatchesEngineFlag": true,
+      "reasonScoreInvariantHolds": true
+    },
+    "eligibilityReasonCounts": {
+      "activity.INSUFFICIENT_HISTORY": 1,
+      "riskAdjusted.INSUFFICIENT_HISTORY": 2,
+      "riskAdjusted.ZERO_VARIANCE": 1,
+      "value.MISSING_INPUT": 2
+    },
+    "engineVersion": "2.5.1",
+    "excludedWithoutReason": [],
+    "factorPopulations": {
+      "activity": {
+        "count": 9,
+        "eligibleTickers": [
+          "FULL_A",
+          "FULL_B",
+          "FULL_C",
+          "FULL_D",
+          "FULL_E",
+          "HIGH_POS",
+          "MISS_VALUE",
+          "SHORT_HIST",
+          "ZERO_VAR"
+        ],
+        "hash": "28c712ba46143c2d1df2d43abc95ba5b5683179f0fc08d8ade72ab734e7ef783"
+      },
+      "momentum": {
+        "count": 10,
+        "eligibleTickers": [
+          "FULL_A",
+          "FULL_B",
+          "FULL_C",
+          "FULL_D",
+          "FULL_E",
+          "HIGH_POS",
+          "MISS_VALUE",
+          "MULTI",
+          "SHORT_HIST",
+          "ZERO_VAR"
+        ],
+        "hash": "fdd2d2e97e52d05eaf3e46ce2ac4252cdca3c5a487290d1cdee762c0e8526b66"
+      },
+      "riskAdjusted": {
+        "count": 7,
+        "eligibleTickers": [
+          "FULL_A",
+          "FULL_B",
+          "FULL_C",
+          "FULL_D",
+          "FULL_E",
+          "HIGH_POS",
+          "MISS_VALUE"
+        ],
+        "hash": "275ace14abd719636a23cdd0c2d7b936b10f78b4b6c63a6438cf1ada0335fd07"
+      },
+      "value": {
+        "count": 8,
+        "eligibleTickers": [
+          "FULL_A",
+          "FULL_B",
+          "FULL_C",
+          "FULL_D",
+          "FULL_E",
+          "HIGH_POS",
+          "SHORT_HIST",
+          "ZERO_VAR"
+        ],
+        "hash": "c7610ed7086a868934f1c4f7b87226f5bfb63b395853f9fb925a8d1b4f65fdbe"
+      }
+    },
+    "marketDate": "2026-07-15",
+    "qualityWarningCounts": {
+      "absRoeGt100": 1,
+      "pbrGt20": 1,
+      "perGt100": 1
+    },
+    "qualityWarnings": {
+      "HIGH_POS": {
+        "value": [
+          "absRoeGt100",
+          "pbrGt20",
+          "perGt100"
+        ]
+      }
+    },
+    "rankingEligibleCount": 6,
+    "rankingEligiblePct": 60.0,
+    "rankingEligibleTickers": [
+      "FULL_A",
+      "FULL_B",
+      "FULL_C",
+      "FULL_D",
+      "FULL_E",
+      "HIGH_POS"
+    ],
+    "rankingPopulationHash": "92f6f0cc4553e4b13f494bc50ffc81e40a7176b992c3a2b78aeda2750efcd4cd",
+    "runNullReasons": [],
+    "runOk": true,
+    "universeCount": 10,
+    "unknownReasons": [],
+    "valueMissingPreservingOthers": [
+      {
+        "preservedFactors": [
+          "momentum",
+          "activity",
+          "riskAdjusted"
+        ],
+        "ticker": "MISS_VALUE"
+      },
+      {
+        "preservedFactors": [
+          "momentum"
+        ],
+        "ticker": "MULTI"
+      }
+    ]
+  },
+  "sourceMismatch": {
+    "engineVersion": "2.5.1",
+    "note": "top-level 실패로 스냅샷 미성립 — 자격/모집단 계약은 산출하지 않는다(정직한 보류).",
+    "qualityWarningCounts": {},
+    "qualityWarnings": {},
+    "runNullReasons": [
+      "SOURCE_DATE_MISMATCH"
+    ],
+    "runOk": false,
+    "universeCount": 1
+  },
+  "staleSource": {
+    "configHash": "7bf1e3a1f989e68e059f0b9f8fafb77b5f295ae0558da3bc2cd2dda5f881f293",
+    "consistency": {
+      "factorCountsMatch": true,
+      "noErasure": true,
+      "noExcludedWithoutReason": true,
+      "rankingCountMatch": true,
+      "rankingHashMatch": true,
+      "rankingIntersectionMatchesEngineFlag": true,
+      "reasonScoreInvariantHolds": true
+    },
+    "eligibilityReasonCounts": {
+      "value.SOURCE_DATE_STALE": 2
+    },
+    "engineVersion": "2.5.1",
+    "excludedWithoutReason": [],
+    "factorPopulations": {
+      "activity": {
+        "count": 2,
+        "eligibleTickers": [
+          "S1",
+          "S2"
+        ],
+        "hash": "470bd4a09039dfa1e980fb52ccb7d578bb13b2e4af475da3456449e7cba2b53a"
+      },
+      "momentum": {
+        "count": 2,
+        "eligibleTickers": [
+          "S1",
+          "S2"
+        ],
+        "hash": "470bd4a09039dfa1e980fb52ccb7d578bb13b2e4af475da3456449e7cba2b53a"
+      },
+      "riskAdjusted": {
+        "count": 2,
+        "eligibleTickers": [
+          "S1",
+          "S2"
+        ],
+        "hash": "470bd4a09039dfa1e980fb52ccb7d578bb13b2e4af475da3456449e7cba2b53a"
+      },
+      "value": {
+        "count": 0,
+        "eligibleTickers": [],
+        "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    "marketDate": "2026-07-15",
+    "qualityWarningCounts": {},
+    "qualityWarnings": {},
+    "rankingEligibleCount": 0,
+    "rankingEligiblePct": 0.0,
+    "rankingEligibleTickers": [],
+    "rankingPopulationHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "runNullReasons": [],
+    "runOk": true,
+    "universeCount": 2,
+    "unknownReasons": [],
+    "valueMissingPreservingOthers": [
+      {
+        "preservedFactors": [
+          "momentum",
+          "activity",
+          "riskAdjusted"
+        ],
+        "ticker": "S1"
+      },
+      {
+        "preservedFactors": [
+          "momentum",
+          "activity",
+          "riskAdjusted"
+        ],
+        "ticker": "S2"
+      }
+    ]
+  }
+}
