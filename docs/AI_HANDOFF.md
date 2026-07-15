@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-14T16:51:16.816Z
+Last updated: 2026-07-15T03:00:20.533Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -23,9 +23,9 @@ Path: C:\dev\OrnScore
 
 - Task: n/a
 - Run: n/a
-- Status: connected
+- Status: registered
 - Agent: n/a
-- Note: Project folder connected in AI Dev Center.
+- Note: Project registered in AI Dev Center.
 
 ## Next Agent Checklist
 
