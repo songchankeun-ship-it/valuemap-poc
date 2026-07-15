@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-15 - [codex] Metrics 2.5.1 Slice C: 백분위·반올림·결측 원시 함수
+
+- **Scope**: 설계서 `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §6 / §7 Gate 1 / §10 Slice C만. average-rank 백분위, Decimal `ROUND_HALF_UP`, 점수 클램프/검증, 명시적 null 전파를 **순수·결정적·표준 라이브러리 전용** Python 원시 함수로 추가. 공개 Metrics 2.4 생성 경로(`compute_metrics.py`)와 분리 유지 — import·public/ 기록·데이터 생성 연결 없음(엔진 조립은 Slice D). 결측을 50/factor 평균으로 채우지 않는다.
+- **신규 파일(2)**:
+  - `scripts/metrics251_primitives.py` — 함수: `average_ranks`(동률=평균순위·순서무관), `percentile_from_average_rank`((rank-0.5)/N·N=1→50), `percentile_scores`(None 모집단 제외+None 전파+[0,100] 클램프), `round_half_up`/`round_half_up_float`/`store_score`(소수1자리·None 전파), `display_integer`(저장값 기준 정수·None 전파), `clamp_score`/`is_score_in_range`/`assert_score_valid`, `mean_or_none`/`weighted_mean_or_none`/`composite_score`(필수 factor 하나라도 결측이면 보류 None). 상수 `STORED_SCORE_DECIMALS=1`·`ROUNDING_MODE`·`SINGLE_VALUE_SCORE=50`·`MIN/MAX_SCORE`·`PERCENTILE_METHOD`는 canonical config 반영(테스트가 정합 단언). `Decimal(str(x))` 경유로 float 이진오차 회피, 비유한(NaN/Inf) 명시 거부.
+  - `scripts/test_metrics251_primitives.py` — 계약·불변식 게이트. `package.json`에 `test:metrics251-primitives` 추가.
+- **속성/불변식 증명**: (A) 백분위 — N=1→50, 빈=빈, 전부 None→전부 None, [10,None,20]→N=2·25/75(결측 미대체), 동률 동일([10,10,20]→33.3̄/33.3̄/83.3̄), 전부 동률→50, **순서 불변**(결정적 순열 step 2/3/5/6 + 역순에서 값→점수 매핑 동일), **단조**(음수·raw 293490 포함 엄격 증가), **0..100 범위**, 경계(min=50/N·max=100-50/N 엄격 내부). (B) HALF_UP — 0.5/1.5/2.5/3.5→1/2/3/4(은행가 반올림과 차이 명시), 소수1자리(2.45→2.5·0.05→0.1), 음수(-0.5→-1·-2.5→-3), 멱등, 비유한/음수decimals 거부. (C) 저장(1자리)+표시(정수)=저장값 기준(원시 2.46→저장 2.5→표시 3, 원시 직접정수화=2 로 두 단계 차이 증명). (D) 클램프/검증(범위밖 클램프·None 유효결측 통과·NaN 거부). (E) null 전파(mean/weighted/composite — 결측 하나면 None·**50 대체 아님** 명시). (F) config 정합성. (G) 분리(compute_metrics 미의존)·순수(open/write 없음)·벽시계 없음 소스 스캔.
+- **불변식**: `public/data/stocks.json`·Metrics 2.4 산출물 바이트 불변(git status 미변경) · metricsVersion 2.4 · 공개 라우트/API/sitemap/검색인덱스/유니버스(138)/DART/auth/Supabase/RLS/cron/의존성/환경값 무변경. 런타임/공개/UI 계약 미변경(순수 Python 원시 함수 + 테스트 + package.json alias 1줄) → build/route 검증 불요.
+- **게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 verify_metrics.py` 138종목·오류0·금칙0·Metrics 2.4 · `test_metrics251_primitives.py` PASS · 형제 `test_metrics251_config.py` PASS(configHash 7bf1e3a1f989·매핑 61) · `test_metrics251_baseline.py` PASS(회귀 없음) · `git diff --check` clean · 신규/편집 3파일 U+FFFD 0 · stocks.json UNCHANGED.
+- **잔여 리스크**: (1) 원시 함수는 아직 어떤 데이터 생성에도 연결되지 않음 — shadow 엔진 조립·결정성 스냅샷은 Slice D 소관. (2) 동률 판정은 float `==` 기반이라 의도된 동률 입력은 정확히 같은 값이어야 함(백분위 전 원시 반올림 정책은 엔진/설정 결정). (3) `single_value_score=50`은 유효 모집단 1개의 정상 백분위값이며 결측 대체가 아님을 코드/테스트에 명시(오해 방지).
+- **다음 진입점(Slice D)**: 순수 Python shadow 엔진 — 입력 객체→출력 객체 부작용 없는 core, 21/63/126·5/20·value·252 risk 후보 공식, 공개 `stocks.json` 쓰기 금지, 동일 입력 결정성 검증(§10 Slice D). 이 Slice C 원시 함수를 재료로 사용.
+- **커밋**: 로컬 `[codex]` 1건. push 없음·main 무변경.
+
 ## 2026-07-15 - [codex] Metrics 2.5.1 Slice A: 기준선 영향 분석기
 
 - **Scope**: 설계서 `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §7 Gate 0 / §10 Slice A만. 공개 `public/data/stocks.json`(138종목·Metrics 2.4·미수정)을 읽기 전용으로 점검해, 후속 shadow slice(B~L)의 numeric gate 가 사용할 **결정적 기준선**을 측정하고 JSON+Markdown 결정 보고서로 방출. 새 2.5 점수를 계산·게시하지 않고, 결측을 50/factor 평균으로 채우지 않는다.
