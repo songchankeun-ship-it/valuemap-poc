@@ -56,7 +56,7 @@ export function readFlow(score: number): Reading {
   const r: Reading = { label: "거래활성도", score, emoji: "💰", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
     r.meaning = "거래량이 평소보다 눈에 띄게 늘었어요";
-    r.action = "돈과 관심이 몰린 상태 — 어떤 이슈인지 공시·뉴스·수급 변화 확인";
+    r.action = "거래와 관심이 몰린 상태 — 어떤 이슈인지 공시·뉴스·수급 변화 확인";
     r.tone = "good";
   } else if (score >= 40) {
     r.meaning = "거래량은 평소와 비슷한 보통 수준이에요";

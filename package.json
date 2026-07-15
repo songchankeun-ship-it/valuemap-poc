@@ -28,6 +28,7 @@
     "test:activity-surge": "tsx scripts/test_activitySurge.ts",
     "test:score-comparison": "tsx scripts/test_scoreComparison.ts",
     "test:status-dimensions": "tsx scripts/test_statusDimensions.ts",
+    "test:trading-activity": "tsx scripts/test_tradingActivityContract.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

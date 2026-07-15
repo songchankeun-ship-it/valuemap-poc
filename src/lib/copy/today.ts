@@ -60,7 +60,7 @@ export const todayCopy = {
       },
       volume: {
         title: "거래활성도 급증",
-        caption: "평소보다 거래대금·관심이 늘어난 종목 (파생 추정)",
+        caption: "평소보다 거래량·관심이 늘어난 종목 (파생 추정 · 가격 방향/매매 주체 아님)",
         footnote: "거래 관심 증가는 단기 테마성일 수 있어 지속성은 원문·차트로 확인하세요.",
       },
       value: {
@@ -206,7 +206,7 @@ export const todayCopy = {
       },
       volume: {
         title: "Trading activity surge",
-        caption: "Stocks with higher-than-usual turnover and interest (derived estimate)",
+        caption: "Stocks with higher-than-usual trading volume and interest (derived estimate; not price direction or buyer identity)",
         footnote: "Rising trading interest can be short-lived and theme-driven; check the source and chart for durability.",
       },
       value: {

@@ -6,6 +6,13 @@ export interface RealStock extends MockStock {
   peg?: number | null;
   returns?: { r1m?: number; r3m?: number; r6m?: number; r1y?: number };
   volStats?: { annualReturn?: number; annualStd?: number; sharpe?: number; days?: number; maxDrawdown?: number; worstDay?: number };
+  /**
+   * 거래활성도(flow) 지표의 원시 근거. 계약 정본(SOURCE OF TRUTH):
+   * 모든 값은 **주식 체결 수량(share volume, 거래량)** 기준이며 거래대금(turnover value, 원)이 아니다.
+   * `recent5dAvg`/`recent20dAvg`는 최근 5/20거래일 **평균 거래량(주)**, `ratio` = 5일 ÷ 20일.
+   * 필드명(`…Avg`)은 호환성을 위해 단위-중립으로 유지하되, 의미는 여기 한 곳에서만 정의한다.
+   * 이 지표는 가격 방향(상승/하락)이나 매매 주체(외국인/기관 등)를 나타내지 않는다.
+   */
   flowStats?: { recent5dAvg?: number; recent20dAvg?: number; ratio?: number };
   compositeScore?: number;
   market?: string;

@@ -70,6 +70,8 @@ def calc_vol(df):
     return round(score,1), {"annualReturn": round(ar*100,2), "annualStd": round(asd*100,2), "sharpe": round(sharpe,2), "days": len(closes), "maxDrawdown": round(mdd*100,2), "worstDay": round(worst*100,2)}
 
 def calc_flow(df):
+    # 거래활성도 입력 = 주식 체결 수량(share volume, 거래량). 거래대금(turnover value, 원)이 아님.
+    # 가격 방향/매매 주체는 계산에 반영되지 않는다. recent5dAvg/recent20dAvg 단위 = 평균 거래량(주).
     if df is None or len(df) < 25 or "Volume" not in df.columns: return None
     vols = df["Volume"].values
     r5, r20 = sum(vols[-5:])/5, sum(vols[-20:])/20

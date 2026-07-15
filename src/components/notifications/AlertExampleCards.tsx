@@ -21,7 +21,7 @@ export interface ScoreSurgeExample {
 export interface FlowSurgeExample {
   name: string;
   ticker: string;
-  ratio: number; // 최근 거래대금 / 평소 (배)
+  ratio: number; // 최근 거래량 / 평소 (배) — 거래대금(원) 아님
 }
 
 export interface AlertExampleData {
@@ -124,10 +124,10 @@ export function AlertExampleCards({ data }: { data: AlertExampleData }) {
               <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500">{flowSurge.ticker}</span>
             </div>
             <div className="mt-1 text-[13px] text-zinc-600 dark:text-zinc-300 tabular-nums">
-              최근 거래대금이 평소의 <strong>약 {flowSurge.ratio.toFixed(1)}배</strong>
+              최근 거래량이 평소의 <strong>약 {flowSurge.ratio.toFixed(1)}배</strong>
             </div>
             <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-              관심이 몰리고 있다는 참고 신호예요. 방향(상승/하락)을 뜻하지는 않습니다.
+              관심이 몰리고 있다는 참고 신호예요. 가격 방향(상승/하락)이나 매매 주체를 뜻하지는 않습니다.
             </div>
           </ExampleShell>
         ) : null}

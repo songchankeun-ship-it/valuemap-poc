@@ -1,5 +1,5 @@
 // 종합 점수 근거(설계서 2 §5.1~5.2) 표시 파생 — 순수 함수.
-// 4지표 점수·실데이터(수익률/거래대금 추세/PER·PBR·ROE·업종 상대/변동성·낙폭·Sharpe)를
+// 4지표 점수·실데이터(수익률/거래량 추세/PER·PBR·ROE·업종 상대/변동성·낙폭·Sharpe)를
 // "왜 이 점수가 나왔는지" 근거 factor로 변환한다.
 // ⚠️ 점수 계산식(score.ts/metrics.ts/sector.ts)은 절대 건드리지 않는다 — 표시 파생만.
 // ⚠️ 없는 데이터는 지어내지 않고 missingNote("추후 데이터 축적 후 제공")로 분리한다.
@@ -127,14 +127,14 @@ export function buildScoreBasis(input: ScoreBasisInput): ScoreBasis {
   }
   const momMissing = "기간별(1·3·6개월) 수익률 데이터가 아직 없어 추후 데이터 축적 후 제공합니다.";
 
-  // ── 거래활성도: 최근 5일/20일 평균 거래대금 비율(실데이터) ──────
+  // ── 거래활성도: 최근 5일/20일 평균 거래량 비율(실데이터, 거래대금 아님) ──────
   const flowFactors: BasisFactor[] = [];
   const ratio = flowStats?.ratio;
   if (ratio != null && Number.isFinite(ratio)) {
     const trend = ratio >= 1.1 ? "거래 늘어남" : ratio <= 0.9 ? "거래 줄어듦" : "거래 비슷";
-    flowFactors.push({ label: "최근 5일/20일 평균 거래대금", value: `${ratio.toFixed(2)}배 · ${trend}` });
+    flowFactors.push({ label: "최근 5일/20일 평균 거래량", value: `${ratio.toFixed(2)}배 · ${trend}` });
   }
-  const flowMissing = "세부 거래대금 추세 데이터가 없어 추후 데이터 축적 후 제공합니다.";
+  const flowMissing = "세부 거래량 추세 데이터가 없어 추후 데이터 축적 후 제공합니다.";
 
   // ── 밸류: PER·PBR·ROE + 업종 상대(표본 충분할 때만) ──────────
   const valueFactors: BasisFactor[] = [];
