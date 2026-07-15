@@ -61,7 +61,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">3. 보관 및 파기</h2>
-          <p>회원 정보는 회원 탈퇴 시점까지 보관되며, 탈퇴 즉시 모든 정보가 파기됩니다. 단, 법령에 의해 보관이 필요한 경우 해당 기간 동안 보관합니다.</p>
+          <p>회원 정보는 회원 탈퇴 시점까지 보관하며, 탈퇴 요청 시 지체 없이 파기합니다. 다만 법령, 보안, 부정사용 방지, 분쟁 대응 등 정당한 사유로 보관이 필요한 일부 기록은 필요한 기간 동안 제한적으로 보관한 뒤 파기합니다. 삭제 요청 절차와 예외 보관 기준은 <Link href="/data-deletion" className="text-blue-600 dark:text-blue-400 underline">계정 및 데이터 삭제 요청</Link> 안내와 동일하게 적용됩니다.</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>접속 로그·분석 데이터</strong>: 통계 목적으로만 사용하며 최대 12개월 내 파기 또는 익명화.</li>
             <li><strong>알림 메일 관련 이메일</strong>: 사용자가 알림 기능을 직접 켠 경우 발송 목적에 한해 이용하며, 알림 해제·회원 탈퇴 시 처리 중단.</li>

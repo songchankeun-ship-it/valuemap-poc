@@ -80,35 +80,6 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <section className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/60 dark:bg-amber-950/20 p-4 not-prose">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">유료 결제 관련 정책 (현재 미제공 · 향후 도입 시 초안)</h2>
-          <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">현재 유료 결제는 제공되지 않으며, <Link href="/pricing" className="underline">요금제 안내</Link> 페이지도 무료 베타와 유료 플랜 미제공 상태를 안내합니다. 아래는 향후 유료 기능을 도입하는 경우 적용될 수 있는 사항의 <strong>초안</strong>이며, 구속력 있는 금액·날짜를 확정하지 않습니다. 실제 정책은 유료 결제 오픈 전 확정·공지됩니다.</p>
-          <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-zinc-700 dark:text-zinc-300">
-            <li>결제일·자동갱신: 유료 구독을 도입하는 경우 결제주기, 결제일, 갱신 사전 고지 방식은 오픈 전 확정합니다.</li>
-            <li>해지·요금제 변경: 해지 효력 시점, 상위/하위 요금제 전환 적용 시점은 오픈 전 확정합니다.</li>
-            <li>환불·청약철회: 전자상거래법상 청약철회 기준과 디지털 콘텐츠 환불 기준은 오픈 전 확정합니다.</li>
-            <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 오픈 전 확정합니다.</li>
-            <li>향후 유료 기능 구성: 기능 구성은 실제 도입 전 사전 안내 후 확정합니다.</li>
-          </ul>
-
-          <div className="mt-4 rounded-md border border-amber-300/70 dark:border-amber-800 bg-white/60 dark:bg-zinc-900/40 p-3">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">유료 결제 도입 전 확정 필요 항목 (초안 · 미확정)</div>
-            <p className="text-[11px] text-amber-800 dark:text-amber-300 mb-2">아래 항목은 유료 결제를 실제로 제공하기 전 확정·공지할 항목이며, 현재는 미확정 상태입니다. 확정 시 본 약관과 결제 화면에 동일하게 반영합니다.</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 text-[13px] text-zinc-700 dark:text-zinc-300">
-              <li>결제 수단</li>
-              <li>결제 주기</li>
-              <li>자동 갱신 시점</li>
-              <li>해지 효력 시점 — 즉시 종료인지, 결제 기간 만료 후 종료인지</li>
-              <li>환불 기준</li>
-              <li>7일 청약철회 적용 여부</li>
-              <li>디지털 콘텐츠 사용 개시 후 환불 제한 여부</li>
-              <li>장애 보상 기준</li>
-              <li>요금제 변경 시 정산 방식</li>
-            </ul>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격과 유료 정책은 현재 미확정이며, 유료 결제를 제공하기 전 약관과 결제 화면에 동일하게 확정 공지합니다(<Link href="/pricing" className="underline">요금제 안내</Link>).</p>
-          </div>
-        </section>
-
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제5조 (지적재산권)</h2>
           <p>본 서비스가 자체 개발한 점수 산식, UI 디자인, 코드는 운영자의 지적재산입니다. 무단 복제·배포·상업적 활용을 금지합니다.</p>
@@ -132,6 +103,37 @@ export default function TermsPage() {
         </section>
 
       </div>
+
+      {/* 현재 적용 약관(제1조~제8조) 밖의 향후 정책 초안 — 유료 결제 도입 전까지 효력 없음. 본문과 분리해 별도 표기 */}
+      <section className="mt-8 rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/60 dark:bg-amber-950/20 p-4 not-prose">
+        <div className="inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-800 dark:text-amber-300 mb-2">현재 약관 외 · 향후 정책 초안</div>
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">유료 결제 관련 정책 (현재 미제공 · 향후 도입 시 초안)</h2>
+        <p className="text-xs text-amber-800 dark:text-amber-300 mb-2">아래 내용은 위 <strong>현재 적용 약관(제1조~제8조)에 포함되지 않으며</strong>, 유료 결제를 실제로 도입하기 전까지 효력이 없습니다. 현재 유료 결제는 제공되지 않으며, <Link href="/pricing" className="underline">요금제 안내</Link> 페이지도 무료 베타와 유료 플랜 미제공 상태를 안내합니다. 아래는 향후 유료 기능을 도입하는 경우 적용될 수 있는 사항의 <strong>초안</strong>이며, 구속력 있는 금액·날짜를 확정하지 않습니다. 실제 정책은 유료 결제 오픈 전 확정·공지됩니다.</p>
+        <ul className="list-disc list-inside space-y-1 ml-2 text-sm text-zinc-700 dark:text-zinc-300">
+          <li>결제일·자동갱신: 유료 구독을 도입하는 경우 결제주기, 결제일, 갱신 사전 고지 방식은 오픈 전 확정합니다.</li>
+          <li>해지·요금제 변경: 해지 효력 시점, 상위/하위 요금제 전환 적용 시점은 오픈 전 확정합니다.</li>
+          <li>환불·청약철회: 전자상거래법상 청약철회 기준과 디지털 콘텐츠 환불 기준은 오픈 전 확정합니다.</li>
+          <li>결제 실패·장애 보상: 결제 실패 시 절차와 유료 구간 장애 시 보상 범위는 오픈 전 확정합니다.</li>
+          <li>향후 유료 기능 구성: 기능 구성은 실제 도입 전 사전 안내 후 확정합니다.</li>
+        </ul>
+
+        <div className="mt-4 rounded-md border border-amber-300/70 dark:border-amber-800 bg-white/60 dark:bg-zinc-900/40 p-3">
+          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">유료 결제 도입 전 확정 필요 항목 (초안 · 미확정)</div>
+          <p className="text-[11px] text-amber-800 dark:text-amber-300 mb-2">아래 항목은 유료 결제를 실제로 제공하기 전 확정·공지할 항목이며, 현재는 미확정 상태입니다. 확정 시 본 약관과 결제 화면에 동일하게 반영합니다.</p>
+          <ul className="list-disc list-inside space-y-1 ml-2 text-[13px] text-zinc-700 dark:text-zinc-300">
+            <li>결제 수단</li>
+            <li>결제 주기</li>
+            <li>자동 갱신 시점</li>
+            <li>해지 효력 시점 — 즉시 종료인지, 결제 기간 만료 후 종료인지</li>
+            <li>환불 기준</li>
+            <li>7일 청약철회 적용 여부</li>
+            <li>디지털 콘텐츠 사용 개시 후 환불 제한 여부</li>
+            <li>장애 보상 기준</li>
+            <li>요금제 변경 시 정산 방식</li>
+          </ul>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">가격과 유료 정책은 현재 미확정이며, 유료 결제를 제공하기 전 약관과 결제 화면에 동일하게 확정 공지합니다(<Link href="/pricing" className="underline">요금제 안내</Link>).</p>
+        </div>
+      </section>
 
       <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400 text-center">
         <Link href="/about" className="hover:text-zinc-900 dark:hover:text-zinc-100 underline">서비스 소개</Link>
