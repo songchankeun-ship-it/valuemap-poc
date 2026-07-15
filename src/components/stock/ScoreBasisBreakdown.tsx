@@ -114,6 +114,36 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
         <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">{part.extraNote}</p>
       ) : null}
 
+      {/* 모멘텀 국면 — 1·3·6개월 부호 기반. 장·단기 방향이 어긋나는 국면(divergent)은
+          한 줄 해석으로 뭉개지 않도록 별도 라벨+설명으로 대비를 그대로 노출한다. */}
+      {part.kind === "momentum" && part.regime && part.regime.key !== "unavailable" ? (
+        (() => {
+          const rg = t.momentumRegime.labels[part.regime.key];
+          const divergent = part.regime.divergent;
+          return (
+            <div
+              className={
+                "rounded-md px-2 py-1.5 border text-[10px] leading-snug break-words " +
+                (divergent
+                  ? "border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20"
+                  : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50")
+              }
+            >
+              <span
+                className={
+                  "font-semibold " +
+                  (divergent ? "text-amber-700 dark:text-amber-300" : "text-zinc-600 dark:text-zinc-300")
+                }
+              >
+                {t.momentumRegime.prefix} · {rg.label}
+              </span>
+              <span className="text-zinc-500 dark:text-zinc-400"> — {rg.note}</span>
+              <span className="mt-1 block text-[9px] text-zinc-400 dark:text-zinc-500">{t.momentumRegime.caption}</span>
+            </div>
+          );
+        })()
+      ) : null}
+
       {/* 강점/주의 — metricReadings 단일 소스 */}
       <p className="text-[11px] text-zinc-700 dark:text-zinc-300 leading-snug break-words">
         <span className="font-semibold text-zinc-500 dark:text-zinc-400">{t.interpretLabel}</span> {r.meaning}

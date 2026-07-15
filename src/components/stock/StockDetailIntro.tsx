@@ -169,7 +169,7 @@ export function SectorValueCard({
 
   if (!hasScore) {
     return (
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
+      <div id="sector-value" className="scroll-mt-16 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 p-3">
         <div className="text-[11px] md:text-xs text-zinc-600 dark:text-zinc-300 font-semibold">{t.titlePrefix} {sectorName}</div>
         <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{t.emptyBefore} {peers}{t.emptyMid} {poolN} {t.emptyAfter}</div>
       </div>
@@ -178,7 +178,7 @@ export function SectorValueCard({
 
   const lowSample = peers < 10;
   return (
-    <div className={"rounded-lg border p-3 flex items-center justify-between gap-3 " + (lowSample ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40" : "border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20")}>
+    <div id="sector-value" className={"scroll-mt-16 rounded-lg border p-3 flex items-center justify-between gap-3 " + (lowSample ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40" : "border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20")}>
       <div className="min-w-0">
         <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>{t.titlePrefix} {sectorName} <span className={"font-normal " + (lowSample ? "text-zinc-400 dark:text-zinc-500" : "text-cyan-700/70 dark:text-cyan-400/70")}>{t.diffNote}</span></div>
         <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.peerDescBefore} {peers}{t.peerDescMid} {poolN}{t.peerDescAfter}({Math.round(valueScore)}{t.peerDescPoint}</div>

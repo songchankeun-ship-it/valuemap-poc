@@ -91,8 +91,8 @@ export function readValue(score: number, per: number, pbr: number): Reading {
 export function readVol(score: number): Reading {
   const r: Reading = { label: "위험조정", score, emoji: "⚖️", meaning: "", action: "", tone: "watch" };
   if (score >= 70) {
-    r.meaning = "관측 기간엔 주가 출렁임 대비 수익률이 좋은 편이었어요";
-    r.action = "출렁임이 작다는 뜻은 아님 — 실제 일간 변동·최대낙폭도 함께 확인";
+    r.meaning = "관측 기간엔 주가 출렁임 대비 수익 효율이 좋은 편이었어요";
+    r.action = "안전 점수가 아님 · 출렁임이 작다는 뜻도 아님 — 실제 일간 변동·최대낙폭도 함께 확인";
     r.tone = "good";
   } else if (score >= 40) {
     r.meaning = "출렁임과 수익률이 무난하게 균형을 이룬 편이에요";

@@ -565,6 +565,18 @@ export default async function StockDetailPage({ params }: PageProps) {
       {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2). 결론 다음 첫 깊이 = 근거 */}
       <ScoreBasisBreakdown basis={scoreBasis} />
 
+      {/* 업종 대비 밸류 — 이미 계산된 같은 업종 상대 밸류(sectorValueScore)를 근거 탭(기본/첫 탭)
+          에서 항상 보이게 배치해 접근성을 높인다(Slice G). 종합 점수식에 들어가지 않는 별도 참고
+          지표이며(표시/문구만, 산식 무변경), 상세 순위 비교는 요약 탭의 '같은 업종 비교' 표로 잇는다. */}
+      <SectorValueCard
+        hasScore={sectorValue.score >= 0}
+        sectorName={sectorValue.sector}
+        peers={sectorValue.peers}
+        score={sectorValue.score}
+        poolN={poolN}
+        valueScore={s.value}
+      />
+
       {/* 최근 변화 — 근거 바로 뒤(설계서 §9.3 순서 2). 점수·거래활성도·가격·공시 변화 요약. */}
       <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
 
@@ -651,16 +663,8 @@ export default async function StockDetailPage({ params }: PageProps) {
           />
         ) : null}
 
-        {/* 업종 대비 밸류 — 점수 산식(sectorValueScore) 무변경. 표시/문구만 SectorValueCard에서 분기 */}
-        <SectorValueCard
-          hasScore={sectorValue.score >= 0}
-          sectorName={sectorValue.sector}
-          peers={sectorValue.peers}
-          score={sectorValue.score}
-          poolN={poolN}
-          valueScore={s.value}
-        />
-
+        {/* 같은 업종 비교(종합점수 순위 표) — 업종 대비 밸류 카드는 근거 탭(항상 노출)로 옮겨
+            접근성을 높였고(Slice G), 여기서는 상세 순위 시각화만 유지한다. */}
         <SectorComparison rows={sectorRows} sector={mySector} sectorCount={sectorCount} />
       </MetricsDetailsSection>
 

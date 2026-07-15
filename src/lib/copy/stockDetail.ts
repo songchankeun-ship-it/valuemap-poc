@@ -363,6 +363,37 @@ export const scoreBasisCopy = {
     interpretLabel: "해석:",
     cautionTag: "주의",
     confirmTag: "확인",
+    // 모멘텀 국면 — 1·3·6개월 수익률 부호로만 자동 분류(momentumRegime.ts). 점수 계산과 무관한 표시 파생.
+    momentumRegime: {
+      caption: "국면은 1·3·6개월 수익률 부호로만 자동 분류합니다(점수 계산과 무관).",
+      prefix: "국면",
+      labels: {
+        strengthening: {
+          label: "단기·장기 모두 상승",
+          note: "최근 1개월과 6개월 수익률이 함께 플러스 — 상승 흐름이 이어지는 구간이에요.",
+        },
+        longUpShortDown: {
+          label: "장기 강세 · 단기 약세",
+          note: "6개월은 올랐지만 최근 1개월은 밀렸어요 — 장기 상승 속 단기 조정일 수 있어, 장기·단기를 한 문장으로 뭉치지 말고 나눠 확인하세요.",
+        },
+        longDownShortUp: {
+          label: "장기 약세 · 단기 반등",
+          note: "6개월은 빠졌지만 최근 1개월은 반등했어요 — 추세 전환인지 일시 되돌림인지 확인이 필요해요.",
+        },
+        weakening: {
+          label: "단기·장기 모두 하락",
+          note: "최근 1개월과 6개월 수익률이 함께 마이너스 — 하락 흐름이 이어지는 구간이에요.",
+        },
+        sideways: {
+          label: "뚜렷한 방향 없음",
+          note: "최근 1개월·6개월 수익률이 모두 크지 않아 방향이 뚜렷하지 않아요.",
+        },
+        unavailable: {
+          label: "국면 판정 보류",
+          note: "1개월 또는 6개월 수익률이 아직 충분하지 않아 국면을 판정하지 않습니다.",
+        },
+      },
+    },
   },
   en: {
     title: "Score basis",
@@ -392,6 +423,36 @@ export const scoreBasisCopy = {
     interpretLabel: "Read:",
     cautionTag: "Caution",
     confirmTag: "Check",
+    momentumRegime: {
+      caption: "The regime is auto-classified from the sign of the 1/3/6-month returns only (independent of the score).",
+      prefix: "Regime",
+      labels: {
+        strengthening: {
+          label: "Both short- and long-term up",
+          note: "The recent 1-month and 6-month returns are both positive — the uptrend is continuing.",
+        },
+        longUpShortDown: {
+          label: "Long-term strength, short-term weakness",
+          note: "The 6-month return is up but the recent 1 month pulled back — this can be a short-term dip within a longer uptrend, so read long- and short-term separately rather than as one sentence.",
+        },
+        longDownShortUp: {
+          label: "Long-term weakness, short-term rebound",
+          note: "The 6-month return is down but the recent 1 month rebounded — check whether it is a trend change or a temporary bounce.",
+        },
+        weakening: {
+          label: "Both short- and long-term down",
+          note: "The recent 1-month and 6-month returns are both negative — the downtrend is continuing.",
+        },
+        sideways: {
+          label: "No clear direction",
+          note: "Neither the recent 1-month nor 6-month return is large, so there is no clear direction.",
+        },
+        unavailable: {
+          label: "Regime not determined",
+          note: "The 1-month or 6-month return is not yet sufficient, so the regime is not determined.",
+        },
+      },
+    },
   },
 } as const satisfies Record<Locale, unknown>;
 

@@ -13,6 +13,7 @@ import {
   readVol,
   type Reading,
 } from "./metricReadings";
+import { classifyMomentumRegime, type MomentumRegimeKey } from "./momentumRegime";
 
 export type BasisKind = "momentum" | "flow" | "value" | "vol";
 
@@ -45,6 +46,8 @@ export interface BasisPart {
   missingNote?: string;
   /** 근거는 있으나 일부 항목(예: 업종 상대 밸류)이 표본 부족일 때 보조 안내. */
   extraNote?: string;
+  /** 추세(momentum) 파트에만 붙는 1·3·6개월 국면 분류(momentumRegime.ts). 표시 파생 — 점수 무관. */
+  regime?: { key: MomentumRegimeKey; divergent: boolean };
 }
 
 export interface ScoreBasis {
@@ -161,8 +164,15 @@ export function buildScoreBasis(input: ScoreBasisInput): ScoreBasis {
   }
   const volMissing = "변동성·낙폭·Sharpe 통계가 아직 없어 추후 데이터 축적 후 제공합니다.";
 
+  // 모멘텀 국면 — 1·3·6개월 수익률 부호로만 결정적 분류(점수 계산과 무관). 장·단기 대비를
+  // 한 문장 해석으로 뭉개지 않도록 추세 파트에만 붙여 표시한다.
+  const momRegime = classifyMomentumRegime(returns);
+
+  const momentumPart = buildPart("추세", "momentum", momentum, ranks.momentum, total, momFactors, readMomentum(momentum), momMissing);
+  momentumPart.regime = { key: momRegime.key, divergent: momRegime.divergent };
+
   const parts: BasisPart[] = [
-    buildPart("추세", "momentum", momentum, ranks.momentum, total, momFactors, readMomentum(momentum), momMissing),
+    momentumPart,
     buildPart("거래활성도", "flow", flow, ranks.flow, total, flowFactors, readFlow(flow), flowMissing),
     buildPart("밸류", "value", value, ranks.value, total, valueFactors, readValue(value, per, pbr), valueMissing, valueExtra),
     buildPart("위험조정", "vol", vol, ranks.vol, total, volFactors, readVol(vol), volMissing),

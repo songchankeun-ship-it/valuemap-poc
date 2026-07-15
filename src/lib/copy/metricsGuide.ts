@@ -129,7 +129,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
         {
           question: "위험조정 점수는 무엇인가요?",
           answer:
-            "위험조정 점수는 관측 기간의 수익을 변동성과 함께 본 지표입니다. 점수가 높아도 향후 하락 위험이 작다는 뜻은 아니며, 과거 흐름을 해석하는 참고 신호입니다.",
+            "위험조정 점수는 관측 기간의 '과거 수익-변동성 효율'(수익을 변동성으로 나눈 효율)을 본 지표입니다. 점수가 높아도 안전(저위험)하다는 뜻이나 향후 하락 위험이 작다는 뜻은 아니며, 과거 흐름을 해석하는 참고 신호입니다. 실제 위험은 종목 상세의 '위험 상세'에서 절대 변동성·최대낙폭으로 함께 확인하세요.",
         },
       ],
     },
@@ -166,13 +166,13 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       },
       {
         key: "vol",
-        name: "위험조정 (변동성조정)",
-        desc: "연간화 수익률을 연간화 변동성으로 나눈 위험조정 수익 (Sharpe 유사).",
+        name: "위험조정 · 과거 수익-변동성 효율",
+        desc: "과거 수익을 변동성으로 나눈 효율 (Sharpe 유사) — 안전(저위험) 점수가 아닙니다.",
         calc: "(연간 수익 - 무위험률 3.5%) / 연간 변동성. -2~+2 범위를 0~100점으로 매핑.",
         detail: () =>
-          "기간: 최근 1년(약 252거래일) · 수익률: 수정종가 일별 · 무위험률: 연 3.5% · 최소 관측치 미달 시 중립 처리.",
-        high: "관측 기간 변동성 대비 수익이 양호했던 구간입니다. 과거 기준이며 향후를 보장하지 않습니다.",
-        low: "변동성 대비 수익이 부진. 흔들림은 큰데 결과가 못 따라간 상태일 수 있습니다.",
+          "기간: 최근 1년(약 252거래일) · 수익률: 수정종가 일별 · 무위험률: 연 3.5% · 최소 관측치 미달 시 중립 처리. 절대 변동성·최대낙폭은 종목 상세의 '위험 상세'에 별도 표시.",
+        high: "관측 기간 변동성 대비 수익 효율이 양호했던 구간입니다. 과거 기준이며 안전이나 향후 수익을 보장하지 않습니다.",
+        low: "변동성 대비 수익 효율이 부진. 흔들림은 큰데 결과가 못 따라간 상태일 수 있습니다.",
       },
     ],
     metricSection: {
@@ -275,7 +275,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
         {
           question: "What is a risk-adjusted score?",
           answer:
-            "The risk-adjusted score reads return together with volatility over the observed period. A high score does not mean future downside risk is small; it is a historical reference signal.",
+            "The risk-adjusted score reads past return-to-volatility efficiency (return divided by volatility) over the observed period. A high score does not mean the stock is safe (low-risk) or that future downside risk is small; it is a historical reference signal. Check the actual risk via absolute volatility and max drawdown in the stock's Risk detail.",
         },
       ],
     },
@@ -312,13 +312,13 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       },
       {
         key: "vol",
-        name: "Risk-adjusted (Volatility-adjusted)",
-        desc: "Risk-adjusted return, annualized return divided by annualized volatility (Sharpe-like).",
+        name: "Risk-adjusted · past return-to-volatility efficiency",
+        desc: "Past return divided by volatility (Sharpe-like) — not a safety (low-risk) score.",
         calc: "(Annual return − risk-free rate 3.5%) / annual volatility. Maps the −2 to +2 range onto 0–100 points.",
         detail: () =>
-          "Period: the last 1 year (about 252 trading days) · Returns: daily adjusted close · Risk-free rate: 3.5% per year · Treated as neutral when below the minimum number of observations.",
-        high: "A stretch where return was favorable relative to volatility over the observed period. This is historical and does not guarantee the future.",
-        low: "Return was weak relative to volatility. The swings may have been large while the result failed to keep up.",
+          "Period: the last 1 year (about 252 trading days) · Returns: daily adjusted close · Risk-free rate: 3.5% per year · Treated as neutral when below the minimum number of observations. Absolute volatility and max drawdown are shown separately in the stock's Risk detail.",
+        high: "A stretch where return-to-volatility efficiency was favorable over the observed period. This is historical and does not guarantee safety or future returns.",
+        low: "Return-to-volatility efficiency was weak. The swings may have been large while the result failed to keep up.",
       },
     ],
     metricSection: {
