@@ -32,6 +32,7 @@
     "test:today-insight": "tsx scripts/test_todayInsightProvenance.ts",
     "test:score-scale": "tsx scripts/test_scoreScaleContract.ts",
     "test:momentum-regime": "tsx scripts/test_momentumRegime.ts",
+    "test:seo-stability": "tsx scripts/test_seoStability.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

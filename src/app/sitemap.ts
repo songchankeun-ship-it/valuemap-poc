@@ -6,23 +6,35 @@ import { seoTopics } from "@/lib/seoTopics";
 const SITE = "https://ornscore.com";
 
 /**
+ * lastModified 계약(결정적) — Slice H:
+ * 요청/빌드 시각(new Date())을 절대 쓰지 않는다. 값은 오직 로컬 데이터셋에서만
+ * 유도한다: 우선 dataMetadata.generatedAt, 없으면 asOfBusinessDate(YYYYMMDD, KST 자정).
+ * 같은 데이터 입력이면 항상 같은 sitemap 을 만들어, 크롤러가 매 요청마다 "방금 변경됨"
+ * 으로 오인하지 않게 한다. 두 소스 모두 없으면 lastModified 를 생략한다(임의의 현재
+ * 시각으로 대체하지 않는다).
+ */
+function deterministicLastModified(): Date | undefined {
+  const iso = dataMetadata?.generatedAt;
+  if (iso) {
+    const d = new Date(iso);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  const biz = dataMetadata?.asOfBusinessDate;
+  if (biz && /^\d{8}$/.test(biz)) {
+    const d = new Date(`${biz.slice(0, 4)}-${biz.slice(4, 6)}-${biz.slice(6, 8)}T00:00:00+09:00`);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  return undefined;
+}
+
+/**
  * 동적 sitemap: 정적 페이지 + 138개 종목 페이지 자동 포함.
  * 구글/네이버가 모든 페이지를 색인할 수 있게 한다.
+ * lastModified 는 전 페이지 공통으로 데이터셋 기준의 결정적 값을 쓴다(위 계약 참고).
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  // 데이터 마지막 업데이트 시각 (있으면 사용)
-  let dataDate = now;
-  try {
-    const iso = dataMetadata?.generatedAt;
-    if (iso) {
-      const d = new Date(iso);
-      if (!Number.isNaN(d.getTime())) dataDate = d;
-    }
-  } catch {
-    // ignore
-  }
+  const dataDate = deterministicLastModified();
+  const now = dataDate;
 
   // 1. 정적 페이지 (공개)
   const staticPages: MetadataRoute.Sitemap = [

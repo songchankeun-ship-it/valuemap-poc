@@ -24,6 +24,7 @@ import { MetricInsightCards } from "@/components/stock/MetricInsightCards";
 import { SectorComparison } from "@/components/stock/SectorComparison";
 import { StockTabs } from "@/components/StockTabs";
 import { sectorValueScore, sectorOf } from "@/lib/sector";
+import { formerNamesOf } from "@/lib/stockAliases";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
@@ -471,6 +472,9 @@ export default async function StockDetailPage({ params }: PageProps) {
 
   // 구조화 데이터 (JSON-LD) — 구글 검색 결과 풍부한 표시
   const structuredDataDate = stockStructuredDataDate();
+  // 구(舊) 사명은 통제된 별칭으로만 노출한다(Slice H): canonical name/headline/제목/URL 은
+  // 항상 현재 사명(s.name)을 쓰고, 과거 사명은 alternateName 별칭 필드에서만 검색 힌트로 제공한다.
+  const formerNames = formerNamesOf(ticker);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -494,6 +498,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         about: {
           "@type": "Thing",
           name: `${s.name} (${ticker})`,
+          ...(formerNames.length ? { alternateName: [...formerNames] } : {}),
         },
       },
       {

@@ -18,7 +18,10 @@
 //       /api, /settings, /watchlist, /history) — those must never be advertised
 //       to crawlers,
 //     - host hygiene: every <loc> is an absolute https://ornscore.com URL (no
-//       localhost / http / preview-host leak) and there are no duplicates.
+//       localhost / http / preview-host leak) and there are no duplicates,
+//     - deterministic <lastmod>: one data-derived date for the whole file (never
+//       a per-request/build clock) — recomputed from the shipped stocks.json and
+//       compared, so a dynamic new Date() leak fails locally (Slice H).
 //
 //   ROBOTS (/robots.txt)
 //     - points crawlers at the canonical sitemap (Sitemap: .../sitemap.xml) and
@@ -46,6 +49,10 @@
 //   VERIFY_BASE_URL=http://localhost:4471 node scripts/verify-public-seo.mjs
 
 // --- args -------------------------------------------------------------------
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+
 function argValue(flag, fallback) {
   const i = process.argv.indexOf(flag);
   if (i !== -1 && i + 1 < process.argv.length) return process.argv[i + 1];
@@ -54,6 +61,36 @@ function argValue(flag, fallback) {
 
 const BASE = (argValue("--base", process.env.VERIFY_BASE_URL) || "http://localhost:4471").replace(/\/+$/, "");
 const SITE = "https://ornscore.com";
+
+// --- deterministic lastmod expectation (Slice H) ----------------------------
+// The sitemap's <lastmod> must be a pure function of the local dataset, never the
+// request/build clock. We recompute the SAME deterministic date the app derives
+// (src/app/sitemap.ts deterministicLastModified) straight from the shipped data
+// file, then assert every emitted <lastmod> equals it. If a `new Date()` (or any
+// per-request value) leaks back in, the emitted lastmod stops matching the data
+// date and this gate fails locally.
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DATA_PATH = argValue("--data", resolve(__dirname, "..", "public", "data", "stocks.json"));
+
+function expectedLastmodIso() {
+  let meta;
+  try {
+    meta = JSON.parse(readFileSync(DATA_PATH, "utf-8"));
+  } catch {
+    return null; // cannot load dataset -> skip strict equality, only structural checks apply
+  }
+  const iso = meta?.generatedAt;
+  if (iso) {
+    const d = new Date(iso);
+    if (!Number.isNaN(d.getTime())) return d.toISOString();
+  }
+  const biz = meta?.asOfBusinessDate;
+  if (biz && /^\d{8}$/.test(biz)) {
+    const d = new Date(`${biz.slice(0, 4)}-${biz.slice(4, 6)}-${biz.slice(6, 8)}T00:00:00+09:00`);
+    if (!Number.isNaN(d.getTime())) return d.toISOString();
+  }
+  return null;
+}
 
 // --- contract ---------------------------------------------------------------
 // Important public routes that MUST appear in the sitemap. Kept in sync with the
@@ -124,6 +161,14 @@ function sitemapLocs(xml) {
         .replace(/&gt;/g, ">")
         .trim(),
     );
+  }
+  return out;
+}
+
+function sitemapLastmods(xml) {
+  const out = [];
+  for (const m of xml.matchAll(/<lastmod>\s*([^<\s]+)\s*<\/lastmod>/gi)) {
+    out.push(m[1].trim());
   }
   return out;
 }
@@ -208,6 +253,27 @@ function checkSitemap(status, xml) {
   for (const p of paths) {
     for (const bad of FORBIDDEN_SITEMAP_PREFIXES) {
       if (matchesPrefix(p, bad)) reasons.push(`forbidden private route "${p}" leaked into sitemap (matches "${bad}")`);
+    }
+  }
+
+  // Deterministic <lastmod> (Slice H): every entry must carry the data-derived
+  // date, identical across the whole file — never a per-request/build clock value.
+  const lastmods = sitemapLastmods(xml);
+  if (lastmods.length === 0) {
+    reasons.push("no <lastmod> entries parsed — sitemap must carry a deterministic last-modified date");
+  } else {
+    const uniqueLastmods = [...new Set(lastmods)];
+    if (uniqueLastmods.length > 1) {
+      reasons.push(`non-uniform <lastmod> values ${JSON.stringify(uniqueLastmods)} — must be one deterministic data-derived date`);
+    }
+    const expected = expectedLastmodIso();
+    if (expected == null) {
+      reasons.push(`cannot derive expected lastmod from ${DATA_PATH} — dataset missing generatedAt/asOfBusinessDate`);
+    } else {
+      const wrong = uniqueLastmods.filter((v) => v !== expected);
+      if (wrong.length) {
+        reasons.push(`<lastmod> ${JSON.stringify(wrong)} != expected data date "${expected}" — likely a dynamic new Date() leak`);
+      }
     }
   }
 

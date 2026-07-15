@@ -7,6 +7,9 @@
 //   - 0건 조합 / 자유 검색어(q) / 다축 조합 / 과다·미인식 파라미터 URL 은 noindex + canonical=/stocks.
 //   - 종목 상세 description/OG/Twitter/JSON-LD 설명은 매일 바뀌는 점수·PER/PBR·수익률·옛 용어를
 //     노출하지 않고, 안정적인 지표/재무/공시/데이터 기준일/비자문 프레이밍을 유지한다.
+//   - 개명 종목(예: 352820 하이브)은 현재 사명을 canonical name/headline/title 로 유지하고,
+//     구 사명(빅히트엔터테인먼트)은 오직 JSON-LD alternateName 별칭으로만 노출한다 —
+//     제목·canonical URL·설명·canonical entity name 에 구 사명이 새면 실패(Slice H).
 //   - 홈·발견(/stocks) head 메타(제목/설명/OG/Twitter/keywords)에 옛 지표명(모멘텀·변동성조정 등)이
 //     되살아나지 않는다.
 //   - 백테스트 페이지는 색인·발견은 유지하되(index/follow) robots nosnippet 을 유지해 과거 성과
@@ -110,6 +113,40 @@ function jsonLdArticleDescriptions(html) {
   return out;
 }
 
+// Collect every string value stored under `key` anywhere in a JSON-LD graph
+// (recursing through @graph, nested entities, and string arrays). Used to read
+// canonical naming (name/headline) and controlled aliases (alternateName).
+function collectJsonLdByKey(node, key, out) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectJsonLdByKey(item, key, out);
+    return;
+  }
+  if (!node || typeof node !== "object") return;
+  const v = node[key];
+  if (typeof v === "string") out.push(v);
+  else if (Array.isArray(v)) for (const s of v) if (typeof s === "string") out.push(s);
+  for (const k of Object.keys(node)) {
+    if (k === "@context" || k === key) continue;
+    const child = node[k];
+    if (child && typeof child === "object") collectJsonLdByKey(child, key, out);
+  }
+}
+
+function jsonLdKeyStrings(html, key) {
+  const out = [];
+  const scripts = html.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+  for (const match of scripts) {
+    const raw = decodeHtml(match[1].trim());
+    if (!raw) continue;
+    try {
+      collectJsonLdByKey(JSON.parse(raw), key, out);
+    } catch {
+      // Ignore unrelated malformed JSON-LD; the name/alias assertions below report absence.
+    }
+  }
+  return out;
+}
+
 // --- expected cases ---------------------------------------------------------
 // Each case asserts the intended robots + canonical for one /stocks URL. Values
 // come straight from the acceptance checks: normal pages indexable, degenerate
@@ -173,6 +210,21 @@ const STOCK_DETAIL_CASES = [
     label: "stock detail meta description (lagged-stock regression sample)",
     path: "/stock/000070",
     expectCanonical: `${SITE}/stock/000070`,
+  },
+];
+
+// Former-name alias contract (Slice H): a renamed company must present its CURRENT
+// name as the canonical name/headline/title, and expose any former legal name ONLY
+// as a controlled JSON-LD alternateName — never in the title, canonical URL, meta
+// description, or as the canonical entity name. Sample: 352820 하이브 (formerly
+// 빅히트엔터테인먼트). This is the tripwire against stale canonical naming.
+const ALIAS_STOCK_CASES = [
+  {
+    label: "renamed stock keeps current canonical name, former name as alias only (하이브 / 빅히트엔터테인먼트)",
+    path: "/stock/352820",
+    expectCanonical: `${SITE}/stock/352820`,
+    currentName: "하이브",
+    formerNames: ["빅히트엔터테인먼트"],
   },
 ];
 
@@ -279,6 +331,36 @@ function validateStockDetailMeta(html) {
   return reasons;
 }
 
+function validateAliasStock(html, c) {
+  const reasons = [];
+  const names = jsonLdKeyStrings(html, "name").concat(jsonLdKeyStrings(html, "headline"));
+  const alternateNames = jsonLdKeyStrings(html, "alternateName");
+  const title = decodeHtml(headOf(html).match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "");
+  const ogTitle = metaContent(html, "og:title") ?? "";
+  const canonical = canonicalHref(html) ?? "";
+  const description = metaContent(html, "description") ?? "";
+
+  // Canonical surfaces must reflect the CURRENT name.
+  if (!names.some((n) => n.includes(c.currentName))) {
+    reasons.push(`no JSON-LD name/headline contains current name "${c.currentName}"`);
+  }
+  if (!title.includes(c.currentName)) reasons.push(`<title> missing current name "${c.currentName}"`);
+
+  for (const former of c.formerNames) {
+    // Former name stays discoverable, but only as a controlled alias.
+    if (!alternateNames.some((a) => a.includes(former))) {
+      reasons.push(`former name "${former}" missing from JSON-LD alternateName (must stay a discoverable alias)`);
+    }
+    // Former name must never masquerade as canonical naming.
+    if (names.some((n) => n.includes(former))) reasons.push(`former name "${former}" used as canonical JSON-LD name/headline (stale canonical naming)`);
+    if (title.includes(former)) reasons.push(`former name "${former}" leaked into <title> (stale canonical naming)`);
+    if (ogTitle.includes(former)) reasons.push(`former name "${former}" leaked into og:title`);
+    if (canonical.includes(former) || canonical.includes(encodeURIComponent(former))) reasons.push(`former name "${former}" leaked into canonical URL`);
+    if (description.includes(former)) reasons.push(`former name "${former}" leaked into meta description`);
+  }
+  return reasons;
+}
+
 async function fetchHtml(path) {
   // No query-string cache-buster here: the query string IS under test (an extra ?v=
   // token would itself count as an over-parameterized URL). Dynamic /stocks SSR renders
@@ -295,6 +377,7 @@ async function main() {
   console.log("OrnScore stocks SEO verification (real gate; exits 1 on any failure)");
   console.log(
     `base=${BASE}  filter-cases=${CASES.length}  stock-detail-cases=${STOCK_DETAIL_CASES.length}` +
+      `  alias-cases=${ALIAS_STOCK_CASES.length}` +
       `  general-meta-cases=${GENERAL_META_CASES.length}  nosnippet-cases=${NOSNIPPET_CASES.length}`,
   );
   console.log("");
@@ -341,6 +424,28 @@ async function main() {
     const canonical = canonicalHref(body);
     if (canonical !== c.expectCanonical) reasons.push(`canonical "${canonical}" (expected "${c.expectCanonical}")`);
     reasons.push(...validateStockDetailMeta(body));
+
+    results.push({ ...c, ok: reasons.length === 0, status, reasons });
+  }
+
+  for (const c of ALIAS_STOCK_CASES) {
+    // eslint-disable-next-line no-await-in-loop
+    let status, body;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      ({ status, body } = await fetchHtml(c.path));
+    } catch (err) {
+      results.push({ ...c, ok: false, unreachable: true, reasons: [`request failed: ${String(err?.message ?? err)}`] });
+      continue;
+    }
+
+    const reasons = [];
+    if (status !== 200) reasons.push(`status ${status} (expected 200)`);
+    if (isNoindex(body)) reasons.push(`unexpected noindex (robots="${robotsContent(body)}") — stock detail must stay indexable`);
+    const canonical = canonicalHref(body);
+    if (canonical !== c.expectCanonical) reasons.push(`canonical "${canonical}" (expected "${c.expectCanonical}")`);
+    reasons.push(...validateStockDetailMeta(body));
+    reasons.push(...validateAliasStock(body, c));
 
     results.push({ ...c, ok: reasons.length === 0, status, reasons });
   }
