@@ -1,0 +1,421 @@
+{
+  "configHash": "7bf1e3a1f989e68e059f0b9f8fafb77b5f295ae0558da3bc2cd2dda5f881f293",
+  "eligibilityReasonCounts": {
+    "activity.INSUFFICIENT_HISTORY": 1,
+    "riskAdjusted.INSUFFICIENT_HISTORY": 1,
+    "riskAdjusted.ZERO_VARIANCE": 1,
+    "value.MISSING_INPUT": 1,
+    "value.NON_POSITIVE_FUNDAMENTAL": 1
+  },
+  "engineVersion": "2.5.1",
+  "factorPopulations": {
+    "activity": {
+      "count": 9,
+      "hash": "82d6c009c1ed7551c387b5b4fdba7d20c0529a5797b5e3b532debbc74563ab6b"
+    },
+    "momentum": {
+      "count": 10,
+      "hash": "17473508638fcc584f0df1b63edc633c1db85027be3cb66db9dc370ae23bd1d1"
+    },
+    "riskAdjusted": {
+      "count": 8,
+      "hash": "3a11437e7dece2c1e466e7ad0d83abdd575fbcebd666b47285cd844c220b6b8e"
+    },
+    "value": {
+      "count": 8,
+      "hash": "bf781894ef59675dadf85d20fc9d6456b18e1896ed6c126b5caefd087267403e"
+    }
+  },
+  "inputManifestHash": "3ca53c10d5bc4265c0286af80dc071d7a2063a7617ec91931e845cfae1c47414",
+  "marketDate": "2026-07-15",
+  "rankingPopulation": {
+    "count": 5,
+    "hash": "8ffbf0f92d5b42d02f2b3447234eccbe4948f7a5f7cacec83818e2f67a5eae8f"
+  },
+  "runState": "CANDIDATE_COMPUTED",
+  "sourceDates": {
+    "fundamentals": "2026-07-13",
+    "prices": "2026-07-14",
+    "volumes": "2026-07-14"
+  },
+  "stocks": [
+    {
+      "compositeScore": 55.6,
+      "eligibilityReasons": {},
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.10445912172800435,
+          "reason": "VALID",
+          "score": 85.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 124.03792718944426,
+          "reason": "VALID",
+          "score": 31.3
+        },
+        "value": {
+          "components": {
+            "pbr": 1.0,
+            "pbrScore": 56.3,
+            "per": 10.0,
+            "perScore": 56.3
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 56.3
+        }
+      },
+      "rankingEligible": true,
+      "ticker": "A_RISE"
+    },
+    {
+      "compositeScore": 45.9,
+      "eligibilityReasons": {},
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.6,
+          "reason": "VALID",
+          "score": 65.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.05952184085350704,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 207.38713540233744,
+          "reason": "VALID",
+          "score": 62.5
+        },
+        "value": {
+          "components": {
+            "pbr": 2.0,
+            "pbrScore": 6.3,
+            "per": 20.0,
+            "perScore": 6.3
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 6.3
+        }
+      },
+      "rankingEligible": true,
+      "ticker": "B_SURGE"
+    },
+    {
+      "compositeScore": 30.2,
+      "eligibilityReasons": {},
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 0.5714285714285714,
+          "reason": "VALID",
+          "score": 15.7
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": -0.0832096160344776,
+          "reason": "VALID",
+          "score": 5.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": -210.15403923472866,
+          "reason": "VALID",
+          "score": 6.3
+        },
+        "value": {
+          "components": {
+            "pbr": 0.5,
+            "pbrScore": 93.8,
+            "per": 5.0,
+            "perScore": 93.8
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 93.8
+        }
+      },
+      "rankingEligible": true,
+      "ticker": "C_FALL"
+    },
+    {
+      "compositeScore": 46.9,
+      "eligibilityReasons": {},
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.04163092786154741,
+          "reason": "VALID",
+          "score": 25.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 274.97307297378103,
+          "reason": "VALID",
+          "score": 93.8
+        },
+        "value": {
+          "components": {
+            "pbr": 1.5,
+            "pbrScore": 18.8,
+            "per": 15.0,
+            "perScore": 18.8
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 18.8
+        }
+      },
+      "rankingEligible": true,
+      "ticker": "D_FLAT"
+    },
+    {
+      "compositeScore": 61.3,
+      "eligibilityReasons": {},
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.12418310963460959,
+          "reason": "VALID",
+          "score": 95.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 104.36294388451608,
+          "reason": "VALID",
+          "score": 18.8
+        },
+        "value": {
+          "components": {
+            "pbr": 0.8,
+            "pbrScore": 81.3,
+            "per": 8.0,
+            "perScore": 81.3
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 81.3
+        }
+      },
+      "rankingEligible": true,
+      "ticker": "E_RISE3"
+    },
+    {
+      "compositeScore": null,
+      "eligibilityReasons": {
+        "value": "MISSING_INPUT"
+      },
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.05952184085350704,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 207.38713540233744,
+          "reason": "VALID",
+          "score": 62.5
+        },
+        "value": {
+          "factor": "value",
+          "raw": null,
+          "reason": "MISSING_INPUT",
+          "score": null
+        }
+      },
+      "rankingEligible": false,
+      "ticker": "F_NOPER"
+    },
+    {
+      "compositeScore": null,
+      "eligibilityReasons": {
+        "value": "NON_POSITIVE_FUNDAMENTAL"
+      },
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.05952184085350704,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 207.38713540233744,
+          "reason": "VALID",
+          "score": 62.5
+        },
+        "value": {
+          "factor": "value",
+          "raw": null,
+          "reason": "NON_POSITIVE_FUNDAMENTAL",
+          "score": null
+        }
+      },
+      "rankingEligible": false,
+      "ticker": "G_NEGPER"
+    },
+    {
+      "compositeScore": null,
+      "eligibilityReasons": {
+        "riskAdjusted": "INSUFFICIENT_HISTORY"
+      },
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.06275947790980554,
+          "reason": "VALID",
+          "score": 75.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": null,
+          "reason": "INSUFFICIENT_HISTORY",
+          "score": null
+        },
+        "value": {
+          "components": {
+            "pbr": 1.2,
+            "pbrScore": 31.3,
+            "per": 12.0,
+            "perScore": 31.3
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 31.3
+        }
+      },
+      "rankingEligible": false,
+      "ticker": "H_SHORT"
+    },
+    {
+      "compositeScore": null,
+      "eligibilityReasons": {
+        "activity": "INSUFFICIENT_HISTORY"
+      },
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": null,
+          "reason": "INSUFFICIENT_HISTORY",
+          "score": null
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.05952184085350704,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": 207.38713540233744,
+          "reason": "VALID",
+          "score": 62.5
+        },
+        "value": {
+          "components": {
+            "pbr": 0.9,
+            "pbrScore": 68.8,
+            "per": 9.0,
+            "perScore": 68.8
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 68.8
+        }
+      },
+      "rankingEligible": false,
+      "ticker": "I_SHORTVOL"
+    },
+    {
+      "compositeScore": null,
+      "eligibilityReasons": {
+        "riskAdjusted": "ZERO_VARIANCE"
+      },
+      "factors": {
+        "activity": {
+          "factor": "activity",
+          "raw": 1.0,
+          "reason": "VALID",
+          "score": 50.0
+        },
+        "momentum": {
+          "factor": "momentum",
+          "raw": 0.0,
+          "reason": "VALID",
+          "score": 15.0
+        },
+        "riskAdjusted": {
+          "factor": "riskAdjusted",
+          "raw": null,
+          "reason": "ZERO_VARIANCE",
+          "score": null
+        },
+        "value": {
+          "components": {
+            "pbr": 1.1,
+            "pbrScore": 43.8,
+            "per": 11.0,
+            "perScore": 43.8
+          },
+          "factor": "value",
+          "raw": null,
+          "reason": "VALID",
+          "score": 43.8
+        }
+      },
+      "rankingEligible": false,
+      "ticker": "J_CONST"
+    }
+  ]
+}

@@ -44,6 +44,7 @@
     "config:metrics251:check": "python scripts/metrics251_config.py --check",
     "test:metrics251-config": "python scripts/test_metrics251_config.py",
     "test:metrics251-primitives": "python scripts/test_metrics251_primitives.py",
+    "test:metrics251-engine": "python scripts/test_metrics251_engine.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
