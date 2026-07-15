@@ -5,7 +5,8 @@
 - **수정**: `src/lib/datasetTimestamp.ts`에 시간대 불변 파서를 추가했다. 시간대 없는 Python ISO 생성 시각은 명시적으로 KST(`+09:00`)로 해석하고, `Z`/명시적 오프셋은 그대로 존중하며, 잘못된 형식은 `undefined`로 fail-closed 처리한다. `src/app/sitemap.ts`가 이 파서를 사용하고 `scripts/verify-public-seo.mjs`도 같은 기대값 계약으로 정합했다. `scripts/test_seoStability.ts`에 naive KST·명시적 UTC·명시적 KST·잘못된 형식 회귀 케이스를 추가했다.
 - **검증**: `npm run test:seo-stability` PASS · `npx tsc --noEmit` 0 · `verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · U+FFFD 0 · `npm run build` 0 · 로컬 prod `127.0.0.1:61838`에서 `verify:local --no-perf` **6/6**(sitemap 162 URL 포함) 통과. 시작한 리스너만 종료 확인.
 - **코드 커밋**: `94d8d7f3d4964261d0f4752a168b5a88d2707c26` (`[codex] fix sitemap timestamp timezone invariance`).
-- **다음에 바로 실행할 작업**: 이 기록 커밋과 코드 커밋을 `origin/main`에 일반 푸시하고 Vercel 반영 후 `https://ornscore.com`에서 `verify:local --no-perf` 6/6 및 `/admin*` 307 로그인 보호를 다시 확인한다.
+- **공개 릴리스 완료**: 코드 `94d8d7f`와 복구 기록 `1a5d601`을 `origin/main`에 일반 fast-forward 푸시했다. Vercel 반영 후 공개 sitemap 162개 URL이 모두 `2026-07-14T00:46:19.697Z`로 전환된 것을 확인했고, `https://ornscore.com` 전체 `verify:local --no-perf` **6/6**을 통과했다(공개 25/25, 라우트 9/9, 종목 SEO 13/13, public SEO 3/3, 로그인 5/5, `/admin*` 4/4 모두 307→`/login`).
+- **다음에 바로 실행할 작업**: 코드 변경 없음. 오너가 실제 로그인 세션으로 `/admin`, `/admin/status`, `/admin/traffic`, `/admin/users` 허용 측을 검수하고, 일반 사용자 관점의 공개 화면 검수를 진행한다.
 
 ## 2026-07-15 - [codex] 공개 재검수 Slice N — 최종 재인증 + 통합 reaudit 게이트 (task 294)
 - **Scope**: 설계서 `docs/ornscore-public-reaudit-remediation-2026-07-15.md`의 **Slice N**(최종 마감)만 구현. 제품 동작 변경 없음. Slice A–M의 **포커스 검증기 13종을 하나의 유한 로컬 커맨드로 통합**하고, 전체 로컬 게이트를 돌려 모든 P0 계약·공개 라우트·상태 의미·종목 SEO·관리자 리다이렉트·TypeScript·메트릭·빌드·로컬 prod 검증·diff 청결·인코딩을 재인증. 원 재검수 항목 전부를 완료/오너 게이트/의도적 보류로 매핑. 직전 HEAD `b0dd07f`(Slice M)·클린 워크트리, 브랜치 `ai-center/task-294-ornscore-public-reaudit-n-final-loca`.
