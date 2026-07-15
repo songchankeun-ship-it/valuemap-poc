@@ -3,7 +3,8 @@
  * 클라이언트 컴포넌트가 stocks.json 번들 없이 읽도록 데이터 파생 문자열과 분리한다.
  * 데이터 파생값(상태 라벨·도메인 상태·출처 사용처·제한·고지·자동 점검 수치)은 dataStatus.ts의 dataStatusByLocale에서 온다.
  * ko = 화면 그대로(verbatim), en = 충실 번역. 금융 문구는 양쪽 모두 보수적·비자문(투자 추천 아님).
- * 출처/제품명(KRX·Naver·DART·FinanceDataReader·Supabase·GitHub Actions·daily_scores)·날짜·숫자·산식 버전 표기는 원형 유지.
+ * 출처/제품명(KRX·Naver·DART·FinanceDataReader)·날짜·숫자·산식 버전 표기는 원형 유지.
+ * 내부 파이프라인 구현 세부(워크플로·저장 테이블·크론·코드 기대 산식 버전)는 공개 표면에 넣지 않고 보호된 /admin/status 에만 둔다.
  */
 import type { Locale } from "@/lib/i18n";
 
@@ -37,12 +38,8 @@ export const statusCopy = {
     snapshotUniverse: "분석 대상",
     daysAgo: (n: number) => ` (${n}일 전)`,
     stocksUnit: (n: number) => `${n}종목`,
-    snapshotNotePrefix:
-      "가격·점수는 마지막 배치 기준이고, 공시는 페이지를 열 때 DART에서 라이브 조회합니다. 산식 버전은 코드 기대값(",
-    snapshotNoteMid: ")과 ",
-    snapshotMatch: "일치합니다",
-    snapshotMismatch: "불일치 — 점검이 필요합니다",
-    snapshotNoteSuffix: ".",
+    snapshotNote:
+      "가격·점수는 마지막 장마감 배치 기준이고, 공시는 페이지를 열 때 DART에서 라이브로 조회합니다.",
     scoreTimeBatchNote: "장마감 후 배치",
     scoreTimeUtcLabel: "원본 배치",
     dataCadenceNote:
@@ -63,10 +60,6 @@ export const statusCopy = {
     selfcheckSuspectNote: "Top·오늘 후보에서 제외",
     selfcheckMissing: "PER·PBR 결측",
     selfcheckMissingNote: "밸류 해석 신뢰도 낮음",
-    selfcheckVersion: "산식 버전 일치",
-    selfcheckMatch: "일치",
-    selfcheckMismatch: "불일치",
-    selfcheckVersionNote: (v: string) => `${v} 기준`,
     selfcheckPriceLag: "종목별 가격 기준일 불일치",
     selfcheckPriceLagNote: "전체 기준일보다 과거인 종목",
     selfcheckPriceLagNone: "모든 종목 기준일 일치",
@@ -93,7 +86,7 @@ export const statusCopy = {
     // 데이터 소스
     sourcesHeading: "데이터 소스",
     sources: {
-      price: { name: "가격·지표 (FinanceDataReader)", detail: "GitHub Actions 매일 평일 자동 갱신" },
+      price: { name: "가격·지표 (FinanceDataReader)", detail: "매 영업일 장마감 후 자동 갱신" },
       quote: { name: "현재가 (네이버 지연 시세)", detail: "페이지 열 때 실시간 조회 (참고용)" },
       disclosure: { name: "공시 (DART)", detail: "DART 연동 상태: 정상" },
       alert: {
@@ -101,7 +94,7 @@ export const statusCopy = {
         detailActive: (n: number) => `활성 ${n}종목`,
         detailIdle: "보류 — 무료 공식 소스 없음(인프라만 준비)",
       },
-      scores: { name: "점수 변화 (Supabase daily_scores)", detail: "장 마감 후 cron 저장" },
+      scores: { name: "점수 변화 기록", detail: "장 마감 후 자동 저장" },
     },
 
     // 원본 소스 직접 확인 (evidence cockpit)
@@ -120,7 +113,7 @@ export const statusCopy = {
 
     // 푸터 + 하단 링크
     footerNote:
-      "데이터는 평일마다 장 마감 후 클라우드(GitHub Actions)에서 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.",
+      "데이터는 평일마다 장 마감 후 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.",
     linkMetricsGuide: "지표 계산 방식 보기 →",
     linkChangelog: "산식 변경 이력 →",
   },
@@ -150,12 +143,8 @@ export const statusCopy = {
     snapshotUniverse: "Coverage",
     daysAgo: (n: number) => ` (${n} days ago)`,
     stocksUnit: (n: number) => `${n} stocks`,
-    snapshotNotePrefix:
-      "Prices and scores are from the last batch; disclosures are fetched live from DART when the page opens. The formula version ",
-    snapshotNoteMid: " the code's expected value (",
-    snapshotMatch: "matches",
-    snapshotMismatch: "does not match — review needed",
-    snapshotNoteSuffix: ").",
+    snapshotNote:
+      "Prices and scores are from the last market-close batch; disclosures are fetched live from DART when the page opens.",
     scoreTimeBatchNote: "after market-close batch",
     scoreTimeUtcLabel: "Source batch",
     dataCadenceNote:
@@ -173,10 +162,6 @@ export const statusCopy = {
     selfcheckSuspectNote: "Excluded from Top and today's candidates",
     selfcheckMissing: "PER·PBR missing",
     selfcheckMissingNote: "Lower confidence in valuation reading",
-    selfcheckVersion: "Formula version match",
-    selfcheckMatch: "Match",
-    selfcheckMismatch: "Mismatch",
-    selfcheckVersionNote: (v: string) => `as of ${v}`,
     selfcheckPriceLag: "Per-stock price-date mismatch",
     selfcheckPriceLagNote: "Stocks older than the site reference date",
     selfcheckPriceLagNone: "All stocks match the reference date",
@@ -202,7 +187,7 @@ export const statusCopy = {
 
     sourcesHeading: "Data sources",
     sources: {
-      price: { name: "Price · metrics (FinanceDataReader)", detail: "Auto-updated every weekday via GitHub Actions" },
+      price: { name: "Price · metrics (FinanceDataReader)", detail: "Auto-updated after each market close on business days" },
       quote: { name: "Current price (Naver delayed quote)", detail: "Fetched live on page load (reference only)" },
       disclosure: { name: "Disclosures (DART)", detail: "DART connection: active" },
       alert: {
@@ -210,7 +195,7 @@ export const statusCopy = {
         detailActive: (n: number) => `${n} stocks active`,
         detailIdle: "On hold — no free official source (infrastructure only)",
       },
-      scores: { name: "Score changes (Supabase daily_scores)", detail: "Saved via cron after market close" },
+      scores: { name: "Score-change records", detail: "Saved automatically after market close" },
     },
 
     // Verify at the original source (evidence cockpit)
@@ -228,7 +213,7 @@ export const statusCopy = {
     verifyOutbound: "Links open the external site in a new tab.",
 
     footerNote:
-      "Data is auto-updated in the cloud (GitHub Actions) after market close on weekdays. If an update fails, the last good data is kept, and new data is applied only after passing automated checks (consistency and branding). All scores and rankings are based on closing prices and are not investment advice.",
+      "Data is auto-updated after market close on weekdays. If an update fails, the last good data is kept, and new data is applied only after passing automated checks (consistency and branding). All scores and rankings are based on closing prices and are not investment advice.",
     linkMetricsGuide: "See how metrics are calculated →",
     linkChangelog: "Formula changelog →",
   },

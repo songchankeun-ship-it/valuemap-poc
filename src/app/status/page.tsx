@@ -1,5 +1,13 @@
 import { dataMetadata, isDataStale } from "@/lib/realStocks";
-import { dataStatus, dataStatusByLocale, metricsChangelogPath, VERIFICATION_SOURCES } from "@/lib/dataStatus";
+import {
+  dataStatus,
+  dataStatusByLocale,
+  metricsChangelogPath,
+  VERIFICATION_SOURCES,
+  DISCLOSURE_SCOPE,
+  FINANCIAL_MISSING_OVER_THRESHOLD,
+  coverageStats,
+} from "@/lib/dataStatus";
 import { getAlertedTickers } from "@/lib/marketAlert";
 import { getPriceLagSummary } from "@/lib/priceLag";
 import { readStatusHistory } from "@/lib/statusHistory";
@@ -67,6 +75,23 @@ export default async function StatusPage() {
       metricsChangelogPath={metricsChangelogPath}
       verificationSources={VERIFICATION_SOURCES}
       statusHistory={statusHistory}
+      dimensionData={{
+        // 점수 이력 연속성(Slice B): 스냅샷 로그의 기준일들 — 2개 미만이면 비교 불가로 정직 표기.
+        historyAsOfDates: statusHistory.map((h) => h.asOfBusinessDate),
+        historyEntryCount: statusHistory.length,
+        // 재무 완성도: 결측 종목 수·전체·임계 초과 여부(코드 기대 산식 비교와 무관).
+        financialMissing: sc.missingFinancialsCount,
+        financialUniverse: sc.universeCount,
+        financialOverThreshold: FINANCIAL_MISSING_OVER_THRESHOLD,
+        // 공시 범위(설계상 범위 제한) 단일 소스.
+        disclosureScope: { windowDays: DISCLOSURE_SCOPE.windowDays, maxFilings: DISCLOSURE_SCOPE.maxFilings },
+        // 테마·거래활성도 가용성 실측값.
+        coverage: {
+          themedCount: coverageStats.themedCount,
+          flowCount: coverageStats.flowCount,
+          universe: coverageStats.universeCount,
+        },
+      }}
       priceLag={{
         count: priceLag.count,
         symbols: priceLag.lagged.map((l) => ({

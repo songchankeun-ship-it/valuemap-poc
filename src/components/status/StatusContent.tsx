@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { DataStatusBadge } from "@/components/trust/badges";
 import { ReportDataIssue } from "@/components/status/ReportDataIssue";
 import { useLanguage } from "@/components/LanguageProvider";
 import { statusCopy } from "@/lib/copy/status";
 import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
 import { marketFreshnessCopy } from "@/lib/freshness";
+import { buildStatusDimensions, type DimensionState } from "@/lib/statusDimensions";
 import type { LocalizedDataStatus, VerificationSource } from "@/lib/dataStatus";
 import type { StatusHistoryEntry } from "@/lib/statusHistory";
 import type { Locale } from "@/lib/i18n";
@@ -21,6 +21,21 @@ function Dot({ tone }: { tone: Tone }) {
         ? "bg-amber-500"
         : "bg-zinc-400 dark:bg-zinc-600";
   return <span className={"inline-block w-2 h-2 rounded-full " + c} />;
+}
+
+// 차원 상태 뱃지 — ok(정상)/limited(범위 제한)/attention(확인 필요). 색은 라벨과 항상 동반.
+const DIMENSION_STATE_BADGE: Record<DimensionState, string> = {
+  ok: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+  limited: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300",
+  attention: "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
+};
+
+function DimensionStateBadge({ state, label }: { state: DimensionState; label: string }) {
+  return (
+    <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium " + DIMENSION_STATE_BADGE[state]}>
+      {label}
+    </span>
+  );
 }
 
 /**
@@ -39,6 +54,7 @@ export function StatusContent({
   metricsChangelogPath,
   verificationSources,
   statusHistory,
+  dimensionData,
   priceLag,
   selfCheck,
 }: {
@@ -51,6 +67,15 @@ export function StatusContent({
   metricsChangelogPath: string;
   verificationSources: VerificationSource[];
   statusHistory: StatusHistoryEntry[];
+  dimensionData: {
+    historyAsOfDates: string[];
+    historyEntryCount: number;
+    financialMissing: number;
+    financialUniverse: number;
+    financialOverThreshold: boolean;
+    disclosureScope: { windowDays: number; maxFilings: number };
+    coverage: { themedCount: number; flowCount: number; universe: number };
+  };
   priceLag: {
     count: number;
     symbols: { ticker: string; name: string; priceDate: string; businessDaysBehind: number }[];
@@ -80,6 +105,40 @@ export function StatusContent({
   const awaitingClose = freshness?.state === "awaiting_close" && !priceStale;
   const snapshotWarn = priceStale || awaitingClose;
   const snapshotBadge = priceStale ? t.snapshotStale : awaitingClose ? f.awaitingBadge : t.snapshotOk;
+
+  // 사용자 향 상태 6차원(Slice C) — 단일 초록 대신 차원별 명시적 날짜·상태(정상/제한/확인 필요).
+  // 가격 신선도는 클라이언트 신선도 훅(awaitingClose)까지 반영해 조립한다. 이력 연속성은 Slice B basis 소비.
+  const dimensions = buildStatusDimensions(
+    {
+      price: {
+        asOfLabel: ds.globalAsOfLabel,
+        stale: priceStale,
+        awaitingClose,
+        ageLabel: priceAge !== null ? t.daysAgo(priceAge) : "",
+      },
+      score: {
+        computedLabel: scoreTimeKst,
+        metricsVersionLabel: ds.metricsVersionLabel,
+        generated: !!ds.metricsVersion && scoreTimeKst !== "—",
+      },
+      history: {
+        asOfDates: dimensionData.historyAsOfDates,
+        entryCount: dimensionData.historyEntryCount,
+      },
+      financial: {
+        missing: dimensionData.financialMissing,
+        universe: dimensionData.financialUniverse,
+        overThreshold: dimensionData.financialOverThreshold,
+      },
+      disclosure: dimensionData.disclosureScope,
+      themeFlow: {
+        themedCount: dimensionData.coverage.themedCount,
+        flowCount: dimensionData.coverage.flowCount,
+        universe: dimensionData.coverage.universe,
+      },
+    },
+    locale,
+  );
 
   const sources: { name: string; detail: string; tone: Tone }[] = [
     { name: t.sources.price.name, detail: t.sources.price.detail, tone: priceStale ? "warn" : "ok" },
@@ -160,11 +219,7 @@ export function StatusContent({
           </div>
         </div>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
-          {t.snapshotNotePrefix}{sc.expectedMetricsVersion}{t.snapshotNoteMid}
-          {sc.metricsVersionMatch
-            ? <span className="text-emerald-700 dark:text-emerald-400 font-medium">{t.snapshotMatch}</span>
-            : <span className="text-amber-700 dark:text-amber-400 font-medium">{t.snapshotMismatch}</span>}
-          {t.snapshotNoteSuffix}
+          {t.snapshotNote}
         </p>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
           {t.dataCadenceNote}
@@ -180,16 +235,22 @@ export function StatusContent({
         ) : null}
       </section>
 
-      {/* 데이터 종류별 상태 — 가격/재무/공시/산식 분리 (전역 dataStatus 단일 소스 재사용) */}
+      {/* 사용자 향 상태 6차원(Slice C) — 가격 신선도/점수 신선도/점수 이력 연속성/재무 완성도/공시 범위/테마·거래활성도.
+          단일 초록 대신 차원별 명시적 날짜·상태(정상/범위 제한/확인 필요)를 노출한다. */}
       <section id="domains" className="scroll-mt-20">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.domainsHeading}</div>
         <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800">
-          {ds.domainStatuses.map((dm) => (
-            <div key={dm.key} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 px-4 py-3">
-              <div className="sm:w-24 shrink-0 text-sm font-medium text-zinc-800 dark:text-zinc-200">{dm.label}</div>
+          {dimensions.map((dm) => (
+            <div key={dm.key} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-3 px-4 py-3">
+              <div className="sm:w-32 shrink-0 text-sm font-medium text-zinc-800 dark:text-zinc-200">{dm.label}</div>
               <div className="flex-1 min-w-0">
-                <DataStatusBadge tone={dm.status} label={dm.statusLabel} className="text-xs" />
-                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 break-words">{dm.detail} · {dm.meaning}</div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <DimensionStateBadge state={dm.state} label={dm.stateLabel} />
+                  {dm.asOf ? (
+                    <span className="text-[11px] tabular-nums text-zinc-500 dark:text-zinc-400 break-words">{dm.asOf}</span>
+                  ) : null}
+                </div>
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 break-words">{dm.detail}</div>
               </div>
             </div>
           ))}
@@ -214,10 +275,11 @@ export function StatusContent({
         </div>
       </section>
 
-      {/* 최근 자동 점검 요약 — 앱 내부 실측 값(검증 보류·결측·산식 일치) */}
+      {/* 최근 자동 점검 요약 — 앱 내부 실측 값(검증 보류·결측·가격 지연). 산식 버전 일치 여부 대조는
+          내부 구현 세부라 보호된 /admin/status 로 이동했다(공개 페이지 비노출). */}
       <section id="selfcheck" className="scroll-mt-20">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.selfcheckHeading}</div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3">
             <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.selfcheckSuspect}</div>
             <div className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">{sc.suspectCount}<span className="text-xs font-medium text-zinc-400 dark:text-zinc-500"> / {sc.universeCount}</span></div>
@@ -227,11 +289,6 @@ export function StatusContent({
             <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.selfcheckMissing}</div>
             <div className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">{sc.missingFinancialsCount}<span className="text-xs font-medium text-zinc-400 dark:text-zinc-500"> / {sc.universeCount}</span></div>
             <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.selfcheckMissingNote}</div>
-          </div>
-          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3">
-            <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.selfcheckVersion}</div>
-            <div className={"text-lg font-bold tabular-nums " + (sc.metricsVersionMatch ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400")}>{sc.metricsVersionMatch ? t.selfcheckMatch : t.selfcheckMismatch}</div>
-            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.selfcheckVersionNote(ds.metricsVersionLabel)}</div>
           </div>
           {/* 종목별 가격 기준일 불일치 — 전역 기준일보다 과거인 종목 수·이름. 0이면 회색, ≥1이면 amber. */}
           <div className={"rounded-lg border p-3 " + (lagCount > 0 ? "border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20" : "border-zinc-200 dark:border-zinc-800")}>

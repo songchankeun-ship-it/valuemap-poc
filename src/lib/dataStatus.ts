@@ -132,6 +132,25 @@ const metricsStatus: DataStatusKind = metricsVersion ? "normal" : "error";
 const suspectCount = realStockPool.filter((s) => isSuspect(s)).length;
 const metricsVersionMatch = metricsVersion === EXPECTED_METRICS_VERSION;
 
+// ── 공개 상태 차원(Slice C) 파생값 ────────────────────────────────────────
+// 테마·거래활성도 가용성: 테마가 1개 이상 부여된 종목 수와 거래활성도(flow) 값이 산출된 종목 수.
+// 데이터셋을 지어내지 않고 realStockPool 에서 실제로 채워진 값만 센다.
+const themedCount = realStockPool.filter((s) => Array.isArray(s.themes) && s.themes.length > 0).length;
+const flowCount = realStockPool.filter((s) => typeof s.flow === "number").length;
+
+/** 공시 수집 범위(단일 소스) — 공개 상태 차원과 알려진 제한이 같은 값을 읽는다. */
+export const DISCLOSURE_SCOPE = { windowDays: 7, maxFilings: 200 } as const;
+
+/** 재무 결측 임계 초과 여부(밸류 해석 신뢰도 주의 경계) — 공개 상태 차원이 읽는다. */
+export const FINANCIAL_MISSING_OVER_THRESHOLD = financialMissingRate > FINANCIAL_MISSING_THRESHOLD;
+
+/** 테마·거래활성도 가용성 실측값 — 공개 상태 차원(themeFlow)이 읽는다. */
+export const coverageStats = {
+  themedCount,
+  flowCount,
+  universeCount: universeSize,
+} as const;
+
 export interface DomainStatus {
   key: "price" | "financial" | "disclosure" | "metrics";
   label: string;

@@ -152,8 +152,20 @@ export default async function AdminStatusPage() {
         <Stat label="산식 일치" value={sc.metricsVersionMatch ? "OK" : "불일치"} tone={sc.metricsVersionMatch ? "ok" : "warn"} />
       </section>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400 -mt-3">
-        기대 산식 {sc.expectedMetricsVersion} · 실제 {sc.actualMetricsVersion ?? "—"}
+        기대 산식 {sc.expectedMetricsVersion} · 실제 {sc.actualMetricsVersion ?? "—"} ·{" "}
+        {sc.metricsVersionMatch ? "코드 기대값과 일치" : "코드 기대값과 불일치 — 점검 필요"}
       </p>
+
+      {/* 파이프라인 구현 세부 — 공개 /status 에서 제거하고 이 보호 화면으로 이동(Slice C).
+          사용자에게는 의미 없는 내부 운영 정보(워크플로·테이블·크론·코드 기대 버전)만 여기 모은다. */}
+      <Panel title="파이프라인 구현 세부 (공개 비노출)" desc="공개 /status 에는 노출하지 않는 내부 운영 정보">
+        <ul className="text-[12px] text-zinc-600 dark:text-zinc-300 space-y-1 leading-relaxed">
+          <li>· 가격·점수 갱신: <code className="text-[10px]">GitHub Actions</code> 워크플로 — 매 영업일 장마감 후 자동 실행.</li>
+          <li>· 점수 변화 저장: Supabase <code className="text-[10px]">daily_scores</code> 테이블 — 장마감 후 cron 저장.</li>
+          <li>· 기대 산식 버전(코드 단일 기준): <code className="text-[10px]">{sc.expectedMetricsVersion}</code> · 실제 <code className="text-[10px]">{sc.actualMetricsVersion ?? "—"}</code>.</li>
+          <li>· 데이터 오류 신고 저장: <code className="text-[10px]">data_reports</code> 테이블(<code className="text-[10px]">ADMIN_ENABLED=1</code> 시 표시).</li>
+        </ul>
+      </Panel>
 
       <Panel title={`검증 보류 종목 (${suspects.length})`} desc="PER·PBR·ROE 극단값 — 오늘 후보·Top에서 제외">
         {suspects.length === 0 ? (

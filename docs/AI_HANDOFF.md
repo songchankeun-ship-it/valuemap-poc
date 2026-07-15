@@ -2971,3 +2971,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측은 오너 게이트(숫자 소스 통합·레이아웃 무변경이라 overflow 위험 없음).
 - **다음(Slice B)**: 날짜 인지 점수 비교 기준 — 비교 날짜 반환 + 종목별 장중일 시퀀스로 전일/N일전/불가 분류(§4 Slice B).
 - **커밋**: 로컬 [codex] reaudit Slice A: unify Today activity-surge into one typed result. push/main 무변경.
+
+
+### 2026-07-15 — 공개 재감사 Slice C: 사용자 향 상태 차원 분리 ([codex])
+
+- **무엇**: 설계서 §4 Slice C대로 공개 /status를 단일 "정상(초록)"에서 6개 사용자 향 차원(가격 신선도·점수 신선도·점수 이력 연속성·재무 완성도·공시 범위·테마·거래활성도 가용성)으로 분리하고, 차원별 명시적 날짜 + ok/limited/attention 상태를 노출. GitHub Actions·daily_scores·cron·코드 기대 산식 버전 같은 내부 구현 세부는 공개 표면에서 제거하고 보호된 /admin/status로 이동. 점수 이력 연속성은 Slice B(scoreComparison.classifyComparisonBasis) 의미를 그대로 소비.
+- **변경 파일(신규 2·수정 6)**: src/lib/statusDimensions.ts(신규·순수 6차원 빌더+ko/en), src/lib/dataStatus.ts(coverageStats·DISCLOSURE_SCOPE·FINANCIAL_MISSING_OVER_THRESHOLD 파생 export), src/app/status/page.tsx(dimensionData 직렬화 prop), src/components/status/StatusContent.tsx(6차원 렌더·코드기대값 노트 제거·버전카드 제거·DataStatusBadge import 제거), src/lib/copy/status.ts(인프라명·코드기대값 카피 제거, snapshotNote 단일화), src/app/admin/status/page.tsx('파이프라인 구현 세부' Panel 신설), scripts/test_statusDimensions.ts(신규)+package.json(test:status-dimensions).
+- **불변식**: 점수식·metricsVersion·public/data·유니버스(138)·수집잡·auth/데이터스토어·cron 잡 자체·의존성·라우트·SEO 메타 무변경. dataStatus.domainStatuses/selfCheck는 export 유지(다른 소비자 무변경), 공개 페이지만 6차원으로 교체. requireAdminAccess 관리자 보호 무변경.
+- **게이트**: tsc 0 · verify_metrics 138·오류0·Metrics 2.4 · git diff --check clean · U+FFFD 0(8파일) · test_statusDimensions PASS · test_scoreComparison·test_activitySurge PASS · build 0(/status 8.14kB) · verify:local :4931 6/6 OK(admin-access 4/4 307 redirect). SSR /status: 6차원 라벨 전부·차원별 상태·내부 토큰 0·이력 '이력 축적 중' 정직 문구. /admin/status 307 로그인 리다이렉트. 시작한 :4931만 종료. 390x844/1440x900 픽셀 실측은 headless 미설치로 오너 게이트(4→6행·4→3열·카피 교체라 폭 불변·overflow 위험 없음).
+- **다음(Slice D)**: 거래활성도=거래량 전 계층 통일(계산 입력·API 필드 의미·가이드·카드·상세 툴팁·픽스처 6계층에서 '거래대금' 제거·volume 통일) + 계약 검증기(§4 Slice D).
+- **커밋**: 로컬 [codex] reaudit Slice C: split public status into user-facing dimensions. push/main 무변경.
