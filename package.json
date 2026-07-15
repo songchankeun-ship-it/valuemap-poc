@@ -48,6 +48,8 @@
     "test:metrics251-eligibility": "python scripts/test_metrics251_eligibility.py",
     "test:metrics251-snapshot-store": "python scripts/test_metrics251_snapshot_store.py",
     "test:metrics251-compare": "python scripts/test_metrics251_compare.py",
+    "replay:metrics251": "python scripts/metrics251_replay.py",
+    "test:metrics251-replay": "python scripts/test_metrics251_replay.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

@@ -1,0 +1,7133 @@
+{
+  "dataQualityFindings": {
+    "byCode": {},
+    "sampleByCode": {}
+  },
+  "factorDifferential": {
+    "activity": {
+      "AGREE": 34776,
+      "DATA_QUALITY_FINDING": 0,
+      "INTENDED_METHOD_CHANGE": 0,
+      "P0_MISMATCH": 0,
+      "UNAVAILABLE_COMPARISON": 0,
+      "methodCodes": {}
+    },
+    "momentum": {
+      "AGREE": 0,
+      "DATA_QUALITY_FINDING": 0,
+      "INTENDED_METHOD_CHANGE": 34776,
+      "P0_MISMATCH": 0,
+      "UNAVAILABLE_COMPARISON": 0,
+      "methodCodes": {
+        "PERCENTILE_METHOD": 34776
+      }
+    },
+    "riskAdjusted": {
+      "AGREE": 0,
+      "DATA_QUALITY_FINDING": 0,
+      "INTENDED_METHOD_CHANGE": 34776,
+      "P0_MISMATCH": 0,
+      "UNAVAILABLE_COMPARISON": 0,
+      "methodCodes": {
+        "PERCENTILE_METHOD": 34776
+      }
+    }
+  },
+  "meta": {
+    "analyzedDates": 252,
+    "computesPublicScore": false,
+    "datasetHash": "7ae4b380540182546da733991ad1b42f7353c554b05e1661798b41b5d2111c2b",
+    "engineVersion": "2.5.1",
+    "isPerformanceBacktest": false,
+    "lookbackCap": 253,
+    "note": "가격·거래량 factor 만 point-in-time 재실행. 밸류·종합은 시점별 재무 부재로 봉쇄(NO_POINT_IN_TIME_FUNDAMENTALS). 현재 재무를 과거로 복사하지 않는다(§M251-D03).",
+    "priceVolumeFactors": [
+      "momentum",
+      "activity",
+      "riskAdjusted"
+    ],
+    "purpose": "reliability-regression (determinism/boundary/stability), NOT investment-performance backtest",
+    "readOnly": true,
+    "reportKind": "metrics-2.5.1-historical-differential-replay",
+    "requestedDates": 252,
+    "universeSize": 138
+  },
+  "p0Count": 0,
+  "p0Mismatches": [],
+  "perDate": [
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-07-31",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-08-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-09-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-10-31",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-11-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2025-12-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-01-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-02-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-03-31",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-04-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-20",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-21",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-27",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-28",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-05-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-04",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-05",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-11",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-12",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-15",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-16",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-17",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-18",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-19",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-22",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-23",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-24",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-25",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-26",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-29",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-06-30",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-01",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-02",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-03",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-06",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-07",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-08",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-09",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-10",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-13",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    },
+    {
+      "factors": {
+        "activity": {
+          "AGREE": 138,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 0,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "momentum": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        },
+        "riskAdjusted": {
+          "AGREE": 0,
+          "DATA_QUALITY_FINDING": 0,
+          "INTENDED_METHOD_CHANGE": 138,
+          "P0_MISMATCH": 0,
+          "UNAVAILABLE_COMPARISON": 0
+        }
+      },
+      "marketDate": "2026-07-14",
+      "stocksWithDataQualityFinding": 0,
+      "universeCount": 138
+    }
+  ],
+  "pointInTimeGuard": {
+    "compositeComparison": "UNAVAILABLE_COMPARISON",
+    "computed": false,
+    "note": "역사 밸류·종합 성과는 산출·주장하지 않는다. 현재-날짜 밸류 영향은 Slice A 기준선 소관.",
+    "reason": "NO_POINT_IN_TIME_FUNDAMENTALS",
+    "valueComparison": "UNAVAILABLE_COMPARISON"
+  },
+  "rawAgreement": {
+    "comparablePairs": 104328,
+    "note": "comparablePairs = 양쪽 유효(AGREE+INTENDED) + P0. 양쪽 유효인데 원시값이 허용오차를 넘으면 P0 로만 분류된다 — rawAgreePairs 는 원시 동치가 확인된 쌍.",
+    "p0Pairs": 0,
+    "rawAgreePairs": 104328
+  },
+  "verdict": {
+    "meetsMinimumDates": true,
+    "p0Clean": true,
+    "p0Count": 0
+  }
+}
