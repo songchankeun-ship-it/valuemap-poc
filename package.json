@@ -25,6 +25,7 @@
     "test:freshness": "tsx scripts/test_freshness.ts",
     "test:compare": "tsx scripts/test_compare_query.ts",
     "test:price-summary": "tsx scripts/test_priceSummary.ts",
+    "test:activity-surge": "tsx scripts/test_activitySurge.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

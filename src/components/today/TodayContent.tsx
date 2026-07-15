@@ -83,7 +83,8 @@ export interface TodayContentProps {
   // KPI 카드
   totalCount: number;
   strongCount: number;
-  spikeCount: number;
+  /** 거래활성도 급증 종목 수 — 요약 KPI와 브리핑 숫자가 공유하는 단일 값(별도 재계산 금지). */
+  activitySurgeCount: number;
   signalCount: number;
   // 섹션 데이터
   top3: TodayTopRaw[];
@@ -99,7 +100,6 @@ export interface TodayContentProps {
   upCount: number;
   downCount: number;
   flatCount: number;
-  flowSurgeCount: number;
   briefingSignalCount: number;
   breadthPct: number;
   aiInsight: TodayAiInsight | null;
@@ -260,7 +260,7 @@ export function TodayContent(props: TodayContentProps) {
       <MarketSnapshotCards
         totalCount={props.totalCount}
         strongCount={props.strongCount}
-        volumeSpikeCount={props.spikeCount}
+        volumeSpikeCount={props.activitySurgeCount}
         signalCount={props.signalCount}
       />
 
@@ -282,7 +282,7 @@ export function TodayContent(props: TodayContentProps) {
           </div>
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
             <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingFlowLabel}</div>
-            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{props.flowSurgeCount}{t.briefingCountSuffix}</div>
+            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{props.activitySurgeCount}{t.briefingCountSuffix}</div>
           </div>
           <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
             <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingSignalLabel}</div>

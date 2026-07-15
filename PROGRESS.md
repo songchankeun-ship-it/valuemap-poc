@@ -3758,3 +3758,19 @@
 - **화면 검증 한계**: headless 브라우저 미설치 → 390x844/1440x900 픽셀 overflow 실측 미지원. 이번 변경은 카피 교체+빈 상태 버튼 3→2 축소(레이아웃 폭 불변·세로 감소 방향)로 가로 overflow/겹침 위험 없음. 관심 빈 상태는 클라이언트 하이드레이션 렌더라 정적 가드로 소스 계약을 고정. 실기기 픽셀은 오너 게이트로 남김.
 - **다음 진입점(Slice H)**: 전체 사용자 여정 재인증 — 홈→검색/후보→상세→관심/비교→로그인 경계 E2E, 모바일/데스크톱 overflow·핵심 위치, 공개 카피·분석 이벤트·관리자 보호 최종 검증, PROGRESS/AI_HANDOFF 최종 정리.
 - **커밋**: 로컬 [codex] first-run UX Slice G: watchlist/compare empty states + login boundary. push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice G"로 확인.
+
+
+### 2026-07-15 — 공개 재감사 리메디에이션 Slice A (오늘 거래활성도 급증 단일화) [codex]
+
+- **Scope**: 설계서 docs/ornscore-public-reaudit-remediation-2026-07-15.md §4 Slice A만. /today에서 '거래활성도 급증'이 세 곳(시장 요약 KPI 카드·오늘의 브리핑 숫자·표시 목록)에 서로 다른 필터로 세어지던 계약 실패를 하나의 타입 결과로 통합. 점수식·metricsVersion·public/data·유니버스(138)·수집잡·인증/데이터스토어·의존성 무변경.
+- **문제(통합 전)**: (1) KPI 카드 = `volumeSpikeCount(realStockPool)` = ratio≥1.5‖flow≥75, 이상데이터 포함, 전체 풀. (2) 브리핑 숫자 = `flow≥70` — **다른 임계값**, 이상데이터 포함. (3) 표시 목록 = ratio≥1.5‖flow≥75 + isSuspect 제외, flow 내림차순 top6. 한 라벨('거래활성도 급증')이 세 집단을 가리켰다.
+- **변경(수정 4 · 신규 1)**:
+  - src/lib/homeSnapshot.ts — 단일 판정식 `isActivitySurge(s)` 추출(ratio 우선·flow 폴백). `volumeSpikeCount`는 이 판정식에 위임(홈 스냅샷 호환 유지). 신규 `ActivitySurgeResult{ readonly items; readonly count }` + `activitySurge(pool)` — `!isSuspect && isActivitySurge`로 필터, flow 내림차순 정렬, `count=items.length`. 필터·목록·개수를 한 객체가 소유.
+  - src/app/today/page.tsx — `volumeSpikeStocks`/`spikeCount`/`flowSurgeCount` 세 소스를 `const surge = activitySurge(validStocks)` 하나로 대체. 표시 목록 = `surge.items.slice(0,6)`, 단일 개수 = `surge.count`(변수 `activitySurgeCount`). `volumeSpikeCount`·`VOLUME_SPIKE_*` import 제거.
+  - src/components/today/TodayContent.tsx — 별개 prop `spikeCount`/`flowSurgeCount` 두 개를 단일 `activitySurgeCount`로 축소. MarketSnapshotCards의 volumeSpikeCount와 브리핑 emerald 숫자가 모두 `props.activitySurgeCount` 하나를 렌더 → 두 위치가 구조적으로 다른 수를 못 보임.
+  - scripts/test_activitySurge.ts (신규) — 단위 assertion(비어있지 않음·제로·빈 풀·판정 경계) + `count===items.length` 불변식 + 소스 가드(page가 activitySurge 정확히 1회 호출, flow>=70/volumeSpikeCount/flowSurgeCount/VOLUME_SPIKE_* 재등장 금지, 컴포넌트가 activitySurgeCount 단일 prop을 2개 렌더 지점에서 소비). package.json에 `test:activity-surge` 추가.
+- **불변식**: 급증 판정 임계값(ratio 1.5 / flow 75) 무변경 — 통합만. 브리핑에서 제거된 `flow≥70`은 급증과 다른 집단이라 라벨('거래활성도 급증')과 불일치했으므로 제거(같은 라벨 두 집단 금지). KPI·목록·브리핑 이제 isSuspect 제외 기준으로 일관.
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · test_activitySurge PASS · npm run build 0(/today 10.3kB) · 로컬 prod :4893 verify:local --no-perf 6/6 OK. SSR /today: KPI 급증 카드=3개·브리핑 급증=3, 동일 값 렌더·표시 목록도 그 집단(count===items.length===3). 시작한 :4893만 taskkill(PID)로 종료.
+- **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측 오너 게이트. 이번 변경은 숫자 소스 통합(레이아웃 무변경)이라 overflow 위험 없음.
+- **다음 진입점(Slice B)**: 날짜 인지 점수 비교 기준 — getScoreChangesBatch/getMetricChangesBatch가 비교 날짜를 함께 반환하고 종목별 장중일 시퀀스로 전일/N일전/불가 분류(§4 Slice B).
+- **커밋**: 로컬 [codex] reaudit Slice A: unify Today activity-surge into one typed result. push 없음·main 무변경.

@@ -2950,3 +2950,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측 미지원(카피 교체+버튼 3→2 축소라 폭 불변·세로 감소, overflow 위험 없음). 관심 빈 상태는 클라 하이드레이션 렌더라 정적 가드로 소스 계약 고정. 실기기 픽셀은 오너 게이트.
 - **다음 진입점(Slice H)**: 전체 사용자 여정 재인증(E2E·overflow·핵심 위치·공개 카피/이벤트/관리자 보호) + PROGRESS/AI_HANDOFF 최종 정리.
 - **커밋**: 로컬 [codex] first-run UX Slice G: watchlist/compare empty states + login boundary (브랜치 ai-center/task-279-ornscore-first-run-ux-rebuild-g-alig). push 없음·main 무변경. 해시는 git log --grep "first-run UX Slice G"로 확인.
+
+
+### 2026-07-15 — 공개 재감사 Slice A: 오늘 거래활성도 급증 단일 소스 ([codex])
+
+- **무엇**: /today '거래활성도 급증'이 시장 요약 KPI(ratio≥1.5‖flow≥75·전체 풀), 브리핑 숫자(flow≥70·다른 임계값), 표시 목록(ratio≥1.5‖flow≥75+isSuspect 제외·top6)에서 서로 다른 필터로 세어지던 계약 실패를 하나의 타입 결과로 통합(설계서 §4 Slice A). 필터·목록·개수를 한 객체(`ActivitySurgeResult`)가 소유하고 세 표시 위치가 그 결과 하나만 소비.
+- **변경 파일(5)**: src/lib/homeSnapshot.ts(단일 판정식 `isActivitySurge` 추출 + `ActivitySurgeResult`/`activitySurge(pool)` 신규, `volumeSpikeCount`는 판정식에 위임), src/app/today/page.tsx(3소스→`activitySurge(validStocks)` 1개, 목록=items.slice(0,6)·개수=count), src/components/today/TodayContent.tsx(prop `spikeCount`+`flowSurgeCount`→단일 `activitySurgeCount`, KPI·브리핑 둘 다 이 prop 렌더), scripts/test_activitySurge.ts(신규 회귀 가드), package.json(test:activity-surge).
+- **불변식**: 급증 임계값(ratio 1.5/flow 75)·점수식·metricsVersion·public/data·유니버스(138)·수집잡·인증/데이터스토어·크론·의존성·라우트·SEO 메타 무변경. 브리핑의 옛 flow≥70은 '거래활성도 급증' 라벨과 다른 집단이라 제거(한 라벨 두 집단 금지). KPI·목록·브리핑 모두 isSuspect 제외 기준으로 일관.
+- **게이트**: tsc 0 · verify_metrics 138·오류0·금칙0·Metrics 2.4 · git diff --check clean · U+FFFD 0(편집 5파일) · test_activitySurge PASS(비어있지않음·제로·빈풀·count===items.length·독립재계산 소스가드) · build 0 · verify:local :4893 6/6 OK. SSR /today KPI 급증=3개·브리핑 급증=3 동일값·목록 count===items.length===3. 시작한 :4893만 종료.
+- **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측은 오너 게이트(숫자 소스 통합·레이아웃 무변경이라 overflow 위험 없음).
+- **다음(Slice B)**: 날짜 인지 점수 비교 기준 — 비교 날짜 반환 + 종목별 장중일 시퀀스로 전일/N일전/불가 분류(§4 Slice B).
+- **커밋**: 로컬 [codex] reaudit Slice A: unify Today activity-surge into one typed result. push/main 무변경.

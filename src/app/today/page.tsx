@@ -6,7 +6,7 @@ import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 import { fmtWon } from "@/lib/format";
-import { volumeSpikeCount, VOLUME_SPIKE_RATIO, VOLUME_SPIKE_FLOW } from "@/lib/homeSnapshot";
+import { activitySurge } from "@/lib/homeSnapshot";
 import type { MetricKey } from "@/lib/copy/home";
 import { TodayContent } from "@/components/today/TodayContent";
 import type {
@@ -88,15 +88,10 @@ export default async function TodayPage() {
   const compositeRest = compositeSorted.slice(3, 9);
   const topValue = [...validStocks].filter((s) => !isSuspect(s) && s.value > 0 && s.per > 0).sort((a, b) => b.value - a.value).slice(0, 6);
   const topMomentum = [...validStocks].filter((s) => !isSuspect(s) && s.momentum > 0 && s.returns).sort((a, b) => b.momentum - a.momentum).slice(0, 6);
-  const volumeSpikeStocks = [...validStocks]
-    .filter((s) => {
-      if (isSuspect(s)) return false;
-      const r = s.flowStats?.ratio;
-      if (typeof r === "number" && Number.isFinite(r)) return r >= VOLUME_SPIKE_RATIO;
-      return s.flow >= VOLUME_SPIKE_FLOW;
-    })
-    .sort((a, b) => b.flow - a.flow)
-    .slice(0, 6);
+  // 거래활성도 급증 단일 소스 — 요약 KPI·브리핑 숫자·표시 목록이 모두 이 결과 하나만 소비한다.
+  // (필터·목록·개수를 한 객체가 소유하므로 라벨별로 다른 집단을 세는 일이 구조적으로 불가능.)
+  const surge = activitySurge(validStocks);
+  const volumeSpikeStocks = surge.items.slice(0, 6);
   const overheated = [...validStocks]
     .filter((s) => !isSuspect(s) && (s.returns?.r3m ?? 0) >= 80)
     .sort((a, b) => (b.returns?.r3m ?? 0) - (a.returns?.r3m ?? 0))
@@ -112,8 +107,8 @@ export default async function TodayPage() {
   const downCount = realStockPool.filter((s) => s.changePct < 0).length;
   const flatCount = realStockPool.length - upCount - downCount;
   const strongCount = realStockPool.filter((s) => compositeOf(s) >= 80 && !isSuspect(s)).length;
-  const flowSurgeCount = realStockPool.filter((s) => s.flow >= 70).length;
-  const spikeCount = volumeSpikeCount(realStockPool);
+  // 급증 개수는 surge.count 하나뿐 — 요약 KPI·브리핑 숫자가 이 값을 공유한다(임계값 중복 세기 금지).
+  const activitySurgeCount = surge.count;
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
 
   // 외부 데이터(Supabase/DART)는 4초 타임아웃 + 병렬 — 느리거나 실패해도 빈 값으로 폴백
@@ -271,7 +266,7 @@ export default async function TodayPage() {
       dataStale={dataStale}
       totalCount={dataMetadata.count}
       strongCount={strongCount}
-      spikeCount={spikeCount}
+      activitySurgeCount={activitySurgeCount}
       signalCount={signalCount}
       top3={top3Raw}
       composite={compositeData}
@@ -285,7 +280,6 @@ export default async function TodayPage() {
       upCount={upCount}
       downCount={downCount}
       flatCount={flatCount}
-      flowSurgeCount={flowSurgeCount}
       briefingSignalCount={briefingSignalCount}
       breadthPct={breadthPct}
       aiInsight={
