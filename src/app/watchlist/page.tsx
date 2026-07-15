@@ -3,7 +3,7 @@ import { getAllStocks } from "@/lib/mockData";
 import { createClient } from "@/lib/supabase/server";
 import recentSignalsRaw from "../../../public/disclosure-samples/recent-signals.json";
 import { compositeOf } from "@/lib/score";
-import { getScoreChangesBatch } from "@/lib/scoreHistory";
+import { getScoreChangesBatch, EMPTY_SCORE_CHANGES_BATCH } from "@/lib/scoreHistory";
 import type { StockForMatch } from "@/lib/matchConfig";
 import { realStockPool, type RealStock } from "@/lib/realStocks";
 import { isSuspect } from "@/lib/dataQuality";
@@ -94,11 +94,15 @@ export default async function WatchlistPage() {
     .sort((a, b) => b.momentum - a.momentum || a.ticker.localeCompare(b.ticker));
   pickExample(byMomentum, (s) => `추세 상위 · 모멘텀 ${Math.round(s.momentum)}점`);
 
-  const tickerToDelta = await withTimeout(
+  const scoreBatch = await withTimeout(
     getScoreChangesBatch(allStocks.map((s) => s.ticker)),
     4000,
-    {} as Record<string, number>,
+    EMPTY_SCORE_CHANGES_BATCH,
   );
+  // 델타는 숫자 맵으로 투영(기존 클라이언트 로직 유지) + 실제 비교 기준(basis)을 함께 넘긴다.
+  const tickerToDelta: Record<string, number> = {};
+  for (const [t, d] of Object.entries(scoreBatch.byTicker)) tickerToDelta[t] = d.delta;
+  const changeBasis = scoreBatch.sharedBasis;
 
   // ticker → 최강 신호 매핑
   const signals = ((recentSignalsRaw as { signals?: RawSignal[] }).signals ?? []);
@@ -130,7 +134,7 @@ export default async function WatchlistPage() {
           담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요. 오늘의 변화부터 훑고, 정렬·비교로 이어보세요.
         </p>
       </header>
-      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} todayCompareTickers={todayCompareTickers} />
+      <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} changeBasis={changeBasis} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} todayCompareTickers={todayCompareTickers} />
 
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면/로딩 고착 방지 fallback */}
       <noscript>

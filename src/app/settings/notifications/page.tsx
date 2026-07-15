@@ -14,6 +14,7 @@ import recentSignalsRaw from "../../../../public/disclosure-samples/recent-signa
 import { realStockPool } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
 import { getScoreChangesBatch } from "@/lib/scoreHistory";
+import { comparisonBasisLabel } from "@/lib/scoreComparison";
 
 export const metadata = {
   title: "알림 설정 — 오른스코어",
@@ -58,18 +59,25 @@ async function buildExampleData(): Promise<AlertExampleData> {
     };
   }
 
-  // 3) 점수 급변 예시 — daily_scores 실제 전일 대비 변화(있으면). 없으면 표본 종목으로 형식만 예시.
+  // 3) 점수 급변 예시 — daily_scores 최근 저장 2행 변화(있으면). 최근 2행을 무조건 "어제"로 부르지 않고
+  //    실제 비교 기준(basis) 라벨을 함께 싣는다. 없으면 표본 종목으로 형식만 예시(basis 없음).
   try {
     const tickers = realStockPool.map((s) => s.ticker);
-    const deltas = await getScoreChangesBatch(tickers);
-    const entries = Object.entries(deltas).filter(([, d]) => Math.abs(d) >= 1);
+    const batch = await getScoreChangesBatch(tickers);
+    const entries = Object.entries(batch.byTicker).filter(([, d]) => Math.abs(d.delta) >= 1);
     if (entries.length > 0) {
-      entries.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
-      const [ticker, delta] = entries[0];
+      entries.sort((a, b) => Math.abs(b[1].delta) - Math.abs(a[1].delta));
+      const [ticker, d] = entries[0];
       const stock = realStockPool.find((s) => s.ticker === ticker);
       if (stock) {
         const to = Math.round(compositeOf(stock));
-        data.scoreSurge = { name: stock.name, ticker, from: to - Math.round(delta), to };
+        data.scoreSurge = {
+          name: stock.name,
+          ticker,
+          from: to - Math.round(d.delta),
+          to,
+          basisLabel: comparisonBasisLabel(d.basis, "ko"),
+        };
       }
     }
   } catch {

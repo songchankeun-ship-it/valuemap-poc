@@ -44,7 +44,7 @@ export const ALERT_CATALOG: AlertType[] = [
     id: "watchlist_score_surge",
     label: "관심 종목 종합 점수 급변",
     description:
-      "관심 종목의 종합 점수가 전일 대비 크게 움직이면 변화 사실만 알려드려요. 점수는 탐색 우선순위용 참고 지표이며 매수·매도 신호가 아닙니다. (준비 중 · 아직 발송 전)",
+      "관심 종목의 종합 점수가 최근 장마감 대비 크게 움직이면 변화 사실만 알려드려요. 점수는 탐색 우선순위용 참고 지표이며 매수·매도 신호가 아닙니다. (준비 중 · 아직 발송 전)",
     category: "관심종목",
     status: "preview",
     connectsTo: "관심 종목",

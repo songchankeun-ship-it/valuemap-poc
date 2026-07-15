@@ -9,6 +9,12 @@ import { ShareButton } from "@/components/ShareButton";
 import { ScoreHistoryChart } from "@/components/ScoreHistoryChart";
 import { StockEventTimelineLazy } from "@/components/StockEventTimelineLazy";
 import { getScoreHistory, type ScorePoint } from "@/lib/scoreHistory";
+import {
+  type ComparisonBasis,
+  UNAVAILABLE_BASIS,
+  classifyComparisonBasis,
+  comparisonBasisDateHint,
+} from "@/lib/scoreComparison";
 import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
 import { StockPriceSummary } from "@/components/StockPriceSummary";
 import { getPriceHistory } from "@/lib/priceHistory";
@@ -412,15 +418,20 @@ export default async function StockDetailPage({ params }: PageProps) {
   const leadCheckSignal = { label: leadCheck.metric, score: leadCheck.score };
   const heroStrengths = sortedStrengths.map((x) => x.metric);
   const heroWarnings: string[] = sortedCautions.map((x) => x.metric + " 약함");
+  const latestScorePoint = scoreHistory.length >= 1 ? scoreHistory[scoreHistory.length - 1] : null;
   const prevScorePoint = scoreHistory.length >= 2 ? scoreHistory[scoreHistory.length - 2] : null;
   const scoreDelta = prevScorePoint ? composite - Math.round(compositeOf(prevScorePoint)) : null;
   const flowDelta = prevScorePoint ? s.flow - prevScorePoint.flow : null;
+  // 단일 종목은 마켓 캘린더가 없어 "전일"이라 단정하지 않는다 — 실제 비교 날짜(recent-stored)를 힌트에 명시.
+  const scoreChangeBasis: ComparisonBasis = prevScorePoint
+    ? classifyComparisonBasis(latestScorePoint?.date, prevScorePoint.date, [])
+    : UNAVAILABLE_BASIS;
   const recentChangeItems: RecentChangeItem[] = [
     {
       kind: "score",
       label: "종합 점수",
       value: signedNumber(scoreDelta),
-      hint: prevScorePoint ? `${prevScorePoint.date.slice(5)} 대비` : "점수 이력 부족",
+      hint: comparisonBasisDateHint(scoreChangeBasis, "ko"),
       tone: toneOf(scoreDelta),
       href: "#basis",
     },

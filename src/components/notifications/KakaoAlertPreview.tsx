@@ -36,7 +36,7 @@ function buildMessage(data: AlertExampleData): PreviewMessage | null {
     return {
       title: "관심 종목 점수 변화",
       lines: [
-        `${scoreSurge.name} 종합 점수가 ${scoreSurge.from}→${scoreSurge.to}로 움직였어요(${diff > 0 ? "+" : ""}${diff}).`,
+        `${scoreSurge.name} 종합 점수가 ${scoreSurge.from}→${scoreSurge.to}로 움직였어요(${diff > 0 ? "+" : ""}${diff}${scoreSurge.basisLabel ? ` · ${scoreSurge.basisLabel}` : ""}).`,
         "점수는 탐색 우선순위용 참고 지표예요. 변화 사실만 알리고 매매를 권하지 않습니다.",
       ],
       ticker: scoreSurge.ticker,

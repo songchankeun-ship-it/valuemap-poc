@@ -15,6 +15,8 @@ export interface ScoreSurgeExample {
   ticker: string;
   from: number;
   to: number;
+  /** 델타의 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). 실데이터일 때만 주어진다. */
+  basisLabel?: string;
 }
 export interface FlowSurgeExample {
   name: string;
@@ -105,6 +107,9 @@ export function AlertExampleCards({ data }: { data: AlertExampleData }) {
                 ({scoreSurge.to - scoreSurge.from > 0 ? "+" : ""}
                 {scoreSurge.to - scoreSurge.from})
               </span>
+              {scoreSurge.basisLabel ? (
+                <span className="ml-1 text-[11px] text-zinc-400 dark:text-zinc-500">· {scoreSurge.basisLabel}</span>
+              ) : null}
             </div>
             <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
               점수는 탐색 우선순위용 참고 지표예요. 변화 사실만 알리고, 매수·매도를 권하지 않습니다.

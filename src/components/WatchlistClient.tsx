@@ -31,6 +31,7 @@ import {
 } from "@/lib/watchlistMeta";
 import { trackEvent } from "@/lib/clientAnalytics";
 import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
+import { type ComparisonBasis, UNAVAILABLE_BASIS, comparisonBasisLabel } from "@/lib/scoreComparison";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -168,6 +169,7 @@ export function WatchlistClient({
   matchPool = [],
   tickerToSignal = {},
   tickerToDelta = {},
+  changeBasis = UNAVAILABLE_BASIS,
   isLoggedIn = false,
   exampleStocks = [],
   todayCompareTickers = [],
@@ -176,6 +178,8 @@ export function WatchlistClient({
   matchPool?: StockForMatch[];
   tickerToSignal?: Record<string, SignalInfo>;
   tickerToDelta?: Record<string, number>;
+  /** 점수 델타의 실제 비교 기준(전 거래일 / N거래일 전 / 최근 저장 데이터). "오늘 변화"가 무엇 대비인지 명시. */
+  changeBasis?: ComparisonBasis;
   isLoggedIn?: boolean;
   // 관심 종목이 비어 있을 때만 쓰는 예시 종목(서버에서 실제 필드로 결정적 선택 · isSuspect 제외 · 매수·매도 추천 아님)
   exampleStocks?: { ticker: string; name: string; reason: string }[];
@@ -513,6 +517,10 @@ export function WatchlistClient({
     );
   }
 
+  // 점수 델타의 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). "오늘 변화"가 무엇 대비인지 명시.
+  const changeBasisLabel = comparisonBasisLabel(changeBasis, "ko");
+  const changeBasisSuffix = changeBasis.kind === "unavailable" ? "" : ` · ${changeBasisLabel}`;
+
   // 관심 종목 점수 변화 요약(오늘 기준 · 중립 표현)
   let upCount = 0;
   let downCount = 0;
@@ -681,7 +689,7 @@ export function WatchlistClient({
             </div>
             {watchlist.length > 0 ? (
               <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug break-words tabular-nums">
-                <span className="text-zinc-500 dark:text-zinc-500">관심 종목 변화(오늘):</span>{" "}
+                <span className="text-zinc-500 dark:text-zinc-500">관심 종목 변화(오늘{changeBasisSuffix}):</span>{" "}
                 점수 오른 종목 <strong className="text-red-600 dark:text-red-400">{upCount}</strong> ·
                 내린 종목 <strong className="text-blue-600 dark:text-blue-400">{downCount}</strong> ·
                 변동 없음 <strong className="text-zinc-700 dark:text-zinc-300">{flatCount}</strong>
@@ -900,7 +908,7 @@ export function WatchlistClient({
           changed.length > 0 ? (
             <div className="mb-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
               <div className="mb-0.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 변화가 있는 종목</div>
-              <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 break-words">담아둔 종목의 점수·공시 변화를 모아봤어요.</p>
+              <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 break-words">담아둔 종목의 점수·공시 변화를 모아봤어요{changeBasis.kind === "unavailable" ? "" : ` (점수 ${changeBasisLabel})`}.</p>
               <ul className="space-y-1">
                 {changed.map((c) => (
                   <li key={c.ticker}>

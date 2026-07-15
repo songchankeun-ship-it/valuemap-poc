@@ -3773,4 +3773,24 @@
 - **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(LF→CRLF 경고만) · 편집 5파일 U+FFFD 0 · test_activitySurge PASS · npm run build 0(/today 10.3kB) · 로컬 prod :4893 verify:local --no-perf 6/6 OK. SSR /today: KPI 급증 카드=3개·브리핑 급증=3, 동일 값 렌더·표시 목록도 그 집단(count===items.length===3). 시작한 :4893만 taskkill(PID)로 종료.
 - **화면 검증 한계**: headless 미설치 → 390x844/1440x900 픽셀 실측 오너 게이트. 이번 변경은 숫자 소스 통합(레이아웃 무변경)이라 overflow 위험 없음.
 - **다음 진입점(Slice B)**: 날짜 인지 점수 비교 기준 — getScoreChangesBatch/getMetricChangesBatch가 비교 날짜를 함께 반환하고 종목별 장중일 시퀀스로 전일/N일전/불가 분류(§4 Slice B).
+
+
+### 2026-07-15 — 공개 재감사 리메디에이션 Slice B (날짜 인지 점수 비교 기준) [codex]
+
+- **Scope**: 설계서 docs/ornscore-public-reaudit-remediation-2026-07-15.md §4 Slice B만. daily_scores 최근 2행을 무조건 "전일(어제)"로 부르며 날짜를 버리던 계약 실패를 고침. 점수·지표 히스토리 read가 비교 날짜를 델타와 함께 싣고, 로컬 마켓 날짜 시퀀스에 대조해 basis(전 거래일/N거래일 전/최근 저장 데이터/비교 불가)를 분류한 뒤, Today·종목상세·관심·알림 예시의 "전일" 단정 문구를 공유 basis 인지 카피로 교체. 저장 스키마·점수식·metricsVersion·public/data·유니버스(138)·수집잡·인증/데이터스토어·의존성 무변경.
+- **문제(고치기 전)**: `getScoreChangesBatch`→`Record<string,number>`, `getMetricChangesBatch`→`Record<string,MetricChange>` 는 최근 2행의 차이만 반환하고 두 행의 business_date를 버렸다. 소비 카피는 그 델타를 무조건 "전일 대비/vs. previous trading day"로 라벨했으나, 두 저장 행은 실제로 여러 거래일 떨어져 있을 수 있어(휴장·수집 누락) 거짓 전일 주장이 가능했다.
+- **변경(신규 2 · 수정 10)**:
+  - `src/lib/scoreComparison.ts`(신규·순수, 외부 의존 0) — `ComparisonBasis` 판별 유니온(항상 fromDate/toDate 동반), `marketDateSequence`(중복 제거·최신순), `classifyComparisonBasis(to,from,marketDates)`(인접→전 거래일·간격 N→N거래일 전·시퀀스 밖/역순→최근 저장 데이터·null·동일 날짜→비교 불가), `sharedComparisonBasis`(균일하면 그대로, 섞이면 recent-stored로 축약해 거짓 전일 금지), `comparisonBasisLabel`/`comparisonBasisDateHint`(ko/en, "어제/yesterday" 단정 금지).
+  - `src/lib/scoreHistory.ts` — 배치 read를 `ScoreChangesBatch{byTicker,marketDates,sharedBasis}`·`MetricChangesBatch`로 리팩터: 종목별 `ScoreDelta`/`MetricChangeEntry`에 fromDate/toDate/basis를 실어 이동. marketDates는 요청 종목 전체 business_date 합집합(로컬 마켓 캘린더)이라 특정 종목이 하루 건너뛰면 자연히 'N거래일 전'으로 분류. `EMPTY_*_BATCH` 폴백 상수 추가. 미사용 단일 `getScoreChange`는 @deprecated 주석만(동작·시그니처 무변경).
+  - `src/app/today/page.tsx` — 배치를 batch 객체로 받아 기존 선정 로직용 숫자 맵으로 투영(로직 불변) + `sharedBasis`를 `comparisonBasis` prop으로 TodayContent에 전달.
+  - `src/lib/copy/today.ts` — `summaryWithDeltas`·`noChangeNote`·`rankRisers`를 basis 라벨을 받는 함수형으로, `changeCaption` 삭제(컴포넌트가 basis 라벨을 직접 렌더). `summaryNoDeltas`·`strengthFallbackNote`·`signalsStrengthNote`에서 "전일 대비" 제거(ko/en 동기). `src/components/today/TodayContent.tsx` — `comparisonBasis` prop 소비·`basisLabel` 파생·해당 렌더 지점(요약·변화 캡션·순위 상승·변화 없음)에 적용.
+  - `src/app/watchlist/page.tsx` + `src/components/WatchlistClient.tsx` — 배치를 숫자 맵으로 투영(클라이언트 로직 불변) + `changeBasis` prop 추가, "관심 종목 변화(오늘)"·"오늘 변화" 캡션에 실제 basis 라벨 병기.
+  - `src/app/settings/notifications/page.tsx` + `src/components/notifications/AlertExampleCards.tsx` + `KakaoAlertPreview.tsx` — 점수 급변 예시가 basis 라벨(`ScoreSurgeExample.basisLabel`)을 실어 카드·카톡 프리뷰에 병기(실데이터일 때만). `src/lib/alertCatalog.ts` — 알림 설명 "전일 대비"→"최근 장마감 대비".
+  - `src/app/stock/[ticker]/page.tsx` — 단일 종목은 마켓 캘린더가 없어 recent-stored로 분류하고 힌트에 실제 날짜(MM-DD 대비)를 명시(공유 `comparisonBasisDateHint` 경유). 기존 "MM-DD 대비"와 동일 표시이나 계약을 중앙화.
+  - `scripts/test_scoreComparison.ts`(신규) + package.json `test:score-comparison` — 순수 테스트: consecutive→전 거래일, skipped→N거래일 전, unknown→최근 저장, mixed-date(합집합 시퀀스에서 중간 날짜 결측 종목이 N거래일 전·shared는 recent-stored), empty-history→비교 불가, 라벨/힌트 ko·en("어제/yesterday" 미사용), 소스 가드(scoreHistory basis 소비·today 카피 함수형·하드코딩 "전일 대비" 부재).
+- **불변식**: daily_scores 저장 스키마·RLS·점수식·compositeScore/지표·metricsVersion·public/data·유니버스(138)·DART 수집·auth/제공자·cron·배포·의존성·라우트 경로·SEO 메타 무변경. 델타 값 자체(최근 2행 차)는 동일 — 날짜·basis를 추가로 실어 카피만 정확해짐.
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138종목·오류0·금칙0·Metrics 2.4 · git diff --check clean(CRLF만) · 편집/신규 15파일 U+FFFD 0 · test_scoreComparison PASS · test_activitySurge PASS(회귀 없음) · npm run build 0(/today 10.5kB·/watchlist 17kB·라우트 표 불변) · 로컬 prod :4914 verify:local --no-perf real gates 6/6 OK(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access 4/4). SSR: /today 무-델타 정직 문구("아직 비교할 최근 변화 데이터가 없어…") 렌더·"전일 대비" 0, /stock/005930 힌트 "점수 이력 부족"(로컬 이력 없음→비교 불가), /watchlist 하드코딩 "전일 대비" 0, 알림 "최근 장마감 대비" 렌더. 시작한 :4914만 taskkill(PID 15800)로 종료·포트 000, 상시 AI Center 무중단.
+- **로컬 데이터 한계**: 로컬은 Supabase daily_scores 미구성이라 배치가 비어 무-델타 경로만 SSR로 실증됨. 델타-존재 경로(전 거래일/N거래일 전/최근 저장)의 분류·라벨·shared 축약은 순수 test_scoreComparison이 결정적으로 고정(실데이터 주입 불가한 로컬의 대체 검증).
+- **화면 검증 한계**: headless 브라우저 미설치 → 390x844/1440x900 픽셀 실측 오너 게이트. 이번 변경은 라벨 텍스트 교체·캡션 병기(레이아웃 폭 불변)라 overflow/겹침 위험 없음.
+- **다음 진입점(Slice C)**: 사용자 향 상태 차원 분리 — 공개 /status를 가격/점수 신선도·점수 이력 연속성·재무 완성도·공시 범위·테마 가용성으로 쪼개고 GitHub 워크플로/테이블/크론 등 내부 구현 세부는 보호된 admin으로 이동. 이력 연속성은 Slice B의 basis 의미를 재사용(§4 Slice C).
 - **커밋**: 로컬 [codex] reaudit Slice A: unify Today activity-surge into one typed result. push 없음·main 무변경.

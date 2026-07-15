@@ -1,6 +1,12 @@
 import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { getRecentSignals } from "@/lib/recentSignals";
-import { getScoreChangesBatch, getMetricChangesBatch } from "@/lib/scoreHistory";
+import {
+  getScoreChangesBatch,
+  getMetricChangesBatch,
+  EMPTY_SCORE_CHANGES_BATCH,
+  EMPTY_METRIC_CHANGES_BATCH,
+  type MetricChange,
+} from "@/lib/scoreHistory";
 import { getLatestStoredInsight } from "@/lib/ai-insight";
 import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
@@ -113,12 +119,20 @@ export default async function TodayPage() {
 
   // 외부 데이터(Supabase/DART)는 4초 타임아웃 + 병렬 — 느리거나 실패해도 빈 값으로 폴백
   const tickers = realStockPool.map((s) => s.ticker);
-  const [recentSig, scoreDeltas, metricChanges, aiInsight] = await Promise.all([
+  const [recentSig, scoreBatch, metricBatch, aiInsight] = await Promise.all([
     withTimeout(getRecentSignals(7), 4000, { days: 7, totalDisclosures: 0, signalCount: 0, signals: [] } as Awaited<ReturnType<typeof getRecentSignals>>),
-    withTimeout(getScoreChangesBatch(tickers), 4000, {} as Record<string, number>),
-    withTimeout(getMetricChangesBatch(tickers), 4000, {} as Awaited<ReturnType<typeof getMetricChangesBatch>>),
+    withTimeout(getScoreChangesBatch(tickers), 4000, EMPTY_SCORE_CHANGES_BATCH),
+    withTimeout(getMetricChangesBatch(tickers), 4000, EMPTY_METRIC_CHANGES_BATCH),
     withTimeout(getLatestStoredInsight(), 4000, null as Awaited<ReturnType<typeof getLatestStoredInsight>>),
   ]);
+  // 델타는 숫자 맵으로 투영해 기존 선정 로직을 그대로 유지하되, 비교 날짜(basis)는 batch 에 실려 이동한다.
+  const scoreDeltas: Record<string, number> = {};
+  for (const [t, d] of Object.entries(scoreBatch.byTicker)) scoreDeltas[t] = d.delta;
+  const metricChanges: Record<string, MetricChange> = {};
+  for (const [t, e] of Object.entries(metricBatch.byTicker)) {
+    metricChanges[t] = { momentum: e.momentum, flow: e.flow, value: e.value, vol: e.vol };
+  }
+  const comparisonBasis = scoreBatch.sharedBasis;
   const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
   const briefingSignalCount = (recentSig.signals ?? []).length;
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
@@ -293,6 +307,7 @@ export default async function TodayPage() {
           : null
       }
       hasDeltas={hasDeltas}
+      comparisonBasis={comparisonBasis}
       newEntrants={newEntrants}
       dropouts={dropouts}
       rankRisers={rankRisers}

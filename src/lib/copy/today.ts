@@ -27,13 +27,14 @@ export const todayCopy = {
     staleSuffix: "를 보여드립니다 — 최신이 아닐 수 있어요.",
 
     // ── 오늘 한 줄 요약(변화 중심 · 첫 문장) ──
-    // 전일 대비 변화 데이터가 있으면 변화를, 없으면 현재 강점 기준임을 솔직히 밝힌다(가짜 변화 금지).
-    summaryWithDeltas: "전일 대비 달라진 후보와 공시 신호를 정리했습니다. 변화가 큰 종목부터 확인하세요.",
-    summaryNoDeltas: "전일 대비 변화 데이터가 아직 없어, 오늘은 현재 강점이 큰 후보를 기준으로 정리했습니다.",
-    // 전일 대비 변화 데이터가 없을 때 후보 목록이 '변화'가 아니라 '현재 강점'임을 명시.
-    strengthFallbackNote: "전일 대비 변화 데이터가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다 — 변화가 아닙니다.",
-    noChangeNote: "전일 대비 뚜렷한 변화가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다.",
-    signalsStrengthNote: "아래 목록은 전일 대비 변화가 아니라 현재 강점(점수·지표) 기준입니다.",
+    // 변화 데이터가 있으면 변화를, 없으면 현재 강점 기준임을 솔직히 밝힌다(가짜 변화 금지).
+    // basis = 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). "전일"이라 단정하지 않는다.
+    summaryWithDeltas: (basis: string) => `${basis} 달라진 후보와 공시 신호를 정리했습니다. 변화가 큰 종목부터 확인하세요.`,
+    summaryNoDeltas: "아직 비교할 최근 변화 데이터가 없어, 오늘은 현재 강점이 큰 후보를 기준으로 정리했습니다.",
+    // 변화 데이터가 없을 때 후보 목록이 '변화'가 아니라 '현재 강점'임을 명시.
+    strengthFallbackNote: "최근 변화 데이터가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다 — 변화가 아닙니다.",
+    noChangeNote: (basis: string) => `${basis} 뚜렷한 변화가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다.`,
+    signalsStrengthNote: "아래 목록은 최근 변화가 아니라 현재 강점(점수·지표) 기준입니다.",
     disclosureHeading: "확인할 공시 신호",
 
     // ── 오늘 확인 순서(재방문 스캔 순서 안내) ──
@@ -109,12 +110,11 @@ export const todayCopy = {
     notAdvice: "투자 추천 아님",
     breadthLine: (pct: number) => `최근 거래일 상승 비율 ${pct}% · 영업일 장마감 후 갱신.`,
 
-    // ── 최근 장마감 변화 ──
+    // ── 최근 장마감 변화 ── (캡션은 실제 비교 기준을 컴포넌트에서 basis 라벨로 렌더)
     changeTitle: "최근 장마감 변화",
-    changeCaption: "전 거래일 대비",
     newEntrants: "🆕 오늘 종합 80+ 신규 편입",
     dropouts: "↘ 오늘 종합 80+ 이탈",
-    rankRisers: "↑ 전일 대비 순위 상승 (5단계+)",
+    rankRisers: (basis: string) => `↑ ${basis} 순위 상승 (5단계+)`,
     bigMovers: "📊 점수 급변 종목",
     rankStepSuffix: "단계",
     watchHint: "관심 종목으로 등록하면 이런 변화를 알림으로 받을 수 있어요 (현재는 이메일 발송, 카카오톡 알림 준비 중 · 설정 > 알림).",
@@ -173,13 +173,14 @@ export const todayCopy = {
     staleSuffix: " — it may not be the latest.",
 
     // ── One-line daily summary (change-first · first sentence) ──
-    // When day-over-day change data exists, describe the change; otherwise say plainly
+    // When change data exists, describe the change against its actual basis; otherwise say plainly
     // that the list is by current strength (never fabricate a previous-day delta).
-    summaryWithDeltas: "We've gathered the candidates and disclosure signals that changed since the previous trading day. Start with the biggest movers.",
-    summaryNoDeltas: "There's no day-over-day change data yet, so today's list is ordered by current strength, not by change.",
-    strengthFallbackNote: "No day-over-day change data, so the candidates below reflect current strength (score/metrics) — not change.",
-    noChangeNote: "No notable change vs. the previous trading day, so the candidates below reflect current strength (score/metrics).",
-    signalsStrengthNote: "The lists below reflect current strength (score/metrics), not day-over-day change.",
+    // basis = the actual comparison label (previous trading day / N trading days ago / recent stored data).
+    summaryWithDeltas: (basis: string) => `We've gathered the candidates and disclosure signals that changed ${basis}. Start with the biggest movers.`,
+    summaryNoDeltas: "There's no recent change data to compare yet, so today's list is ordered by current strength, not by change.",
+    strengthFallbackNote: "No recent change data, so the candidates below reflect current strength (score/metrics) — not change.",
+    noChangeNote: (basis: string) => `No notable change ${basis}, so the candidates below reflect current strength (score/metrics).`,
+    signalsStrengthNote: "The lists below reflect current strength (score/metrics), not recent change.",
     disclosureHeading: "Disclosure signals to check",
 
     // ── Today's check order (returning-user scan order) ──
@@ -255,12 +256,11 @@ export const todayCopy = {
     notAdvice: "Not investment advice",
     breadthLine: (pct: number) => `Latest trading day advance ratio ${pct}% · Updated after market close on business days.`,
 
-    // ── Recent market-close changes ──
+    // ── Recent market-close changes ── (caption rendered from the actual basis label in the component)
     changeTitle: "Recent market-close changes",
-    changeCaption: "vs. previous trading day",
     newEntrants: "🆕 Newly entered composite 80+ today",
     dropouts: "↘ Dropped out of composite 80+ today",
-    rankRisers: "↑ Rank up vs. previous day (5+ steps)",
+    rankRisers: (basis: string) => `↑ Rank up ${basis} (5+ steps)`,
     bigMovers: "📊 Large score change",
     rankStepSuffix: " steps",
     watchHint: "Add to your watchlist to get these changes by alert (email for now; KakaoTalk alerts in the works · Settings > Alerts).",

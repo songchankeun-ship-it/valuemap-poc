@@ -1,5 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
+import {
+  type ComparisonBasis,
+  UNAVAILABLE_BASIS,
+  marketDateSequence,
+  classifyComparisonBasis,
+  sharedComparisonBasis,
+} from "@/lib/scoreComparison";
 
 export interface ScorePoint {
   date: string; // YYYY-MM-DD
@@ -77,7 +84,10 @@ export async function getScoreHistory(ticker: string, days = 30): Promise<ScoreP
   }
 }
 
-/** 특정 종목의 어제 대비 변화량 */
+/**
+ * @deprecated 미사용 · 최근 2행을 무조건 "어제(yesterday)"로 부르는 옛 계약. 날짜 인지 비교가 필요하면
+ * getScoreChangesBatch(basis 포함) 또는 scoreComparison.classifyComparisonBasis 를 사용한다(공개 재감사 Slice B).
+ */
 export async function getScoreChange(ticker: string): Promise<{
   yesterdayComposite: number | null;
   todayComposite: number | null;
@@ -108,12 +118,57 @@ export async function getScoreChange(ticker: string): Promise<{
   }
 }
 
-/** 여러 종목의 어제 대비 변화량 일괄 조회 */
+/** 여러 종목의 최근 저장 2행 기준 변화량 일괄 조회 */
 export interface MetricChange { momentum: number; flow: number; value: number; vol: number }
 
-/** 지표별(추세·거래활성도·밸류·위험조정) 전일 대비 변화. daily_scores 최근 2영업일 기준. */
-export async function getMetricChangesBatch(tickers: string[]): Promise<Record<string, MetricChange>> {
-  if (tickers.length === 0) return {};
+/**
+ * 지표 변화 + 비교 날짜(basis) 를 함께 싣는 항목. 델타가 어느 두 날짜 사이 값인지가 함께 이동한다
+ * — 최근 2행을 무조건 "어제"로 부르지 않기 위함(공개 재감사 Slice B).
+ */
+export interface MetricChangeEntry extends MetricChange {
+  fromDate: string;
+  toDate: string;
+  basis: ComparisonBasis;
+}
+
+/** 종합 점수 델타 + 비교 날짜(basis). */
+export interface ScoreDelta {
+  delta: number;
+  fromDate: string;
+  toDate: string;
+  basis: ComparisonBasis;
+}
+
+/**
+ * 배치 결과 공통 골격 — 종목별 항목, 이 조회에서 실재한 마켓 날짜 시퀀스, 화면 상단 한 줄용 공유 기준.
+ * marketDates 는 요청한 모든 종목의 business_date 합집합(최신순)으로, 특정 종목이 하루를 건너뛰면
+ * 그 종목의 basis 는 자연히 'N거래일 전'으로 분류된다(로컬 마켓 캘린더).
+ */
+export interface ScoreChangesBatch {
+  byTicker: Record<string, ScoreDelta>;
+  marketDates: string[];
+  sharedBasis: ComparisonBasis;
+}
+export interface MetricChangesBatch {
+  byTicker: Record<string, MetricChangeEntry>;
+  marketDates: string[];
+  sharedBasis: ComparisonBasis;
+}
+
+export const EMPTY_SCORE_CHANGES_BATCH: ScoreChangesBatch = {
+  byTicker: {},
+  marketDates: [],
+  sharedBasis: UNAVAILABLE_BASIS,
+};
+export const EMPTY_METRIC_CHANGES_BATCH: MetricChangesBatch = {
+  byTicker: {},
+  marketDates: [],
+  sharedBasis: UNAVAILABLE_BASIS,
+};
+
+/** 지표별(추세·거래활성도·밸류·위험조정) 최근 저장 2행 변화 + 비교 날짜. daily_scores 기준. */
+export async function getMetricChangesBatch(tickers: string[]): Promise<MetricChangesBatch> {
+  if (tickers.length === 0) return EMPTY_METRIC_CHANGES_BATCH;
   try {
     const supabase = getClient();
     const { data } = await supabase
@@ -121,15 +176,25 @@ export async function getMetricChangesBatch(tickers: string[]): Promise<Record<s
       .select("ticker, business_date, momentum, flow, value, vol")
       .in("ticker", tickers)
       .order("business_date", { ascending: false });
-    if (!data) return {};
-    const byTicker = new Map<string, MetricChange[]>();
+    if (!data) return EMPTY_METRIC_CHANGES_BATCH;
+    const marketDates = marketDateSequence(data.map((r) => r.business_date as string));
+    type Row = MetricChange & { date: string };
+    const byTicker = new Map<string, Row[]>();
     for (const r of data) {
       const t = r.ticker as string;
       if (!byTicker.has(t)) byTicker.set(t, []);
       const arr = byTicker.get(t)!;
-      if (arr.length < 2) arr.push({ momentum: Number(r.momentum), flow: Number(r.flow), value: Number(r.value), vol: Number(r.vol) });
+      if (arr.length < 2) {
+        arr.push({
+          date: r.business_date as string,
+          momentum: Number(r.momentum),
+          flow: Number(r.flow),
+          value: Number(r.value),
+          vol: Number(r.vol),
+        });
+      }
     }
-    const result: Record<string, MetricChange> = {};
+    const result: Record<string, MetricChangeEntry> = {};
     for (const [ticker, rows] of byTicker.entries()) {
       if (rows.length === 2) {
         result[ticker] = {
@@ -137,45 +202,56 @@ export async function getMetricChangesBatch(tickers: string[]): Promise<Record<s
           flow: rows[0].flow - rows[1].flow,
           value: rows[0].value - rows[1].value,
           vol: rows[0].vol - rows[1].vol,
+          toDate: rows[0].date,
+          fromDate: rows[1].date,
+          basis: classifyComparisonBasis(rows[0].date, rows[1].date, marketDates),
         };
       }
     }
-    return result;
+    const sharedBasis = sharedComparisonBasis(Object.values(result).map((e) => e.basis));
+    return { byTicker: result, marketDates, sharedBasis };
   } catch {
-    return {};
+    return EMPTY_METRIC_CHANGES_BATCH;
   }
 }
 
-export async function getScoreChangesBatch(tickers: string[]): Promise<Record<string, number>> {
-  if (tickers.length === 0) return {};
+/** 종합 점수의 최근 저장 2행 변화 + 비교 날짜 일괄 조회. */
+export async function getScoreChangesBatch(tickers: string[]): Promise<ScoreChangesBatch> {
+  if (tickers.length === 0) return EMPTY_SCORE_CHANGES_BATCH;
   try {
     const supabase = getClient();
-    // 최근 2 영업일 데이터
     const { data } = await supabase
       .from("daily_scores")
       .select("ticker, business_date, composite")
       .in("ticker", tickers)
       .order("business_date", { ascending: false });
 
-    if (!data) return {};
+    if (!data) return EMPTY_SCORE_CHANGES_BATCH;
 
-    // ticker별로 최근 2개씩 모으기
-    const byTicker = new Map<string, number[]>();
+    const marketDates = marketDateSequence(data.map((r) => r.business_date as string));
+    // ticker별로 최근 2행(점수+날짜) 모으기
+    const byTicker = new Map<string, { composite: number; date: string }[]>();
     for (const r of data) {
       const t = r.ticker as string;
       if (!byTicker.has(t)) byTicker.set(t, []);
       const arr = byTicker.get(t)!;
-      if (arr.length < 2) arr.push(Number(r.composite));
+      if (arr.length < 2) arr.push({ composite: Number(r.composite), date: r.business_date as string });
     }
 
-    const result: Record<string, number> = {};
-    for (const [ticker, scores] of byTicker.entries()) {
-      if (scores.length === 2) {
-        result[ticker] = scores[0] - scores[1];
+    const result: Record<string, ScoreDelta> = {};
+    for (const [ticker, rows] of byTicker.entries()) {
+      if (rows.length === 2) {
+        result[ticker] = {
+          delta: rows[0].composite - rows[1].composite,
+          toDate: rows[0].date,
+          fromDate: rows[1].date,
+          basis: classifyComparisonBasis(rows[0].date, rows[1].date, marketDates),
+        };
       }
     }
-    return result;
+    const sharedBasis = sharedComparisonBasis(Object.values(result).map((e) => e.basis));
+    return { byTicker: result, marketDates, sharedBasis };
   } catch {
-    return {};
+    return EMPTY_SCORE_CHANGES_BATCH;
   }
 }

@@ -10,6 +10,7 @@ import type { StockCandidate } from "@/components/home/StockCandidateCard";
 import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
 import { SignalSection } from "@/components/today/SignalSection";
 import type { SignalStockVM } from "@/components/today/SignalStockCard";
+import { type ComparisonBasis, comparisonBasisLabel } from "@/lib/scoreComparison";
 
 /** 신호별 VM을 만들기 위해 서버에서 넘기는 종목 원시 데이터(점수·지표는 서버 계산값). */
 export interface TodayStockRaw {
@@ -105,6 +106,8 @@ export interface TodayContentProps {
   aiInsight: TodayAiInsight | null;
   // 장마감 변화
   hasDeltas: boolean;
+  /** 델타의 비교 기준(전 거래일 / N거래일 전 / 최근 저장 데이터 / 없음) — 카피가 "전일"이라 단정하지 않게 한다. */
+  comparisonBasis: ComparisonBasis;
   newEntrants: TodayChangeChip[];
   dropouts: TodayChangeChip[];
   rankRisers: TodayRankChip[];
@@ -115,6 +118,9 @@ export function TodayContent(props: TodayContentProps) {
   const { locale } = useLanguage();
   const t = todayCopy[locale];
   const M = t.metric;
+  const basisLang = locale === "en" ? "en" : "ko";
+  // 델타의 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). 카피가 "전일"이라 단정하지 않게 한다.
+  const basisLabel = comparisonBasisLabel(props.comparisonBasis, basisLang);
 
   // 헤더 날짜 — 현재 KST 날짜를 로케일에 맞춰 표기(데이터 기준일 dataAsOf와는 별개).
   const today = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ko-KR", {
@@ -228,7 +234,7 @@ export function TodayContent(props: TodayContentProps) {
   );
   const disclosureVMs = props.disclosure.map((d) => toVM(d.raw, t.reason.disclosureNote(d.signalLabel)));
 
-  // 전일 대비 실제 변화 행이 하나라도 있는지(가짜 변화 금지 — 없으면 '현재 강점' 문구로 구분).
+  // 최근 변화(basis 기준) 실제 행이 하나라도 있는지(가짜 변화 금지 — 없으면 '현재 강점' 문구로 구분).
   const hasChangeRows =
     props.hasDeltas &&
     (props.newEntrants.length > 0 ||
@@ -243,7 +249,7 @@ export function TodayContent(props: TodayContentProps) {
         <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">{t.eyebrow}</div>
         <h1 className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{today}</h1>
         <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2">
-          {props.hasDeltas ? t.summaryWithDeltas : t.summaryNoDeltas}
+          {props.hasDeltas ? t.summaryWithDeltas(basisLabel) : t.summaryNoDeltas}
         </p>
         {props.isClosed ? (
           <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1.5">{t.closedNoticePrefix}<strong className="tabular-nums">{props.dataAsOf}</strong>{t.closedNoticeSuffix}</p>
@@ -306,7 +312,7 @@ export function TodayContent(props: TodayContentProps) {
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">{t.breadthLine(props.breadthPct)}</p>
       </section>
 
-      {/* ── 구간 2 · 오늘 후보와 전일 대비 변화 ── */}
+      {/* ── 구간 2 · 오늘 후보와 최근 변화(basis 기준) ── */}
       <TodayTopSection candidates={top3Candidates} />
 
       {hasChangeRows ? (
@@ -314,7 +320,7 @@ export function TodayContent(props: TodayContentProps) {
           <div className="flex items-center gap-1.5 mb-3">
             <span className="text-sm">🔔</span>
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.changeTitle}</h2>
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.changeCaption}</span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{basisLabel}</span>
           </div>
           {props.newEntrants.length > 0 ? (
             <div className="mb-3">
@@ -342,7 +348,7 @@ export function TodayContent(props: TodayContentProps) {
           ) : null}
           {props.rankRisers.length > 0 ? (
             <div className="mb-3">
-              <div className="text-[11px] font-semibold text-red-700 dark:text-red-400 mb-1.5">{t.rankRisers}</div>
+              <div className="text-[11px] font-semibold text-red-700 dark:text-red-400 mb-1.5">{t.rankRisers(basisLabel)}</div>
               <div className="flex flex-wrap gap-1.5">
                 {props.rankRisers.map((s) => (
                   <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition">
@@ -373,11 +379,11 @@ export function TodayContent(props: TodayContentProps) {
         </section>
       ) : (
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2">
-          {props.hasDeltas ? t.noChangeNote : t.strengthFallbackNote}
+          {props.hasDeltas ? t.noChangeNote(basisLabel) : t.strengthFallbackNote}
         </p>
       )}
 
-      {/* 현재 강점 기준 후보 목록 — 전일 대비 변화가 아님을 캡션으로 구분 */}
+      {/* 현재 강점 기준 후보 목록 — 최근 변화가 아님을 캡션으로 구분 */}
       <section className="space-y-5 md:space-y-6">
         <div className="flex items-baseline justify-between gap-2">
           <div>
