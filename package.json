@@ -46,6 +46,7 @@
     "test:metrics251-primitives": "python scripts/test_metrics251_primitives.py",
     "test:metrics251-engine": "python scripts/test_metrics251_engine.py",
     "test:metrics251-eligibility": "python scripts/test_metrics251_eligibility.py",
+    "test:metrics251-snapshot-store": "python scripts/test_metrics251_snapshot_store.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

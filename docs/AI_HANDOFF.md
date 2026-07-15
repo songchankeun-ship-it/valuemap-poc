@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T15:07:40.637Z
+Last updated: 2026-07-15T15:10:14.971Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 299 - ORNScore Metrics 2.5.1 E - eligibility and population contracts
-- Run: 303
-- Status: completed
+- Task: 300 - ORNScore Metrics 2.5.1 F - immutable shadow snapshot store
+- Run: 304
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -3166,3 +3166,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test_metrics251_config PASS · config:metrics251:check PASS · Slice A 회귀 없음 · git diff --check clean · 8파일 U+FFFD 0.
 - **한계/다음**: configHash 7bf1e3a1f989…는 현 파라미터 스냅샷; 이후 config 변경 시 재생성(check 강제). 엔진 소비·생성 TS는 Slice C/D/J. **다음(Slice C)**: average-rank percentile·Decimal HALF_UP·순서/동률/N=1/null 경계 fixture(공개 경로 미연결).
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice B: shadow config boundary + JSON Schema + YAML→config decision map + canonical serialization + SHA-256 configHash + generate/check drift gate. push 없음·main 무변경.
+
+### 2026-07-16 — Metrics 2.5.1 Slice F: 불변 shadow snapshot·manifest·pointer ([codex])
+
+- **무엇**: 설계서 §M251-D07 원자적 승격 + §M251-D10 비공개 자산 + §8 데이터 계약 + §9 실패/롤백대로 비공개 로컬 shadow snapshot 저장소 계약을 만든다. 순수·결정적·표준 라이브러리 전용, 공개 경로 미연결. 흐름: (1) 고유 runId 임시 디렉터리에 canonical 산출물 작성 → (2) 스키마·기준일·해시 검증 + QA 게이트 → (3) 각 산출물 SHA-256+상태 manifest 작성 → (4) manifest 를 QA_PASSED 로 봉인 → (5) 완성 run 을 불변 위치(runs/<snapshotId>)로 원자 승격(os.replace + 읽기전용) → (6) 작은 current pointer 를 원자적으로 교체(마지막) → (7) reader 가 pointer↔manifest↔산출물 해시를 재검증. pointer 는 snapshotId·marketDate·metricsVersion·manifestHash 를 담는다.
+- **신규 파일(2)**: `scripts/metrics251_snapshot_store.py`(라이브러리+CLI: `publish_snapshot(root, snapshot, run_id=, qa_check=, faults=)`·`read_current(root)`·`verify_run_dir`·`assert_private_root`·`rmtree_force`; 상태 enum READ_OK/UNAVAILABLE/DEGRADED·publish 사유 SCHEMA_INVALID/QA_FAILED/WRITE_INTERRUPTED/CHECKSUM_MISMATCH/ALREADY_PROMOTED; canonical_bytes 는 Slice B 재사용), `scripts/test_metrics251_snapshot_store.py`(15케이스 실패주입 게이트). 수정 2: `.gitignore`(`/.metrics251-shadow/` 추가 — 런타임 shadow 출력 Git 비추적·public 밖), `package.json`(`test:metrics251-snapshot-store`).
+- **검증기 계약(test_metrics251_snapshot_store, 서버 불필요·순수·임시디렉터리)**: A 해피패스(승격+pointer, reader OK 왕복 일치, manifest QA_PASSED), B 원자적 pointer 승격(연속 성공만 전진, 직전 run 불변 유지), C 실패주입 5종—(1)중단쓰기(manifest 전/pointer 전 각각 — 승격 안 됨/승격돼도 pointer 유지), (2)스키마실패(필수키 제거·빈 marketDate), (3)체크섬손상(승격 전 자기검증·승격 후 변조→reader DEGRADED), (4)pointer손상(깨진 JSON→UNAVAILABLE·필드누락→INVALID·유령 run→DEGRADED·pointer↔manifest 해시불일치→DEGRADED), (5)QA실패(fault·콜백 False)—전부 직전 정상 pointer 유지, D reader 부분 데이터 금지(손상 시 snapshot=None), E 불변성(읽기전용·같은 snapshotId 재승격 거부 ALREADY_PROMOTED), F 비공개루트(public/ 밑 루트/게시 거부·기본루트 public 밖), G 결정성(같은 입력·runId→같은 snapshotId·manifestHash·pointer), + 소스 순수성(벽시계/난수/네트워크 흔적 0). 유효 입력은 Slice D 골든 스냅샷 재사용.
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4 산출물·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성 무변경. 저장소는 `.metrics251-shadow/`(Git 비추적)에만 쓰고 src import 0·공개 pointer/API 미생성 → 런타임/공개/UI 계약 불변(build·route 검증 불요). 런타임 shadow 산출물은 커밋되지 않는다(테스트는 tempfile 만 사용하고 정리).
+- **게이트(전부 통과)**: npx tsc --noEmit 0 · PYTHONUTF8=1 verify_metrics.py 138·오류0·금칙0·Metrics 2.4 · test_metrics251_snapshot_store PASS(15/15) · Slice D/E 회귀 없음(engine·eligibility PASS) · git diff --check clean · 신규/편집 4파일 U+FFFD 0 · `git status` 에 shadow 출력 미추적.
+- **한계/리스크**: (1) snapshotId=`<marketDate>__<runId>` — runId 유일성은 호출자 책임(벽시계/난수 없이 결정성 유지). (2) 불변성은 읽기전용 chmod + 재승격 거부 + reader 체크섬 3중이나 OS 레벨 강제는 아님(root 권한은 무시 가능) — 무결성은 reader 재검증이 최종 방어선. (3) 실제 shadow 실행(엔진→저장소 배선)·5일 게이트는 Slice K, 역사 재실행은 Slice H. Slice F 는 저장/무결성 계약만 확정. (4) interrupt_before_pointer 는 승격됐지만 pointer 미교체 run 을 남긴다 — 다음 성공 게시가 pointer 를 전진시키고 고아 run 은 불변 저장소에 남는다(정리 정책은 owner-gated).
+- **다음(Slice G)**: KRX 거래일 calendar adapter 계약 + raw/factor/composite/rank 비교 capability 분리 + 유니버스 변경 시 원시값만 비교 가능한 fixture. 외부 캘린더 설정/네트워크 변경 없음(§10 Slice G).
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice F: immutable shadow snapshot store — temp run dirs + checksum manifest + QA_PASSED sealing + atomic pointer promotion + reader integrity + failure injection. push 없음·main 무변경.
