@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T06:51:58.572Z
+Last updated: 2026-07-15T07:17:05.353Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,8 +21,8 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 290 - ORNScore public reaudit J - simplify compare start and auth CTA roles
-- Run: 294
+- Task: 291 - ORNScore public reaudit K - improve disclosure information hierarchy
+- Run: 295
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
