@@ -1,5 +1,12 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-15 - [codex] 공개 사이트 재검수 개선 배치 설계 및 자동화 준비
+- **입력 검수**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_site_reaudit_feedback_2026-07-15.md` 933줄 전체를 읽고 P0/P1/P2 및 미검증 외부 트랜잭션 범위를 코드와 대조했다.
+- **정본 정렬**: `C:\dev\OrnScore`에서 `origin/main`의 배포 데이터 갱신과 정본 이전 기록을 정상 merge(`f8a1d90`)했다. 강제 reset/rebase/사용자 변경 폐기 없음.
+- **확인된 실제 공백**: Today 거래활성도 집계 필터 3종 불일치, 이력 조회의 날짜 유실 및 최근 2행=전일 가정, 계산은 거래량이나 일부 상세/알림은 거래대금으로 설명, 상대 점수의 절대값 표현, 근거 계약 없는 Today AI 요약, 공개 상태의 사용자 관점 연속성 부족.
+- **설계서**: `docs/ornscore-public-reaudit-remediation-2026-07-15.md`에 A~N 14개 순차 슬라이스, 완료 기준, 검증 명령, 불변식, 외부 소유자 게이트를 고정했다. 이전 first-run UX 배치에서 끝난 홈/모바일 정리는 반복하지 않는다.
+- **다음에 바로 실행할 작업**: AI Dev Center project #1에 설계서 Slice A~N을 순서대로 등록한다. Claude provider, planner off, fallback off, quality gates on, 로컬 저장소 작업만 허용한다. 공개 push/deploy/Search Console/법무 결론/데이터 권리 승인/DB·RLS 변경은 별도 소유자 결정이다.
+
 ## 2026-07-15 - [codex] first-run UX rebuild Slice H — 전체 사용자 여정 재인증 (task 280)
 - **Scope**: 설계서 `docs/ornscore-first-run-ux-rebuild-2026-07-14.md` §18 **Slice H**(전체 여정 재인증) + §20 최종 판정만. 신규 제품 기능 0 — 완료된 A~G 흐름(홈→검색/후보→상세→관심/비교→로그인/관리자 경계)을 첫 방문 사용자 관점으로 감사하고, 모든 로컬 게이트를 재실행해 재인증하고, 여정 계약을 단일 정적 가드로 고정. 감사 결과 **회귀 0**(수정 대상 소스 변경 없음) — 코드 변경은 검증 스크립트 1파일뿐. 점수식·데이터·공시·유니버스·인증/스토어·크론·env·의존성 무변경. 브랜치 `ai-center/task-280-ornscore-first-run-ux-rebuild-h-full`(직전 HEAD `b8840ff`=Slice G, 클린 워크트리에서 재개).
 - **감사 결과(회귀 0, 계약 충족 확인)**:

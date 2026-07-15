@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-15 - Codex - Public reaudit remediation batch intake
+- 소유자가 전달한 `ornscore_site_reaudit_feedback_2026-07-15.md` 933줄을 전체 감사하고, 재검수 주장을 현재 코드와 대조했다. 핵심 결함은 시각 문제가 아니라 Today 집계, 비교일, 거래량 의미, 상대 점수 표현, 자동 요약 근거, 공개 상태 등 신뢰 계약이다.
+- 배포된 `origin/main`(`69faea7`, 일일 데이터 커밋 포함)과 정본 이전 브랜치를 정상 merge한 로컬 기준점은 `f8a1d90`이다. 정본 경로는 계속 `C:\dev\OrnScore`; OneDrive 원본은 건드리지 않았다.
+- 새 정본 설계서는 `docs/ornscore-public-reaudit-remediation-2026-07-15.md`. A~N 14개 슬라이스를 P0 신뢰 계약 → P1 해석/UX/법무 정합성 → P2 방법론 기반 → 최종 로컬 재인증 순으로 실행한다. 이미 완료된 first-run UX 작업은 중복하지 않는다.
+- 자동화 범위는 로컬 source/test/script/docs와 검증/로컬 커밋뿐이다. 점수식·유니버스·생성 데이터·DART 수집·auth 설정·DB/RLS·외부 계정·Search Console·데이터 권리 법률 결론·push/deploy는 변경하지 않는다. 외부 잔여는 최종 handoff에 owner-gated로 분리한다.
+- Next: AI Dev Center project #1에 Slice A~N을 순차 큐로 등록하고 Claude(planner/fallback off)로 시작한 뒤 heartbeat가 실제 로그/승인/실패를 감시한다.
+
 ### 2026-07-15 - Codex - Canonical workspace migration
 - OneDrive 실행본을 멈춘 뒤 `C:\dev\OrnScore`로 Git 저장소를 독립 복제했다. source/target HEAD와 tree(`64e02b1`), tracked files 550개, `.env.local` SHA-256이 모두 일치했고 `git fsck --full`도 손상 없이 통과했다.
 - `origin`은 `https://github.com/songchankeun-ship-it/valuemap-poc.git`로 유지했고 AI Dev Center project #1 등록 경로를 `C:\dev\OrnScore`로 전환했다. OneDrive 원본은 복구 확인 전까지 삭제하지 않는다.
