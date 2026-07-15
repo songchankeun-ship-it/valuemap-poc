@@ -1,0 +1,289 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ornscore/metrics/2.5.1",
+  "title": "ORNScore Metrics 2.5.1 shadow configuration",
+  "description": "Approved shadow configuration boundary (data only, no executable expressions). Validated by scripts/metrics251_config.py using an explicit standard-library validator that supports the subset of JSON Schema keywords used here. See docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md section M251-D01.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "engineVersion",
+    "status",
+    "effectiveMarketDate",
+    "market",
+    "configHashAlgorithm",
+    "rounding",
+    "universe",
+    "percentile",
+    "metrics",
+    "composite",
+    "comparison",
+    "semanticRules",
+    "quality",
+    "statusSeverityOrder"
+  ],
+  "properties": {
+    "id": { "const": "ornscore-metrics" },
+    "engineVersion": { "const": "2.5.1" },
+    "status": { "enum": ["shadow_draft"] },
+    "effectiveMarketDate": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "market": { "const": "XKRX" },
+    "configHashAlgorithm": { "const": "sha256" },
+
+    "rounding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storedScoreDecimals", "mode", "rawStorageDecimalsMinimum", "displayIntegerFromStoredScore"],
+      "properties": {
+        "storedScoreDecimals": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "mode": { "enum": ["ROUND_HALF_UP"] },
+        "rawStorageDecimalsMinimum": { "type": "integer", "minimum": 0, "maximum": 12 },
+        "displayIntegerFromStoredScore": { "type": "boolean" }
+      }
+    },
+
+    "universe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "versionStrategy", "requireSameVersionForScoreDelta", "requireSameVersionForRankDelta"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "versionStrategy": { "type": "string", "minLength": 1 },
+        "requireSameVersionForScoreDelta": { "type": "boolean" },
+        "requireSameVersionForRankDelta": { "type": "boolean" }
+      }
+    },
+
+    "percentile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "tieHandling", "singleValueScore", "minScore", "maxScore"],
+      "properties": {
+        "method": { "enum": ["average_rank"] },
+        "tieHandling": { "enum": ["average_rank"] },
+        "singleValueScore": { "type": "number", "minimum": 0, "maximum": 100 },
+        "minScore": { "type": "number" },
+        "maxScore": { "type": "number" }
+      }
+    },
+
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["momentum", "activity", "value", "riskAdjusted"],
+      "properties": {
+        "momentum": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "minimumPricePoints", "lookbacksTradingDays", "weights", "scoreMapping", "missingPolicy"],
+          "properties": {
+            "input": { "type": "string", "minLength": 1 },
+            "minimumPricePoints": { "type": "integer", "minimum": 1 },
+            "lookbacksTradingDays": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["r1m", "r3m", "r6m"],
+              "properties": {
+                "r1m": { "type": "integer", "minimum": 1 },
+                "r3m": { "type": "integer", "minimum": 1 },
+                "r6m": { "type": "integer", "minimum": 1 }
+              }
+            },
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["r1m", "r3m", "r6m"],
+              "properties": {
+                "r1m": { "type": "number", "minimum": 0, "maximum": 1 },
+                "r3m": { "type": "number", "minimum": 0, "maximum": 1 },
+                "r6m": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            "scoreMapping": { "enum": ["universe_percentile"] },
+            "missingPolicy": { "enum": ["propagate_null"] }
+          }
+        },
+
+        "activity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "minimumVolumePoints", "numeratorTradingDays", "denominatorTradingDays", "scoreMapping", "missingPolicy"],
+          "properties": {
+            "input": { "type": "string", "minLength": 1 },
+            "minimumVolumePoints": { "type": "integer", "minimum": 1 },
+            "numeratorTradingDays": { "type": "integer", "minimum": 1 },
+            "denominatorTradingDays": { "type": "integer", "minimum": 1 },
+            "scoreMapping": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "domain", "segments"],
+              "properties": {
+                "type": { "enum": ["piecewise_linear"] },
+                "domain": { "type": "string", "minLength": 1 },
+                "segments": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["minInclusive", "maxExclusive", "anchorRatio", "anchorScore", "slopePerRatio"],
+                    "properties": {
+                      "minInclusive": { "type": ["number", "null"] },
+                      "maxExclusive": { "type": ["number", "null"] },
+                      "anchorRatio": { "type": "number" },
+                      "anchorScore": { "type": "number" },
+                      "slopePerRatio": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            },
+            "missingPolicy": { "enum": ["propagate_null"] }
+          }
+        },
+
+        "value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inputs", "validity", "componentScore", "combine", "industryAdjustmentInComposite", "missingPolicy"],
+          "properties": {
+            "inputs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "enum": ["per", "pbr"] }
+            },
+            "validity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["per", "pbr"],
+              "properties": {
+                "per": { "enum": ["positive"] },
+                "pbr": { "enum": ["positive"] }
+              }
+            },
+            "componentScore": { "enum": ["hundred_minus_percentile"] },
+            "combine": { "enum": ["mean"] },
+            "industryAdjustmentInComposite": { "type": "boolean" },
+            "missingPolicy": { "enum": ["propagate_null"] }
+          }
+        },
+
+        "riskAdjusted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "minimumPricePoints", "requiredDailyReturns", "annualizationFactor", "fixedAnnualHurdleRate", "stddev", "scoreMapping", "missingPolicy"],
+          "properties": {
+            "input": { "type": "string", "minLength": 1 },
+            "minimumPricePoints": { "type": "integer", "minimum": 1 },
+            "requiredDailyReturns": { "type": "integer", "minimum": 1 },
+            "annualizationFactor": { "type": "integer", "minimum": 1 },
+            "fixedAnnualHurdleRate": { "type": "number", "minimum": 0, "maximum": 1 },
+            "stddev": { "enum": ["population"] },
+            "scoreMapping": { "enum": ["universe_percentile"] },
+            "missingPolicy": { "enum": ["propagate_null"] }
+          }
+        }
+      }
+    },
+
+    "composite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requiredMetrics", "weights", "combine", "missingPolicy"],
+      "properties": {
+        "requiredMetrics": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "enum": ["momentum", "activity", "value", "riskAdjusted"] }
+        },
+        "weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["momentum", "activity", "value", "riskAdjusted"],
+          "properties": {
+            "momentum": { "type": "number", "minimum": 0, "maximum": 1 },
+            "activity": { "type": "number", "minimum": 0, "maximum": 1 },
+            "value": { "type": "number", "minimum": 0, "maximum": 1 },
+            "riskAdjusted": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "combine": { "enum": ["weighted_mean"] },
+        "missingPolicy": { "enum": ["withhold_composite_and_ranking"] }
+      }
+    },
+
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirePreviousKrxTradingDay", "requireSameMetricsVersion", "requireSameConfigHash", "requireSameUniverseVersionForScoreDelta", "requireSameUniverseVersionForRankDelta", "hideDeltaWhenNotComparable"],
+      "properties": {
+        "requirePreviousKrxTradingDay": { "type": "boolean" },
+        "requireSameMetricsVersion": { "type": "boolean" },
+        "requireSameConfigHash": { "type": "boolean" },
+        "requireSameUniverseVersionForScoreDelta": { "type": "boolean" },
+        "requireSameUniverseVersionForRankDelta": { "type": "boolean" },
+        "hideDeltaWhenNotComparable": { "type": "boolean" }
+      }
+    },
+
+    "semanticRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["directionFlatThresholdPct", "activityStates", "riskEfficiencyBands"],
+      "properties": {
+        "directionFlatThresholdPct": { "type": "number", "minimum": 0 },
+        "activityStates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "minInclusive", "maxExclusive"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "minInclusive": { "type": ["number", "null"] },
+              "maxExclusive": { "type": ["number", "null"] }
+            }
+          }
+        },
+        "riskEfficiencyBands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "minInclusive", "maxExclusive"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "minInclusive": { "type": ["number", "null"] },
+              "maxExclusive": { "type": ["number", "null"] }
+            }
+          }
+        }
+      }
+    },
+
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publishBlockers"],
+      "properties": {
+        "publishBlockers": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "statusSeverityOrder": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["NORMAL", "LIMITED", "DEGRADED", "OUTAGE"] }
+    }
+  }
+}

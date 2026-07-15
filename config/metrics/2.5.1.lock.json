@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256",
+  "canonicalByteLength": 3361,
+  "configHash": "7bf1e3a1f989e68e059f0b9f8fafb77b5f295ae0558da3bc2cd2dda5f881f293",
+  "engineVersion": "2.5.1",
+  "generator": "scripts/metrics251_config.py",
+  "note": "GENERATED. Do not edit by hand. Run `npm run config:metrics251` (python scripts/metrics251_config.py) after editing config/metrics/2.5.1.json. configHash = sha256 of config/metrics/2.5.1.canonical.json bytes (compact, key-sorted, UTF-8).",
+  "source": "config/metrics/2.5.1.json"
+}

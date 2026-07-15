@@ -1,0 +1,129 @@
+{
+  "id": "ornscore-metrics",
+  "engineVersion": "2.5.1",
+  "status": "shadow_draft",
+  "effectiveMarketDate": null,
+  "market": "XKRX",
+  "configHashAlgorithm": "sha256",
+
+  "rounding": {
+    "storedScoreDecimals": 1,
+    "mode": "ROUND_HALF_UP",
+    "rawStorageDecimalsMinimum": 6,
+    "displayIntegerFromStoredScore": true
+  },
+
+  "universe": {
+    "id": "ornscore_kr_v1",
+    "versionStrategy": "sha256_of_normalized_constituents_and_eligibility",
+    "requireSameVersionForScoreDelta": true,
+    "requireSameVersionForRankDelta": true
+  },
+
+  "percentile": {
+    "method": "average_rank",
+    "tieHandling": "average_rank",
+    "singleValueScore": 50.0,
+    "minScore": 0.0,
+    "maxScore": 100.0
+  },
+
+  "metrics": {
+    "momentum": {
+      "input": "adjusted_close",
+      "minimumPricePoints": 127,
+      "lookbacksTradingDays": { "r1m": 21, "r3m": 63, "r6m": 126 },
+      "weights": { "r1m": 0.30, "r3m": 0.40, "r6m": 0.30 },
+      "scoreMapping": "universe_percentile",
+      "missingPolicy": "propagate_null"
+    },
+
+    "activity": {
+      "input": "share_volume",
+      "minimumVolumePoints": 20,
+      "numeratorTradingDays": 5,
+      "denominatorTradingDays": 20,
+      "scoreMapping": {
+        "type": "piecewise_linear",
+        "domain": "volume_activity_ratio",
+        "segments": [
+          { "minInclusive": null, "maxExclusive": 0.50, "anchorRatio": 0.0, "anchorScore": 10.0, "slopePerRatio": 0.0 },
+          { "minInclusive": 0.50, "maxExclusive": 1.00, "anchorRatio": 0.50, "anchorScore": 10.0, "slopePerRatio": 80.0 },
+          { "minInclusive": 1.00, "maxExclusive": 3.00, "anchorRatio": 1.00, "anchorScore": 50.0, "slopePerRatio": 25.0 },
+          { "minInclusive": 3.00, "maxExclusive": null, "anchorRatio": 3.00, "anchorScore": 100.0, "slopePerRatio": 0.0 }
+        ]
+      },
+      "missingPolicy": "propagate_null"
+    },
+
+    "value": {
+      "inputs": ["per", "pbr"],
+      "validity": { "per": "positive", "pbr": "positive" },
+      "componentScore": "hundred_minus_percentile",
+      "combine": "mean",
+      "industryAdjustmentInComposite": false,
+      "missingPolicy": "propagate_null"
+    },
+
+    "riskAdjusted": {
+      "input": "adjusted_close_daily_returns",
+      "minimumPricePoints": 253,
+      "requiredDailyReturns": 252,
+      "annualizationFactor": 252,
+      "fixedAnnualHurdleRate": 0.035,
+      "stddev": "population",
+      "scoreMapping": "universe_percentile",
+      "missingPolicy": "propagate_null"
+    }
+  },
+
+  "composite": {
+    "requiredMetrics": ["momentum", "activity", "value", "riskAdjusted"],
+    "weights": { "momentum": 0.25, "activity": 0.25, "value": 0.25, "riskAdjusted": 0.25 },
+    "combine": "weighted_mean",
+    "missingPolicy": "withhold_composite_and_ranking"
+  },
+
+  "comparison": {
+    "requirePreviousKrxTradingDay": true,
+    "requireSameMetricsVersion": true,
+    "requireSameConfigHash": true,
+    "requireSameUniverseVersionForScoreDelta": true,
+    "requireSameUniverseVersionForRankDelta": true,
+    "hideDeltaWhenNotComparable": true
+  },
+
+  "semanticRules": {
+    "directionFlatThresholdPct": 1.0,
+    "activityStates": [
+      { "id": "VERY_LOW", "minInclusive": null, "maxExclusive": 0.50 },
+      { "id": "DECREASED", "minInclusive": 0.50, "maxExclusive": 0.80 },
+      { "id": "NORMAL", "minInclusive": 0.80, "maxExclusive": 1.20 },
+      { "id": "INCREASED", "minInclusive": 1.20, "maxExclusive": 1.50 },
+      { "id": "SIGNIFICANT_INCREASE", "minInclusive": 1.50, "maxExclusive": 2.00 },
+      { "id": "SURGE", "minInclusive": 2.00, "maxExclusive": null }
+    ],
+    "riskEfficiencyBands": [
+      { "id": "LOW", "minInclusive": 0.0, "maxExclusive": 30.0 },
+      { "id": "NEUTRAL", "minInclusive": 30.0, "maxExclusive": 70.0 },
+      { "id": "HIGH", "minInclusive": 70.0, "maxExclusive": 100.0001 }
+    ]
+  },
+
+  "quality": {
+    "publishBlockers": [
+      "latest_market_date_mismatch",
+      "source_date_mismatch",
+      "duplicate_ticker",
+      "score_out_of_range",
+      "composite_invariant_failure",
+      "metrics_version_config_mismatch",
+      "config_hash_failure",
+      "universe_snapshot_missing",
+      "published_row_count_mismatch",
+      "generated_docs_config_mismatch"
+    ]
+  },
+
+  "statusSeverityOrder": ["NORMAL", "LIMITED", "DEGRADED", "OUTAGE"]
+}

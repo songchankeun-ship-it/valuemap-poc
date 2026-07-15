@@ -1,0 +1,105 @@
+{
+  "note": "Traceable decision mapping from the received draft Metrics 2.5 YAML parameter names to the approved Metrics 2.5.1 shadow config fields. The YAML is immutable source evidence and is NOT parsed at runtime (no YAML runtime parser). This map is authored by hand and its yaml sha256 is asserted by scripts/test_metrics251_config.py so any edit to the received YAML is detected. See docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md section M251-D01.",
+  "sourceYaml": {
+    "path": "docs/metrics-v2.5-source/ornscore_metrics_spec_v2_5.yaml",
+    "sha256": "df3027dc67343475dd6d6905f5aa77bb66aabf841bd6d092d12a9865b00d7b6c",
+    "status": "draft",
+    "immutable": true
+  },
+  "approvedConfig": {
+    "path": "config/metrics/2.5.1.json",
+    "schema": "config/metrics/2.5.1.schema.json"
+  },
+  "generated": {
+    "canonical": "config/metrics/2.5.1.canonical.json",
+    "lock": "config/metrics/2.5.1.lock.json",
+    "generator": "scripts/metrics251_config.py"
+  },
+  "decisions": {
+    "D01_no_yaml_runtime": "The received YAML declares config/metrics/2.5.yaml as the runtime source and configHash = sha256(canonicalized_yaml) (spec section 7). Superseded: this repo has no YAML runtime dependency, so the approved parameters live in canonical JSON and configHash = sha256(canonical JSON bytes). No YAML parser is imported.",
+    "D06_naming": "risk_free_rate_annual is renamed fixedAnnualHurdleRate; the volume ratio keeps explicit trading-day counts. Section M251-D06 forbids calling 3.5% a risk-free rate or the ratio a liquidity/inflow signal.",
+    "expressions_to_data": "Every YAML string that is an executable expression (raw_formula, composite.formula, activity score_mapping when/score, value per_score/pbr_score/value_score, validity '> 0') is decomposed into pure numeric/enum data. The config carries NO arithmetic or comparison expression strings; the execution meaning lives in the Python engine (Slice C/D). The validator rejects expression-like strings.",
+    "missing_policy": "YAML per-metric missing_policy: null is recorded as 'propagate_null' (a missing input yields a null factor, never a 50 or factor-average fill). YAML composite.missing_policy withhold_composite_and_ranking is preserved verbatim in intent.",
+    "semantic_copy_deferred": "YAML semantic_rules.*.copy (Korean display strings) are NOT carried in this config. Only the stable state id and numeric bounds are captured here; user-facing copy keys are produced in Slice I (shadow DTO and copy keys). This keeps the config numeric/enum data only.",
+    "version": "YAML spec.version 2.5.0 (engine draft) maps to engineVersion 2.5.1 (the amended shadow engine). A config-value-equal change still requires a metricsVersion bump when engine semantics change (M251-D01)."
+  },
+  "mappings": [
+    { "yamlPath": "spec.id", "yamlValue": "ornscore-metrics", "configPath": "id", "configValue": "ornscore-metrics", "decision": "verbatim" },
+    { "yamlPath": "spec.version", "yamlValue": "2.5.0", "configPath": "engineVersion", "configValue": "2.5.1", "decision": "version" },
+    { "yamlPath": "spec.status", "yamlValue": "draft", "configPath": "status", "configValue": "shadow_draft", "decision": "Local shadow status; not an approved release. Public Metrics 2.4 stays authoritative." },
+    { "yamlPath": "spec.effective_market_date", "yamlValue": null, "configPath": "effectiveMarketDate", "configValue": null, "decision": "verbatim (owner-gated)" },
+    { "yamlPath": "spec.market", "yamlValue": "XKRX", "configPath": "market", "configValue": "XKRX", "decision": "verbatim" },
+    { "yamlPath": "spec.config_hash_algorithm", "yamlValue": "sha256", "configPath": "configHashAlgorithm", "configValue": "sha256", "decision": "verbatim; applied to canonical JSON bytes (D01_no_yaml_runtime)" },
+
+    { "yamlPath": "rounding.stored_score_decimals", "yamlValue": 1, "configPath": "rounding.storedScoreDecimals", "configValue": 1, "decision": "verbatim" },
+    { "yamlPath": "rounding.mode", "yamlValue": "ROUND_HALF_UP", "configPath": "rounding.mode", "configValue": "ROUND_HALF_UP", "decision": "verbatim" },
+    { "yamlPath": "rounding.raw_storage_decimals_minimum", "yamlValue": 6, "configPath": "rounding.rawStorageDecimalsMinimum", "configValue": 6, "decision": "verbatim" },
+    { "yamlPath": "rounding.display_integer_from_stored_score", "yamlValue": true, "configPath": "rounding.displayIntegerFromStoredScore", "configValue": true, "decision": "verbatim" },
+
+    { "yamlPath": "universe.id", "yamlValue": "ornscore_kr_v1", "configPath": "universe.id", "configValue": "ornscore_kr_v1", "decision": "verbatim" },
+    { "yamlPath": "universe.version_strategy", "yamlValue": "sha256_of_normalized_constituents_and_eligibility", "configPath": "universe.versionStrategy", "configValue": "sha256_of_normalized_constituents_and_eligibility", "decision": "verbatim" },
+    { "yamlPath": "universe.require_same_version_for_score_delta", "yamlValue": true, "configPath": "universe.requireSameVersionForScoreDelta", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "universe.require_same_version_for_rank_delta", "yamlValue": true, "configPath": "universe.requireSameVersionForRankDelta", "configValue": true, "decision": "verbatim" },
+
+    { "yamlPath": "percentile.method", "yamlValue": "average_rank", "configPath": "percentile.method", "configValue": "average_rank", "decision": "verbatim" },
+    { "yamlPath": "percentile.formula", "yamlValue": "100 * (average_rank_1_based - 1) / (valid_count - 1)", "configPath": "(none)", "configValue": null, "decision": "expressions_to_data: dropped; average-rank percentile is implemented in the Python engine (Slice C)." },
+    { "yamlPath": "percentile.tie_handling", "yamlValue": "average_rank", "configPath": "percentile.tieHandling", "configValue": "average_rank", "decision": "verbatim" },
+    { "yamlPath": "percentile.single_value_score", "yamlValue": 50.0, "configPath": "percentile.singleValueScore", "configValue": 50.0, "decision": "verbatim; this is the N=1 percentile convention, not a missing-value fill." },
+    { "yamlPath": "percentile.min_score", "yamlValue": 0.0, "configPath": "percentile.minScore", "configValue": 0.0, "decision": "verbatim" },
+    { "yamlPath": "percentile.max_score", "yamlValue": 100.0, "configPath": "percentile.maxScore", "configValue": 100.0, "decision": "verbatim" },
+
+    { "yamlPath": "metrics.momentum.input", "yamlValue": "adjusted_close", "configPath": "metrics.momentum.input", "configValue": "adjusted_close", "decision": "verbatim" },
+    { "yamlPath": "metrics.momentum.minimum_price_points", "yamlValue": 127, "configPath": "metrics.momentum.minimumPricePoints", "configValue": 127, "decision": "verbatim" },
+    { "yamlPath": "metrics.momentum.lookbacks_trading_days", "yamlValue": "{r1m:21,r3m:63,r6m:126}", "configPath": "metrics.momentum.lookbacksTradingDays", "configValue": "{r1m:21,r3m:63,r6m:126}", "decision": "verbatim" },
+    { "yamlPath": "metrics.momentum.weights", "yamlValue": "{r1m:0.30,r3m:0.40,r6m:0.30}", "configPath": "metrics.momentum.weights", "configValue": "{r1m:0.30,r3m:0.40,r6m:0.30}", "decision": "verbatim" },
+    { "yamlPath": "metrics.momentum.raw_formula", "yamlValue": "0.30*r21 + 0.40*r63 + 0.30*r126", "configPath": "(none)", "configValue": null, "decision": "expressions_to_data: weighted return implemented in engine from weights + lookbacks." },
+    { "yamlPath": "metrics.momentum.score_mapping", "yamlValue": "universe_percentile", "configPath": "metrics.momentum.scoreMapping", "configValue": "universe_percentile", "decision": "verbatim" },
+    { "yamlPath": "metrics.momentum.missing_policy", "yamlValue": null, "configPath": "metrics.momentum.missingPolicy", "configValue": "propagate_null", "decision": "missing_policy" },
+
+    { "yamlPath": "metrics.activity.input", "yamlValue": "share_volume", "configPath": "metrics.activity.input", "configValue": "share_volume", "decision": "verbatim" },
+    { "yamlPath": "metrics.activity.minimum_volume_points", "yamlValue": 20, "configPath": "metrics.activity.minimumVolumePoints", "configValue": 20, "decision": "verbatim" },
+    { "yamlPath": "metrics.activity.numerator", "yamlValue": "average_last_5_trading_days", "configPath": "metrics.activity.numeratorTradingDays", "configValue": 5, "decision": "expressions_to_data: window length as integer." },
+    { "yamlPath": "metrics.activity.denominator", "yamlValue": "average_last_20_trading_days", "configPath": "metrics.activity.denominatorTradingDays", "configValue": 20, "decision": "expressions_to_data: window length as integer." },
+    { "yamlPath": "metrics.activity.raw_formula", "yamlValue": "avg_volume_5 / avg_volume_20", "configPath": "(none)", "configValue": null, "decision": "expressions_to_data: ratio implemented in engine from the two window lengths." },
+    { "yamlPath": "metrics.activity.score_mapping.rules", "yamlValue": "piecewise when/score strings", "configPath": "metrics.activity.scoreMapping.segments", "configValue": "piecewise_linear anchor/slope segments", "decision": "expressions_to_data: each YAML when-range and score expression is decomposed into {minInclusive, maxExclusive, anchorRatio, anchorScore, slopePerRatio}. score = anchorScore + (ratio - anchorRatio) * slopePerRatio, evaluated in the engine." },
+    { "yamlPath": "metrics.activity.missing_policy", "yamlValue": null, "configPath": "metrics.activity.missingPolicy", "configValue": "propagate_null", "decision": "missing_policy" },
+
+    { "yamlPath": "metrics.value.inputs", "yamlValue": "[per, pbr]", "configPath": "metrics.value.inputs", "configValue": "[per, pbr]", "decision": "verbatim" },
+    { "yamlPath": "metrics.value.validity.per", "yamlValue": "> 0", "configPath": "metrics.value.validity.per", "configValue": "positive", "decision": "expressions_to_data: comparison string replaced by an enum token; the engine enforces > 0." },
+    { "yamlPath": "metrics.value.validity.pbr", "yamlValue": "> 0", "configPath": "metrics.value.validity.pbr", "configValue": "positive", "decision": "expressions_to_data: comparison string replaced by an enum token; the engine enforces > 0." },
+    { "yamlPath": "metrics.value.score_mapping.per_score", "yamlValue": "100 - percentile(per)", "configPath": "metrics.value.componentScore", "configValue": "hundred_minus_percentile", "decision": "expressions_to_data: enum token; engine computes 100 - percentile(per) and 100 - percentile(pbr)." },
+    { "yamlPath": "metrics.value.score_mapping.value_score", "yamlValue": "(per_score + pbr_score) / 2", "configPath": "metrics.value.combine", "configValue": "mean", "decision": "expressions_to_data: enum token; engine averages the two component scores." },
+    { "yamlPath": "metrics.value.industry_adjustment_in_composite", "yamlValue": false, "configPath": "metrics.value.industryAdjustmentInComposite", "configValue": false, "decision": "verbatim" },
+    { "yamlPath": "metrics.value.missing_policy", "yamlValue": null, "configPath": "metrics.value.missingPolicy", "configValue": "propagate_null", "decision": "missing_policy" },
+
+    { "yamlPath": "metrics.risk_adjusted.input", "yamlValue": "adjusted_close_daily_returns", "configPath": "metrics.riskAdjusted.input", "configValue": "adjusted_close_daily_returns", "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.minimum_price_points", "yamlValue": 253, "configPath": "metrics.riskAdjusted.minimumPricePoints", "configValue": 253, "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.required_daily_returns", "yamlValue": 252, "configPath": "metrics.riskAdjusted.requiredDailyReturns", "configValue": 252, "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.annualization_factor", "yamlValue": 252, "configPath": "metrics.riskAdjusted.annualizationFactor", "configValue": 252, "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.risk_free_rate_annual", "yamlValue": 0.035, "configPath": "metrics.riskAdjusted.fixedAnnualHurdleRate", "configValue": 0.035, "decision": "D06_naming" },
+    { "yamlPath": "metrics.risk_adjusted.stddev", "yamlValue": "population", "configPath": "metrics.riskAdjusted.stddev", "configValue": "population", "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.raw_formula", "yamlValue": "(mean_daily_return*252 - 0.035) / (population_std_daily_return*sqrt(252))", "configPath": "(none)", "configValue": null, "decision": "expressions_to_data: annualized Sharpe-style ratio implemented in engine from the numeric parameters." },
+    { "yamlPath": "metrics.risk_adjusted.score_mapping", "yamlValue": "universe_percentile", "configPath": "metrics.riskAdjusted.scoreMapping", "configValue": "universe_percentile", "decision": "verbatim" },
+    { "yamlPath": "metrics.risk_adjusted.missing_policy", "yamlValue": null, "configPath": "metrics.riskAdjusted.missingPolicy", "configValue": "propagate_null", "decision": "missing_policy" },
+
+    { "yamlPath": "composite.required_metrics", "yamlValue": "[momentum, activity, value, risk_adjusted]", "configPath": "composite.requiredMetrics", "configValue": "[momentum, activity, value, riskAdjusted]", "decision": "verbatim (risk_adjusted -> riskAdjusted key casing)" },
+    { "yamlPath": "composite.weights", "yamlValue": "0.25 each", "configPath": "composite.weights", "configValue": "0.25 each", "decision": "verbatim" },
+    { "yamlPath": "composite.missing_policy", "yamlValue": "withhold_composite_and_ranking", "configPath": "composite.missingPolicy", "configValue": "withhold_composite_and_ranking", "decision": "verbatim" },
+    { "yamlPath": "composite.formula", "yamlValue": "mean(momentum, activity, value, risk_adjusted)", "configPath": "composite.combine", "configValue": "weighted_mean", "decision": "expressions_to_data: enum token; equal 0.25 weights make the weighted mean equal to the simple mean, implemented in engine." },
+
+    { "yamlPath": "comparison.require_previous_krx_trading_day", "yamlValue": true, "configPath": "comparison.requirePreviousKrxTradingDay", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "comparison.require_same_metrics_version", "yamlValue": true, "configPath": "comparison.requireSameMetricsVersion", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "comparison.require_same_config_hash", "yamlValue": true, "configPath": "comparison.requireSameConfigHash", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "comparison.require_same_universe_version_for_score_delta", "yamlValue": true, "configPath": "comparison.requireSameUniverseVersionForScoreDelta", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "comparison.require_same_universe_version_for_rank_delta", "yamlValue": true, "configPath": "comparison.requireSameUniverseVersionForRankDelta", "configValue": true, "decision": "verbatim" },
+    { "yamlPath": "comparison.hide_delta_when_not_comparable", "yamlValue": true, "configPath": "comparison.hideDeltaWhenNotComparable", "configValue": true, "decision": "verbatim" },
+
+    { "yamlPath": "semantic_rules.direction_flat_threshold_pct", "yamlValue": 1.0, "configPath": "semanticRules.directionFlatThresholdPct", "configValue": 1.0, "decision": "verbatim" },
+    { "yamlPath": "semantic_rules.activity_states", "yamlValue": "6 states with id/min/max/copy", "configPath": "semanticRules.activityStates", "configValue": "6 states with id/min/max", "decision": "semantic_copy_deferred: numeric bounds and id captured; Korean copy deferred to Slice I." },
+    { "yamlPath": "semantic_rules.risk_efficiency_bands", "yamlValue": "3 bands with id/min/max", "configPath": "semanticRules.riskEfficiencyBands", "configValue": "3 bands with id/min/max", "decision": "verbatim" },
+
+    { "yamlPath": "quality.publish_blockers", "yamlValue": "10 blocker ids", "configPath": "quality.publishBlockers", "configValue": "10 blocker ids", "decision": "verbatim" },
+    { "yamlPath": "status.severity_order", "yamlValue": "[NORMAL, LIMITED, DEGRADED, OUTAGE]", "configPath": "statusSeverityOrder", "configValue": "[NORMAL, LIMITED, DEGRADED, OUTAGE]", "decision": "verbatim" },
+    { "yamlPath": "status.overall_rule", "yamlValue": "maximum_child_severity", "configPath": "(none)", "configValue": null, "decision": "Status aggregation rule is engine/operational behavior (M251-D08), not a numeric config parameter; not carried in this boundary." }
+  ]
+}

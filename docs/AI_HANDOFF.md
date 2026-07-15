@@ -2178,7 +2178,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - 점검 경로(데스크톱 SSR): `/ /today /stocks /stock/005380 /stock/032830 /disclosures /backtest /compare /pricing /status /privacy /terms /watchlist /settings/notifications /about /universe /history /login /guide/metrics` → 19/19 HTTP 200·치명 마커 0. 뷰포트: 데스크톱 SSR+빌드 청크+소스. 390px = 클래스 가드 점검만(픽셀 미보장).
 - 발견 요약: **P0 없음**. 데이터 기준 2026.06.25·Metrics 2.4 전 화면 동일(불일치 0). 금칙어 0·고지 8경로 전면·요금제 확정가 0·`<table>` 전부 overflow-x-auto·≥5열 고정 그리드 0. **P1**: Playwright 미구성 → 실 브라우저 시각 게이트 부재(운영자 육안 필요). **P2**: 공시 범위 표기 표면별 상이(7일 vs 90일, 다른 쿼리·문구 통합 제안) · `/today` 방문일 vs 데이터 기준일 위계. **P3**: `CLAUDE.md` 구 브랜드 "밸류맵 스톡" 잔존(앱은 "오른스코어" 일관) · 설계서 ③ 부분 항목(백로그 추적됨) · 공시 라이브 종료일 ≠ 가격 기준일(정상).
 - What passed: `tsc --noEmit` 0 · `npm run build` 0(172p) · `verify_metrics.py`(PYTHONUTF8=1) 138종목 0오류·금칙어 0·Metrics 2.4 · 로컬 prod 3403 19경로 200 · 신규 문서 Korean·링크 5개 전부 존재. `git diff`는 신규 문서·PROGRESS·이 노트만(앱 소스 0). 검증 prod node PID 14648만 정리, 4310·3000 무중단.
-- Gate note: **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 QA 리포트 §7 체크리스트 19경로 육안 1회 권장**(특히 `/today` 날짜 위계·`/disclosures` 공시 범위 문구·`/stocks` 표형 가로 스크롤). 
+- Gate note: **운영자: 3000 재빌드·재기동 후 데스크톱/390px로 QA 리포트 §7 체크리스트 19경로 육안 1회 권장**(특히 `/today` 날짜 위계·`/disclosures` 공시 범위 문구·`/stocks` 표형 가로 스크롤).
 - Residual / next: P1 운영자 육안 게이트 → P2-1 공시 범위 문구 통합·P2-2 today 날짜 위계·P3-1 CLAUDE.md 브랜드 정정(표시/문서 수정, 산식·데이터 무변경). 원격 갱신·main 머지·외부 릴리스·결제 연동 범위 외(운영자).
 
 ### Task 47 — OrnScore 상용화 고도화 2-E §10·§14·§15·§16·§18 베타 출시 체크리스트·커버리지 제한 노출·최종 QA (2026-06-26, Claude)
@@ -3127,3 +3127,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **한계/리스크**: (1) 매트릭스의 재배포·상업 이용·약관 버전·검토일은 전부 `unverified` — **출처별 약관 원문 대조·상용 클리어런스는 오너/법무 게이트**(설계서 §6). 코드는 증거 준비만, 법적 결론 없음. (2) 390x844/데스크톱 픽셀 실측 로컬 미지원(headless 없음)→오너 게이트; 카피/블록 이동뿐이라 폭·overflow 위험 낮음(모두 기존 `max-w-3xl` 컨테이너 내). (3) 매트릭스는 공개 페이지로 서빙하지 않음(의도 — 법적 주장 회피).
 - **다음(Slice M)**: 방법론 연구 표면·정직한 백테스트 라벨 — 공개 lab을 validation research로 개명, 현재 합성점수 미검증 배너 강화, 상관/기여/동일가중 대안/단일지표 ablation 로컬 감사 추가, 산출 불가 증거(선행수익·비용·회전율·신뢰구간·섹터중립·표본외)는 fail-closed(§4 Slice M).
 - **커밋**: 로컬 [codex] reaudit Slice L: align privacy/data-deletion deletion+exception language + free-beta terms primary with paid draft moved out + data-rights matrix (KRX/DART/Naver-FDR/Yahoo-yfinance) unverified + cross-page copy checks. push 없음·main 무변경.
+
+### 2026-07-15 — Metrics 2.5.1 Slice B: shadow 설정 경계 + canonical hash ([codex])
+
+- **무엇**: 설계서 §M251-D01 / §10 Slice B대로 승인 shadow 설정 경계를 데이터 전용 canonical JSON으로 분리. 수신 draft YAML은 증거로 보존(파싱 안 함), 승인 파라미터는 `config/metrics/2.5.1.json`에만 두고 JSON Schema로 검증, 수신 YAML→config 결정 매핑을 기록, canonical 직렬화+SHA-256 configHash, 생성물 드리프트/stale 게이트.
+- **신규 파일(7)**: `config/metrics/2.5.1.json`(승인 config·데이터전용), `config/metrics/2.5.1.schema.json`(JSON Schema), `config/metrics/2.5.1.decision-map.json`(YAML→config 61 매핑+결정·sourceYaml sha256 df3027dc…), `config/metrics/2.5.1.canonical.json`(생성·3361B), `config/metrics/2.5.1.lock.json`(생성·configHash 7bf1e3a1f989…), `scripts/metrics251_config.py`(검증기+canonical+생성/`--check`), `scripts/test_metrics251_config.py`(계약 테스트). 수정 1: `package.json`(config:metrics251·:check·test:metrics251-config).
+- **핵심 결정**: (D01) 원안 `configHash=sha256(canonicalized_yaml)`·런타임 YAML 소유를 대체 → 런타임 YAML 파서 없이 canonical JSON 바이트 hash. (D06) risk_free_rate_annual→fixedAnnualHurdleRate. (expressions_to_data) YAML raw_formula/when/score/"> 0"를 전부 수치·enum 데이터로 분해(엔진이 실행 의미 소유). (missing_policy) null→propagate_null(50/평균 대체 금지). semantic 한글 copy는 Slice I 이연.
+- **검증기 계약(test_metrics251_config)**: 스키마 통과+실제 차단, 데이터전용 가드(표현식 주입 검출·enum 오탐 없음), canonical 결정성, 불변식 A(공백/키순서/숫자표기 hash 불변), 불변식 B(실 파라미터 변경 hash 변경), 생성물 최신성(바이트 정확 일치), YAML 불변(sha256), YAML 파서/벽시계 부재, decision-map 추적성(configPath 61 해석).
+- **불변식(무변경)**: public/data·Metrics 2.4·metricsVersion 2.4·유니버스 138·공개 라우트·auth/Supabase/RLS·cron·의존성 무변경. config/는 공개 미서빙·src import 0 → 런타임/공개/UI 계약 불변(build·route 검증 불요).
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test_metrics251_config PASS · config:metrics251:check PASS · Slice A 회귀 없음 · git diff --check clean · 8파일 U+FFFD 0.
+- **한계/다음**: configHash 7bf1e3a1f989…는 현 파라미터 스냅샷; 이후 config 변경 시 재생성(check 강제). 엔진 소비·생성 TS는 Slice C/D/J. **다음(Slice C)**: average-rank percentile·Decimal HALF_UP·순서/동률/N=1/null 경계 fixture(공개 경로 미연결).
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice B: shadow config boundary + JSON Schema + YAML→config decision map + canonical serialization + SHA-256 configHash + generate/check drift gate. push 없음·main 무변경.
