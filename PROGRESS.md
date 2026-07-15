@@ -1,5 +1,20 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-15 - [codex] 공개 재검수 Slice N — 최종 재인증 + 통합 reaudit 게이트 (task 294)
+- **Scope**: 설계서 `docs/ornscore-public-reaudit-remediation-2026-07-15.md`의 **Slice N**(최종 마감)만 구현. 제품 동작 변경 없음. Slice A–M의 **포커스 검증기 13종을 하나의 유한 로컬 커맨드로 통합**하고, 전체 로컬 게이트를 돌려 모든 P0 계약·공개 라우트·상태 의미·종목 SEO·관리자 리다이렉트·TypeScript·메트릭·빌드·로컬 prod 검증·diff 청결·인코딩을 재인증. 원 재검수 항목 전부를 완료/오너 게이트/의도적 보류로 매핑. 직전 HEAD `b0dd07f`(Slice M)·클린 워크트리, 브랜치 `ai-center/task-294-ornscore-public-reaudit-n-final-loca`.
+- **Changes** (3 파일 · 신규 1):
+  - `scripts/verify-reaudit.mjs`(신규) — 서버 독립 러너. `release-preflight.mjs` 패턴대로 `spawnSync`로 A–M 13개 `test:*` 스크립트를 슬라이스 순서로 실행(M은 `PYTHONUTF8=1`). 슬라이스→exit 요약 표 출력, 하나라도 실패 시 exit 1. `--list`는 슬라이스↔검증기 맵만 출력하고 종료. **서버를 시작·종료하지 않음**(상시 AI Center 리스너 보호).
+  - `package.json` — `verify:reaudit` 스크립트 1줄 추가.
+  - `scripts/release-preflight.mjs` — 오프라인 게이트 목록에 `verify:reaudit` 추가 + 헤더 주석 갱신. 이제 릴리스 프리플라이트도 A–M 소스 계약을 함께 재인증.
+  - `scripts/verify-first-run-ux.ts` — 교차 배치 stale 단언 1건 정합(테스트 전용). 재검수 **Slice B**가 `today` 카피 `summaryWithDeltas`/`noChangeNote`를 실제 비교 기준을 담도록 `(basis)=>string`으로 바꿨는데, 이전 first-run-UX 게이트의 경직된 "문자열인가" 검사가 이 때문에 실패하고 있었다 → *렌더 텍스트*(문자열 OR basis 함수가 비지 않은 텍스트 반환)를 검증하도록 완화. `src/` 카피/산식 무변경.
+- **불변식**: 점수식·`metricsVersion`/Metrics 2.4·`public/data/*`·유니버스(138)·DART 수집·auth/제공자·Supabase 스키마/RLS·cron·배포·env·의존성·모든 라우트 경로·SEO/상태 계약 무변경. 러너+npm 스크립트만 추가하며 `src/` 무변경(정합은 검증기 파일에 국한).
+- **선재 결함 발견·정합**: 직전 HEAD `b0dd07f`에서 이미 `verify:first-run-ux`가 4건 실패(`today` 카피 ko+en) — 이번 diff를 stash하여 **선재**임을 증명. 원인은 재검수 Slice B의 의도된 shape 변경이며 제품 회귀 아님. stale 단언만 정합.
+- **Validation(전부 통과)**: `npm run verify:reaudit` → A–M **13/13** OK · `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean · 편집 파일 U+FFFD 0 · `npm run build` 0 · 로컬 prod 127.0.0.1:4737 `npm run verify:local -- --no-perf` real gates **6/6**(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access 4/4 — /admin* 307→/login) · `npm run release:preflight -- --offline-only --no-build` 오프라인 게이트 **7/7**(typecheck·verify:metrics·route/click/admin-traffic 분석·verify:first-run-ux·verify:reaudit). 시작한 :4737 리스너(PID 20892)만 종료·포트 000 확인, 상시 AI Center 무중단.
+- **재검수 항목 처리**(원본 `ornscore_site_reaudit_feedback_2026-07-15.md`): P0-1 활성도 단일소스=**완료(A)** · P0-2 날짜 인지 비교=**완료(B)** · P0-3 거래량 통일=**완료(D)** · P0-4 근거없는 AI요약 비노출=**완료(E)** · P0-5 절대→비교 점수=**완료(F)** · P0-6 안정 SEO 메타=**완료(H)** · P0-7 데이터 권리 매트릭스=**완료(L·미확인행+오너조치)** · 상태 6차원=**완료(C)** · 3-2 모멘텀 국면/3-3 위험효율/3-4 업종밸류=**완료(G)** · 3-5 입력 완성도 라벨=**완료(F)** · 3-6 정직한 백테스트/방법론 감사=**완료(M)** · 4-1 반복 면책 축소=**완료(I/K)** · 4-3 탐색 밀도=**완료(I)** · 4-4 비교 진입/4-7 인증 CTA=**완료(J)** · 4-5 공시 위계=**완료(K)** · 4-6 상태 내부정보 숨김=**완료(C)** · 5-2 개인정보/삭제 정합, 5-3 약관 무료베타 우선=**완료(L)**.
+- **오너 게이트(증거 준비 완료·외부 결정 필요)**: 구 사명 종목 Search Console 재색인+캐시 관찰; 투자자문 표현·운영주체 법적 정보 법무 검토; 제공자별 상업 이용·재배포 클리어런스(매트릭스 `unverified`); 실제 Supabase 세션/OAuth·계정 삭제 실행; 신규 스키마/RLS/보관잡·시점별 유니버스 스냅샷; 앱스토어 콘솔 선언·실기기 테스트; 공개 push/배포/릴리스 승인.
+- **의도적 보류(현재 데이터로 날조 없이 산출 불가)**: 미래수익·비용·회전율·신뢰구간·업종중립·아웃오브샘플 성과 증거(Slice M이 `unavailable`·fail-closed로 보고, 현재 데이터 미대체); 390×844+데스크톱 픽셀 overflow 검증(headless 브라우저 미설치 → 오너/실기기 게이트, 원 재검수 §10도 이번 범위 밖으로 명시).
+- **Commit**: 브랜치 팁의 단일 `[codex]` 커밋(로컬만·push 미수행·main 무변경). **배치 A–N 로컬 완료.** 잔여는 전부 위 오너 게이트/의도적 보류이며 **공개 릴리스는 검토 후 별도 오너 결정**.
+
 ## 2026-07-15 - [codex] 공개 재검수 Slice M — 검증 연구 표면·정직한 백테스트 라벨 + 방법론 감사 (task 293)
 - **Scope**: 설계서 `docs/ornscore-public-reaudit-remediation-2026-07-15.md`의 **Slice M**만 구현. (1) 공개 lab/백테스트 표면을 **"검증 연구(Validation research)"**로 개명하고 *현재 종합 점수를 검증하지 않는다*는 고지를 눈에 띄게 강화, (2) 현재 스냅샷으로 **결정적 로컬 방법론 감사** 추가 — 지표 간 상관·종합 기여도·등가중 대안·단일지표 제거(ablation), (3) 미래수익·거래비용·회전율·신뢰구간·업종중립·아웃오브샘플 증거를 현재 데이터로 **대체하지 않고 unavailable 로 명시**(fail-closed). **현재 점수 출력 무변경.** 점수식·`metricsVersion`·생성 데이터·유니버스·인증·크론·env·의존성 무변경. 직전 HEAD `cb17194`(Slice L)·클린 워크트리, 브랜치 `ai-center/task-293-ornscore-public-reaudit-m-add-method`.
 - **Changes** (9 파일 · 신규 4):

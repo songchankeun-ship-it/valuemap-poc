@@ -178,6 +178,11 @@ check(
 );
 
 // 6e. The new change-briefing copy keys exist in both locales.
+// Reaudit Slice B (date-aware comparison basis) turned summaryWithDeltas and
+// noChangeNote into (basis: string) => string so the summary embeds the real
+// comparison basis instead of asserting "yesterday". This guard validates the
+// *rendered copy* (non-empty string, or a basis-function that returns one),
+// which stays green across that intentional shape change.
 const TODAY_KEYS = [
   "summaryWithDeltas",
   "summaryNoDeltas",
@@ -186,10 +191,18 @@ const TODAY_KEYS = [
   "signalsStrengthNote",
   "disclosureHeading",
 ] as const;
+function copyResolvesToText(value: unknown): boolean {
+  if (typeof value === "string") return value.length > 0;
+  if (typeof value === "function") {
+    const out = (value as (basis: string) => unknown)("최근 저장 데이터 대비");
+    return typeof out === "string" && out.length > 0;
+  }
+  return false;
+}
 for (const locale of ["ko", "en"] as const) {
   const c = todayCopy[locale] as Record<string, unknown>;
   for (const key of TODAY_KEYS) {
-    check(`today copy.${key} (${locale}) is a non-empty string`, typeof c[key] === "string" && (c[key] as string).length > 0);
+    check(`today copy.${key} (${locale}) resolves to non-empty text`, copyResolvesToText(c[key]));
   }
 }
 
