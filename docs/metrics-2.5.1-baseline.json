@@ -1,0 +1,498 @@
+{
+  "extremeValues": {
+    "absRoeGt100": {
+      "count": 5,
+      "examples": [
+        {
+          "ticker": "066970",
+          "value": 201.94
+        },
+        {
+          "ticker": "079160",
+          "value": 1122.71
+        },
+        {
+          "ticker": "293490",
+          "value": 113.53
+        },
+        {
+          "ticker": "298380",
+          "value": 116.18
+        },
+        {
+          "ticker": "348370",
+          "value": 205.74
+        }
+      ],
+      "field": "roe",
+      "label": "절대값 ROE > 100",
+      "op": "abs>",
+      "threshold": 100.0
+    },
+    "pbrGt20": {
+      "count": 2,
+      "examples": [
+        {
+          "ticker": "196170",
+          "value": 35.24
+        },
+        {
+          "ticker": "247540",
+          "value": 20.51
+        }
+      ],
+      "field": "pbr",
+      "label": "PBR > 20",
+      "op": ">",
+      "threshold": 20.0
+    },
+    "perGt100": {
+      "count": 24,
+      "examples": [
+        {
+          "ticker": "000150",
+          "value": 220.26
+        },
+        {
+          "ticker": "003670",
+          "value": 968.71
+        },
+        {
+          "ticker": "009420",
+          "value": 659.6
+        },
+        {
+          "ticker": "010140",
+          "value": 155.7
+        },
+        {
+          "ticker": "011170",
+          "value": 254.43
+        },
+        {
+          "ticker": "020150",
+          "value": 172.76
+        },
+        {
+          "ticker": "034020",
+          "value": 183.04
+        },
+        {
+          "ticker": "035720",
+          "value": 306.86
+        },
+        {
+          "ticker": "037560",
+          "value": 102.0
+        },
+        {
+          "ticker": "066970",
+          "value": 180.38
+        },
+        {
+          "ticker": "079160",
+          "value": 3441.0
+        },
+        {
+          "ticker": "086520",
+          "value": 336.78
+        },
+        {
+          "ticker": "089030",
+          "value": 181.67
+        },
+        {
+          "ticker": "093370",
+          "value": 152.05
+        },
+        {
+          "ticker": "095340",
+          "value": 111.45
+        },
+        {
+          "ticker": "196170",
+          "value": 264.19
+        },
+        {
+          "ticker": "247540",
+          "value": 364.17
+        },
+        {
+          "ticker": "251270",
+          "value": 173.31
+        },
+        {
+          "ticker": "293490",
+          "value": 17124.0
+        },
+        {
+          "ticker": "298380",
+          "value": 1547.0
+        },
+        {
+          "ticker": "328130",
+          "value": 3830.0
+        },
+        {
+          "ticker": "329180",
+          "value": 463.89
+        },
+        {
+          "ticker": "348370",
+          "value": 15519.0
+        },
+        {
+          "ticker": "377300",
+          "value": 2624.66
+        }
+      ],
+      "field": "per",
+      "label": "PER > 100",
+      "op": ">",
+      "threshold": 100.0
+    },
+    "perGt500": {
+      "count": 8,
+      "examples": [
+        {
+          "ticker": "003670",
+          "value": 968.71
+        },
+        {
+          "ticker": "009420",
+          "value": 659.6
+        },
+        {
+          "ticker": "079160",
+          "value": 3441.0
+        },
+        {
+          "ticker": "293490",
+          "value": 17124.0
+        },
+        {
+          "ticker": "298380",
+          "value": 1547.0
+        },
+        {
+          "ticker": "328130",
+          "value": 3830.0
+        },
+        {
+          "ticker": "348370",
+          "value": 15519.0
+        },
+        {
+          "ticker": "377300",
+          "value": 2624.66
+        }
+      ],
+      "field": "per",
+      "label": "PER > 500",
+      "op": ">",
+      "threshold": 500.0
+    }
+  },
+  "factorAvailability": {
+    "activity": {
+      "evidenceField": "flowStats.ratio",
+      "note": "거래량 5일/20일 비율. ratio 결측이면 파이썬 엔진이 50 으로 채운다.",
+      "storedNumeric": 138,
+      "supportingEvidence": 138
+    },
+    "momentum": {
+      "evidenceField": "returns.r1m/r3m/r6m",
+      "note": "저장 momentum 은 백분위. 원시 수익률(returns)이 결측이면 파이썬 엔진이 50.0 으로 채운다.",
+      "storedNumeric": 138,
+      "supportingEvidence": 138
+    },
+    "riskAdjusted": {
+      "evidenceField": "volStats.sharpe",
+      "note": "저장 volScore 는 샤프 백분위. sharpe 결측이면 파이썬 엔진이 50.0 으로 채운다. volStats.days 로 관측 이력 길이를 확인(252 시장일 재실행은 Slice H).",
+      "observedHistoryDaysGte252": 138,
+      "storedNumeric": 138,
+      "supportingEvidence": 138
+    },
+    "value": {
+      "evidenceField": "per>0 AND pbr>0",
+      "note": "저장 value 는 PER·PBR 결측 시 나머지 factor 평균으로 재가중(valueNA=true). 진짜 유효 모집단은 per>0 AND pbr>0 인 종목뿐.",
+      "storedNumeric": 138,
+      "supportingEvidence": 137
+    }
+  },
+  "fundamentals": {
+    "bothPositive": 137,
+    "pbr": {
+      "missing": 1,
+      "missingTickers": [
+        "088980"
+      ],
+      "nonPositive": 0,
+      "nonPositiveTickers": [],
+      "positive": 137
+    },
+    "per": {
+      "missing": 1,
+      "missingTickers": [
+        "088980"
+      ],
+      "nonPositive": 0,
+      "nonPositiveTickers": [],
+      "positive": 137
+    },
+    "positivityRule": "per>0 AND pbr>0 (설계서 §3.3 / calc_value 조건과 동일).",
+    "valueExcludedByPositivityRule": 1
+  },
+  "marketExclusionDistribution": {
+    "rankingExcludedByMarket": {
+      "KOSPI": 1
+    },
+    "totalsByMarket": {
+      "KOSDAQ": 16,
+      "KOSDAQ GLOBAL": 14,
+      "KOSPI": 108
+    }
+  },
+  "meta": {
+    "computesNewScore": false,
+    "declaredCount": 138,
+    "factors": [
+      "momentum",
+      "activity",
+      "value",
+      "riskAdjusted"
+    ],
+    "generatedAt": "2026-07-14T09:46:19.697282",
+    "inputPath": "public/data/stocks.json",
+    "inputSha256": "dbe3fb1b23febb0d8635f8d04e700d2a6d144501225d55ffd570d7603245d463",
+    "metricsVersion": "2.4",
+    "note": "읽기 전용 기준선. 새 2.5 점수를 계산·게시하지 않고, 결측을 채우지 않는다.",
+    "pricesSyncedAt": "2026-07-14T09:46:18.965016",
+    "publicMetricsVersionUnchanged": "2.4",
+    "readOnly": true,
+    "reportKind": "metrics-2.5.1-baseline-impact",
+    "snapshotAsOf": "20260714",
+    "source": "FDR + Naver + yfinance",
+    "universeCount": 138
+  },
+  "rankingEligibility": {
+    "bindingFactor": "value",
+    "candidateCount": 137,
+    "coveragePct": 99.28,
+    "excludedCount": 1,
+    "excludedTickers": [
+      "088980"
+    ],
+    "exclusionReasonCounts": {
+      "VALUE_MISSING_INPUT": 1
+    },
+    "exclusionReasons": {
+      "088980": [
+        "VALUE_MISSING_INPUT"
+      ]
+    },
+    "note": "관측 근거 기반 후보. 실제 2.5.1 rankingEligible 은 shadow 엔진(Slice D/E)이 확정한다. 여기서는 새 점수를 계산하지 않는다."
+  },
+  "sourceContractPaths": {
+    "checks": [
+      {
+        "description": "종합점수를 safe_avg(default=50)로 계산 — 결측이 종합에 50 으로 스며드는 경로.",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-composite-safe-avg",
+        "kind": "fallback",
+        "line": 172
+      },
+      {
+        "description": "거래활성도 계산 불가 시 50 대체.",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-flow-else-50",
+        "kind": "fallback",
+        "line": 134
+      },
+      {
+        "description": "모멘텀 원시값 결측 시 백분위 대신 50.0 대체.",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-momentum-missing-50",
+        "kind": "fallback",
+        "line": 145
+      },
+      {
+        "description": "종합 평균에서 결측 factor 를 50 으로 채우는 헬퍼(default=50).",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-safe-avg-default50",
+        "kind": "fallback",
+        "line": 100
+      },
+      {
+        "description": "밸류 결측을 나머지 factor(추세·거래·위험조정) 평균으로 재가중(설계서 §4 금지 대상).",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-value-factor-average",
+        "kind": "fallback",
+        "line": 165
+      },
+      {
+        "description": "위험조정 계산 불가 시 50 대체(백분위 재계산 전 임시).",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-vol-else-50",
+        "kind": "fallback",
+        "line": 129
+      },
+      {
+        "description": "샤프 원시값 결측 시 백분위 대신 50.0 대체.",
+        "file": "scripts/compute_metrics.py",
+        "found": true,
+        "id": "py-vol-missing-50",
+        "kind": "fallback",
+        "line": 155
+      },
+      {
+        "description": "종합점수를 TypeScript 에서 재계산(중복).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-duplicate-compositeScore",
+        "kind": "duplicate-calculation",
+        "line": 112
+      },
+      {
+        "description": "거래활성도 점수를 TypeScript 에서 재계산(중복).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-duplicate-flowScore",
+        "kind": "duplicate-calculation",
+        "line": 57
+      },
+      {
+        "description": "모멘텀 원시값을 TypeScript 에서 재계산(파이썬 엔진과 중복).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-duplicate-momentumRaw",
+        "kind": "duplicate-calculation",
+        "line": 35
+      },
+      {
+        "description": "밸류 점수를 TypeScript 에서 재계산(중복).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-duplicate-valueScore",
+        "kind": "duplicate-calculation",
+        "line": 78
+      },
+      {
+        "description": "위험조정 점수를 TypeScript 에서 재계산(중복).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-duplicate-volScore",
+        "kind": "duplicate-calculation",
+        "line": 91
+      },
+      {
+        "description": "거래량 20일 미만이면 50 반환.",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-metrics-flow-50",
+        "kind": "fallback",
+        "line": 58
+      },
+      {
+        "description": "백분위 모집단이 비면 50 반환.",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-metrics-percentile-50",
+        "kind": "fallback",
+        "line": 45
+      },
+      {
+        "description": "비양수 PER/PBR 또는 빈 모집단이면 밸류 50 반환(비양수를 중립 점수로 승격).",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-metrics-value-50",
+        "kind": "fallback",
+        "line": 79
+      },
+      {
+        "description": "종가 60개 미만이면 위험조정 50 반환.",
+        "file": "src/lib/metrics.ts",
+        "found": true,
+        "id": "ts-metrics-vol-60-50",
+        "kind": "fallback",
+        "line": 93
+      },
+      {
+        "description": "저장 compositeScore 가 없으면 50 대체.",
+        "file": "src/lib/realStocks.ts",
+        "found": true,
+        "id": "ts-realstocks-composite-50",
+        "kind": "fallback",
+        "line": 45
+      },
+      {
+        "description": "저장 flow 가 숫자가 아니면 50 대체.",
+        "file": "src/lib/realStocks.ts",
+        "found": true,
+        "id": "ts-realstocks-flow-50",
+        "kind": "fallback",
+        "line": 35
+      },
+      {
+        "description": "저장 momentum 이 숫자가 아니면 50 대체.",
+        "file": "src/lib/realStocks.ts",
+        "found": true,
+        "id": "ts-realstocks-momentum-50",
+        "kind": "fallback",
+        "line": 34
+      },
+      {
+        "description": "저장 value 가 숫자가 아니면 50 대체.",
+        "file": "src/lib/realStocks.ts",
+        "found": true,
+        "id": "ts-realstocks-value-50",
+        "kind": "fallback",
+        "line": 36
+      },
+      {
+        "description": "저장 volScore 가 숫자가 아니면 50 대체.",
+        "file": "src/lib/realStocks.ts",
+        "found": true,
+        "id": "ts-realstocks-vol-50",
+        "kind": "fallback",
+        "line": 37
+      }
+    ],
+    "duplicateCalculationPaths": 5,
+    "fallbackPaths": 16,
+    "found": 21,
+    "missing": 0,
+    "note": "리터럴 소스 계약 검사. found=false 는 해당 경로가 사라졌거나(개선) 파일이 바뀌었음을 뜻하며, 커밋된 리포트를 stale 로 만들어 재생성을 강제한다.",
+    "totalChecks": 21
+  },
+  "unavailableFields": {
+    "pointInTimeHistory": {
+      "available": false,
+      "reason": "지표별 252 시장일 재실행과 시점 일관 재무는 시점별 스냅샷이 필요하다(설계서 §M251-D03). 현재 단일 스냅샷으로는 확립 불가 — Slice H 하네스에서 다룬다."
+    },
+    "sectorExclusionDistribution": {
+      "available": false,
+      "reason": "업종(sector)은 src/lib/sector.ts 의 표시용 휴리스틱으로 themes 에서 파생되며 stocks.json 엔벨로프에 없다. 이 분석기에서 재현하면 계산 로직이 또 하나 생기므로(설계서 §M251-D01), 정식 sector 필드가 생기기 전까지 업종별 제외 분포는 unavailable."
+    }
+  },
+  "valueFallbackExposure": {
+    "compositeFallbackTriggered": 0,
+    "note": "valueNA=true 는 현재 파이프라인이 밸류 결측을 나머지 factor 평균으로 재가중해 숫자로 저장했음을 뜻한다. 그래서 realStocks 의 비-숫자 50-fallback 은 현재 0 회 트리거되지만(파이썬이 미리 채움), 2.5.1 은 이런 대체를 금지한다.",
+    "realStocksFallbackTriggeredByFactor": {
+      "activity": 0,
+      "momentum": 0,
+      "riskAdjusted": 0,
+      "value": 0
+    },
+    "valueNaCount": 1,
+    "valueNaTickers": [
+      "088980"
+    ]
+  }
+}
