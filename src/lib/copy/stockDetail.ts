@@ -589,6 +589,8 @@ export const stockDisclosuresCopy = {
     checkLabel: "확인",
     reporterLabel: "보고자",
     dartOriginal: "DART 원문",
+    correctionBadge: "정정",
+    correctionBadgeTitle: "보고서명에 '정정'이 포함된 정정 공시 — 무엇이 바뀌었는지 원문 확인",
   },
   en: {
     title: "DART disclosures",
@@ -623,6 +625,8 @@ export const stockDisclosuresCopy = {
     checkLabel: "Check",
     reporterLabel: "Reporter",
     dartOriginal: "DART source",
+    correctionBadge: "Correction",
+    correctionBadgeTitle: "A correction filing (report title contains '정정') — check the source for what changed",
   },
 } as const satisfies Record<Locale, unknown>;
 

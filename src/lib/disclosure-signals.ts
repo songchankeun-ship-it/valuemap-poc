@@ -2,6 +2,7 @@
 // 사이트에서 종목/공시 페이지의 배지·필터로 활용.
 
 import type { Disclosure } from "./dart";
+import { isCorrectionFiling } from "./disclosureHierarchy";
 
 export type SignalType =
   | "treasury_buy"
@@ -26,7 +27,7 @@ const RE_TREASURY_SELL = /자기주식\s*처분/;
 const RE_TRUST = /신탁계약/;      // 자기주식 취득 신탁계약(체결/해지)
 const RE_TRUST_END = /해지/;      // 신탁계약 '해지' — 신규 취득 결정이 아님
 const RE_INSIDER = /임원[ㆍ·, ]*주요주주/;
-const RE_CORRECTION = /정정/;
+// 정정 판별은 disclosureHierarchy.isCorrectionFiling로 단일화(이 파일에서 별도 정규식 미보유).
 const RE_PNL_KEYWORDS = /(매출액?|영업[손익이익]+|순?이익|손익|실적)/;
 const RE_SINGLE_CONTRACT = /단일판매[ㆍ·, ]*공급계약체결/;
 const RE_RIGHTS_ISSUE = /유상증자/;
@@ -111,7 +112,8 @@ function detectInsiderBuy(d: Disclosure): SignalHit | null {
 }
 
 function detectCorrection(d: Disclosure): SignalHit | null {
-  if (!RE_CORRECTION.test(d.report_nm)) return null;
+  // 정정 판별은 disclosureHierarchy의 단일 소스를 쓴다(그룹핑·배지와 동일한 결정론).
+  if (!isCorrectionFiling(d.report_nm)) return null;
   const isPnL = RE_PNL_KEYWORDS.test(d.report_nm);
   return {
     signalType: "correction",

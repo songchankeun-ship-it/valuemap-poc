@@ -5,6 +5,7 @@ import { AlertTriangle, ExternalLink, Info, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDisclosuresCopy } from "@/lib/copy/stockDetail";
 import { typeMetaOf } from "@/lib/disclosureType";
+import { isCorrectionFiling, presentOptionalFields } from "@/lib/disclosureHierarchy";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 import type { Locale } from "@/lib/i18n";
 
@@ -253,12 +254,15 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
           ) : null}
           <ol className="relative ml-1 border-l border-zinc-200 dark:border-zinc-800">
             {items.map((d) => {
-              const dir = d.signal?.direction;
+              // 선택 필드(방향·확인 노트)는 원천이 실제로 제공할 때만 담긴다(없으면 키 생략 — 합성 금지).
+              const opt = presentOptionalFields(d.signal);
               // 방향은 긍정/부정 valence(호재/악재) 대신 사실(장내매수/매도 단서) 또는 '방향 확인 필요'로만 표기.
-              const dirLabel = dir === "긍정 가능" ? t.dirBuy : dir === "부정 가능" ? t.dirSell : t.dirCheck;
+              const dirLabel = opt.direction === "buy" ? t.dirBuy : opt.direction === "sell" ? t.dirSell : t.dirCheck;
+              // 정정 여부는 보고서명 기반 결정론 판별 — signalType과 독립(단일계약·유증의 정정도 표시).
+              const isCorrection = isCorrectionFiling(d.report_nm);
               const dotColor = !d.signal
                 ? "bg-zinc-300 dark:bg-zinc-600"
-                : dir && dir !== "확인 필요"
+                : opt.direction === "buy" || opt.direction === "sell"
                 ? "bg-slate-400 dark:bg-slate-500"
                 : "bg-amber-500";
               return (
@@ -283,9 +287,18 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                             DART
                           </span>
                         )}
-                        {d.signal?.direction ? (
+                        {opt.direction ? (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                             {dirLabel}
+                          </span>
+                        ) : null}
+                        {/* 결정론적 정정 상태 — 유형 배지와 별개로 앞세운다(재검수 Slice K). */}
+                        {isCorrection ? (
+                          <span
+                            title={t.correctionBadgeTitle}
+                            className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900"
+                          >
+                            {t.correctionBadge}
                           </span>
                         ) : null}
                       </div>
@@ -300,10 +313,10 @@ export function StockDisclosures({ ticker }: { ticker: string }) {
                         ? `${t.reporterLabel} · ${d.flr_nm}`
                         : d.flr_nm}
                     </div>
-                    {d.signal?.note ? (
+                    {opt.note ? (
                       <div className="mt-1.5 flex gap-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2 py-1.5 leading-relaxed">
                         <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>
-                        <span className="break-words line-clamp-2">{d.signal.note}</span>
+                        <span className="break-words line-clamp-2">{opt.note}</span>
                       </div>
                     ) : null}
                     <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 dark:text-blue-400">

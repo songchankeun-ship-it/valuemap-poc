@@ -5,6 +5,7 @@ import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox, Info 
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { findGuideByLabel } from "@/lib/signalGuide";
 import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
+import { isCorrectionFiling } from "@/lib/disclosureHierarchy";
 import { addToWatchlist, removeFromWatchlist, isInWatchlist, getWatchlist } from "@/lib/watchlist";
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosureExplorerCopy } from "@/lib/copy/disclosures";
@@ -121,7 +122,8 @@ function groupSignals(signals: DisclosureSignal[]): GroupedSignal[] {
   const groups = new Map<string, GroupedSignal>();
   for (const sig of signals) {
     const key = sig.disclosure.corp_name + "_" + sig.signalType;
-    const isRevision = sig.disclosure.report_nm.includes("기재정정") || sig.disclosure.report_nm.includes("정정");
+    // 정정 여부는 disclosureHierarchy 단일 소스로 결정론 판별(디텍터·배지와 동일).
+    const isRevision = isCorrectionFiling(sig.disclosure.report_nm);
     if (!groups.has(key)) {
       groups.set(key, {
         key,
@@ -303,8 +305,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.title}</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
+            {/* 수집 범위 반복 고지는 아래 공통 안내 박스 한 곳으로 모음(재검수 Slice K) — 여기선 카운트만. */}
             <span className="tabular-nums">{t.summary(days, data.signalCount, scope === "all", scoped.length)}</span>
-            <span className="block text-[11px] text-zinc-400 dark:text-zinc-500">{t.missingFragment}</span>
           </div>
         </div>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-3 text-[11px] tabular-nums">
@@ -634,13 +636,8 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
         )}
       </div>
 
-      {/* 제한 안내(§7-5) — 카드 목록 아래로 이동(재검수 P0C). 목록이 비어 있으면 빈 상태와 경쟁하지 않도록 숨김. */}
-      {filtered.length > 0 ? (
-        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 leading-relaxed">
-          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
-          <span className="break-words">{t.limitBanner}</span>
-        </div>
-      ) : null}
+      {/* 하단 제한 안내는 상단 공통 안내 박스(topNotice) + 기간 배지로 이미 1회 고지되므로 제거해
+          같은 수집 범위 문구가 4곳→2곳으로 줄었다(재검수 Slice K: 반복 고지 축소). */}
     </div>
   );
 }

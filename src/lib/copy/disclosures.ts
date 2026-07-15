@@ -69,8 +69,6 @@ export const disclosureExplorerCopy = {
     periodScopeBadge: "최신 수집 200건 내",
     periodScopeBadgeAria:
       "수집 범위 제한 안내입니다. 선택한 기간 전체 공시가 아니라 코스피와 코스닥 최신 100건씩, 합 200건 안에서만 표시하며, 필터 컨트롤이 아닙니다.",
-    // 결과 카운트 옆에 반복 고지하는 누락 안내 조각
-    missingFragment: "누락 가능 · 코스피/코스닥 최신 100건씩 내",
     // 카드 위 공통 경고 박스 — 카드마다 반복되던 문구를 한곳에 모음
     topNoticeTitle: "공시 카드 공통 안내",
     topNoticeBullets: [
@@ -106,8 +104,6 @@ export const disclosureExplorerCopy = {
     // 상단 탭(§7-3)
     tabAll: "전체",
     tabWatchlist: "내 관심종목",
-    // 제한 안내 배너(§7-5) — 큰 안내 대신 작은 info 배너
-    limitBanner: "선택 기간 전체가 아니라 코스피/코스닥 최신 100건씩(합 200건) 안의 최근 수집 공시입니다. 전체 이력은 DART에서 확인하세요.",
     // 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 노출(재검수 P0C)
     sampleNotice: "현재 표시 데이터는 예시입니다. 실제 공시는 DART 원문에서 확인하세요.",
     // 관심종목 탭 빈 상태
@@ -122,6 +118,7 @@ export const disclosureExplorerCopy = {
     directionSell: "장내매도·처분 단서",
     directionUnknown: "방향 확인 필요",
     revisionIncluded: "정정 포함 ",
+    // 그룹 카드의 수 = 이 묶음에 합쳐진 개별 공시 '건'수(묶음 '개'와 구분).
     countUnit: (n: number) => `${n}건`,
     submitted: "제출",
     checkLabel: "확인할 것",
@@ -181,8 +178,6 @@ export const disclosureExplorerCopy = {
     periodScopeBadge: "Within latest collected 200",
     periodScopeBadgeAria:
       "Collection-scope limit. Shows only within the latest 100 KOSPI and 100 KOSDAQ filings, 200 total, not every filing in the selected period; this is not a filter control.",
-    // Repeated missing-coverage note shown next to the result count
-    missingFragment: "some may be missing · latest 100 KOSPI/KOSDAQ each",
     // Shared top warning box — hoists notes that used to repeat on every card
     topNoticeTitle: "Common notes for all disclosure cards",
     topNoticeBullets: [
@@ -214,7 +209,6 @@ export const disclosureExplorerCopy = {
     filterAll: (count: number) => `All ${count}`,
     tabAll: "All",
     tabWatchlist: "My watchlist",
-    limitBanner: "This is not the full selected period; it is the recent collected subset within the latest 100 KOSPI + 100 KOSDAQ filings (200 total). Check DART for the full history.",
     sampleNotice: "The data shown is example data. Check the actual filings in the DART source.",
     watchlistEmpty: "Add stocks to your watchlist to gather their filings here.",
     watchlistEmptyCta: "Go add stocks",
@@ -226,7 +220,8 @@ export const disclosureExplorerCopy = {
     directionSell: "On-market sell·disposal clue",
     directionUnknown: "Direction to be confirmed",
     revisionIncluded: "incl. correction ",
-    countUnit: (n: number) => `${n}`,
+    // Group card count = individual filings merged into this group (distinct from "groups").
+    countUnit: (n: number) => `${n} filings`,
     submitted: "filed",
     checkLabel: "Check",
     cautionLabel: "Note",
@@ -285,15 +280,18 @@ export const disclosureExplorerCopy = {
 /** DisclosureSummaryCards(클라이언트) — 타입별 요약 카드 문구. */
 export const disclosureSummaryCopy = {
   ko: {
-    recentCount: (days: number, count: number) => `최근 ${days}일 · ${count}건`,
+    // 이 카드의 수는 공시 '건수'가 아니라 유형별 이벤트 '묶음' 수다. 개별 공시 건수(건)와
+    // 혼동되지 않도록 묶음 단위 '개'로 표기한다(재검수 Slice K: 건=공시 vs 개=묶음/유형 구분).
+    recentCount: (days: number, count: number) => `최근 ${days}일 · ${count}개`,
     noEvents: "이벤트 없음",
     bottomNote: (days: number, total: number) =>
-      `최근 ${days}일 공시를 5개 유형으로 자동 분류한 결과입니다 · 전체 ${total}건. 좋고 나쁨을 판단한 것이 아니라 유형만 나눈 분류입니다.`,
+      `최근 ${days}일 공시를 5개 유형으로 자동 분류한 결과입니다 · 전체 ${total}개 묶음. 좋고 나쁨을 판단한 것이 아니라 유형만 나눈 분류입니다.`,
   },
   en: {
-    recentCount: (days: number, count: number) => `Last ${days}d · ${count}`,
+    // Counts here are event groups, not individual filings; label as groups to avoid confusion.
+    recentCount: (days: number, count: number) => `Last ${days}d · ${count} groups`,
     noEvents: "No events",
     bottomNote: (days: number, total: number) =>
-      `Auto-classified the last ${days} days of disclosures into 5 types · ${total} total. This is a type classification, not a good/bad judgment.`,
+      `Auto-classified the last ${days} days of disclosures into 5 types · ${total} groups total. This is a type classification, not a good/bad judgment.`,
   },
 } as const satisfies Record<Locale, unknown>;
