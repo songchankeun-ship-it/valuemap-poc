@@ -70,13 +70,6 @@ export interface TodayBigMoverChip {
   metricChange?: { momentum: number; flow: number; value: number; vol: number };
 }
 
-export interface TodayAiInsight {
-  headline: string;
-  summary: string;
-  watchPoints: string[];
-  dateKst: string;
-}
-
 export interface TodayContentProps {
   isClosed: boolean;
   dataAsOf: string;
@@ -103,7 +96,6 @@ export interface TodayContentProps {
   flatCount: number;
   briefingSignalCount: number;
   breadthPct: number;
-  aiInsight: TodayAiInsight | null;
   // 장마감 변화
   hasDeltas: boolean;
   /** 델타의 비교 기준(전 거래일 / N거래일 전 / 최근 저장 데이터 / 없음) — 카피가 "전일"이라 단정하지 않게 한다. */
@@ -295,20 +287,9 @@ export function TodayContent(props: TodayContentProps) {
             <div className="text-sm font-bold text-amber-700 dark:text-amber-400 tabular-nums">{props.briefingSignalCount}{t.briefingSignalCountSuffix}</div>
           </div>
         </div>
-        {props.aiInsight ? (
-          <div className="mt-3 pt-3 border-t border-blue-100 dark:border-blue-900/50">
-            <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1">{props.aiInsight.headline}</div>
-            <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-relaxed">{props.aiInsight.summary}</p>
-            {props.aiInsight.watchPoints && props.aiInsight.watchPoints.length > 0 ? (
-              <div className="mt-1.5 flex flex-wrap gap-1">
-                {props.aiInsight.watchPoints.map((w, i) => (
-                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-white/70 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400">👁 {w}</span>
-                ))}
-              </div>
-            ) : null}
-            <div className="text-[9px] text-zinc-400 dark:text-zinc-500 mt-1">{t.aiThemeSummary} · {props.aiInsight.dateKst} · {t.notAdvice}</div>
-          </div>
-        ) : null}
+        {/* 저장된 일일 AI 인사이트는 출처·구성종목·계산시각·규칙/모델 역할의 타입화된
+            프로버넌스가 없어 공개 표시하지 않는다(Slice E). 근거 없는 대체 카드도 넣지 않는다.
+            재도입 방지 가드: scripts/test_todayInsightProvenance.ts. */}
         <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">{t.breadthLine(props.breadthPct)}</p>
       </section>
 

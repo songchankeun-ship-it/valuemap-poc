@@ -7,7 +7,6 @@ import {
   EMPTY_METRIC_CHANGES_BATCH,
   type MetricChange,
 } from "@/lib/scoreHistory";
-import { getLatestStoredInsight } from "@/lib/ai-insight";
 import { isSuspect } from "@/lib/dataQuality";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
@@ -118,12 +117,16 @@ export default async function TodayPage() {
   const breadthPct = realStockPool.length ? Math.round((upCount / realStockPool.length) * 100) : 0;
 
   // 외부 데이터(Supabase/DART)는 4초 타임아웃 + 병렬 — 느리거나 실패해도 빈 값으로 폴백
+  //
+  // 저장된 일일 AI 인사이트(daily_insights)는 출처·구성종목·계산시각·규칙/모델 역할의
+  // 타입화된 프로버넌스가 아직 없어 공개 /today 에서 조회·표시하지 않는다(Slice E). 생성·저장
+  // 코드(src/lib/ai-insight.ts, cron)는 프로버넌스 계약이 갖춰진 뒤 재도입을 위해 보존한다.
+  // 재도입 방지 가드: scripts/test_todayInsightProvenance.ts.
   const tickers = realStockPool.map((s) => s.ticker);
-  const [recentSig, scoreBatch, metricBatch, aiInsight] = await Promise.all([
+  const [recentSig, scoreBatch, metricBatch] = await Promise.all([
     withTimeout(getRecentSignals(7), 4000, { days: 7, totalDisclosures: 0, signalCount: 0, signals: [] } as Awaited<ReturnType<typeof getRecentSignals>>),
     withTimeout(getScoreChangesBatch(tickers), 4000, EMPTY_SCORE_CHANGES_BATCH),
     withTimeout(getMetricChangesBatch(tickers), 4000, EMPTY_METRIC_CHANGES_BATCH),
-    withTimeout(getLatestStoredInsight(), 4000, null as Awaited<ReturnType<typeof getLatestStoredInsight>>),
   ]);
   // 델타는 숫자 맵으로 투영해 기존 선정 로직을 그대로 유지하되, 비교 날짜(basis)는 batch 에 실려 이동한다.
   const scoreDeltas: Record<string, number> = {};
@@ -296,16 +299,6 @@ export default async function TodayPage() {
       flatCount={flatCount}
       briefingSignalCount={briefingSignalCount}
       breadthPct={breadthPct}
-      aiInsight={
-        aiInsight
-          ? {
-              headline: aiInsight.insight.headline,
-              summary: aiInsight.insight.summary,
-              watchPoints: aiInsight.insight.watchPoints ?? [],
-              dateKst: aiInsight.dateKst,
-            }
-          : null
-      }
       hasDeltas={hasDeltas}
       comparisonBasis={comparisonBasis}
       newEntrants={newEntrants}

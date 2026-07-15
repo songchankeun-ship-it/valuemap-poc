@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-15 - [codex] 공개 재검수 Slice E — 근거 없는 Today AI 인사이트 비노출 (task 285)
+- **Scope**: 설계서 `docs/ornscore-public-reaudit-remediation-2026-07-15.md`의 **Slice E**만 구현. 저장된 일일 AI 인사이트(`daily_insights`)는 헤드라인·본문·주목점만 있고 **출처·구성종목·계산시각·규칙/모델 역할**의 타입화된 프로버넌스가 없는데도 `/today`가 이를 조회(`getLatestStoredInsight`)·표시했다. 이 슬라이스는 공개 조회·표시를 제거하고, 생성·저장 파이프라인은 미래의 프로버넌스 대응 구현을 위해 보존하며, 프로버넌스 계약이 갖춰지기 전에는 공개 표면 재도입을 막는 정적 가드를 추가한다. **점수식·`metricsVersion`·생성 데이터·스키마·저장 코드 무제거.** 직전 HEAD `4f775f6`(Slice D)·클린 워크트리, 브랜치 `ai-center/task-285-ornscore-public-reaudit-e-hide-untra`.
+- **Changes** (4 파일):
+  - `src/app/today/page.tsx` — `getLatestStoredInsight` import 제거, SSR `Promise.all`에서 제외(외부 호출 4→3), `TodayContent`에 넘기던 `aiInsight={…}` prop 제거. 프로버넌스 없어 비노출한다는 주석 + 가드 경로 명시. Today의 다른 데이터 경로(급증·델타·공시·브리핑 KPI)는 무변경.
+  - `src/components/today/TodayContent.tsx` — `TodayAiInsight` 인터페이스·`aiInsight` prop·브리핑 내부 인사이트 렌더 블록(헤드라인/본문/주목점/날짜) 삭제. 자리엔 주석만(가짜·근거 없는 대체 카드 금지). `t.aiThemeSummary`/`t.notAdvice` 카피 키는 미사용이지만 미래 재도입 시 재사용하도록 존치(범위 밖 cleanup 회피).
+  - `scripts/test_todayInsightProvenance.ts`(신규) + `package.json` `test:today-insight` — STATIC 게이트. `ThemeInsightOutput`이 네 필드(`sources`·`constituents`·`calculatedAt`·`ruleRole`+`modelRole`)를 모두 선언할 때만 계약 충족으로 보고, 계약이 없는 동안(현재)에는 `/today`가 인사이트를 조회·prop 전달·선언·렌더하지 않음을 고정한다. 저장 헬퍼 보존·가짜 카드 미재도입도 확인. 계약 필드가 추가되면 게이트가 자동으로 열린다.
+- **저장 코드 보존**: `src/lib/ai-insight.ts`(`generateThemeInsight`·`getLatestStoredInsight`)·cron 라우트·`scripts/generate-daily-insight.ts`·`theme-insight` 프롬프트/타입 전부 무변경 — `/today` 공개 소비만 제거.
+- **불변식**: 점수식·`metricsVersion`/Metrics 2.4·`public/data/*`·유니버스(138)·DART 수집·`daily_insights` 스키마/RLS·auth/제공자/Supabase·cron·게시·의존성·라우트 표·SEO 메타 무변경. `/today`는 여전히 빌드·렌더되고 다른 섹션 전부 유지 — 추적 불가 인사이트 카드만 사라짐.
+- **Validation(전부 통과)**: `npx tsc --noEmit` 0 · `$env:PYTHONUTF8='1'; python scripts\verify_metrics.py` 138종목/오류0/금칙0/Metrics 2.4 · `git diff --check` clean(CRLF 경고만) · 편집 파일 U+FFFD 0 · `npx tsx scripts/test_todayInsightProvenance.ts` PASS(게이트 CLOSED) + 네거티브 셀프체크 2건((a) page.tsx에 `getLatestStoredInsight()` 재추가 시 2a FAIL exit1·원복, (b) `ThemeInsightOutput`에 네 필드 추가 시 게이트 OPEN PASS·원복) · `npm run build` 0(라우트 표 불변, `/today` 여전히 ƒ) · 로컬 prod 127.0.0.1:39517 `npm run verify:local -- --no-perf` real gates **6/6**(smoke·routes·stocks-seo·public-seo·login-preflight·admin-access 4/4). SSR `/today`: 브리핑 섹션(제목+breadth 라인) 유지, `AI 테마 요약`/`AI theme summary` 라벨·👁 주목점 마커 0건. 시작한 :39517 리스너(PID 5400)만 taskkill 종료·포트 000 확인, 상시 AI Center 무중단.
+- **Commit**: 브랜치 팁의 단일 `[codex]` 커밋(로컬만·push 미수행·main 무변경).
+- **Risks / next entry point**: (1) 로컬 Supabase `daily_insights` 미구성이라 제거된 카드는 로컬에서 이미 null이었을 것 — 제거는 소스+빌드 HTML 구조와 가드로 증명(실 저장 행 아님). (2) 390×844/데스크톱 픽셀 검증 로컬 미지원 → 소유자 게이트. 카드 제거만이라 레이아웃 폭 무변경·overflow 리스크 0. (3) 생성 cron은 계속 행을 기록하나 프로버넌스 대응 렌더 전까지 공개 소비처 없음(의도). **다음 안전 진입점 = Slice F**(상대 점수·입력 완성도 언어: `0~100 절대값`/절대 점수 표현을 가이드·상세 인트로·우선순위 카드·score basis·툴팁·영문 카피 전반에서 교체, 대상 절대 점수 문구 잔존 0 가드 추가).
+
 ## 2026-07-15 - [codex] 공개 사이트 재검수 개선 배치 설계 및 자동화 준비
 - **입력 검수**: `C:\Users\dongy\OneDrive\바탕 화면\ornscore_site_reaudit_feedback_2026-07-15.md` 933줄 전체를 읽고 P0/P1/P2 및 미검증 외부 트랜잭션 범위를 코드와 대조했다.
 - **정본 정렬**: `C:\dev\OrnScore`에서 `origin/main`의 배포 데이터 갱신과 정본 이전 기록을 정상 merge(`f8a1d90`)했다. 강제 reset/rebase/사용자 변경 폐기 없음.
