@@ -37,6 +37,7 @@
     "test:compare-entry": "tsx scripts/test_compareEntry.ts",
     "test:disclosure-hierarchy": "tsx scripts/test_disclosureHierarchy.ts",
     "test:legal-consistency": "tsx scripts/test_legalConsistency.ts",
+    "test:methodology-audit": "python scripts/test_methodology_audit.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

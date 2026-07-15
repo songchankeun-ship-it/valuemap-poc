@@ -8,6 +8,7 @@ import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
 import { MonthlyHeatmap } from "@/components/backtest/MonthlyHeatmap";
 import { DrawdownChart } from "@/components/backtest/DrawdownChart";
 import { ContributionBars } from "@/components/backtest/ContributionBars";
+import { ValidationScopeNotice } from "@/components/backtest/ValidationScopeNotice";
 
 interface StratMetrics {
   totalReturn: number;
@@ -264,9 +265,9 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
         <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">검증 연구 <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">Validation research</span></h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과입니다 · 현재 종합 점수 검증 결과는 아닙니다.
+          과거 가격 데이터로 가격 기반 실험 전략을 시뮬레이션한 결과와, 현재 스냅샷의 지표 구조를 단면 분석한 방법론 감사입니다 · 현재 종합 점수의 성과를 검증한 결과는 아닙니다.
         </p>
         {/* 결과보다 한계를 먼저 읽게 하는 1순위 행동(§5-7). 결과가 아래로 긴 모바일에서 특히 유효. */}
         <a
@@ -283,6 +284,8 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
 
       <div id="backtest-limits" className="scroll-mt-4 space-y-6">
         <BacktestDateMismatchNotice generatedAt={data.generatedAt} siteDataAsOf={siteDataAsOf} />
+
+        <ValidationScopeNotice />
 
         <BacktestRiskNotice assumptions={data.assumptions} benchmarkLabel={data.benchmarkLabel} />
       </div>

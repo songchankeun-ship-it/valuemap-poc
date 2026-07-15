@@ -2,18 +2,19 @@ import Link from "next/link";
 import { BacktestClient, type BacktestData } from "@/components/BacktestClient";
 import { BacktestLimitBadges } from "@/components/BacktestLimitBadges";
 import { BacktestRiskNotice } from "@/components/backtest/BacktestRiskNotice";
+import { ValidationScopeNotice } from "@/components/backtest/ValidationScopeNotice";
 import rawResult from "../../../public/backtest-result.json";
 import { realStockPool } from "@/lib/realStocks";
 import { dataStatus } from "@/lib/dataStatus";
 
 const backtestDescription =
-  "실데이터 기반 가격 신호 전략 검증. 누적수익률·MDD·Sharpe·알파 공개.";
+  "검증 연구 — 과거 가격 신호 전략 시뮬레이션과 현재 지표 구조의 단면 방법론 감사. 현재 종합 점수의 성과 검증이 아닙니다.";
 
 export const metadata = {
-  title: "백테스트 — 오른스코어",
+  title: "검증 연구 — 오른스코어",
   description: backtestDescription,
   openGraph: {
-    title: "백테스트 — 오른스코어",
+    title: "검증 연구 — 오른스코어",
     description: backtestDescription,
     url: "/backtest",
     siteName: "오른스코어",
@@ -24,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "백테스트 — 오른스코어",
+    title: "검증 연구 — 오른스코어",
     description: backtestDescription,
   },
   alternates: { canonical: "/backtest" },
@@ -51,13 +52,15 @@ export default function BacktestPage() {
     <div className="max-w-3xl mx-auto space-y-6 py-8">
       <header>
         <Link href="/" className="text-xs text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">← 홈으로</Link>
-        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">실험 전략 백테스트</h1>
+        <h1 className="text-2xl font-bold mt-2 text-zinc-900 dark:text-zinc-100">검증 연구 <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">Validation research</span></h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          더보기 &gt; 실험실의 참고용 시뮬레이션 도구입니다 · 현재 종합 점수 검증 결과는 아닙니다.
+          더보기 &gt; 검증 연구의 참고용 시뮬레이션·방법론 감사 도구입니다 · 현재 종합 점수의 성과 검증 결과는 아닙니다.
         </p>
       </header>
 
       <BacktestLimitBadges />
+
+      <ValidationScopeNotice />
 
       <BacktestRiskNotice />
 

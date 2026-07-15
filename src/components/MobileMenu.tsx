@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { href: "/today", label: "오늘" },
   { href: "/stocks", label: "종목" },
   { href: "/disclosures", label: "공시" },
-  { href: "/backtest", label: "백테스트" },
+  { href: "/backtest", label: "검증 연구" },
   { href: "/guide/metrics", label: "지표 가이드" },
 ];
 

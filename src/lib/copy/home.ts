@@ -146,7 +146,7 @@ export const homeCopy = {
     },
     features: {
       heading: "오른스코어 핵심 기능",
-      sub: "점수 · 공시 · 실험실",
+      sub: "점수 · 공시 · 검증 연구",
       cards: {
         today: {
           title: "오늘의 후보",
@@ -161,10 +161,10 @@ export const homeCopy = {
           cta: "신호 보기",
         },
         backtest: {
-          title: "실험실",
-          body: "백테스트는 현재 점수 검증이 아니라 과거 조건을 단순 적용한 참고 시뮬레이션입니다.",
-          stat: "참고용 시뮬레이션",
-          cta: "실험실 보기",
+          title: "검증 연구",
+          body: "과거 조건 시뮬레이션과 지표 구조 방법론 감사 · 현재 종합 점수의 성과 검증이 아닙니다.",
+          stat: "참고용 · 성과 검증 아님",
+          cta: "검증 연구 보기",
         },
       },
     },
@@ -315,7 +315,7 @@ export const homeCopy = {
     },
     features: {
       heading: "OrnScore core features",
-      sub: "Scores · disclosures · lab",
+      sub: "Scores · disclosures · validation research",
       cards: {
         today: {
           title: "Today's candidates",
@@ -330,10 +330,10 @@ export const homeCopy = {
           cta: "View signals",
         },
         backtest: {
-          title: "Lab",
-          body: "Backtests are reference simulations using past conditions, not validation of today's score.",
-          stat: "Reference simulation",
-          cta: "Open lab",
+          title: "Validation research",
+          body: "Past-condition simulation plus a metric-structure methodology audit — not performance validation of today's score.",
+          stat: "Reference · not performance validation",
+          cta: "Open validation research",
         },
       },
     },
