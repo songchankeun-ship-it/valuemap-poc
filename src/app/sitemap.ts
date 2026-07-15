@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
+import { parseDatasetGeneratedAt } from "@/lib/datasetTimestamp";
 import { mockTopNeglectedThemes } from "@/lib/mockData";
 import { seoTopics } from "@/lib/seoTopics";
 
@@ -8,7 +9,8 @@ const SITE = "https://ornscore.com";
 /**
  * lastModified 계약(결정적) — Slice H:
  * 요청/빌드 시각(new Date())을 절대 쓰지 않는다. 값은 오직 로컬 데이터셋에서만
- * 유도한다: 우선 dataMetadata.generatedAt, 없으면 asOfBusinessDate(YYYYMMDD, KST 자정).
+ * 유도한다: 우선 dataMetadata.generatedAt(시간대가 없으면 KST로 해석), 없으면
+ * asOfBusinessDate(YYYYMMDD, KST 자정).
  * 같은 데이터 입력이면 항상 같은 sitemap 을 만들어, 크롤러가 매 요청마다 "방금 변경됨"
  * 으로 오인하지 않게 한다. 두 소스 모두 없으면 lastModified 를 생략한다(임의의 현재
  * 시각으로 대체하지 않는다).
@@ -16,8 +18,8 @@ const SITE = "https://ornscore.com";
 function deterministicLastModified(): Date | undefined {
   const iso = dataMetadata?.generatedAt;
   if (iso) {
-    const d = new Date(iso);
-    if (!Number.isNaN(d.getTime())) return d;
+    const d = parseDatasetGeneratedAt(iso);
+    if (d) return d;
   }
   const biz = dataMetadata?.asOfBusinessDate;
   if (biz && /^\d{8}$/.test(biz)) {

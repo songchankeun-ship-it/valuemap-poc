@@ -81,8 +81,16 @@ function expectedLastmodIso() {
   }
   const iso = meta?.generatedAt;
   if (iso) {
-    const d = new Date(iso);
-    if (!Number.isNaN(d.getTime())) return d.toISOString();
+    // Python dataset jobs emit a timezone-less ISO datetime in Korea time.
+    // Normalize it explicitly so this verifier agrees across KST local runs
+    // and UTC production environments. Explicit Z/offset values stay intact.
+    const explicitZone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(iso);
+    const localIso = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(iso);
+    const normalized = explicitZone ? iso : localIso ? `${iso}+09:00` : null;
+    if (normalized) {
+      const d = new Date(normalized);
+      if (!Number.isNaN(d.getTime())) return d.toISOString();
+    }
   }
   const biz = meta?.asOfBusinessDate;
   if (biz && /^\d{8}$/.test(biz)) {
@@ -272,7 +280,7 @@ function checkSitemap(status, xml) {
     } else {
       const wrong = uniqueLastmods.filter((v) => v !== expected);
       if (wrong.length) {
-        reasons.push(`<lastmod> ${JSON.stringify(wrong)} != expected data date "${expected}" — likely a dynamic new Date() leak`);
+        reasons.push(`<lastmod> ${JSON.stringify(wrong)} != expected data date "${expected}" — likely a clock or timezone normalization leak`);
       }
     }
   }

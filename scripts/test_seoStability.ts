@@ -13,6 +13,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { FORMER_NAME_ALIASES, formerNamesOf } from "../src/lib/stockAliases";
+import { parseDatasetGeneratedAt } from "../src/lib/datasetTimestamp";
 
 let failed = 0;
 function check(name: string, cond: boolean): void {
@@ -45,6 +46,20 @@ check("A1 no Date.now() in sitemap code", !/Date\.now\s*\(/.test(sitemapCode));
 check("A2 uses deterministicLastModified helper", /function deterministicLastModified/.test(sitemapSrc));
 check("A2 derives from generatedAt", sitemapSrc.includes("generatedAt"));
 check("A2 falls back to asOfBusinessDate", sitemapSrc.includes("asOfBusinessDate"));
+check("A2 sitemap uses timezone-stable dataset parser", sitemapSrc.includes("parseDatasetGeneratedAt(iso)"));
+check(
+  "A2 timezone-less generatedAt is interpreted as KST",
+  parseDatasetGeneratedAt("2026-07-14T09:46:19.697282")?.toISOString() === "2026-07-14T00:46:19.697Z",
+);
+check(
+  "A2 explicit UTC generatedAt remains UTC",
+  parseDatasetGeneratedAt("2026-07-14T09:46:19.697Z")?.toISOString() === "2026-07-14T09:46:19.697Z",
+);
+check(
+  "A2 explicit KST generatedAt matches timezone-less KST",
+  parseDatasetGeneratedAt("2026-07-14T09:46:19.697+09:00")?.toISOString() === "2026-07-14T00:46:19.697Z",
+);
+check("A2 malformed generatedAt fails closed", parseDatasetGeneratedAt("2026-07-14 09:46:19") === undefined);
 // A3. 의도 마커 — 결정적 계약임을 소스에 고정(회귀 시 리뷰 신호).
 check("A3 documents deterministic contract", sitemapSrc.includes("결정적"));
 
