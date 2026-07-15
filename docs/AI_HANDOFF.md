@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T18:04:43.688Z
+Last updated: 2026-07-15T18:08:39.976Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 304 - ORNScore Metrics 2.5.1 J - generated TypeScript contract guard
-- Run: 309
-- Status: completed
+- Task: 305 - ORNScore Metrics 2.5.1 K - shadow status and five-day AND gate
+- Run: 310
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -3225,3 +3225,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-contracts PASS(7영역) · contract:metrics251:check FRESH · 생성기 2회 바이트 동일(결정성) · config:check·projection·eligibility·snapshot-store 회귀 PASS · git diff --check clean · 8파일 U+FFFD 0 · shadow 미추적·public 무변경.
 - **한계/다음**: 스냅샷/manifest/pointer/capability 인터페이스는 손수 작성(필수키만 대조 드리프트)·projection DTO 만 스키마 전체 재귀 생성. 비교 사유코드·캘린더 kind 는 export 스크립트 명시 열거(멤버 추가 시 갱신). reader 는 파싱 객체 입력 순수 계약이며 실제 파일 IO·shadow 배선은 별도. 새 scripts/metrics251/ 파일은 guardedSources 등록 필요. **다음(Slice K)**: shadow 운영 보고서·5일 AND 게이트 — 실행별 커버리지/mismatch/source date/hash 요약, 5연속 성공+P0 0 동시 요구, 로컬 보고서 우선(§10 Slice K).
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice J: TypeScript read contracts + duplicate-computation guard. push 없음·main 무변경.
+
+
+### 2026-07-16 — Metrics 2.5.1 Slice K: shadow 운영 보고서 + 5일 AND 롤아웃 게이트 ([codex])
+
+- **무엇**: 설계서 §M251-D02(5일 AND)·§7 Gate 4·§8·§9·§10 Slice K·원안 ORN-2508 대로, shadow 실행별(시장일별) 요약과 기계판독 롤아웃-게이트 평가기를 추가. 실행별로 소스일·config/engine/input 해시·factor/ranking 커버리지·제외사유·차등 분류·manifest 무결성·연속 거래일 연결성을 요약하고, **5개 연속 실제 거래일 QA_PASSED + 창 전체 (미해결P0·소스일불일치·미지제외사유·공개누출) 4-zero 동시 만족일 때만** rolloutCandidate=true(AND 게이트). 실제 run<5 면 PENDING(증거 합성 금지). **로컬/docs 지향·보호되지 않은 라우트 미추가**. 순수·결정적. 직전 HEAD `7803978`(Slice J), 브랜치 `ai-center/task-305-ornscore-metrics-2.5.1-k-shadow-stat`.
+- **신규 파일(3)**: `scripts/metrics251_rollout_gate.py`(순수 평가기+읽기전용 CLI: evaluate_run·evaluate_rollout_gate·run_evidence_from_store·is_public_path·render_markdown·report_hash), `scripts/test_metrics251_rollout_gate.py`(19케이스), `scripts/fixtures/metrics251/rollout_gate_fixtures.json`(캘린더+11시나리오). 생성 문서 2: `docs/metrics-2.5.1-rollout-gate.{json,md}`. 수정 1: `package.json`(rollout:metrics251·test:metrics251-rollout-gate).
+- **게이트 판정(3상태)**: MET(연속≥5+4-zero) / NOT_MET(run≥5·연속<5, 실패 run·거래일 누락 시 후행 연속 초기화) / PENDING(run<5, 합성금지). 하루 누락→연속 초기화. 차등 증거 없는 run 은 DIFFERENTIAL_MISSING 으로 통과 불가(P0-clean 합성 금지). run 단위 실패 사유: NOT_QA_PASSED·MANIFEST_COMPROMISED·NOT_TRADING_DAY·CALENDAR_UNCOVERED·SOURCE_DATE_MISMATCH·UNKNOWN_EXCLUSION_REASON·DIFFERENTIAL_MISSING·UNRESOLVED_P0·PUBLIC_PATH_LEAK.
+- **현재 실측**: 비공개 shadow 저장소에 승격 run 0개 → 생성 문서는 **PENDING/rolloutCandidate=false/INSUFFICIENT_REAL_RUNS**(정직한 현재 상태). 게이트 로직은 fixture 로 증명, 재실행 바이트 동일.
+- **검증기 계약(19케이스)**: AND(OR 아님)·RESET(gap trailing3·p0Reset trailing2)·PEND(합성금지)·RUNCHK(7 fault+캘린더미제공)·SUMM(요약 필드·커버리지 pct)·LEAK(is_public_path·public 루트 읽기 거부)·STORE(빈 저장소→PENDING/0)·DET(바이트동일·hash안정·순서불변)·PURE(벽시계/난수/네트워크0·docs/·public open0).
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4 산출물·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성·config/2.5.1.*(configHash 7bf1e3a1f989…) 무변경. 신규 모듈은 scripts/(Python)·src import 0 → Next 번들 미포함·런타임/공개/UI 불변(build·route 검증 불요). shadow 저장소 미생성/미추적. 보호되지 않은 라우트 미추가.
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-rollout-gate PASS(19) · snapshot-store·eligibility·compare 회귀 PASS · git diff --check clean · 6파일 U+FFFD 0 · rollout 문서 2회 바이트 동일 · shadow 미추적·public 무변경.
+- **한계/다음**: 실제 5일 연속 shadow run 은 0개(문서 PENDING)·일별 publish+차등 사이드카 배선은 공개 승인 뒤 별도. 연속성은 거래일 캘린더 fixture 의존(실 KRX 캘린더는 ops 입력). **다음(Slice L)**: 로컬 통합 재인증·결정 문서 — 전체 focused/unit/contract/golden/build/local route 검증, 공개 2.4 바이트 불변 증거, owner-gated 공개 체크리스트(§10 Slice L). push/deploy 없음.
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice K: shadow operator report + five-day AND rollout gate. push 없음·main 무변경.

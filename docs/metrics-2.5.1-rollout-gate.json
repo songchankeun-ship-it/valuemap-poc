@@ -1,0 +1,43 @@
+{
+  "aggregate": {
+    "exclusionReasonTotals": {},
+    "failingRuns": 0,
+    "passingRuns": 0,
+    "runFailReasonCounts": {}
+  },
+  "continuity": {
+    "calendarUncoveredDates": [],
+    "duplicateMarketDates": [],
+    "gaps": [],
+    "orderedDates": []
+  },
+  "gate": {
+    "actualRuns": 0,
+    "blockingReasons": [
+      "INSUFFICIENT_REAL_RUNS"
+    ],
+    "maxConsecutivePassingRuns": 0,
+    "requiredConsecutiveRuns": 5,
+    "rolloutCandidate": false,
+    "status": "PENDING",
+    "trailingConsecutivePassingRuns": 0,
+    "windowDates": [],
+    "windowZeroConditions": {
+      "publicPathLeakage": 0,
+      "sourceDateMismatch": 0,
+      "unknownExclusionReason": 0,
+      "unresolvedP0": 0
+    }
+  },
+  "meta": {
+    "calendarCoverage": null,
+    "computesPublicScore": false,
+    "engineVersion": "2.5.1",
+    "generatedFrom": "shadow-store",
+    "note": "shadow 운영 게이트(§M251-D02 5일 AND). 공개 Metrics 2.4 정본은 불변이며 이 보고서는 공개 전환 승인 근거가 아니라 로컬 준비 상태 요약이다(§7 Gate 6).",
+    "readOnly": true,
+    "reportKind": "metrics-2.5.1-rollout-gate",
+    "requiredConsecutiveRuns": 5
+  },
+  "runs": []
+}

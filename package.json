@@ -55,6 +55,8 @@
     "contract:metrics251": "python scripts/metrics251_contract_export.py && node scripts/gen_metrics251_contracts.mjs",
     "contract:metrics251:check": "python scripts/metrics251_contract_export.py --check && node scripts/gen_metrics251_contracts.mjs --check",
     "test:metrics251-contracts": "tsx scripts/test_metrics251_contracts.ts",
+    "rollout:metrics251": "python scripts/metrics251_rollout_gate.py",
+    "test:metrics251-rollout-gate": "python scripts/test_metrics251_rollout_gate.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
