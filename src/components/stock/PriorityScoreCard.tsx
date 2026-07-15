@@ -134,6 +134,7 @@ export function PriorityScoreCard({
             </>
           ) : null}
         </div>
+        <p className="mt-1.5 text-[10px] leading-snug text-zinc-400 dark:text-zinc-500">{t.completenessNote}</p>
       </div>
     </div>
   );

@@ -30,6 +30,7 @@
     "test:status-dimensions": "tsx scripts/test_statusDimensions.ts",
     "test:trading-activity": "tsx scripts/test_tradingActivityContract.ts",
     "test:today-insight": "tsx scripts/test_todayInsightProvenance.ts",
+    "test:score-scale": "tsx scripts/test_scoreScaleContract.ts",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

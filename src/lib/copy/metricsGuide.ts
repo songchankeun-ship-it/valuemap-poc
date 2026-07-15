@@ -98,7 +98,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       title: "읽기 전 검토 포인트",
       items: (count: number) => [
         "종합 점수는 네 지표를 똑같은 비중으로 평균합니다. 추세 · 거래활성도 · 밸류 · 위험조정 4지표를 각각 25%씩 동일 가중으로 더해 평균한 값이라, 한 지표만 아주 높아도 나머지가 평범하면 종합 점수는 중간대에 머뭅니다. 종목 상세의 점수 근거 보기에서 각 지표가 종합 점수에 얼마나 기여했는지 확인할 수 있습니다.",
-        "점수와 순위는 다릅니다. 점수는 0~100 절대값이고, 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 점수와 상대순위를 분리해 표시합니다.",
+        "점수와 순위는 다릅니다. 점수는 0~100 비교 척도이며, 추세·밸류는 현재 유니버스 안에서의 백분위라 종목 구성이 바뀌면 값도 달라집니다(고정된 절대 점수가 아닙니다). 상대순위는 전체 풀에서 몇 번째인지를 나타냅니다. 같은 52점이라도 분포에 따라 순위는 달라지므로 둘을 같은 의미로 보면 안 됩니다. 종목 상세는 점수와 상대순위를 분리해 표시합니다.",
         `밸류 점수의 기준에 주의하세요. 밸류는 전체 ${count}개 풀 분위라 업종 차이를 보정하지 않습니다 — 금융·지주사처럼 구조적으로 저PER·저PBR인 업종이 상위에 몰릴 수 있습니다. 종목 상세의 업종 대비 밸류는 같은 업종 안에서 다시 본 별도 참고 지표이며, 종합 점수에는 포함되지 않습니다.`,
       ],
     },
@@ -244,7 +244,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
       title: "Points to review before reading",
       items: (count: number) => [
         "The composite score averages the four metrics with equal weight. Trend, trading activity, valuation, and risk-adjusted are each weighted 25% and averaged, so even if one metric is very high, the composite stays mid-range when the others are average. In a stock's detail page, See score basis shows how much each metric contributed to the composite.",
-        "Score and rank are different. The score is an absolute value from 0 to 100, while the relative rank shows where a stock places within the full pool. The same 52 points can rank differently depending on the distribution, so the two should not be read as the same thing. Stock detail pages show score and relative rank separately.",
+        "Score and rank are different. The score is a comparative 0–100 scale, and the trend and valuation metrics are percentiles within the current universe, so their values shift if the pool changes (it is not a fixed absolute score). The relative rank shows where a stock places within the full pool. The same 52 points can rank differently depending on the distribution, so the two should not be read as the same thing. Stock detail pages show score and relative rank separately.",
         `Note the basis of the valuation score. Valuation is a percentile within the full pool of ${count} stocks, so it does not adjust for sector differences — sectors that are structurally low-PER/low-PBR, such as financials and holding companies, can cluster near the top. The in-sector valuation on a stock's detail page is a separate reference metric viewed within the same sector and is not included in the composite score.`,
       ],
     },
