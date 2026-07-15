@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T04:43:45.177Z
+Last updated: 2026-07-15T04:58:33.222Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,8 +21,8 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 284 - ORNScore public reaudit D - align trading activity to volume semantics
-- Run: 288
+- Task: 285 - ORNScore public reaudit E - hide untraceable generated Today insight
+- Run: 289
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
