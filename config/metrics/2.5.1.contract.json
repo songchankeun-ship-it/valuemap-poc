@@ -1,0 +1,163 @@
+{
+  "artifactNames": {
+    "manifest": "manifest.json",
+    "pointer": "current.json",
+    "runsSubdir": "runs",
+    "snapshot": "snapshot.json"
+  },
+  "checksumMetadata": {
+    "artifactChecksumKey": "sha256",
+    "manifestHashKey": "manifestHash",
+    "pointerManifestHashKey": "manifestHash",
+    "populationHashKey": "hash",
+    "snapshotHashKeys": [
+      "configHash",
+      "inputManifestHash"
+    ]
+  },
+  "contractVersion": "2.5.1",
+  "engineVersion": "2.5.1",
+  "enums": {
+    "calendarDayKinds": [
+      "TRADING_DAY",
+      "WEEKEND",
+      "HOLIDAY",
+      "OUT_OF_CALENDAR_RANGE",
+      "NO_PREVIOUS_MARKET_DAY",
+      "PREVIOUS_MARKET_DATE_MATCH",
+      "PREVIOUS_MARKET_DATE_MISMATCH",
+      "PAIRING_INVALID"
+    ],
+    "comparisonMetricKeys": [
+      "momentum",
+      "activity",
+      "value",
+      "riskAdjusted"
+    ],
+    "comparisonReasonCodes": [
+      "COMPARABLE",
+      "CURRENT_SNAPSHOT_MISSING",
+      "PREVIOUS_SNAPSHOT_MISSING",
+      "CURRENT_UNPUBLISHED",
+      "PREVIOUS_UNPUBLISHED",
+      "ENGINE_VERSION_MISMATCH",
+      "CONFIG_MISMATCH",
+      "SOURCE_CONTRACT_INCOMPATIBLE",
+      "SOURCE_INPUT_UNPUBLISHED",
+      "FACTOR_POPULATION_MISMATCH",
+      "RANKING_UNIVERSE_MISMATCH",
+      "FACTOR_NOT_COMPARABLE",
+      "COMPOSITE_NOT_COMPARABLE"
+    ],
+    "eligibilityReasons": [
+      "INSUFFICIENT_HISTORY",
+      "MISSING_INPUT",
+      "NON_POSITIVE_FUNDAMENTAL",
+      "QUALITY_WARNING",
+      "SOURCE_DATE_MISMATCH",
+      "SOURCE_DATE_STALE",
+      "VALID",
+      "ZERO_VARIANCE"
+    ],
+    "excludingReasons": [
+      "INSUFFICIENT_HISTORY",
+      "MISSING_INPUT",
+      "NON_POSITIVE_FUNDAMENTAL",
+      "SOURCE_DATE_MISMATCH",
+      "SOURCE_DATE_STALE",
+      "ZERO_VARIANCE"
+    ],
+    "factorKeys": [
+      "momentum",
+      "activity",
+      "value",
+      "riskAdjusted"
+    ],
+    "nonExcludingReasons": [
+      "QUALITY_WARNING",
+      "VALID"
+    ],
+    "readReasonCodes": [
+      "NO_POINTER",
+      "POINTER_UNREADABLE",
+      "POINTER_INVALID",
+      "RUN_MISSING",
+      "MANIFEST_MISSING",
+      "MANIFEST_UNREADABLE",
+      "MANIFEST_HASH_MISMATCH",
+      "POINTER_MANIFEST_MISMATCH",
+      "ARTIFACT_MISSING",
+      "CHECKSUM_MISMATCH",
+      "NOT_SEALED"
+    ],
+    "readStatuses": [
+      "OK",
+      "UNAVAILABLE",
+      "DEGRADED"
+    ],
+    "runStates": [
+      "QA_PASSED"
+    ]
+  },
+  "generatedBy": "scripts/metrics251_contract_export.py",
+  "note": "Machine-readable Python-owned contract surface for the Metrics 2.5.1 TypeScript reader (Slice J). Values are pulled from the actual Slice B-I Python modules so a Python source change flips this file and the generated TS freshness check catches the drift. NOT public data; never served.",
+  "requiredKeys": {
+    "factorPopulation": [
+      "count",
+      "hash"
+    ],
+    "factorResult": [
+      "factor",
+      "reason",
+      "raw",
+      "score"
+    ],
+    "manifest": [
+      "snapshotId",
+      "marketDate",
+      "metricsVersion",
+      "runState",
+      "artifacts",
+      "manifestHash"
+    ],
+    "manifestArtifact": [
+      "sha256",
+      "bytes"
+    ],
+    "pointer": [
+      "snapshotId",
+      "marketDate",
+      "metricsVersion",
+      "manifestHash",
+      "runDir"
+    ],
+    "rankingPopulation": [
+      "count",
+      "hash"
+    ],
+    "snapshot": [
+      "configHash",
+      "eligibilityReasonCounts",
+      "engineVersion",
+      "factorPopulations",
+      "inputManifestHash",
+      "marketDate",
+      "rankingPopulation",
+      "runState",
+      "sourceDates",
+      "stocks"
+    ],
+    "sourceDates": [
+      "prices",
+      "volumes",
+      "fundamentals"
+    ],
+    "stockResult": [
+      "ticker",
+      "factors",
+      "compositeScore",
+      "rankingEligible",
+      "eligibilityReasons"
+    ]
+  }
+}
