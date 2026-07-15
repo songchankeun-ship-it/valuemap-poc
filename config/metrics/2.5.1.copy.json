@@ -1,0 +1,168 @@
+{
+  "copyVersion": "2.5.1",
+  "engineVersion": "2.5.1",
+  "note": "Metrics 2.5.1 shadow projection copy registry (Slice I). Stable bilingual copy keyed by semantic enum. NOT wired to any public route/component. Public Metrics 2.4 copy in src/lib/copy/* stays authoritative and is not duplicated here — this registry only names the shadow-candidate semantic states and their mandated naming/denials (see docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md M251-D06).",
+  "locales": ["ko", "en"],
+  "factorLabels": {
+    "momentum": {
+      "name": {
+        "ko": "모멘텀 · 21/63/126일 블렌디드 수익률",
+        "en": "Momentum · blended 21/63/126-day return"
+      },
+      "denies": {
+        "ko": [
+          "단기·장기 국면을 구분한 다-기간 regime 판정이 아님 — 저장된 단일 블렌디드 원시값의 방향만 표시",
+          "미래 수익을 보장하지 않음"
+        ],
+        "en": [
+          "not the multi-horizon regime classification — only the direction of the single stored blended raw",
+          "no guarantee of future return"
+        ]
+      }
+    },
+    "volumeActivity": {
+      "name": {
+        "ko": "거래활성도(거래량 활동) · 5일/20일 거래량 비율",
+        "en": "Volume activity · 5-day/20-day volume ratio"
+      },
+      "denies": {
+        "ko": [
+          "가격 방향(상승·하락)을 뜻하지 않음",
+          "매수·매도 주체가 누구인지를 뜻하지 않음",
+          "유동성·자금유입·매수세를 뜻하지 않음"
+        ],
+        "en": [
+          "does not mean price direction (up or down)",
+          "does not identify who is buying or selling",
+          "does not mean liquidity, fund inflow, or buying pressure"
+        ]
+      }
+    },
+    "value": {
+      "name": {
+        "ko": "밸류 · PER·PBR 저평가",
+        "en": "Value · PER/PBR cheapness"
+      },
+      "denies": {
+        "ko": ["미래 수익을 보장하지 않음"],
+        "en": ["no guarantee of future return"]
+      }
+    },
+    "riskAdjusted": {
+      "name": {
+        "ko": "위험조정 · 고정 기준수익률 3.5% 대비 과거 수익-변동성 효율",
+        "en": "Risk-adjusted · past return-to-volatility efficiency vs a fixed 3.5% annual hurdle"
+      },
+      "hurdleDefinition": {
+        "ko": "3.5%는 버전에 고정된 기준수익률(fixedAnnualHurdleRate)이며, 최신·현재 무위험수익률이 아닙니다.",
+        "en": "3.5% is a version-fixed hurdle rate (fixedAnnualHurdleRate), not the latest or current risk-free rate."
+      },
+      "denies": {
+        "ko": [
+          "안전을 뜻하지 않음",
+          "향후 수익을 보장하지 않음",
+          "최신·현재 무위험수익률이 아님"
+        ],
+        "en": [
+          "not a safety measure",
+          "no guarantee of future return",
+          "not the latest or current risk-free rate"
+        ]
+      }
+    }
+  },
+  "stateCopy": {
+    "momentum.direction.UP": {
+      "ko": "블렌디드 모멘텀 원시값이 기준(±1%)을 넘어 상승",
+      "en": "Blended momentum raw above the +1% flat band (up)"
+    },
+    "momentum.direction.FLAT": {
+      "ko": "블렌디드 모멘텀 원시값이 ±1% 이내로 방향 없음",
+      "en": "Blended momentum raw within the ±1% flat band (no direction)"
+    },
+    "momentum.direction.DOWN": {
+      "ko": "블렌디드 모멘텀 원시값이 기준(-1%) 아래로 하락",
+      "en": "Blended momentum raw below the -1% flat band (down)"
+    },
+    "momentum.direction.UNAVAILABLE": {
+      "ko": "저장된 모멘텀 값이 없어 방향 판정 보류",
+      "en": "No stored momentum value; direction withheld"
+    },
+    "volumeActivity.state.VERY_LOW": {
+      "ko": "5일 평균 거래량이 20일 평균의 0.5배 미만",
+      "en": "5-day average volume below 0.5x the 20-day average"
+    },
+    "volumeActivity.state.DECREASED": {
+      "ko": "5일 평균 거래량이 20일 평균의 0.5~0.8배",
+      "en": "5-day average volume 0.5-0.8x the 20-day average"
+    },
+    "volumeActivity.state.NORMAL": {
+      "ko": "5일 평균 거래량이 20일 평균의 0.8~1.2배",
+      "en": "5-day average volume 0.8-1.2x the 20-day average"
+    },
+    "volumeActivity.state.INCREASED": {
+      "ko": "5일 평균 거래량이 20일 평균의 1.2~1.5배",
+      "en": "5-day average volume 1.2-1.5x the 20-day average"
+    },
+    "volumeActivity.state.SIGNIFICANT_INCREASE": {
+      "ko": "5일 평균 거래량이 20일 평균의 1.5~2.0배",
+      "en": "5-day average volume 1.5-2.0x the 20-day average"
+    },
+    "volumeActivity.state.SURGE": {
+      "ko": "5일 평균 거래량이 20일 평균의 2.0배 이상",
+      "en": "5-day average volume at least 2.0x the 20-day average"
+    },
+    "volumeActivity.state.UNAVAILABLE": {
+      "ko": "저장된 거래량 활동 값이 없어 상태 보류",
+      "en": "No stored volume-activity value; state withheld"
+    },
+    "value.state.PRESENT": {
+      "ko": "PER·PBR 저평가 점수가 저장되어 있음",
+      "en": "PER/PBR cheapness score is stored"
+    },
+    "value.state.UNAVAILABLE": {
+      "ko": "저장된 밸류 점수가 없어 보류",
+      "en": "No stored value score; withheld"
+    },
+    "riskEfficiency.band.LOW": {
+      "ko": "위험조정 효율 점수가 유니버스 하위 구간(0~30)",
+      "en": "Risk-adjusted efficiency score in the universe lower band (0-30)"
+    },
+    "riskEfficiency.band.NEUTRAL": {
+      "ko": "위험조정 효율 점수가 유니버스 중위 구간(30~70)",
+      "en": "Risk-adjusted efficiency score in the universe middle band (30-70)"
+    },
+    "riskEfficiency.band.HIGH": {
+      "ko": "위험조정 효율 점수가 유니버스 상위 구간(70~100)",
+      "en": "Risk-adjusted efficiency score in the universe upper band (70-100)"
+    },
+    "riskEfficiency.band.UNAVAILABLE": {
+      "ko": "저장된 위험조정 점수가 없어 보류",
+      "en": "No stored risk-adjusted score; withheld"
+    },
+    "riskEfficiency.hurdle.ABOVE": {
+      "ko": "저장된 원시값이 양수 — 고정 기준수익률 3.5%를 상회",
+      "en": "Stored raw is positive - above the fixed 3.5% hurdle"
+    },
+    "riskEfficiency.hurdle.AT": {
+      "ko": "저장된 원시값이 0 — 고정 기준수익률 3.5%와 동일",
+      "en": "Stored raw is zero - at the fixed 3.5% hurdle"
+    },
+    "riskEfficiency.hurdle.BELOW": {
+      "ko": "저장된 원시값이 음수 — 고정 기준수익률 3.5%를 하회",
+      "en": "Stored raw is negative - below the fixed 3.5% hurdle"
+    },
+    "riskEfficiency.hurdle.UNAVAILABLE": {
+      "ko": "저장된 위험조정 원시값이 없어 보류",
+      "en": "No stored risk-adjusted raw; withheld"
+    },
+    "composite.state.ELIGIBLE": {
+      "ko": "네 factor가 모두 유효해 종합점수·순위 산출",
+      "en": "All four factors valid; composite and ranking produced"
+    },
+    "composite.state.WITHHELD": {
+      "ko": "유효하지 않은 factor가 있어 종합점수·순위 보류",
+      "en": "At least one factor invalid; composite and ranking withheld"
+    }
+  }
+}

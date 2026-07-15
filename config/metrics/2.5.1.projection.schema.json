@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ornscore/metrics/2.5.1/projection",
+  "title": "ORNScore Metrics 2.5.1 shadow projection (public-candidate DTO)",
+  "description": "Language-neutral shadow projection produced from a STORED candidate snapshot (metrics251_engine output). It carries stable semantic enums + copy keys only; it never recomputes scores and is never wired to a public route/component. Validated by the standard-library validator in scripts/metrics251_config.py. See docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md M251-D06 and Slice I.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "projectionVersion",
+    "engineVersion",
+    "configHash",
+    "copyVersion",
+    "marketDate",
+    "sourceDates",
+    "hurdleRate",
+    "stocks"
+  ],
+  "properties": {
+    "projectionVersion": { "const": "2.5.1" },
+    "engineVersion": { "const": "2.5.1" },
+    "configHash": { "type": "string", "minLength": 1 },
+    "copyVersion": { "const": "2.5.1" },
+    "marketDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "sourceDates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prices", "volumes", "fundamentals"],
+      "properties": {
+        "prices": { "type": ["string", "null"] },
+        "volumes": { "type": ["string", "null"] },
+        "fundamentals": { "type": ["string", "null"] }
+      }
+    },
+    "hurdleRate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "stocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ticker", "composite", "factors"],
+        "properties": {
+          "ticker": { "type": "string", "minLength": 1 },
+          "composite": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["state", "copyKey", "rankingEligible", "sourceCompositeScore"],
+            "properties": {
+              "state": { "enum": ["ELIGIBLE", "WITHHELD"] },
+              "copyKey": { "type": "string", "minLength": 1 },
+              "rankingEligible": { "type": "boolean" },
+              "sourceCompositeScore": { "type": ["number", "null"] }
+            }
+          },
+          "factors": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["momentum", "volumeActivity", "value", "riskAdjusted"],
+            "properties": {
+              "momentum": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["factor", "semanticName", "state", "copyKey", "sourceRaw", "sourceScore", "sourceReason"],
+                "properties": {
+                  "factor": { "const": "momentum" },
+                  "semanticName": { "const": "momentum" },
+                  "state": { "enum": ["UP", "FLAT", "DOWN", "UNAVAILABLE"] },
+                  "copyKey": { "type": "string", "minLength": 1 },
+                  "sourceRaw": { "type": ["number", "null"] },
+                  "sourceScore": { "type": ["number", "null"] },
+                  "sourceReason": { "type": "string", "minLength": 1 }
+                }
+              },
+              "volumeActivity": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["factor", "semanticName", "state", "copyKey", "deniedMeanings", "sourceRaw", "sourceScore", "sourceReason"],
+                "properties": {
+                  "factor": { "const": "activity" },
+                  "semanticName": { "const": "volumeActivity" },
+                  "state": { "enum": ["VERY_LOW", "DECREASED", "NORMAL", "INCREASED", "SIGNIFICANT_INCREASE", "SURGE", "UNAVAILABLE"] },
+                  "copyKey": { "type": "string", "minLength": 1 },
+                  "deniedMeanings": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": { "enum": ["priceDirection", "buyerIdentity", "liquidity", "fundInflow", "buyingPressure"] }
+                  },
+                  "sourceRaw": { "type": ["number", "null"] },
+                  "sourceScore": { "type": ["number", "null"] },
+                  "sourceReason": { "type": "string", "minLength": 1 }
+                }
+              },
+              "value": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["factor", "semanticName", "state", "copyKey", "sourceScore", "sourceReason"],
+                "properties": {
+                  "factor": { "const": "value" },
+                  "semanticName": { "const": "value" },
+                  "state": { "enum": ["PRESENT", "UNAVAILABLE"] },
+                  "copyKey": { "type": "string", "minLength": 1 },
+                  "sourceScore": { "type": ["number", "null"] },
+                  "sourceReason": { "type": "string", "minLength": 1 }
+                }
+              },
+              "riskAdjusted": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["factor", "semanticName", "state", "copyKey", "hurdleRelation", "hurdleRelationCopyKey", "hurdleRate", "deniedMeanings", "sourceRaw", "sourceScore", "sourceReason"],
+                "properties": {
+                  "factor": { "const": "riskAdjusted" },
+                  "semanticName": { "const": "riskAdjusted" },
+                  "state": { "enum": ["LOW", "NEUTRAL", "HIGH", "UNAVAILABLE"] },
+                  "copyKey": { "type": "string", "minLength": 1 },
+                  "hurdleRelation": { "enum": ["ABOVE", "AT", "BELOW", "UNAVAILABLE"] },
+                  "hurdleRelationCopyKey": { "type": "string", "minLength": 1 },
+                  "hurdleRate": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "deniedMeanings": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": { "enum": ["latestRiskFreeRate", "safetyGuarantee", "futureReturn"] }
+                  },
+                  "sourceRaw": { "type": ["number", "null"] },
+                  "sourceScore": { "type": ["number", "null"] },
+                  "sourceReason": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
