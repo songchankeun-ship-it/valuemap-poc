@@ -4164,3 +4164,18 @@
 - **한계/리스크**: (1) 스냅샷/manifest/pointer/capability TS 인터페이스는 손수 작성이고 필수키만 contract.json 대조로 드리프트를 잡는다(중첩 구조 자체는 자동 생성 아님) — projection DTO 만 스키마에서 전체 재귀 생성. 향후 §8 스냅샷에 필드가 늘면 인터페이스도 함께 갱신 필요(테스트가 필수키 드리프트를 잡음). (2) 비교 사유 코드·캘린더 kind 집합은 export 스크립트에서 명시 열거라 새 코드 추가 시 열거 목록을 갱신해야 한다(값 드리프트는 모듈에서 끌어와 잡히나 멤버 추가는 아님). (3) reader 는 파싱된 객체를 입력으로 받는 순수 계약이며 파일 IO·pointer 무결성 재검증 배선(실제 shadow 읽기)은 Slice K/공개 승인 뒤 별도. (4) 정적 가드는 소스 텍스트 스캔이라 새 파일을 scripts/metrics251/ 에 추가하면 guardedSources 목록에 등록해야 커버된다.
 - **다음 진입점(Slice K)**: shadow 운영 보고서와 5일 AND 게이트 — 실행별 커버리지·mismatch·source date·hash 요약, 5개 연속 성공과 P0 0 을 동시에 요구, 보호된 화면 연결 없이 로컬 보고서 우선(§10 Slice K).
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice J: TypeScript read contracts + duplicate-computation guard. push 없음·main 무변경.
+
+
+### 2026-07-16 — Metrics 2.5.1 Slice L (로컬 통합 재인증·소유자 결정 문서) [codex]
+
+- **Scope**: 설계서 §10 Slice L·§7·§13·원안 ORN-2510 대로, Slice A–K 를 로컬에서 최종 재인증하고 소유자 결정 dossier 를 생성. 새 산식·기능 없음(재인증+문서). 직전 HEAD `63a748f`(task 305 K), 브랜치 `ai-center/task-306-ornscore-metrics-2.5.1-l-local-recer`.
+- **신규 파일(1)**: `docs/metrics-2.5.1-recertification-dossier.md`(게이트 결과표 19행·재현성 해시·공개 2.4 무변경 증명·발견/시정 1건·factor/순위 커버리지·shadow 게이트 상태·M251-D01..D10 상태·ORN-2501..2510 대응·소유자 체크리스트·잔여위험). 수정 2: `docs/metrics-2.5.1-baseline.{json,md}`(§5 stale 시정 재생성).
+- **재인증 게이트(전부 이 세션 실행·통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · config:metrics251:check FRESH(configHash 7bf1e3a1f989…) · test:metrics251-{config,baseline,primitives,engine,eligibility,snapshot-store,compare,replay,projection,rollout-gate} 전부 PASS · contract:metrics251:check FRESH · test:metrics251-contracts PASS(7영역, tsx) · npm run build PASS(138 종목 페이지 prerender) · verify:routes 라이브 9/9 200(next start 4461, 데이터일 2026.07.14) · git diff --check 0 · 편집파일 U+FFFD 0.
+- **재현성 해시**: configHash 7bf1e3a1f989… · contract.json 9d59bc49b659… · 생성TS 79b9e15dc9ef… · 롤아웃보고서 2dee648a5636(2회 동일) · 골든10 바이트일치.
+- **공개 2.4 무변경 증명**: pre-batch HEAD 6ce642e → 63a748f 사이 `public/` 변경 0건. stocks.json 커밋 sha c225c09a86f5a595… (PRE==HEAD 동일)·작업트리 CRLF정규화 후 동일·git status 청결. 배치 유일 런타임 변경=`src/lib/metrics.ts` +9줄 순수 주석(Slice J 버전경계 라벨, 삭제0·로직0). metricsVersion 2.4 유지. shadow(.metrics251-shadow) 미생성·public 누출 0.
+- **발견·시정(1)**: test:metrics251-baseline 이 stale — Slice J 의 metrics.ts 주석 +9줄로 기준선 문서의 소스 라인번호가 밀렸음. `python scripts/metrics251_baseline.py` 결정적 재생성. diff 는 오직 `"line":` 필드 이동(json 9·md 9)·수치 baseline 불변(138·137·1·순위후보 137/99.28%·PER>100 24·PER>500 8·PBR>20 2). 재생성 후 PASS.
+- **shadow 게이트 현황(정직)**: 롤아웃 PENDING·rolloutCandidate=false·실제 run 0·후행연속 0·사유 INSUFFICIENT_REAL_RUNS. **releaseReady=false**. 5거래일 미조작(§M251-D02). 남은 정확한 증거: 실제 KRX 5거래일 연속 QA_PASSED shadow run + 창 전체 4-zero(P0/소스일/미지사유/공개누출) + run별 차등 증거. 날짜 미정(effectiveMarketDate 미정).
+- **티켓 매핑**: ORN-2501/2502/2503/2504/2505/2506 완료·증거확보 · 2508 부분(로컬 게이트 완료·공개화면 지연) · 2510 준비만(전환 Gate6 별도) · 2507/2509 설계서상 의도적 지연.
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4 산출물·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성·config/2.5.1.*(configHash 불변) 무변경. Slice L 작업트리 변경은 docs 3건(dossier 신규·baseline 재생성)+PROGRESS+AI_HANDOFF 뿐, src/·public/ 무변경.
+- **한계/다음**: 코드 큐 A–L 종료(추가 자동화 slice 없음). 이후 트랙=운영(실제 shadow 창 배선, 권한 회귀 별도 slice)·사람(Gate 5 검수+체크리스트)·소유자(Gate 6 공개 승인·effectiveMarketDate). **다음은 slice 가 아니라 소유자/운영 결정**.
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice L: local recertification + owner decision dossier. push 없음·main 무변경.

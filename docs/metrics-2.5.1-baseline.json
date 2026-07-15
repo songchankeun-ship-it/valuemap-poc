@@ -357,7 +357,7 @@
         "found": true,
         "id": "ts-duplicate-compositeScore",
         "kind": "duplicate-calculation",
-        "line": 112
+        "line": 121
       },
       {
         "description": "거래활성도 점수를 TypeScript 에서 재계산(중복).",
@@ -365,7 +365,7 @@
         "found": true,
         "id": "ts-duplicate-flowScore",
         "kind": "duplicate-calculation",
-        "line": 57
+        "line": 66
       },
       {
         "description": "모멘텀 원시값을 TypeScript 에서 재계산(파이썬 엔진과 중복).",
@@ -373,7 +373,7 @@
         "found": true,
         "id": "ts-duplicate-momentumRaw",
         "kind": "duplicate-calculation",
-        "line": 35
+        "line": 44
       },
       {
         "description": "밸류 점수를 TypeScript 에서 재계산(중복).",
@@ -381,7 +381,7 @@
         "found": true,
         "id": "ts-duplicate-valueScore",
         "kind": "duplicate-calculation",
-        "line": 78
+        "line": 87
       },
       {
         "description": "위험조정 점수를 TypeScript 에서 재계산(중복).",
@@ -389,7 +389,7 @@
         "found": true,
         "id": "ts-duplicate-volScore",
         "kind": "duplicate-calculation",
-        "line": 91
+        "line": 100
       },
       {
         "description": "거래량 20일 미만이면 50 반환.",
@@ -397,7 +397,7 @@
         "found": true,
         "id": "ts-metrics-flow-50",
         "kind": "fallback",
-        "line": 58
+        "line": 67
       },
       {
         "description": "백분위 모집단이 비면 50 반환.",
@@ -405,7 +405,7 @@
         "found": true,
         "id": "ts-metrics-percentile-50",
         "kind": "fallback",
-        "line": 45
+        "line": 54
       },
       {
         "description": "비양수 PER/PBR 또는 빈 모집단이면 밸류 50 반환(비양수를 중립 점수로 승격).",
@@ -413,7 +413,7 @@
         "found": true,
         "id": "ts-metrics-value-50",
         "kind": "fallback",
-        "line": 79
+        "line": 88
       },
       {
         "description": "종가 60개 미만이면 위험조정 50 반환.",
@@ -421,7 +421,7 @@
         "found": true,
         "id": "ts-metrics-vol-60-50",
         "kind": "fallback",
-        "line": 93
+        "line": 102
       },
       {
         "description": "저장 compositeScore 가 없으면 50 대체.",

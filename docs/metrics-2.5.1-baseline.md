@@ -86,15 +86,15 @@
 | `py-value-factor-average` | `scripts/compute_metrics.py` | fallback | 165 | 밸류 결측을 나머지 factor(추세·거래·위험조정) 평균으로 재가중(설계서 §4 금지 대상). |
 | `py-vol-else-50` | `scripts/compute_metrics.py` | fallback | 129 | 위험조정 계산 불가 시 50 대체(백분위 재계산 전 임시). |
 | `py-vol-missing-50` | `scripts/compute_metrics.py` | fallback | 155 | 샤프 원시값 결측 시 백분위 대신 50.0 대체. |
-| `ts-duplicate-compositeScore` | `src/lib/metrics.ts` | duplicate-calculation | 112 | 종합점수를 TypeScript 에서 재계산(중복). |
-| `ts-duplicate-flowScore` | `src/lib/metrics.ts` | duplicate-calculation | 57 | 거래활성도 점수를 TypeScript 에서 재계산(중복). |
-| `ts-duplicate-momentumRaw` | `src/lib/metrics.ts` | duplicate-calculation | 35 | 모멘텀 원시값을 TypeScript 에서 재계산(파이썬 엔진과 중복). |
-| `ts-duplicate-valueScore` | `src/lib/metrics.ts` | duplicate-calculation | 78 | 밸류 점수를 TypeScript 에서 재계산(중복). |
-| `ts-duplicate-volScore` | `src/lib/metrics.ts` | duplicate-calculation | 91 | 위험조정 점수를 TypeScript 에서 재계산(중복). |
-| `ts-metrics-flow-50` | `src/lib/metrics.ts` | fallback | 58 | 거래량 20일 미만이면 50 반환. |
-| `ts-metrics-percentile-50` | `src/lib/metrics.ts` | fallback | 45 | 백분위 모집단이 비면 50 반환. |
-| `ts-metrics-value-50` | `src/lib/metrics.ts` | fallback | 79 | 비양수 PER/PBR 또는 빈 모집단이면 밸류 50 반환(비양수를 중립 점수로 승격). |
-| `ts-metrics-vol-60-50` | `src/lib/metrics.ts` | fallback | 93 | 종가 60개 미만이면 위험조정 50 반환. |
+| `ts-duplicate-compositeScore` | `src/lib/metrics.ts` | duplicate-calculation | 121 | 종합점수를 TypeScript 에서 재계산(중복). |
+| `ts-duplicate-flowScore` | `src/lib/metrics.ts` | duplicate-calculation | 66 | 거래활성도 점수를 TypeScript 에서 재계산(중복). |
+| `ts-duplicate-momentumRaw` | `src/lib/metrics.ts` | duplicate-calculation | 44 | 모멘텀 원시값을 TypeScript 에서 재계산(파이썬 엔진과 중복). |
+| `ts-duplicate-valueScore` | `src/lib/metrics.ts` | duplicate-calculation | 87 | 밸류 점수를 TypeScript 에서 재계산(중복). |
+| `ts-duplicate-volScore` | `src/lib/metrics.ts` | duplicate-calculation | 100 | 위험조정 점수를 TypeScript 에서 재계산(중복). |
+| `ts-metrics-flow-50` | `src/lib/metrics.ts` | fallback | 67 | 거래량 20일 미만이면 50 반환. |
+| `ts-metrics-percentile-50` | `src/lib/metrics.ts` | fallback | 54 | 백분위 모집단이 비면 50 반환. |
+| `ts-metrics-value-50` | `src/lib/metrics.ts` | fallback | 88 | 비양수 PER/PBR 또는 빈 모집단이면 밸류 50 반환(비양수를 중립 점수로 승격). |
+| `ts-metrics-vol-60-50` | `src/lib/metrics.ts` | fallback | 102 | 종가 60개 미만이면 위험조정 50 반환. |
 | `ts-realstocks-composite-50` | `src/lib/realStocks.ts` | fallback | 45 | 저장 compositeScore 가 없으면 50 대체. |
 | `ts-realstocks-flow-50` | `src/lib/realStocks.ts` | fallback | 35 | 저장 flow 가 숫자가 아니면 50 대체. |
 | `ts-realstocks-momentum-50` | `src/lib/realStocks.ts` | fallback | 34 | 저장 momentum 이 숫자가 아니면 50 대체. |

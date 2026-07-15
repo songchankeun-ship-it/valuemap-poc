@@ -3238,3 +3238,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-rollout-gate PASS(19) · snapshot-store·eligibility·compare 회귀 PASS · git diff --check clean · 6파일 U+FFFD 0 · rollout 문서 2회 바이트 동일 · shadow 미추적·public 무변경.
 - **한계/다음**: 실제 5일 연속 shadow run 은 0개(문서 PENDING)·일별 publish+차등 사이드카 배선은 공개 승인 뒤 별도. 연속성은 거래일 캘린더 fixture 의존(실 KRX 캘린더는 ops 입력). **다음(Slice L)**: 로컬 통합 재인증·결정 문서 — 전체 focused/unit/contract/golden/build/local route 검증, 공개 2.4 바이트 불변 증거, owner-gated 공개 체크리스트(§10 Slice L). push/deploy 없음.
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice K: shadow operator report + five-day AND rollout gate. push 없음·main 무변경.
+
+
+### 2026-07-16 — Metrics 2.5.1 Slice L: 로컬 통합 재인증·소유자 결정 문서 ([codex])
+
+- **무엇**: 설계서 §10 Slice L·§7·§13·원안 ORN-2510 대로, Slice A–K 를 로컬에서 최종 재인증하고 owner 결정 dossier 를 생성하는 재인증+문서 작업(새 산식 없음). 공개 전환·push·deploy 없음. 직전 HEAD `63a748f`, 브랜치 `ai-center/task-306-ornscore-metrics-2.5.1-l-local-recer`.
+- **산출**: `docs/metrics-2.5.1-recertification-dossier.md`(신규) — 게이트 19행·재현성 해시·공개 2.4 무변경 증명·발견1건·커버리지·shadow 상태·D01..D10·ORN-2501..2510·owner 체크리스트·잔여위험. `docs/metrics-2.5.1-baseline.{json,md}`(재생성, §stale 시정).
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · 모든 metrics251 test PASS(config/baseline/primitives/engine/eligibility/snapshot-store/compare/replay/projection/rollout-gate/contracts) · contract:check FRESH · npm run build PASS(138 페이지) · verify:routes 라이브 9/9 200 · git diff --check 0 · U+FFFD 0.
+- **공개 2.4 무변경**: pre-batch 6ce642e→63a748f `public/` 변경 0 · stocks.json sha c225c09… PRE==HEAD · 배치 유일 런타임=metrics.ts +9 주석(로직0) · metricsVersion 2.4 · shadow 미생성.
+- **shadow 게이트**: PENDING·releaseReady=false·실제 run 0. 5일 미조작. 남은 것=실제 5거래일 연속 shadow+4-zero+차등증거(운영 입력). effectiveMarketDate 미정.
+- **발견·시정**: baseline 문서 stale(Slice J 주석 +9줄 라인시프트) → 결정적 재생성, `"line":` 필드만 이동·수치 baseline 불변.
+- **다음**: 코드 큐 A–L 종료. 이후는 운영(shadow 창 배선·권한 회귀 별도 slice)·사람(Gate 5)·소유자(Gate 6 공개 승인). **자동화 slice 아님**.
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice L: local recertification + owner decision dossier. push 없음·main 무변경.
