@@ -3260,3 +3260,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **발견·시정**: baseline 문서 stale(Slice J 주석 +9줄 라인시프트) → 결정적 재생성, `"line":` 필드만 이동·수치 baseline 불변.
 - **다음**: 코드 큐 A–L 종료. 이후는 운영(shadow 창 배선·권한 회귀 별도 slice)·사람(Gate 5)·소유자(Gate 6 공개 승인). **자동화 slice 아님**.
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice L: local recertification + owner decision dossier. push 없음·main 무변경.
+
+
+### 2026-07-16 — Metrics 2.5.1 Slice N: 원자적·멱등 단일 시장일 shadow run 오케스트레이터 ([codex])
+
+- **무엇**: 설계서 §M251-D02/D07/D10·§8·§9·§10·원안 ORN-2503/2508 대로, **명시적으로 날짜가 박힌 정확히 하나의 시장일**에 대해 기존 계약 층(Slice M preflight·D engine·E eligibility·G comparison·F snapshot-store)을 조립 실행하는 명령. 새 산식 없음. 산출물은 비공개(Git 비추적) shadow 저장소 뿐. 직전 HEAD `ebcef9e`(task 307 M), 브랜치 `ai-center/task-308-ornscore-metrics-2.5.1-n-atomic-idem`.
+- **신규 파일(2)**: `scripts/metrics251_run.py`(run_market_day·derive_run_id·derive_expected·qa_gate·scan_market_date·읽기전용 CLI), `scripts/test_metrics251_run.py`(11케이스). 수정 1: `package.json`(run:metrics251·test:metrics251-run). fixture 재사용(새 fixture 없음).
+- **조립 순서**: preflight(계약 검증·계산 전 거절) → engine(순수 후보 스냅샷) → eligibility(재계산+내재적 QA 게이트: runOk·UNKNOWN0·일관성·사유없는제외0, 138-baseline coverage_gate 미사용) → comparison(직전 승격과 차등 증거·비-차단) → snapshot-store(원자적 승격, pointer 교체 단독 소유).
+- **원자성**: 게이트 실패는 승격/pointer 이전에 멈춘다. store fault(중단/손상/QA) → PUBLISH_FAILED·승인 pointer 무변경·run0. interrupt_before_pointer → 고아 승격 run 1·pointer 미설정(승인=pointer)·재실행 NOOP.
+- **멱등**: runId=스냅샷 정체성 sha256[:16] → 바이트 동일 입력=같은 snapshotId. scan_market_date 로 같은 시장일 판정 — 바이트 동일 승격→NOOP(교체 없음)·다른 스냅샷→SAME_DATE_CONFLICT(불변 위치 보존·두번째 run 안 만듦). 과거일 재실행이 최신일 pointer 를 되돌리지 않음.
+- **상태/사유**: status=PUBLISHED/NOOP_ALREADY_PUBLISHED/REJECTED · reasons=PREFLIGHT_FAILED·ENGINE_NULL(방어)·ELIGIBILITY_FAILED·SAME_DATE_CONFLICT·PUBLISH_FAILED·INTERNAL_ERROR(fail closed). phases/evidence 로 층별 세부 전달.
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성·config/2.5.1.*(configHash 7bf1e3a1f989…) 무변경. scripts/metrics251/* 는 src import 0 → 번들 미포함·런타임/UI 불변(build·route 검증 불요). shadow(.metrics251-shadow) 미생성/미추적.
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-run PASS(11) · preflight/engine/eligibility/snapshot-store/compare/rollout-gate 회귀 PASS · git diff --check clean · 3파일 U+FFFD 0 · CLI 게시→NOOP 확인 · shadow 미추적·public 무변경.
+- **한계/다음**: ENGINE_NULL·(주입 외)ELIGIBILITY 분기는 방어적(preflight 가 엔진 null 사유 상위집합·순수 엔진 UNKNOWN 미발생)이라 fault 주입으로만 도달. 고아 승격의 pointer 승인은 별도 repair(범위 밖). 실제 5거래일 연속 창·차등 누적은 운영 배선(공개 승인 뒤). **다음**: 코드 큐 A–N 종료 — 이후 운영 shadow 창 배선·사람 Gate 5·소유자 Gate 6(공개 전환·effectiveMarketDate).
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice N: atomic/idempotent single-market-day shadow-run command. push 없음·main 무변경.

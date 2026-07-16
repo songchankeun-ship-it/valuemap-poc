@@ -59,6 +59,8 @@
     "test:metrics251-rollout-gate": "python scripts/test_metrics251_rollout_gate.py",
     "preflight:metrics251": "python scripts/metrics251_preflight.py",
     "test:metrics251-preflight": "python scripts/test_metrics251_preflight.py",
+    "run:metrics251": "python scripts/metrics251_run.py",
+    "test:metrics251-run": "python scripts/test_metrics251_run.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
