@@ -16,6 +16,12 @@ import {
 } from "lucide-react";
 import { requireAdminAccess } from "@/lib/adminAccess";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  classifySupabaseRead,
+  isResourceStateNominal,
+  resourceStateMeta,
+  type ResourceState,
+} from "@/lib/adminResourceState";
 
 export const metadata = {
   title: "가입자 운영 현황 — 오른스코어",
@@ -50,18 +56,20 @@ interface UsageMetric {
   count: number | null;
   uniqueUsers: number | null;
   note: string;
-  tone: Tone;
+  state: ResourceState;
   Icon: typeof Bookmark;
 }
 
 interface UserOverview {
   users: AuthUserRow[];
   authNote: string;
+  authState: ResourceState;
   envError: string;
   waitlist: {
     count: number | null;
     rows: WaitlistRow[];
     note: string;
+    state: ResourceState;
   };
   usage: UsageMetric[];
   fetchedAt: string;
@@ -153,13 +161,15 @@ function normalizeAuthUser(user: User): AuthUserRow {
   };
 }
 
-async function listAuthUsers(supabase: ReturnType<typeof createAdminClient>): Promise<{ rows: AuthUserRow[]; note: string }> {
+async function listAuthUsers(
+  supabase: ReturnType<typeof createAdminClient>,
+): Promise<{ rows: AuthUserRow[]; note: string; state: ResourceState }> {
   const users: User[] = [];
   let note = "";
 
   for (let page = 1; users.length < AUTH_SCAN_LIMIT; page += 1) {
     const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 100 });
-    if (error) return { rows: [], note: `Auth 사용자 목록을 읽지 못했습니다: ${error.message}` };
+    if (error) return { rows: [], note: `Auth 사용자 목록을 읽지 못했습니다: ${error.message}`, state: classifySupabaseRead({ failed: true }) };
     const pageUsers = data?.users ?? [];
     users.push(...pageUsers);
     if (pageUsers.length < 100) break;
@@ -173,7 +183,7 @@ async function listAuthUsers(supabase: ReturnType<typeof createAdminClient>): Pr
     .map(normalizeAuthUser)
     .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
 
-  return { rows, note };
+  return { rows, note, state: classifySupabaseRead({ count: rows.length }) };
 }
 
 async function loadWaitlist(supabase: ReturnType<typeof createAdminClient>): Promise<UserOverview["waitlist"]> {
@@ -188,13 +198,16 @@ async function loadWaitlist(supabase: ReturnType<typeof createAdminClient>): Pro
       count: null,
       rows: [],
       note: "waitlist 테이블을 읽지 못했습니다. 테이블 미생성, env 미설정, 권한을 확인하세요.",
+      state: classifySupabaseRead({ failed: true }),
     };
   }
 
+  const total = count ?? (data?.length ?? 0);
   return {
-    count: count ?? (data?.length ?? 0),
+    count: total,
     rows: ((data ?? []) as WaitlistRow[]).filter(Boolean),
     note: "",
+    state: classifySupabaseRead({ count: total }),
   };
 }
 
@@ -214,8 +227,8 @@ async function loadUsageMetric(
       detail: spec.detail,
       count: null,
       uniqueUsers: null,
-      note: "테이블 미생성 또는 권한 확인 필요",
-      tone: "warn",
+      note: "",
+      state: classifySupabaseRead({ failed: true }),
       Icon: spec.Icon,
     };
   }
@@ -232,7 +245,7 @@ async function loadUsageMetric(
     count: total,
     uniqueUsers,
     note: sampled ? "고유 계정 수는 최대 1000건 샘플 기준" : "",
-    tone: total > 0 ? "ok" : "neutral",
+    state: classifySupabaseRead({ count: total }),
     Icon: spec.Icon,
   };
 }
@@ -244,8 +257,8 @@ async function loadOverview(): Promise<UserOverview> {
     detail: spec.detail,
     count: null,
     uniqueUsers: null,
-    note: "Supabase env 설정 후 조회",
-    tone: "neutral" as Tone,
+    note: "",
+    state: classifySupabaseRead({ capable: false }),
     Icon: spec.Icon,
   }));
 
@@ -260,6 +273,7 @@ async function loadOverview(): Promise<UserOverview> {
     return {
       users: auth.rows,
       authNote: auth.note,
+      authState: auth.state,
       envError: "",
       waitlist,
       usage,
@@ -269,11 +283,13 @@ async function loadOverview(): Promise<UserOverview> {
     return {
       users: [],
       authNote: "",
+      authState: classifySupabaseRead({ capable: false }),
       envError: errorMessage(error),
       waitlist: {
         count: null,
         rows: [],
         note: "Supabase service role 환경변수 설정 후 조회됩니다.",
+        state: classifySupabaseRead({ capable: false }),
       },
       usage: emptyUsage,
       fetchedAt: new Date().toISOString(),
@@ -365,6 +381,7 @@ export default async function AdminUsersPage() {
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
         <Panel title="최근 가입자" desc={overview.authNote || `최대 ${AUTH_SCAN_LIMIT}명 조회 후 최근 가입 순으로 표시`}>
+          <ResourceStateLine state={overview.authState} className="mb-2" />
           {overview.users.length === 0 ? (
             <Empty>아직 조회된 가입자가 없거나 Supabase Auth Admin 조회가 필요합니다.</Empty>
           ) : (
@@ -422,6 +439,7 @@ export default async function AdminUsersPage() {
         </Panel>
 
         <Panel title="출시 대기 신청" desc={overview.waitlist.note || "최근 12건 표시"}>
+          <ResourceStateLine state={overview.waitlist.state} className="mb-2" />
           {overview.waitlist.rows.length === 0 ? (
             <Empty>{overview.waitlist.note || "아직 대기 신청이 없습니다."}</Empty>
           ) : (
@@ -528,6 +546,26 @@ function Panel({ title, desc, children }: { title: string; desc: string; childre
   );
 }
 
+// 운영자용 리소스 상태 배지 — 공유 분류기(adminResourceState)로 5개 상태를 구분해 표시.
+// 행 내용·이메일·원문 오류 같은 값은 노출하지 않고 상태 라벨/힌트만 보여준다.
+function ResourceStateLine({ state, className = "" }: { state: ResourceState; className?: string }) {
+  const meta = resourceStateMeta(state);
+  const badgeCls =
+    meta.tone === "ok"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+      : meta.tone === "warn"
+        ? "border-amber-300 bg-amber-100 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+        : "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+  return (
+    <div className={"flex flex-wrap items-center gap-x-2 gap-y-1 " + className}>
+      <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-semibold ${badgeCls}`}>
+        {meta.label}
+      </span>
+      <span className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">{meta.hint}</span>
+    </div>
+  );
+}
+
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="py-2 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{children}</p>;
 }
@@ -571,10 +609,12 @@ function InfoBlock({
 
 function UsageCard({ metric }: { metric: UsageMetric }) {
   const { Icon } = metric;
+  const meta = resourceStateMeta(metric.state);
+  // 카드 배경 색조는 리소스 상태의 tone(공유 분류기)으로 결정한다.
   const toneClass =
-    metric.tone === "ok"
+    meta.tone === "ok"
       ? "border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100"
-      : metric.tone === "warn"
+      : meta.tone === "warn"
         ? "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"
         : "border-zinc-200 bg-zinc-50 text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-100";
 
@@ -593,6 +633,14 @@ function UsageCard({ metric }: { metric: UsageMetric }) {
       <p className="mt-2 text-[11px] leading-relaxed opacity-75">
         고유 계정 {metric.uniqueUsers === null ? "—" : `${metric.uniqueUsers}명`}
       </p>
+      <div className="mt-2 flex items-center">
+        <span className="inline-flex items-center rounded border border-black/10 px-1.5 py-0.5 text-[10px] font-semibold opacity-90 dark:border-white/15">
+          {meta.label}
+        </span>
+      </div>
+      {!isResourceStateNominal(metric.state) ? (
+        <p className="mt-1 text-[11px] leading-relaxed opacity-80">{meta.hint}</p>
+      ) : null}
       {metric.note ? <p className="mt-1 text-[11px] leading-relaxed opacity-70">{metric.note}</p> : null}
     </div>
   );

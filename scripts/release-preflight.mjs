@@ -17,9 +17,10 @@
 //   4. verify:click-analytics  data-analytics-event click contract
 //   5. verify:admin-traffic-metrics  future-dashboard boundary vs event map
 //   6. verify:admin-traffic-view  numeric dashboard shell view-model derivations
-//   7. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
-//   8. verify:reaudit        all public-reaudit source contracts (Slices A-M)
-//   9. build                 next build
+//   7. verify:admin-resource-state operator diagnostics state classifier + labels
+//   8. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
+//   9. verify:reaudit        all public-reaudit source contracts (Slices A-M)
+//  10. build                 next build
 //
 // The server-DEPENDENT route-health gate (smoke + verify:routes + stocks-seo +
 // public-seo + login-preflight + admin-access) is delegated to the existing
@@ -96,6 +97,7 @@ const OFFLINE_GATES = [
   { name: "verify:click-analytics", command: "npm", args: ["run", "verify:click-analytics"], shell: true },
   { name: "verify:admin-traffic-metrics", command: "npm", args: ["run", "verify:admin-traffic-metrics"], shell: true },
   { name: "verify:admin-traffic-view", command: "npm", args: ["run", "verify:admin-traffic-view"], shell: true },
+  { name: "verify:admin-resource-state", command: "npm", args: ["run", "verify:admin-resource-state"], shell: true },
   { name: "verify:first-run-ux", command: "npm", args: ["run", "verify:first-run-ux"], shell: true },
   { name: "verify:reaudit", command: "npm", args: ["run", "verify:reaudit"], shell: true },
 ];

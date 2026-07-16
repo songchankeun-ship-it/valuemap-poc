@@ -15,6 +15,11 @@ import { isSuspect } from "@/lib/dataQuality";
 import { dataStatus } from "@/lib/dataStatus";
 import { requireAdminAccess } from "@/lib/adminAccess";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  classifySupabaseRead,
+  resourceStateMeta,
+  type ResourceState,
+} from "@/lib/adminResourceState";
 
 export const metadata = {
   title: "내부 데이터 상태판 — 오른스코어",
@@ -51,9 +56,13 @@ const REPORT_STATUS_META: Record<string, { label: string; badge: string }> = {
   dismissed: { label: "반려", badge: "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" },
 };
 
-async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
+async function loadReports(): Promise<{ rows: DataReport[]; note: string; state: ResourceState }> {
   if (process.env.ADMIN_ENABLED !== "1") {
-    return { rows: [], note: "ADMIN_ENABLED=1 설정 시 신고 목록을 표시합니다(개인정보 보호)." };
+    return {
+      rows: [],
+      note: "ADMIN_ENABLED=1 설정 시 신고 목록을 표시합니다(개인정보 보호).",
+      state: classifySupabaseRead({ disabled: true }),
+    };
   }
   try {
     const supabase = createAdminClient();
@@ -63,11 +72,20 @@ async function loadReports(): Promise<{ rows: DataReport[]; note: string }> {
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) {
-      return { rows: [], note: "data_reports 테이블을 읽지 못했습니다(미생성 또는 권한). SQL은 라우트 주석 참조." };
+      return {
+        rows: [],
+        note: "data_reports 테이블을 읽지 못했습니다(미생성 또는 권한). SQL은 라우트 주석 참조.",
+        state: classifySupabaseRead({ failed: true }),
+      };
     }
-    return { rows: (data as DataReport[]) ?? [], note: "" };
+    const rows = (data as DataReport[]) ?? [];
+    return { rows, note: "", state: classifySupabaseRead({ count: rows.length }) };
   } catch {
-    return { rows: [], note: "Supabase env 미설정으로 신고 목록을 조회하지 못했습니다." };
+    return {
+      rows: [],
+      note: "Supabase env 미설정으로 신고 목록을 조회하지 못했습니다.",
+      state: classifySupabaseRead({ capable: false }),
+    };
   }
 }
 
@@ -100,7 +118,7 @@ export default async function AdminStatusPage() {
     (s) => !(typeof s.per === "number" && s.per > 0) || !(typeof s.pbr === "number" && s.pbr > 0),
   );
   const sc = dataStatus.selfCheck;
-  const { rows: reports, note: reportNote } = await loadReports();
+  const { rows: reports, note: reportNote, state: reportState } = await loadReports();
 
   // triage 정렬·집계 — 이미 조회한 rows에서만 파생(추가 조회·쓰기 없음).
   // 표는 미처리(new→reviewing) 먼저, 종료(resolved→dismissed) 뒤. 그룹 내 접수일 내림차순은
@@ -184,6 +202,7 @@ export default async function AdminStatusPage() {
       </Panel>
 
       <Panel title={`접수된 데이터 오류 신고 (${reports.length})`} desc="data_reports 최근 50건 · 미처리(신규·확인 중) 우선 정렬">
+        <ResourceStateLine state={reportState} className="mb-3" />
         {reportNote ? (
           <Empty>{reportNote}</Empty>
         ) : reports.length === 0 ? (
@@ -306,6 +325,26 @@ function Panel({ title, desc, children }: { title: string; desc: string; childre
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="text-xs text-zinc-500 dark:text-zinc-400 py-2">{children}</p>;
+}
+
+// 운영자용 리소스 상태 배지 — 공유 분류기(adminResourceState)로 5개 상태를
+// 구분해 표시한다. 값(행 내용·이메일·원문 오류)은 절대 노출하지 않고 상태 라벨/힌트만 보여준다.
+function ResourceStateLine({ state, className = "" }: { state: ResourceState; className?: string }) {
+  const meta = resourceStateMeta(state);
+  const badgeCls =
+    meta.tone === "ok"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+      : meta.tone === "warn"
+        ? "border-amber-300 bg-amber-100 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+        : "border-zinc-200 bg-zinc-100 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+  return (
+    <div className={"flex flex-wrap items-center gap-x-2 gap-y-1 " + className}>
+      <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-semibold ${badgeCls}`}>
+        {meta.label}
+      </span>
+      <span className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">{meta.hint}</span>
+    </div>
+  );
 }
 
 function StatusBadge({ status }: { status: string }) {
