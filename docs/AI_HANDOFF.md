@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-16T16:45:54.089Z
+Last updated: 2026-07-16T16:46:12.698Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 327 - ORNScore Framework Security C - request and cache semantics
-- Run: 335
-- Status: completed
+- Task: 328 - ORNScore Framework Security D - React 19 interaction compatibility
+- Run: 336
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -3436,3 +3436,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Pre-existing residual**: verify:reaudit Slice M (methodology-audit) is red — docs/methodology-audit.md stale (`python scripts/methodology_audit.py`). Not in this diff, reproduces on unchanged content; Slice F owns the fix. The verifier reports it honestly (currently exits 1 on that delegated row).
 - **Frozen**: login/auth files, provider/callback/runtime settings, Supabase schema/RLS, cron, Metrics 2.4, public/data, 138-stock output, analytics names, SEO URLs. Next 16 deferred.
 - **Commit**: local [codex] Framework security hardening Slice A: security baseline + invariant harness. No push · main unchanged.
+
+### 2026-07-17 — Framework security Slice D: React 19 public-interaction compatibility (verification-only) [codex]
+
+- **What**: Slice D of docs/ornscore-framework-security-hardening-2026-07-16.md — on the migrated Next 15.5.18 / React 19.2.7 baseline, exercise the public interaction surfaces and repair ONLY demonstrated React 19 regressions. Surfaces: watchlist persistence + groups, compare basket + query state, stock filters/search, issue-report forms, analytics click delegation, theme/localStorage, welcome-state cleanup. Login smoke-tested read-only; src/app/login and src/app/auth frozen/unedited. Prior HEAD a77045c (Slice C), branch ai-center/task-328-ornscore-framework-security-d-react-. **Outcome: no demonstrated React 19 regression → zero source changes (docs-only commit).**
+- **Static scan (clean)**: no forwardRef / findDOMNode / ReactDOM.render|hydrate / string refs / useFormState / .defaultProps|propTypes / element.ref in src/. Interaction libs (watchlist.ts, compare.ts, watchlistMeta.ts, next-themes 0.4.6) are localStorage + CustomEvent based; client components use controlled inputs + useEffect cleanup + mounted-guards — all React-19-safe.
+- **Browser smoke (Chrome headless over CDP, no npm deps; loopback :4455)** — route × viewport 26/26 CLEAN: 13 routes at desktop 1280×800 + mobile 390×844, each asserting 0 uncaught page errors, 0 unexpected console.error, horizontal overflow ≤1px (desktop −8 scrollbar gutter / mobile 0). Waits are hydration-aware so heavy streamed pages are measured fully rendered. Interactions 7/7: watchlist add→`ornscore_watchlist` persists to /watchlist; compare add→`ornscore_compare_basket`; compare `?stocks=004170,078930,055550` renders 3; StocksExplorer search 25→6 for "삼성전자" then restores; theme toggle flips html.dark + `localStorage.theme=dark`; WelcomeToast `?welcome=1` scrubbed via history.replaceState; report-form <5-char validation `[role=alert]` "신고 내용을 5자 이상 적어주세요."; analytics capture-phase click delegation error-free.
+- **Non-regressions recorded (out of scope, no fix)**: (a) /stock/[ticker] & /today stream dynamically (chunked, private/no-store) — complete correct HTML (232,758 B, h1 + all buttons) delivered, but stream holds ~4.0s in cold local env (fast TTFB ~10ms) = server-side external quote/market fetch latency in streaming Suspense; identical pre/post migration, no client error/interaction impact; request/cache-semantics = Slice C domain (already gated). (b) GET /api/disclosures/[ticker] 500 locally = DART_API_KEY unset + no sample file for that ticker; StockDisclosures shows a graceful error card (0 JS errors). Env/data-gated, pre-existing.
+- **Slice A verifier (ran as required gate)** exits 1 on exactly two pre-existing, earlier-slice-owned rows, neither React-19-interaction: (1) `baseline-freshness` STALE on 6 fields only = expected Next 14.2.13→15.5.18 / React 18.3.1→19.2.7 version drift from the Slice B migration; all other runtimeDependencies, middlewareBoundary, and 43 sourceRoutes still MATCH → every route/auth/admin contract preserved; baseline artifact refresh belongs to recert slices E/F. (2) `verify:reaudit` → Slice M methodology-audit stale, Slice F-owned (already recorded under Slice A). Not in this diff.
+- **Gates**: tsc 0 · build PASS (183 static pages, 43 routes, Middleware 90.2 kB) · smoke:check --all 25/25 OK · test:compare / test:stocks-discovery / test:compare-entry / test:freshness PASS · CDP smoke 26/26 clean · interactions 7/7 · git worktree docs-only (no source change) · U+FFFD 0.
+- **Frozen**: login/auth files, provider/callback/runtime, Supabase schema/RLS, cron, Metrics 2.4, public/data, 138-stock, analytics names, SEO URLs. Next 16 deferred. No `--force` / `npm audit fix --force` / `--legacy-peer-deps`. Package versions unchanged.
+- **Commit**: local [codex] Framework security Slice D: React 19 public-interaction compatibility (verification-only; no regression). No push · main unchanged.
