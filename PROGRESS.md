@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-17 - [codex] Framework security hardening Slice B (re-run): Next 15.5.18 + React 19 — zero critical/high
+
+- **Scope**: 설계서 `docs/ornscore-framework-security-hardening-2026-07-16.md` Slice B 만, 소유자 승인 개정 목표(**Next 15.5.18**)로 재실행. Slice C(요청/캐시 시맨틱 감사)·Slice D(React 19 컴포넌트 재작성) 미수행. 직전 HEAD `88782ef`, 브랜치 `ai-center/task-326-ornscore-framework-security-b-next-1`.
+- **패키지 이동(package.json, 2줄만)**: `next` 15.5.16→**15.5.18**(exact) · `eslint-config-next` 15.5.16→**15.5.18**(exact). React 셋은 직전 Slice B 커밋(`b4505bd`)에서 이미 상호호환 React 19 stable — 변경 불필요. **lockfile 해석(정확)**: next 15.5.18 · @next/* 15.5.18 · react **19.2.7** · react-dom **19.2.7**(동일 버전 단일 사본) · @types/react **19.2.17** · @types/react-dom **19.2.3**. lockfile 은 일반 `npm install` 로 갱신(**force/legacy-peer-deps 미사용**); React-소비 의존성(next-themes·lucide-react·@vercel/analytics·@vercel/speed-insights) peer 전부 `^19` 수용 → peer 충돌 0. lockfile diff = next/@next/*/eslint-config-next 15.5.16→15.5.18 만(48/48 균형, React·기타 churn 0).
+- **소스 변경 0**: Next 15 async request API 적응(2 파일)은 `b4505bd` 에서 이미 반영됨 → 이 재실행은 컴파일 변경 불필요. 빌드 커맨드 `next build` 유지.
+- **게이트(정확)**: `npm install` 0 · `npm ci` 0 · `npx tsc --noEmit` 0 · `npm run build` 0 (138 종목 SSG, Middleware 90.2 kB) · `git diff --check` clean · U+FFFD 스캔 0 (package.json·package-lock.json). 변경 파일 = `package.json`·`package-lock.json` 2개뿐.
+- **보안 결과(zero-high 게이트 통과)**: `npm audit --omit=dev --json` = **critical 0 / high 0 / moderate 2 / low 0 / total 2**. ✅ 직전 15.5.16 을 막던 HIGH `next` GHSA-26hh-7cqf-hhc6 (segment-prefetch bypass, `>=15.2.0 <15.5.18`) **해소**. 잔여 moderate 2건은 동일 advisory `postcss` GHSA-qx2v-qp2m-jg93 (XSS via unescaped `</style>`, `<8.5.10`) 로, next 15.5.18 내부 번들 postcss 를 `next`·`postcss` 두 노드로 계수한 것 — moderate 는 critical/high 게이트 하위이며 사전 존재 잔여. npm 이 제시하는 fixAvailable 은 next@9.3.3(다운그레이드·semver-major) 로 유효 경로 아님 → `npm audit fix --force` 미사용.
+- **verify:framework-baseline** exit 1 (6/9 gates OK), 세 실패 전부 예상/사전존재이며 불변식 회귀 아님: (1) `baseline-freshness` — drift 6줄 전부 의도된 next/react/react-dom 범프; `middlewareBoundary`·`sourceRoutes` drift = **0**. (2) `build-classification` — `/api/themes` 만 prerendered→on-demand(Next 15 GET 핸들러 기본 캐싱) — 응답 내용 불변, 의도 캐시 결정은 **Slice C**. (3) `verify:reaudit` — **사전 존재** stale `docs/methodology-audit.md`(Slice M; A–L 12/13 pass, Slice F 소관). `audit-block` = **OK**(critical/high 0). 보존 계약 PASS: verify:metrics(138 / Metrics 2.4)·verify:admin-policy(미들웨어/admin 경계)·route/click analytics·first-run-ux.
+- **동결(무변경)**: login/auth(`src/app/login`·`src/app/auth`)·Supabase provider/callback/schema/RLS·cron·public Metrics 2.4·`public/data`·138 종목 산출·analytics 이벤트명·public URL·빌드 커맨드. Next 16 유예. rollback point = `88782ef`. 단일 로컬 `[codex]` 커밋, push/deploy 없음(소유자 별도 조치).
+
 ## 2026-07-17 - [codex] Framework security target amendment: Next 15.5.18
 
 - Owner approved replacing the exact Next `15.5.16` target with exactly `15.5.18` after task #326 proved that GHSA-26hh-7cqf-hhc6 covers `>=15.2.0 <15.5.18` and leaves one production HIGH finding on 15.5.16.
