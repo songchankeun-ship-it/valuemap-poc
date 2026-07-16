@@ -38,7 +38,6 @@ export async function GET(request: NextRequest) {
     {
       id: profile.id,
       sub: profile.id,
-      email: profile.email,
       name: profile.name ?? profile.nickname,
       preferred_username: profile.nickname ?? profile.name,
       picture: profile.profile_image,
