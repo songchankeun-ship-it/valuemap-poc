@@ -56,10 +56,13 @@ const artifact = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
 // ---------------------------------------------------------------------------
 const facts = artifact.facts;
 
-// 2a. bumped runtime dependency version (the exact migration this harness guards).
+// 2a. bumped runtime dependency version (the future drift this harness guards).
+// The baseline was re-based at Slice F to the certified next 15.5.18, so the
+// probe mutates to a version that differs from the current pin to prove a future
+// bump would still be flagged.
 {
   const stale = clone(facts);
-  stale.runtimeDependencies.resolved.next = "15.5.18";
+  stale.runtimeDependencies.resolved.next = "99.99.99";
   const drift = diffFacts(stale, computeRepoFacts());
   check("§2a bumped `next` resolved version is flagged stale", drift.some((d) => d.includes("runtimeDependencies.resolved.next")));
 }
@@ -118,14 +121,18 @@ const facts = artifact.facts;
   bad2.summary = { info: 0, low: 0, moderate: 0, high: 0, critical: 1, total: 1 };
   check("§3c critical summary with no critical package is rejected", validateAuditBlock(bad2).some((e) => e.includes("critical")));
 
-  // A secret-shaped value smuggled into evidence is rejected...
+  // A secret-shaped value smuggled into evidence is rejected. Inject into the
+  // first package that carries an advisory (the re-based block's `next` finding
+  // is a via-postcss reference with no advisory object of its own).
   const bad3 = clone(artifact.productionAudit);
-  bad3.packages[0].advisories[0].source = "password=hunter2secretvalue";
+  const secretTarget = bad3.packages.find((p) => Array.isArray(p.advisories) && p.advisories.length);
+  if (secretTarget) secretTarget.advisories[0].source = "password=hunter2secretvalue";
+  else bad3.packages[0].range = "password=hunter2secretvalue";
   check("§3d secret-shaped value in evidence is rejected", validateAuditBlock(bad3).some((e) => e.includes("secret-looking")));
 
-  // ...but a plain English advisory title containing "Authorization" is NOT a
-  // false positive (the real block already carries exactly such a title).
-  check("§3e advisory title with the word 'Authorization' is not flagged", validateAuditBlock(artifact.productionAudit).length === 0);
+  // ...but the re-based block's plain-English advisory titles (security words
+  // like "XSS") are NOT false positives; the real block validates clean.
+  check("§3e real advisory titles are not flagged as secrets", validateAuditBlock(artifact.productionAudit).length === 0);
 }
 
 // ---------------------------------------------------------------------------

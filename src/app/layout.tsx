@@ -115,7 +115,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <head>
+      {/* Next 15 App Router 에서는 루트 레이아웃에 수동 <head> 를 두지 않는다(Next 문서
+       * 권장). 수동 <head> 는 Metadata API 태그(canonical·robots·description·OG/Twitter·
+       * icons)를 <body> 로 밀어내 <head> 색인 계약을 깨뜨린다. head 로 갈 태그는 Metadata
+       * API(export const metadata/viewport)가 소유하고, 아래 커스텀 노드는 <body> 최상단에
+       * 둔다: <link rel=preconnect> 는 React 19 가 <head> 로 hoist 하고, 인라인 폰트 스크립트
+       * 는 제자리에서 실행되며 런타임에 document.head 에 link 를 주입, noscript·JSON-LD 는
+       * Next 문서 권장대로 컴포넌트(본문)에서 렌더한다. */}
+      <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
         {/* Pretendard 웹폰트 — 비차단 로드(JS 주입 방식).
          * SSR 마크업에는 스타일시트 링크를 넣지 않고, 아래 인라인 스크립트가
          * media="print" 로 link 를 만든 뒤 onload 시 media='all' 로 승격한다.
@@ -155,8 +162,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-      </head>
-      <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
         {/* 키보드 사용자가 헤더/사이드바를 건너뛰고 본문으로 바로 이동.
          * body 의 첫 자식이라 Tab 첫 스톱이 된다. (SSR 한국어 고정) */}
         <a href="#main-content" className="skip-link">

@@ -332,7 +332,7 @@ export function computeBuildClassification(root = ROOT) {
     staticRoutePages,
     staticRouteCount: staticRoutePages.length,
     prerendered,
-    note: ".next manifests are regenerated each build; recorded here as the pre-migration classification evidence.",
+    note: ".next manifests are regenerated each build; recorded here as the certified route classification evidence at baseline capture.",
   };
 }
 
@@ -403,15 +403,19 @@ function generate(auditFile) {
   const artifact = {
     meta: {
       reportKind: "framework-migration-baseline",
-      slice: "A",
+      slice: "F (re-based from A)",
+      originSlice: "A",
       plan: "docs/ornscore-framework-security-hardening-2026-07-16.md",
       target: MIGRATION_TARGET,
       readOnly: true,
       capturedWith: { node: nodeVersion, npm: npmVersion },
       note:
-        "Deterministic pre-migration invariant baseline. Freshness facts (runtimeDependencies, " +
-        "middlewareBoundary, sourceRoutes) are recomputed from committed repo files and diffed by " +
-        "verify-framework-baseline.mjs; productionAudit and buildClassification are recorded evidence.",
+        "Deterministic framework invariant baseline. First captured at Slice A as the pre-migration " +
+        "freeze (Next 14.2.13 / React 18.3.1); re-based at Slice F to the certified post-migration " +
+        "invariants (Next 15.5.18 / React 19) after the migration preserved the middleware boundary and " +
+        "all source routes. Freshness facts (runtimeDependencies, middlewareBoundary, sourceRoutes) are " +
+        "recomputed from committed repo files and diffed by verify-framework-baseline.mjs; productionAudit " +
+        "and buildClassification are recorded evidence.",
     },
     facts: computeRepoFacts(),
     productionAudit: summarizeAudit(auditJson),
