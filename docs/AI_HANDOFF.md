@@ -3287,3 +3287,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-ledger PASS(9) · run/preflight/snapshot-store/compare/engine/eligibility/rollout-gate 회귀 PASS · git diff --check clean · 신규/편집 파일 U+FFFD 0 · CLI dry-run(빈 저장소→승인0·PENDING) 확인 · shadow·원장 미추적·public·docs 무변경.
 - **한계/다음**: fourZeroGate.unresolvedP0 는 2.4-vs-2.5.1 차등이 배선되기 전까지 null(합성 금지, 그 run 은 게이트 미통과 — 설계상 정상). 실제 5거래일 연속 창·차등 누적은 운영 배선(공개 승인 뒤). **다음**: 코드 큐 A–O 종료 — 이후 운영 shadow 창 배선·사람 Gate 5·소유자 Gate 6(공개 전환·effectiveMarketDate).
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice O: append-only evidence ledger + rollout-gate refresh. push 없음·main 무변경.
+
+### 2026-07-16 — Metrics 2.5.1 Slice P: 일일 shadow 운영자 상태 명령·보고서 + cp949 콘솔 안전 ([codex])
+
+- **무엇**: 설계서 §M251-D02/D07/D08/D10·§7 Gate 4·§8·§9·원안 ORN-2508 대로, 매 거래일 shadow 워크플로 운영자가 볼 **읽기 전용** 상태 명령·보고서. 기존 계약 층(Slice M preflight·D engine·E eligibility·F store·K rollout gate)을 조립만 하고 게시/계산 저장 없음(run 은 Slice N 소유). 웹 라우트 없음·새 산식 없음. 직전 HEAD `56c4597`(task 309 O), 브랜치 `ai-center/task-310-ornscore-metrics-2.5.1-p-operator-st`.
+- **신규 파일(2)**: `scripts/metrics251_operator.py`(classify_target_day·_operator_state·next_actions·build_report·render_console/markdown·report_hash·enable_utf8_console·읽기전용 CLI), `scripts/test_metrics251_operator.py`(15케이스). 수정 1: `package.json`(operator:metrics251·test:metrics251-operator). fixture 재사용(새 fixture 없음).
+- **8개 상태**: READY·ALREADY_RECORDED·MISSING_INPUT·STALE_SOURCE·CONFLICT·PARTIAL_RUN·QA_FAILED·GATE_PENDING. 우선순위(fail closed): 저장소 스캔 PARTIAL_RUN → 봉인 run 존재 시 바이트 동일=ALREADY_RECORDED/아니면 CONFLICT(덮어쓰기 금지) → preflight 버킷 MISSING_INPUT/STALE_SOURCE → 엔진 null 방어 → qa_gate QA_FAILED → READY. ALREADY_RECORDED+게이트 PENDING → operatorState=GATE_PENDING. --request 없으면 상태 전용(저장소+게이트, 기본 GATE_PENDING). 각 상태에 안전한 다음 조치 제시. 게이트는 Slice K 단일 출처(합성 금지).
+- **cp949 콘솔 안전(한글)**: enable_utf8_console() 이 인자 파싱·--help 전에 stdout/stderr 를 UTF-8 로 reconfigure(이미 UTF-8 이면 무변경·미지원 스트림 fail soft). 상태 기호(✅⏳⚠️⛔🧩📼)는 cp949 미인코딩 → 재구성 없으면 UnicodeEncodeError. 회귀 테스트가 cp949 TextIOWrapper 로 --help·보고서 출력을 실제 검증(UTF-8 round-trip).
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성·config/2.5.1.* 무변경. scripts/metrics251_operator.py 는 src import 0 → 번들 미포함·런타임/UI 불변. shadow(.metrics251-shadow) 미생성/미추적(테스트·CLI 임시 루트 사용). 상태 명령은 기본 파일 미기록(--md-out 시에만 Markdown).
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-operator PASS(15) · run/preflight/rollout-gate/ledger 회귀 PASS · git diff --check clean · 신규/편집 파일 U+FFFD 0 · CLI 상태전용(빈 저장소→GATE_PENDING ⏳) 확인 · shadow 미추적·public·docs 무변경.
+- **다음**: 코드 큐 A–P 종료 — 이후 운영 shadow 창 배선·사람 Gate 5·소유자 Gate 6(공개 전환·effectiveMarketDate). **자동화 slice 아님**.
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice P: read-only daily shadow operator status command + report + cp949-safe console. push 없음·main 무변경.
