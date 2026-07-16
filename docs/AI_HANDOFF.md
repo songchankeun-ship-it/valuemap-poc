@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-15T21:50:24.751Z
+Last updated: 2026-07-16T00:34:18.085Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,8 +21,8 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 306 - ORNScore Metrics 2.5.1 L - local recertification decision dossier
-- Run: 312
+- Task: 307 - ORNScore Metrics 2.5.1 M - one-day shadow preflight contract
+- Run: 313
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
