@@ -1,5 +1,11 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-17 - [codex] Framework security target amendment: Next 15.5.18
+
+- Owner approved replacing the exact Next `15.5.16` target with exactly `15.5.18` after task #326 proved that GHSA-26hh-7cqf-hhc6 covers `>=15.2.0 <15.5.18` and leaves one production HIGH finding on 15.5.16.
+- Updated the governing plan and Slice A verifier target only. Historical 15.5.16 migration and failure evidence remains intact. Next 16, login/auth provider behavior, public Metrics 2.4, `public/data`, 138-stock output, analytics names, outside-service settings, push, and deployment remain frozen.
+- Next: rerun Slice B to bump `next` and `eslint-config-next` to exactly `15.5.18`, regenerate the lockfile normally, and require `npm audit --omit=dev` critical/high counts of zero before Slice C proceeds.
+
 ## 2026-07-17 - [codex] Framework security hardening Slice B: Next 15.5.16 + React 19 패키지 마이그레이션 (zero-high 게이트 BLOCKED)
 
 - **Scope**: 설계서 `docs/ornscore-framework-security-hardening-2026-07-16.md` Slice B 만 — `next`·`eslint-config-next` 를 정확히 `15.5.16` 으로, `react`/`react-dom`/`@types/react`/`@types/react-dom` 를 상호호환 React 19 stable 셋으로 이동. lockfile 은 일반 `npm install` 로 갱신(force/legacy-peer-deps **미사용**). Slice C(요청/캐시 시맨틱 감사)·Slice D(React 19 컴포넌트 재작성) 미수행. 직전 HEAD `162a1ef`, 브랜치 `ai-center/task-326-ornscore-framework-security-b-next-1`.

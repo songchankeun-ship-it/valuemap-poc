@@ -4,7 +4,7 @@
 //
 // WHY THIS EXISTS
 // ---------------
-// The batch upgrades Next (14.2.13 -> 15.5.16) and React (18 -> 19) to clear the
+// The batch upgrades Next (14.2.13 -> 15.5.18) and React (18 -> 19) to clear the
 // current production `next` critical audit finding without `--force`. Before any
 // package moves, we must freeze the invariants the migration MUST preserve so a
 // later slice can prove nothing drifted:
@@ -55,9 +55,9 @@ const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(SCRIPTS_DIR, "..");
 export const BASELINE_PATH = join(ROOT, "docs", "ornscore-framework-migration-baseline-2026-07-16.json");
 
-// The migration target is bounded to Next 15.5.16 + React 19. Next 16 changes the
+// The migration target is bounded to Next 15.5.18 + React 19. Next 16 changes the
 // build default and the middleware/proxy contract and is deferred (plan §1/§5).
-export const MIGRATION_TARGET = { next: "15.5.16", react: "19", note: "Next 16 deferred (plan §5)" };
+export const MIGRATION_TARGET = { next: "15.5.18", react: "19", note: "Next 16 deferred (plan §5)" };
 
 // ---------------------------------------------------------------------------
 // small fs/json helpers
@@ -267,7 +267,7 @@ export function summarizeAudit(auditJson) {
     packages,
     note:
       "npm audit fix recommends a semver-MAJOR bump (Next 16), so `npm audit fix --force` " +
-      "is not the migration path; the batch targets Next 15.5.16 explicitly (plan §1).",
+      "is not the migration path; the batch targets Next 15.5.18 explicitly (plan §1).",
   };
 }
 

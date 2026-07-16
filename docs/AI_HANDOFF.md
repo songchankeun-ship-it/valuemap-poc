@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-16T15:09:46.341Z
+Last updated: 2026-07-16T15:45:11.884Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -22,10 +22,10 @@ Path: C:\dev\OrnScore
 ## Last AI Center Event
 
 - Task: 326 - ORNScore Framework Security B - Next 15.5.16 and React 19 migration
-- Run: 332
+- Run: 333
 - Status: failed
 - Agent: claude
-- Note: Development process exited with code 1
+- Note: Quality gate failed after 0 repair attempt(s): TESTER BLOCKED: All finite local gates pass (npm ci / tsc / build exit 0, diff & encoding clean, invariants preserved, Next 14 critical cleared), but the zero-high security gate is unmet by one post-plan HIGH advisory (GHSA-26hh-7cqf-hhc6) that covers the mandated-exact 15.5.16, an accurately documented owner-decision blocker (remedy: bump to 15.5.18).
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-17 - Codex - owner-approved Next 15.5.18 target amendment
+
+- Owner approved the security correction after task #326 demonstrated that exact Next 15.5.16 is inside GHSA-26hh-7cqf-hhc6 (`>=15.2.0 <15.5.18`).
+- The controlling plan and framework verifier now require exactly Next 15.5.18. Historical 15.5.16 evidence is preserved. Next 16 and all login/provider, Metrics 2.4, `public/data`, analytics, publication, and hosting boundaries remain frozen.
+- Requeue task #326 with the amended exact patch target, require production critical/high audit counts of zero, then continue Slices C-F only after Slice B passes.
 
 ### 2026-07-17 - Claude - Framework Security Slice B: Next 15.5.16 + React 19 migration (zero-high gate BLOCKED by post-plan advisory)
 - **Did (Slice B only)**: moved `next` 14.2.13→**15.5.16** and `eslint-config-next` ^14.2.13→**15.5.16**; moved React set to a mutually compatible React 19 stable set — lockfile resolves `react` **19.2.7** / `react-dom` **19.2.7** (same version) / `@types/react` **19.2.17** / `@types/react-dom` **19.2.3**. Lockfile updated via a normal `npm install` (NO `--force`, NO `--legacy-peer-deps`); every React-consuming dep peer accepts `^19`, zero peer conflicts in the final tree.

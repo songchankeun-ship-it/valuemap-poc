@@ -59,7 +59,7 @@ const facts = artifact.facts;
 // 2a. bumped runtime dependency version (the exact migration this harness guards).
 {
   const stale = clone(facts);
-  stale.runtimeDependencies.resolved.next = "15.5.16";
+  stale.runtimeDependencies.resolved.next = "15.5.18";
   const drift = diffFacts(stale, computeRepoFacts());
   check("§2a bumped `next` resolved version is flagged stale", drift.some((d) => d.includes("runtimeDependencies.resolved.next")));
 }

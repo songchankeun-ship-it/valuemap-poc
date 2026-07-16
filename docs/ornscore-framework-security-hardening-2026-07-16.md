@@ -12,9 +12,11 @@ The production dependency baseline is materially stale:
 - The audit's automatic recommendation is a major update. `npm audit fix
   --force` is therefore not an acceptable migration strategy.
 
-The bounded target for this batch is **Next 15.5.16 plus React 19**, not Next
-16. Next 15.5.16 is the first lower-risk supported line that clears the
-currently reported critical/high Next ranges while retaining the current
+The bounded target for this batch is **Next 15.5.18 plus React 19**, not Next
+16. The original 15.5.16 target was amended with owner approval on 2026-07-17
+after GHSA-26hh-7cqf-hhc6 established that `>=15.2.0 <15.5.18` remained HIGH.
+Next 15.5.18 is the minimum 15.5.x patch that clears the currently reported
+critical/high Next ranges while retaining the current
 `middleware` boundary. Next 16 additionally changes the build default and the
 middleware/proxy contract; that is useful later, but it is not required to
 remove the current critical finding and would unnecessarily touch the login
@@ -55,9 +57,9 @@ Every slice must preserve all of these invariants:
   baselines in deterministic repository evidence.
 - Do not change package versions in this slice.
 
-### Slice B - Next 15.5.16 and React 19 package migration
+### Slice B - Next 15.5.18 and React 19 package migration
 
-- Upgrade `next` and `eslint-config-next` to `15.5.16` and move React,
+- Upgrade `next` and `eslint-config-next` to exactly `15.5.18` and move React,
   React DOM, and their type packages to a mutually compatible React 19 stable
   set.
 - Update the lockfile through a normal npm install. Resolve peer conflicts
@@ -117,7 +119,7 @@ Every slice must preserve all of these invariants:
 
 The batch is complete only when all six slices have local commits, the queue is
 idle with no pending approval or failed run, the worktree is clean, Next is
-exactly 15.5.16, production critical/high audit findings are zero, all finite
+exactly 15.5.18, production critical/high audit findings are zero, all finite
 local gates pass, and the frozen login/Metrics/public-data boundaries are
 unchanged. Publication is not part of completion.
 
