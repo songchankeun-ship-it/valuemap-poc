@@ -24,6 +24,7 @@
     "verify:admin-traffic-metrics": "tsx scripts/verify-admin-traffic-metrics.ts",
     "verify:admin-traffic-view": "tsx scripts/verify-admin-traffic-view.ts",
     "verify:admin-resource-state": "tsx scripts/verify-admin-resource-state.ts",
+    "verify:operator-acceptance": "node scripts/verify-operator-acceptance.mjs",
     "verify:first-run-ux": "tsx scripts/verify-first-run-ux.ts",
     "verify:reaudit": "node scripts/verify-reaudit.mjs",
     "test:freshness": "tsx scripts/test_freshness.ts",

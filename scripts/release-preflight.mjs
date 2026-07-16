@@ -13,14 +13,23 @@
 // It runs the deterministic, server-INDEPENDENT gates directly:
 //   1. typecheck             npx tsc --noEmit
 //   2. verify:metrics        python scripts/verify_metrics.py   (PYTHONUTF8=1)
-//   3. verify:route-analytics  sanitized route_view_public classifier contract
-//   4. verify:click-analytics  data-analytics-event click contract
-//   5. verify:admin-traffic-metrics  future-dashboard boundary vs event map
-//   6. verify:admin-traffic-view  numeric dashboard shell view-model derivations
-//   7. verify:admin-resource-state operator diagnostics state classifier + labels
-//   8. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
-//   9. verify:reaudit        all public-reaudit source contracts (Slices A-M)
-//  10. build                 next build
+//   3. verify:admin-policy   signed-out /admin authorization contract + layer drift
+//   4. verify:route-analytics  sanitized route_view_public classifier contract
+//   5. verify:click-analytics  data-analytics-event click contract
+//   6. verify:admin-traffic-metrics  future-dashboard boundary vs event map
+//   7. verify:admin-traffic-view  numeric dashboard shell view-model derivations
+//   8. verify:admin-resource-state operator diagnostics state classifier + labels
+//   9. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
+//  10. verify:reaudit        all public-reaudit source contracts (Slices A-M)
+//  11. build                 next build
+//
+// OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
+// operator-acceptance set. `npm run verify:operator-acceptance` is the
+// operator-scoped view of these same gates (grouped by acceptance criterion)
+// plus the paired owner signed-in review matrix
+// (docs/ornscore-operator-acceptance-runbook.md). Preflight runs them inline as
+// part of full branch re-cert; the operator command runs the same gates alone
+// when you only need to accept the admin surfaces.
 //
 // The server-DEPENDENT route-health gate (smoke + verify:routes + stocks-seo +
 // public-seo + login-preflight + admin-access) is delegated to the existing
@@ -93,6 +102,7 @@ const OFFLINE_GATES = [
     shell: true,
     env: { PYTHONUTF8: "1", PYTHONIOENCODING: "utf-8" },
   },
+  { name: "verify:admin-policy", command: "npm", args: ["run", "verify:admin-policy"], shell: true },
   { name: "verify:route-analytics", command: "npm", args: ["run", "verify:route-analytics"], shell: true },
   { name: "verify:click-analytics", command: "npm", args: ["run", "verify:click-analytics"], shell: true },
   { name: "verify:admin-traffic-metrics", command: "npm", args: ["run", "verify:admin-traffic-metrics"], shell: true },
