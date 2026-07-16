@@ -1,16 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-
-const FALLBACK_ADMIN_EMAILS = ["contact@ornscore.com"];
-
-function adminEmailSet(): Set<string> {
-  const configured = (process.env.ADMIN_EMAILS ?? process.env.ORNSCORE_ADMIN_EMAILS ?? "")
-    .split(/[,\s]+/)
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-  const emails = configured.length > 0 ? configured : FALLBACK_ADMIN_EMAILS;
-  return new Set(emails.map((email) => email.toLowerCase()));
-}
+import { adminDecision, isAdminRoute } from "@/lib/adminPolicy";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -39,16 +29,15 @@ export async function middleware(request: NextRequest) {
   const { data } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isAdminRoute = path === "/admin" || path.startsWith("/admin/");
-  if (isAdminRoute) {
-    const email = data.user?.email?.trim().toLowerCase();
-    if (!email) {
+  if (isAdminRoute(path)) {
+    const decision = adminDecision(data.user?.email);
+    if (decision === "redirect-login") {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = `?next=${encodeURIComponent(path + request.nextUrl.search)}`;
       return NextResponse.redirect(loginUrl);
     }
-    if (!adminEmailSet().has(email)) {
+    if (decision === "forbidden") {
       return new NextResponse("Forbidden", {
         status: 403,
         headers: {

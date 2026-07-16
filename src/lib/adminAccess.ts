@@ -1,23 +1,24 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import {
+  FALLBACK_ADMIN_EMAILS,
+  adminDecision,
+  adminEmailSet,
+  normalizeAdminEmail,
+} from "@/lib/adminPolicy";
 
-export const FALLBACK_ADMIN_EMAILS = ["contact@ornscore.com"];
-
-export function adminEmailSet(): Set<string> {
-  const configured = (process.env.ADMIN_EMAILS ?? process.env.ORNSCORE_ADMIN_EMAILS ?? "")
-    .split(/[,\s]+/)
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-  const emails = configured.length > 0 ? configured : FALLBACK_ADMIN_EMAILS;
-  return new Set(emails.map((email) => email.toLowerCase()));
-}
+// Re-export the shared allow-list surface so existing importers of these names
+// from `@/lib/adminAccess` keep working; the definitions now live in the single
+// shared contract (`@/lib/adminPolicy`) that the Edge middleware also uses.
+export { FALLBACK_ADMIN_EMAILS, adminEmailSet };
 
 export async function requireAdminAccess(nextPath: string): Promise<{ email: string; allowed: boolean }> {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
-  const email = data.user?.email?.trim().toLowerCase();
-  if (!email) {
+  const email = normalizeAdminEmail(data.user?.email);
+  const decision = adminDecision(data.user?.email);
+  if (decision === "redirect-login") {
     redirect(`/login?next=${encodeURIComponent(nextPath)}`);
   }
-  return { email, allowed: adminEmailSet().has(email) };
+  return { email, allowed: decision === "allow" };
 }
