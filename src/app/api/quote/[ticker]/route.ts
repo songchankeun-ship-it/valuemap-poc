@@ -8,9 +8,10 @@ const NAVER = (code: string) =>
 
 export async function GET(
   _req: Request,
-  { params }: { params: { ticker: string } },
+  { params }: { params: Promise<{ ticker: string }> },
 ) {
-  const code = (params.ticker || "").replace(/[^0-9A-Za-z]/g, "");
+  const { ticker } = await params;
+  const code = (ticker || "").replace(/[^0-9A-Za-z]/g, "");
   if (!code) {
     return NextResponse.json({ ok: false, error: "no ticker" }, { status: 400 });
   }

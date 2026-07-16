@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-16T14:58:02.072Z
+Last updated: 2026-07-16T15:09:46.341Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 325 - ORNScore Framework Security A - baseline and invariant harness
-- Run: 329
-- Status: completed
+- Task: 326 - ORNScore Framework Security B - Next 15.5.16 and React 19 migration
+- Run: 332
+- Status: failed
 - Agent: claude
-- Note: Slice A completed in commit d052eae with exit code 0 and green owned gates. AI Center status was repaired after the global $5 task cap produced a post-success operational false failure at $5.2975.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-17 - Claude - Framework Security Slice B: Next 15.5.16 + React 19 migration (zero-high gate BLOCKED by post-plan advisory)
+- **Did (Slice B only)**: moved `next` 14.2.13→**15.5.16** and `eslint-config-next` ^14.2.13→**15.5.16**; moved React set to a mutually compatible React 19 stable set — lockfile resolves `react` **19.2.7** / `react-dom` **19.2.7** (same version) / `@types/react` **19.2.17** / `@types/react-dom` **19.2.3**. Lockfile updated via a normal `npm install` (NO `--force`, NO `--legacy-peer-deps`); every React-consuming dep peer accepts `^19`, zero peer conflicts in the final tree.
+- **Minimal compile changes required by the transition (2 files)**: Next 15's async request API makes route/image `params` a `Promise`; the `next build` type gate failed only on the two remaining sync-`params` files. Converted `src/app/api/quote/[ticker]/route.ts` and `src/app/stock/[ticker]/opengraph-image.tsx` to `params: Promise<…>` + `await params` (the same pattern already used everywhere else, e.g. `api/disclosures/[ticker]`). Behavior identical (values unchanged, just awaited). `src/app/login` and `src/app/auth` untouched.
+- **Gates (exact)**: `npm install` 0 · `npm ci` 0 · `npx tsc --noEmit` 0 · `npm run build` 0 (Next 15.5.16, build command `next build` kept) · `git diff --check` clean · U+FFFD scan 0 on changed text files.
+- **verify:framework-baseline** exit 1, but all three failing gates are expected / pre-existing, NOT invariant regressions: (1) `baseline-freshness` — all 6 drift lines are the intended next/react/react-dom bump; `middlewareBoundary` + `sourceRoutes` drift = **0**. (2) `build-classification` — one route `/api/themes` moved prerendered→on-demand (Next 15 GET-handler default caching); response content unchanged; the intentional-cache decision is **Slice C**. (3) `verify:reaudit` — fails only on the **pre-existing** stale `docs/methodology-audit.md` (Slice M; A–L pass 12/13); neither that doc nor its generator is in this diff. Preserved contracts: verify:metrics (138 / Metrics 2.4), verify:admin-policy (middleware/admin boundary), route/click analytics, first-run-ux — all PASS.
+- **Security outcome + BLOCKER (honest)**: `npm audit --omit=dev` = **critical 0 / high 1 / moderate 1**. ✅ The Next 14 **critical** (middleware auth-bypass GHSA-f82v-jwr5-mffw) is cleared — the batch's primary goal. ⛔ One **HIGH remains**: `next` GHSA-26hh-7cqf-hhc6 (segment-prefetch middleware/proxy bypass, range `>=15.2.0 <15.5.18`, fixed in 15.5.18) — a **new advisory published after the 2026-07-16 plan** that now covers 15.5.16. The task's "exactly 15.5.16" and "critical/high must be zero" therefore conflict; per the escape hatch I held 15.5.16 and document the blocker (owner was asked and did not choose the bump). Residual moderate: `postcss@8.4.31` bundled inside `next` (persists at 15.5.18/20 too, but is moderate).
+- **Recommended remedy (OWNER decision)**: bump `next`/`eslint-config-next` to **15.5.18** (or line-latest **15.5.20**) — stays on the 15.5.x line so **Next 16 remains deferred** and no frozen boundary is touched, and it clears the HIGH. Do NOT use `npm audit fix --force` (forbidden flag; it would force next@15.5.20). After the bump, re-run `npm ci` + `npm audit --omit=dev` to confirm zero critical/high, then proceed to Slice C.
+- **Frozen (unchanged)**: login/auth, Supabase provider/callback/schema/RLS, cron, public Metrics 2.4, `public/data`, 138-stock output, analytics event names, public URLs, build command. Next 16 deferred. Single local `[codex]` commit; not pushed, no deploy.
 
 ### 2026-07-16 - Codex - framework security hardening queue design
 

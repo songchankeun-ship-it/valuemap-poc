@@ -1,5 +1,25 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-17 - [codex] Framework security hardening Slice B: Next 15.5.16 + React 19 패키지 마이그레이션 (zero-high 게이트 BLOCKED)
+
+- **Scope**: 설계서 `docs/ornscore-framework-security-hardening-2026-07-16.md` Slice B 만 — `next`·`eslint-config-next` 를 정확히 `15.5.16` 으로, `react`/`react-dom`/`@types/react`/`@types/react-dom` 를 상호호환 React 19 stable 셋으로 이동. lockfile 은 일반 `npm install` 로 갱신(force/legacy-peer-deps **미사용**). Slice C(요청/캐시 시맨틱 감사)·Slice D(React 19 컴포넌트 재작성) 미수행. 직전 HEAD `162a1ef`, 브랜치 `ai-center/task-326-ornscore-framework-security-b-next-1`.
+- **패키지 이동(package.json)**: `next` 14.2.13→15.5.16 · `eslint-config-next` ^14.2.13→15.5.16 · `react`/`react-dom` ^18.3.1→^19.2.0 · `@types/react` ^18.3.11→^19.2.0 · `@types/react-dom` ^18.3.0→^19.2.0. **lockfile 해석(정확)**: next 15.5.16 · react 19.2.7 · react-dom 19.2.7(동일 버전) · @types/react 19.2.17 · @types/react-dom 19.2.3 · postcss(dev) 8.5.15. react/react-dom 단일 사본(19.2.7)만 존재. React-소비 의존성 전부(next-themes·lucide-react·@vercel/analytics·@vercel/speed-insights) peer 가 `^19` 수용 → peer 충돌 0(설치 중 npm ERESOLVE 로그는 18→19 스왑 과도기 경고이며 최종 트리는 clean).
+- **마이그레이션 필수 컴파일 변경(2파일, 최소)**: Next 15 async request API 계약상 route/image 의 `params` 가 `Promise`. `npm run build` 타입게이트가 두 잔여 sync-params 파일에서만 실패(나머지 page/route 예: `api/disclosures/[ticker]` 는 이미 `Promise` params). 최소 수정: `src/app/api/quote/[ticker]/route.ts` · `src/app/stock/[ticker]/opengraph-image.tsx` → `params: Promise<…>` + `await params`(코드베이스 전반이 쓰는 동일 패턴). 응답/상태/로직 무변경(값 동일, await 만 추가). login/auth 표면 미접촉.
+- **게이트(정확한 결과)**: `npm install` exit 0 · `npm ci` exit 0(lockfile 재현) · `npx tsc --noEmit` exit 0 · `npm run build` exit 0(Next 15.5.16, 라우트표 정상, 빌드 명령 `next build` 유지) · `git diff --check` clean · U+FFFD 스캔 0(변경 텍스트 4파일).
+- **verify:framework-baseline(Slice A 검증기) — 정확한 판정**: exit 1, 단 세 실패 모두 **불변식 회귀 아님**:
+  1. `baseline-freshness` FAIL — drift 6건 **전부 의도된 의존성 범프**(next/react/react-dom, declared+resolved). `middlewareBoundary`·`sourceRoutes` drift **0** → 미들웨어 경계·라우트 인벤토리 보존.
+  2. `build-classification` FAIL — 단 1개 라우트 `/api/themes` 가 prerendered→on-demand(Next 15 GET Route Handler 기본 캐시 변경). 응답 내용 무변경. **의도적 캐시 결정은 Slice C 소관**.
+  3. `verify:reaudit` FAIL — **Slice M(methodology-audit) 선재 stale 만**(A–L 12/13 PASS). `docs/methodology-audit.md`·`scripts/methodology_audit.py` 이 슬라이스 미접촉 → 미변경 HEAD 동일(PROGRESS 반복 기록).
+  보존 확인 계약: audit-block OK · verify:metrics OK(138종목·Metrics 2.4) · verify:admin-policy OK(미들웨어/관리자 경계) · verify:route-analytics·click-analytics·first-run-ux OK · reaudit A–L OK.
+- **보안 결과 & BLOCKER(정직)**: `npm audit --omit=dev` = critical **0** / high **1** / moderate 1 / low 0 (total 2).
+  - ✅ **Critical 제거**: Next 14 의 critical(미들웨어 인가 우회 GHSA-f82v-jwr5-mffw) 해소 — 배치 1차 목표 달성.
+  - ⛔ **잔여 HIGH — zero-high 게이트 BLOCKED**: `next` GHSA-26hh-7cqf-hhc6 "Middleware/Proxy bypass via segment-prefetch (Incomplete Fix Follow-Up)", range `>=15.2.0 <15.5.18`, 15.5.18 에서 해소. **설계서 작성(2026-07-16) 이후 공개된 신규 권고**라 15.5.16 을 포함. 명령의 "정확히 15.5.16" 과 "critical/high=0" 이 이 신규 권고로 **충돌** → 이스케이프 해치("slice must fail and document the blocker")에 따라 문서화. (사전 오너 확인 시도했으나 미응답 → 명령대로 15.5.16 고수 + 블로커 문서화 선택.)
+  - 잔여 moderate: `next` 내부 고정 `postcss@8.4.31`(<8.5.10). 15.5.18/20 도 postcss 8.4.31 고정이라 지속되나 **moderate**(critical/high 아님). 도달성: next 빌드타임 CSS stringify — 앱 정상 경로에 공격자 제어 CSS stringify 없음.
+  - **권고 remedy(오너 결정)**: `next`/`eslint-config-next` 를 **15.5.18**(또는 라인 최신 15.5.20)로 상향 — 15.5.x 유지라 **Next 16 계속 유보**, 모든 frozen 경계 무영향, high 해소. `npm audit fix --force`(next@15.5.20 강제 안내)는 **금지 플래그**라 미사용.
+- **불변식(무변경)**: login/auth(`src/app/login`·`src/app/auth`) 미편집 · Supabase provider/callback/schema/RLS · cron · public Metrics 2.4 · public/data · 138종목 산출 · analytics 이벤트명 · 공개 URL · 빌드 명령(`next build`) 유지. Next 16 유보.
+- **worktree/커밋**: 변경 5파일(package.json·package-lock.json·quote route·opengraph-image·docs/AI_HANDOFF.md[AI Center managed block 선재 변경 보존 + Manual Notes 추가]). 단일 로컬 `[codex]` 커밋. push/deploy 없음.
+- **다음 진입점**: 오너가 15.5.18 상향 승인 → 재-install/audit 로 zero-high 확정 후 Slice C(요청/캐시 시맨틱: `/api/themes` 등 GET 핸들러 캐시 의도 명시)·Slice D(React 19 상호작용 QA)·E/F.
+
 ## 2026-07-16 - [codex] Framework security hardening queue design
 
 - Current production audit evidence: Next 14.2.13 has a direct critical finding; `npm audit --omit=dev --json` reports 2 production findings total (critical Next + transitive moderate PostCSS).
