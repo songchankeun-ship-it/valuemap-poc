@@ -1,0 +1,15 @@
+{
+  "description": "Metrics 2.5.1 Slice M — base valid preflight request for one explicitly dated market-day shadow run. Deterministic static evidence (no wall clock / no network). The engine `config` and the pinned `expected` hashes are injected/derived by the test from the real config bytes; this fixture pins only the dated inputs (marketDate, source dates, universe). Source dates are as-of the market-day close (prices/volumes == marketDate); fundamentals lag is allowed (<= marketDate).",
+  "marketDate": "2026-07-15",
+  "sourceDates": {
+    "prices": "2026-07-15",
+    "volumes": "2026-07-15",
+    "fundamentals": "2026-07-13"
+  },
+  "stocks": [
+    {"ticker": "000100", "prices": [10.0, 10.2, 10.1, 10.4, 10.6], "volumes": [1000, 1100, 900, 1200, 1300], "per": 8.5, "pbr": 0.9},
+    {"ticker": "000200", "prices": [20.0, 19.8, 20.4, 20.1, 20.7], "volumes": [2000, 1800, 2200, 2100, 2400], "per": 12.0, "pbr": 1.4},
+    {"ticker": "000300", "prices": [5.0, 5.1, 5.2, 5.15, 5.3], "volumes": [500, 620, 480, 700, 660], "per": 6.2, "pbr": 0.7},
+    {"ticker": "000400", "prices": [42.0, 41.5, 42.8, 43.1, 42.6], "volumes": [3000, 2800, 3200, 3100, 3300], "per": 22.0, "pbr": 2.1}
+  ]
+}
