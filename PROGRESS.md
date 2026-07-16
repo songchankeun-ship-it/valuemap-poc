@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-16 - [codex] Metrics 2.5.1 Slice R (repair): worktree EOL churn on regenerated rollout-gate docs
+
+- **Blocking issue (quality-gate fail)**: the reviewer's verification re-ran the docs-writing rollout-gate generator (`npm run rollout:metrics251` / `scripts/metrics251_rollout_gate.py` main, §6.2 step 4 of the runbook), which rewrites `docs/metrics-2.5.1-rollout-gate.{json,md}` with `newline="
+"` (deterministic LF, keeps report/canonical hashes byte-stable). Under `core.autocrlf=true` git expects CRLF on checkout, so a freshly-regenerated LF file shows as **modified** even though the committed blob is byte-identical — a phantom change (empty `git diff`, `git hash-object` == HEAD blob, "LF will be replaced by CRLF" warning). That dirtied the worktree mid-review → safe fail.
+- **Root cause**: no `.gitattributes` existed; the four metrics docs the shadow tooling regenerates deterministically as LF (`metrics-2.5.1-rollout-gate.{json,md}`, `metrics-2.5.1-baseline.{json,md}`) had no EOL pin, so any regeneration churned the tree under autocrlf.
+- **Fix (minimal)**: added `.gitattributes` pinning exactly those four generated paths to `text eol=lf` so git's checkout expectation matches the generators' LF output — regeneration is now churn-free. `git add --renormalize` on the four paths; **no content change** to any file (blob ids identical to HEAD: rollout-gate.json `bd4361c1…`, .md `95d69817…`, baseline.json `fd3d1ed4…`, .md `0d822378…`). No script/config/public/data/`src/` change.
+- **Durability proof**: re-ran `python scripts/metrics251_rollout_gate.py` (the exact command that dirtied the tree) → `git status` stays clean, report hash `2dee648a5636…` (matches dossier §3). Full re-verification: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 verify_metrics.py` 138/0 errors/0 banned/Metrics 2.4 · focused contracts rollout-gate(19)/preflight(13)/run(11)/ledger(9)/operator(15)/e2e(5) all PASS · `git diff --check` clean · U+FFFD 0 on `.gitattributes` · `.metrics251-shadow` still absent.
+- **Honesty preserved**: rollout gate still `status:PENDING` · `actualRuns:0` · `rolloutCandidate:false` · `blockingReasons:[INSUFFICIENT_REAL_RUNS]`. `public/data/stocks.json` blob `f2243814819c…` and `src/lib/metrics.ts` blob `8d217ca5ab7a…` unchanged. No push/deploy/public switch.
+- **Commit**: single local `[codex]` commit (repair). main untouched.
+
 ## 2026-07-16 - [codex] Metrics 2.5.1 Slice R: 운영 층(M–Q) 재인증 + 비공개 운영자 핸드오프/런북
 
 - **Scope**: 설계서 `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §M251-D02(5일 AND 게이트)·§M251-D07(원자적·불변 승격)·§M251-D08(운영/공개 상태 분리)·§M251-D10(비공개 자산)·§7 Gate 4/5/6 만. 운영 층 **Slice M–Q**(preflight·원자적 run·증거 원장·운영자 상태·종단 fault matrix)를 **재인증**하고, 실제 거래일 shadow run 을 소유자 승인 뒤 그대로 착수할 수 있는 **비공개 운영자 핸드오프 + 런북**을 생성한다. 새 산식/게이트/런타임 코드 없음 — 문서 1건 + 재인증 실행뿐(선행 Slice L 도시에의 운영 층 대응물). 직전 HEAD `fefb9b9`(Slice Q), 브랜치 `ai-center/task-312-ornscore-metrics-2.5.1-r-local-opera`. 공개 Metrics 2.4 런타임·public/data 무변경.

@@ -1,0 +1,11 @@
+# Metrics 2.5.1 shadow tooling regenerates these docs deterministically with LF
+# (scripts write with newline="\n" so report/canonical hashes stay byte-stable
+# across platforms). Under core.autocrlf=true git would otherwise expect CRLF on
+# checkout and flag a re-generated LF file as "modified" even though the committed
+# blob is byte-identical — a phantom change that dirties the worktree during
+# verification. Pin these exact generated paths to LF so re-running the generators
+# is churn-free.
+docs/metrics-2.5.1-rollout-gate.json text eol=lf
+docs/metrics-2.5.1-rollout-gate.md   text eol=lf
+docs/metrics-2.5.1-baseline.json     text eol=lf
+docs/metrics-2.5.1-baseline.md       text eol=lf
