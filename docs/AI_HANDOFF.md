@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-16 - Codex - framework security hardening queue design
+
+- `npm audit --omit=dev --json` found 2 production findings on the current Next 14.2.13 baseline, including one direct critical Next finding.
+- Added `docs/ornscore-framework-security-hardening-2026-07-16.md` as the controlling A-F plan. Target is Next 15.5.16 + React 19; Next 16 is deliberately deferred until the pending Naver review/login boundary is closed.
+- The batch freezes Naver/Supabase provider settings and login behavior, public Metrics 2.4, `public/data`, 138-stock output, analytics names, outside-service settings, push, and deployment.
+- Next agent entry: execute Slice A only, then continue in strict order through Slice F. Each slice must leave one local `[codex]` commit and exact validation evidence.
+
 ### 2026-07-16 - Claude - Analytics Ops FULL RE-CERTIFICATION (Slice S–W / task #313–#317) [task 318]
 - **Scope**: re-certify the five Analytics Ops batches (S `2f3af51` · T `b7c13f1` · U `09c9926` · V `060771c` · W `f25861a`) **as one unit**. No code change — only docs (this note + PROGRESS.md) and one `[codex]` closeout commit. The whole batch range `2f3af51^..f25861a` touched **19 files, ZERO under `public/`**: docs 3 · `package.json` · 5 verifier scripts + release-preflight · `src/app/admin/{status,traffic,users}` · `src/lib/admin{Policy,Access,ResourceState,TrafficMetrics,TrafficView}` · `src/middleware.ts`. Branch `ai-center/task-318-ornscore-analytics-ops-x-local-recer`, HEAD `2b9b60b`.
 - **Five invariants re-verified (all hold)**:

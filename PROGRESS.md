@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-16 - [codex] Framework security hardening queue design
+
+- Current production audit evidence: Next 14.2.13 has a direct critical finding; `npm audit --omit=dev --json` reports 2 production findings total (critical Next + transitive moderate PostCSS).
+- Decision: target Next 15.5.16 + React 19 first. Defer Next 16 because it adds build/proxy changes that are not required to remove the current critical finding and would touch the authentication boundary while Naver review is pending.
+- Governing plan: `docs/ornscore-framework-security-hardening-2026-07-16.md`, six ordered slices A-F (baseline, package migration, request/cache semantics, React 19 interaction QA, security regression, final recertification).
+- Frozen: Naver/Supabase provider and login behavior, public Metrics 2.4, `public/data`, 138-stock output, analytics names, external settings, push/deploy.
+- Next: enqueue the six local repository slices in AI Dev Center with Claude, planner/fallback off, quality gates on, then run them sequentially.
+
 ## 2026-07-16 - [codex] Analytics Ops 전수 재인증 (Slice S–W / task #313–#317) [task 318]
 
 - **Scope**: Analytics Ops 다섯 배치(S `2f3af51`·T `b7c13f1`·U `09c9926`·V `060771c`·W `f25861a`)를 **하나의 단위로 재인증**. 코드 변경 없음(문서 2개 + 이 항목만). 전 배치 범위 `2f3af51^..f25861a` 의 변경 파일은 docs 3 · `package.json` · `scripts/` 검증기 5 + release-preflight · `src/app/admin/{status,traffic,users}` · `src/lib/admin{Policy,Access,ResourceState,TrafficMetrics,TrafficView}` · `src/middleware.ts` — **총 19개, public/ 파일 0개**. 브랜치 `ai-center/task-318-ornscore-analytics-ops-x-local-recer`, HEAD `2b9b60b`.
