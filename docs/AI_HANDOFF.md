@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-16T01:50:08.924Z
+Last updated: 2026-07-16T01:50:30.560Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 311 - ORNScore Metrics 2.5.1 Q - end-to-end fault matrix
-- Run: 317
-- Status: completed
+- Task: 312 - ORNScore Metrics 2.5.1 R - local operations recertification
+- Run: 318
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-16 - Claude - Metrics 2.5.1 Slice R: operations-layer (M–Q) recertification + private operator runbook
+- **Scope**: amendment `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §M251-D02 (five-day AND gate) · §M251-D07 (atomic/immutable promotion) · §M251-D08 (ops vs public status split) · §M251-D10 (private assets) · §7 Gate 4/5/6 only. **Recertifies the operations layer (Slices M–Q)** — preflight, atomic run, evidence ledger, operator status, end-to-end fault matrix — and produces the **private operator handoff + runbook** that lets an owner-approved real trading-day shadow run start as-is. No new formula/gate/runtime code — one doc + recertification runs (the ops-layer counterpart to the Slice L dossier). Prior HEAD `fefb9b9` (Slice Q), branch `ai-center/task-312-ornscore-metrics-2.5.1-r-local-opera`. Public Metrics 2.4 runtime and `public/data` unchanged.
+- **New file (1)**: `docs/metrics-2.5.1-operations-runbook.md` — (§2) recertification result tables for the full A–K + M–Q focused contracts, (§3) **Git blob identity** proof of Metrics 2.4 invariance, (§4) M–Q ops-layer structure summary, (§5) private evidence location, (§6) **canonical command sequence for a later authorized real market-day run** (operator READY → run → ledger → rollout, repeated over five trading days with the four-zero window), (§7) remaining human/owner decisions (listed only), (§8) genuine-run gate + honesty contract, (§9) diff/encoding hygiene. Modified: `PROGRESS.md` + this file. No code/config/public/data/`src/` change.
+- **Metrics 2.4 invariance (Git blob identity)**: `public/data/stocks.json` blob id `f2243814819cbcbc2255a3e9f213012149fc78e3` is **identical** across `6ce642e` (pre-A–K) → `63a748f` (L) → `fefb9b9` (HEAD) → working tree. Committed blob sha256 `c225c09a86f5a595…` matches the L dossier. `src/lib/metrics.ts` blob id `8d217ca5ab7a…` identical across all of M–Q. `git diff --stat 59a675e HEAD -- public/` and `-- src/` both empty → batch M–Q touched 0 public/source files.
+- **Recertification gates (all pass)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 verify_metrics.py` 138/0 errors/0 banned/Metrics 2.4 · A–K battery (config:check · config · baseline · primitives · engine · eligibility · snapshot-store · compare · replay · projection · contract:check · contracts · rollout-gate) all PASS · **M–Q battery (preflight · run · ledger · operator · e2e) all PASS** · live `operator:metrics251 --json` = `GATE_PENDING` / `actualRuns:0` / `rolloutCandidate:false` (read-only — `.metrics251-shadow` still not created afterward) · `git diff --check` clean · U+FFFD 0 on 3 new/edited files.
+- **Honesty (releaseReady/actualRuns)**: rollout gate `status:PENDING` / `actualRuns:0` / `blockingReasons:[INSUFFICIENT_REAL_RUNS]` / `rolloutCandidate:false` — derived from the real store only, never synthesized. `.metrics251-shadow` not created (real five-day runs still 0). The Slice Q genuine-run gate keeps rejecting synthetic-marker artifacts.
+- **Invariants (unchanged)**: four-factor formulas · metricsVersion 2.4 · public/data (stocks.json blob unchanged) · universe 138 · public routes/SEO · auth/Supabase/RLS · cron · deps unchanged. `config/2.5.1.*` (configHash 7bf1e3a1f989…) untouched. New file is docs-only (imported by no code).
+- **Residual risk**: (1) the runbook is a canonical record of the command sequence and **does not start any real trading-day run** (owner Gate 6 approval + `effectiveMarketDate` required; never fabricate the five days, §M251-D02). (2) `releaseReady=false` root cause is 0 real shadow windows — resolved only by operational input. (3) wiring real KRX 138-name inputs, source-date pin policy, and the trading-day calendar into ops is owner-gated with permission/regression review (§M251-D10). (4) human decisions (§7) are listed, not performed.
+- **Commit**: single local `[codex]` commit (not pushed; main untouched). **Next**: code queue **A–R is locally complete**; remaining tracks are ops (wire + run the real trading-day shadow pipeline per §6 runbook), human (Gate 5 review), owner (Gate 6 public approval). No push/deploy/public switch.
 
 ### 2026-07-16 - Claude - Metrics 2.5.1 Slice Q: end-to-end fixture fault matrix + synthetic-marker genuine-run gate
 - **Scope**: amendment `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §M251-D02 (five-day AND gate) · §M251-D07 (atomic/immutable promotion) · §M251-D10 (private assets) · §7 Gate 4 · §8 · §9 · original tickets ORN-2503/2508 only. Drives the **complete preflight (M) → run (N: engine D · eligibility E · compare G · store F) → rollout gate (K)** workflow through one **finite fixture-based fault matrix**. **Reuses existing contract layers only** (no new formula/gate). Pure, deterministic, standard-library only. Prior HEAD `6b2fa99` (Slice P), branch `ai-center/task-311-ornscore-metrics-2.5.1-q-end-to-end-`. Public Metrics 2.4 runtime and `public/data` unchanged.

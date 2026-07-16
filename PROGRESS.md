@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-16 - [codex] Metrics 2.5.1 Slice R: 운영 층(M–Q) 재인증 + 비공개 운영자 핸드오프/런북
+
+- **Scope**: 설계서 `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §M251-D02(5일 AND 게이트)·§M251-D07(원자적·불변 승격)·§M251-D08(운영/공개 상태 분리)·§M251-D10(비공개 자산)·§7 Gate 4/5/6 만. 운영 층 **Slice M–Q**(preflight·원자적 run·증거 원장·운영자 상태·종단 fault matrix)를 **재인증**하고, 실제 거래일 shadow run 을 소유자 승인 뒤 그대로 착수할 수 있는 **비공개 운영자 핸드오프 + 런북**을 생성한다. 새 산식/게이트/런타임 코드 없음 — 문서 1건 + 재인증 실행뿐(선행 Slice L 도시에의 운영 층 대응물). 직전 HEAD `fefb9b9`(Slice Q), 브랜치 `ai-center/task-312-ornscore-metrics-2.5.1-r-local-opera`. 공개 Metrics 2.4 런타임·public/data 무변경.
+- **신규 파일(1)**: `docs/metrics-2.5.1-operations-runbook.md` — (§2) A–K + M–Q 전 focused 계약 재인증 결과표, (§3) **Git blob 동일성**으로 공개 Metrics 2.4 무변경 증명, (§4) M–Q 운영 층 구조 요약, (§5) 비공개 증거 위치, (§6) **실제 시장일 run 정본 명령 시퀀스**(operator READY→run→ledger→rollout, 5거래일 반복·4-zero 창), (§7) 남은 사람/소유자 결정(나열만), (§8) genuine-run 게이트·정직성 계약, (§9) diff/인코딩 위생.
+- **수정 파일**: `PROGRESS.md`(본 항목)·`docs/AI_HANDOFF.md`(Manual Notes 항목). 코드·config·public/data·`src/` 무변경.
+- **Metrics 2.4 무변경 증명(Git blob 동일성)**: `public/data/stocks.json` blob id `f2243814819cbcbc2255a3e9f213012149fc78e3` 가 `6ce642e`(A–K 이전)→`63a748f`(L)→`fefb9b9`(HEAD)→작업트리에서 **전부 동일**. 커밋 바이트 sha256 `c225c09a86f5a595…`(L 도시에 기록과 일치). `src/lib/metrics.ts` blob id `8d217ca5ab7a…` M–Q 전 구간 동일. `git diff --stat 59a675e HEAD -- public/`·`-- src/` 둘 다 빈 출력 → 배치 M–Q 는 공개/소스 파일 0건 변경.
+- **재인증 게이트(전부 통과)**: `npx tsc --noEmit` 0 · `PYTHONUTF8=1 verify_metrics.py` 138·오류0·금칙0·Metrics 2.4 · A–K 배터리(config:check·config·baseline·primitives·engine·eligibility·snapshot-store·compare·replay·projection·contract:check·contracts·rollout-gate) 전부 PASS · **M–Q 배터리(preflight·run·ledger·operator·e2e) 전부 PASS** · 라이브 `operator:metrics251 --json` = `GATE_PENDING`·`actualRuns:0`·`rolloutCandidate:false`(읽기 전용 — 실행 후 `.metrics251-shadow` 미생성 확인) · `git diff --check` clean · 신규/편집 3파일 U+FFFD 0.
+- **정직성(releaseReady/actualRuns)**: 롤아웃 게이트 `status:PENDING`·`actualRuns:0`·`blockingReasons:[INSUFFICIENT_REAL_RUNS]`·`rolloutCandidate:false` — 실측 저장소에서만 파생, 합성 안 함. `.metrics251-shadow` 미생성(실제 5거래일 run 0). genuine-run 게이트(Slice Q)가 합성마커 산출물을 계속 거부.
+- **불변식**: 4지표 점수식·metricsVersion(2.4)·public/data(stocks.json blob 불변)·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·배포·의존성 무변경. `config/2.5.1.*`(configHash 7bf1e3a1f989…) 미수정. 신규 파일은 docs 전용(코드 import 0).
+- **한계/리스크**: (1) 런북은 명령 시퀀스의 정본 기록일 뿐 **실제 거래일 run 을 착수하지 않는다**(Gate 6 소유자 승인·`effectiveMarketDate` 지정 전제, 5거래일 조작 금지 §M251-D02). (2) `releaseReady=false`의 근본은 실제 shadow 창 0 — 운영 입력으로만 해소. (3) 실제 KRX 138종목 입력·소스일 pin 정책·거래일 캘린더의 운영 배선은 권한 회귀 검증과 함께 별도(§M251-D10). (4) 사람 결정(§7)은 나열만 하고 수행하지 않았다.
+- **다음 진입점**: **코드 큐 A–R 로컬 완결.** 이후 운영(§6 런북 순서로 실제 거래일 run 배선·착수)·사람(Gate 5 검수)·소유자(Gate 6 공개 승인). push/deploy/public switch 없음.
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice R: operations-layer recertification + private operator runbook. push 없음·main 무변경.
+
 ## 2026-07-16 - [codex] Metrics 2.5.1 Slice Q: end-to-end fault matrix (preflight→run→게이트)
 
 - **Scope**: 설계서 `docs/ornscore-metrics-v2.5.1-amendment-2026-07-15.md` §M251-D02(5일 AND 게이트)·§M251-D07(원자적·불변 승격)·§M251-D10(비공개 자산)·§7 Gate 4·§8·§9·원안 ORN-2503/2508 만. **preflight(M)→run(N: 엔진 D·자격 E·비교 G·저장소 F)→롤아웃 게이트(K)** 의 완전한 워크플로를 하나의 **유한한 fixture 기반 fault matrix** 로 종단 실행한다. 기존 계약 층을 **재사용만** 한다(새 산식/게이트 없음). 순수·결정적·표준 라이브러리 전용. 직전 HEAD `6b2fa99`(Slice P), 브랜치 `ai-center/task-311-ornscore-metrics-2.5.1-q-end-to-end-`. 공개 Metrics 2.4 런타임·public/data 무변경.
