@@ -65,6 +65,8 @@
     "test:metrics251-ledger": "python scripts/test_metrics251_ledger.py",
     "operator:metrics251": "python scripts/metrics251_operator.py",
     "test:metrics251-operator": "python scripts/test_metrics251_operator.py",
+    "e2e:metrics251": "python scripts/metrics251_e2e_matrix.py",
+    "test:metrics251-e2e": "python scripts/test_metrics251_e2e_matrix.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
