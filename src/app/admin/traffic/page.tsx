@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Eye,
   FileWarning,
+  Gauge,
   GitCompare,
   ListChecks,
   Route,
@@ -16,6 +17,20 @@ import {
   UserPlus,
 } from "lucide-react";
 import { requireAdminAccess } from "@/lib/adminAccess";
+import {
+  SAMPLE_TRAFFIC_METRICS_FIXTURE,
+  createFixtureTrafficMetricsProvider,
+  isTrafficMetricsReady,
+  notConfiguredTrafficMetricsProvider,
+  type TrafficMetricWindow,
+  type TrafficMetricsProvider,
+  type TrafficMetricsResult,
+} from "@/lib/adminTrafficMetrics";
+import {
+  buildWindowComparison,
+  toTrafficSummaryView,
+  type TrafficSummaryView,
+} from "@/lib/adminTrafficView";
 
 export const metadata = {
   title: "트래픽·이벤트 개요 — 오른스코어",
@@ -144,6 +159,60 @@ const EVENT_GROUPS: EventGroup[] = [
 
 const totalEventCount = EVENT_GROUPS.reduce((sum, group) => sum + group.events.length, 0);
 
+// --- numeric dashboard shell (built on the TrafficMetricsProvider contract) ---
+// The shell binds to a provider and renders whatever it returns — truthfully.
+// In production (and by default locally) the provider is the not_configured
+// empty state, so the shell invents no numbers: the real anonymous figures live
+// in the external Vercel Analytics dashboard until an owner wires a real Option-C
+// adapter (vendor token + server route + retention). Fixture data is used ONLY
+// for local loopback verification, behind an env gate that can never fire on
+// Vercel — see selectTrafficMetricsProvider below.
+const PRIMARY_WINDOW: TrafficMetricWindow = "24h";
+const COMPARISON_WINDOW: TrafficMetricWindow = "72h";
+
+// Human labels for the canonical funnel stages (keys come from FUNNEL_STAGE_DEFS).
+const FUNNEL_STAGE_LABELS: Record<string, string> = {
+  entry: "진입",
+  discover_to_detail: "발견 → 상세",
+  action_intent: "비교·관심 의도",
+  account_intent: "계정 의도",
+};
+const WINDOW_LABELS: Record<TrafficMetricWindow, string> = {
+  "24h": "최근 24시간",
+  "72h": "최근 72시간",
+  "7d": "최근 7일",
+  "30d": "최근 30일",
+};
+
+function stageLabel(key: string): string {
+  return FUNNEL_STAGE_LABELS[key] ?? key;
+}
+function windowLabel(window: TrafficMetricWindow): string {
+  return WINDOW_LABELS[window] ?? window;
+}
+// A ratio → percent string; null (no basis to compute) renders as "—", never 0%.
+function fmtPct(rate: number | null): string {
+  if (rate === null) return "—";
+  return `${(rate * 100).toFixed(1)}%`;
+}
+function fmtInt(n: number): string {
+  return n.toLocaleString("en-US");
+}
+
+// Select the provider the shell binds to. Default: the not_configured empty
+// state (no live call, no invented numbers) — the production and default-local
+// reality. The deterministic sample fixture is opt-in ONLY for local loopback
+// verification (ADMIN_TRAFFIC_FIXTURE=1) and is hard-gated off whenever VERCEL is
+// set, so real deployments can never render fixture numbers.
+function selectTrafficMetricsProvider(): { provider: TrafficMetricsProvider; usingFixture: boolean } {
+  const fixtureRequested = process.env.ADMIN_TRAFFIC_FIXTURE === "1";
+  const onVercel = Boolean(process.env.VERCEL);
+  if (fixtureRequested && !onVercel) {
+    return { provider: createFixtureTrafficMetricsProvider(SAMPLE_TRAFFIC_METRICS_FIXTURE), usingFixture: true };
+  }
+  return { provider: notConfiguredTrafficMetricsProvider, usingFixture: false };
+}
+
 function ToneDot({ tone }: { tone: Tone }) {
   const cls =
     tone === "ok"
@@ -159,6 +228,245 @@ function MiniCheck({ label, value }: { label: string; value: string }) {
     <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-950/40">
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{label}</p>
       <p className="mt-1 break-words text-sm font-medium text-zinc-900 dark:text-zinc-100">{value}</p>
+    </div>
+  );
+}
+
+// The numeric dashboard shell. Renders the provider result truthfully across all
+// four branches (ready / not_configured / unavailable / — plus the fixture label
+// on ready). Every rendered number comes from the provider summary via the pure
+// derivations in adminTrafficView; nothing is invented.
+function TrafficDashboardShell({
+  primary,
+  comparison,
+  usingFixture,
+}: {
+  primary: TrafficMetricsResult;
+  comparison: TrafficMetricsResult;
+  usingFixture: boolean;
+}) {
+  const ready = isTrafficMetricsReady(primary);
+  const badge = ready
+    ? usingFixture
+      ? { tone: "warn" as Tone, text: "로컬 검증용 예시 데이터" }
+      : { tone: "ok" as Tone, text: "실데이터 연동" }
+    : primary.status === "unavailable"
+      ? { tone: "warn" as Tone, text: "일시적으로 불러올 수 없음" }
+      : { tone: "neutral" as Tone, text: "미연동 · 외부 대시보드" };
+  const badgeCls =
+    badge.tone === "ok"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+      : badge.tone === "warn"
+        ? "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300"
+        : "border-zinc-200 bg-zinc-50 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+
+  return (
+    <section aria-label="트래픽 수치" className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Gauge className="h-4 w-4 text-zinc-700 dark:text-zinc-300" aria-hidden="true" />
+          <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">트래픽 수치 (대시보드 셸)</h2>
+        </div>
+        <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium ${badgeCls}`}>
+          {badge.text}
+        </span>
+      </div>
+      <p className="mt-1 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+        {windowLabel(PRIMARY_WINDOW)} 기준 · {windowLabel(COMPARISON_WINDOW)}와 퍼널 모양 비교. 수치는 연동된 제공자에서만 나오며, 없으면 아래처럼 빈 상태로 표시합니다(임의 값 없음).
+      </p>
+
+      {ready ? (
+        <ReadyDashboard primary={primary.summary} comparison={comparison} usingFixture={usingFixture} />
+      ) : primary.status === "unavailable" ? (
+        <DashboardNotice
+          tone="warn"
+          title="지금은 트래픽 수치를 불러올 수 없습니다"
+          body={primary.reason}
+        />
+      ) : (
+        <DashboardNotice
+          tone="neutral"
+          title="아직 관리자 화면에 트래픽 수치가 연동되지 않았습니다"
+          body={primary.reason}
+          withLinks
+        />
+      )}
+    </section>
+  );
+}
+
+// The ready numeric view: totals, route buckets, funnel conversion ratios, and a
+// compact cross-window comparison. All values come from the summaries.
+function ReadyDashboard({
+  primary,
+  comparison,
+  usingFixture,
+}: {
+  primary: Parameters<typeof toTrafficSummaryView>[0];
+  comparison: TrafficMetricsResult;
+  usingFixture: boolean;
+}) {
+  const view = toTrafficSummaryView(primary);
+  const populated = view.routeViews.filter((rv) => rv.views > 0);
+  const zeroCount = view.routeViews.length - populated.length;
+  const comparisonView: TrafficSummaryView | null = isTrafficMetricsReady(comparison)
+    ? toTrafficSummaryView(comparison.summary)
+    : null;
+  const comparisonRows = comparisonView ? buildWindowComparison(view, comparisonView).filter((r) => r.key !== "entry") : [];
+
+  return (
+    <div className="mt-3 space-y-4">
+      {usingFixture && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+          아래 수치는 <span className="font-semibold">로컬 검증용 예시 픽스처</span>입니다 — 실제 방문·이벤트가 아닙니다. 운영 배포에서는 절대 표시되지 않습니다.
+        </div>
+      )}
+
+      <div className="grid gap-2 sm:grid-cols-3">
+        <MiniCheck label="기준 창" value={windowLabel(view.window)} />
+        <MiniCheck label="공개 라우트 진입 합계" value={`${fmtInt(view.totalRouteViews)}회`} />
+        <MiniCheck label="퍼널 진입" value={`${fmtInt(view.entryCount)}회`} />
+      </div>
+
+      <div>
+        <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">경로별 진입 (많은 순)</h3>
+        {populated.length === 0 ? (
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">이 창에 집계된 경로 진입이 없습니다.</p>
+        ) : (
+          <>
+            <ul className="grid gap-1.5 sm:grid-cols-2">
+              {populated.map((rv) => (
+                <li key={rv.routeKind} className="flex items-center justify-between gap-2 rounded-md border border-zinc-100 bg-zinc-50 px-2.5 py-1.5 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+                  <span className="truncate font-mono text-[11px] text-zinc-700 dark:text-zinc-200">{rv.routeKind}</span>
+                  <span className="shrink-0 tabular-nums text-xs font-semibold text-zinc-900 dark:text-zinc-100">{fmtInt(rv.views)}</span>
+                </li>
+              ))}
+            </ul>
+            {zeroCount > 0 && (
+              <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">그 외 {zeroCount}개 경로는 이 창에서 0회.</p>
+            )}
+          </>
+        )}
+      </div>
+
+      <div>
+        <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">런치 퍼널 전환율</h3>
+        <div
+          role="region"
+          aria-label="런치 퍼널 전환율 (가로 스크롤)"
+          tabIndex={0}
+          className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+        >
+          <table className="min-w-[420px] w-full text-left text-xs">
+            <caption className="sr-only">런치 퍼널 전환율: 단계, 건수, 직전 단계 대비, 진입 대비</caption>
+            <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+              <tr>
+                <th scope="col" className="py-1.5 pr-3 font-medium">단계</th>
+                <th scope="col" className="py-1.5 pr-3 font-medium text-right">건수</th>
+                <th scope="col" className="py-1.5 pr-3 font-medium text-right">직전 대비</th>
+                <th scope="col" className="py-1.5 pr-0 font-medium text-right">진입 대비</th>
+              </tr>
+            </thead>
+            <tbody className="text-zinc-700 dark:text-zinc-300">
+              {view.stages.map((stage) => (
+                <tr key={stage.key} className="border-b border-zinc-100 dark:border-zinc-800">
+                  <td className="py-1.5 pr-3">{stageLabel(stage.key)}</td>
+                  <td className="py-1.5 pr-3 text-right tabular-nums">{fmtInt(stage.count)}</td>
+                  <td className="py-1.5 pr-3 text-right tabular-nums">{stage.isEntry ? "—" : fmtPct(stage.stepRate)}</td>
+                  <td className="py-1.5 pr-0 text-right tabular-nums">{stage.isEntry ? "기준" : fmtPct(stage.entryRate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          창 비교 · 진입 대비 전환 ({windowLabel(view.window)} vs {windowLabel(COMPARISON_WINDOW)})
+        </h3>
+        {comparisonView && comparisonRows.length > 0 ? (
+          <div
+            role="region"
+            aria-label="창 비교 전환율 (가로 스크롤)"
+            tabIndex={0}
+            className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+          >
+            <table className="min-w-[420px] w-full text-left text-xs">
+              <caption className="sr-only">창 비교: 단계별 진입 대비 전환율을 두 기간으로 나란히</caption>
+              <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                <tr>
+                  <th scope="col" className="py-1.5 pr-3 font-medium">단계</th>
+                  <th scope="col" className="py-1.5 pr-3 font-medium text-right">{windowLabel(view.window)}</th>
+                  <th scope="col" className="py-1.5 pr-0 font-medium text-right">{windowLabel(COMPARISON_WINDOW)}</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-700 dark:text-zinc-300">
+                {comparisonRows.map((row) => (
+                  <tr key={row.key} className="border-b border-zinc-100 dark:border-zinc-800">
+                    <td className="py-1.5 pr-3">{stageLabel(row.key)}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{fmtPct(row.primaryRate)}</td>
+                    <td className="py-1.5 pr-0 text-right tabular-nums">{fmtPct(row.comparisonRate)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {windowLabel(COMPARISON_WINDOW)} 창은 현재 불러올 수 없어 비교를 생략합니다
+            {comparison.status !== "ready" ? ` (${comparison.reason})` : ""}.
+          </p>
+        )}
+        <p className="mt-2 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+          두 기간의 길이가 다르므로 총량이 아니라 <span className="font-medium">전환 비율(모양)</span>으로 읽습니다. 값이 없으면(분모 0) 임의 0% 대신 &quot;—&quot;로 둡니다.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// The empty / degraded state. `not_configured` (default, production reality) and
+// `unavailable` (transient) both land here — an honest message, never fake data.
+function DashboardNotice({
+  tone,
+  title,
+  body,
+  withLinks = false,
+}: {
+  tone: "warn" | "neutral";
+  title: string;
+  body: string;
+  withLinks?: boolean;
+}) {
+  const cls =
+    tone === "warn"
+      ? "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"
+      : "border-zinc-200 bg-zinc-50 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-200";
+  return (
+    <div className={`mt-3 rounded-md border p-3 ${cls}`}>
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="mt-1 text-[11px] leading-relaxed opacity-90">{body}</p>
+      {withLinks && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href="https://vercel.com/analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+          >
+            Vercel Analytics
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
+          <Link
+            href="/admin/users"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+          >
+            <Bell className="h-4 w-4" aria-hidden="true" />
+            가입자 운영 현황
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
@@ -189,6 +497,15 @@ export default async function AdminTrafficPage() {
 
   const collecting = Boolean(process.env.VERCEL);
 
+  // Numeric dashboard shell: bind to a provider and fetch the primary +
+  // comparison windows. Both branches make ZERO network calls (not_configured
+  // returns immediately; the fixture is offline/deterministic).
+  const { provider, usingFixture } = selectTrafficMetricsProvider();
+  const [primaryResult, comparisonResult] = await Promise.all([
+    provider.getSummary(PRIMARY_WINDOW),
+    provider.getSummary(COMPARISON_WINDOW),
+  ]);
+
   return (
     <div className="mx-auto max-w-5xl px-3 py-4 md:px-4 md:py-8">
       <header className="mb-5">
@@ -208,7 +525,13 @@ export default async function AdminTrafficPage() {
         </div>
       </header>
 
-      <section aria-label="수집 요약" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <TrafficDashboardShell
+        primary={primaryResult}
+        comparison={comparisonResult}
+        usingFixture={usingFixture}
+      />
+
+      <section aria-label="수집 요약" className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex items-start gap-2">
             <ToneDot tone={collecting ? "ok" : "neutral"} />
