@@ -31,6 +31,7 @@
     "test:framework-baseline": "node scripts/test-framework-baseline.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
+    "verify:security-regression": "tsx scripts/verify-security-regression.ts",
     "test:freshness": "tsx scripts/test_freshness.ts",
     "test:compare": "tsx scripts/test_compare_query.ts",
     "test:price-summary": "tsx scripts/test_priceSummary.ts",
