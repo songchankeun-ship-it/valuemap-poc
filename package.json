@@ -61,6 +61,8 @@
     "test:metrics251-preflight": "python scripts/test_metrics251_preflight.py",
     "run:metrics251": "python scripts/metrics251_run.py",
     "test:metrics251-run": "python scripts/test_metrics251_run.py",
+    "ledger:metrics251": "python scripts/metrics251_ledger.py",
+    "test:metrics251-ledger": "python scripts/test_metrics251_ledger.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

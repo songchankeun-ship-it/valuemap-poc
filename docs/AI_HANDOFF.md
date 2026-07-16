@@ -3274,3 +3274,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-run PASS(11) · preflight/engine/eligibility/snapshot-store/compare/rollout-gate 회귀 PASS · git diff --check clean · 3파일 U+FFFD 0 · CLI 게시→NOOP 확인 · shadow 미추적·public 무변경.
 - **한계/다음**: ENGINE_NULL·(주입 외)ELIGIBILITY 분기는 방어적(preflight 가 엔진 null 사유 상위집합·순수 엔진 UNKNOWN 미발생)이라 fault 주입으로만 도달. 고아 승격의 pointer 승인은 별도 repair(범위 밖). 실제 5거래일 연속 창·차등 누적은 운영 배선(공개 승인 뒤). **다음**: 코드 큐 A–N 종료 — 이후 운영 shadow 창 배선·사람 Gate 5·소유자 Gate 6(공개 전환·effectiveMarketDate).
 - **커밋**: 로컬 [codex] Metrics 2.5.1 Slice N: atomic/idempotent single-market-day shadow-run command. push 없음·main 무변경.
+
+### 2026-07-16 — Metrics 2.5.1 Slice O: append-only 증거 원장 + 롤아웃 게이트 재생성 ([codex])
+
+- **무엇**: 설계서 §M251-D02/D07/D10·§7 Gate 4·§8·§9·§10·원안 ORN-2503/2508 대로, **오직 QA_PASSED 봉인 불변 manifest 에서만** 파생되는 append-only 증거 원장과, 비공개 저장소에서 **기존 롤아웃 게이트 JSON·Markdown(docs/)을 재생성**하는 명령. 새 산식 없음. 원장은 비공개(Git 비추적) shadow 저장소 뿐. 직전 HEAD `b1ba43c`(task 308 N), 브랜치 `ai-center/task-309-ornscore-metrics-2.5.1-o-evidence-le`.
+- **신규 파일(2)**: `scripts/metrics251_ledger.py`(accepted_runs_from_store·build_candidates·compute_differential·merge_append·verify_chain·refresh_from_store·읽기전용 CLI), `scripts/test_metrics251_ledger.py`(9케이스). 수정 1: `package.json`(ledger:metrics251·test:metrics251-ledger). fixture 재사용(새 fixture 없음).
+- **원장 항목(=승인 시장일 run 하나)**: marketDate · evidenceHashes(configHash·inputManifestHash·manifestHash·snapshotSha256) · coverage(factor/ranking count·pct+universeSize) · exclusions+unknownExclusionReasons · differential(직전 승인 스냅샷 대비 신규/제외/순위자격/종합점수 count + raw/composite/rank capability) · fourZeroGate(unresolvedP0·소스일불일치·미지제외사유·공개경로누출). 커버리지/제외/4-zero 는 Slice K 헬퍼 재사용·비교 capability 는 Slice G 재사용.
+- **append-only**: 기존 항목 보존, 새 시장일만 prevHash 연쇄로 덧붙임. 같은 시장일 재수집=내용 동일→중복(멱등·덮어쓰지 않음)·내용 상이→충돌 거절(불변 항목/원장 보존·CLI exit 3). entryHash=위치 의존 필드 제외 내용 정체성 sha256. verify_chain 으로 위변조 탐지.
+- **승인 판정**: verify_run_dir 로 QA_PASSED+무결성 통과 run 만 원장에 넣는다(미봉인/손상/판독불가 제외 — 부분 데이터 금지).
+- **PENDING 보존**: 승인 run <5 → 게이트 PENDING(합성 없음). 5일 AND 최종 판정은 Slice K(evaluate_rollout_gate) 단일 출처 재사용해 docs/metrics-2.5.1-rollout-gate.{json,md} 재생성. 저장소에 2.4-vs-2.5.1 차등 없으므로 fourZeroGate.unresolvedP0 은 null(합성 금지).
+- **불변식(무변경)**: public/data·stocks.json·Metrics 2.4·metricsVersion 2.4·유니버스 138·공개 라우트·SEO·auth/Supabase/RLS·cron·의존성·config/2.5.1.*(configHash 7bf1e3a1f989…) 무변경. scripts/metrics251_ledger.py 는 src import 0 → 번들 미포함·런타임/UI 불변. shadow(.metrics251-shadow)·ledger.json 미생성/미추적. docs 게이트 문서는 이번 배치에서 미변경(실 저장소 재생성 시에만 갱신).
+- **게이트(통과)**: tsc 0 · verify_metrics 138·오류0·금칙0·2.4 · test:metrics251-ledger PASS(9) · run/preflight/snapshot-store/compare/engine/eligibility/rollout-gate 회귀 PASS · git diff --check clean · 신규/편집 파일 U+FFFD 0 · CLI dry-run(빈 저장소→승인0·PENDING) 확인 · shadow·원장 미추적·public·docs 무변경.
+- **한계/다음**: fourZeroGate.unresolvedP0 는 2.4-vs-2.5.1 차등이 배선되기 전까지 null(합성 금지, 그 run 은 게이트 미통과 — 설계상 정상). 실제 5거래일 연속 창·차등 누적은 운영 배선(공개 승인 뒤). **다음**: 코드 큐 A–O 종료 — 이후 운영 shadow 창 배선·사람 Gate 5·소유자 Gate 6(공개 전환·effectiveMarketDate).
+- **커밋**: 로컬 [codex] Metrics 2.5.1 Slice O: append-only evidence ledger + rollout-gate refresh. push 없음·main 무변경.
