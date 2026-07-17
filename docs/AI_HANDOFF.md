@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-16T21:01:43.703Z
+Last updated: 2026-07-17T09:25:53.000Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 330 - ORNScore Framework Security F - full local recertification and handoff
-- Run: 339
+- Task: 343 - ORNScore Continuity A - baseline and invariant harness
+- Run: 343
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Operational recovery confirmed commit 569b81a and all development/TESTER gates passed; only the post-result cost cap had been exceeded.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-17 - Codex watchdog - Task 343 operational recovery
+
+- Task 343 produced local commit `569b81a` with a clean implementation and passed `verify:continuity-baseline` 7/7, its self-test 36/36, delegated framework/release checks, diff check, encoding scan, and every frozen-boundary assertion.
+- AI Dev Center marked the run failed only after the successful TESTER verdict because the already-finished upper-tier Claude session used $5.3494 against the inherited $5.00 cap. No code or test failure occurred.
+- Reconciled task/run 343 to completed, attached commit `569b81a`, cleared the stale queue error, and retained the selective routing rule for tasks 344-349. This recovery performed no outside action and changed no runtime/public data.
 
 ### 2026-07-17 - Codex - Service continuity batch queued for local work
 
