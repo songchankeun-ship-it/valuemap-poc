@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-17T09:25:53.000Z
+Last updated: 2026-07-17T09:29:05.000Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 343 - ORNScore Continuity A - baseline and invariant harness
-- Run: 343
-- Status: completed
+- Task: 344 - ORNScore Continuity B - read-only route canary
+- Run: 344
+- Status: queued
 - Agent: claude
-- Note: Operational recovery confirmed commit 569b81a and all development/TESTER gates passed; only the post-result cost cap had been exceeded.
+- Note: Codex CLI 0.143.0 rejected configured model gpt-5.6-sol before edits; task requeued on the available runner with standard limits.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-17 - Codex watchdog - Routine-provider capacity recovery
+
+- Task 344's Codex process exited before reading or editing the repository because local Codex CLI `0.143.0` does not support the configured `gpt-5.6-sol` model. The failed run consumed zero task tokens and made no code commit.
+- Avoided a global CLI package change and avoided restarting AI Dev Center. Requeued routine tasks 344 and 347 on the available Claude runner with standard 80-turn / 45-minute / $8 limits; high-consequence tasks 345, 346, 348, and 349 retain their 140-turn / 90-minute / $15 limits.
+- The provider substitution is operational only. Slice scope, quality gates, frozen login/Metrics/public-data boundaries, and the no-outside-action rule remain unchanged.
 
 ### 2026-07-17 - Codex watchdog - Task 343 operational recovery
 
