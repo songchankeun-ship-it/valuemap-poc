@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { dataStatus } from "@/lib/dataStatus";
 import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
+import { ownershipVerification } from "@/lib/seoVerification";
 import { AnalyticsEventTracker } from "@/components/analytics/AnalyticsEventTracker";
 
 export const metadata: Metadata = {
@@ -47,6 +48,10 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // 검색엔진 소유권 확인(선택). 환경변수(GOOGLE_SITE_VERIFICATION / NAVER_SITE_VERIFICATION)가
+  // 있을 때만 <meta ...-site-verification> 를 방출한다. 미설정 시 undefined → Next 가 생략하므로
+  // 로컬 빌드는 토큰 없이 동작한다. 토큰 발급/입력은 운영자 전용(문서: SEO 소유권 확인 런북).
+  verification: ownershipVerification(),
   // Task 74: PNG 아이콘 연결. Next는 public/ 에셋을 자동으로 head에 넣지 않으므로
   // 여기서 명시해 iOS 홈 화면용 apple-touch-icon(180px) <link>가 방출되게 한다.
   icons: {

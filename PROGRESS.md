@@ -1,5 +1,20 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-18 - [codex] SEO authority Slice D: ownership verification readiness + operator runbook
+
+- **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice D 만 — 환경변수 기반 Google/Naver 소유권 검증 메타데이터(옵션) + `.env.example` 빈 placeholder + 운영자 런북 + 유한·오프라인 테스트. 렌더 페이지 로직/점수식/데이터 무변경. Slice E(릴리스 게이트)·F(재인증) 미실행. 직전 HEAD `87cf0ff`(task 353), 브랜치 `ai-center/task-354-ornscore-seo-d-ownership-metadata-re`.
+- **신규 순수 헬퍼** `src/lib/seoVerification.ts`: `ownershipVerification(env=process.env)` — `GOOGLE_SITE_VERIFICATION`/`NAVER_SITE_VERIFICATION`(단일 진실 소스 상수로 export) 를 읽어 Next `Metadata["verification"]` 를 만든다. 둘 다 미설정/공백이면 **undefined**(Next 가 필드 생략 → 로컬 빌드 토큰 불필요), 값이 있으면 정확히 google → `<meta name="google-site-verification">`, naver → `<meta name="naver-site-verification">`(`other[NAVER_VERIFICATION_META_NAME]`) 만 방출. 공백은 trim 후 미설정 취급(빈 placeholder 를 .env 로 복사해도 태그 미누출). fs/서버 의존 없는 leaf.
+- **루트 메타데이터 연결** `src/app/layout.tsx`: `robots` 다음에 `verification: ownershipVerification()` 한 줄 + import. 값·URL 다른 필드 무변경.
+- **`.env.example`**: `GOOGLE_SITE_VERIFICATION=""` / `NAVER_SITE_VERIFICATION=""` 두 **빈** placeholder + 운영자 전용·커밋 금지 주석만 추가(CRLF 보존, 실토큰 없음).
+- **운영자 런북** `docs/ornscore-seo-ownership-verification-runbook-2026-07-18.md`: **Part A(저장소 작업, 이번 슬라이스 완료·외부 접촉 없음)** 와 **Part B(운영자 전용 외부 체크리스트, 이 배치는 미수행)** 를 하드 분리. Part B 순서 = 호스팅 환경변수 설정 → **소유권 확인(verify)** → **canonical sitemap 제출(`https://ornscore.com/sitemap.xml`)** → **대표 URL 점검(stock/topic/compare 각 1개)** → **배포 커밋 마커 기록**. 브라우저·네트워크·콘솔 액션은 명시적으로 슬라이스 범위 밖.
+- **신규 테스트** `scripts/test_seoOwnershipVerification.ts`(`npm run test:seo-verification`, tsx, 유한·오프라인·네트워크 없음): 미설정/무관 env → undefined · 빈문자열/공백 → undefined · google-only(naver/other 부재) · naver-only(google 부재, 메타명 `naver-site-verification`) · both(앞뒤 공백 trim) · 기본 `process.env` 경로(설정/삭제 복원) · layout.tsx 가 헬퍼 import+`verification: ownershipVerification()` 연결 · `.env.example` 두 변수 **빈 placeholder** 로만 선언(실토큰 방지) · 런북 Part A/Part B 분리 + 4개 순서 요소 + "이 배치 미수행" 문구 + 두 env 변수명 존재.
+- **검증(전부 green, 오프라인/유한)**: `npx tsc --noEmit` exit 0 · test:seo-verification PASS · 기존 SEO 테스트 회귀 없음(test:seo-contract·test:theme-authority·test:comparison-pages·test:seo-stability PASS) · `npm run build` **성공(토큰 미설정 상태, 정적/SSG 133+ 페이지 · Middleware 90.2 kB)** → 로컬 빌드에 placeholder 콘텐츠 불필요 입증. 합성 값 주입 시 태그 방출은 순수 헬퍼 테스트로 유한 증명(라이브 서버 미기동 — 과제 범위상 네트워크/서버 금지). U+FFFD(EF BF BD) 스캔 **0**(신규/변경 6개 파일) · `git diff --check` clean · `git status --porcelain public/data` **empty**.
+- **package.json**: dev 스크립트 +1(`test:seo-verification`), 의존성 추가 없음.
+- **동결(검증)**: public/data·138종목·Metrics 2.4(git diff empty); login/auth/provider/callback·middleware·Supabase/런타임 값; analytics 이름; Next 15.5.18; 공개 재무 계산·점수식 무변경. Slice A(seoContract)·B(theme/topic)·C(comparison) 산출물 무변경. 실토큰 미커밋 · 브라우저/네트워크/콘솔 액션 없음 · no push; main 불변.
+- **롤백**: Slice D 만 → `src/lib/seoVerification.ts`·`scripts/test_seoOwnershipVerification.ts`·런북 문서 제거, layout.tsx 의 import+`verification` 줄·`.env.example` 6줄·package.json 1줄·이 항목 되돌리기; 런타임 데이터 되돌릴 것 없음.
+- **다음**: Slice E — 유한 로컬 SEO 릴리스 게이트(robots·sitemap·topic authority·은퇴 theme·큐레이션 비교·메타데이터·JSON-LD·noindex·내부 링크·배포 마커 SHA 매칭 + 양/음성 픽스처). 기존 라우트/배포 마커 헬퍼 재사용, 로직 중복 금지.
+- **Commit**: local [codex] SEO authority Slice D: ownership verification readiness + operator runbook.
+
 ## 2026-07-18 - [codex] SEO authority Slice C: curated comparison landing pages
 
 - **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice C 만 — Slice A 허용목록(`CURATED_COMPARISON_PAIRS`)을 소비해 안정 라우트 `/compare/[pair]` 로 큐레이션 7쌍 비교 랜딩을 정적 생성·색인. 소유권 태그(Slice D)·나머지(D–F) 미실행. 직전 HEAD `36e9bcf`(task 352), 브랜치 `ai-center/task-353-ornscore-seo-c-curated-comparison-la`.
