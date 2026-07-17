@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-17 - Codex - Vercel production-build unblock
+
+- The owner approved publishing the completed framework-security batch to `main`. The first Vercel production deployment for `fd2a27c` failed during `next build` because `src/app/global-error.tsx` used a raw `<a href="/">`, which violates `@next/next/no-html-link-for-pages` on Vercel's Linux build.
+- Replaced that navigation with `next/link`. Also captured `triggerRef.current` at effect entry in `TrustLayer.tsx` so cleanup restores focus to the same trigger without the React hooks warning.
+- Clean production build passed on exact Next 15.5.18 and generated 183 static pages. `npx tsc --noEmit`, `verify:security-regression` offline half, and `verify:framework-baseline` (9/9, including public reaudit 13/13) passed. Production audit remains critical 0 / high 0 / moderate 2. The remaining Supabase Edge `process.version` message is a pre-existing non-blocking warning.
+- Frozen boundaries remain unchanged: login/provider behavior, Supabase settings/schema/policy, Metrics 2.4, and `public/data`. Publication is valid only after the replacement Vercel deployment succeeds and public-route smoke checks pass.
+
 ### 2026-07-17 - Claude - Framework Security Slice C: Next 15 request/cache semantics on the 15.5.18 baseline
 
 - **Did (Slice C only)**: audited the two request/caching contracts the Next 14→15 move changes and made the one intended-but-implicit case explicit. (1) **async params/searchParams**: verified the migration is already complete — every page (`stock/[ticker]`, `theme/[slug]`, `topics/[slug]`, `stocks`, `compare`), every parameterized route handler (`api/disclosures/[ticker]`, `api/quote/[ticker]`), the `stock/[ticker]/opengraph-image` entry point, and `lib/supabase/server.ts` `cookies()` all use `Promise<...>` + `await`. `blog/[slug]` uses no params (calls `notFound()`); no `generateImageMetadata`/`generateViewport`/`generateSitemaps` entry points exist. No source edits were required here. (2) **GET Route Handler default-cache change**: the ONLY handler whose prerender contract actually flipped is **`/api/themes`** — it reads no request input and returns a build-time constant (`mockTopNeglectedThemes`), so Next 14 prerendered it and Next 15 (uncached-by-default) dropped it to on-demand. Added `export const dynamic = "force-static"` to preserve the pre-migration static behavior. This is a single evidence-backed declaration, NOT a blanket force — every other GET handler is dynamic by nature (reads `req.url`/headers/cookies/`await params`, or declares `force-dynamic`), so none silently flipped.

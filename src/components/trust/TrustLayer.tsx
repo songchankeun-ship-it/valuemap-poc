@@ -97,6 +97,7 @@ export function DataTrustModal({
 
   useEffect(() => {
     if (!open) return;
+    const trigger = triggerRef.current;
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -106,7 +107,7 @@ export function DataTrustModal({
     // 초기 마운트에서 실행되지 않으므로 페이지 로드 시 포커스를 가로채지 않음(키보드 접근 §20).
     return () => {
       document.removeEventListener("keydown", onKey);
-      triggerRef.current?.focus?.();
+      trigger?.focus();
     };
   }, [open]);
 

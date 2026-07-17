@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 // 최후의 에러 바운더리 — 루트 layout까지 대체하므로 자체 <html>/<body>를 렌더하고
 // LanguageProvider/ThemeProvider·useLanguage에 의존하지 않는다(컨텍스트 없음).
@@ -40,12 +41,12 @@ export default function GlobalError({
               >
                 다시 시도
               </button>
-              <a
+              <Link
                 href="/"
                 className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 rounded-md text-sm font-medium bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200"
               >
                 홈으로
-              </a>
+              </Link>
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
               문제가 계속되면 잠시 후 다시 시도하거나 새로고침해주세요.
