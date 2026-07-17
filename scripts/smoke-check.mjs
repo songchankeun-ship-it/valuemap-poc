@@ -71,7 +71,7 @@ const CORE_ROUTES = [
 
 // Extra public routes, appended only with --all. The first five keep parity with
 // past 12-route passes; the rest are launch-critical public pages (about / guide /
-// universe / legal / a real theme) that must render their own SSR content.
+// universe / legal / a real-data topic) that must render their own SSR content.
 const EXTRA_ROUTES = [
   { path: "/compare", anchor: "비교", mustAbsent: ["비교 중인 종목"], why: "base compare shows only the start state (no results header)" },
   { path: "/compare?stocks=004170,078930,055550", anchor: "비교 중인 종목", mustAbsent: ["비교할 종목이 아직 없습니다"], why: "3 valid symbols render results, NOT the empty no-symbols block" },
@@ -86,7 +86,7 @@ const EXTRA_ROUTES = [
   { path: "/terms", anchor: "이용약관", why: "terms page renders its '이용약관' heading" },
   { path: "/privacy", anchor: "개인정보처리방침", why: "privacy page renders its '개인정보처리방침' heading" },
   { path: "/data-deletion", anchor: "계정 및 데이터 삭제 요청", why: "data deletion page renders its Play Console deletion-resource heading" },
-  { path: "/theme/battery", anchor: "2차전지", why: "theme detail for the real 'battery' slug renders its '2차전지' name" },
+  { path: "/topics/battery-stocks", anchor: "2차전지 관련주", why: "authoritative battery topic (legacy /theme/battery retired -> redirects here) renders its real-data '2차전지 관련주' surface" },
 ];
 
 // Negative / fallback checks (only with --all): bad input must degrade to the

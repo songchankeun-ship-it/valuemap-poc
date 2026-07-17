@@ -1,8 +1,27 @@
 /** @type {import('next').NextConfig} */
 import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js';
 
+// 레거시 /theme/* 은퇴(SEO authority Slice B) — 영구(308) 라우트 리다이렉트.
+// 각 레거시 테마는 실데이터로 뒷받침되는 authoritative /topics/* 로 소유권을 이관한다.
+// 이 목록은 src/lib/seoContract.ts 의 LEGACY_THEME_MIGRATION(정본)과 동기되어야 하며,
+// scripts/test_themeAuthority.ts 가 두 소스의 정합성을 정적으로 고정한다.
+// robot 은 실 커버리지가 생길 때까지 리다이렉트하지 않고 noindex 로만 남긴다(여기 없음).
+const LEGACY_THEME_REDIRECTS = [
+  { source: '/theme/battery', destination: '/topics/battery-stocks' },
+  { source: '/theme/semi-materials', destination: '/topics/semiconductor-stocks' },
+  { source: '/theme/bio', destination: '/topics/bio-stocks' },
+  { source: '/theme/shipbuilding', destination: '/topics/shipbuilding-stocks' },
+];
+
 export default function nextConfigFactory(phase) {
   const nextConfig = {};
+
+  nextConfig.redirects = async () =>
+    LEGACY_THEME_REDIRECTS.map(({ source, destination }) => ({
+      source,
+      destination,
+      permanent: true,
+    }));
 
   // dev 서버와 prod 빌드가 같은 .next 디렉터리를 공유하면 청크가 충돌한다.
   // (npm run build = 타입게이트, AI Center Playwright 게이트 = next dev 가 번갈아

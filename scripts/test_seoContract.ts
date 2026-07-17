@@ -116,14 +116,18 @@ check("3 semi-materials redirects to semiconductor-stocks (active)", (() => {
   const d = LEGACY_THEME_MIGRATION["semi-materials"];
   return d.kind === "redirect" && d.status === "active" && d.target === "semiconductor-stocks";
 })());
-check("3 bio/shipbuilding are pending redirects (topics created later)", (() => {
+// Slice B: bio/shipbuilding topic 이 실데이터로 생성되어 active 리다이렉트로 승격됨.
+check("3 bio/shipbuilding are active redirects (topics created in Slice B)", (() => {
   const b = LEGACY_THEME_MIGRATION.bio;
   const s = LEGACY_THEME_MIGRATION.shipbuilding;
-  return b.kind === "redirect" && b.status === "pending" && s.kind === "redirect" && s.status === "pending";
+  return (
+    b.kind === "redirect" && b.status === "active" && b.target === "bio-stocks" &&
+    s.kind === "redirect" && s.status === "active" && s.target === "shipbuilding-stocks"
+  );
 })());
-// pending 대상은 실데이터가 실제로 존재해 Slice B 에서 실 topic 이 될 수 있어야 한다.
-check("3 bio has real data to back a future topic", realThemeMatchCount("바이오") > 0);
-check("3 shipbuilding has real data to back a future topic", realThemeMatchCount("조선") > 0);
+// active 리다이렉트 대상은 실데이터가 실제로 존재해 실 topic 을 뒷받침해야 한다.
+check("3 bio has real data backing its topic", realThemeMatchCount("바이오") > 0);
+check("3 shipbuilding has real data backing its topic", realThemeMatchCount("조선") > 0);
 
 // ── 4. 적대적 픽스처: 4개 위반이 실제로 탐지되는지 ──────────────────
 function mutate(patch: Partial<SeoContractInput>): ContractViolation[] {

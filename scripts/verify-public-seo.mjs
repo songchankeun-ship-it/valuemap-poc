@@ -12,8 +12,10 @@
 //     - every important public route is listed (home, today, stocks, compare,
 //       disclosures, backtest, guide/metrics, pricing, about, terms, privacy,
 //       data-deletion) — a missing one silently drops it from indexing,
-//     - the three dynamic families are represented (>=1 each of /stock/,
-//       /theme/, /topics/) so the 138 detail pages actually made it in,
+//     - the indexable dynamic families are represented (>=1 each of /stock/ and
+//       /topics/) so the 138 detail pages and real-data topics actually made it
+//       in. Legacy /theme/* is retired (Slice B): permanently redirected to its
+//       authoritative /topics/* or noindex, so it must NOT appear in the sitemap,
 //     - NO owner-only / private / API route leaks in (/admin, /login, /auth,
 //       /api, /settings, /watchlist, /history) — those must never be advertised
 //       to crawlers,
@@ -119,12 +121,13 @@ const REQUIRED_SITEMAP_PATHS = [
   "/data-deletion",
 ];
 
-// The three dynamic route families the sitemap generates from real data. Each
+// The indexable dynamic route families the sitemap generates from real data. Each
 // must contribute at least one URL, proving the data-driven mapping still runs
-// (a broken import would yield zero and silently shrink the index).
+// (a broken import would yield zero and silently shrink the index). Legacy
+// /theme/* is intentionally excluded — it is retired (Slice B) and must be absent
+// from the sitemap (see FORBIDDEN_SITEMAP_PREFIXES).
 const REQUIRED_DYNAMIC_PREFIXES = [
   { label: "stock detail (/stock/...)", prefix: "/stock/" },
-  { label: "theme (/theme/...)", prefix: "/theme/" },
   { label: "topic (/topics/...)", prefix: "/topics/" },
 ];
 
@@ -140,6 +143,9 @@ const FORBIDDEN_SITEMAP_PREFIXES = [
   "/settings",
   "/watchlist",
   "/history",
+  // Retired legacy theme surface (Slice B): permanently redirected or noindex,
+  // never advertised. Any /theme/* <loc> is a regression.
+  "/theme",
 ];
 
 // Private prefixes robots.txt must Disallow. Kept in sync with src/app/robots.ts.

@@ -173,6 +173,50 @@ export const seoTopics: SeoTopic[] = [
           .sort(byComposite),
       ),
   },
+  {
+    slug: "bio-stocks",
+    title: "바이오 관련주 탐색 | 제약·바이오 테마 종목",
+    h1: "바이오 관련주 탐색",
+    shortLabel: "바이오 관련주",
+    category: "테마",
+    description:
+      "바이오, 제약 테마 종목을 추세, 거래활성도, 밸류, 위험조정 지표로 비교합니다.",
+    intro:
+      "바이오·제약 관련주는 임상 결과와 파이프라인 기대가 가격을 크게 흔들 수 있습니다. 테마 노출뿐 아니라 밸류와 위험조정 점수, 실적 지속성을 함께 확인하세요.",
+    selectionLabel: "테마 내 종합 점수 높은 순",
+    filterNote: "바이오·제약 테마가 붙은 종목을 대상으로 종합 점수 순으로 정렬합니다.",
+    primaryMetric: "종합 점수",
+    keywords: ["바이오 관련주", "제약 관련주", "바이오 테마주", "신약 관련주", "한국 바이오 주식"],
+    stocksHref: `/stocks?theme=${encodeURIComponent("바이오")}`,
+    stockSelector: () =>
+      takeTop(
+        realStockPool
+          .filter((stock) => matchesAnyTheme(stock, ["바이오", "제약"]))
+          .sort(byComposite),
+      ),
+  },
+  {
+    slug: "shipbuilding-stocks",
+    title: "조선 관련주 탐색 | 조선·조선기자재 테마 종목",
+    h1: "조선 관련주 탐색",
+    shortLabel: "조선 관련주",
+    category: "테마",
+    description:
+      "조선, 조선기자재 테마 종목을 추세, 거래활성도, 밸류, 위험조정 지표로 비교합니다.",
+    intro:
+      "조선 관련주는 수주 사이클과 선가, 환율에 민감합니다. 테마명만 보지 말고 가격 흐름, 거래활성도, 밸류 부담을 함께 점검하세요.",
+    selectionLabel: "테마 내 종합 점수 높은 순",
+    filterNote: "조선·조선기자재 테마가 붙은 종목을 대상으로 종합 점수 순으로 정렬합니다.",
+    primaryMetric: "종합 점수",
+    keywords: ["조선 관련주", "조선주", "조선기자재 관련주", "조선 테마주", "한국 조선 주식"],
+    stocksHref: `/stocks?theme=${encodeURIComponent("조선")}`,
+    stockSelector: () =>
+      takeTop(
+        realStockPool
+          .filter((stock) => matchesAnyTheme(stock, ["조선"]))
+          .sort(byComposite),
+      ),
+  },
 ];
 
 export function getSeoTopic(slug: string): SeoTopic | undefined {

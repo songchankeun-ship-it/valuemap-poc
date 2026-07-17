@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { parseDatasetGeneratedAt } from "@/lib/datasetTimestamp";
-import { mockTopNeglectedThemes } from "@/lib/mockData";
 import { seoTopics } from "@/lib/seoTopics";
 
 const SITE = "https://ornscore.com";
@@ -114,14 +113,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // 2. 종목 페이지 (138개)
-  const themePages: MetadataRoute.Sitemap = mockTopNeglectedThemes.map((theme) => ({
-    url: `${SITE}/theme/${theme.slug}`,
-    lastModified: dataDate,
-    changeFrequency: "weekly" as const,
-    priority: 0.55,
-  }));
-
+  // 2. 레거시 /theme/* 은퇴(Slice B): 색인 대상이 아니다.
+  //    battery·semi-materials·bio·shipbuilding 은 authoritative /topics/* 로 영구
+  //    리다이렉트(next.config)되고, robot 은 실데이터 커버리지가 생길 때까지 noindex 다.
+  //    따라서 어떤 /theme/* URL 도 sitemap 에 넣지 않는다(모의 종목/집계를 색인 근거로
+  //    노출 금지). 색인 대상 테마 의도는 아래 topicPages(실데이터)가 소유한다.
   const topicPages: MetadataRoute.Sitemap = seoTopics.map((topic) => ({
     url: `${SITE}/topics/${topic.slug}`,
     lastModified: dataDate,
@@ -137,5 +133,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.marketCap >= 5_000_000_000_000 ? 0.8 : s.marketCap >= 1_000_000_000_000 ? 0.7 : 0.6,
   }));
 
-  return [...staticPages, ...themePages, ...topicPages, ...stockPages];
+  return [...staticPages, ...topicPages, ...stockPages];
 }

@@ -87,8 +87,10 @@ export function curatedComparisonPaths(): string[] {
 }
 
 // ── 4. 레거시 theme → 마이그레이션 / 은퇴 맵 ───────────────────────
-// active: 대상 topic 이 이미 존재(실데이터 뒷받침). pending: Slice B 에서 topic 생성.
+// active: 대상 topic 이 이미 존재(실데이터 뒷받침). pending: 아직 topic 미생성.
 // noindex: 실데이터 커버리지가 없어 색인 금지(모의 종목을 공개 근거로 노출 금지).
+// Slice B: bio/shipbuilding topic 이 실데이터로 생성되어 pending → active 로 승격.
+// 네 개 리다이렉트 theme 은 모두 next.config 의 영구(308) 리다이렉트로 은퇴한다.
 export type ThemeDisposition =
   | { kind: "redirect"; target: string; status: "active" | "pending" }
   | { kind: "noindex"; reason: string };
@@ -96,13 +98,35 @@ export type ThemeDisposition =
 export const LEGACY_THEME_MIGRATION: Record<string, ThemeDisposition> = {
   battery: { kind: "redirect", target: "battery-stocks", status: "active" },
   "semi-materials": { kind: "redirect", target: "semiconductor-stocks", status: "active" },
-  bio: { kind: "redirect", target: "bio-stocks", status: "pending" },
-  shipbuilding: { kind: "redirect", target: "shipbuilding-stocks", status: "pending" },
+  bio: { kind: "redirect", target: "bio-stocks", status: "active" },
+  shipbuilding: { kind: "redirect", target: "shipbuilding-stocks", status: "active" },
   robot: {
     kind: "noindex",
     reason: "실데이터 매칭 0건 — 실제 커버리지가 생길 때까지 색인 금지(모의 종목 노출 금지)",
   },
 };
+
+/** 레거시 theme 슬러그의 영구 리다이렉트 목적 경로(리다이렉트 처리면 `/topics/…`), 아니면 null. */
+export function legacyThemeRedirectTarget(slug: string): string | null {
+  const d = LEGACY_THEME_MIGRATION[slug];
+  return d && d.kind === "redirect" ? `/topics/${d.target}` : null;
+}
+
+/** noindex 처리(실 커버리지 없음) 레거시 theme 슬러그인지. */
+export function isNoindexLegacyTheme(slug: string): boolean {
+  const d = LEGACY_THEME_MIGRATION[slug];
+  return d !== undefined && d.kind === "noindex";
+}
+
+/** 영구 리다이렉트되는 레거시 theme 의 (from 경로 → to 경로) 목록. next.config 정합성 검사의 정본. */
+export function legacyThemeRedirects(): { from: string; to: string }[] {
+  return Object.entries(LEGACY_THEME_MIGRATION)
+    .filter(([, d]) => d.kind === "redirect")
+    .map(([slug, d]) => ({
+      from: `/theme/${slug}`,
+      to: `/topics/${(d as { target: string }).target}`,
+    }));
+}
 
 // ── 5. 모의(mock) 기반 색인 제외 ───────────────────────────────────
 // 레거시 theme 페이지는 실데이터 매칭이 없으면 모의 종목으로 폴백한다. 따라서 어떤

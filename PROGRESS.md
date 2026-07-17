@@ -1,5 +1,21 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-18 - [codex] SEO authority Slice B: real-data topic authority + legacy theme retirement
+
+- **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice B 만 — Slice A 계약을 소비해 (1) 실데이터 bio/조선 topic 추가, (2) 레거시 `/theme/*` 은퇴(영구 리다이렉트+robot noindex+sitemap 제거), (3) 유한 테스트. 비교 페이지(Slice C)·나머지(C–F) 미실행. 직전 HEAD `bf58544`(task 351), 브랜치 `ai-center/task-352-ornscore-seo-b-real-topic-authority-`.
+- **신규 실데이터 topic** `src/lib/seoTopics.ts`(+2): `bio-stocks`(바이오·제약 테마, 실 15종목 중 top 12 선택) · `shipbuilding-stocks`(조선 테마, 실 6종목). 기존 topic 파이프라인(`realStockPool.filter(matchesAnyTheme).sort(byComposite)`, `takeTop`)만 사용 — 모의 종목 없음. `/topics/[slug]` 이 self-canonical·CollectionPage JSON-LD·breadcrumb 그대로 렌더(build 시 SSG 9개 topic).
+- **레거시 theme 은퇴**: `next.config.mjs` 에 영구(308) 라우트 리다이렉트 4건 — `/theme/battery→/topics/battery-stocks`, `/theme/semi-materials→/topics/semiconductor-stocks`, `/theme/bio→/topics/bio-stocks`, `/theme/shipbuilding→/topics/shipbuilding-stocks`. `seoContract.ts` 의 `LEGACY_THEME_MIGRATION` bio/shipbuilding 을 pending→**active** 로 승격(대상 topic 실재)하고 `legacyThemeRedirectTarget`/`isNoindexLegacyTheme`/`legacyThemeRedirects` 헬퍼 추가(next.config 정합성의 정본). `/theme/robot` 은 리다이렉트하지 않고 **noindex**(실매칭 0) 로만 남긴다.
+- **theme 라우트 정리** `src/app/theme/[slug]/page.tsx`: 리다이렉트 처리 slug 은 `permanentRedirect`(라우트 자기정합). 모의 폴백(`getStocksInTheme`)·모의 집계(RadarChart/ReturnCell/기간수익률/composite) 렌더 **완전 제거** — 오직 `realStockPool` 매칭 종목만 표(공개 근거로 모의 노출 금지). 메타는 noindex 처리/실매칭 0건이면 `robots:{index:false}` + self-canonical 미부여.
+- **sitemap** `src/app/sitemap.ts`: `mockTopNeglectedThemes` import + `/theme/*` 블록 제거 → 어떤 `/theme/*` URL 도 방출 안 함. 색인 테마 의도는 실데이터 topicPages 가 소유. 최종 sitemap = 정적 12 + topic 9 + 종목 138 = **159 URL**.
+- **게이트 갱신**: `verify-public-seo.mjs` REQUIRED_DYNAMIC_PREFIXES 에서 `/theme/` 제거 + FORBIDDEN_SITEMAP_PREFIXES 에 `/theme` 추가(은퇴를 게이트가 능동 강제). `smoke-check.mjs` 의 `/theme/battery` 스모크 → authoritative `/topics/battery-stocks` 로 교체. Slice A `test_seoContract.ts` 의 bio/shipbuilding "pending" 단언 → "active" 로 갱신(Slice B 가 topic 생성).
+- **신규 테스트** `scripts/test_themeAuthority.ts`(`npm run test:theme-authority`, tsx): bio/shipbuilding topic 실데이터 뒷받침(실 티커만) · 4건 리다이렉트 대상=정본 & next.config 소스 정합 & robot 미리다이렉트 · sitemap 무 `/theme/`(+mockTopNeglectedThemes import 제거) · theme 페이지 모의 폴백/집계 제거 · **robot generateMetadata 실호출로 index:false·canonical 미부여 동작 검증** + battery(리다이렉트) 메타 noindex.
+- **검증(오프라인·유한, 전부 green)**: test:theme-authority PASS · test:seo-contract PASS(갱신) · test:seo-stability PASS · `npx tsc --noEmit` exit 0 · `npx next build` 성공(topic SSG 9, `/theme/[slug]` dynamic). **런타임 게이트**(빌드+`next start -p 4471`): verify:public-seo **3/3**(sitemap 159 URL, `/theme/` 부재, robots 교차정합) · verify:stocks-seo **13/13** · `/theme/{battery,bio,shipbuilding,semi-materials}` 실제 **308→/topics/**, `/theme/robot` **200 + `noindex, follow`** · `/topics/bio-stocks`·`/topics/shipbuilding-stocks` 실종목(삼성바이오로직스·셀트리온·삼성중공업·한화오션) 렌더. U+FFFD 스캔 **0**(변경/신규 소스 전체) · `git diff --check` clean · `git status --porcelain public/data` **empty**.
+- **package.json**: dev 스크립트 +1(`test:theme-authority`), 의존성 추가 없음.
+- **동결(검증)**: public/data·138 종목·Metrics 2.4(git diff empty); login/auth/provider/callback·middleware admin 로직 무변경(theme 리다이렉트는 next.config); Supabase/런타임 값; analytics 이름; Next 15.5.18. 공개 재무 계산·점수식 무변경. no push; main 불변.
+- **롤백**: Slice B 만 → next.config 리다이렉트 블록·seoTopics 2 topic·theme 페이지 재작성·sitemap theme 블록 제거·seoContract active 승격+헬퍼·verify-public-seo/smoke-check/test_seoContract 편집 되돌리기 + `scripts/test_themeAuthority.ts` 제거 + package.json 1줄 + 이 항목; 런타임 데이터 되돌릴 것 없음.
+- **다음**: Slice C — 큐레이션 `/compare/[pair]` 7쌍 랜딩(안정 메타·중립 차이·breadcrumb JSON-LD·내부 링크·sitemap 에 7쌍만). `CURATED_COMPARISON_PAIRS` 소비. 임의/역순 쌍 색인·정적생성 금지.
+- **Commit**: local [codex] SEO authority Slice B: real-data topic authority + legacy theme retirement.
+
 ## 2026-07-18 - [codex] SEO authority Slice A: search-surface contract
 
 - **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice A 만 — 색인 검색 표면의 단일 진실 소스(계약)와 적대적 검증기를 추가. 렌더 페이지 무변경, Slices B–F 미실행. 직전 HEAD `28972ed`(SEO 계획), 브랜치 `ai-center/task-351-ornscore-seo-a-search-surface-author`.
