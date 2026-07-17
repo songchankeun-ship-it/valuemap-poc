@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-17 - Codex - Service continuity batch queued for local work
+
+- Naver login review remains pending and is frozen. The next autonomous batch must not edit login/auth files, provider settings, callbacks, email behavior, accounts, credentials, schema/RLS, or runtime values.
+- Added `docs/ornscore-service-continuity-2026-07-17.md` from tested public base `b4ba1e9`. It defines seven ordered local slices: invariant baseline, read-only route canary, public-data candidate delta guard, fail-closed daily-workflow integration, finite commit-status verification, fault matrix, and full recertification dossier.
+- This batch keeps public Metrics 2.4, `public/data`, 138-stock output, daily schedule/permissions, Next 15.5.18, and current public behavior unchanged. No push, publication, deployment, provider connection, or outside-service mutation is authorized.
+- The requested two-day observation window is a liveness window, not a work quota. Stop after the seven evidence-backed slices complete; do not manufacture filler tasks.
+
 ### 2026-07-17 - Codex - Vercel production-build unblock
 
 - The owner approved publishing the completed framework-security batch to `main`. The first Vercel production deployment for `fd2a27c` failed during `next build` because `src/app/global-error.tsx` used a raw `<a href="/">`, which violates `@next/next/no-html-link-for-pages` on Vercel's Linux build.

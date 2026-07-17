@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-17 - [codex] Service continuity batch plan and queue handoff
+
+- **Decision**: keep the pending Naver review and every login/auth provider surface frozen. Do not spend the observation window on speculative feature work.
+- **Evidence-backed target**: harden the daily public-data path after the first framework publication exposed a production-only build failure and the existing daily workflow was found to commit/push after data verification without candidate-delta, production-build, or finite status gates.
+- **Plan**: `docs/ornscore-service-continuity-2026-07-17.md`, seven ordered local slices A-G: invariant baseline, read-only route canary, public-data candidate delta guard, fail-closed workflow integration, finite commit-status verifier, continuity fault matrix, and full local recertification/operator dossier.
+- **Frozen**: `src/app/login`, `src/app/auth`, provider settings/callbacks, credentials, schema/RLS, Next 15.5.18, Metrics 2.4, `public/data`, 138-stock output, daily schedule/permissions, public URLs, and analytics names. No package additions, remote mutation, push, publication, or service release.
+- **Operating rule**: use the requested two days as a liveness window. Stop when the seven meaningful slices complete and do not invent filler tasks.
+
 ## 2026-07-17 - [codex] Framework security hardening Slice C: Next 15 request/cache semantics (15.5.18 baseline)
 
 - **Scope**: 설계서 `docs/ornscore-framework-security-hardening-2026-07-16.md` Slice C 만 — Next 14→15 가 바꾼 두 계약(async 요청 API · GET Route Handler 기본 캐시)을 마이그레이션된 15.5.18 위에서 감사·명시. login/auth·provider·Metrics 2.4·public/data·138 산출·analytics 이벤트명·public URL·빌드 커맨드 무변경. Slice D(React 19 상호작용 QA)·E·F 미수행. 직전 HEAD `b48ed11`, 브랜치 `ai-center/task-327-ornscore-framework-security-c-reques`.
