@@ -116,7 +116,12 @@ function worktreeClean(paths, root = ROOT) {
 // ---------------------------------------------------------------------------
 export const WORKFLOW_FILE = ".github/workflows/daily-data.yml";
 export function parseDailyWorkflow(root = ROOT) {
-  const src = readText(WORKFLOW_FILE, root);
+  return parseWorkflowContract(readText(WORKFLOW_FILE, root));
+}
+// Text-based parse of the daily workflow contract. Split out so a source-level
+// verifier (Slice D) can parse fixture workflow text through the exact same
+// contract extraction this baseline uses, instead of keeping a second copy.
+export function parseWorkflowContract(src) {
   const first = (re) => {
     const m = src.match(re);
     return m ? m[1] : null;

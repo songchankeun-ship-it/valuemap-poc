@@ -35,6 +35,8 @@
     "test:route-canary": "node scripts/test-route-canary.mjs",
     "verify:public-data-delta": "python scripts/verify_public_data_delta.py",
     "test:public-data-delta": "python scripts/test_public_data_delta.py",
+    "verify:daily-workflow-gate": "node scripts/verify-daily-workflow-gate.mjs",
+    "test:daily-workflow-gate": "node scripts/test-daily-workflow-gate.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",

@@ -28,7 +28,8 @@
         "scripts/sync_prices_to_stocks.py",
         "scripts/compute_metrics.py",
         "scripts/fetch_market_alerts.py",
-        "scripts/verify_metrics.py"
+        "scripts/verify_metrics.py",
+        "scripts/verify_public_data_delta.py"
       ],
       "schedule": "0 8 * * 1-5",
       "stepNames": [
@@ -40,6 +41,11 @@
         "Recompute metrics (momentum/flow/value/vol)",
         "Fetch KRX market alerts (non-blocking; bld 검증 중)",
         "Verify data integrity (gate)",
+        "Guard public-data candidate delta (gate)",
+        "Setup Node (offline recert gates)",
+        "Install Node dependencies (offline recert gates)",
+        "Recertify release preflight — offline gates (gate)",
+        "Recertify framework baseline freshness (gate)",
         "Commit and push if data changed"
       ],
       "workflowDispatch": true

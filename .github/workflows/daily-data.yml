@@ -49,6 +49,29 @@ jobs:
       - name: Verify data integrity (gate)
         run: python scripts/verify_metrics.py
 
+      # --- Slice D fail-closed publish gates (docs/ornscore-service-continuity-2026-07-17.md) ---
+      # Every gate below MUST pass before any data is staged, committed, or pushed.
+      # In GitHub Actions a step that exits non-zero fails the job, and because the
+      # commit-and-push step is the LAST step and carries no `if:`/`continue-on-error`,
+      # a failed gate makes staging, commit, and push unreachable (fail-closed). None
+      # of these gates start a server, mutate a remote resource, or edit public/data.
+      - name: Guard public-data candidate delta (gate)
+        run: python scripts/verify_public_data_delta.py
+
+      - name: Setup Node (offline recert gates)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Node dependencies (offline recert gates)
+        run: npm ci
+
+      - name: Recertify release preflight — offline gates (gate)
+        run: npm run release:preflight -- --offline-only --no-build
+
+      - name: Recertify framework baseline freshness (gate)
+        run: npm run verify:framework-baseline -- --freshness-only
+
       - name: Commit and push if data changed
         run: |
           git config user.name "ornscore-bot"
