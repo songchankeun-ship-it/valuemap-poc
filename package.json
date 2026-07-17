@@ -31,6 +31,8 @@
     "test:framework-baseline": "node scripts/test-framework-baseline.mjs",
     "verify:continuity-baseline": "node scripts/verify-continuity-baseline.mjs",
     "test:continuity-baseline": "node scripts/test-continuity-baseline.mjs",
+    "verify:route-canary": "node scripts/verify-route-canary.mjs",
+    "test:route-canary": "node scripts/test-route-canary.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",

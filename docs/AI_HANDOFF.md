@@ -3513,3 +3513,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - **Frozen (verified)**: daily-data.yml (read-only parse), login/auth (blobs recorded), Metrics 2.4 / public/data / 138-stock (git diff -- public/ empty), SEO/analytics, Next 15.5.18. No push · main unchanged.
 - **Rollback**: remove 2 scripts + baseline json + revert 2 package.json lines + this entry; nothing runtime to unwind.
 - **Commit**: local [codex] Service continuity Slice A: continuity baseline + invariant harness.
+
+
+### 2026-07-17 — Service continuity Slice B: read-only route canary [codex]
+
+**Slice B** of docs/ornscore-service-continuity-2026-07-17.md — the second continuity slice. A one-shot, read-only route-canary CLI + a deterministic loopback-mock self-test. No runtime code, no workflow changed. Prior HEAD `ea1b3c5`. Tested base `b4ba1e9`. Follows Slice A (`569b81a`).
+
+- **CLI** `scripts/verify-route-canary.mjs` (`npm run verify:route-canary -- --base <url> [--marker <7-hex>] [--json] [--list]`; env `VERIFY_BASE_URL` / `VERIFY_EXPECT_MARKER`). GET-only, never mutates a remote resource, never starts/leaves a listener. Per-route checks: status (default 200), redirect behaviour (`expectRedirectTo` / unexpected-redirect), non-empty `<title>`, `<link rel="canonical">`, footer build marker (`title="코드 <sha>"`) vs expected marker, data date (derived from local stocks.json like realStocks.ts), Metrics-version label. Four distinct failure classes — **timeout**, **dns_tls_http**, **content**, **stale_marker** (marker present-but-wrong, kept separate from absent). Bounded: perRequestTimeoutMs 8000 · totalDurationMs 60000 · maxRedirects 5 · maxResponseBytes 3 MB · maxRequests 40. Stable human table + `--json` evidence (no timestamps); reuses framework-baseline `looksLikeSecret` + redacts base-URL userinfo.
+- **Self-test** `scripts/test-route-canary.mjs` (`npm run test:route-canary`) 36/36 — task-owned loopback mock on 127.0.0.1 exercising every failure class + every bound (timeout via slow route, redirect loop budget, byte-cap truncation, request-count + duration skips, closed-port dns_tls_http, JSON stability), then **stops the server and proves it stopped**. No live service touched in dev or tests.
+- **Verification**: test:route-canary 36/36 (exit 0); CLI vs background loopback mock — good base 6/6 OK (exit 0), stale marker 6/6 stale_marker (exit 1), no-marker skips marker checks (exit 0); `--list`/usage errors exit correctly. Fixed a Windows libuv exit assertion (`connection: close` + `process.exitCode` drain, no hard exit mid-teardown). Slice A still green (freeze 2/2, self-test 36/36). git diff --check clean; U+FFFD scan 0.
+- **No runtime TS imported** (only `.mjs` + package.json) → no tsc/build required by this slice. package.json: +2 dev scripts only, no dependency.
+- **Frozen (verified)**: `.github/workflows/` untouched · public/data / 138-stock / Metrics 2.4 (git diff --stat empty) · src/app/login + src/app/auth · SEO/public URLs · analytics event names · Next 15.5.18. Read-only finite HTTP only against operator/test loopback URLs; no push · main unchanged.
+- **Rollback**: remove the two scripts + revert 2 package.json lines + this entry; nothing runtime to unwind.
+- **Commit**: local [codex] Service continuity Slice B: read-only route canary.
