@@ -1,5 +1,20 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-18 - [codex] SEO authority Slice F: full local SEO recertification + operator dossier
+
+- **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice F 만 — 배치 마감(전체 로컬 SEO 재인증) + 운영자 도시어. Slice A–E 를 clean `npm ci` 위에서 한 단위로 재인증하고, 정확 증거를 기록하고, 소유자 전용 후속 단계를 열거한다. **렌더 페이지/라우트/점수식/런타임/데이터 무변경 — 문서만**(PROGRESS·AI_HANDOFF·신규 도시어). 직전 HEAD `265a40c`(task 355, Slice E). 브랜치 `ai-center/task-356-ornscore-seo-f-full-local-recertific`. 플랜 베이스 `a828c0d`(플랜 정의 커밋 `28972ed`).
+- **재인증(전부 green, 유한·로컬)**: `npm ci`(410 packages, exit 0) · `npx tsc --noEmit`(exit 0) · `npm run build`(성공, **정적 192/192**, `/stock/[ticker]` SSG 138 · `/topics/[slug]` 9 · `/compare/[pair]` 7, Middleware 90.2 kB). 해석 버전 next 15.5.18 / react 19.2.7 / react-dom 19.2.7 / eslint-config-next 15.5.18 / typescript 5.9.3 / tsx 4.22.4.
+- **audit**: `npm audit --omit=dev`(공개 경로) **critical 0 / high 0** / moderate 2(`postcss` GHSA-qx2v-qp2m-jg93, next 경유 빌드타임 CSS, 공개 요청경로 밖). 전체 audit 는 dev 전용 **HIGH `xlsx`**(오프라인 스프레드시트) + **LOW `esbuild`**(tsx) 추가 = 1 low/2 mod/1 high. `audit fix --force`(금지 다운그레이드) 미실행.
+- **정적 SEO 테스트(오프라인, 전부 PASS·exit 0)**: `test:seo-stability`·`test:seo-contract`·`test:theme-authority`·`test:comparison-pages`·`test:seo-verification`·`test:seo-release`. **Metrics 2.4 동결 검증** `verify_metrics.py` = 138종목·오류 0·금칙 0·산식 Metrics 2.4.
+- **라이브 게이트(과제 소유 로컬 프로덕션 서버, 전용 포트 4489, 마커=HEAD; `3000`/`4310` 미접촉)**: `verify:seo-release --sha <HEAD>` → **11/11 OK**(sitemap **166 URLs**, 라우트/마커 canary 6/6, 배포마커==기대 SHA, exit 0) · `verify:routes` 9/9(데이터 날짜 2026.07.16) · `verify:public-seo` 3/3 · `verify:stocks-seo` 13/13 · `smoke:check --all` 25/25(404+무효티커 포함) · `release:preflight --no-perf` 11/11 · **모바일 390×844 fetch 스모크 8/8**(iPhone UA, 대표 8개 라우트 — bio/조선 topic·큐레이션 compare 포함 — 200·크리티컬 런타임 마커 0·`lang="ko"`).
+- **음성 대조(게이트 fail-closed 실증, exit 1)**: 잘못된 `--sha deadbeef1234` → **STALE**(canary 0/6 stale_marker=6, 10/11) · `--sha` 누락 → 배포마커 검사만 하드 실패(10/11). stale/누락 SHA 는 경고 아닌 발행 실패.
+- **동결 증명(플랜 베이스 `a828c0d` 와 바이트 동일)**: `public/data` 트리 `1ab0e42…` · `stocks.json` blob `b9d09f3…` · `src/app/login` `d8ae30d…` · `src/app/auth` `983db41…` · `.github/workflows` `bdffea9…` 전부 base==HEAD. `git diff -- public/data` **0바이트**, 138종목+138 price 파일. Supabase/런타임 값·analytics 이름·공개 재무계산·점수식 무변경, Next 15.5.18 고정(Next 16 미이행), 의존성 추가 없음. `.env` 실토큰 미커밋(빈 placeholder만). 서버 과제 소유 기동·**중지 확인**(post-kill `curl` exit 7). no push · `main` 불변 · 외부 Search Console/Advisor 미접촉. Metrics 2.5.1 shadow-only 유지(미승격).
+- **구현 정본 URL 패밀리(색인·실데이터, sitemap 166 = 정적 12+topic 9+compare 7+종목 138)**: `/stock/[ticker]`×138 · `/topics/[slug]`×9 · `/compare/[pair]`×7 큐레이션. 은퇴: `/theme/{battery,semi-materials,bio,shipbuilding}` → `/topics/*` 영구 308 · `/theme/robot` noindex+sitemap 제외 · 임의/역순 `/compare/*` notFound+noindex.
+- **신규 문서** `docs/ornscore-seo-authority-operator-dossier-2026-07-18.md`: 구현 URL·명령 결과표·롤백 매트릭스(A–F [codex]/wrapper 커밋)·잔여 리스크·소유자 전용 발행/검색제출 단계(플랜 §6, 미실행). `git diff --check` clean · U+FFFD(EF BF BD) 스캔 0(신규 문서).
+- **롤백**: Slice F 는 문서 전용 → PROGRESS·AI_HANDOFF·도시어 3파일 되돌리면 런타임/라우트/데이터 무영향. Slice A–E 개별 [codex] 커밋 역순 되돌림(도시어 §5 표).
+- **다음**: 배치 종료. 로컬 완료 = 발행 완료 아님. 소유자 전용 후속(플랜 §6): 리뷰 커밋 push → 정확 커밋 배포 → 배포 마커==SHA 확인 → 호스팅 소유권 값 설정 → Google/Naver 소유권 확인 → `sitemap.xml` 제출 + 대표 URL 점검. 순위 약속 없음.
+- **Commit**: local [codex] SEO authority Slice F: full local SEO recertification + operator dossier.
+
 ## 2026-07-18 - [codex] SEO authority Slice E: SEO release gate
 
 - **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice E 만 — 유한 로컬 **SEO 릴리스 게이트**(로컬 프로덕션 서버 대상 단일 결정) + 양/음성 픽스처 자기테스트. 렌더 페이지/점수식/데이터 무변경. Slice F(전체 재인증) 미실행. 직전 HEAD `b7fc5c6`(task 354, Slice D). 브랜치 `ai-center/task-355-ornscore-seo-e-exact-sha-release-gat`.
