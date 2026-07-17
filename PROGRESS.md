@@ -1,5 +1,17 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-18 - [codex] SEO authority Slice A: search-surface contract
+
+- **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice A 만 — 색인 검색 표면의 단일 진실 소스(계약)와 적대적 검증기를 추가. 렌더 페이지 무변경, Slices B–F 미실행. 직전 HEAD `28972ed`(SEO 계획), 브랜치 `ai-center/task-351-ornscore-seo-a-search-surface-author`.
+- **신규 계약** `src/lib/seoContract.ts`(순수·fs/서버 없음): `STATIC_INDEXABLE_PATHS`(정적 12개, sitemap.ts 정적 블록과 1:1) · `INDEXABLE_ROUTE_FAMILIES`(stock/topic/compare-pair — 레거시 `/theme/` 은 은퇴로 의도적 부재) · `CURATED_COMPARISON_PAIRS`(승인된 7쌍, 계획서 순서가 canonical) + `isCuratedComparisonPair`/`comparisonPairBySlug`/`curatedComparisonPaths` · `LEGACY_THEME_MIGRATION`(battery→battery-stocks active, semi-materials→semiconductor-stocks active, bio→bio-stocks pending, shipbuilding→shipbuilding-stocks pending, robot→noindex) · `MOCK_BACKED_INDEXING_EXCLUSIONS`(=레거시 theme 5개 전부) · 재사용 가능한 `verifySeoContract(input)`+`defaultContractInput()`(주입식 — Slice E 재사용·픽스처 변형 가능). 실매칭 수는 theme 페이지의 실/모의 판정 규칙(`themes.includes(name)`)과 동일.
+- **검증기/테스트** `scripts/test_seoContract.ts`(`npm run test:seo-contract`, tsx 정적): 실 계약이 **위반 0**(sitemap 드리프트 교차검증 포함 — src/app/sitemap.ts 에서 `${SITE}/<리터럴>` 정적 라우트를 파싱해 계약과 대조)임을 고정한 뒤, 요구된 4개 실패가 주입 픽스처에서 실제로 걸림을 증명: **OWNERSHIP_DUP**(battery theme 색인화 → topic+theme 이 battery-stocks 의도 중복 소유) · **ZERO_REAL_MATCH**(robot 색인화/제외 목록 제거 — robot 실매칭 0) · **PAIR_UNKNOWN_TICKER+PAIR_REVERSE**(임의 쌍·역순 쌍 주입) · **SITEMAP_DRIFT**(방출 초과/누락) + MIGRATION_TARGET_MISSING. robot 실매칭=0, bio=11, 조선=6, 7개 slug=승인 허용목록, 임의·역순 쌍 predicate 거부 확인.
+- **검증(오프라인·유한, 전부 green)**: test:seo-contract PASS; 요구 기존 테스트 유지 — test:seo-stability PASS · test:stocks-discovery PASS · test:compare-entry PASS; `npx tsc --noEmit` exit 0. U+FFFD(EF BF BD) 스캔 **0**(seoContract.ts+test_seoContract.ts+package.json, 한글 무손상); `git diff --check` clean; `git status --porcelain public/data` empty; src/app/login·src/app/auth·.github/workflows 무변경; worktree=의도한 3파일뿐.
+- **package.json**: dev 스크립트 +1(`test:seo-contract`), 의존성 추가 없음.
+- **동결(검증)**: 렌더 페이지 무변경(sitemap.ts·robots.ts·theme·topics·compare 페이지 불변); public/data·138 종목·Metrics 2.4; login/auth/provider/callback; analytics 이름; Next 15.5.18. 계약 lib 은 이 슬라이스에선 자기 테스트만 import 하는 새 leaf — 아직 어떤 페이지도 소비 안 함. no push; main 불변.
+- **롤백**: `src/lib/seoContract.ts`+`scripts/test_seoContract.ts` 제거, package.json 1줄+이 항목 되돌리기; 런타임 되돌릴 것 없음.
+- **다음**: Slice B — 실데이터 bio/조선 topic + `/theme/*` 영구 리다이렉트(battery/semi-materials/bio/shipbuilding) + robot noindex + sitemap 제거, 유한 테스트로 커버. `LEGACY_THEME_MIGRATION` 소비.
+- **Commit**: local [codex] SEO authority Slice A: search-surface contract.
+
 ## 2026-07-18 - [codex] SEO authority batch plan and queue handoff
 
 - **Decision**: do not apply the older external SEO kit against the newer repository. Preserve the already-green stock metadata, canonical/noindex rules, dynamic sitemap, JSON-LD, and topic pages; close only evidence-backed gaps.
