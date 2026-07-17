@@ -33,6 +33,8 @@
     "test:continuity-baseline": "node scripts/test-continuity-baseline.mjs",
     "verify:route-canary": "node scripts/verify-route-canary.mjs",
     "test:route-canary": "node scripts/test-route-canary.mjs",
+    "verify:commit-status": "node scripts/verify-commit-status.mjs",
+    "test:commit-status": "node scripts/test-commit-status.mjs",
     "verify:public-data-delta": "python scripts/verify_public_data_delta.py",
     "test:public-data-delta": "python scripts/test_public_data_delta.py",
     "verify:daily-workflow-gate": "node scripts/verify-daily-workflow-gate.mjs",
