@@ -1,0 +1,120 @@
+{
+  "facts": {
+    "dailyWorkflow": {
+      "commit": {
+        "addPaths": [
+          "public/data/stocks.json",
+          "public/data/prices",
+          "public/data/market-alerts.json"
+        ],
+        "botEmail": "actions@users.noreply.github.com",
+        "botName": "ornscore-bot",
+        "messagePrefix": "chore(data): daily refresh",
+        "pushes": true
+      },
+      "concurrency": {
+        "cancelInProgress": "false",
+        "group": "daily-data"
+      },
+      "file": ".github/workflows/daily-data.yml",
+      "job": {
+        "runsOn": "ubuntu-latest",
+        "timeoutMinutes": 30
+      },
+      "name": "Daily data refresh",
+      "permissionsContents": "write",
+      "pipeline": [
+        "scripts/fetch_prices.py",
+        "scripts/sync_prices_to_stocks.py",
+        "scripts/compute_metrics.py",
+        "scripts/fetch_market_alerts.py",
+        "scripts/verify_metrics.py"
+      ],
+      "schedule": "0 8 * * 1-5",
+      "stepNames": [
+        "Checkout",
+        "Setup Python",
+        "Install dependencies",
+        "Fetch prices (5y OHLCV per ticker)",
+        "Sync latest price into stocks.json",
+        "Recompute metrics (momentum/flow/value/vol)",
+        "Fetch KRX market alerts (non-blocking; bld 검증 중)",
+        "Verify data integrity (gate)",
+        "Commit and push if data changed"
+      ],
+      "workflowDispatch": true
+    },
+    "footerMarker": {
+      "component": "src/components/AppFooter.tsx",
+      "envVar": "VERCEL_GIT_COMMIT_SHA",
+      "hasCommitShaProp": true,
+      "layout": "src/app/layout.tsx",
+      "passedInLayout": true,
+      "rendersCodeTitle": true,
+      "sliceLength": 7
+    },
+    "frozenAuth": {
+      "auth": [
+        {
+          "path": "src/app/auth/callback/route.ts",
+          "sha": "60846593211b6e4c71376e1ca79cfac8d0b0ee85"
+        }
+      ],
+      "login": [
+        {
+          "path": "src/app/login/LoginContent.tsx",
+          "sha": "fea64da6da8ba32d8b71f8bd6e278ecc5ff2afcd"
+        },
+        {
+          "path": "src/app/login/page.tsx",
+          "sha": "0c8a28f5d7d908fbee727bdd4fd1e73cbea7867f"
+        }
+      ],
+      "paths": [
+        "src/app/login",
+        "src/app/auth"
+      ],
+      "worktreeClean": true
+    },
+    "metrics": {
+      "dataStatusExpectedVersion": "2.4",
+      "dataVersion": "2.4",
+      "expectedVersion": "2.4",
+      "universeCount": 138
+    },
+    "publicData": {
+      "marketAlerts": "e4741f31e665ffe88e763a6051fdf704e0e4fd54",
+      "pricesFileCount": 138,
+      "pricesTree": "388f85034446e09381ff1b107a1b7cb4dd470a05",
+      "stocksJson": "b9d09f33268ed3fe232ce37ddbe052640c8bd695",
+      "treeSha": "1ab0e42dd5e3f95df04f3324616d6bae51f40b8c",
+      "worktreeClean": true
+    },
+    "routeCanary": {
+      "paths": [
+        "/",
+        "/status",
+        "/about",
+        "/pricing",
+        "/stocks",
+        "/stock/005930",
+        "/login?next=/watchlist",
+        "/watchlist",
+        "/compare"
+      ],
+      "source": "scripts/verify-routes.mjs"
+    }
+  },
+  "meta": {
+    "capturedWith": {
+      "git": "git version 2.54.0.windows.1",
+      "node": "v24.16.0"
+    },
+    "note": "Deterministic service-continuity invariant baseline (Slice A). The freshness surface (dailyWorkflow, publicData, routeCanary, footerMarker, metrics, frozenAuth) is recomputed from committed repo files + Git object identities and diffed by verify-continuity-baseline.mjs. This script never changes runtime code or the workflow; it only reads them and orchestrates the existing offline Metrics/routes/SEO/release/framework gates.",
+    "plan": "docs/ornscore-service-continuity-2026-07-17.md",
+    "readOnly": true,
+    "reportKind": "service-continuity-baseline",
+    "slice": "A",
+    "testedBase": "b4ba1e905064a1d9058f0fa6b46e9ff4b92f44fc"
+  }
+}

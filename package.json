@@ -29,6 +29,8 @@
     "verify:reaudit": "node scripts/verify-reaudit.mjs",
     "verify:framework-baseline": "node scripts/verify-framework-baseline.mjs",
     "test:framework-baseline": "node scripts/test-framework-baseline.mjs",
+    "verify:continuity-baseline": "node scripts/verify-continuity-baseline.mjs",
+    "test:continuity-baseline": "node scripts/test-continuity-baseline.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",
