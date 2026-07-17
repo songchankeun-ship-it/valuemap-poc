@@ -16,6 +16,8 @@
     "verify:routes": "node scripts/verify-routes.mjs",
     "verify:stocks-seo": "node scripts/verify-stocks-seo.mjs",
     "verify:public-seo": "node scripts/verify-public-seo.mjs",
+    "verify:seo-release": "tsx scripts/verify-seo-release.ts",
+    "test:seo-release": "tsx scripts/test_seoRelease.ts",
     "verify:login-preflight": "node scripts/verify-login-preflight.mjs",
     "verify:admin-access": "node scripts/verify-admin-access.mjs",
     "verify:admin-policy": "tsx scripts/verify-admin-policy.ts",

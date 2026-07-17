@@ -74,7 +74,7 @@ const SITE = "https://ornscore.com";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_PATH = argValue("--data", resolve(__dirname, "..", "public", "data", "stocks.json"));
 
-function expectedLastmodIso() {
+export function expectedLastmodIso() {
   let meta;
   try {
     meta = JSON.parse(readFileSync(DATA_PATH, "utf-8"));
@@ -106,7 +106,7 @@ function expectedLastmodIso() {
 // Important public routes that MUST appear in the sitemap. Kept in sync with the
 // staticPages list in src/app/sitemap.ts — a route silently dropped from that
 // array would never get indexed, and this is the tripwire.
-const REQUIRED_SITEMAP_PATHS = [
+export const REQUIRED_SITEMAP_PATHS = [
   "/",
   "/today",
   "/stocks",
@@ -126,7 +126,7 @@ const REQUIRED_SITEMAP_PATHS = [
 // (a broken import would yield zero and silently shrink the index). Legacy
 // /theme/* is intentionally excluded — it is retired (Slice B) and must be absent
 // from the sitemap (see FORBIDDEN_SITEMAP_PREFIXES).
-const REQUIRED_DYNAMIC_PREFIXES = [
+export const REQUIRED_DYNAMIC_PREFIXES = [
   { label: "stock detail (/stock/...)", prefix: "/stock/" },
   { label: "topic (/topics/...)", prefix: "/topics/" },
   // Curated comparison landings (Slice C): the seven approved /compare/<pair>
@@ -139,7 +139,7 @@ const REQUIRED_DYNAMIC_PREFIXES = [
 // crawlers via the sitemap. A <loc> whose path equals one of these or starts
 // with "<prefix>/" is a leak. (/admin is guarded server-side and absent from
 // robots.ts on purpose, but it must still never appear in the sitemap.)
-const FORBIDDEN_SITEMAP_PREFIXES = [
+export const FORBIDDEN_SITEMAP_PREFIXES = [
   "/admin",
   "/login",
   "/auth",
@@ -153,7 +153,7 @@ const FORBIDDEN_SITEMAP_PREFIXES = [
 ];
 
 // Private prefixes robots.txt must Disallow. Kept in sync with src/app/robots.ts.
-const REQUIRED_ROBOTS_DISALLOW = ["/api/", "/auth/", "/login", "/settings/", "/watchlist", "/history"];
+export const REQUIRED_ROBOTS_DISALLOW = ["/api/", "/auth/", "/login", "/settings/", "/watchlist", "/history"];
 
 // --- fetch ------------------------------------------------------------------
 // connection:close so no keep-alive socket lingers into teardown — on Windows a
@@ -169,7 +169,7 @@ async function fetchText(path) {
 }
 
 // --- sitemap parsing --------------------------------------------------------
-function sitemapLocs(xml) {
+export function sitemapLocs(xml) {
   const out = [];
   for (const m of xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)) {
     out.push(
@@ -183,7 +183,7 @@ function sitemapLocs(xml) {
   return out;
 }
 
-function sitemapLastmods(xml) {
+export function sitemapLastmods(xml) {
   const out = [];
   for (const m of xml.matchAll(/<lastmod>\s*([^<\s]+)\s*<\/lastmod>/gi)) {
     out.push(m[1].trim());
@@ -191,7 +191,7 @@ function sitemapLastmods(xml) {
   return out;
 }
 
-function pathOf(url) {
+export function pathOf(url) {
   try {
     return new URL(url).pathname;
   } catch {
@@ -199,13 +199,13 @@ function pathOf(url) {
   }
 }
 
-function matchesPrefix(path, prefix) {
+export function matchesPrefix(path, prefix) {
   // "/admin" matches "/admin" and "/admin/anything" but NOT "/administrators".
   return path === prefix || path.startsWith(`${prefix}/`);
 }
 
 // --- robots parsing ---------------------------------------------------------
-function parseRobots(text) {
+export function parseRobots(text) {
   const disallow = [];
   const allow = [];
   let sitemap = null;
@@ -226,7 +226,7 @@ function parseRobots(text) {
 }
 
 // --- checks -----------------------------------------------------------------
-function checkSitemap(status, xml) {
+export function checkSitemap(status, xml) {
   const reasons = [];
   if (status !== 200) reasons.push(`status ${status} (expected 200)`);
 
@@ -298,7 +298,7 @@ function checkSitemap(status, xml) {
   return { reasons, locs, paths };
 }
 
-function checkRobots(status, text) {
+export function checkRobots(status, text) {
   const reasons = [];
   if (status !== 200) reasons.push(`status ${status} (expected 200)`);
 
@@ -327,7 +327,7 @@ function checkRobots(status, text) {
 }
 
 // robots Disallow paths must not also be advertised as indexable sitemap URLs.
-function checkCrossConsistency(sitemapPaths, robotsDisallow) {
+export function checkCrossConsistency(sitemapPaths, robotsDisallow) {
   const reasons = [];
   for (const rule of robotsDisallow) {
     if (!rule || rule === "/") continue;
@@ -416,4 +416,8 @@ async function main() {
   process.exitCode = 0;
 }
 
-main();
+// Only run the CLI when invoked directly, not when imported by the SEO release gate
+// (scripts/verify-seo-release.ts reuses the exported robots/sitemap contract helpers).
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+  main();
+}
