@@ -8,6 +8,7 @@ import { getRecentSignals } from "@/lib/recentSignals";
 import { CompareClient } from "@/components/CompareClient";
 import { COMPARE_QUERY_MAX, parseCompareQuery } from "@/lib/compareQuery";
 import { metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
+import { curatedComparisonCards } from "@/lib/comparison";
 
 const compareDescription = "선택한 종목의 PER·PBR·ROE, 배당수익률, 추세, 밸류, 위험조정, 최근 공시 신호를 한눈에 비교합니다.";
 
@@ -195,6 +196,9 @@ export default async function ComparePage({ searchParams }: PageProps) {
   // 상한 초과로 잘라낸 종목은 유효 코드이므로 이름으로 안내한다.
   const truncatedNames = truncatedTickers.map((ticker) => stockMap[ticker].name);
 
+  // 큐레이션 비교 랜딩(Slice C) — 서버 렌더 내부 링크. 허용목록 7쌍만, 전부 실데이터.
+  const compareCards = curatedComparisonCards();
+
   return (
     <div className="space-y-4">
       <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
@@ -226,6 +230,28 @@ export default async function ComparePage({ searchParams }: PageProps) {
         <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
           비교는 최대 {COMPARE_QUERY_MAX}개까지만 담을 수 있어 뒤쪽 종목은 제외했어요: <strong>{truncatedNames.join(", ")}</strong>
         </div>
+      ) : null}
+
+      {compareCards.length > 0 ? (
+        <section aria-label="추천 비교" className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">바로 보는 종목 비교</h2>
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            같은 업종 대표 종목을 미리 정리한 비교 페이지입니다. 어느 쪽이 높고 낮은지 중립적으로 나란히 봅니다.
+          </p>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {compareCards.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/compare/${c.slug}`}
+                  className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 px-3 py-2.5 text-xs transition hover:border-blue-300 hover:text-blue-700 dark:border-zinc-800 dark:hover:border-blue-700 dark:hover:text-blue-400"
+                >
+                  <span className="font-medium text-zinc-800 dark:text-zinc-200">{c.a.name} vs {c.b.name}</span>
+                  <span aria-hidden="true" className="text-zinc-400">›</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
 
       <CompareClient

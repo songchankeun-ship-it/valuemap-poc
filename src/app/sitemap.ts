@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { parseDatasetGeneratedAt } from "@/lib/datasetTimestamp";
 import { seoTopics } from "@/lib/seoTopics";
+import { curatedComparisonPaths } from "@/lib/seoContract";
 
 const SITE = "https://ornscore.com";
 
@@ -125,6 +126,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.62,
   }));
 
+  // 3. 큐레이션 비교 랜딩(Slice C): 허용목록의 7쌍만 색인 대상이다. 임의/역순 쌍은
+  //    정적 생성도 sitemap 등재도 되지 않는다(대체 canonical 방지). 경로 정본은
+  //    seoContract.curatedComparisonPaths() 하나이며 라우트 generateStaticParams 와 일치한다.
+  const comparePages: MetadataRoute.Sitemap = curatedComparisonPaths().map((path) => ({
+    url: `${SITE}${path}`,
+    lastModified: dataDate,
+    changeFrequency: "weekly" as const,
+    priority: 0.55,
+  }));
+
   const stockPages: MetadataRoute.Sitemap = realStockPool.map((s) => ({
     url: `${SITE}/stock/${s.ticker}`,
     lastModified: dataDate,
@@ -133,5 +144,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.marketCap >= 5_000_000_000_000 ? 0.8 : s.marketCap >= 1_000_000_000_000 ? 0.7 : 0.6,
   }));
 
-  return [...staticPages, ...topicPages, ...stockPages];
+  return [...staticPages, ...topicPages, ...comparePages, ...stockPages];
 }

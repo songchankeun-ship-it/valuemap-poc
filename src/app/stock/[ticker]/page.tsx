@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { LivePrice } from "@/components/LivePrice";
 import { getStockByTicker } from "@/lib/mockData";
 import { StockDisclosuresLazy } from "@/components/StockDisclosuresLazy";
@@ -28,6 +29,7 @@ import { formerNamesOf } from "@/lib/stockAliases";
 import { realStockPool, dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { dataStatus } from "@/lib/dataStatus";
 import { compositeOf } from "@/lib/score";
+import { curatedPairsForTicker } from "@/lib/comparison";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
 import { CompareTray } from "@/components/stock/CompareTray";
 import { StockChecklist } from "@/components/stock/StockChecklist";
@@ -475,6 +477,9 @@ export default async function StockDetailPage({ params }: PageProps) {
   // 구(舊) 사명은 통제된 별칭으로만 노출한다(Slice H): canonical name/headline/제목/URL 은
   // 항상 현재 사명(s.name)을 쓰고, 과거 사명은 alternateName 별칭 필드에서만 검색 힌트로 제공한다.
   const formerNames = formerNamesOf(ticker);
+  // 큐레이션 비교(Slice C) — 이 종목이 포함된 허용목록 비교 랜딩으로의 서버 렌더 내부 링크.
+  const curatedComparisons = curatedPairsForTicker(s.ticker);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -687,6 +692,29 @@ export default async function StockDetailPage({ params }: PageProps) {
           },
         ]}
       />
+
+      {/* 큐레이션 비교(Slice C) — 이 종목이 속한 승인 비교 랜딩으로의 서버 렌더 내부 링크.
+          허용목록에 없는 종목이면 렌더되지 않는다(빈 섹션/임의 쌍 노출 없음). */}
+      {curatedComparisons.length > 0 ? (
+        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">이 종목이 담긴 비교</h2>
+          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+            같은 업종 종목과 지표를 중립적으로 나란히 봅니다.
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {curatedComparisons.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/compare/${c.slug}`}
+                  className="inline-flex items-center gap-1 rounded-md border border-zinc-200 px-3 py-2 text-xs font-medium text-zinc-700 transition hover:border-blue-300 hover:text-blue-700 dark:border-zinc-800 dark:text-zinc-300 dark:hover:border-blue-700 dark:hover:text-blue-400"
+                >
+                  {s.name} vs {c.other.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {/* 설계서 5-8: 비교함에 종목이 담겨 있을 때만 뜨는 비교 유도 트레이. 담기 로직은 히어로의
           '비교 추가'가 소유하고, 이 트레이는 상태 반영 + /compare 이동만 담당(중복 CTA 방지). */}

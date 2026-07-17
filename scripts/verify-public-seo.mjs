@@ -129,6 +129,10 @@ const REQUIRED_SITEMAP_PATHS = [
 const REQUIRED_DYNAMIC_PREFIXES = [
   { label: "stock detail (/stock/...)", prefix: "/stock/" },
   { label: "topic (/topics/...)", prefix: "/topics/" },
+  // Curated comparison landings (Slice C): the seven approved /compare/<pair>
+  // pages. At least one must be present, proving the curated allowlist mapping
+  // still emits into the sitemap. Arbitrary/reverse pairs are never generated.
+  { label: "curated comparison (/compare/...)", prefix: "/compare/" },
 ];
 
 // Owner-only / private / machine routes that must NEVER be advertised to
