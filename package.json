@@ -39,6 +39,8 @@
     "test:public-data-delta": "python scripts/test_public_data_delta.py",
     "verify:daily-workflow-gate": "node scripts/verify-daily-workflow-gate.mjs",
     "test:daily-workflow-gate": "node scripts/test-daily-workflow-gate.mjs",
+    "verify:continuity-fault-matrix": "node scripts/verify-continuity-fault-matrix.mjs",
+    "test:continuity-fault-matrix": "node scripts/test-continuity-fault-matrix.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",
