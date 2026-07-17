@@ -42,6 +42,14 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-17 - Codex - Service continuity Slice G (batch close): full local recertification + operator dossier
+
+- Re-certified Slices A–F as one unit from a clean `npm ci` at HEAD `d54e241` (tested base `b4ba1e9`). Added `docs/ornscore-service-continuity-operator-dossier-2026-07-17.md` (command/state tables, rollback matrix, failure triage, residual risks, Metrics 2.5.1 status, owner-only steps). No source, workflow, `public/data`, or Metrics change — one doc + PROGRESS/this handoff.
+- Gates all green: `npm ci` 0 · `tsc --noEmit` 0 · `build` 0 (183/183 static, 138 stock SSG paths, Middleware 90.2 kB) · versions next 15.5.18 / react 19.2.7 / react-dom 19.2.7 · production audit critical 0 / high 0 / moderate 2 (full audit adds dev-only HIGH `xlsx`, LOW `esbuild`). verify:continuity-baseline 7/7 · Metrics 2.4 (138, 0 errors) · live routes 9/9, public-seo 3/3, stocks-seo 13/13, smoke --all 25/25, release preflight 11/11 offline + 11/11 live, route-canary 6/6 · every new continuity verifier/test passed · desktop + 390×844 mobile smoke 8/8 200.
+- Frozen proofs: login/auth blobs (`fea64da…`,`0c8a28f…`,`6084659…`) and `public/data` tree (`1ab0e42…`, 138 price files) byte-identical to `b4ba1e9`; no fixture in `public/data`; `next start` listener stopped (post-kill curl exit 7); `git diff --check` clean; worktree clean.
+- Metrics 2.5.1 is NOT ready: shadow-only engine, rollout ledger 0/5 approved runs, gate PENDING, `rolloutCandidate false`. Public stays Metrics 2.4. Do not declare ready or switch the public formula.
+- Nothing pushed, published, deployed, connected, or mutated remotely. Batch A–G complete; the continuity queue stops here. Owner-only next steps are enumerated in dossier §8 (Naver review, push/deploy, commit-status CI wiring, Metrics 2.5.1 promotion, analytics creds, asset-links, setting changes).
+
 ### 2026-07-17 - Codex watchdog - Routine-provider capacity recovery
 
 - Task 344's Codex process exited before reading or editing the repository because local Codex CLI `0.143.0` does not support the configured `gpt-5.6-sol` model. The failed run consumed zero task tokens and made no code commit.

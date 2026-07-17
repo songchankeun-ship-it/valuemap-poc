@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-17 - [codex] Service continuity Slice G: full local recertification + operator dossier
+
+- **Scope**: 설계서 `docs/ornscore-service-continuity-2026-07-17.md` Slice G 만 — Slices A–F 를 한 단위로 전수 재인증하고 운영자 도시어를 작성. 소스/워크플로/공개데이터/Metrics 무변경(문서 1개 신규 + PROGRESS/AI_HANDOFF 갱신만). 직전 HEAD `d54e241`(Slice F), 브랜치 `ai-center/task-349-ornscore-continuity-g-full-local-rec`. 테스트 베이스 `b4ba1e9`.
+- **신규 산출물**: `docs/ornscore-service-continuity-operator-dossier-2026-07-17.md` — command/state 표, 롤백 커밋 매트릭스, 실패 트리아지 런북, 잔여 리스크, Metrics 2.5.1 상태, 소유자 전용 후속 단계.
+- **클린 게이트(정확)**: `npm ci` 0(410 packages) · `npx tsc --noEmit` 0 · `npm run build` 0(`Generating static pages (183/183)`·`/stock/[ticker]` SSG 138 경로·`/topics/[slug]` 7·Middleware 90.2 kB) · 설치 버전 next **15.5.18** / react **19.2.7** / react-dom **19.2.7** / eslint-config-next **15.5.18**.
+- **감사(full-build)**: `npm audit --omit=dev` = **critical 0 / high 0 / moderate 2 / low 0**(zero-high 게이트 유지; moderate 2 = postcss GHSA-qx2v-qp2m-jg93, 빌드타임 전용·public 경로 미도달). 전체 audit 은 dev 전용 HIGH `xlsx`(SheetJS, fix 없음, 스크립트 전용)·LOW `esbuild`(tsx) 추가 — 프로덕션 미노출.
+- **재인증 게이트 전부 PASS**: verify:continuity-baseline **7/7** · framework-baseline 3/3(freshness FRESH·audit-block OK·build-classification OK) · verify_metrics.py 138·오류0·금칙0·**Metrics 2.4** · (live) verify:routes **9/9**(date 2026.07.16)·verify:public-seo **3/3**(sitemap 162 URL)·verify:stocks-seo **13/13**·smoke --all **25/25** · release:preflight offline **11/11** + live **11/11 all green** · verify:route-canary live **6/6** · 신규 연속성 검증기/테스트 전수 PASS(test:continuity-baseline·route-canary·commit-status[7 state]·daily-workflow-gate·continuity-fault-matrix·public-data-delta 0 fail·framework-baseline; verify:daily-workflow-gate 6/6·verify:continuity-fault-matrix 25 cases 38/200 req 12 cat).
+- **데스크톱 + 390×844 모바일 스모크**: 데스크톱 라우트/스모크/canary 라이브 통과. 모바일(iPhone-class UA) `/`·`/stocks`·`/stock/005930`·`/compare`·`/status`·`/today`·`/watchlist`·`/login?next=/watchlist` 8/8 200 + viewport meta 1개(SSR HTML 는 viewport 독립, 반응형은 클라이언트 CSS).
+- **동결 증명(Git object)**: login/auth 3개 blob(LoginContent `fea64da…`·login/page `0c8a28f…`·auth/callback `6084659…`) HEAD==`b4ba1e9` 동일 · `public/data` 트리 `1ab0e42…`(stocks.json `b9d09f3…`·market-alerts `e4741f3…`·prices 트리 `388f850…`, 138 파일) HEAD==base 동일 · 138 종목·Metrics 2.4 유지 · fixture 유출 0(`candidate_*`/`baseline.json` = `scripts/fixtures/public_data_delta/` 에만) · `next start`(:4478) 리스너 PID 14952 종료→post-kill curl exit 7(중지) · git diff --check clean · worktree clean.
+- **Metrics 2.5.1(비준비·정직)**: engineVersion 2.5.1 은 Git 비추적 shadow(`.metrics251-shadow`)·fail-closed 25 reason code. rollout ledger **승인 run 0/필요 5 · 게이트 PENDING · rolloutCandidate false**. 공개 = Metrics 2.4 유지. **Ready 선언 금지·공개 산식 스위치 금지** — 5 실거래일 후 소유자 결정.
+- **불변식(무변경)**: login/auth·Supabase provider/callback/schema/RLS·cron 스케줄/동시성/권한·public Metrics 2.4·`public/data`·138 산출·analytics 이벤트명·public URL·빌드 커맨드 무변경. 패키지 추가 0. push/publish/deploy/remote mutation 0. 단일 로컬 `[codex]` 커밋. rollback point `d54e241`.
+- **배치 종료**: Slices A–G 완료. 관측 창을 채우기 위한 filler 작업 금지 — 큐는 여기서 정지. 소유자 전용 후속(네이버 리뷰·push/배포·commit-status CI 배선·Metrics 2.5.1 승격·애널리틱스 자격·asset-links·설정 변경)은 도시어 §8 참조.
+
 ## 2026-07-17 - [codex] Service continuity batch plan and queue handoff
 
 - **Decision**: keep the pending Naver review and every login/auth provider surface frozen. Do not spend the observation window on speculative feature work.
