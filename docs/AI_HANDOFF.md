@@ -42,6 +42,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-18 - Codex - SEO authority batch plan and queue handoff
+
+- Audited the current repository rather than applying the older external SEO package. Existing stock metadata, canonical/noindex behavior, sitemap, JSON-LD, seven topic pages, and SEO tests are retained.
+- Added the governing six-slice plan at `docs/ornscore-seo-authority-plan-2026-07-18.md`: contract first, retire duplicate/mock legacy themes, add seven curated comparison pages, prepare env-driven Google/Naver ownership tags, build an exact-SHA SEO release gate, then full local recertification.
+- Frozen throughout: login/auth/Naver review, Supabase/runtime settings, public Metrics 2.4, Metrics 2.5.1 shadow status, `public/data`, 138-stock output, workflow controls, external search-console actions, push, deploy, packages, and Next 16.
+- Next agent must execute one slice only, leave one local `[codex]` commit with finite evidence, and stop after Slice F. No arbitrary comparison pages, mock-backed index pages, mass-generated content, or filler work.
+
 ### 2026-07-17 - Codex - Service continuity Slice G (batch close): full local recertification + operator dossier
 
 - Re-certified Slices A–F as one unit from a clean `npm ci` at HEAD `d54e241` (tested base `b4ba1e9`). Added `docs/ornscore-service-continuity-operator-dossier-2026-07-17.md` (command/state tables, rollback matrix, failure triage, residual risks, Metrics 2.5.1 status, owner-only steps). No source, workflow, `public/data`, or Metrics change — one doc + PROGRESS/this handoff.

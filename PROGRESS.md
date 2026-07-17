@@ -1,5 +1,13 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-18 - [codex] SEO authority batch plan and queue handoff
+
+- **Decision**: do not apply the older external SEO kit against the newer repository. Preserve the already-green stock metadata, canonical/noindex rules, dynamic sitemap, JSON-LD, and topic pages; close only evidence-backed gaps.
+- **Plan**: `docs/ornscore-seo-authority-plan-2026-07-18.md`, six ordered local slices A-F: search-surface contract, real-data topic authority/legacy-theme retirement, curated comparison landing pages, environment-driven ownership-verification readiness, exact-SHA SEO release gate, and full local recertification/operator dossier.
+- **Search intent**: eliminate duplicate theme/topic ownership and mock-backed indexing; add only seven curated same-domain comparison pages; keep arbitrary filters and pairs out of the index; make every sitemap URL real-data-backed and internally linked.
+- **Frozen**: Naver review/login/auth/provider/callback behavior, Supabase/runtime values, public Metrics 2.4, shadow Metrics 2.5.1 state, `public/data`, 138-stock output, daily workflow controls, analytics names, external search tools, push, deployment, Next 16, and packages.
+- **Operating rule**: upper-tier capacity is reserved for authority decisions, adversarial release-gate work, and final recertification. Focused implementation uses standard budgets. Planner/fallback stay off, quality gates stay on, and the queue stops after Slice F without filler work.
+
 ## 2026-07-17 - [codex] Service continuity Slice G: full local recertification + operator dossier
 
 - **Scope**: 설계서 `docs/ornscore-service-continuity-2026-07-17.md` Slice G 만 — Slices A–F 를 한 단위로 전수 재인증하고 운영자 도시어를 작성. 소스/워크플로/공개데이터/Metrics 무변경(문서 1개 신규 + PROGRESS/AI_HANDOFF 갱신만). 직전 HEAD `d54e241`(Slice F), 브랜치 `ai-center/task-349-ornscore-continuity-g-full-local-rec`. 테스트 베이스 `b4ba1e9`.
