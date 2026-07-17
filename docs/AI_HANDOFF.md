@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-17T19:22:03.881Z
+Last updated: 2026-07-17T19:45:31.446Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,8 +21,8 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 355 - ORNScore SEO E - exact SHA release gate and fault tests
-- Run: 359
+- Task: 356 - ORNScore SEO F - full local recertification and operator dossier
+- Run: 360
 - Status: completed
 - Agent: claude
 - Note: Development and all quality gates completed.
