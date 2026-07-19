@@ -28,7 +28,7 @@ export function SignalStockCard({ s }: { s: SignalStockVM }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-[14px] font-bold text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono tabular-nums shrink-0">{s.ticker}</span>
+          <span className="text-[10px] text-zinc-600 dark:text-zinc-300 font-mono tabular-nums shrink-0">{s.ticker}</span>
         </div>
         <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">{s.sector}</div>
         <div className="flex items-center gap-1.5 mt-1 text-[12px]">

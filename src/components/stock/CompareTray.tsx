@@ -64,7 +64,7 @@ export function CompareTray() {
             <span className="text-xs font-medium text-zinc-700 dark:text-zinc-200 tabular-nums whitespace-nowrap">
               {t.basketPrefix} {count}/{COMPARE_MAX}
             </span>
-            <span className="hidden md:inline text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
+            <span className="hidden md:inline text-[11px] text-zinc-600 dark:text-zinc-300 truncate">
               {t.hint}
             </span>
           </div>

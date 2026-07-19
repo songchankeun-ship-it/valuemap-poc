@@ -50,7 +50,7 @@ export function ConclusionSummaryCard({
               </li>
             ))}
             {extraGoodCount > 0 ? (
-              <li className="text-[10px] text-emerald-700/80 dark:text-emerald-300/80">{t.moreSignals(extraGoodCount)}</li>
+              <li className="text-[10px] text-emerald-800 dark:text-emerald-300">{t.moreSignals(extraGoodCount)}</li>
             ) : null}
           </ul>
         </div>
@@ -65,7 +65,7 @@ export function ConclusionSummaryCard({
               </li>
             ))}
             {extraCheckCount > 0 ? (
-              <li className="text-[10px] text-amber-700/80 dark:text-amber-300/80">{t.moreSignals(extraCheckCount)}</li>
+              <li className="text-[10px] text-amber-800 dark:text-amber-300">{t.moreSignals(extraCheckCount)}</li>
             ) : null}
           </ul>
         </div>

@@ -133,7 +133,7 @@ export function StockConclusionHero({
 
       <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/40 px-3 py-2">
         <p className="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">{t.disclaimerMain}</p>
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug">{t.disclaimerSub}</p>
+        <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-snug">{t.disclaimerSub}</p>
       </div>
     </section>
   );

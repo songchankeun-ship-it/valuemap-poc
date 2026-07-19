@@ -70,9 +70,9 @@ export function HomeHero({
             <span className={"w-1.5 h-1.5 rounded-full " + (dataWarn ? "bg-orange-400" : "bg-emerald-400")} />
             <span className="tabular-nums">{copy.dataPrefix} {dataAsOf} {copy.marketClose}</span>
             {dataStale ? (
-              <span className="font-medium text-orange-600 dark:text-orange-300">· {copy.delayed}</span>
+              <span className="font-medium text-orange-700 dark:text-orange-300">· {copy.delayed}</span>
             ) : awaitingClose ? (
-              <span className="font-medium text-orange-600 dark:text-orange-300">· {f.awaitingShort}</span>
+              <span className="font-medium text-orange-700 dark:text-orange-300">· {f.awaitingShort}</span>
             ) : (
               <span className="text-emerald-600 dark:text-emerald-300">· {copy.normal}</span>
             )}
@@ -98,13 +98,13 @@ export function HomeHero({
                 key={ex.ticker}
                 prefetch={false}
                 href={"/stock/" + ex.ticker}
-                className="inline-flex items-center gap-1 border-b border-zinc-300 dark:border-zinc-700 py-0.5 font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500"
+                className="inline-flex min-h-8 items-center gap-1 border-b border-zinc-300 dark:border-zinc-700 py-0.5 font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500"
               >
                 <span className="truncate max-w-[7rem]">{ex.name}</span>
-                <span className="font-mono tabular-nums text-[10px] text-zinc-400 dark:text-zinc-500">{ex.ticker}</span>
+                <span className="font-mono tabular-nums text-[10px] text-zinc-600 dark:text-zinc-300">{ex.ticker}</span>
               </Link>
             ))}
-            <span className="shrink-0 text-zinc-400 dark:text-zinc-500">· {copy.searchCodeNote}</span>
+            <span className="shrink-0 text-zinc-600 dark:text-zinc-300">· {copy.searchCodeNote}</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 mt-3 md:mt-4">

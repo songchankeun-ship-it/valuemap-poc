@@ -35,7 +35,7 @@ export function SignalSection({
       )}
 
       {footnote ? (
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2 leading-relaxed">{footnote}</p>
+        <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-2 leading-relaxed">{footnote}</p>
       ) : null}
     </section>
   );

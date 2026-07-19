@@ -19,7 +19,7 @@ export function AppFooter({
   const { copy } = useLanguage();
 
   return (
-    <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+    <footer className="max-w-5xl mx-auto px-3 md:px-4 pb-10 pt-3 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-zinc-600 dark:text-zinc-300">
       <span className="tabular-nums" title={commitSha ? `${copy.footer.code} ${commitSha}` : undefined}>
         {copy.footer.dataPrefix} {globalAsOfLabel} {copy.footer.marketClose}
       </span>
@@ -32,8 +32,8 @@ export function AppFooter({
         href="/status"
         className={
           (dataStale
-            ? "text-amber-600/90 dark:text-amber-500/90"
-            : "text-emerald-600/80 dark:text-emerald-500/80") + " hover:underline"
+            ? "text-amber-700 dark:text-amber-300"
+            : "text-emerald-700 dark:text-emerald-300") + " inline-flex min-h-8 items-center hover:underline"
         }
       >
         {copy.footer.dataStatus} {dataStale ? copy.footer.dataStale : copy.footer.dataNormal}
@@ -41,22 +41,22 @@ export function AppFooter({
       <span>·</span>
       <span>{copy.footer.disclaimer}</span>
       <span>·</span>
-      <Link href="/about" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/about" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.about}
       </Link>
-      <Link href="/pricing" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/pricing" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.pricing}
       </Link>
-      <Link href="/terms" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/terms" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.terms}
       </Link>
-      <Link href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/privacy" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.privacy}
       </Link>
-      <Link href="/data-deletion" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/data-deletion" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.dataDeletion}
       </Link>
-      <Link href="/status#report" className="hover:text-zinc-600 dark:hover:text-zinc-300 underline">
+      <Link href="/status#report" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.report}
       </Link>
     </footer>

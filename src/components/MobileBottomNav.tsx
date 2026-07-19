@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
 import type { NavKey, NavShortKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
+import { getFocusableElements, trapTabKey } from "@/lib/focusTrap";
 
 // 하단 바는 폭이 좁아 축약 라벨(navShort)을 쓴다. 데스크톱/드로어(Sidebar·MobileNav)는
 // 같은 경로에 역할 라벨(nav)을 쓴다 — 설계서 §12.1/§12.2.
@@ -29,12 +30,14 @@ export function MobileBottomNav() {
   const pathname = usePathname() || "";
   const { copy } = useLanguage();
   const moreButtonRef = useRef<HTMLButtonElement>(null);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
 
   // 다른 메뉴(MobileNav·UserMenu)와 동일하게 Esc 로 더보기 시트를 닫는다(키보드 접근성).
   useEffect(() => {
     if (!moreOpen) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setMoreOpen(false);
+      else trapTabKey(e, moreMenuRef.current);
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -47,7 +50,8 @@ export function MobileBottomNav() {
   useEffect(() => {
     if (moreOpen) {
       wasOpenRef.current = true;
-      return;
+      const id = requestAnimationFrame(() => getFocusableElements(moreMenuRef.current)[0]?.focus());
+      return () => cancelAnimationFrame(id);
     }
     if (wasOpenRef.current) {
       wasOpenRef.current = false;
@@ -64,8 +68,10 @@ export function MobileBottomNav() {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setMoreOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
           <div
+            ref={moreMenuRef}
             role="menu"
             aria-label={copy.nav.more}
+            tabIndex={-1}
             className="absolute bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))] inset-x-0 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 rounded-t-2xl p-3 grid grid-cols-3 gap-2"
             onClick={(e) => e.stopPropagation()}
           >

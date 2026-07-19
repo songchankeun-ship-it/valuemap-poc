@@ -4817,3 +4817,17 @@ Completed a third presentation-only pass on branch `codex/visual-hierarchy-core`
 - **Frozen boundaries**: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, login/auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names are unchanged. No push, deployment, publication, or outside-service action.
 - **Next**: owner visual review remains available at `http://127.0.0.1:4460`; keep the current operational and release boundaries unchanged.
 - **Commit**: local `[codex] UI: establish branded visual language`.
+
+### 2026-07-20 - Accessibility and performance recertification [codex]
+
+Finalized the visual-refresh branch with a focused accessibility and production-performance pass, starting from `6caf051` on `codex/visual-hierarchy-core`.
+
+- Added shared keyboard focus trapping to the mobile navigation, mobile bottom-sheet menu, and data-trust dialog. Each surface now moves focus into the opened layer, wraps Tab navigation, supports Escape, and restores focus to its trigger.
+- Brought primary mobile controls to stable touch dimensions: menu and dialog controls are 44x44, header search is at least 44px high, compact trust/source controls are at least 32px, and footer/sample links have stable minimum heights.
+- Corrected small-text contrast in the header data strip, Home source/footer text, Today status/signal surfaces, and stock score/detail surfaces. The always-dark priority score panel now explicitly keeps its dark descendant palette in both site themes.
+- Production browser QA at 390x844 and 1440x900 on `/`, `/today`, and `/stock/032830`, in light and dark themes: zero WCAG text-contrast failures, zero unnamed interactive controls, zero visible images without alt text, one `h1`, one `main`, `lang=ko`, and zero horizontal overflow on every checked surface. Dialog/menu focus entry and trigger restoration passed.
+- Performance guardrail PASS with zero warnings. Median TTFB (3 samples): `/` 16ms, `/stocks` 15ms, `/today` 14ms, `/stock/034730` 12ms, `/stock/032830` 10ms, `/login` 7ms, `/pricing` 7ms, `/status` 10ms, `/disclosures` 7ms, `/backtest` 11ms, `/watchlist` 9ms, `/compare` 10ms. Category-B total time remains the known approximately 4s remote Supabase wait; server TTFB is unchanged.
+- Gates green: `npm run lint`; final `npm run build` (192 pages); `verify:local -- --base http://127.0.0.1:4461 --no-perf` 6/6; `verify:reaudit` 13/13; `verify:first-run-ux`; compare-entry, locale-invariant, and SEO-contract regressions; `app:check` PASS with only the expected owner-gated `assetlinks.json` WAIT.
+- Frozen boundaries: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names are unchanged. No push, deployment, publication, external service action, or genuine shadow collection.
+- **Next**: no further visual code is required before release review. Wait for the owner/external gates: Android signing fingerprint for `assetlinks.json`, Google Play identity/account readiness, Naver review, and five distinct real Metrics 2.5.1 trading dates. Keep the private collector active and review its dossier before any separate promotion decision.
+- **Commit**: local `[codex] A11y: recertify visual refresh`.

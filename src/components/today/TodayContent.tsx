@@ -341,7 +341,7 @@ export function TodayContent(props: TodayContentProps) {
               </div>
             </div>
           ) : null}
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-3">{t.watchHint}</p>
+          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-3">{t.watchHint}</p>
         </section>
       ) : (
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2">
@@ -377,7 +377,7 @@ export function TodayContent(props: TodayContentProps) {
       </section>
 
       {/* ── 구간 5 · 데이터 기준/주의 사항 ── */}
-      <section className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-3">
+      <section className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-3">
         {t.sourceNote}
       </section>
     </div>

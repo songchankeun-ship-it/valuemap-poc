@@ -119,7 +119,7 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
                   className={
                     "text-sm break-words " +
                     (isChecked
-                      ? "text-zinc-400 dark:text-zinc-500 line-through"
+                      ? "text-zinc-600 dark:text-zinc-300 line-through"
                       : "text-zinc-800 dark:text-zinc-100")
                   }
                 >
@@ -130,7 +130,7 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
               <a
                 href={item.anchor}
                 aria-label={`${label} — 해당 탭으로 이동`}
-                className={`flex items-center justify-center min-h-[44px] min-w-[44px] shrink-0 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+                className={`flex items-center justify-center min-h-[44px] min-w-[44px] shrink-0 rounded-md text-zinc-600 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
               >
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </a>
@@ -140,7 +140,7 @@ export function StockChecklist({ ticker }: { ticker: string; name?: string }) {
       </ul>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
-        <p className="min-w-0 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
+        <p className="min-w-0 text-[11px] text-zinc-600 dark:text-zinc-300 leading-snug break-words">
           {allDone ? t.allDone : t.storageNote}
         </p>
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">

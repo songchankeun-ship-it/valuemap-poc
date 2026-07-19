@@ -76,14 +76,14 @@ export function LivePrice({
             "text-[10px] px-1.5 py-0.5 rounded tabular-nums " +
             (open
               ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-              : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400")
+              : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")
           }
         >
           {open ? "장중 참고시세" : "장마감"}
           {timeLabel ? " · " + timeLabel : ""}
         </span>
       ) : asOf ? (
-        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">
+        <span className="text-[10px] text-zinc-600 dark:text-zinc-300 tabular-nums">
           · {asOf} 종가
         </span>
       ) : null}

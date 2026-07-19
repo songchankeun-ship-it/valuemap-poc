@@ -11,6 +11,7 @@ import type { NavKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
 import { ThemeToggle } from "./ThemeToggle";
 import { BrandMark } from "./BrandMark";
+import { trapTabKey } from "@/lib/focusTrap";
 
 const ITEMS = [
   // 1차 메뉴 — 핵심 기능
@@ -38,6 +39,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
   const { copy } = useLanguage();
   const openButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   // 드로어/백드롭을 document.body 로 포털해 헤더의 backdrop-blur(고정요소 컨테이닝 블록)
   // 밖으로 빼낸다. SSR 에서는 마운트 전이라 오버레이를 렌더하지 않는다(하이드레이션 안전).
@@ -52,11 +54,12 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
   }, [open]);
 
   useEffect(() => {
-    function onEsc(e: KeyboardEvent) {
+    function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
+      else trapTabKey(e, dialogRef.current);
     }
-    if (open) document.addEventListener("keydown", onEsc);
-    return () => document.removeEventListener("keydown", onEsc);
+    if (open) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   // 드로어 열릴 때 포커스를 닫기 버튼으로 이동하고, 닫힐 때 메뉴 열기 버튼으로
@@ -99,7 +102,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
         aria-label={copy.chrome.openMenu}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="lg:hidden w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-zinc-700 dark:text-zinc-300"
+        className="lg:hidden w-11 h-11 flex items-center justify-center rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-zinc-700 dark:text-zinc-300"
       >
         <Menu className="w-5 h-5" strokeWidth={2} />
       </button>
@@ -112,13 +115,15 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             aria-hidden
           />
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={copy.brand}
+            tabIndex={-1}
             className="lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10"
           >
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-              <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
+              <Link href="/" onClick={() => setOpen(false)} className="flex min-h-11 items-center gap-2 rounded-md">
                 <BrandMark className="h-7 w-7" />
                 <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{copy.brand}</span>
               </Link>
@@ -127,7 +132,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={copy.chrome.closeMenu}
-                className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
+                className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
               >
                 <X className="w-4 h-4" strokeWidth={2} />
               </button>

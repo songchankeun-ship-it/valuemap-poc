@@ -3842,3 +3842,16 @@ Second presentation-only pass on branch `codex/visual-hierarchy-core`, starting 
 - Frozen: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names. No push/deploy/publication/external action.
 - Next: owner visual review at `http://127.0.0.1:4460`; preserve current operational and release boundaries.
 - Commit: local `[codex] UI: establish branded visual language`.
+
+### 2026-07-20 - Accessibility and performance recertification [codex]
+
+Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibility, interaction, and production-performance checks. Prior HEAD `6caf051`.
+
+- **Interaction hardening**: `src/lib/focusTrap.ts` is the shared focusable-element/Tab-wrap helper. `MobileNav`, `MobileBottomNav`, and `DataTrustModal` use it with Escape handling, entry focus, and trigger-focus restoration. The mobile menu, home logo, and dialog close controls are 44px targets; compact trust/source controls and text links have stable minimum heights.
+- **Contrast hardening**: small secondary text was promoted from low-contrast zinc tones across the header strip, Home source/footer, Today status/signal cards, and stock score/detail surfaces. `PriorityScoreCard` carries an explicit nested dark context because it is intentionally dark in both site themes.
+- **Browser evidence**: production build `http://127.0.0.1:4461` checked at 390x844 and 1440x900 on `/`, `/today`, and `/stock/032830` in light/dark. Every combination reported one H1, one main, `lang=ko`, no unnamed focusables, no missing image alts, no horizontal overflow, and zero contrast failures. Data-trust and mobile-nav focus returned to their triggers; the bottom menu opened on its first menuitem.
+- **Performance evidence**: `perf:check` 3-sample median TTFB PASS with zero warnings: 16/15/14/12/10/7/7/10/7/11/9/10ms for home, stocks, today, two stock pages, login, pricing, status, disclosures, backtest, watchlist, compare. Known Category-B total time remains approximately 4s from the bounded remote Supabase request.
+- **Automated gates**: lint PASS; final build PASS (192 pages); local route health 6/6; public reaudit 13/13; first-run UX, compare-entry, locale invariant, SEO contract PASS; app packaging PASS with the expected external `assetlinks.json` WAIT only.
+- **Frozen**: no diff in `public/data`, Metrics/version state, auth, workflows, package manifests, runtime values, SEO ownership, or analytics names. No push/deploy/publication/external action.
+- **Next**: stop product/visual edits unless new evidence appears. Await Android signing fingerprint + Google Play identity/account readiness, Naver review, and the five-real-trading-day Metrics 2.5.1 dossier. Public remains Metrics 2.4 until a separate reviewed decision.
+- **Commit**: local `[codex] A11y: recertify visual refresh`.

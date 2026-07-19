@@ -40,7 +40,7 @@ export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
   const isHero = variant === "hero";
   const inputClassName = isHero
     ? "w-full pl-12 pr-3 py-3.5 md:py-4 bg-white dark:bg-zinc-950 border border-blue-200 dark:border-blue-900 text-zinc-950 dark:text-zinc-100 rounded-lg text-[15px] md:text-base font-bold placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-blue-950/10 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition"
-    : "w-full pl-10 pr-3 py-2 md:py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-zinc-100 rounded-lg text-sm md:text-[15px] font-medium placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-zinc-900/5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition";
+    : "w-full min-h-11 pl-10 pr-3 py-2 md:py-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-zinc-100 rounded-lg text-sm md:text-[15px] font-medium placeholder:text-zinc-500 dark:placeholder:text-zinc-500 shadow-sm shadow-zinc-900/5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition";
   const iconClassName = isHero
     ? "absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none"
     : "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-600 dark:text-blue-400 pointer-events-none";

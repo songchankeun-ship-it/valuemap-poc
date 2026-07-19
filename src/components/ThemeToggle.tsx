@@ -19,7 +19,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   }, []);
 
   if (!mounted) {
-    return <div className={compact ? "w-9 h-9" : "h-8 w-[150px]"} />;
+    return <div className={compact ? "w-10 h-10" : "h-8 w-[150px]"} />;
   }
 
   if (compact) {
@@ -28,7 +28,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
       <button
         type="button"
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="w-9 h-9 flex items-center justify-center rounded-md text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+        className="w-10 h-10 flex items-center justify-center rounded-md text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
         aria-label={isDark ? "라이트 모드로" : "다크 모드로"}
       >
         {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -48,7 +48,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
             aria-label={label}
             aria-pressed={active}
             className={
-              "flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition " +
+              "flex min-h-8 items-center gap-1 px-2 py-1 rounded text-[11px] font-medium transition " +
               (active
                 ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100")

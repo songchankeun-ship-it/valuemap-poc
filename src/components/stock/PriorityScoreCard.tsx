@@ -62,14 +62,14 @@ export function PriorityScoreCard({
   const t = priorityScoreCardCopy[locale];
   const rankPrefix = (tieCount: number) => tieCount > 1 ? (locale === "ko" ? "공동 " : "T-") : "";
   return (
-    <div className={"rounded-lg border bg-zinc-950 text-white p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-700")}>
+    <div className={"dark rounded-lg border bg-zinc-950 text-white p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-700")}>
       <div className="text-[11px] font-semibold uppercase text-zinc-400">{t.title}</div>
 
       <div className="mt-2 flex items-center gap-3">
         {suspect ? (
           <div className="flex items-baseline gap-1 shrink-0">
-            <span className="text-3xl md:text-4xl font-bold leading-none tabular-nums text-zinc-400 dark:text-zinc-500">{score}</span>
-            <span className="text-sm text-zinc-400 dark:text-zinc-500 tabular-nums">/ 100</span>
+            <span className="text-3xl md:text-4xl font-bold leading-none tabular-nums text-zinc-300">{score}</span>
+            <span className="text-sm text-zinc-300 tabular-nums">/ 100</span>
             <span className="text-amber-600 dark:text-amber-400 text-base" aria-hidden="true"> ⚠</span>
           </div>
         ) : (

@@ -14,6 +14,7 @@ import type { Locale } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
 import { trustModalCopy } from "@/lib/copy/trust";
 import { DataStatusBadge, AsOfDateBadge, MetricsVersionBadge } from "./badges";
+import { trapTabKey } from "@/lib/focusTrap";
 
 const TONE_RING: Record<DataStatusKind, string> = {
   normal: "border-emerald-200 dark:border-emerald-900",
@@ -46,7 +47,7 @@ export function DataSourceBadges({
               aria-describedby={isOpen ? descId : undefined}
               onClick={() => setOpen(isOpen ? null : s.id)}
               onBlur={() => setOpen((cur) => (cur === s.id ? null : cur))}
-              className="inline-flex items-center rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-1.5 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+              className="inline-flex min-h-8 items-center rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-2 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             >
               {s.label}
             </button>
@@ -93,6 +94,7 @@ export function DataTrustModal({
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
 
   useEffect(() => {
@@ -101,6 +103,7 @@ export function DataTrustModal({
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
+      else trapTabKey(e, dialogRef.current);
     };
     document.addEventListener("keydown", onKey);
     // 닫힐 때(open: true→false) 또는 언마운트 시에만 트리거로 포커스 복귀.
@@ -118,7 +121,7 @@ export function DataTrustModal({
         type="button"
         onClick={() => setOpen(true)}
         className={
-          "inline-flex items-center rounded border border-zinc-300 dark:border-zinc-600 px-1.5 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 " +
+          "inline-flex min-h-8 items-center rounded border border-zinc-300 dark:border-zinc-600 px-2 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 " +
           triggerClassName
         }
       >
@@ -131,9 +134,11 @@ export function DataTrustModal({
           onClick={() => setOpen(false)}
         >
           <div
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
+            tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
             className="w-full sm:max-w-md max-h-[85vh] overflow-y-auto rounded-t-2xl sm:rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-xl"
           >
@@ -146,7 +151,7 @@ export function DataTrustModal({
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t.close}
-                className="rounded p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                className="inline-flex h-11 w-11 items-center justify-center rounded text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -231,7 +236,7 @@ export function DataTrustBar({ status }: { status: LocalizedDataStatus }) {
       {/* 모바일 압축형 */}
       <div className="flex sm:hidden items-center gap-1.5 min-w-0 text-zinc-600 dark:text-zinc-300 truncate">
         <strong className="tabular-nums text-zinc-900 dark:text-zinc-100">{status.marketDateLabel}</strong>
-        <span className="text-zinc-500">{t.marketClose}</span>
+        <span className="text-zinc-600 dark:text-zinc-300">{t.marketClose}</span>
         <span className="text-zinc-300 dark:text-zinc-600">·</span>
         <DataStatusBadge tone={status.statusTone} label={status.statusLabel} />
       </div>

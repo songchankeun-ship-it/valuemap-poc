@@ -13,14 +13,14 @@ import type { Locale } from "@/lib/i18n";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="text-zinc-400 dark:text-zinc-500">{label}</span>
+      <span className="text-zinc-600 dark:text-zinc-300">{label}</span>
       {children}
     </span>
   );
 }
 
 function Divider() {
-  return <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700" aria-hidden="true">·</span>;
+  return <span className="hidden sm:inline text-zinc-500 dark:text-zinc-400" aria-hidden="true">·</span>;
 }
 
 export function TodayStatusBarContent({

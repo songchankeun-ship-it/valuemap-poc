@@ -54,12 +54,12 @@ export function HeaderDataBar({
               <>
                 <span className="sm:hidden">
                   <strong className={"tabular-nums " + (warn ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDateShort}</strong>
-                  <span className="ml-1 text-zinc-500 dark:text-zinc-500">{t.marketClose}</span>
+                  <span className="ml-1 text-zinc-600 dark:text-zinc-300">{t.marketClose}</span>
                 </span>
                 <span className="hidden sm:inline">
                   {t.dataBasis}{" "}
                   <strong className={"tabular-nums " + (warn ? "text-amber-900 dark:text-amber-100" : "text-zinc-900 dark:text-zinc-100")}>{businessDate}</strong>
-                  <span className="text-zinc-500 dark:text-zinc-500"> {t.marketClose}</span>
+                  <span className="text-zinc-600 dark:text-zinc-300"> {t.marketClose}</span>
                 </span>
                 {isStale && bizDaysSince !== null ? (
                   <span className="ml-1.5 font-semibold">{t.bizDaysAgo(bizDaysSince)}</span>
@@ -68,11 +68,11 @@ export function HeaderDataBar({
                 ) : null}
               </>
             ) : (
-              <span className="text-zinc-500 dark:text-zinc-500">{t.preparing}</span>
+              <span className="text-zinc-600 dark:text-zinc-300">{t.preparing}</span>
             )}
           </span>
           <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">·</span>
-          <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · DART</span>
+          <span className="text-zinc-600 dark:text-zinc-300 hidden md:inline whitespace-nowrap">KRX · Naver · DART</span>
           <span className="hidden sm:inline-flex"><MetricsVersionBadge label={metricsVersionLabel} /></span>
           <LocalizedDataTrustModal
             statusByLocale={statusByLocale}

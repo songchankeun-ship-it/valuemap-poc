@@ -61,7 +61,7 @@ export function ScoreGauge({ score, size = 96, stroke, showLabel = true, showOut
           {Math.round(v)}
         </span>
         {showOutOf ? (
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-none mt-0.5">/ 100</span>
+          <span className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-none mt-0.5">/ 100</span>
         ) : null}
         {showLabel ? (
           <span className={"text-[9px] font-medium leading-none mt-1 px-1 text-center " + c.text}>{c.label}</span>

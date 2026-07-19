@@ -46,7 +46,7 @@ export function MetricsSectionHeader({ poolN }: { poolN: number }) {
         <Link href="/guide/metrics" className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline shrink-0">{t.guideLink}</Link>
       </div>
       <p className="mt-1 text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">{t.lead}</p>
-      <p className="mt-1 text-[10px] leading-snug text-zinc-400 dark:text-zinc-500">{t.scoreVsRankNote(poolN)}</p>
+      <p className="mt-1 text-[10px] leading-snug text-zinc-600 dark:text-zinc-300">{t.scoreVsRankNote(poolN)}</p>
     </div>
   );
 }
@@ -92,7 +92,7 @@ export function RiskDetailCard({
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
       <div className="flex items-baseline justify-between mb-2">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.title} <span className="text-[10px] font-normal text-zinc-400">{t.subtitle}</span></div>
-        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 tabular-nums">{t.observedPrefix} {days}{t.observedSuffix} · {t.reliabilityPrefix} {reliability}</span>
+        <span className="text-[10px] text-zinc-600 dark:text-zinc-300 tabular-nums">{t.observedPrefix} {days}{t.observedSuffix} · {t.reliabilityPrefix} {reliability}</span>
       </div>
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-md bg-zinc-50 dark:bg-zinc-800/50 p-2">
@@ -108,7 +108,7 @@ export function RiskDetailCard({
           <div className="text-sm font-semibold tabular-nums text-rose-600 dark:text-rose-400">{worstDay != null ? worstDay.toFixed(1) + "%" : "—"}</div>
         </div>
       </div>
-      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-2">{t.note}</p>
+      <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-2">{t.note}</p>
     </section>
   );
 }
@@ -180,16 +180,16 @@ export function SectorValueCard({
   return (
     <div id="sector-value" className={"scroll-mt-16 rounded-lg border p-3 flex items-center justify-between gap-3 " + (lowSample ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40" : "border-cyan-200 dark:border-cyan-900 bg-cyan-50/60 dark:bg-cyan-950/20")}>
       <div className="min-w-0">
-        <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>{t.titlePrefix} {sectorName} <span className={"font-normal " + (lowSample ? "text-zinc-400 dark:text-zinc-500" : "text-cyan-700/70 dark:text-cyan-400/70")}>{t.diffNote}</span></div>
+        <div className={"text-[11px] md:text-xs font-semibold " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>{t.titlePrefix} {sectorName} <span className={"font-normal " + (lowSample ? "text-zinc-600 dark:text-zinc-300" : "text-cyan-800 dark:text-cyan-300")}>{t.diffNote}</span></div>
         <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.peerDescBefore} {peers}{t.peerDescMid} {poolN}{t.peerDescAfter}({Math.round(valueScore)}{t.peerDescPoint}</div>
-        <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.bridgeNote}</div>
+        <div className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-1 break-keep">{t.bridgeNote}</div>
         {lowSample ? (
           <div className="text-[10px] font-medium text-amber-600 dark:text-amber-400 mt-1">{t.lowSample}</div>
         ) : null}
       </div>
       <div className="text-right shrink-0">
         <span className={"font-bold tabular-nums " + (lowSample ? "text-base text-zinc-500 dark:text-zinc-400" : "text-lg text-cyan-700 dark:text-cyan-400")}>{score}</span>
-        <span className="text-[10px] text-zinc-400">/100</span>
+        <span className="text-[10px] text-zinc-600 dark:text-zinc-300">/100</span>
       </div>
     </div>
   );
@@ -228,7 +228,7 @@ export function FinancialsSection({
         ))}
       </section>
 
-      <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-relaxed">{t.note}</p>
+      <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-relaxed">{t.note}</p>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="text-sm font-semibold mb-2 text-zinc-900 dark:text-zinc-100">{t.themesPrefix} {themes.length}</div>

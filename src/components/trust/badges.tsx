@@ -68,7 +68,7 @@ export function AsOfDateBadge({
   return (
     <span className={"inline-flex items-center gap-1 whitespace-nowrap " + className}>
       <strong className="tabular-nums text-zinc-900 dark:text-zinc-100 font-medium">{label}</strong>
-      {suffix ? <span className="text-zinc-500 dark:text-zinc-500">{suffix}</span> : null}
+      {suffix ? <span className="text-zinc-600 dark:text-zinc-300">{suffix}</span> : null}
     </span>
   );
 }

@@ -42,7 +42,7 @@ export function SectorComparison({
       {sectorCount < 2 ? (
         <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-6 text-center">
           <p className="text-xs text-zinc-500 dark:text-zinc-400">{t.emptyTitle}</p>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">{t.emptySub}</p>
+          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-1">{t.emptySub}</p>
         </div>
       ) : (
         <>
@@ -75,12 +75,12 @@ export function SectorComparison({
               })}
             </ul>
           </div>
-          <div className="flex flex-wrap items-center gap-x-2 mt-2 text-[10px] text-zinc-400 dark:text-zinc-500">
+          <div className="flex flex-wrap items-center gap-x-2 mt-2 text-[10px] text-zinc-600 dark:text-zinc-300">
             <span className="break-keep">{t.legend}</span>
           </div>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1">{t.sampleBefore} {Math.min(6, sectorCount)} {t.sampleMid} {sectorCount} {t.sampleAfter}</p>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.basisNote}</p>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 break-keep">{t.classNote}</p>
+          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-1">{t.sampleBefore} {Math.min(6, sectorCount)} {t.sampleMid} {sectorCount} {t.sampleAfter}</p>
+          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-1 break-keep">{t.basisNote}</p>
+          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-1 break-keep">{t.classNote}</p>
         </>
       )}
     </section>

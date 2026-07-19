@@ -10,17 +10,17 @@ export function HomeDataSourceFooter({ count, dataAsOf }: { count: number; dataA
   const { locale } = useLanguage();
   const t = homeCopy[locale].dataSource;
   return (
-    <section className="text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
+    <section className="text-xs text-zinc-500 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-4">
       <p className="text-zinc-600 dark:text-zinc-400">{t.notAdvice}</p>
       <p className="mt-2">
         <strong className="text-zinc-700 dark:text-zinc-300">{t.label}</strong> {t.bodyA}{count}{t.bodyMid}{dataAsOf}{t.bodyEnd}
       </p>
-      <div className="mt-3 flex items-center gap-3 text-zinc-400 dark:text-zinc-500">
-        <Link href="/about" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">{t.about}</Link>
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-zinc-600 dark:text-zinc-300">
+        <Link href="/about" className="inline-flex min-h-8 items-center hover:text-zinc-800 dark:hover:text-white underline">{t.about}</Link>
         <span>·</span>
-        <Link href="/terms" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">{t.terms}</Link>
+        <Link href="/terms" className="inline-flex min-h-8 items-center hover:text-zinc-800 dark:hover:text-white underline">{t.terms}</Link>
         <span>·</span>
-        <Link href="/privacy" className="hover:text-zinc-700 dark:hover:text-zinc-300 underline">{t.privacy}</Link>
+        <Link href="/privacy" className="inline-flex min-h-8 items-center hover:text-zinc-800 dark:hover:text-white underline">{t.privacy}</Link>
       </div>
     </section>
   );

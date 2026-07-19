@@ -72,7 +72,7 @@ export async function AppHeader() {
             <BrandMark className="h-7 w-7" />
             <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">오른스코어</span>
           </Link>
-          <Link href="/" className="lg:hidden flex items-center shrink-0" aria-label="홈">
+          <Link href="/" className="lg:hidden flex min-h-11 min-w-11 items-center justify-center shrink-0 rounded-md" aria-label="홈">
             <BrandMark className="h-7 w-7" />
           </Link>
 

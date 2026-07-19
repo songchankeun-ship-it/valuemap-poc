@@ -75,9 +75,9 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
 
       {/* 점수(0~100) */}
       <div className="flex items-baseline gap-1.5">
-        <span className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.scoreLabel}</span>
+        <span className="text-[10px] text-zinc-600 dark:text-zinc-300">{t.scoreLabel}</span>
         <span className={"text-2xl font-bold leading-none tabular-nums " + c.text}>{v}</span>
-        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">/ 100</span>
+        <span className="text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">/ 100</span>
       </div>
 
       <div className={"relative h-1.5 w-full rounded-full overflow-hidden " + c.barTrack} aria-hidden="true">
@@ -86,11 +86,11 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
 
       {/* 종합 기여 + 상대순위 */}
       <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums leading-snug">
-        {t.contributionPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.contributionPts}{t.contributionPoint}</strong> <span className="text-zinc-400 dark:text-zinc-500">{t.weightPrefix} {part.weightPct}{t.weightSuffix}</span>
+        {t.contributionPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.contributionPts}{t.contributionPoint}</strong> <span className="text-zinc-600 dark:text-zinc-300">{t.weightPrefix} {part.weightPct}{t.weightSuffix}</span>
       </div>
       <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums leading-snug">
         {t.rankPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.rank}</strong> / {part.total}{t.rankSuffix}
-        <span className="text-zinc-400 dark:text-zinc-500"> · {isTop ? `${t.topPctPrefix} ${part.topPct}%` : `${t.bottomPctPrefix} ${100 - part.topPct}%`}</span>
+        <span className="text-zinc-600 dark:text-zinc-300"> · {isTop ? `${t.topPctPrefix} ${part.topPct}%` : `${t.bottomPctPrefix} ${100 - part.topPct}%`}</span>
       </div>
 
       {/* 점수를 만든 실데이터 근거 칩 — 없으면 결측 안내(중립 회색) */}
@@ -101,17 +101,17 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
               key={f.label}
               className="inline-flex items-baseline gap-1 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 px-1.5 py-1 text-[10px] text-zinc-600 dark:text-zinc-300 min-w-0 break-words"
             >
-              <span className="text-zinc-400 dark:text-zinc-500">{f.label}</span>
+              <span className="text-zinc-600 dark:text-zinc-300">{f.label}</span>
               <span className="font-semibold tabular-nums">{f.value}</span>
             </span>
           ))}
         </div>
       ) : (
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">{part.missingNote}</p>
+        <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-snug break-words">{part.missingNote}</p>
       )}
 
       {part.extraNote ? (
-        <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">{part.extraNote}</p>
+        <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-snug break-words">{part.extraNote}</p>
       ) : null}
 
       {/* 모멘텀 국면 — 1·3·6개월 부호 기반. 장·단기 방향이 어긋나는 국면(divergent)은
@@ -138,7 +138,7 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
                 {t.momentumRegime.prefix} · {rg.label}
               </span>
               <span className="text-zinc-500 dark:text-zinc-400"> — {rg.note}</span>
-              <span className="mt-1 block text-[9px] text-zinc-400 dark:text-zinc-500">{t.momentumRegime.caption}</span>
+              <span className="mt-1 block text-[9px] text-zinc-600 dark:text-zinc-300">{t.momentumRegime.caption}</span>
             </div>
           );
         })()
@@ -149,7 +149,7 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
         <span className="font-semibold text-zinc-500 dark:text-zinc-400">{t.interpretLabel}</span> {r.meaning}
       </p>
       <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug flex gap-1 break-words">
-        <span className={"shrink-0 font-semibold " + (cautionTag ? "text-amber-600 dark:text-amber-400" : "text-blue-600 dark:text-blue-400")}>
+        <span className={"shrink-0 font-semibold " + (cautionTag ? "text-amber-700 dark:text-amber-300" : "text-blue-600 dark:text-blue-400")}>
           {cautionTag ? t.cautionTag : t.confirmTag}
         </span>
         <span>{r.action}</span>
