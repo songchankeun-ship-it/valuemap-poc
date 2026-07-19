@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-19 - [codex] 한국어 전용 공개 로케일 불변식(Korean-only public-locale)
+
+- **Scope**: 공개 경험을 한국어 전용으로 잠그는 로케일 상태 슬라이스. 허용 경로만 편집 — `src/components/LanguageProvider.tsx`, 신규 focused 테스트 `scripts/test_localePublicInvariant.ts`, `package.json`(테스트 스크립트 1줄), PROGRESS·AI_HANDOFF. 그 외 경로 무변경. 직전 HEAD `257e4db`(task 363). 브랜치 `ai-center/task-364-ornscore-reaudit-b-korean-only-local`.
+- **문제**: 기존 `readStoredLocale()`는 `?lang=` → localStorage → 쿠키 순으로 저장값을 존중해, **레거시로 저장된 영어 값**(localStorage=en 또는 cookie=en)이 남아 있으면 일반 공개 방문자가 영어/혼합 언어로 떨어졌다. 한국어 전용 결정(scope 문서 §1·§4)과 충돌.
+- **불변식**: 어떤 durable 상태(localStorage/쿠키)도 일반 방문자를 영어로 만들 수 없다. 영어는 오직 명시적 `?lang=en` **내부 검증 override** 로만, 그것도 **이 뷰 한정**(durable 저장 절대 금지)으로만 켜진다. `?lang=ko`·잡음 쿼리·일반 네비게이션 → 항상 한국어.
+- **구현**: 순수·DOM 없는 단일 진실 소스 `resolvePublicLocale({queryLang, storedLocale, cookieLocale})` export. 반환 = `{locale, ephemeralOverride, clearLegacyDurable, source}`. `?lang=en`(EN/en-US/공백 포함 normalize) → `en`·ephemeral·정리 안 함. `?lang=`(기타 비어있지 않은 값) → `ko`(query-ko)·레거시 정리. 쿼리 없음 → `ko`(default)·레거시 있으면 정리. **default/query-ko 어느 분기도 durable 값만으로 en 을 반환하지 않는다**(query-en 분기에서만 `locale:"en"`). DOM 어댑터는 얇은 래퍼(readQueryLang/readStoredLocaleRaw/readCookieLocaleRaw/setDocumentLang/clearDurableLocale). effect 는 mount 후 resolution 적용 + `clearLegacyDurable` 시 durable 정리. **durable 로케일 '값 쓰기' 경로 없음**(setItem 제거, cookie 는 `max-age=0` 정리뿐, removeItem 만). `setLocale`(숨은 스위치용)도 동일 규칙 — 영어는 durable 로 안 굳고, 한국어 전환 시 레거시 정리.
+- **하이드레이션/lang**: SSR·최초 클라 렌더 모두 `DEFAULT_LOCALE="ko"` 로 시작(레이아웃 `<html lang="ko" suppressHydrationWarning>` 유지) → **mismatch 없음**. `?lang=en` 은 mount 이후 effect 에서만 `documentElement.lang="en"` 로 갱신, 그 외 항상 `"ko"`. EN i18n copy 데이터(`src/lib/i18n.ts` en 로케일)·`LanguageSwitcher` 컴포넌트는 **보존**(추후 재개 대비, 공개 스위치는 여전히 숨김).
+- **신규 focused 테스트** `test:locale-invariant`(`scripts/test_localePublicInvariant.ts`, tsx·오프라인·유한, **PASS**): 8개 요구 시나리오(저장값 없음 · 레거시 localStorage=en · 레거시 cookie=en · 충돌 저장값 · ?lang=en · ?lang=ko · 영어 override 후 재로드 · 지속성/부작용) + **소스 수준 불변식**(쿼리 없는 durable 전 조합 **10×10=100** 전수 매트릭스가 항상 `ko` 반환 + 텍스트 가드: `setItem(` 부재·`removeItem` 존재·장수명 쿠키 부재·`resolvePublicLocale` export·`locale:"en"` 정확 1곳) + 비공허 자기검증(가드가 레거시 en·장수명 쿠키·값 쓰기를 실제로 잡음).
+- **검증(전부 green)**: `npx tsc --noEmit` exit 0 · `test:locale-invariant` PASS · 회귀 `test:comparison-language` PASS · `npm run build` 성공(정적/SSG 페이지·Middleware 90.2 kB 불변) · **라이브 게이트**(로컬 프로덕션 서버 전용 포트 4494, 마커=HEAD, :3000/:4310 미접촉, 검사 후 중지·post-kill curl exit 7): `verify:routes` **9/9 OK**(한국어 공개, 데이터 2026.07.16) · `verify:login-preflight` **5/5 OK**(`lang="ko"` 존재·KO/EN 토글(hreflang/`lang="en"`/LanguageSwitcher) 부재). `git diff --check` clean(exit 0) · **U+FFFD(EF BF BD) 스캔 0**(LanguageProvider.tsx·test·package.json).
+- **불변**: 점수식·public/data·138종목·라우트 구조·Supabase/런타임 값·EN i18n 문자열·`LanguageSwitcher` 무변경. Next 15.5.18 고정, 의존성 추가 없음.
+- **롤백**: `scripts/test_localePublicInvariant.ts` 삭제, `LanguageProvider.tsx`·`package.json`(1줄)·PROGRESS·AI_HANDOFF 되돌림. 런타임/데이터/라우트 구조 영향 없음.
+- **Commit**: local [codex] locale-state: Korean-only public-locale invariant + deterministic tests.
+
 ## 2026-07-19 - [codex] 큐레이션 비교 한국어 조사(placeholder particle) 정비
 
 - **Scope**: 비교 랜딩의 플레이스홀더 조사("와(과)"·"은(는)")를 이름·지표명 받침 기반 자연 한국어로 교체. 허용 경로만 편집 — `src/app/compare/[pair]/page.tsx`, `src/lib/comparison.ts`, 신규 조사 헬퍼 `src/lib/particle.ts`, focused 테스트 `scripts/test_comparisonLanguage.ts`, `package.json`(테스트 스크립트 1줄), PROGRESS·AI_HANDOFF. 그 외 경로 무변경. 직전 HEAD `a1235a1`. 브랜치 `ai-center/task-363-ornscore-reaudit-a-curated-compariso`.

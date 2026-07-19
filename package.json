@@ -61,6 +61,7 @@
     "test:theme-authority": "tsx scripts/test_themeAuthority.ts",
     "test:comparison-pages": "tsx scripts/test_comparisonPages.ts",
     "test:comparison-language": "tsx scripts/test_comparisonLanguage.ts",
+    "test:locale-invariant": "tsx scripts/test_localePublicInvariant.ts",
     "test:seo-verification": "tsx scripts/test_seoOwnershipVerification.ts",
     "test:stocks-discovery": "tsx scripts/test_stocksDiscovery.ts",
     "test:compare-entry": "tsx scripts/test_compareEntry.ts",
