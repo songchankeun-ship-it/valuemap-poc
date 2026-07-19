@@ -197,6 +197,40 @@ pointer/API/화면/changelog/배포 전환을 **별도 작업으로** 진행한�
   재검증한다(어느 쪽이 정본인지 사람 판단).
 - 연속성 초기화: 거래일 누락 시 게이트가 NOT_MET 으로 창을 리셋(합성으로 메우지 않는다).
 
+### 6.5 단일 명령 오케스트레이터(Slice C) — §6.2 4단계의 유한·멱등 조립
+
+§6.2 의 (1)→(2)→(3)→(4) 를 손으로 순서대로 돌리는 대신, **정확히 하나의 시장일**에 대해
+어댑터(Slice B)→운영자 READY(P)→run(N)→원장(O)→게이트(K)를 한 번에 조립·판정하는 유한·멱등
+명령이다. 새 산식/게이트/저장 로직 없음 — 기존 계약 층만 호출한다. **게이트 MET 도 공개 승격/외부
+액션을 촉발하지 않는다**(§7 Gate 6 별도). 모든 산출물은 `.metrics251-shadow` 아래에만 생성되고,
+scheduled 실행은 추적(tracked) 파일을 더럽히지 않는다.
+
+```bash
+# scheduled(권장): 시장일 지정 금지 — 어댑터가 증명한 '가장 최근의 완전한 공통 거래일'만 사용.
+# 첫 비공개 effectiveDate 규칙: --activation-date 이후 첫 통과 거래일만 자격.
+PYTHONUTF8=1 npm run orchestrate:metrics251 -- \
+  --source public --calendar calendar.json --config config/metrics/2.5.1.json \
+  --activation-date <YYYY-MM-DD> --json
+#   PASS(PUBLISHED|ALREADY_RECORDED) exit0 → 이 날은 비공개 shadow 에 반영됨. 게이트 status 는 보고만.
+#   WAIT(NON_TRADING_DAY|PUBLICATION_GRACE|MISSING_CURRENT_INPUT|PRE_ACTIVATION|LOCK_HELD|INPUT_NOT_FRESH)
+#        exit0 → 깨진 것 없음, run 을 조작하지 않음. 나중에 재시도.
+#   FAIL(SAME_DATE_CONFLICT|PARTIAL_RUN|QA_FAILED|SYNTHETIC_MARKER|PUBLIC_PATH_LEAK|STALE_SOURCE|
+#        CONFIG_INVALID|HASH_MISMATCH|LEDGER_CONFLICT|PUBLISH_FAILED|PREFLIGHT_FAILED|INTERNAL_ERROR)
+#        exit2 → 멈춤(fail-closed). 시정 후 재실행.
+
+# 판정만(무기록): --no-write 는 inputs/run/원장/보고서를 쓰지 않는다(읽기 전용 점검).
+# explicit(회귀/재현용): --mode explicit --market-date <D> (proven<D→WAIT, proven>D→FAIL).
+```
+
+- **현 공개 envelope 실측(2026-07-19, 읽기 전용)**: `--source public --no-write` → `WAIT /
+  MISSING_CURRENT_INPUT`(marketDate `2026-07-16`) — 한 종목 PER/PBR 결측(§B.4)으로 아직 게시 자격
+  미충족. 이는 정직한 fail-closed hold 이며 **실제 run 을 만들지 않는다**.
+- **멱등**: 같은 입력 재실행 = `ALREADY_RECORDED`(새 run 없음). 같은 날 다른 입력 =
+  `SAME_DATE_CONFLICT`(불변 위치 미덮어쓰기).
+- **겹침 lock**: `<root>/locks/orchestrator.lock`(O_EXCL). 보유 중이면 `LOCK_HELD` WAIT.
+- ⚠️ Slice C 는 오케스트레이션 **조립만** 제공한다. 실제 KRX 거래일 창 착수·5거래일 연속·Gate 4→5→6
+  은 여전히 소유자 결정(§6.3·§7)이며 이 배치에서 수행하지 않는다.
+
 ---
 
 ## 7. 남은 사람/소유자 결정 (나열만 — 이 세션에서 수행 안 함)

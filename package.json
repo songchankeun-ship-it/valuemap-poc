@@ -100,6 +100,8 @@
     "test:metrics251-e2e": "python scripts/test_metrics251_e2e_matrix.py",
     "input:metrics251": "python scripts/metrics251_market_input.py",
     "test:metrics251-input": "python scripts/test_metrics251_market_input.py",
+    "orchestrate:metrics251": "python scripts/metrics251_orchestrator.py",
+    "test:metrics251-orchestrator": "python scripts/test_metrics251_orchestrator.py",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",

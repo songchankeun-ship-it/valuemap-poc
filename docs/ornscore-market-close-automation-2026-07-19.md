@@ -292,3 +292,121 @@ push/deploy/publish, no change to `public/data`, the 138-stock output, Metrics 2
 login/auth, Supabase/runtime values, `.github/workflows`, SEO ownership, or
 Next/React/dependency versions. Wiring the adapter into the run layer for a real
 trading-day window remains an owner decision behind runbook §6 / Gate 6.
+
+---
+
+# Slice C — finite, idempotent one-market-day private shadow orchestrator (2026-07-19)
+
+Branch: `ai-center/task-370-ornscore-market-ops-c-private-one-da`.
+Base HEAD at Slice C authoring: `ff1bbc5` (Slice B).
+Surface: two new Python files (`scripts/metrics251_orchestrator.py` +
+`scripts/test_metrics251_orchestrator.py`) + two `package.json` dev aliases + this
+section + a runbook §6.5 operator note + `PROGRESS.md`/`docs/AI_HANDOFF.md`. Frozen
+boundaries of §7 stay in force.
+
+## C.1 Problem Slice C solves
+
+Slices A/B and the operations layer (Slice M–Q, runbook §6) each answer one
+question; a market-close operator still has to run five commands (adapter →
+operator READY → run → ledger → gate) in the right order for **exactly one**
+trading day, interpret each layer's status, and decide whether the day is done,
+should be held, or must stop. Slice C is the single **finite, idempotent**
+command that **composes** those already-shipped contracts for one market day and
+collapses their combined state into a three-way verdict. It **creates no new
+formula, gate, or storage logic** — it only calls Slice B (real-input adapter),
+Slice P (operator READY), Slice N (atomic/idempotent run), Slice O (append-only
+ledger), and Slice K (5-day AND rollout gate) in sequence and reports.
+
+## C.2 Scheduled selection + first private effective date
+
+- **`--mode scheduled`** (default): the operator may **not** name a market date.
+  The orchestrator uses only the **latest complete common trading date proven by
+  the adapter** (every price series ends on the same real calendar trading day).
+  Nothing else is eligible; a date cannot be asserted into existence.
+- **First private effective date**: `--activation-date D` gates eligibility — the
+  first private `effectiveMarketDate` is the **first post-activation** trading day
+  (`marketDate > D`) that passes *every* genuine-input gate. A proven date at or
+  before activation is `WAIT / PRE_ACTIVATION` (hold, no run).
+- **`--mode explicit --market-date D`**: for regression/replay only. Proven `< D`
+  → `WAIT / INPUT_NOT_FRESH` (envelope not caught up yet); proven `> D` →
+  `FAIL / REQUEST_STALE` (the request is stale/ambiguous — fail closed).
+
+## C.3 Three-way verdict (fail-closed)
+
+- **PASS** — the market day is exactly reflected in the private shadow: this run
+  promoted it (`PUBLISHED`) or a byte-identical snapshot was already recorded
+  (`ALREADY_RECORDED`, no new run). Gate status (PENDING/MET) is **reported only**.
+- **WAIT** — nothing is broken but no run can legitimately be produced now, and the
+  orchestrator **fabricates nothing**: weekend/holiday (`NON_TRADING_DAY`),
+  publication grace / input not finalized (`PUBLICATION_GRACE` — divergent or
+  unresolved series end-dates, or a not-yet-fresh fundamentals source date), missing
+  current input (`MISSING_CURRENT_INPUT` — envelope/series/PER-PBR not yet landed,
+  which is the **current live public-envelope state**, Slice B.4), before activation
+  (`PRE_ACTIVATION`), or an overlap lock held by another orchestration (`LOCK_HELD`).
+  Exit 0 — a WAIT is a healthy hold, not an error.
+- **FAIL** — a real defect that must stop the cycle: `SAME_DATE_CONFLICT` (a
+  different/changed input for an already-recorded date), `PARTIAL_RUN`, `QA_FAILED`,
+  `SYNTHETIC_MARKER`, `PUBLIC_PATH_LEAK`, `PREFLIGHT_FAILED`, `STALE_SOURCE`,
+  `CONFIG_INVALID`, `HASH_MISMATCH` (adapter pin ≠ run-derived pin), `LEDGER_CONFLICT`,
+  `PUBLISH_FAILED`, or `INTERNAL_ERROR`. Exit 2.
+
+Fail-closed rule (same as Slice A): any hard defect **outranks** every WAIT window.
+The adapter reason set is partitioned into an explicit WAIT allowlist and a
+FAIL-by-default remainder — a test proves `WAIT ∪ FAIL == ALL_REASONS` and
+`WAIT ∩ FAIL == ∅`, so no hard defect can ever leak into a WAIT.
+
+## C.4 Composition, hashing, locking, and safety
+
+1. **Private-root guard first** — if the shadow root resolves under `public/`, or
+   `inputs/` layout is violated, the orchestrator writes nothing and FAILs
+   (`PUBLIC_PATH_LEAK`).
+2. **Adapter assembles + proves the date** (Slice B); on failure, WAIT/FAIL per the
+   partition. On success it writes `inputs/request.json` **only** under the shadow
+   root (atomic).
+3. **Exact input/config hashes** — the run request consumes the adapter's `expected`
+   pin verbatim; the orchestrator independently recomputes `configHash` +
+   `inputManifestHash` via `run.derive_expected` and FAILs on any mismatch — no hash
+   is re-invented.
+4. **Overlap lock** — `<root>/locks/orchestrator.lock` is created with
+   `O_CREAT|O_EXCL` (deterministic payload: marketDate + hashes, no wall-clock/PID);
+   if held → `WAIT / LOCK_HELD`, released in a `finally`.
+5. **Operator READY** (Slice P, read-only) gates the run: `ALREADY_RECORDED` →
+   PASS (idempotent, no run); CONFLICT/PARTIAL_RUN/QA_FAILED/MISSING/STALE → FAIL.
+6. **Atomic idempotent run** (Slice N) is the only store write; pointer swap only at
+   the store's final publish step. Byte-identical re-run = NOOP.
+7. **Ledger + gate** (Slice O/K) append from QA-passed manifests and regenerate the
+   rollout-gate summary **into the shadow root** (`reports/rollout-gate.{json,md}`),
+   never the tracked `docs/` copies. A window `publicPathLeakage` signal → FAIL.
+
+**Determinism**: no wall-clock (`datetime.now`/`time.time`/`date.today`), no RNG,
+no network — a source-purity test greps the comment-stripped source for the
+forbidden APIs. All routine outputs (reports, locks, inputs, runs, pointer, ledger,
+gate docs) stay below `.metrics251-shadow`; a scheduled run dirties **no** tracked
+file (test-verified). **Gate MET never triggers public promotion or any external
+action** — the report always carries `publicPromotionTriggered:false`,
+`externalActionTaken:false`, `readOnlyPublicCanon:true` (§7 Gate 6 is a separate
+owner decision).
+
+## C.5 Tests (`scripts/test_metrics251_orchestrator.py`)
+
+21 deterministic, offline cases over tempdir fixtures (never `public/data`):
+PASS (scheduled happy-path → PUBLISHED with inputs/run/ledger/gate-docs all under
+shadow + gate PENDING; idempotent re-run → ALREADY_RECORDED, no new run); WAIT
+(weekend, missing current input, publication grace / divergent end-date, stale
+source date, pre-activation, lock held); FAIL (synthetic marker, public-path leak
+with no `public/` write, same-date conflict, universe drift, malformed envelope,
+explicit request-stale); explicit-mode match/not-fresh/stale; and the invariants —
+adapter reason partition, no-tracked-file-dirtied, determinism, source purity, and
+no-run-on-WAIT/FAIL. **Live read-only check** (`--source public --no-write`, temp
+root): the current public envelope → `WAIT / MISSING_CURRENT_INPUT`
+(marketDate `2026-07-16`), exit 0, **no genuine run**, no repo shadow write — the
+honest fail-closed hold, consistent with Slice B.4.
+
+## C.6 Non-goals / owner-only follow-up (NOT performed here)
+
+No genuine live market-day run, no 5-consecutive-day window, no promotion, no
+push/deploy/publish, no change to `public/data`, the 138-stock output, Metrics 2.4,
+login/auth, Supabase/runtime values, `.github/workflows`, SEO ownership, or
+Next/React/dependency versions. Driving the orchestrator across a real KRX trading
+window (and the Gate 4 → Gate 5 → Gate 6 sequence) remains an owner decision behind
+runbook §6.

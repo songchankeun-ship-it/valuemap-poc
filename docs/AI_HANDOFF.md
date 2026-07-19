@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-19T08:19:06.207Z
+Last updated: 2026-07-19T08:31:20.569Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 369 - ORNScore Market Ops B - private Metrics 2.5.1 real-input adapter
-- Run: 371
-- Status: completed
+- Task: 370 - ORNScore Market Ops C - private one-day shadow orchestrator
+- Run: 372
+- Status: failed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Development process exited with code 1
 
 ## Next Agent Checklist
 
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-19 - [codex] - Task 370 Market-close ops Slice C: finite idempotent one-market-day private shadow orchestrator
+
+- Slice C of `docs/ornscore-market-close-automation-2026-07-19.md` — a finite, idempotent, fail-closed **orchestrator** that composes the already-shipped contract layers for **exactly one** market day into a three-way **PASS/WAIT/FAIL** verdict. No new formula/gate/storage logic: it only calls Slice B (real-input adapter) → Slice P (operator READY, read-only) → Slice N (atomic/idempotent run) → Slice O (append-only ledger) → Slice K (5-day AND gate) in sequence and reports. Writable paths limited to `scripts/metrics251_orchestrator.py` + `scripts/test_metrics251_orchestrator.py`, `package.json` (2 dev aliases), the plan doc Slice C section, the runbook §6.5 note, PROGRESS, and this handoff. Prior HEAD `ff1bbc5` (Slice B); branch `ai-center/task-370-ornscore-market-ops-c-private-one-da`.
+- CLI `npm run orchestrate:metrics251 -- --source public|fixture [--data-dir DIR] --calendar cal.json [--config C] [--mode scheduled|explicit] [--market-date D] [--activation-date D] [--root DIR] [--no-write] [--json]`. **PASS** = PUBLISHED (this run promoted the day) or ALREADY_RECORDED (byte-identical, no new run); gate status reported only. **WAIT** (fabricates no run, exit 0) = NON_TRADING_DAY / PUBLICATION_GRACE / MISSING_CURRENT_INPUT / PRE_ACTIVATION / LOCK_HELD / INPUT_NOT_FRESH. **FAIL** (stop, exit 2) = SAME_DATE_CONFLICT / PARTIAL_RUN / QA_FAILED / SYNTHETIC_MARKER / PUBLIC_PATH_LEAK / PREFLIGHT_FAILED / STALE_SOURCE / CONFIG_INVALID / HASH_MISMATCH / LEDGER_CONFLICT / PUBLISH_FAILED / REQUEST_STALE / INTERNAL_ERROR. Fail-closed: any hard defect outranks every WAIT window (adapter reasons partitioned WAIT-allowlist vs FAIL-by-default; a test proves `WAIT ∪ FAIL == ALL_REASONS`, `WAIT ∩ FAIL == ∅`).
+- Scheduled mode forbids naming a date — uses **only the latest complete common trading date proven by the adapter**; `--activation-date D` makes the first private effectiveMarketDate the first post-activation (`>D`) day that passes every genuine-input gate (≤D → WAIT/PRE_ACTIVATION). Overlap lock `<root>/locks/orchestrator.lock` (O_EXCL, deterministic, released in `finally`). Exact input/config hashes: run request consumes the adapter's `expected` pin verbatim and re-derives configHash+inputManifestHash (mismatch → HASH_MISMATCH). **Gate MET never triggers public promotion or any external action** — report carries `publicPromotionTriggered:false`, `externalActionTaken:false`, `readOnlyPublicCanon:true` (§7 Gate 6 separate). All outputs (reports/locks/inputs/runs/pointer/ledger/gate-docs) stay below `.metrics251-shadow`; scheduled run dirties no tracked file. Deterministic: no wall-clock/RNG/network (source-purity test).
+- Self-test `npm run test:metrics251-orchestrator` **21/21 PASS**, offline over tempdir fixtures (never `public/data`): PASS(scheduled happy-path→PUBLISHED with all artifacts under shadow + gate PENDING; idempotent re-run→ALREADY_RECORDED no new run); WAIT(weekend, missing input, publication grace/divergent end-date, stale source, pre-activation, lock held); FAIL(synthetic marker, public-path leak with no `public/` write, same-date conflict, universe drift, malformed envelope, explicit request-stale); explicit match/not-fresh/stale; invariants(reason partition, no-tracked-file-dirtied, determinism, source purity, no-run-on-WAIT/FAIL).
+- **Live read-only check (no genuine run)**: `orchestrate:metrics251 --source public --no-write` (temp root) against the current public envelope → `WAIT / MISSING_CURRENT_INPUT` (marketDate `2026-07-16`), exit 0, no run promoted, no repo shadow write — the honest fail-closed hold (one ticker's PER/PBR still null, Slice B.4). **No genuine live market-day run and no 5-consecutive-day window were performed.**
+- Checks all green: test:metrics251-orchestrator 21/21 · regression test:metrics251-input 21/21 · test:metrics251-run / -ledger / -e2e / -operator / -rollout-gate PASS · `verify_metrics.py` 138 / Metrics 2.4 (PYTHONUTF8=1) · `git diff -- public/data` empty · `.github/workflows` / `src/app/login` / `src/app/auth` / `src/middleware.ts` / `config/metrics` diff empty · `git diff --check` clean · U+FFFD scan 0 on both new files · package.json changed only by 2 alias lines. Pure Python (no runtime TS imported) → no tsc/build required by this slice.
+- Frozen (verified): public/data, 138 stocks, Metrics 2.4, login/auth, Supabase/runtime values, SEO ownership, workflows, Next 15.5.18/React 19 and dependency versions unchanged. Metrics 2.5.1 stays shadow-only. One local `[codex]` commit; nothing pushed; `main` unchanged; worktree clean. Owner-only next (not performed): drive the orchestrator across a real KRX window and the Gate 4→5→6 sequence per runbook §6.
 
 ### 2026-07-19 - [codex] - Task 368 Market-close ops Slice A: read-only market-close health verifier
 
