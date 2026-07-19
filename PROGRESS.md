@@ -4831,3 +4831,13 @@ Finalized the visual-refresh branch with a focused accessibility and production-
 - Frozen boundaries: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names are unchanged. No push, deployment, publication, external service action, or genuine shadow collection.
 - **Next**: no further visual code is required before release review. Wait for the owner/external gates: Android signing fingerprint for `assetlinks.json`, Google Play identity/account readiness, Naver review, and five distinct real Metrics 2.5.1 trading dates. Keep the private collector active and review its dossier before any separate promotion decision.
 - **Commit**: local `[codex] A11y: recertify visual refresh`.
+
+### 2026-07-20 - Visual refresh production release [codex]
+
+The owner explicitly authorized push and deployment. Fast-forwarded `origin/main` from `a1235a1` to visual release commit `502dea1` without history rewriting; the existing Vercel main-branch integration deployed that exact commit to `https://ornscore.com`.
+
+- **Exact deployment proof**: production footer marker changed from `a1235a1` to `502dea1`; `verify:route-canary -- --base https://ornscore.com --marker 502dea1` passed 6/6 routes.
+- **Production release gates**: `verify:seo-release -- --base https://ornscore.com --sha 502dea178a3539cd14e9e7679b76e14ed2aa148c` passed 11/11, including 166 sitemap URLs, topic and curated-comparison authority, legacy redirects, mock exclusions, and exact-SHA matching. `verify:local -- --base https://ornscore.com --no-perf` passed all 6 real gates, including 25/25 route smoke checks.
+- **Release boundaries**: no force push, package/configuration change, data mutation, external search submission, provider action, or Metrics promotion. Public data remains 138 stocks on Metrics 2.4; Metrics 2.5.1 remains private and shadow-only.
+- **Residual owner/external gates**: Android signing fingerprint for `assetlinks.json`, Google Play identity/account readiness, Naver review, and five distinct real Metrics 2.5.1 trading dates remain unchanged.
+- **Next**: hold code changes unless production evidence identifies a regression; continue the existing private collector and owner-only app/search review steps.

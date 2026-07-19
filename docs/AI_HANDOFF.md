@@ -3855,3 +3855,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - **Frozen**: no diff in `public/data`, Metrics/version state, auth, workflows, package manifests, runtime values, SEO ownership, or analytics names. No push/deploy/publication/external action.
 - **Next**: stop product/visual edits unless new evidence appears. Await Android signing fingerprint + Google Play identity/account readiness, Naver review, and the five-real-trading-day Metrics 2.5.1 dossier. Public remains Metrics 2.4 until a separate reviewed decision.
 - **Commit**: local `[codex] A11y: recertify visual refresh`.
+
+### 2026-07-20 - Visual refresh production release [codex]
+
+- Owner explicitly approved push/deploy. `origin/main` fast-forwarded from `a1235a1` to `502dea178a3539cd14e9e7679b76e14ed2aa148c`; no force push or history rewrite.
+- Vercel main-branch deployment is live at `https://ornscore.com`. Exact deployment proof: footer build marker `502dea1`; route canary 6/6 PASS.
+- Production SEO release gate PASS 11/11 at exact SHA, including sitemap (166 URLs), robots, authority routes, redirect/noindex behavior, curated comparisons, and deployment marker.
+- Production route-health PASS 6/6 real gates: 25/25 smoke routes plus route/data-date, Stocks SEO, public SEO, login preflight, and logged-out admin guard.
+- Frozen state preserved: 138-stock public data and Metrics 2.4, private Metrics 2.5.1 shadow state, auth/provider behavior, workflows, packages, runtime values, and outside search/app accounts.
+- Remaining external gates: Android signing fingerprint for `assetlinks.json`, Google Play identity/account readiness, Naver review, and five distinct real Metrics 2.5.1 trading dates.
+- Next: no further product changes without production evidence. Keep the private collector active and wait for the owner/external gates above.
