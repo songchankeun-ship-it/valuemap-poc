@@ -12,6 +12,7 @@
 import { realStockPool, type RealStock } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
 import { compositeOf } from "@/lib/score";
+import { topicParticle, subjectParticle, conjunctionParticle } from "@/lib/particle";
 import {
   comparisonPairBySlug,
   isCuratedComparisonPair,
@@ -85,7 +86,9 @@ function higherSide(a: MetricValue, b: MetricValue): "a" | "b" | "tie" | "na" {
 }
 
 // 중립 차이 문장 — 오직 높다/낮다/동일/비교불가만 쓴다(보편적 우열 표현 금지).
-function neutralSentence(
+// 조사(은/는·와/과·이/가)는 이름·지표명의 받침으로 결정(src/lib/particle.ts). export 는
+// tie/na/higher 세 분기를 focused 테스트가 직접 고정하기 위함(순수 함수).
+export function neutralSentence(
   label: string,
   a: MetricValue,
   b: MetricValue,
@@ -93,13 +96,14 @@ function neutralSentence(
   nameA: string,
   nameB: string,
 ): string {
-  if (higher === "na") return `${label}은(는) 한쪽 값이 없어 비교할 수 없습니다.`;
-  if (higher === "tie") return `${label}은(는) ${nameA}와(과) ${nameB}가 ${a.display}로 동일합니다.`;
+  if (higher === "na") return `${label}${topicParticle(label)} 한쪽 값이 없어 비교할 수 없습니다.`;
+  if (higher === "tie")
+    return `${label}${topicParticle(label)} ${nameA}${conjunctionParticle(nameA)} ${nameB}${subjectParticle(nameB)} ${a.display}로 동일합니다.`;
   const hi = higher === "a" ? nameA : nameB;
   const lo = higher === "a" ? nameB : nameA;
   const hiV = higher === "a" ? a.display : b.display;
   const loV = higher === "a" ? b.display : a.display;
-  return `${label}은(는) ${hi}(${hiV})가 ${lo}(${loV})보다 높습니다.`;
+  return `${label}${topicParticle(label)} ${hi}(${hiV})가 ${lo}(${loV})보다 높습니다.`;
 }
 
 function metricRow(
@@ -186,7 +190,7 @@ export function comparisonMetadata(slug: string): ComparisonMetadata | null {
   const pairLabel = `${r.a.name} vs ${r.b.name}`;
   return {
     title: `${pairLabel} 비교 (${r.a.ticker}·${r.b.ticker}) — 오른스코어`,
-    description: `${r.a.name}와(과) ${r.b.name}의 추세·거래활성도·밸류·위험조정 지표와 PER·PBR·ROE, 배당수익률, 시가총액을 중립적으로 나란히 비교합니다. 투자 추천이 아닌 종목 탐색 도구입니다.`,
+    description: `${r.a.name}${conjunctionParticle(r.a.name)} ${r.b.name}의 추세·거래활성도·밸류·위험조정 지표와 PER·PBR·ROE, 배당수익률, 시가총액을 중립적으로 나란히 비교합니다. 투자 추천이 아닌 종목 탐색 도구입니다.`,
     canonical: `/compare/${slug}`,
     h1: `${pairLabel} 비교`,
   };

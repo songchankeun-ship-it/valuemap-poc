@@ -13,6 +13,7 @@ import {
   comparisonBreadcrumbJsonLd,
   comparisonStaticParams,
 } from "@/lib/comparison";
+import { conjunctionParticle } from "@/lib/particle";
 
 // 허용목록의 7쌍만 정적 생성. 그 외 슬러그는 생성/색인되지 않는다.
 export const dynamicParams = false;
@@ -90,7 +91,8 @@ export default async function ComparePairPage({ params }: PageProps) {
             {data.a.name}
           </Link>
           <span className="text-zinc-400">({data.a.sector})</span>
-          {" 와(과) "}
+          {/* 두 종목명을 잇는 접속 조사 — 문법적 머리인 앞 종목명(data.a.name)의 받침으로 결정(메타 설명과 동일 규칙). */}
+          {` ${conjunctionParticle(data.a.name)} `}
           <Link href={`/stock/${data.b.ticker}`} className="font-semibold text-blue-700 hover:underline dark:text-blue-400">
             {data.b.name}
           </Link>

@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-19 - [codex] 큐레이션 비교 한국어 조사(placeholder particle) 정비
+
+- **Scope**: 비교 랜딩의 플레이스홀더 조사("와(과)"·"은(는)")를 이름·지표명 받침 기반 자연 한국어로 교체. 허용 경로만 편집 — `src/app/compare/[pair]/page.tsx`, `src/lib/comparison.ts`, 신규 조사 헬퍼 `src/lib/particle.ts`, focused 테스트 `scripts/test_comparisonLanguage.ts`, `package.json`(테스트 스크립트 1줄), PROGRESS·AI_HANDOFF. 그 외 경로 무변경. 직전 HEAD `a1235a1`. 브랜치 `ai-center/task-363-ornscore-reaudit-a-curated-compariso`.
+- **조사 헬퍼** `src/lib/particle.ts`(순수·결정적): 마지막 문자가 받침 있는 한글 음절(U+AC00–U+D7A3, 종성≠0)이면 은/이/과, 없으면 는/가/와. 비한글(영문·숫자·기호·빈문자열, 예 "삼성SDI")로 끝나면 **모음 종결과 동일한 안전 폴백(는/가/와)** — 플레이스홀더를 절대 출력하지 않는다. `topicParticle`/`subjectParticle`/`conjunctionParticle` + `with*` 편의 함수.
+- **교체 지점**: comparison.ts `neutralSentence` 세 분기(na "…은/는 한쪽 값이 없어…" · tie "…은/는 A와/과 B이/가 …로 동일합니다" · higher "…은/는 …보다 높습니다")와 `comparisonMetadata` 설명("A와/과 B의 …"), 라우트 소개 문단 접속 조사. 접속 조사는 문법적 머리인 **앞 종목명(a.name)** 받침으로 결정(메타·페이지 동일 규칙). 괄호 안 숫자 뒤 "가"·표시값 뒤 "로"는 이름/지표명 대상이 아니라 그대로 둠(범위 밖). `neutralSentence` 는 세 분기 고정 테스트용으로만 export.
+- **불변**: 계산(compositeOf·비율·시총 포맷)·지표 의미·허용목록 7쌍·canonical URL·sitemap 등재·인터랙티브 비교 경로·JSON-LD·중립성(여전히 높다/동일/비교불가만) 전부 그대로. 렌더 예: "삼성전자와 SK하이닉스의…", "삼성생명과 미래에셋생명의…", "삼성SDI와 LG에너지솔루션의…"(폴백).
+- **신규 focused 테스트** `test:comparison-language`(`scripts/test_comparisonLanguage.ts`, tsx·오프라인·유한, **PASS**): 받침 유/무 단어 + 비한글 폴백에서 은/는·이/가·와/과 정확 · neutralSentence tie/na/higher 세 분기 문자열 고정 · 7쌍 메타 설명이 앞 이름 받침 접속 조사로 시작 + 무플레이스홀더 · **가드**: 크롤 출력(제목·설명·H1·JSON-LD·지표 문장·라벨·힌트·한계) + 라우트 템플릿에 플레이스홀더 조사 0건 · 자기검증(가드가 "밸류은(는)…"·"…와(과)…"를 실제로 잡고, "주가수익비율(배)"·"자기자본이익률(%)"는 오탐 아님).
+- **검증(전부 green)**: `npx tsc --noEmit` exit 0 · `test:comparison-language` PASS · 회귀 `test:comparison-pages`·`test:seo-contract`·`test:seo-stability`·`test:seo-verification`·`test:theme-authority`·`test:seo-release` 전부 PASS · `npm run build` 성공(`/compare/[pair]` 큐레이션 7쌍 SSG 유지) · `git diff --check` clean(LF→CRLF 경고만, exit 0) · **U+FFFD(EF BF BD) 스캔 0** (particle.ts·comparison.ts·page.tsx·test·package.json).
+- **롤백**: `src/lib/particle.ts`+`scripts/test_comparisonLanguage.ts` 삭제, comparison.ts·page.tsx·package.json·PROGRESS·AI_HANDOFF 되돌림. 런타임/데이터/라우트 구조 영향 없음.
+- **Commit**: local [codex] comparison-language: 받침 기반 한국어 조사로 비교 랜딩 플레이스홀더 정비.
+
 ## 2026-07-18 - [codex] SEO authority Slice F: full local SEO recertification + operator dossier
 
 - **Scope**: `docs/ornscore-seo-authority-plan-2026-07-18.md` Slice F 만 — 배치 마감(전체 로컬 SEO 재인증) + 운영자 도시어. Slice A–E 를 clean `npm ci` 위에서 한 단위로 재인증하고, 정확 증거를 기록하고, 소유자 전용 후속 단계를 열거한다. **렌더 페이지/라우트/점수식/런타임/데이터 무변경 — 문서만**(PROGRESS·AI_HANDOFF·신규 도시어). 직전 HEAD `265a40c`(task 355, Slice E). 브랜치 `ai-center/task-356-ornscore-seo-f-full-local-recertific`. 플랜 베이스 `a828c0d`(플랜 정의 커밋 `28972ed`).
