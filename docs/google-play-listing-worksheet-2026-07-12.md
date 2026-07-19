@@ -145,6 +145,8 @@ This section is a worksheet, not a final legal filing. The final Play Console an
 
 ## Financial Features Declaration Notes
 
+> 계정 유형(개인 vs 조직)은 이 금융 기능 선언과 **별개의 미결 정책 항목**이다. 어느 쪽으로도 확정하지 않으며, 근거·질의 템플릿·예/아니오 질문·결정 트리는 `docs/ornscore-google-play-account-type-decision-2026-07-19.md`를 본다.
+
 ORNScore is finance-related in subject matter, but the current app is not a brokerage, loan, payment, crypto, insurance, or personalized financial-advice product.
 
 Suggested owner wording if an explanation box is available:

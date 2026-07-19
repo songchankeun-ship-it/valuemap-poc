@@ -1,5 +1,14 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-19 - [codex] Task 367: Google Play 개발자 계정 유형(개인 vs 조직) 정책 판단 패킷 (docs-only)
+
+- **Scope**: 문서 전용 정책 판단 패킷. Personal 개발자 프로필 선택·신원 인증 진행중·앱 생성 불가 상태에서, 오른스코어(비거래·비자문 주식 리서치/스크리닝)가 **개인 계정을 유지 가능한지 vs 조직 계정 의무인지** 판단 근거를 정리. **개인/조직 어느 쪽도 확정하지 않음.** 앱 코드/설정 무수정. 허용 경로만 편집: 신규 패킷 + 스토어 문서 4건 교차링크 + PROGRESS + AI_HANDOFF. 브랜치 `ai-center/task-367-ornscore-reaudit-d-google-play-accou`.
+- **신규 패킷** `docs/ornscore-google-play-account-type-decision-2026-07-19.md`: (1) 사실 기반 제품 분류, (2) 명시적 정책 문구 verbatim vs 추론 분리, (3) "금융 상품 및 서비스" 모호성, (4) 금융 기능 선언 전체 옵션 목록, (5) 한/영 질의 템플릿, (6) 서면 답변용 예/아니오 4문항, (7) 비공개 값 없는 안전 첨부 제안, (8) 두 답변(개인 허용/조직 필요) 결정 트리 + 무응답 fallback.
+- **정책 근거(공식 Google Play 고객센터, 2026-07-19 확인)**: `answer 10840893`(개발자 계정 연락처 요구사항) — 조직 계정 의무 범주 "금융 상품 및 서비스(은행, 대출, 주식 거래, 투자 펀드, 암호화폐 지갑/거래소를 **포함하되 이에 국한되지 않음**)". `answer 13849271`(금융 기능 선언) — 금융 기능 없으면 "앱에서 금융 기능을 제공하지 않음" 선언; 범주에 "Stock trading and portfolio management"만 있고 주식 정보/스크리닝 범주는 없음. **정정**: `answer 13327111`은 금융 상품 정의가 아니라 "Google Play의 앱 계정 삭제 요구사항 이해하기" 페이지 → 계정 유형 근거로 직접 사용 불가(패킷 §2.3 명시).
+- **핵심 모호성**: 조직-의무 트리거의 "…를 포함하되 이에 국한되지 않음" 때문에, 거래를 집행하지 않고 포트폴리오를 관리하지 않는 리서치 앱이 계정 유형 목적상 "금융 상품 및 서비스"에 포함되는지 정책 문구가 명시하지 않음 → 소유자·법무 판단 + Google 서면 확인 필요.
+- **문서 정합화**: 4개 스토어 문서(`google-play-listing-worksheet-2026-07-12`·`app-store-submission-pack`·`ornscore-android-twa-owner-checklist`·`ornscore-play-console-action-pack-2026-07-13`)에 패킷 교차링크 + "계정 유형 미결" 명시 추가. 어떤 문서도 개인/조직을 확정으로 시사하지 않음(스캔 확인).
+- **검증**: 내부 참조 전부 resolve(패킷·교차링크 대상 파일 존재) · 외부 정책 URL 3건 = task 지정 URL과 일치 · 저장소에 전용 md/link 체커 없음(무관 analytics 스크립트만) → 내부 링크 해석 검사로 대체 · `git diff --check` clean(exit 0) · U+FFFD(EF BF BD) 스캔 **0**(변경 5파일) · CRLF/UTF-8-no-BOM 유지. 로컬 `[codex]` 커밋 1개; 미push; `main` 무변경; worktree clean.
+
 ## 2026-07-19 - [codex] Reaudit C: 한국어 문법·로케일 수리 전체 로컬 재인증(task 366)
 
 - **Scope**: Reaudit A(비교 랜딩 한국어 조사) + B(한국어 전용 공개 로케일 불변식)를 한 단위로 재인증하는 **문서 전용** 슬라이스. 결함 미발견 → A/B 소스 무수정. 허용 경로만 편집: 신규 도시어 `docs/ornscore-post-release-reaudit-recertification-2026-07-19.md`, PROGRESS·AI_HANDOFF. HEAD `fc98d5b`. 브랜치 `ai-center/task-366-ornscore-reaudit-c-full-local-recert`.

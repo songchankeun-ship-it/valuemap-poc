@@ -113,6 +113,8 @@ Before final upload, owner/design should review screenshots and the feature grap
 
 ## What The Owner Must Do In Console
 
+> Account type (Personal vs Organization) is an **open policy question**, not settled. Do not assume the current Personal profile is final until Google confirms. Evidence, Korean/English inquiry templates, exact yes/no questions, and a decision tree: `docs/ornscore-google-play-account-type-decision-2026-07-19.md`.
+
 1. Finish Play Developer account/payment/address/profile verification.
 2. Create the app as an Android app, not a game.
 3. Use package id `com.ornscore.app` unless the owner deliberately chooses a final alternate before app creation.
@@ -151,6 +153,7 @@ Only after that should `public/.well-known/assetlinks.json` be committed and dep
 ## Related Detailed Docs
 
 - `docs/google-play-listing-worksheet-2026-07-12.md`
+- `docs/ornscore-google-play-account-type-decision-2026-07-19.md`
 - `docs/app-store-submission-pack.md`
 - `docs/ornscore-store-release-preflight-2026-07-12.md`
 - `docs/ornscore-android-twa-owner-checklist.md`
