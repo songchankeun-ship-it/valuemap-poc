@@ -179,3 +179,116 @@ Push, deploy of any commit, live-marker confirmation after a real deploy, Search
 Console / Naver submission, wiring this verifier into CI/hosting, and any
 Metrics 2.5.1 promotion remain owner decisions. This slice verifies the live
 surface read-only and stops.
+
+---
+
+# Slice B — fail-closed market-day input adapter (2026-07-19)
+
+Branch: `ai-center/task-369-ornscore-market-ops-b-private-metric`.
+Base HEAD at Slice B authoring: `3e7a4ba` (Slice A).
+Surface: two new Python scripts + two `package.json` dev aliases + this section +
+`PROGRESS.md`/`docs/AI_HANDOFF.md`. Frozen boundaries of §7 stay in force.
+
+## B.1 Problem Slice B solves
+
+Slice A verifies the *published* surface read-only. Slice B is the **input
+front-end** for the Metrics 2.5.1 shadow pipeline: it assembles **exactly one
+genuine market-day run request + trading calendar** from ORNScore-owned public
+envelope data (`public/data/stocks.json` + `public/data/prices/{ticker}.json`)
+**or** an explicit local fixture of the same layout, and writes it **only** under
+the private, Git-ignored `.metrics251-shadow/inputs/` tree. It sits *before*
+preflight (Slice M) / run (Slice N): it **assembles only and never runs** — a
+genuine shadow run remains an owner decision (runbook §6, Gate 6).
+
+The operations runbook (`docs/metrics-2.5.1-operations-runbook.md` §6.1) requires
+each trading day's `request-D.json` to carry real 138-stock inputs, pinned source
+dates, and a calendar. Slice B is the deterministic, fail-closed producer of that
+artifact — the missing bridge between the public data envelope and the run layer.
+
+## B.2 Fail-closed contract (prove-or-refuse)
+
+The adapter emits a **promotable** `request.json` **only** when every field below
+is *proven* from the supplied envelope. If any cannot be proven it returns a
+precise, sorted, machine-readable reason (a `MISSING_INPUT` / `STALE_SOURCE`-class
+code) and **writes no promotable request** (no partial artifact). It never
+invents, forward-fills, estimates, or silently substitutes a value:
+
+1. **Universe** — exactly 138 unique, present tickers (`UNIVERSE_COUNT_MISMATCH`,
+   `DUPLICATE_TICKER`, `TICKER_MISSING`, `PRICE_SERIES_MISSING`).
+2. **Exact, mutually consistent source dates** — `prices == volumes == marketDate`
+   (both read from the same price point) and `fundamentals` (=
+   `meta.asOfBusinessDate`, normalized) **equal** to `marketDate`; any drift is
+   `SOURCE_DATE_MISMATCH` / `SOURCE_DATE_STALE` / `SOURCE_DATE_FUTURE` /
+   `SOURCE_DATE_MISSING` / `SOURCE_DATE_MALFORMED`.
+3. **Sufficient real history** — `≥` the config minima (derived, not hardcoded:
+   253 price points, 20 volume points) so no factor nulls out
+   (`INSUFFICIENT_PRICE_HISTORY`, `INSUFFICIENT_VOLUME_HISTORY`).
+4. **Required PER/PBR** — present, finite, positive; a `valueNA` flag counts as
+   missing (`FUNDAMENTAL_MISSING`, `FUNDAMENTAL_NON_POSITIVE`).
+5. **A common actual trading date** — every price series ends on the *same* date,
+   and that date is a real calendar trading day (`MARKET_DATE_AMBIGUOUS`,
+   `MARKET_DATE_NOT_TRADING_DAY`, `CALENDAR_MISSING`, `CALENDAR_UNCOVERED`).
+6. **No future / stale dates** — enforced by (2) and the calendar.
+7. **No synthetic/test markers** — the envelope is scanned by the reused
+   `genuine_run_gate` (Slice Q) plus a defensive `source`/`note` text scan
+   (`SYNTHETIC_MARKER_PRESENT`); the *emitted* request is proven marker-free so it
+   is genuinely promotable.
+8. **Deterministic ordering/hashes** — stocks sorted by ticker, canonical
+   (`sort_keys`) serialization, and a derived `expected` pin (engineVersion +
+   `configHash` + `inputManifestHash` + marketDate + sourceDates) computed with the
+   same primitives the run layer uses, plus an `assemblyHash`.
+9. **No unresolved input ambiguity** — divergent price end-dates, unnormalizable
+   business dates, malformed points, and non-finite prices/volumes all refuse
+   (`MARKET_DATE_UNRESOLVED`, `PRICE_NON_POSITIVE`, `VOLUME_NEGATIVE`,
+   `ENVELOPE_MALFORMED`).
+
+**Output-location guard**: the target is always `<shadow-root>/inputs/`; if it
+resolves under `public/` (`OUTPUT_NOT_PRIVATE`) or outside the `inputs/` subtree
+(`OUTPUT_NOT_UNDER_INPUTS`), the adapter writes **nothing** regardless of assembly
+success. Any unexpected exception is absorbed as `INTERNAL_ERROR` (fail-closed).
+
+## B.3 Reuse — no duplicated business logic
+
+| Contract | Reused from | What is reused |
+| --- | --- | --- |
+| Canonical serialization + hashes | `metrics251_config` | `canonical_bytes`, `config_hash`, `CONFIG_PATH` |
+| Engine identity / input manifest | `metrics251_engine` | `ENGINE_VERSION`, `EngineRequest`, `_input_manifest_hash` (for the `expected` pin, identical to `run.derive_expected`) |
+| Private-root layout + atomic write | `metrics251_snapshot_store` | `DEFAULT_SHADOW_ROOT`, `RUNS_SUBDIR`, `_atomic_write_bytes` |
+| Synthetic-marker rejection | `metrics251_e2e_matrix` | `genuine_run_gate`, `carries_synthetic_marker`, `SYNTHETIC_MARKER` |
+| Trading calendar | `metrics251_compare` | `FixtureTradingCalendar` |
+| History minima | `config/metrics/2.5.1.json` | momentum/activity/riskAdjusted minimums (derived at runtime) |
+
+The assembled `request.json` is exactly the shape `preflight_market_day` /
+`run_market_day` consume (marketDate, sourceDates, stocks, expected); the tests
+prove the artifact is preflight-clean and engine-runnable.
+
+## B.4 Current public envelope → honest MISSING_INPUT (verified read-only)
+
+A GET-only compatibility inspection of the live owner surface / local
+`public/data` shows the current envelope has all 138 price series ending on a
+single common trading date (`2026-07-16`, ≥974 points each), but **one ticker
+(`088980`) has `per`/`pbr` = null (`valueNA: true`)**. Running the adapter against
+it therefore returns `FAIL / FUNDAMENTAL_MISSING`, exit 2, and writes **no**
+promotable request — the correct fail-closed outcome ("the current public envelope
+cannot prove a required field"). This is a demonstration of the guard, **not** a
+defect to paper over: no value is invented to force a pass.
+
+## B.5 Tests (`scripts/test_metrics251_market_input.py`)
+
+21 deterministic, offline cases over tempdir fixtures (never `public/data`):
+happy-path assembly **+ write + preflight/engine acceptance**; corrupt; partial
+(missing price file / missing PER-PBR); stale; mixed-date; duplicate;
+synthetic-marker (structural + text); **public-path-write rejection** (and no
+`public/` leak); insufficient history; future source date; non-trading day;
+missing calendar; universe-count drift; non-positive PER/PBR; non-positive price +
+negative volume; config engine mismatch; determinism (byte-identical request +
+`assemblyHash`); source purity (no wall-clock / RNG / network API); and
+no-write-on-failure.
+
+## B.6 Non-goals / owner-only follow-up (NOT performed here)
+
+No genuine shadow run, no preflight/run invocation on real data, no promotion, no
+push/deploy/publish, no change to `public/data`, the 138-stock output, Metrics 2.4,
+login/auth, Supabase/runtime values, `.github/workflows`, SEO ownership, or
+Next/React/dependency versions. Wiring the adapter into the run layer for a real
+trading-day window remains an owner decision behind runbook §6 / Gate 6.
