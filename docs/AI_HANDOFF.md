@@ -3816,3 +3816,16 @@ Presentation-only cleanup of the four primary public journeys on branch `codex/v
 - Frozen: public/data + Metrics 2.4, Metrics 2.5.1 private state, auth, workflows, packages, runtime values, SEO route ownership, and analytics names. No push/deploy/publication/external action.
 - Next: apply the same visual hierarchy to comparison, disclosures, watchlist, status, and guide pages without changing their contracts.
 - Commit: local `[codex] UI: simplify core visual hierarchy`.
+
+### 2026-07-20 - Compare and disclosure action-first visual pass [codex]
+
+Second presentation-only pass on branch `codex/visual-hierarchy-core`, starting from `7ac983c`.
+
+- Compare now puts its interactive stock-selection tool before curated comparison links; preview/curated support content uses rules instead of nested cards, and the tested `<noscript>` fallback remains intact.
+- Disclosures now uses an unframed filter section, one responsive basis band, compact rectangular type controls, and three closed `<details>` summaries for collection scope, type guidance, and shared card caveats. No trust content was removed.
+- Today's compact briefing reuses `activitySurgeCount`, preserving the two-render-location single-source contract without reintroducing the old four-card duplication.
+- Production QA at 1440x1000 and 390x844: `/compare` and `/disclosures` have no horizontal overflow and no main-content radius over 8px. Disclosure mobile scroll height reduced 4126 -> 3917.
+- Gates green: compare entry, comparison language, disclosure hierarchy, activity-surge, final 192-page build, `verify:reaudit` 13/13, and final production `verify:local` 6/6.
+- Frozen boundaries and external state unchanged; no push/deploy/publication.
+- Next: gather feedback from `http://127.0.0.1:4460`; Status, Metrics Guide, and Watchlist were inspected and intentionally left unchanged.
+- Commit: local `[codex] UI: prioritize compare and disclosure actions`.

@@ -270,7 +270,7 @@ export function TodayContent(props: TodayContentProps) {
           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">{props.dataAsOf}{t.briefingAsOfSuffix}</span>
         </div>
         <p className="text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
-          {t.briefingMoveLabel(props.totalCount)} · {t.briefingUp(props.upCount)} · {t.briefingDownFlat(props.downCount, props.flatCount)}
+          {t.briefingMoveLabel(props.totalCount)} · {t.briefingUp(props.upCount)} · {t.briefingDownFlat(props.downCount, props.flatCount)} · {t.briefingFlowLabel} {props.activitySurgeCount}{t.briefingCountSuffix}
         </p>
         {/* 저장된 일일 AI 인사이트는 출처·구성종목·계산시각·규칙/모델 역할의 타입화된
             프로버넌스가 없어 공개 표시하지 않는다(Slice E). 근거 없는 대체 카드도 넣지 않는다.

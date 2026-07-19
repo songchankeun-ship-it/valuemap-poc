@@ -301,7 +301,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
 
   return (
     <div className="space-y-4">
-      <header className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+      <header className="border-y border-zinc-200 py-3 dark:border-zinc-800 md:py-4">
         <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.title}</h2>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
@@ -309,12 +309,12 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             <span className="tabular-nums">{t.summary(days, data.signalCount, scope === "all", scoped.length)}</span>
           </div>
         </div>
-        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-3 text-[11px] tabular-nums">
-          <div className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-1.5">
+        <dl className="mb-3 grid grid-cols-1 border-y border-zinc-200 text-[11px] tabular-nums dark:border-zinc-800 sm:grid-cols-2 sm:divide-x sm:divide-zinc-200 sm:dark:divide-zinc-800">
+          <div className="flex items-center justify-between gap-2 px-2.5 py-2">
             <dt className="text-zinc-500 dark:text-zinc-400">{t.priceScoreBasis}</dt>
             <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{priceScoreBasis}</dd>
           </div>
-          <div className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-2.5 py-1.5">
+          <div className="flex items-center justify-between gap-2 border-t border-zinc-200 px-2.5 py-2 dark:border-zinc-800 sm:border-t-0">
             <dt className="text-zinc-500 dark:text-zinc-400">{t.disclosureCollectionBasis}</dt>
             <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{disclosureBasis}</dd>
           </div>
@@ -337,7 +337,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           <span
             role="note"
             aria-label={t.periodScopeBadgeAria}
-            className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300"
+            className="inline-flex items-center gap-1 border-l border-slate-300 px-2 py-1 text-[11px] font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300"
           >
             <Info className="w-3 h-3 shrink-0 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
             {t.periodScopeBadge}
@@ -369,7 +369,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                   type="button"
                   onClick={() => setFilterType(tab.key)}
                   aria-pressed={active}
-                  className={"inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full border text-xs font-medium whitespace-nowrap shrink-0 transition " + FOCUS_RING + " " +
+                  className={"inline-flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-md border text-xs font-medium whitespace-nowrap shrink-0 transition " + FOCUS_RING + " " +
                     (active
                       ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                       : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
@@ -378,7 +378,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
                     <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (active ? "bg-white/70 dark:bg-zinc-900/70" : tab.dot)} aria-hidden="true" />
                   ) : null}
                   {tab.label}
-                  <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
+                  <span className={"tabular-nums text-[11px] " +
                     (active
                       ? "bg-white/20 text-white dark:bg-zinc-900/20 dark:text-zinc-900"
                       : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400")}>
@@ -436,9 +436,9 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
       </header>
 
       {/* 카드 공통 경고 박스(재검수 5-4 밀도) — DART 원문/수집 제한/호재·악재 아님을 한곳에 모아 카드 반복 축소 */}
-      <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 leading-relaxed">
-        <p className="font-semibold text-slate-500 dark:text-slate-400 mb-1">{t.topNoticeTitle}</p>
-        <ul className="space-y-0.5">
+      <details className="border-l-2 border-slate-300 bg-slate-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600 dark:border-slate-700 dark:bg-slate-800/30 dark:text-slate-300">
+        <summary className="cursor-pointer select-none font-semibold text-slate-500 dark:text-slate-400">{t.topNoticeTitle}</summary>
+        <ul className="mt-1 space-y-0.5">
           {t.topNoticeBullets.map((bullet, i) => (
             <li key={i} className="flex gap-1.5">
               <span className="text-slate-400 shrink-0" aria-hidden="true">·</span>
@@ -446,7 +446,7 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
             </li>
           ))}
         </ul>
-      </div>
+      </details>
 
       {/* 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 카드 목록 위에 노출(재검수 P0C) */}
       {data.source?.startsWith("sample") ? (

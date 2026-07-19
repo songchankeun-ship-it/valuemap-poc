@@ -232,18 +232,27 @@ export default async function ComparePage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
+      <CompareClient
+        stockMap={stockMap}
+        top5={top5}
+        recommendedSets={recommendedSets}
+        exampleSets={exampleSets}
+        disclosureByTicker={disclosureByTicker}
+        initialTickers={initialTickers}
+      />
+
       {compareCards.length > 0 ? (
-        <section aria-label="추천 비교" className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <section aria-label="추천 비교" className="border-y border-zinc-200 py-4 dark:border-zinc-800">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">바로 보는 종목 비교</h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
             같은 업종 대표 종목을 미리 정리한 비교 페이지입니다. 어느 쪽이 높고 낮은지 중립적으로 나란히 봅니다.
           </p>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {compareCards.map((c) => (
-              <li key={c.slug}>
+              <li key={c.slug} className="border-b border-zinc-200 last:border-b-0 dark:border-zinc-800">
                 <Link
                   href={`/compare/${c.slug}`}
-                  className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 px-3 py-2.5 text-xs transition hover:border-blue-300 hover:text-blue-700 dark:border-zinc-800 dark:hover:border-blue-700 dark:hover:text-blue-400"
+                  className="flex items-center justify-between gap-2 px-1 py-2.5 text-xs transition hover:text-blue-700 dark:hover:text-blue-400"
                 >
                   <span className="font-medium text-zinc-800 dark:text-zinc-200">{c.a.name} vs {c.b.name}</span>
                   <span aria-hidden="true" className="text-zinc-400">›</span>
@@ -254,21 +263,12 @@ export default async function ComparePage({ searchParams }: PageProps) {
         </section>
       ) : null}
 
-      <CompareClient
-        stockMap={stockMap}
-        top5={top5}
-        recommendedSets={recommendedSets}
-        exampleSets={exampleSets}
-        disclosureByTicker={disclosureByTicker}
-        initialTickers={initialTickers}
-      />
-
       {/* JS 미실행(정적 렌더·검색엔진·스크립트 오류) 시 빈 화면 방지 fallback.
           단, 유효 종목이 2개 이상이면 CompareClient가 이미 결과를 SSR로 출력하므로
           빈 상태를 함께 렌더하지 않는다(결과 + 빈 상태 동시 노출 방지). */}
       {initialTickers.length < 2 ? (
       <noscript>
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 md:p-8 text-center">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-6 md:p-8 text-center">
           <div className="text-2xl mb-2">📊</div>
           <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">비교할 종목이 아직 없습니다</h2>
           <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed mb-4">

@@ -50,14 +50,14 @@ export function DisclosuresIntroHeader() {
         </p>
       </details>
 
-      <section aria-label={t.typeGuide.title} className="border-l-2 border-amber-200 dark:border-amber-900 pl-3 py-1">
-        <h2 className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">{t.typeGuide.title}</h2>
+      <details className="border-l-2 border-amber-200 py-1 pl-3 dark:border-amber-900">
+        <summary className="cursor-pointer select-none text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">{t.typeGuide.title}</summary>
         <ul className="mt-1 space-y-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
           {t.typeGuide.items.map((item) => (
             <li key={item}>· {item}</li>
           ))}
         </ul>
-      </section>
+      </details>
     </>
   );
 }

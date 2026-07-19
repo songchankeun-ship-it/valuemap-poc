@@ -4789,3 +4789,16 @@ Reworked the four highest-traffic public surfaces around a quieter operational v
 - **Frozen boundaries**: `public/data`, Metrics 2.4, shadow Metrics 2.5.1 state, packages, workflows, login/auth, runtime values, SEO URLs/ownership, and analytics event names are unchanged. No push, deployment, publication, account action, or genuine shadow collection.
 - **Next**: continue the visual pass on comparison, disclosures, watchlist, status, and guide surfaces using the same hierarchy contract; keep all behavioral and frozen boundaries intact.
 - **Commit**: local `[codex] UI: simplify core visual hierarchy`.
+
+### 2026-07-20 - Compare and disclosure action-first visual pass [codex]
+
+Extended the shared visual hierarchy to the two remaining high-friction public tools after inspecting Compare, Disclosures, Watchlist, Status, and Metrics Guide in the production build. Watchlist, Status, and Metrics Guide were deliberately left unchanged because their document/empty-state hierarchy was already coherent. Prior HEAD `7ac983c`; branch `codex/visual-hierarchy-core`.
+
+- **Compare**: the interactive stock-selection tool now precedes curated comparison links, so the page's primary action appears first. The selection panel keeps a real tool boundary at 8px, while the preview capability list and curated links use unframed rules instead of nested cards. The no-JavaScript fallback remains intact and ordered after the interactive/curated surfaces.
+- **Disclosures**: converted the large filter card into an unframed section, turned the two basis cells into one responsive data band, reduced pill-heavy type tabs to compact rectangular controls, and flattened the shared notice. Collection scope, disclosure-type guidance, and common-card caveats remain available as closed `<details>` controls so mobile reaches filters/results sooner without deleting trust context.
+- **Today contract repair**: the compact one-line briefing explicitly reuses `activitySurgeCount`; this preserves the tested single-source relationship with the KPI strip without restoring the removed four-card duplicate grid.
+- **Visual verification**: `/compare` and `/disclosures` checked at 1440x1000 and 390x844. Both have zero horizontal overflow and zero main-content radii above 8px. Compare mobile fits the selection action and capability summary in the first viewport. Disclosures mobile has three closed, accessible detail summaries and reduced scroll height from 4126 to 3917.
+- **Automated verification**: `test:compare-entry`, `test:comparison-language`, `test:disclosure-hierarchy`, and `test:activity-surge` PASS; final `npm run build` PASS (192 pages); `verify:reaudit` 13/13 PASS; production `verify:local -- --base http://127.0.0.1:4460 --no-perf` 6/6 PASS.
+- **Frozen boundaries**: public data/Metrics 2.4, Metrics 2.5.1 private state, auth/provider behavior, workflows, packages, runtime values, SEO routes/metadata ownership, comparison math/copy, disclosure classification, and analytics names are unchanged. No push, deploy, publication, or external action.
+- **Next**: hold visual changes here and collect user feedback from the local production preview before any lower-priority polish. Status, Guide, and Watchlist were inspected and require no immediate redesign.
+- **Commit**: local `[codex] UI: prioritize compare and disclosure actions`.

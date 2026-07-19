@@ -333,7 +333,7 @@ export function CompareClient({
     const selected = stocks[0]; // 0개 또는 1개
     return (
       <section className="py-2 md:py-4">
-        <div className="max-w-2xl mx-auto text-center mb-5">
+        <div className="max-w-2xl mx-auto text-center mb-3">
           <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300">
             <BarChart3 className="w-5 h-5" strokeWidth={1.8} />
           </div>
@@ -351,7 +351,7 @@ export function CompareClient({
           {feedbackRegion ? <div>{feedbackRegion}</div> : null}
 
           {/* 1) 직접 검색하기 — 빈 상태의 첫 행동(유일하게 강조한 박스) */}
-          <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3.5">
+          <div className="rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 p-3.5">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 mb-1">
               <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">종목명 또는 코드 검색</div>
               {countIndicator}
@@ -360,7 +360,7 @@ export function CompareClient({
             <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void tryAdd(t); }} placeholder="예: 삼성전자, 005930" />
           </div>
 
-          <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3.5">
+          <div className="border-y border-zinc-200 py-3.5 dark:border-zinc-800">
             <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">비교하면 이런 걸 볼 수 있어요</div>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {COMPARE_EMPTY_PREVIEW.map((item) => (
