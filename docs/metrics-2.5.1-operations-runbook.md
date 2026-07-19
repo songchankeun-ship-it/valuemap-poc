@@ -222,9 +222,12 @@ PYTHONUTF8=1 npm run orchestrate:metrics251 -- \
 # explicit(회귀/재현용): --mode explicit --market-date <D> (proven<D→WAIT, proven>D→FAIL).
 ```
 
-- **현 공개 envelope 실측(2026-07-19, 읽기 전용)**: `--source public --no-write` → `WAIT /
-  MISSING_CURRENT_INPUT`(marketDate `2026-07-16`) — 한 종목 PER/PBR 결측(§B.4)으로 아직 게시 자격
-  미충족. 이는 정직한 fail-closed hold 이며 **실제 run 을 만들지 않는다**.
+- **현 공개 envelope 재검증(2026-07-19, 읽기 전용)**: `088980`의 `per`/`pbr`가 모두
+  `null`이고 `valueNA: true`인 상태는 값 대체 없이 **밸류 factor-level 결측**으로 처리한다.
+  어댑터는 138종목 request를 만들고 엔진은 해당 종목의 밸류·종합·순위만 보류하여
+  value/ranking 137/138(99.28%)을 유지한다. 한쪽만 null, 키 누락, 플래그-값 모순은 계속
+  `MISSING_CURRENT_INPUT`으로 보류한다. 운영 activation date는 `2026-07-19`이므로 그 이후
+  첫 적격 실제 거래일부터 1/5 수집한다.
 - **멱등**: 같은 입력 재실행 = `ALREADY_RECORDED`(새 run 없음). 같은 날 다른 입력 =
   `SAME_DATE_CONFLICT`(불변 위치 미덮어쓰기).
 - **겹침 lock**: `<root>/locks/orchestrator.lock`(O_EXCL). 보유 중이면 `LOCK_HELD` WAIT.

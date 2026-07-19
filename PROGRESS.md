@@ -4749,3 +4749,16 @@
 - **Rollback**: Slice D only → remove `docs/ornscore-market-close-automation-operator-dossier-2026-07-19.md` and revert this PROGRESS/AI_HANDOFF entry; nothing runtime/data to unwind.
 - **Next**: owner-only — the Codex watchdog installs the two weekday schedules (§6) after this recert is green; the genuine 5-consecutive-KRX-day window + Gate 4→5→6 remain owner decisions behind runbook §6. Do not push/publish; Metrics 2.5.1 stays shadow-only, public stays Metrics 2.4.
 - **Commit**: local [codex] market-close ops Slice D: five-day automation recertification + operator dossier.
+
+### 2026-07-19 - Metrics 2.5.1 explicit missing-value resolution for 088980 [codex]
+
+Resolved the permanent shadow-collection hold for ticker `088980` without inventing PER/PBR values or changing public Metrics 2.4. Prior HEAD `2089714`; branch `codex/metrics251-explicit-missing-fundamentals`.
+
+- **Root cause**: the public record intentionally carries `per:null`, `pbr:null`, `valueNA:true`. The Metrics 2.5.1 engine/eligibility/rollout contracts already treat this as a factor-level value exclusion and allow 137/138 ranking coverage (99.28%), but the later market-input adapter incorrectly rejected the entire 138-stock request.
+- **Adapter contract**: accept only (a) finite positive PER/PBR with `valueNA` not true, or (b) both keys present, both null, and `valueNA:true`. State (b) is preserved unchanged; the engine withholds only value/composite/rank for that stock. Missing keys, partial nulls, contradictory flags, non-positive values, and non-finite values remain fail-closed.
+- **Tests**: input adapter 22/22 and orchestrator 22/22, including explicit-null acceptance, 137/138 population proof, and ambiguous-state refusal. The complete 19-command Metrics 2.5.1 regression battery passed with `PYTHONUTF8=1`; `verify_metrics.py` passed 138/138 with Metrics 2.4; `npx tsc --noEmit` and `npm run build` passed.
+- **Operational proof**: read-only public assembly passed for market date `2026-07-16`, produced a deterministic 138-stock request, and wrote nothing. Running the orchestrator with the operational activation date `2026-07-19` returned `WAIT / PRE_ACTIVATION`, so the historical date was not counted. The real private ledger still has zero entries: **actualRuns 0/5**.
+- **Frozen boundaries**: `public/data`, `src/lib/metrics.ts`, login/auth/middleware, `.github/workflows`, `package.json`, and `package-lock.json` all have zero diff. No public promotion, external action, push, deployment, package change, or account/service mutation.
+- **Known pre-existing residual**: `test:metrics251-baseline` still reports only the two baseline documentation artifacts stale. All executable Metrics 2.5.1 contracts and public Metrics 2.4 checks pass; regenerating those historical docs remains a separate maintenance task.
+- **Next**: no owner action is required for collection. Leave the weekday 20:00 Asia/Seoul private shadow automation active; the first eligible real trading date after activation becomes 1/5, and the automation pauses itself after five distinct real trading dates.
+- **Commit**: local `[codex] Metrics 2.5.1: accept explicit missing value fundamentals`.

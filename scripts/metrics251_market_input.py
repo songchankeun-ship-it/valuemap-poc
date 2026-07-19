@@ -18,7 +18,7 @@
 #     1) 정확히 138개 유니크 ticker.
 #     2) 정확·상호일관 소스일(prices == volumes == fundamentals == marketDate).
 #     3) 충분한 실제 가격/거래량 이력(config 최소치 이상).
-#     4) 필수 PER/PBR 입력(양수·유한).
+#     4) 명시적 PER/PBR 가용성(양수·유한 pair 또는 null/null + valueNA=true).
 #     5) 공통의 실제 거래일(캘린더가 커버하는 거래일) — 미래/stale 금지.
 #     6) 합성/테스트 마커 없음(genuine-run 게이트 재사용).
 #     7) 결정적 순서/해시(ticker 정렬·canonical 직렬화·pin 해시).
@@ -91,7 +91,7 @@ INSUFFICIENT_VOLUME_HISTORY = "INSUFFICIENT_VOLUME_HISTORY"
 PRICE_NON_POSITIVE = "PRICE_NON_POSITIVE"
 VOLUME_NEGATIVE = "VOLUME_NEGATIVE"
 
-# 필수 PER/PBR(MISSING_INPUT 계열).
+# 모호·부분·모순 PER/PBR 가용성(MISSING_INPUT 계열).
 FUNDAMENTAL_MISSING = "FUNDAMENTAL_MISSING"
 FUNDAMENTAL_NON_POSITIVE = "FUNDAMENTAL_NON_POSITIVE"
 
@@ -488,12 +488,27 @@ def build_stock_input(stock, points, min_prices, min_volumes):
         reasons.append(VOLUME_NEGATIVE)
         detail.append(f"{ticker}: 비유한/음수 거래량 존재")
 
-    # 필수 PER/PBR — 없으면 MISSING_INPUT(합성/대체 금지). valueNA 플래그도 결측으로 본다.
+    # PER/PBR availability is explicit. A fully null pair is accepted only when
+    # valueNA=true proves that the public envelope intentionally withheld the
+    # value factor. The engine then records value.MISSING_INPUT and excludes the
+    # stock from composite/rank eligibility without erasing its other factors.
+    # Partial or contradictory states remain fail-closed.
     per = stock.get("per")
     pbr = stock.get("pbr")
-    if stock.get("valueNA") is True or per is None or pbr is None:
+    value_na = stock.get("valueNA")
+    has_per = "per" in stock
+    has_pbr = "pbr" in stock
+    explicit_value_unavailable = (
+        has_per and has_pbr and per is None and pbr is None and value_na is True
+    )
+    if explicit_value_unavailable:
+        detail.append(f"{ticker}: explicit value unavailable (per/pbr null, valueNA=true)")
+    elif not has_per or not has_pbr or per is None or pbr is None or value_na is True:
         reasons.append(FUNDAMENTAL_MISSING)
-        detail.append(f"{ticker}: per/pbr 결측(per={per!r} pbr={pbr!r} valueNA={stock.get('valueNA')!r})")
+        detail.append(
+            f"{ticker}: ambiguous per/pbr availability"
+            f"(hasPer={has_per!r} hasPbr={has_pbr!r} per={per!r} pbr={pbr!r} valueNA={value_na!r})"
+        )
     elif not _finite_positive(per) or not _finite_positive(pbr):
         reasons.append(FUNDAMENTAL_NON_POSITIVE)
         detail.append(f"{ticker}: per/pbr 비양수/비유한(per={per!r} pbr={pbr!r})")

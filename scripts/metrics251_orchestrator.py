@@ -111,7 +111,7 @@ ADAPTER_WAIT_REASONS = frozenset({
     mi.PRICE_SERIES_MISSING,         # 일부 시계열 미도착 → 현재 입력 결측
     mi.INSUFFICIENT_PRICE_HISTORY,   # 이력 미충족(데이터 축적 중)
     mi.INSUFFICIENT_VOLUME_HISTORY,
-    mi.FUNDAMENTAL_MISSING,          # 필수 PER/PBR 미증명(현 공개 envelope 실제 상태 — Slice B.4)
+    mi.FUNDAMENTAL_MISSING,          # 모호·부분·모순 PER/PBR 가용성 미증명(Slice B.4)
     mi.MARKET_DATE_UNRESOLVED,       # 시장일 미해결(입력 미확정)
     mi.MARKET_DATE_AMBIGUOUS,        # 종료일 갈라짐(게시 유예 — 데이터 landing 중)
     mi.MARKET_DATE_NOT_TRADING_DAY,  # 주말/공휴일

@@ -223,8 +223,13 @@ invents, forward-fills, estimates, or silently substitutes a value:
 3. **Sufficient real history** — `≥` the config minima (derived, not hardcoded:
    253 price points, 20 volume points) so no factor nulls out
    (`INSUFFICIENT_PRICE_HISTORY`, `INSUFFICIENT_VOLUME_HISTORY`).
-4. **Required PER/PBR** — present, finite, positive; a `valueNA` flag counts as
-   missing (`FUNDAMENTAL_MISSING`, `FUNDAMENTAL_NON_POSITIVE`).
+4. **Explicit PER/PBR availability** — every stock must carry both keys. A stock
+   is accepted when both values are finite and positive, or when both are `null`
+   and `valueNA: true` explicitly proves factor-level unavailability. The latter
+   is preserved as `null`; the engine withholds that stock's value factor,
+   composite, and rank eligibility while retaining its other factors. Partial or
+   contradictory states remain fail-closed (`FUNDAMENTAL_MISSING`), and
+   non-positive/non-finite values remain `FUNDAMENTAL_NON_POSITIVE`.
 5. **A common actual trading date** — every price series ends on the *same* date,
    and that date is a real calendar trading day (`MARKET_DATE_AMBIGUOUS`,
    `MARKET_DATE_NOT_TRADING_DAY`, `CALENDAR_MISSING`, `CALENDAR_UNCOVERED`).
@@ -262,22 +267,30 @@ The assembled `request.json` is exactly the shape `preflight_market_day` /
 `run_market_day` consume (marketDate, sourceDates, stocks, expected); the tests
 prove the artifact is preflight-clean and engine-runnable.
 
-## B.4 Current public envelope → honest MISSING_INPUT (verified read-only)
+## B.4 Current public envelope: explicit factor-level absence (corrected 2026-07-19)
 
-A GET-only compatibility inspection of the live owner surface / local
-`public/data` shows the current envelope has all 138 price series ending on a
-single common trading date (`2026-07-16`, ≥974 points each), but **one ticker
-(`088980`) has `per`/`pbr` = null (`valueNA: true`)**. Running the adapter against
-it therefore returns `FAIL / FUNDAMENTAL_MISSING`, exit 2, and writes **no**
-promotable request — the correct fail-closed outcome ("the current public envelope
-cannot prove a required field"). This is a demonstration of the guard, **not** a
-defect to paper over: no value is invented to force a pass.
+A read-only compatibility inspection of local `public/data` shows all 138 price
+series end on the common trading date `2026-07-16`. Ticker `088980` has both
+`per` and `pbr` set to `null` with `valueNA: true`. The original Slice-B adapter
+incorrectly promoted that known factor-level absence into a request-level
+`FUNDAMENTAL_MISSING` hold, conflicting with the existing engine, eligibility,
+baseline, and rollout contracts that permit an explained value exclusion while
+requiring at least 95% ranking coverage.
+
+The corrected adapter accepts only the exact, self-consistent null state above,
+preserves the nulls without substitution, and emits a 138-stock request. The
+engine produces value/ranking coverage of **137/138 (99.28%)**, records
+`value.MISSING_INPUT` for `088980`, and leaves momentum/activity/risk-adjusted
+observations intact. Missing keys, partial nulls, `valueNA: true` with positive
+values, and all other contradictory states still refuse the entire request.
 
 ## B.5 Tests (`scripts/test_metrics251_market_input.py`)
 
-21 deterministic, offline cases over tempdir fixtures (never `public/data`):
+22 deterministic, offline cases over tempdir fixtures (never `public/data`):
 happy-path assembly **+ write + preflight/engine acceptance**; corrupt; partial
-(missing price file / missing PER-PBR); stale; mixed-date; duplicate;
+(missing price file); explicit factor-level PER/PBR absence with 137/138 value and
+ranking coverage; ambiguous/partial/contradictory PER/PBR refusal; stale;
+mixed-date; duplicate;
 synthetic-marker (structural + text); **public-path-write rejection** (and no
 `public/` leak); insufficient history; future source date; non-trading day;
 missing calendar; universe-count drift; non-positive PER/PBR; non-positive price +
@@ -389,18 +402,21 @@ owner decision).
 
 ## C.5 Tests (`scripts/test_metrics251_orchestrator.py`)
 
-21 deterministic, offline cases over tempdir fixtures (never `public/data`):
+22 deterministic, offline cases over tempdir fixtures (never `public/data`):
 PASS (scheduled happy-path → PUBLISHED with inputs/run/ledger/gate-docs all under
-shadow + gate PENDING; idempotent re-run → ALREADY_RECORDED, no new run); WAIT
+shadow + gate PENDING; explicit factor-level value absence; idempotent re-run →
+ALREADY_RECORDED, no new run); WAIT
 (weekend, missing current input, publication grace / divergent end-date, stale
 source date, pre-activation, lock held); FAIL (synthetic marker, public-path leak
 with no `public/` write, same-date conflict, universe drift, malformed envelope,
 explicit request-stale); explicit-mode match/not-fresh/stale; and the invariants —
 adapter reason partition, no-tracked-file-dirtied, determinism, source purity, and
 no-run-on-WAIT/FAIL. **Live read-only check** (`--source public --no-write`, temp
-root): the current public envelope → `WAIT / MISSING_CURRENT_INPUT`
-(marketDate `2026-07-16`), exit 0, **no genuine run**, no repo shadow write — the
-honest fail-closed hold, consistent with Slice B.4.
+root, activation date before the proven date): the current public envelope now
+reaches `PASS / PUBLISHED` in the disposable no-write harness for marketDate
+`2026-07-16`, with 138 request stocks, value/ranking coverage 137/138, no public
+promotion, and no tracked-file write. The operational activation date remains
+`2026-07-19`, so only a later eligible real trading date can become run 1/5.
 
 ## C.6 Non-goals / owner-only follow-up (NOT performed here)
 

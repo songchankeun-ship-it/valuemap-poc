@@ -193,8 +193,8 @@ def test_wait_weekend():
         store.rmtree_force(shadow)
 
 
-def test_wait_missing_current_input():
-    # 현 공개 envelope 실제 상태 재현: 한 종목 PER/PBR 결측(valueNA).
+def test_explicit_value_unavailable_passes():
+    # A known factor-level absence remains in the universe but is not ranking eligible.
     miss = _tickers(138)[3]
     d = _mktmp()
     shadow = _mktmp()
@@ -203,8 +203,27 @@ def test_wait_missing_current_input():
             per_ticker=lambda t: {"stock": {"per": None, "pbr": None, "valueNA": True}} if t == miss else None)
         write_envelope(d, meta, stocks, prices)
         res = _orchestrate(d, shadow)
+        check(res.verdict == orch.VERDICT_PASS and orch.PASS_PUBLISHED in res.reasons,
+              f"explicit value unavailability must publish private shadow: {res.verdict}/{res.reasons}")
+        check(res.gate and res.gate.get("actualRuns") == 1,
+              f"private ledger must record the genuine date once: {res.gate}")
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+        store.rmtree_force(shadow)
+
+
+def test_wait_missing_current_input():
+    # Null fundamentals without the explicit valueNA contract remain a healthy hold.
+    miss = _tickers(138)[3]
+    d = _mktmp()
+    shadow = _mktmp()
+    try:
+        meta, stocks, prices = make_envelope(
+            per_ticker=lambda t: {"stock": {"per": None, "pbr": None}} if t == miss else None)
+        write_envelope(d, meta, stocks, prices)
+        res = _orchestrate(d, shadow)
         check(res.verdict == orch.VERDICT_WAIT and orch.WAIT_MISSING_CURRENT_INPUT in res.reasons,
-              f"PER/PBR 결측 → WAIT/MISSING_CURRENT_INPUT: {res.verdict}/{res.reasons}")
+              f"ambiguous PER/PBR absence must WAIT/MISSING_CURRENT_INPUT: {res.verdict}/{res.reasons}")
     finally:
         shutil.rmtree(d, ignore_errors=True)
         store.rmtree_force(shadow)
@@ -492,6 +511,7 @@ def main():
         test_scheduled_pass_published,
         test_idempotent_rerun_already_recorded,
         test_wait_weekend,
+        test_explicit_value_unavailable_passes,
         test_wait_missing_current_input,
         test_wait_publication_grace_ambiguous,
         test_wait_stale_source,

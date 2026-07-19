@@ -6,7 +6,7 @@
 #   A. 해피패스: 138 유니크 종목·공통 거래일·정확 소스일·필수 PER/PBR·충분 이력 → OK,
 #      inputs/ 에 request/calendar/report 기록, request 는 preflight/engine 가 실제로 수용.
 #   B. corrupt: stocks.json 파손 → ENVELOPE_MALFORMED, 무기록.
-#   C. partial: 종목 가격파일 결측/ PER·PBR 결측 → PRICE_SERIES_MISSING / FUNDAMENTAL_MISSING, 무기록.
+#   C. partial: 가격파일 결측은 거부; 명시적 PER·PBR 결측은 factor-level 제외; 모호한 결측은 거부.
 #   D. stale: asOfBusinessDate < marketDate → SOURCE_DATE_STALE(+MISMATCH), 무기록.
 #   E. mixed-date: 가격 시계열 종료일 불일치 → MARKET_DATE_AMBIGUOUS, 무기록.
 #   F. duplicate: 중복 ticker → DUPLICATE_TICKER, 무기록.
@@ -191,7 +191,7 @@ def test_corrupt_envelope():
 
 
 # ---------------------------------------------------------------------------
-# C. partial — 가격파일 결측 · PER/PBR 결측.
+# C. partial — 가격파일 결측 · 명시적/모호한 PER/PBR 결측.
 # ---------------------------------------------------------------------------
 def test_partial_missing_price_file():
     d = _mktmp()
@@ -207,7 +207,7 @@ def test_partial_missing_price_file():
         shutil.rmtree(d, ignore_errors=True)
 
 
-def test_partial_missing_fundamentals():
+def test_explicit_missing_fundamentals_allowed():
     d = _mktmp()
     try:
         miss = _tickers(138)[3]
@@ -215,11 +215,49 @@ def test_partial_missing_fundamentals():
             per_ticker=lambda t: {"stock": {"per": None, "pbr": None, "valueNA": True}} if t == miss else None)
         write_envelope(d, meta, stocks, prices)
         res = _assemble_dir(d)
-        check(not res.ok and mi.FUNDAMENTAL_MISSING in res.reasons,
-              f"PER/PBR 결측 → FUNDAMENTAL_MISSING: {res.reasons}")
-        check(res.request is None, "결측 → 무 request")
+        check(res.ok, f"explicit value unavailability must assemble: {res.reasons}")
+        request_stock = next((s for s in res.request["stocks"] if s["ticker"] == miss), None)
+        check(request_stock is not None, "explicitly unavailable stock must remain in the 138-stock request")
+        check(request_stock and request_stock["per"] is None and request_stock["pbr"] is None,
+              "adapter must preserve null PER/PBR without substitution")
+
+        eres = eng.compute_snapshot(eng.EngineRequest.from_dict(dict(res.request, config=CONFIG)))
+        check(eres.snapshot is not None, f"engine must accept factor-level missing value: {eres.nullReasons}")
+        if eres.snapshot is not None:
+            result_stock = next((s for s in eres.snapshot.stocks if s.ticker == miss), None)
+            check(result_stock is not None, "engine snapshot must retain explicitly unavailable stock")
+            check(result_stock and result_stock.factors["value"].reason == eng.MISSING_INPUT,
+                  "missing PER/PBR must withhold only the value factor")
+            check(result_stock and result_stock.compositeScore is None and not result_stock.rankingEligible,
+                  "missing value factor must withhold composite and rank eligibility")
+            check(eres.snapshot.factorPopulations["value"]["count"] == 137,
+                  "value population must be 137/138")
+            check(eres.snapshot.rankingPopulation["count"] == 137,
+                  "ranking population must be 137/138")
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+def test_ambiguous_missing_fundamentals_rejected():
+    cases = [
+        {"per": None, "pbr": None},
+        {"per": None, "pbr": 1.4, "valueNA": True},
+        {"per": 12.5, "pbr": None, "valueNA": True},
+        {"per": 12.5, "pbr": 1.4, "valueNA": True},
+    ]
+    for mutation in cases:
+        d = _mktmp()
+        try:
+            miss = _tickers(138)[3]
+            meta, stocks, prices = make_envelope(
+                per_ticker=lambda t, mutation=mutation: {"stock": mutation} if t == miss else None)
+            write_envelope(d, meta, stocks, prices)
+            res = _assemble_dir(d)
+            check(not res.ok and mi.FUNDAMENTAL_MISSING in res.reasons,
+                  f"ambiguous fundamental state must fail closed ({mutation}): {res.reasons}")
+            check(res.request is None, f"ambiguous fundamental state must emit no request: {mutation}")
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
 
 
 # ---------------------------------------------------------------------------
@@ -497,7 +535,8 @@ def main():
         test_happy_path_and_write,
         test_corrupt_envelope,
         test_partial_missing_price_file,
-        test_partial_missing_fundamentals,
+        test_explicit_missing_fundamentals_allowed,
+        test_ambiguous_missing_fundamentals_rejected,
         test_stale_source_date,
         test_mixed_last_date,
         test_duplicate_ticker,

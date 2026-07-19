@@ -136,12 +136,16 @@ Both are pure GET reads; the live public surface is healthy and serves exactly t
 state this repo represents. (A live confirmation with `--expected-sha` against a **deployed**
 build marker remains an owner step — this task verified the marker contract offline only.)
 
-**Live read-only orchestrator hold** (documented in runbook §6.5 / plan §C.5):
-`orchestrate:metrics251 --source public --no-write --json` → **WAIT / `MISSING_CURRENT_INPUT`**
-(marketDate 2026-07-16), exit 0, `writtenPaths: []`, `publicPromotionTriggered:false`,
-`externalActionTaken:false`, `readOnlyPublicCanon:true`. This is the honest fail-closed hold:
-the current public envelope has one ticker with `per`/`pbr` = null (Slice B.4), so no
-promotable request exists yet and **no genuine run is fabricated**.
+**Live read-only orchestrator eligibility correction** (documented in runbook §6.5 / plan §B.4):
+the existing engine and eligibility contracts permit a known factor-level value absence while
+requiring at least 95% ranking coverage. Ticker `088980` carries the exact explicit state
+`per:null`, `pbr:null`, `valueNA:true`; the corrected adapter preserves those nulls and accepts
+the 138-stock request. A disposable `--no-write` run with an activation date before the proven
+date reaches **PASS / `PUBLISHED`** for marketDate `2026-07-16`, value/ranking coverage 137/138
+(99.28%), `publicPromotionTriggered:false`, `externalActionTaken:false`, and
+`readOnlyPublicCanon:true`. Ambiguous, partial, or contradictory fundamental states still map to
+the healthy `WAIT / MISSING_CURRENT_INPUT` hold. The operational activation date remains
+`2026-07-19`, so this historical proof does not count toward the live 1/5 window.
 
 ---
 
@@ -240,7 +244,8 @@ PYTHONUTF8=1 npm run orchestrate:metrics251 -- \
   rollout-gate `status` (PENDING/MET) is **reported only**; **MET never triggers promotion**.
 - **WAIT** (`NON_TRADING_DAY` | `PUBLICATION_GRACE` | `MISSING_CURRENT_INPUT` | `PRE_ACTIVATION`
   | `LOCK_HELD` | `INPUT_NOT_FRESH`) — nothing is broken and no run is fabricated. **Do not
-  alert.** Re-run later. (`MISSING_CURRENT_INPUT` is the current live-envelope state, §4.)
+  alert.** Re-run later. `MISSING_CURRENT_INPUT` now means an unresolved or contradictory input,
+  not the explicitly unavailable value factor documented in §4.
 - **FAIL** (exit 2) — `SAME_DATE_CONFLICT`, `PARTIAL_RUN`, `QA_FAILED`, `SYNTHETIC_MARKER`,
   `PUBLIC_PATH_LEAK`, `PREFLIGHT_FAILED`, `STALE_SOURCE`, `CONFIG_INVALID`, `HASH_MISMATCH`,
   `LEDGER_CONFLICT`, `PUBLISH_FAILED`, or `INTERNAL_ERROR`. **Stop and alert** (§6.3).
