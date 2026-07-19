@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-19T04:25:11.521Z
+Last updated: 2026-07-19T04:46:03.396Z
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 363 - ORNScore Reaudit A - curated comparison Korean grammar repair
-- Run: 366
+- Task: 364 - ORNScore Reaudit B - Korean-only locale state hardening
+- Run: 367
 - Status: completed
 - Agent: claude
-- Note: Development and all quality gates completed.
+- Note: Budget-only post-success recovery. Implementation commit b68cd0a and TESTER PASS were already present; focused locale/comparison tests and typecheck were re-run successfully. The $5.0422/$5.00 overage was not a code or test failure.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,12 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-19 - [codex] - Task 364 budget-only post-success recovery
+
+- AI Center marked run #367 failed only after Claude success, local implementation commit `b68cd0a`, and TESTER PASS because cost reached $5.0422 against the $5.00 task limit.
+- Re-ran `test:locale-invariant`, `test:comparison-language`, and `npx tsc --noEmit`; all pass. Git object checks confirm `public/data` and `src/app/login`/`src/app/auth` are unchanged from `a1235a1`.
+- Reclassified only local task/run/queue bookkeeping. No source behavior, package, workflow, runtime value, public data, Metrics 2.4, login/auth behavior, or provider setting changed.
 
 ### 2026-07-19 - [codex] - Korean-only public-locale invariant (locale-state slice)
 
