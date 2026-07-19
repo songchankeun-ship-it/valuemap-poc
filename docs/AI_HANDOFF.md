@@ -3792,3 +3792,15 @@ Resolved the permanent shadow-collection hold for ticker `088980` without invent
 - **Known pre-existing residual**: `test:metrics251-baseline` still reports only the two baseline documentation artifacts stale. All executable Metrics 2.5.1 contracts and public Metrics 2.4 checks pass; regenerating those historical docs remains a separate maintenance task.
 - **Next**: no owner action is required for collection. Leave the weekday 20:00 Asia/Seoul private shadow automation active; the first eligible real trading date after activation becomes 1/5, and the automation pauses itself after five distinct real trading dates.
 - **Commit**: local `[codex] Metrics 2.5.1: accept explicit missing value fundamentals`.
+
+### 2026-07-20 - Metrics 2.5.1 deterministic baseline refresh [codex]
+
+Regenerated the two read-only Metrics 2.5.1 baseline artifacts from the current public Metrics 2.4 snapshot, clearing the final stale-document warning without changing data, formulas, runtime code, or shadow state. Prior HEAD `54c6be2`; branch `codex/metrics251-explicit-missing-fundamentals`.
+
+- **Deterministic delta**: snapshot `20260714 → 20260716`, input SHA `dbe3fb1… → 6639b2e…`, plus the source `generatedAt` and `pricesSyncedAt` metadata. All measured values remain identical: universe 138, PER/PBR positive 137, value/ranking exclusions 1, ranking coverage 137/138 (99.28%), extreme counts 24/8/2/5, fallback paths 16, duplicate calculation paths 5.
+- **Generated artifacts only**: `docs/metrics-2.5.1-baseline.json` and `docs/metrics-2.5.1-baseline.md`. The generator remains deterministic and read-only with respect to `public/data`; it computes and publishes no Metrics 2.5.1 score.
+- **Verification**: baseline stale/determinism contract PASS; complete 20-command Metrics 2.5.1 battery PASS; `verify_metrics.py` 138 stocks / 0 errors / public Metrics 2.4; `npx tsc --noEmit` PASS; `npm run build` PASS (192 pages); `git diff --check` clean; U+FFFD scan 0.
+- **Frozen boundaries**: `public/data`, all `src`, `config/metrics`, workflows, package manifests, authentication, and public scoring behavior have zero diff. No push, deployment, publication, external action, or genuine shadow run.
+- **Shadow status**: private ledger remains **actualRuns 0/5**. The weekday collector continues independently; no owner action is required.
+- **Next**: wait for five distinct eligible real trading dates, then review the private comparison dossier before any separate human promotion decision.
+- **Commit**: local `[codex] Metrics 2.5.1: refresh deterministic baseline`.

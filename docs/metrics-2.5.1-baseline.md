@@ -5,9 +5,9 @@
 
 **읽기 전용 기준선입니다.** 새 Metrics 2.5 점수를 계산하거나 게시하지 않고, 결측을 50 또는 다른 factor 평균으로 채우지 않습니다. 공개 Metrics 2.4 는 그대로 정본입니다.
 
-- 스냅샷 기준일: `20260714` · 지표 버전: `2.4` · 소스: `FDR + Naver + yfinance`
+- 스냅샷 기준일: `20260716` · 지표 버전: `2.4` · 소스: `FDR + Naver + yfinance`
 - 유니버스: 138종목 (선언 count `138`)
-- 입력 SHA-256: `dbe3fb1b23febb0d8635f8d04e700d2a6d144501225d55ffd570d7603245d463`
+- 입력 SHA-256: `6639b2e5e19ea81ddeb26fd28cced4f6295b7512b261e18f8f116a08081bf506`
 - 입력 파일: `public/data/stocks.json` (미수정)
 
 ## 1. PER / PBR 양수·결측·비양수
