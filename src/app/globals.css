@@ -12,21 +12,30 @@
  * 디자인 토큰 — Light Mode (기본)
  * ===================================================== */
 :root {
-  --background: #fafaf9;
+  --background: #f7f8fa;
   --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --border: #e4e4e7;
-  --border-strong: #d4d4d8;
-  --foreground: #18181b;
-  --muted: #71717a;
-  --subtle: #a1a1aa;
+  --surface-2: #f1f3f6;
+  --border: #e2e5ea;
+  --border-strong: #ccd2da;
+  --foreground: #17181c;
+  --muted: #68707d;
+  --subtle: #98a0ad;
 
-  --color-text-success: #15803d;
-  --color-text-danger: #b91c1c;
+  --color-text-success: #047857;
+  --color-text-danger: #be123c;
 
   --accent: #2563eb;
   --accent-strong: #1d4ed8;
-  --accent-soft: #dbeafe;
+  --accent-action: #2563eb;
+  --accent-action-hover: #1d4ed8;
+  --accent-soft: #eff6ff;
+
+  --status-ok: #047857;
+  --status-ok-soft: #ecfdf5;
+  --status-warn: #b45309;
+  --status-warn-soft: #fffbeb;
+  --status-error: #be123c;
+  --status-error-soft: #fff1f2;
 
   --up: #dc2626;       /* 한국 주식 관례: 상승 빨강 */
   --down: #2563eb;     /* 하락 파랑 */
@@ -42,21 +51,30 @@
  * Dark Mode — 차콜 계열 (#0B0F14 ~ #151A23)
  * ===================================================== */
 html.dark {
-  --background: #0B0F14;
-  --surface: #111827;
-  --surface-2: #151A23;
-  --border: #273244;
-  --border-strong: #3a4660;
-  --foreground: #E5E7EB;
-  --muted: #9CA3AF;
-  --subtle: #6b7280;
+  --background: #090b0f;
+  --surface: #111318;
+  --surface-2: #181c22;
+  --border: #28303a;
+  --border-strong: #3a4552;
+  --foreground: #f0f2f5;
+  --muted: #9ca4b2;
+  --subtle: #697281;
 
   --color-text-success: #34D399;
   --color-text-danger: #F87171;
 
   --accent: #60A5FA;
   --accent-strong: #93c5fd;
+  --accent-action: #2563eb;
+  --accent-action-hover: #1d4ed8;
   --accent-soft: rgba(96, 165, 250, 0.15);
+
+  --status-ok: #34d399;
+  --status-ok-soft: rgba(6, 78, 59, 0.3);
+  --status-warn: #fbbf24;
+  --status-warn-soft: rgba(120, 53, 15, 0.28);
+  --status-error: #fb7185;
+  --status-error-soft: rgba(136, 19, 55, 0.28);
 
   --up: #F87171;
   --down: #60A5FA;
@@ -123,6 +141,17 @@ body {
   transition: background-color 200ms ease, color 200ms ease;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @layer components {
   .ui-panel {
     background: var(--surface);
@@ -142,6 +171,67 @@ body {
     font-weight: 700;
     text-transform: uppercase;
   }
+
+  .ui-brand-mark {
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--accent-strong) 76%, #000 8%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  }
+
+  .ui-hero-band {
+    background: color-mix(in srgb, var(--surface) 95%, var(--accent-soft));
+    border-block: 1px solid var(--border);
+    box-shadow: inset 0 2px 0 color-mix(in srgb, var(--accent) 72%, transparent);
+  }
+
+  .ui-primary-action {
+    background: var(--accent-action);
+    border: 1px solid var(--accent-action);
+    color: #fff;
+    box-shadow: 0 1px 2px rgb(29 78 216 / 0.18);
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .ui-primary-action:hover {
+    background: var(--accent-action-hover);
+    border-color: var(--accent-action-hover);
+    box-shadow: 0 4px 10px rgb(29 78 216 / 0.16);
+    transform: translateY(-1px);
+  }
+
+  .ui-interactive-card {
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .ui-interactive-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgb(24 24 27 / 0.06);
+  }
+
+  .ui-status-strip {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 94%, var(--status-ok-soft));
+  }
+
+  .ui-status-strip[data-state="warn"] {
+    border-bottom-color: color-mix(in srgb, var(--status-warn) 28%, var(--border));
+    background: color-mix(in srgb, var(--surface) 78%, var(--status-warn-soft));
+  }
+
+  .ui-market-pulse {
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    border-block: 1px solid var(--border);
+  }
+
+  .ui-score-ring {
+    animation: ui-score-ring-enter 360ms ease-out both;
+  }
+}
+
+@keyframes ui-score-ring-enter {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
 }
 
 a {

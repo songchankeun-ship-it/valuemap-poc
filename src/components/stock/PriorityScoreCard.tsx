@@ -62,8 +62,8 @@ export function PriorityScoreCard({
   const t = priorityScoreCardCopy[locale];
   const rankPrefix = (tieCount: number) => tieCount > 1 ? (locale === "ko" ? "공동 " : "T-") : "";
   return (
-    <div className={"rounded-lg border bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-200")}>
-      <div className="text-[11px] font-semibold uppercase text-zinc-400 dark:text-zinc-500">{t.title}</div>
+    <div className={"rounded-lg border bg-zinc-950 text-white p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-700")}>
+      <div className="text-[11px] font-semibold uppercase text-zinc-400">{t.title}</div>
 
       <div className="mt-2 flex items-center gap-3">
         {suspect ? (
@@ -76,23 +76,23 @@ export function PriorityScoreCard({
           <ScoreGauge score={score} size={88} showLabel showOutOf />
         )}
 
-        <div className="min-w-0 flex-1 space-y-1.5 text-[11px] text-zinc-300 dark:text-zinc-600 tabular-nums">
+        <div className="min-w-0 flex-1 space-y-1.5 text-[11px] text-zinc-300 tabular-nums">
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-1.5">
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500">{t.overallPrefix}</div>
-              <div className="text-base font-black text-white dark:text-zinc-950">{rankPrefix(overallTieCount)}{overallRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {poolN}{t.rankSuffix}</span></div>
+            <div className="rounded-lg bg-white/10 border border-white/10 px-2 py-1.5">
+              <div className="text-[10px] text-zinc-400">{t.overallPrefix}</div>
+              <div className="text-base font-black text-white">{rankPrefix(overallTieCount)}{overallRank}<span className="text-[10px] font-medium text-zinc-400"> / {poolN}{t.rankSuffix}</span></div>
             </div>
-            <div className="rounded-lg bg-white/10 dark:bg-zinc-100 border border-white/10 dark:border-zinc-200 px-2 py-1.5">
-              <div className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">{sector}</div>
-              <div className="text-base font-black text-white dark:text-zinc-950">{rankPrefix(sectorTieCount)}{sectorRank}<span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500"> / {sectorCount}{t.rankSuffix}</span></div>
+            <div className="rounded-lg bg-white/10 border border-white/10 px-2 py-1.5">
+              <div className="text-[10px] text-zinc-400 truncate">{sector}</div>
+              <div className="text-base font-black text-white">{rankPrefix(sectorTieCount)}{sectorRank}<span className="text-[10px] font-medium text-zinc-400"> / {sectorCount}{t.rankSuffix}</span></div>
             </div>
           </div>
           <details className="group">
-            <summary className="flex min-h-[24px] cursor-pointer select-none items-center justify-between gap-2 text-[10px] font-medium text-zinc-400 dark:text-zinc-500 list-none [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-[24px] cursor-pointer select-none items-center justify-between gap-2 text-[10px] font-medium text-zinc-400 list-none [&::-webkit-details-marker]:hidden">
               <span>{t.rankNoteToggle}</span>
               <span aria-hidden="true" className="transition group-open:rotate-180">▾</span>
             </summary>
-            <div className="space-y-1 text-[10px] text-zinc-400 dark:text-zinc-500 normal-nums leading-snug whitespace-normal">
+            <div className="space-y-1 text-[10px] text-zinc-400 normal-nums leading-snug whitespace-normal">
               <div>{t.scopeNote(poolN)}</div>
               <div>{t.scoreVsRankNote(poolN)}</div>
             </div>
@@ -102,23 +102,23 @@ export function PriorityScoreCard({
 
       <div className="mt-2.5 grid grid-cols-2 gap-2 text-[11px]">
         <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1.5">
-          <div className="text-[10px] text-emerald-200 dark:text-emerald-700 font-medium">{t.leadStrength}</div>
+          <div className="text-[10px] text-emerald-200 font-medium">{t.leadStrength}</div>
           <div className="mt-0.5 flex items-baseline justify-between gap-2">
-            <span className="truncate text-white dark:text-zinc-950 font-semibold">{leadStrength.label}</span>
-            <span className="shrink-0 tabular-nums text-emerald-100 dark:text-emerald-700 font-bold">{Math.round(leadStrength.score)}</span>
+            <span className="truncate text-white font-semibold">{leadStrength.label}</span>
+            <span className="shrink-0 tabular-nums text-emerald-100 font-bold">{Math.round(leadStrength.score)}</span>
           </div>
         </div>
         <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 py-1.5">
-          <div className="text-[10px] text-amber-200 dark:text-amber-700 font-medium">{t.leadCheck}</div>
+          <div className="text-[10px] text-amber-200 font-medium">{t.leadCheck}</div>
           <div className="mt-0.5 flex items-baseline justify-between gap-2">
-            <span className="truncate text-white dark:text-zinc-950 font-semibold">{leadCheck.label}</span>
-            <span className="shrink-0 tabular-nums text-amber-100 dark:text-amber-700 font-bold">{Math.round(leadCheck.score)}</span>
+            <span className="truncate text-white font-semibold">{leadCheck.label}</span>
+            <span className="shrink-0 tabular-nums text-amber-100 font-bold">{Math.round(leadCheck.score)}</span>
           </div>
         </div>
       </div>
 
-      <div className="mt-3 border-t border-white/10 dark:border-zinc-200 pt-2.5">
-        <div className="mb-1 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">{t.trustLabel}</div>
+      <div className="mt-3 border-t border-white/10 pt-2.5">
+        <div className="mb-1 text-[10px] font-medium text-zinc-400">{t.trustLabel}</div>
         <div role="list" aria-label={t.badgeAriaLabel} className="flex flex-wrap items-center gap-1.5 text-[10px] tabular-nums">
           <DataStatusPill>{t.requiredDataPrefix} {completeness}%</DataStatusPill>
           <span className="sr-only"> · </span>
@@ -134,7 +134,7 @@ export function PriorityScoreCard({
             </>
           ) : null}
         </div>
-        <p className="mt-1.5 text-[10px] leading-snug text-zinc-400 dark:text-zinc-500">{t.completenessNote}</p>
+        <p className="mt-1.5 text-[10px] leading-snug text-zinc-400">{t.completenessNote}</p>
       </div>
     </div>
   );

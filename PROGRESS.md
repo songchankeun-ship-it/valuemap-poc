@@ -4802,3 +4802,18 @@ Extended the shared visual hierarchy to the two remaining high-friction public t
 - **Frozen boundaries**: public data/Metrics 2.4, Metrics 2.5.1 private state, auth/provider behavior, workflows, packages, runtime values, SEO routes/metadata ownership, comparison math/copy, disclosure classification, and analytics names are unchanged. No push, deploy, publication, or external action.
 - **Next**: hold visual changes here and collect user feedback from the local production preview before any lower-priority polish. Status, Guide, and Watchlist were inspected and require no immediate redesign.
 - **Commit**: local `[codex] UI: prioritize compare and disclosure actions`.
+
+### 2026-07-20 - Branded visual language and real-data market pulse [codex]
+
+Completed a third presentation-only pass on branch `codex/visual-hierarchy-core`, starting from `e6c494c`.
+
+- **Visual system**: established a neutral light/dark palette, a consistent cobalt action token, semantic status colors, a solid reusable brand mark, restrained elevation, and reduced-motion behavior. No gradients, decorative imagery, or new dependencies were introduced.
+- **Home authority signal**: added a compact market pulse inside the first-fold hero. Its four values are derived synchronously from the existing 138-stock payload: analyzed stocks, scores at or above 80, activity-surge count, and advancing stocks. It adds no fetch, formula, data artifact, or analytics event.
+- **Navigation and actions**: unified desktop/mobile active states, search surfaces, account actions, and primary CTAs around the same action color. The data-date bar is now a full-width semantic status strip instead of a floating pill.
+- **Content surfaces**: candidate cards use quieter rules and real icons; the beta notice reads as product context rather than a warning; score gauges use opacity-only motion; and Home, Today, and Disclosures loading states now mirror their final layouts.
+- **Dark-mode repair**: removed the high-contrast white inversion from the stock priority-score panel while preserving its hierarchy and content contract.
+- **Visual verification**: production preview checked at 1440x1000 and 390x844 on `/`, `/today`, and `/stock/032830` in light and dark modes. No horizontal overflow or incoherent overlap was found. The live pulse showed 138 / 5 / 4 / 58 from the current payload, and the stock score panel remained dark-neutral in dark mode.
+- **Automated verification**: `npm run build` PASS (192 pages); `verify:reaudit` 13/13 PASS; production `verify:local -- --base http://127.0.0.1:4460 --no-perf` 6/6 PASS across 25 routes; `verify:first-run-ux`, `test:locale-invariant`, `test:activity-surge`, `npx tsc --noEmit`, and `git diff --check` PASS.
+- **Frozen boundaries**: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, login/auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names are unchanged. No push, deployment, publication, or outside-service action.
+- **Next**: owner visual review remains available at `http://127.0.0.1:4460`; keep the current operational and release boundaries unchanged.
+- **Commit**: local `[codex] UI: establish branded visual language`.

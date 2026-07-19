@@ -50,7 +50,7 @@ export function ScoreGauge({ score, size = 96, stroke, showLabel = true, showOut
           stroke="currentColor"
           strokeLinecap="round"
           strokeDasharray={`${dash} ${circ - dash}`}
-          className={c.fill}
+          className={"ui-score-ring " + c.fill}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">

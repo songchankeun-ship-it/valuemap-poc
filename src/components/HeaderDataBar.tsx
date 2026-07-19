@@ -43,21 +43,10 @@ export function HeaderDataBar({
   const awaitingClose = hasData && freshness?.state === "awaiting_close" && !isStale;
   const warn = isStale || awaitingClose;
   return (
-    <div
-      className={
-        warn
-          ? "bg-white dark:bg-zinc-950 border-b border-amber-100 dark:border-amber-900/60"
-          : "bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900"
-      }
-    >
-      <div className="px-3 md:px-4 py-1 flex items-center justify-end text-[10px] md:text-[11px]">
+    <div className="ui-status-strip" data-state={warn ? "warn" : "ok"}>
+      <div className="flex items-center justify-end px-3 py-1.5 text-[10px] md:px-4 md:text-[11px]">
         <div
-          className={
-            "inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 shadow-sm " +
-            (warn
-              ? "border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200"
-              : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300")
-          }
+          className={"flex min-w-0 max-w-full items-center justify-end gap-1.5 " + (warn ? "text-amber-900 dark:text-amber-200" : "text-zinc-600 dark:text-zinc-300")}
         >
           <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (warn ? "bg-amber-500" : "bg-emerald-500")} />
           <span className="min-w-0 truncate">
@@ -85,7 +74,10 @@ export function HeaderDataBar({
           <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">·</span>
           <span className="text-zinc-500 dark:text-zinc-500 hidden md:inline whitespace-nowrap">KRX · Naver · DART</span>
           <span className="hidden sm:inline-flex"><MetricsVersionBadge label={metricsVersionLabel} /></span>
-          <LocalizedDataTrustModal statusByLocale={statusByLocale} triggerClassName="bg-white/70 dark:bg-zinc-950/60 border-zinc-200 dark:border-zinc-700" />
+          <LocalizedDataTrustModal
+            statusByLocale={statusByLocale}
+            triggerClassName={warn ? "bg-transparent border-amber-300/70 dark:border-amber-800" : "bg-transparent border-zinc-300 dark:border-zinc-700"}
+          />
         </div>
       </div>
     </div>

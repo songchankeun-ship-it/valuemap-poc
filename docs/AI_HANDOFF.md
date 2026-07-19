@@ -3829,3 +3829,16 @@ Second presentation-only pass on branch `codex/visual-hierarchy-core`, starting 
 - Frozen boundaries and external state unchanged; no push/deploy/publication.
 - Next: gather feedback from `http://127.0.0.1:4460`; Status, Metrics Guide, and Watchlist were inspected and intentionally left unchanged.
 - Commit: local `[codex] UI: prioritize compare and disclosure actions`.
+
+### 2026-07-20 - Branded visual language and real-data market pulse [codex]
+
+- Third presentation-only pass on `codex/visual-hierarchy-core`, starting from `e6c494c`.
+- Added a neutral light/dark palette, consistent cobalt action token, semantic status colors, reusable solid brand mark, restrained elevation, and reduced-motion behavior without gradients, imagery, packages, or dependency changes.
+- Home now includes a compact first-fold market pulse derived synchronously from the existing 138-stock payload: analyzed stocks, score 80+, activity-surge count, and advancing stocks. No new fetch, data artifact, calculation source, or analytics event was added.
+- Unified desktop/mobile navigation states, search, account actions, primary CTAs, and the full-width data status strip. Candidate cards, beta context, score motion, and Home/Today/Disclosures loading states now use the same visual language.
+- Repaired the stock priority-score panel so dark mode no longer inverts it to a bright white surface.
+- Production QA at 1440x1000 and 390x844 on `/`, `/today`, and `/stock/032830` in light/dark modes found no horizontal overflow or incoherent overlap. Current market pulse rendered 138 / 5 / 4 / 58 from the existing payload.
+- Gates green: 192-page production build; `verify:reaudit` 13/13; production `verify:local` 6/6 across 25 routes; first-run UX, locale invariant, activity surge, TypeScript, and diff checks.
+- Frozen: `public/data`, public Metrics 2.4, private Metrics 2.5.1 state, auth/provider behavior, workflows, package manifests, runtime values, SEO ownership, and analytics names. No push/deploy/publication/external action.
+- Next: owner visual review at `http://127.0.0.1:4460`; preserve current operational and release boundaries.
+- Commit: local `[codex] UI: establish branded visual language`.

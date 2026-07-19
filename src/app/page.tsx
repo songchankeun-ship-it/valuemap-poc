@@ -4,6 +4,7 @@ import { getPriceLagSummary } from "@/lib/priceLag";
 import { fmtWon } from "@/lib/format";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
+import { activitySurge } from "@/lib/homeSnapshot";
 import { HomeHero } from "@/components/home/HomeHero";
 import { TopCandidateSection } from "@/components/home/TopCandidateSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
@@ -18,8 +19,9 @@ export const revalidate = 3600;
 // 첫 방문 UX 대정리 Slice C(설계서 §6.2): 홈 기본 본문을 네 구간(시작 영역 · 실제 후보
 // 미리보기 최대 3개 · 확인 순서 · 조건부 개인 루틴)으로 제한한다. 시장 스냅샷 카드/공시 목록/
 // 온보딩/기능 소개/사용법/큰 위험 고지는 홈 기본 흐름에서 제거하거나 /today·상세로 이동시켰다.
-// 공시 신호(getRecentSignals)와 시장 요약 통계(volumeSpikeCount)는 홈에서 더는 렌더하지
-// 않으므로 여기서 계산하지 않는다(데이터/점수 산식 무변경, /today가 변화 중심으로 담당).
+// 공시 신호 같은 외부 조회형 섹션은 홈에서 렌더하지 않는다. 다만 첫 화면의 시각적 근거를 위해
+// 이미 메모리에 있는 동일 stocks.json에서만 파생한 네 숫자를 HomeHero 안의 얇은 시장 단면으로
+// 표시한다(별도 홈 섹션/외부 호출/점수 산식 변경 없음, /today가 상세 변화 중심으로 담당).
 
 // 오늘 후보·Top 목록 정책(재검수 P0 #2):
 //  - 검증 보류(isSuspect) 종목 제외(기존)
@@ -136,6 +138,12 @@ export default async function HomePage() {
 
   // ── 오늘 후보 관계 문구용 통계 (후보 리스트와 동일한 !isSuspect 필터로 내부 일관) ──
   const strongCount = realStockPool.filter((s) => displayCompositeScore(s) >= 80 && !isSuspect(s)).length;
+  const marketPulse = {
+    totalCount: dataMetadata.count,
+    strongCount,
+    activitySurgeCount: activitySurge(realStockPool).count,
+    upCount: realStockPool.filter((s) => s.changePct > 0).length,
+  };
 
   // ── 후보 카드 뷰모델 ──
   const candidates: StockCandidate[] = topCandidates.map((s, i) => {
@@ -185,6 +193,7 @@ export default async function HomePage() {
         dataStale={dataStale}
         searchStocks={searchStocks}
         searchThemes={allThemes()}
+        marketPulse={marketPulse}
       />
 
       <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} strongCount={strongCount} />

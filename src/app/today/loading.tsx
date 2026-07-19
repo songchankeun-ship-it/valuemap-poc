@@ -7,11 +7,20 @@
 export default function TodayLoading() {
   return (
     <div className="space-y-5 md:space-y-6" aria-busy="true" aria-label="오늘 화면 불러오는 중">
-      {/* 헤더 + 브리핑 카드 */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 md:p-6">
-        <div className="h-6 w-40 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-3" />
-        <div className="h-3 w-full max-w-lg rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse mb-2" />
+      {/* 헤더 + 상태/시장 단면 */}
+      <div className="border-b border-zinc-200 pb-4 dark:border-zinc-800">
+        <div className="mb-3 h-6 w-40 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+        <div className="mb-2 h-3 w-full max-w-lg rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
         <div className="h-3 w-2/3 max-w-md rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+      </div>
+      <div className="ui-data-band h-11 animate-pulse" />
+      <div className="grid grid-cols-2 border-y border-zinc-200 dark:border-zinc-800 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-20 border-zinc-200 p-3 dark:border-zinc-800 lg:border-l first:border-l-0">
+            <div className="h-3 w-20 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+            <div className="mt-2 h-5 w-12 rounded bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
+          </div>
+        ))}
       </div>
 
       {/* 오늘의 Top 3 후보 */}
@@ -31,11 +40,11 @@ export default function TodayLoading() {
         </div>
       </div>
 
-      {/* 신호 섹션 */}
+      {/* 신호 섹션 — 첫 화면에 필요한 밀도만 유지 */}
       <div>
         <div className="h-5 w-28 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse mb-3" />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
+          {[0, 1, 2, 3].map((i) => (
             <div key={i} className="h-20 rounded-lg bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
           ))}
         </div>

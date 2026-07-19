@@ -10,6 +10,7 @@ import { safeInternalPath } from "@/lib/auth/returnPath";
 import type { NavKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
 import { ThemeToggle } from "./ThemeToggle";
+import { BrandMark } from "./BrandMark";
 
 const ITEMS = [
   // 1차 메뉴 — 핵심 기능
@@ -118,7 +119,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
           >
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="13" cy="15" r="7" stroke="white" strokeWidth="2.4"/><path d="M8 19L20 8" stroke="white" strokeWidth="2.4" strokeLinecap="round"/></svg></span>
+                <BrandMark className="h-7 w-7" />
                 <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{copy.brand}</span>
               </Link>
               <button
@@ -149,7 +150,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                       className={
                         "flex items-center gap-3 px-3 py-3 rounded-md text-sm transition " +
                         (active
-                          ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium"
+                          ? "bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 font-semibold shadow-[inset_2px_0_0_#2563eb]"
                           : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800")
                       }
                     >
@@ -191,7 +192,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                   <Link
                     href={`/login${loginNext}`}
                     onClick={() => setOpen(false)}
-                    className="block w-full px-3 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md text-sm font-medium text-center hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+                    className="ui-primary-action block w-full rounded-md px-3 py-2.5 text-center text-sm font-semibold"
                   >
                     {copy.auth.syncStart}
                   </Link>
@@ -206,8 +207,9 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
               )}
             </div>
 
-            <div className="px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border-t border-amber-200 dark:border-amber-900 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed shrink-0">
-              {copy.chrome.explorationNotice}
+            <div className="flex shrink-0 items-start gap-2 border-t border-zinc-200 bg-zinc-50 px-4 py-3 text-[11px] leading-relaxed text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <span>{copy.chrome.explorationNotice}</span>
             </div>
           </div>
         </>,

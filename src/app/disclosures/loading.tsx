@@ -17,7 +17,7 @@ export default function DisclosuresLoading() {
       </div>
 
       {/* 필터 바 */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
+      <div className="border-y border-zinc-200 py-3 dark:border-zinc-800">
         <div className="flex gap-2 flex-wrap">
           {[0, 1, 2, 3, 4].map((i) => (
             <div key={i} className="h-8 w-16 rounded-md bg-zinc-100 dark:bg-zinc-800/60 animate-pulse" />
@@ -27,7 +27,7 @@ export default function DisclosuresLoading() {
 
       {/* 공시 카드 목록 */}
       <div className="space-y-2">
-        {[0, 1, 2, 3, 4].map((i) => (
+        {[0, 1, 2].map((i) => (
           <div
             key={i}
             className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4"

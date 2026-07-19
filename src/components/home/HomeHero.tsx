@@ -7,6 +7,7 @@ import { homeHeroCopy } from "@/lib/i18n";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useMarketFreshness } from "@/components/trust/useMarketFreshness";
 import { marketFreshnessCopy } from "@/lib/freshness";
+import { HomeMarketPulse, type HomeMarketPulseData } from "./HomeMarketPulse";
 
 interface SearchStockItem {
   ticker: string;
@@ -24,18 +25,21 @@ interface HomeHeroProps {
   dataStale: boolean;
   searchStocks: SearchStockItem[];
   searchThemes: string[];
+  marketPulse: HomeMarketPulseData;
 }
 
 // 홈 히어로 — 하나의 시작 영역(설계서 §6.3). 서비스 정의 → 검색 → 단일 주 행동(오늘 후보) →
-// 보조 텍스트 링크(전체 종목) → 짧은 비자문 한 문장 순으로만 구성한다.
+// 보조 텍스트 링크(전체 종목) → 짧은 비자문 한 문장 → 같은 데이터의 시장 단면 순으로 구성한다.
 // 우측 후보/KPI 미리보기는 아래 후보 섹션과 정보가 겹쳐 제거했고, 후보 카드가 모바일 첫 화면에
 // 곧바로 이어지도록 높이를 낮춘다. 주 행동은 시각적으로 하나만 강조하고 전체 종목은 텍스트 링크로 둔다.
+// 시장 단면은 독립 섹션이 아니라 히어로 내부의 네 숫자 밴드라 첫 방문 4구간 계약을 유지한다.
 export function HomeHero({
   dataAsOf,
   dataAsOfRaw,
   dataStale,
   searchStocks,
   searchThemes,
+  marketPulse,
 }: HomeHeroProps) {
   const { locale } = useLanguage();
   const copy = homeHeroCopy[locale];
@@ -52,7 +56,7 @@ export function HomeHero({
   }).filter((x): x is { ticker: string; name: string } => x !== null);
 
   return (
-    <section className="relative -mx-3 md:-mx-4 overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-5 md:px-6 md:py-8">
+    <section className="ui-hero-band relative -mx-3 overflow-hidden px-4 py-5 md:-mx-4 md:px-6 md:py-8">
       <div className="mx-auto max-w-4xl">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase text-blue-700 dark:text-blue-300">
@@ -104,7 +108,7 @@ export function HomeHero({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 mt-3 md:mt-4">
-          <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+          <a href="#today-candidates" className="ui-primary-action text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-md text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
             <span>{copy.primaryCta}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
@@ -120,6 +124,7 @@ export function HomeHero({
         <p className="mt-4 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
           {copy.note}
         </p>
+        <HomeMarketPulse data={marketPulse} />
       </div>
     </section>
   );

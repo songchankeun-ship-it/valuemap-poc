@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleAlert } from "lucide-react";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { ScoreGauge } from "@/components/ui/ScoreGauge";
@@ -41,7 +41,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
     : t.topCandidate.noReason;
   const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
   const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
-  const cardClass = "flex h-full flex-col rounded-lg border bg-white p-4 transition dark:bg-zinc-900 " +
+  const cardClass = "ui-interactive-card flex h-full flex-col rounded-lg border bg-white p-4 dark:bg-zinc-900 " +
     (featured
       ? "border-zinc-300 dark:border-zinc-700"
       : "border-zinc-200 dark:border-zinc-800") +
@@ -88,7 +88,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
       </p>
 
       <div className="mt-2.5 flex items-start gap-1.5">
-        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-[9px] font-bold shrink-0 mt-0.5" aria-hidden="true">✓</span>
+        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2} aria-hidden="true" />
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">{t.topCandidate.strength}</div>
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -99,11 +99,11 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         </div>
       </div>
 
-      <div className="mt-2.5 flex items-start gap-1.5 border-l-2 border-amber-300 dark:border-amber-700 bg-amber-50/60 dark:bg-amber-950/20 px-2.5 py-2">
-        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-bold shrink-0 mt-px" aria-hidden="true">!</span>
+      <div className="mt-2.5 flex items-start gap-1.5 border-t border-zinc-200 py-2.5 dark:border-zinc-800">
+        <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" strokeWidth={2} aria-hidden="true" />
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t.topCandidate.firstCheck}</div>
-          <p className="text-[11px] leading-snug text-amber-800/90 dark:text-amber-300/80">{t.topCandidate.risk[c.riskKind]}</p>
+          <div className="mb-0.5 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300">{t.topCandidate.firstCheck}</div>
+          <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">{t.topCandidate.risk[c.riskKind]}</p>
         </div>
       </div>
 
@@ -125,7 +125,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
           data-analytics-ticker={c.ticker}
           data-analytics-rank={String(c.rank)}
           data-analytics-slot={featured ? "featured" : "list"}
-          className="flex-1 min-w-0 text-center px-3 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+          className="ui-primary-action flex-1 min-w-0 text-center px-3 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-md text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
         >
           <span className="truncate">{t.topCandidate.viewStock}</span>
           <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />

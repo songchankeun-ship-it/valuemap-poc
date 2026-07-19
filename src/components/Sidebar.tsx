@@ -53,7 +53,7 @@ export function Sidebar() {
                   className={
                     "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition " +
                     (active
-                      ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium"
+                      ? "bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 font-semibold shadow-[inset_2px_0_0_#2563eb]"
                       : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800")
                   }
                 >
@@ -64,11 +64,12 @@ export function Sidebar() {
             );
           })}
         </nav>
-        <div className="mt-8 px-3 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md">
-          <div className="text-[10px] font-semibold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-1">{copy.chrome.beta}</div>
-          <p className="text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed">
-            {copy.chrome.explorationNotice}
-          </p>
+        <div className="mt-8 border-y border-zinc-200 px-2 py-3 dark:border-zinc-800">
+          <div className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+            <Info className="h-3.5 w-3.5" aria-hidden="true" />
+            {copy.chrome.beta}
+          </div>
+          <p className="text-[11px] leading-relaxed text-zinc-600 dark:text-zinc-300">{copy.chrome.explorationNotice}</p>
         </div>
       </div>
     </aside>

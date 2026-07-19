@@ -38,7 +38,7 @@ export function MarketSnapshotCards({ totalCount, strongCount, volumeSpikeCount,
             prefetch={false}
             href={href}
             className={
-              "block p-3 transition hover:bg-white dark:hover:bg-zinc-900 md:p-4 " +
+              "ui-interactive-card block p-3 hover:bg-white dark:hover:bg-zinc-900 md:p-4 " +
               (index < 2 ? "border-b border-zinc-200 dark:border-zinc-800 lg:border-b-0 " : "") +
               (index % 2 === 0 ? "border-r border-zinc-200 dark:border-zinc-800 lg:border-r-0 " : "") +
               (index > 0 ? "lg:border-l lg:border-zinc-200 lg:dark:border-zinc-800" : "")

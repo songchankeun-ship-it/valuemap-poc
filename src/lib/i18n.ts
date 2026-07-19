@@ -244,6 +244,16 @@ export const homeHeroCopy = {
     searchLabel: "종목명 또는 코드로 바로 찾기",
     searchExamplePrefix: "예",
     searchCodeNote: "코드로도 검색",
+    pulse: {
+      ariaLabel: "오늘 시장 단면",
+      title: "오늘 시장 단면",
+      caption: "같은 장마감 데이터 기준",
+      coverage: "분석 종목",
+      strong: "종합 80+",
+      activity: "거래활성도 급증",
+      up: "상승 종목",
+      unit: "개",
+    },
     previewRelation: (strong: number, shown: number) =>
       `종합 80↑ ${strong}개 중 먼저 볼 ${shown}개`,
     previewTitle: "오늘 먼저 볼 후보",
@@ -276,6 +286,16 @@ export const homeHeroCopy = {
     searchLabel: "Find any stock by name or code",
     searchExamplePrefix: "Try",
     searchCodeNote: "codes work too",
+    pulse: {
+      ariaLabel: "Today's market cross-section",
+      title: "Today's market cross-section",
+      caption: "One market-close data basis",
+      coverage: "Analyzed",
+      strong: "Composite 80+",
+      activity: "Activity spikes",
+      up: "Advancers",
+      unit: "",
+    },
     previewRelation: (strong: number, shown: number) =>
       `${shown} shown first of ${strong} scoring 80+`,
     previewTitle: "Candidates to check first",

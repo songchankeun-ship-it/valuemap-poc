@@ -41,7 +41,7 @@ export function AccountButtons() {
         data-analytics-source="header_start"
         data-analytics-has-next={dest !== "/" ? "true" : "false"}
         data-analytics-path={pathname ?? ""}
-        className="hidden md:inline-flex items-center px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition text-sm font-medium"
+        className="ui-primary-action hidden items-center rounded-md px-3 py-1.5 text-sm font-semibold md:inline-flex"
       >
         {copy.auth.syncStart}
       </Link>
