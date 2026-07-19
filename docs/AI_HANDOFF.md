@@ -42,6 +42,15 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-19 - [codex] - Task 366 Reaudit C: full local recertification of A/B (dossier-only)
+
+- Recertified Reaudit A (deterministic Korean particles on curated compare pages) and Reaudit B (Korean-only public-locale invariant) as one unit on a full local build at HEAD `fc98d5b`. **No defect surfaced → no A/B source file changed.** Writable paths kept to the new dossier + PROGRESS + this handoff. Branch `ai-center/task-366-ornscore-reaudit-c-full-local-recert`.
+- Git-object identity vs base `a1235a1`: `public/data` tree `24045925…` (diff empty), `stocks.json` blob `c037daf4…`, `src/app/login` `d8ae30d…`, `src/app/auth` `983db41…`, `src/middleware.ts` `92efe16…` all identical; `package.json` differs only by two added test-script lines (dep versions unchanged — next 15.5.18 / react ^19.2.0 / react-dom ^19.2.0). 138 stocks / Metrics 2.4 (verify_metrics 0 errors).
+- Offline all green: `tsc` 0 · `test:comparison-language` + `test:locale-invariant` PASS · comparison/SEO contract tests (comparison-pages, compare, compare-entry, seo-contract, seo-stability, theme-authority, seo-verification, seo-release) PASS · `build` 0 (`/stock/[ticker]` 138, `/topics/[slug]` 9, `/compare/[pair]` 7 SSG; Middleware 90.2 kB) · `app:check` pass (1 external WAIT = assetlinks) · `verify:reaudit` 13/13 · `git diff --check` clean · U+FFFD scan 0.
+- Live smoke on a task-owned prod server (:4495, marker=HEAD, ports 3000/4310 untouched, stopped + confirmed down after — post-kill curl exit 7): `verify:routes` 9/9, `verify:public-seo` 3/3 (sitemap 166), `verify:stocks-seo` 13/13, `verify:login-preflight` 5/5 (`lang="ko"`, no toggle), `verify:local` 6/6 real gates, `verify:seo-release --sha <HEAD>` 11/11 (canary 6/6, marker == `fc98d5b`), `smoke:check --all` 25/25, `release:preflight --no-perf` 11/11.
+- Headless-Chrome/CDP inspection, desktop 1280×800 + mobile 390×844, 38 rows (home, stocks, `/stock/005930`, login, `/data-deletion`, all 7 curated compares): 0 horizontal overflow, 0 placeholder particles, 0 console errors/warnings, all ordinary rows `lang=ko`. Seeded legacy durable `en` (localStorage+cookie) on 12 ordinary paths → all render Korean and self-clear the legacy durable state (getItem/cookie null) — **no ordinary-path English leak**; `?lang=en` ephemeral override still renders English (2/2).
+- Dossier: `docs/ornscore-post-release-reaudit-recertification-2026-07-19.md`. One local `[codex]` commit; nothing pushed; `main` unchanged; worktree clean. Owner-only residuals: assetlinks.json, push/deploy + live-marker check, Search Console/Naver ownership + sitemap submission. Metrics 2.5.1 stays shadow-only.
+
 ### 2026-07-19 - [codex] - Task 364 budget-only post-success recovery
 
 - AI Center marked run #367 failed only after Claude success, local implementation commit `b68cd0a`, and TESTER PASS because cost reached $5.0422 against the $5.00 task limit.

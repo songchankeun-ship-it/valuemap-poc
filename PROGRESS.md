@@ -1,5 +1,16 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-19 - [codex] Reaudit C: 한국어 문법·로케일 수리 전체 로컬 재인증(task 366)
+
+- **Scope**: Reaudit A(비교 랜딩 한국어 조사) + B(한국어 전용 공개 로케일 불변식)를 한 단위로 재인증하는 **문서 전용** 슬라이스. 결함 미발견 → A/B 소스 무수정. 허용 경로만 편집: 신규 도시어 `docs/ornscore-post-release-reaudit-recertification-2026-07-19.md`, PROGRESS·AI_HANDOFF. HEAD `fc98d5b`. 브랜치 `ai-center/task-366-ornscore-reaudit-c-full-local-recert`.
+- **Git 오브젝트 대조(base `a1235a1`)**: `public/data` 트리 `24045925…`(base==HEAD, `git diff -- public/data` 빈 결과)·`stocks.json` blob `c037daf4…` 동일 · `src/app/login` `d8ae30d…`·`src/app/auth` `983db41…`·`src/middleware.ts` `92efe16…` 동일 · package.json 은 추가된 테스트 스크립트 2줄만 다르고 **의존성 버전 불변**(next 15.5.18 / react ^19.2.0 / react-dom ^19.2.0, 설치본 next 15.5.18 / react 19.2.7 / react-dom 19.2.7). 138종목 · Metrics 2.4(`verify_metrics.py` 오류 0). base..HEAD 변경 파일 = 허용 A/B 표면 + 문서뿐.
+- **오프라인 스위트(전부 green)**: `tsc --noEmit` 0 · `test:comparison-language`·`test:locale-invariant` PASS · 비교/SEO 계약 `test:comparison-pages`·`test:compare`·`test:compare-entry`·`test:seo-contract`·`test:seo-stability`·`test:theme-authority`·`test:seo-verification`·`test:seo-release`(자체 loopback) 전부 PASS · `build` 0(정적; `/stock/[ticker]` 138·`/topics/[slug]` 9·`/compare/[pair]` 7 SSG, Middleware 90.2 kB) · `app:check` 통과(외부 WAIT 1 = assetlinks) · `verify:reaudit` 13/13 · `git diff --check` clean · U+FFFD 스캔 **0**(변경 9파일).
+- **라이브 스모크(task 소유 서버 :4495, 마커=HEAD, :3000/:4310 미접촉)**: `verify:routes` 9/9 · `verify:public-seo` 3/3(sitemap 166) · `verify:stocks-seo` 13/13 · `verify:login-preflight` 5/5(`lang="ko"`, 토글 부재) · `verify:local` 실게이트 6/6 · `verify:seo-release --sha <HEAD>` 11/11(canary 6/6, 마커==SHA `fc98d5b`) · `smoke:check --all` 25/25 · `release:preflight --no-perf` 11/11.
+- **뷰 점검(headless Chrome/CDP, 데스크톱 1280×800 + 모바일 390×844, 38행)**: home·stocks·`/stock/005930`·login·`/data-deletion`·큐레이션 비교 7쌍 전수. 가로 오버플로 **0/38**(비교 7쌍 390px에서 scrollW=390=innerW) · 플레이스홀더 조사 **0/38** · 콘솔 에러/경고/예외 **0/38** · 일반 경로 `lang=ko` 전수. **레거시 durable en 주입(localStorage+cookie) 후 일반 경로 12행 모두 ko 렌더 + durable 자가정리(getItem/cookie null)** → 공개 경로 영어 누수 0. `?lang=en` ephemeral override 는 여전히 en 렌더(2/2).
+- **서버 정리**: task 소유 리스너(:4495 PID 37576) 중지·확인(post-kill curl exit 7, netstat 리스너 없음). 3000/4310/4471/4487 미접촉(4471·4487 은 무관 프로세스 선점, 4495 는 사용 전 free 확인).
+- **잔여 WAIT(소유자 전용, 본 task 미수행)**: assetlinks.json · push/deploy + 라이브 마커 확인 · Search Console/Naver 소유확인·sitemap 제출 · Metrics 2.5.1 shadow 유지(공개 Metrics 2.4).
+- **Commit**: local [codex] Reaudit C: full local recertification dossier(A/B 재인증, 소스 무수정).
+
 ## 2026-07-19 - [codex] 한국어 전용 공개 로케일 불변식(Korean-only public-locale)
 
 - **Scope**: 공개 경험을 한국어 전용으로 잠그는 로케일 상태 슬라이스. 허용 경로만 편집 — `src/components/LanguageProvider.tsx`, 신규 focused 테스트 `scripts/test_localePublicInvariant.ts`, `package.json`(테스트 스크립트 1줄), PROGRESS·AI_HANDOFF. 그 외 경로 무변경. 직전 HEAD `257e4db`(task 363). 브랜치 `ai-center/task-364-ornscore-reaudit-b-korean-only-local`.
