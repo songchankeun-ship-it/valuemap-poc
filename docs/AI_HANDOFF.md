@@ -3804,3 +3804,15 @@ Regenerated the two read-only Metrics 2.5.1 baseline artifacts from the current 
 - **Shadow status**: private ledger remains **actualRuns 0/5**. The weekday collector continues independently; no owner action is required.
 - **Next**: wait for five distinct eligible real trading dates, then review the private comparison dossier before any separate human promotion decision.
 - **Commit**: local `[codex] Metrics 2.5.1: refresh deterministic baseline`.
+
+### 2026-07-20 - Core visual hierarchy and first-fold cleanup [codex]
+
+Presentation-only cleanup of the four primary public journeys on branch `codex/visual-hierarchy-core`, starting from `dcdbb74`.
+
+- Added a shared 8px panel radius plus low-elevation panel/data-band primitives. Removed the home hero card shell, nested candidate guide cards, Today KPI-card grid and duplicate briefing metrics, and the stock-detail hero gradient/heavy shadows.
+- Home candidates are now an equal three-column grid. Today status/KPIs read as compact data bands. Stock mobile order is conclusion -> score -> actions. Stocks discovery removes the redundant intent explainer, compacts the five question presets, and uses unframed quick/saved-search bands.
+- Production visual QA at 1440x1000 and 390x844: no horizontal overflow on `/`, `/today`, `/stock/032830`, or `/stocks`; no core main-content panel radius above 8px; mobile stock conclusion visibly precedes its score panel.
+- Gates green: `npm run build` (192 pages), `verify:first-run-ux`, `test:stocks-discovery`, `verify:reaudit` 13/13, and production `verify:local -- --base http://127.0.0.1:4460 --no-perf` 6/6.
+- Frozen: public/data + Metrics 2.4, Metrics 2.5.1 private state, auth, workflows, packages, runtime values, SEO route ownership, and analytics names. No push/deploy/publication/external action.
+- Next: apply the same visual hierarchy to comparison, disclosures, watchlist, status, and guide pages without changing their contracts.
+- Commit: local `[codex] UI: simplify core visual hierarchy`.

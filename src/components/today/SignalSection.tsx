@@ -29,7 +29,7 @@ export function SignalSection({
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 px-4 py-6 text-center text-[12px] text-zinc-500 dark:text-zinc-400">
+        <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 px-4 py-6 text-center text-[12px] text-zinc-500 dark:text-zinc-400">
           {emptyText}
         </div>
       )}

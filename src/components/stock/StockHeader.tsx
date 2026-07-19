@@ -30,7 +30,7 @@ export function StockHeader({
   const t = stockHeaderCopy[locale];
   const lag = priceBasisLagCopy[locale];
   return (
-    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/60 p-3 md:p-4 shadow-sm">
+    <div className="rounded-lg border border-zinc-200 bg-white/90 p-3 dark:border-zinc-800 dark:bg-zinc-950/60 md:p-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">

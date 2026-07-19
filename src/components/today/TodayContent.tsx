@@ -263,30 +263,15 @@ export function TodayContent(props: TodayContentProps) {
       />
 
       {/* 오늘의 브리핑 */}
-      <section className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-100 dark:border-blue-900 rounded-lg p-3 md:p-4">
-        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+      <section className="border-l-2 border-blue-500 bg-blue-50/50 px-3 py-3 dark:bg-blue-950/20 md:px-4">
+        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
           <span className="text-sm">📋</span>
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.briefingTitle}</h2>
           <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">{props.dataAsOf}{t.briefingAsOfSuffix}</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingMoveLabel(props.totalCount)}</div>
-            <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">{t.briefingUp(props.upCount)} <span className="text-[10px] font-normal text-zinc-400">{t.briefingDownFlat(props.downCount, props.flatCount)}</span></div>
-          </div>
-          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingStrongLabel}</div>
-            <div className="text-sm font-bold text-blue-700 dark:text-blue-400 tabular-nums">{props.strongCount}{t.briefingCountSuffix}</div>
-          </div>
-          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingFlowLabel}</div>
-            <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">{props.activitySurgeCount}{t.briefingCountSuffix}</div>
-          </div>
-          <div className="bg-white/70 dark:bg-zinc-900/50 rounded-md p-2">
-            <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{t.briefingSignalLabel}</div>
-            <div className="text-sm font-bold text-amber-700 dark:text-amber-400 tabular-nums">{props.briefingSignalCount}{t.briefingSignalCountSuffix}</div>
-          </div>
-        </div>
+        <p className="text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
+          {t.briefingMoveLabel(props.totalCount)} · {t.briefingUp(props.upCount)} · {t.briefingDownFlat(props.downCount, props.flatCount)}
+        </p>
         {/* 저장된 일일 AI 인사이트는 출처·구성종목·계산시각·규칙/모델 역할의 타입화된
             프로버넌스가 없어 공개 표시하지 않는다(Slice E). 근거 없는 대체 카드도 넣지 않는다.
             재도입 방지 가드: scripts/test_todayInsightProvenance.ts. */}

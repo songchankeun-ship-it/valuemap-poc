@@ -35,7 +35,7 @@ export function TodayStatusBarContent({
   return (
     <section
       aria-label={t.ariaLabel}
-      className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2.5 md:px-4 md:py-3"
+      className="ui-data-band px-1 py-2.5 md:px-2 md:py-3"
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] md:text-xs">
         <Field label={t.dataStatus}>

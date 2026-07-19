@@ -26,7 +26,7 @@ export function TodayTopSection({ candidates }: { candidates: StockCandidate[] }
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 p-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 p-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
           {t.top3Empty}
         </div>
       )}

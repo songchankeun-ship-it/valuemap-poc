@@ -41,13 +41,13 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
     : t.topCandidate.noReason;
   const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
   const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
-  const cardClass = featured
-    ? "flex flex-col rounded-2xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 md:p-6 shadow-lg shadow-zinc-900/5 hover:border-blue-400 dark:hover:border-blue-700 transition"
-    : "flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-md transition";
-  const nameClass = featured
-    ? "text-xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 truncate"
-    : "text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate";
-  const gaugeSize = featured ? 76 : 72;
+  const cardClass = "flex h-full flex-col rounded-lg border bg-white p-4 transition dark:bg-zinc-900 " +
+    (featured
+      ? "border-zinc-300 dark:border-zinc-700"
+      : "border-zinc-200 dark:border-zinc-800") +
+    " hover:border-blue-400 dark:hover:border-blue-700";
+  const nameClass = "text-[16px] font-bold text-zinc-900 dark:text-zinc-100 truncate";
+  const gaugeSize = 68;
   return (
     <div className={cardClass}>
       <div className="flex items-start justify-between gap-3">
@@ -70,7 +70,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
             <span className={"font-semibold tabular-nums " + changeTone}>{changeLabel}</span>
           </div>
         </div>
-        <ScoreGauge score={c.score} size={gaugeSize} showLabel showOutOf={featured} />
+        <ScoreGauge score={c.score} size={gaugeSize} showLabel />
       </div>
 
       <p className="mt-2 text-[13px] leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -99,7 +99,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         </div>
       </div>
 
-      <div className="mt-2.5 flex items-start gap-1.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-3 py-2">
+      <div className="mt-2.5 flex items-start gap-1.5 border-l-2 border-amber-300 dark:border-amber-700 bg-amber-50/60 dark:bg-amber-950/20 px-2.5 py-2">
         <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-bold shrink-0 mt-px" aria-hidden="true">!</span>
         <div className="min-w-0">
           <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t.topCandidate.firstCheck}</div>
@@ -107,9 +107,9 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         </div>
       </div>
 
-      <div className="mt-2.5 grid grid-cols-2 gap-2">
+      <div className="mt-2.5 grid grid-cols-2 divide-x divide-zinc-200 border-y border-zinc-200 py-2 dark:divide-zinc-800 dark:border-zinc-800">
         {t.topCandidate.checkpoints.map((checkpoint, index) => (
-          <div key={checkpoint} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/40 px-2.5 py-1.5 text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
+          <div key={checkpoint} className="px-2.5 text-[11px] leading-snug text-zinc-600 first:pl-0 last:pr-0 dark:text-zinc-300">
             <span className="font-semibold text-zinc-900 dark:text-zinc-100 tabular-nums">{index + 1}. </span>
             {checkpoint}
           </div>

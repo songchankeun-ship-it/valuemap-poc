@@ -1003,7 +1003,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               <button
                 type="button"
                 onClick={qualityFilterOn ? viewAllStocks : backToDefaultView}
-                className={`text-[11px] px-2.5 py-1 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap ${FOCUS_RING}`}
+                className={`text-[11px] px-2.5 py-1 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap ${FOCUS_RING}`}
               >
                 {qualityFilterOn ? t.viewAllToggle(total) : t.backToDefaultToggle}
               </button>
@@ -1011,20 +1011,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           </div>
         </div>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">{t.headerDesc(total)}</p>
-        <section aria-label={t.searchIntent.title} className="border-l-2 border-blue-200 dark:border-blue-900 pl-3 py-1">
-          <h2 className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">{t.searchIntent.title}</h2>
-          <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{t.searchIntent.body}</p>
-        </section>
         <div className="flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
           {asOf ? <span className="tabular-nums">{asOf} {t.marketCloseSuffix}</span> : null}
           {metricsVersion ? <><span aria-hidden>·</span><span>{t.metricsPrefix} {metricsVersion}</span></> : null}
           <span aria-hidden>·</span>
           <DataStatusBadge tone={dataStale ? "delayed" : "normal"} label={dataStale ? t.dataStaleLabel : t.dataNormalLabel} />
           <span aria-hidden>·</span>
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400">{t.notAdvice}</span>
+          <span className="inline-flex items-center border-l border-zinc-200 pl-2 dark:border-zinc-700">{t.notAdvice}</span>
           <span aria-hidden>·</span>
           {/* 무JS·키보드·스크린리더가 긴 필터 UI를 건너뛰고 종목 목록으로 바로 이동(인페이지 앵커라 JS 없이도 동작) */}
-          <a href="#stock-results" className={`inline-flex items-center px-1.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition ${FOCUS_RING}`}>{t.skipToList}</a>
+          <a href="#stock-results" className={`inline-flex items-center border-b border-blue-300 py-0.5 text-blue-700 dark:border-blue-700 dark:text-blue-400 ${FOCUS_RING}`}>{t.skipToList}</a>
         </div>
         {nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && sorted.length < stocks.length ? (
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
@@ -1067,7 +1063,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           onBlur={(e) => rememberRecentSearch(e.currentTarget.value)}
           onKeyDown={(e) => { if (e.key === "Enter") rememberRecentSearch(e.currentTarget.value); }}
           suppressHydrationWarning
-          className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
+          className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
         />
       </div>
 
@@ -1088,7 +1084,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5">
           <Link
             href="/watchlist"
-            className={`shrink-0 inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
+            className={`shrink-0 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
           >
             {t.entry.watchlist}
           </Link>
@@ -1097,7 +1093,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               key={q}
               type="button"
               onClick={() => { setActivePreset(null); setQuery(q); }}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
             >
               <span className="truncate">{t.entry.recentSearchPrefix}{q}</span>
             </button>
@@ -1107,7 +1103,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               key={"recent-" + s.ticker}
               href={"/stock/" + s.ticker}
               prefetch={false}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
             >
               <span className="truncate">{t.entry.recentViewedPrefix}{s.name}</span>
             </Link>
@@ -1117,7 +1113,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               key={"popular-" + s.ticker}
               href={"/stock/" + s.ticker}
               prefetch={false}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
             >
               <span className="truncate">{t.entry.popularPrefix}{s.name}</span>
             </Link>
@@ -1139,12 +1135,12 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             onClick={() => setShowMobilePresets((v) => !v)}
             aria-expanded={showMobilePresets}
             aria-controls="question-presets"
-            className={`lg:hidden shrink-0 inline-flex min-h-[36px] items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
+            className={`lg:hidden shrink-0 inline-flex min-h-[36px] items-center gap-1 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
           >
             {showMobilePresets ? t.collapse : t.expand}
           </button>
         </div>
-        <div id="question-presets" className={(showMobilePresets ? "grid" : "hidden") + " lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-3"}>
+        <div id="question-presets" className={(showMobilePresets ? "grid" : "hidden") + " lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 mt-3"}>
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
             const badges = badgesFromConfig(p.config, t);
@@ -1156,13 +1152,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 type="button"
                 aria-pressed={selected}
                 onClick={() => togglePreset(p)}
-                className={"text-left rounded-xl border p-3 transition min-h-[44px] " +
+                className={"text-left rounded-lg border p-3 transition min-h-[44px] " +
                   (selected
-                    ? "border-blue-500 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-500/40 shadow-sm"
-                    : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm")}
+                    ? "border-blue-500 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-500/40"
+                    : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-300 dark:hover:border-blue-700")}
               >
                 <div className="flex items-start gap-2">
-                  <span aria-hidden className={"mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full " + (selected ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")}>
+                  <span aria-hidden className={"mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md " + (selected ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")}>
                     <Icon size={15} strokeWidth={2} />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -1171,14 +1167,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                   </div>
                   {selected ? <Check aria-hidden size={16} strokeWidth={2.5} className="shrink-0 text-blue-600 dark:text-blue-400" /> : null}
                 </div>
-                {badges.length > 0 ? (
+                {selected && badges.length > 0 ? (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {badges.map((b) => (
                       <span key={b} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 tabular-nums">{b}</span>
                     ))}
                   </div>
                 ) : null}
-                {qc.caution ? (
+                {selected && qc.caution ? (
                   <div className="flex items-start gap-1 text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug"><AlertTriangle aria-hidden size={11} strokeWidth={2.5} className="mt-px shrink-0" /><span>{qc.caution}</span></div>
                 ) : null}
                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 tabular-nums">{t.expectedResults(presetCounts[p.id] ?? 0).a}<strong className="text-zinc-700 dark:text-zinc-200">{t.expectedResults(presetCounts[p.id] ?? 0).b}</strong></div>
@@ -1189,7 +1185,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       </section>
 
       {/* ── 빠른 프리셋 칩(보조 필터) — 기본 접힘, 필요할 때만 펼치는 보조 도구 ── */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
+      <section className="border-y border-zinc-200 py-3 dark:border-zinc-800">
         <button
           type="button"
           onClick={() => setShowQuickPresets((v) => !v)}
@@ -1226,7 +1222,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       </section>
 
       {/* ── 내 검색 조건(저장/알림) ── */}
-      <section className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
+      <section className="border-y border-zinc-200 py-3 dark:border-zinc-800">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
           <div className="flex gap-1.5">

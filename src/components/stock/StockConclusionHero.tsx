@@ -72,7 +72,7 @@ export function StockConclusionHero({
   const { locale } = useLanguage();
   const t = conclusionHeroCopy[locale];
   return (
-    <section className="-mx-3 md:-mx-4 space-y-3 border-y border-zinc-200 dark:border-zinc-800 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_50%,#eef6ff_100%)] dark:bg-[linear-gradient(135deg,#0b0f14_0%,#111827_56%,#0f172a_100%)] px-3 py-3 md:px-4 md:py-4">
+    <section className="-mx-3 md:-mx-4 space-y-3 border-y border-zinc-200 bg-white/70 px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950/50 md:px-4 md:py-4">
       <StockHeader
         sector={sector}
         name={name}
@@ -84,21 +84,21 @@ export function StockConclusionHero({
       />
 
       {suspect ? (
-        <div className="flex items-start gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl px-3 py-2">
+        <div className="flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{t.suspectBanner}</span>
         </div>
       ) : null}
 
       {riskAlert ? (
-        <div className={"flex items-start gap-2 rounded-xl border px-3 py-2 text-xs shadow-sm " + (riskAlert.level === "high" ? "border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300" : "border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-300")}>
+        <div className={"flex items-start gap-2 rounded-lg border px-3 py-2 text-xs " + (riskAlert.level === "high" ? "border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300" : "border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20 text-orange-700 dark:text-orange-300")}>
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span><strong className="font-semibold">{riskAlert.label}</strong> — {riskAlert.text}</span>
         </div>
       ) : null}
 
       <div className="grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_19rem]">
-        <div className="order-3 lg:order-1">
+        <div className="order-1">
           <ConclusionSummaryCard
             type={conclusion.type}
             summary={conclusion.summary}
@@ -108,7 +108,7 @@ export function StockConclusionHero({
             warnings={warnings}
           />
         </div>
-        <div className="order-1 lg:order-2">
+        <div className="order-2">
           <PriorityScoreCard
             score={score}
             overallRank={overallRank}
@@ -125,7 +125,7 @@ export function StockConclusionHero({
             leadCheck={leadCheck}
           />
         </div>
-        <div className="order-2 lg:order-3 lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-950/50 px-2.5 py-2.5 md:px-3 shadow-sm">
+        <div className="order-3 rounded-lg border border-zinc-200 bg-white/85 px-2.5 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/50 md:px-3 lg:col-span-2">
           <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2">{t.nextToCheck}</div>
           <StockDetailActionButtons />
         </div>

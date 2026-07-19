@@ -62,7 +62,7 @@ export function PriorityScoreCard({
   const t = priorityScoreCardCopy[locale];
   const rankPrefix = (tieCount: number) => tieCount > 1 ? (locale === "ko" ? "공동 " : "T-") : "";
   return (
-    <div className={"rounded-xl border bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 p-3 md:p-4 shadow-lg shadow-zinc-950/10 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-200")}>
+    <div className={"rounded-lg border bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 p-3 md:p-4 " + (suspect ? "border-amber-300 dark:border-amber-800" : "border-zinc-900 dark:border-zinc-200")}>
       <div className="text-[11px] font-semibold uppercase text-zinc-400 dark:text-zinc-500">{t.title}</div>
 
       <div className="mt-2 flex items-center gap-3">

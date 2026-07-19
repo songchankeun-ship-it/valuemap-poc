@@ -4774,3 +4774,18 @@ Regenerated the two read-only Metrics 2.5.1 baseline artifacts from the current 
 - **Shadow status**: private ledger remains **actualRuns 0/5**. The weekday collector continues independently; no owner action is required.
 - **Next**: wait for five distinct eligible real trading dates, then review the private comparison dossier before any separate human promotion decision.
 - **Commit**: local `[codex] Metrics 2.5.1: refresh deterministic baseline`.
+
+### 2026-07-20 - Core visual hierarchy and first-fold cleanup [codex]
+
+Reworked the four highest-traffic public surfaces around a quieter operational visual system. This is presentation-only: no data, scoring, routing, authentication, SEO ownership, package, or workflow behavior changed. Prior HEAD `dcdbb74`; branch `codex/visual-hierarchy-core`.
+
+- **Shared visual contract**: introduced a single 8px panel radius and low-elevation surface/data-band primitives. Core content now uses section bands, separators, and typographic hierarchy instead of nested rounded cards and decorative gradients.
+- **Home**: removed the hero-inside-a-card treatment, flattened verification/search examples, standardized the three candidates into an equal grid, and replaced the outer guide card plus three inner cards with an unframed three-step band. Candidate risks and checkpoints now use rules and separators rather than nested cards.
+- **Today**: converted four standalone KPI cards into one responsive data strip, flattened the status bar, and removed the repeated four-number briefing grid. The briefing is now a compact breadth note, while Top 3 and signal cards use the shared 8px maximum radius.
+- **Stock detail**: fixed the documented mobile reading order to conclusion -> score -> next actions, removed the hero gradient and heavy shadows, and flattened nested conclusion evidence into two semantic columns. This resolves the first-fold issue where the black score panel previously displaced the actual conclusion.
+- **Stocks discovery**: removed the redundant search-intent explainer, reduced pill use, made question presets compact five-column controls on wide screens, shows preset criteria only when selected, and converted quick/saved-search wrappers to unframed bands. Mobile keeps the preset section collapsed and reaches the result controls in the first viewport.
+- **Visual verification**: production build inspected at 1440x1000 and 390x844. Home, Today, stock/032830, and Stocks all have zero horizontal overflow. Core main-content panel radius over 8px is zero. Measured scroll heights: home desktop 1593 / mobile 2510; Today desktop 3051 / mobile 6174; stock mobile 3770; Stocks desktop 5928 / mobile 6335. Mobile stock shows the conclusion before the score.
+- **Automated verification**: `npm run build` PASS (192 pages); `verify:first-run-ux` PASS; `test:stocks-discovery` PASS; full `verify:reaudit` 13/13 PASS; production-server `verify:local -- --base http://127.0.0.1:4460 --no-perf` 6/6 PASS (25-route smoke, route/data-date, Stocks SEO, public SEO, login preflight, admin access).
+- **Frozen boundaries**: `public/data`, Metrics 2.4, shadow Metrics 2.5.1 state, packages, workflows, login/auth, runtime values, SEO URLs/ownership, and analytics event names are unchanged. No push, deployment, publication, account action, or genuine shadow collection.
+- **Next**: continue the visual pass on comparison, disclosures, watchlist, status, and guide surfaces using the same hierarchy contract; keep all behavioral and frozen boundaries intact.
+- **Commit**: local `[codex] UI: simplify core visual hierarchy`.

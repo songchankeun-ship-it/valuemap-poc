@@ -22,7 +22,7 @@ export function SignalStockCard({ s }: { s: SignalStockVM }) {
     <Link
       prefetch={false}
       href={"/stock/" + s.ticker}
-      className="flex items-center gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 min-h-[72px] hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-sm transition active:bg-zinc-50 dark:active:bg-zinc-800/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+      className="flex min-h-[72px] items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 transition hover:border-blue-400 active:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-700 dark:active:bg-zinc-800/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
     >
       <ScoreGauge score={s.score} size={56} showLabel={false} />
       <div className="min-w-0 flex-1">

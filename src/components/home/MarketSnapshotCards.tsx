@@ -31,20 +31,25 @@ export function MarketSnapshotCards({ totalCount, strongCount, volumeSpikeCount,
         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{s.heading}</h2>
         <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{s.sub}</span>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {cards.map(({ icon: Icon, tone, title, value, sub, href }) => (
+      <div className="grid grid-cols-2 border-y border-zinc-200 dark:border-zinc-800 lg:grid-cols-4">
+        {cards.map(({ icon: Icon, tone, title, value, sub, href }, index) => (
           <Link
             key={title}
             prefetch={false}
             href={href}
-            className="block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-400 dark:hover:border-blue-700 hover:shadow-sm transition"
+            className={
+              "block p-3 transition hover:bg-white dark:hover:bg-zinc-900 md:p-4 " +
+              (index < 2 ? "border-b border-zinc-200 dark:border-zinc-800 lg:border-b-0 " : "") +
+              (index % 2 === 0 ? "border-r border-zinc-200 dark:border-zinc-800 lg:border-r-0 " : "") +
+              (index > 0 ? "lg:border-l lg:border-zinc-200 lg:dark:border-zinc-800" : "")
+            }
           >
-            <div className={"w-8 h-8 rounded-md flex items-center justify-center mb-3 " + tone}>
-              <Icon className="w-4 h-4" strokeWidth={1.9} />
+            <div className="mb-2 flex items-center gap-1.5">
+              <Icon className={"h-3.5 w-3.5 " + tone.split(" ").slice(0, 2).join(" ")} strokeWidth={1.9} />
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-tight">{title}</div>
             </div>
-            <div className="text-[12px] text-zinc-500 dark:text-zinc-400 leading-tight">{title}</div>
             <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums mt-1 leading-none">{value}</div>
-            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 leading-tight">{sub}</div>
+            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 leading-tight">{sub}</div>
           </Link>
         ))}
       </div>

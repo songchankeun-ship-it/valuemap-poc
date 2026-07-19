@@ -52,15 +52,15 @@ export function HomeHero({
   }).filter((x): x is { ticker: string; name: string } => x !== null);
 
   return (
-    <section className="relative -mx-3 md:-mx-4 overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-3 md:px-4 md:py-5">
-      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60 px-4 py-3 md:px-5 md:py-5">
+    <section className="relative -mx-3 md:-mx-4 overflow-hidden border-y border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-5 md:px-6 md:py-8">
+      <div className="mx-auto max-w-4xl">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase text-blue-700 dark:text-blue-300">
             <ShieldCheck className="h-3 w-3" aria-hidden="true" />
             {copy.badge}
           </span>
           <span
-            className="inline-flex items-center gap-1.5 text-[10px] text-zinc-600 dark:text-zinc-300 px-2.5 py-1 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800"
+            className="inline-flex items-center gap-1.5 border-l border-zinc-200 dark:border-zinc-700 pl-2 text-[10px] text-zinc-600 dark:text-zinc-300"
             title={`${copy.dataPrefix} ${dataAsOf} ${copy.marketClose}`}
           >
             <span className={"w-1.5 h-1.5 rounded-full " + (dataWarn ? "bg-orange-400" : "bg-emerald-400")} />
@@ -74,7 +74,7 @@ export function HomeHero({
             )}
           </span>
         </div>
-        <h1 className="max-w-2xl text-[24px] leading-[1.08] md:text-[38px] md:leading-[1.04] font-black text-zinc-950 dark:text-white">
+        <h1 className="max-w-2xl text-[26px] leading-[1.12] md:text-[36px] md:leading-[1.08] font-black text-zinc-950 dark:text-white">
           {copy.titleBefore}{" "}
           <span className="text-blue-700 dark:text-sky-300">{copy.titleAccent}</span> {copy.titleAfter}
         </h1>
@@ -94,7 +94,7 @@ export function HomeHero({
                 key={ex.ticker}
                 prefetch={false}
                 href={"/stock/" + ex.ticker}
-                className="inline-flex items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2 py-0.5 font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500"
+                className="inline-flex items-center gap-1 border-b border-zinc-300 dark:border-zinc-700 py-0.5 font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-500 hover:text-blue-700 dark:hover:text-blue-300 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500"
               >
                 <span className="truncate max-w-[7rem]">{ex.name}</span>
                 <span className="font-mono tabular-nums text-[10px] text-zinc-400 dark:text-zinc-500">{ex.ticker}</span>
@@ -104,7 +104,7 @@ export function HomeHero({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 mt-3 md:mt-4">
-          <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition shadow-sm shadow-zinc-900/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+          <a href="#today-candidates" className="text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-md bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-sm font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
             <span>{copy.primaryCta}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
@@ -117,7 +117,7 @@ export function HomeHero({
             <span>{copy.browseAll}</span>
           </Link>
         </div>
-        <p className="mt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400 max-w-2xl">
+        <p className="mt-4 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
           {copy.note}
         </p>
       </div>
