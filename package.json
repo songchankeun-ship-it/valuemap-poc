@@ -43,6 +43,8 @@
     "test:daily-workflow-gate": "node scripts/test-daily-workflow-gate.mjs",
     "verify:continuity-fault-matrix": "node scripts/verify-continuity-fault-matrix.mjs",
     "test:continuity-fault-matrix": "node scripts/test-continuity-fault-matrix.mjs",
+    "verify:market-close-health": "node scripts/verify-market-close-health.mjs",
+    "test:market-close-health": "node scripts/test-market-close-health.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",
