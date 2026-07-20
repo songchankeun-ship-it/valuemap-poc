@@ -3875,3 +3875,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Live GET rehearsal: 138 stocks, 139 files, 8,415,774 bytes, common date 2026-07-16, hash `98af3b44985ba8bd41368986325ea4ce77b9d0e4312bf01f516fcc59008dafc8`. No-write orchestration passed adapter checks and returned `WAIT / PRE_ACTIVATION`; real ledger remains **0/5**.
 - Gates: live-input 8-scenario test PASS; health fail-closed suite PASS; Metrics input 22/22; orchestrator 22/22; TypeScript, lint, and 192-page build PASS.
 - Frozen: public data/Metrics 2.4, tracked data, auth, workflows, packages/dependencies, outside accounts, and public promotion. Next entry point is the first post-activation trading date served complete by production; no owner action is required.
+
+### 2026-07-20 - Naver login re-review evidence packet [codex]
+
+- Naver Login rejected the application only for missing service/financial-business explanation material. No OAuth code or callback defect was reported.
+- Added `docs/ornscore-naver-login-rereview-packet-2026-07-20.md`, `docs/ornscore-naver-login-rereview-form-text-2026-07-20.txt`, and the rendered six-page `output/pdf/ornscore-naver-login-rereview-2026-07-20.pdf`.
+- Production facts used: free personal beta, no payment/subscription, public browsing without login, Naver identity/email for record synchronization, no investment-profile collection, no 1:1 advice, buy/sell/target/timing/quantity call, account link, order, brokerage, auto-trading, discretionary management, custody, or return guarantee.
+- Future paid scope is disclosed as unconfirmed data convenience/change-alert/record/research support. The packet commits to a fresh professional/regulatory registration-reporting review before launch and makes no legal-clearance claim.
+- Legal basis is linked to current Capital Markets Act Articles 6, 7(3), and 101(1), plus official Naver review guidance. All six PDF pages were rendered with Poppler and visually checked; Korean glyphs, tables, screenshots, links, and pagination are intact.
+- Zero application/runtime/provider/external-account change. Naver Developers upload, form submission, and final re-review request remain owner-only.
+- Next: owner uploads the PDF and pastes the prepared text. If Naver specifically requires an external lawyer/regulator document, do not invent one; obtain it separately.

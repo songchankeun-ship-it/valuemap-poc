@@ -12,3 +12,6 @@ docs/metrics-2.5.1-baseline.md       text eol=lf
 # by scripts/verify-framework-baseline.mjs --generate; pin it so re-running the
 # generator is churn-free under core.autocrlf=true.
 docs/ornscore-framework-migration-baseline-2026-07-16.json text eol=lf
+
+# Generated review deliverables are binary artifacts.
+*.pdf binary
