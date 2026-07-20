@@ -43,6 +43,9 @@ jobs:
       - name: Recompute metrics (momentum/flow/value/vol)
         run: python scripts/compute_metrics.py
 
+      - name: Regenerate methodology audit for candidate snapshot
+        run: python scripts/methodology_audit.py
+
       - name: Fetch KRX market alerts (non-blocking; bld 검증 중)
         run: python scripts/fetch_market_alerts.py || echo "market-alerts skipped"
 
@@ -76,7 +79,7 @@ jobs:
         run: |
           git config user.name "ornscore-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/data/stocks.json public/data/prices public/data/market-alerts.json
+          git add public/data/stocks.json public/data/prices public/data/market-alerts.json docs/methodology-audit.md
           if git diff --cached --quiet; then
             echo "No data changes — skip commit."
           else

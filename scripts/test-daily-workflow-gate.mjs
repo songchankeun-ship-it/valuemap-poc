@@ -9,9 +9,10 @@
 //   (2) FAIL-CLOSED — a gate that swallows failure (continue-on-error, a step-level
 //       if:, or `||`) or a commit step forced to run via `if: always()` is rejected.
 //   (3) FROZEN FIELDS — schedule, permissions, concurrency, timeout, data commands
-//       (incl. the market-alert `|| echo` non-blocking policy), commit add-paths,
-//       bot identity, commit message format, push, and the byte-for-byte commit
-//       script are all pinned; any drift is rejected.
+//       (incl. post-recompute methodology regeneration and the market-alert
+//       `|| echo` non-blocking policy), commit add-paths, bot identity, commit
+//       message format, push, and the byte-for-byte commit script are all pinned;
+//       any drift is rejected.
 //
 // The fixtures are the REAL workflow (the valid case, so the pass case always tracks
 // the shipped file) plus minimal, clearly-motivated mutations of it (the failing
@@ -55,8 +56,15 @@ const SETUP_NODE_BLOCK =
   "        with:\n" +
   '          node-version: "20"';
 const COMMIT_NAME = "      - name: Commit and push if data changed";
+const RECOMPUTE_BLOCK =
+  "      - name: Recompute metrics (momentum/flow/value/vol)\n" +
+  "        run: python scripts/compute_metrics.py";
+const METHODOLOGY_BLOCK =
+  "      - name: Regenerate methodology audit for candidate snapshot\n" +
+  "        run: python scripts/methodology_audit.py";
 const MARKET_ALERT = 'python scripts/fetch_market_alerts.py || echo "market-alerts skipped"';
-const ADD_LINE = "          git add public/data/stocks.json public/data/prices public/data/market-alerts.json";
+const ADD_LINE =
+  "          git add public/data/stocks.json public/data/prices public/data/market-alerts.json docs/methodology-audit.md";
 
 function must(anchor) {
   if (!VALID.includes(anchor)) throw new Error(`fixture anchor missing from real workflow:\n${anchor}`);
@@ -65,7 +73,7 @@ function must(anchor) {
 
 function main() {
   // Guard: every anchor the mutations rely on is really in the shipped file.
-  [CANDIDATE_BLOCK, SETUP_NODE_BLOCK, COMMIT_NAME, MARKET_ALERT, ADD_LINE].forEach(must);
+  [CANDIDATE_BLOCK, SETUP_NODE_BLOCK, COMMIT_NAME, RECOMPUTE_BLOCK, METHODOLOGY_BLOCK, MARKET_ALERT, ADD_LINE].forEach(must);
 
   // -------------------------------------------------------------------------
   // §1  the real workflow passes every check
@@ -141,6 +149,11 @@ function main() {
     const rep = evaluateWorkflow(noNode);
     check("§4c npm gates without setup-node -> node-setup fails", groupFailed(rep, "node-setup") && !rep.ok);
   }
+  {
+    const noMethodology = VALID.replace("\n" + METHODOLOGY_BLOCK, "");
+    const rep = evaluateWorkflow(noMethodology);
+    check("§4d removed methodology regeneration -> presence fails", groupFailed(rep, "gate-presence") && !rep.ok);
+  }
 
   // -------------------------------------------------------------------------
   // §5  frozen fields
@@ -154,25 +167,31 @@ function main() {
     check("§5b changed bot identity -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {
-    const rep = evaluateWorkflow(VALID.replace(ADD_LINE, "          git add public/data/stocks.json public/data/prices"));
-    check("§5c dropped commit add-path -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+    const rep = evaluateWorkflow(VALID.replace(ADD_LINE, ADD_LINE.replace(" docs/methodology-audit.md", "")));
+    check("§5c dropped generated audit add-path -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+  }
+  {
+    const correct = RECOMPUTE_BLOCK + "\n\n" + METHODOLOGY_BLOCK;
+    const reversed = METHODOLOGY_BLOCK + "\n\n" + RECOMPUTE_BLOCK;
+    const rep = evaluateWorkflow(VALID.replace(correct, reversed));
+    check("§5d methodology regeneration before recompute -> frozen order fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {
     // Remove the market-alert non-blocking `|| echo` policy.
     const rep = evaluateWorkflow(VALID.replace(MARKET_ALERT, "python scripts/fetch_market_alerts.py"));
-    check("§5d market-alert `|| echo` removed -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+    check("§5e market-alert `|| echo` removed -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {
     const rep = evaluateWorkflow(VALID.replace("timeout-minutes: 30", "timeout-minutes: 45"));
-    check("§5e changed timeout -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+    check("§5f changed timeout -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {
     const rep = evaluateWorkflow(VALID.replace("cancel-in-progress: false", "cancel-in-progress: true"));
-    check("§5f flipped concurrency cancel-in-progress -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+    check("§5g flipped concurrency cancel-in-progress -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {
     const rep = evaluateWorkflow(VALID.replace('daily refresh $(date', 'daily push $(date'));
-    check("§5g changed commit message format -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
+    check("§5h changed commit message format -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
 
   // -------------------------------------------------------------------------

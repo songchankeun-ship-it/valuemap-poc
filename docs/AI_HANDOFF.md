@@ -3885,3 +3885,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Legal basis is linked to current Capital Markets Act Articles 6, 7(3), and 101(1), plus official Naver review guidance. All six PDF pages were rendered with Poppler and visually checked; Korean glyphs, tables, screenshots, links, and pagination are intact.
 - Zero application/runtime/provider/external-account change. Naver Developers upload, form submission, and final re-review request remain owner-only.
 - Next: owner uploads the PDF and pastes the prepared text. If Naver specifically requires an external lawyer/regulator document, do not invent one; obtain it separately.
+
+### 2026-07-20 - [codex] Daily publication methodology-audit continuity repair
+
+- Root cause from GitHub Actions run `29735684199`: all Python data-generation and candidate-delta steps passed, but release preflight Slice M rejected stale `docs/methodology-audit.md`. The daily workflow recomputed metrics without regenerating that deterministic derived report.
+- `.github/workflows/daily-data.yml` now runs `python scripts/methodology_audit.py` directly after `compute_metrics.py` and stages `docs/methodology-audit.md` in the same final bot commit as the refreshed data. The step is unconditional and remains before every publish gate.
+- `verify-daily-workflow-gate.mjs` and its self-test now freeze the generator command/order, fail-closed execution, and generated-doc staging. Negative fixtures reject a missing generator, pre-compute ordering, or dropped staging path.
+- Regenerated the service-continuity baseline for the intentional 15-step/7-command workflow and current committed 20260716 data blobs. Regenerated the framework baseline for the already-shipped `/compare/[pair]` route using a fresh production audit: critical 0 / high 0 / moderate 2.
+- Green checks: build 192 pages; release preflight 10/10; framework freshness 3/3 and self-test; continuity freeze 2/2 and self-test; daily workflow verifier 6/6 and self-test; methodology audit; Metrics 2.4 integrity 138/138; public-data delta `NO_CHANGE`; `git diff --check`; U+FFFD scan 0.
+- No local `public/data`, formula/version, 138-stock, login/auth/provider, package, runtime-setting, or private ledger change. Naver re-review is submitted/pending; Google Play waits for the owner's address statement; Metrics 2.5.1 remains actualRuns 0/5.
+- Next: commit/push fast-forward, dispatch a new daily-data run at the new main SHA (do not rerun the old SHA), wait for deployment date 2026-07-20, then execute the private live-input collector/orchestrator and verify actualRuns 1/5.

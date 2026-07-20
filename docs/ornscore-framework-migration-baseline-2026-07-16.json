@@ -5,6 +5,7 @@
       "/api/disclosures/[ticker]",
       "/api/quote/[ticker]",
       "/blog/[slug]",
+      "/compare/[pair]",
       "/stock/[ticker]",
       "/stock/[ticker]/opengraph-image",
       "/theme/[slug]",
@@ -99,7 +100,7 @@
       }
     },
     "sourceRoutes": {
-      "count": 43,
+      "count": 44,
       "metadataRoutes": [
         "/icon",
         "/manifest",
@@ -118,6 +119,7 @@
         "/blog",
         "/blog/[slug]",
         "/compare",
+        "/compare/[pair]",
         "/data-deletion",
         "/disclosures",
         "/guide/metrics",
@@ -142,6 +144,7 @@
         "/api/disclosures/[ticker]",
         "/api/quote/[ticker]",
         "/blog/[slug]",
+        "/compare/[pair]",
         "/stock/[ticker]",
         "/theme/[slug]",
         "/topics/[slug]"

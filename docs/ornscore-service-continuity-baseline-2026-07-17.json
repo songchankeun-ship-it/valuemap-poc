@@ -5,7 +5,8 @@
         "addPaths": [
           "public/data/stocks.json",
           "public/data/prices",
-          "public/data/market-alerts.json"
+          "public/data/market-alerts.json",
+          "docs/methodology-audit.md"
         ],
         "botEmail": "actions@users.noreply.github.com",
         "botName": "ornscore-bot",
@@ -27,6 +28,7 @@
         "scripts/fetch_prices.py",
         "scripts/sync_prices_to_stocks.py",
         "scripts/compute_metrics.py",
+        "scripts/methodology_audit.py",
         "scripts/fetch_market_alerts.py",
         "scripts/verify_metrics.py",
         "scripts/verify_public_data_delta.py"
@@ -39,6 +41,7 @@
         "Fetch prices (5y OHLCV per ticker)",
         "Sync latest price into stocks.json",
         "Recompute metrics (momentum/flow/value/vol)",
+        "Regenerate methodology audit for candidate snapshot",
         "Fetch KRX market alerts (non-blocking; bld 검증 중)",
         "Verify data integrity (gate)",
         "Guard public-data candidate delta (gate)",
@@ -89,11 +92,11 @@
       "universeCount": 138
     },
     "publicData": {
-      "marketAlerts": "e4741f31e665ffe88e763a6051fdf704e0e4fd54",
+      "marketAlerts": "fe19b90bda00d39c2f42585fa32fb989b82035d7",
       "pricesFileCount": 138,
-      "pricesTree": "388f85034446e09381ff1b107a1b7cb4dd470a05",
-      "stocksJson": "b9d09f33268ed3fe232ce37ddbe052640c8bd695",
-      "treeSha": "1ab0e42dd5e3f95df04f3324616d6bae51f40b8c",
+      "pricesTree": "3ae0da2c96c429838696054914938905fe6ac58f",
+      "stocksJson": "c037daf4f61956a4cb7ac6292298ab65edfbe88d",
+      "treeSha": "24045925fcaaae2746609c4550ec89fb8cd39a45",
       "worktreeClean": true
     },
     "routeCanary": {

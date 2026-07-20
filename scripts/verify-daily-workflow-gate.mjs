@@ -10,7 +10,8 @@
 // must run before the commit-and-push step, a failing gate must make commit/push
 // unreachable, and none of the frozen workflow fields (schedule, permissions,
 // concurrency, timeout, data commands, market-alert non-blocking policy, commit
-// paths, bot identity, commit message format, push semantics) may drift.
+// paths, generated methodology audit, bot identity, commit message format, push
+// semantics) may drift.
 //
 // This verifier PROVES those properties from the workflow SOURCE, without ever
 // executing or dispatching the workflow. It is offline and finite: it only reads
@@ -54,15 +55,23 @@ export const FROZEN = {
   botEmail: "actions@users.noreply.github.com",
   // parseWorkflowContract captures the message text up to the first `$`/`"`.
   messagePrefix: "chore(data): daily refresh",
-  addPaths: ["public/data/stocks.json", "public/data/prices", "public/data/market-alerts.json"],
+  addPaths: [
+    "public/data/stocks.json",
+    "public/data/prices",
+    "public/data/market-alerts.json",
+    "docs/methodology-audit.md",
+  ],
 };
 
-// The data fetch/recompute commands, in order. These must appear unchanged and in
-// this relative order; the market-alert command must keep its non-blocking `|| echo`.
+// The data fetch/recompute/generated-artifact commands, in order. These must appear
+// unchanged and in this relative order; the methodology audit must be regenerated
+// from the recomputed candidate, and the market-alert command must keep its
+// non-blocking `|| echo`.
 export const FROZEN_DATA_COMMANDS = [
   "python scripts/fetch_prices.py",
   "python scripts/sync_prices_to_stocks.py",
   "python scripts/compute_metrics.py",
+  "python scripts/methodology_audit.py",
   'python scripts/fetch_market_alerts.py || echo "market-alerts skipped"',
   "python scripts/verify_metrics.py",
 ];
@@ -73,7 +82,7 @@ export const FROZEN_DATA_COMMANDS = [
 export const FROZEN_COMMIT_SCRIPT = [
   '          git config user.name "ornscore-bot"',
   '          git config user.email "actions@users.noreply.github.com"',
-  "          git add public/data/stocks.json public/data/prices public/data/market-alerts.json",
+  "          git add public/data/stocks.json public/data/prices public/data/market-alerts.json docs/methodology-audit.md",
   "          if git diff --cached --quiet; then",
   '            echo "No data changes — skip commit."',
   "          else",
@@ -86,6 +95,11 @@ export const FROZEN_COMMIT_SCRIPT = [
 // The ordered gate set that must run before commit-and-push. `match` classifies a
 // step by its run body; order in this array is the asserted execution order.
 export const GATES = [
+  {
+    key: "methodology",
+    label: "methodology audit regeneration (methodology_audit.py)",
+    match: (t) => /python\s+scripts\/methodology_audit\.py/.test(t),
+  },
   {
     key: "metrics",
     label: "Metrics data-integrity gate (verify_metrics.py)",
@@ -324,7 +338,8 @@ function main() {
     for (const g of GATES) console.log(`    - ${pad(g.key, 10)}${g.label}`);
     console.log("  fail-closed: no gate has continue-on-error/if:/`||`; commit has no if:/continue-on-error");
     console.log("  frozen: name, cron, workflow_dispatch, permissions.contents, concurrency, timeout,");
-    console.log("          data commands (+ market-alert `|| echo`), commit add-paths, bot identity,");
+    console.log("          data commands (+ methodology regeneration + market-alert `|| echo`),");
+    console.log("          commit add-paths, bot identity,");
     console.log("          commit message format, git push, byte-for-byte commit script; no secret.");
     process.exit(0);
   }
