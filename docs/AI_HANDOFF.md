@@ -3895,3 +3895,11 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Green checks: build 192 pages; release preflight 10/10; framework freshness 3/3 and self-test; continuity freeze 2/2 and self-test; daily workflow verifier 6/6 and self-test; methodology audit; Metrics 2.4 integrity 138/138; public-data delta `NO_CHANGE`; `git diff --check`; U+FFFD scan 0.
 - No local `public/data`, formula/version, 138-stock, login/auth/provider, package, runtime-setting, or private ledger change. Naver re-review is submitted/pending; Google Play waits for the owner's address statement; Metrics 2.5.1 remains actualRuns 0/5.
 - Next: commit/push fast-forward, dispatch a new daily-data run at the new main SHA (do not rerun the old SHA), wait for deployment date 2026-07-20, then execute the private live-input collector/orchestrator and verify actualRuns 1/5.
+
+### 2026-07-20 - [codex] Methodology audit cross-platform determinism follow-up
+
+- Daily workflow run `29749210538` on repair SHA `970cdbd` passed every step and pushed `6899fbb` with snapshot 20260720; generated methodology audit and release preflight both passed on GitHub Python 3.11/Linux.
+- After fast-forwarding locally, Python 3.12/Windows regenerated one diagnostic value differently (`value` ablation changed positions 134 -> 133). This was a near-tied composite sum ordered by binary float residue, not a public data or Metrics 2.4 mismatch.
+- `methodology_audit.ranking()` now normalizes diagnostic composite sums to 12 decimals before descending sort and uses ticker ascending for ties. Added an explicit `0.1 + 0.2` versus `0.3` near-tie regression. Public scoring code is untouched.
+- Current checks green: 20260720 methodology audit, Metrics 2.4 integrity 138/138, daily workflow source gate 6/6, and full daily-workflow negative-fixture self-test.
+- Next: commit/push the cross-platform correction, run a new manual daily workflow at that SHA, verify production date/marker, then run the private live adapter + orchestrator and confirm actualRuns 1/5.

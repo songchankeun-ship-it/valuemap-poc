@@ -4877,3 +4877,12 @@ Investigated failed GitHub Actions run `29735684199`. Price fetch, stock synchro
 - **Frozen boundaries**: no local diff in `public/data`, score formula/version, 138-stock universe, login/auth/provider behavior, packages, runtime settings, or private Metrics 2.5.1 ledger.
 - **External state**: Naver re-review has been submitted and is pending. Google Play re-application waits for the owner's requested address statement. Metrics 2.5.1 remains 0/5 until a repaired daily publication is live and a genuine post-activation trading date is collected.
 - **Next**: commit and fast-forward push this repair, dispatch a fresh daily-data run at the new SHA, verify production serves 2026-07-20, then run the private one-day collector and confirm actualRuns 1/5.
+
+### 2026-07-20 - Methodology audit cross-platform determinism follow-up [codex]
+
+The repaired daily run `29749210538` completed all 16 steps and pushed data commit `6899fbb` for snapshot 20260720. A post-run Windows recertification then exposed one remaining cross-platform artifact difference: the value-ablation changed-position count was 134 under GitHub's Python 3.11/Linux runner but 133 under local Python 3.12/Windows, caused by a near-tied composite sum being ordered by its final floating-point bit.
+
+- **Deterministic tie policy**: audit ranking now rounds composite sums to 12 decimal places before sorting, then uses ticker order for ties. This affects only the diagnostic audit ranking; public Metrics 2.4 scores and rankings are untouched.
+- **Regression**: a focused fixture proves mathematically equal `0.1 + 0.2` and `0.3` rank by ticker rather than binary float residue. The 20260720 generated report now reproduces locally with value-ablation changed positions 133.
+- **Verification**: methodology audit PASS on 20260720; Metrics 2.4 integrity 138/138; daily workflow verifier 6/6 and full negative-fixture self-test PASS.
+- **Next**: push this small determinism correction, dispatch the daily workflow once more at the corrected SHA, then verify production and record the first private Metrics 2.5.1 real date.

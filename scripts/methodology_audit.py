@@ -116,8 +116,10 @@ def composite(row, weights):
 
 
 def ranking(rows, weights):
-    """가중치로 정렬한 티커 순서(내림차순). 동점은 티커 오름차순으로 결정적 처리."""
-    scored = [(composite(r, weights), r["ticker"]) for r in rows]
+    """가중치로 정렬한 티커 순서. 부동소수점 근사 동점은 티커로 결정한다."""
+    # 0.1 + 0.2 같은 합은 Python/OS 조합에 따라 마지막 비트가 달라질 수 있다.
+    # 감사 보고서의 순위 민감도는 12자리로 정규화한 뒤 동점을 ticker로 푼다.
+    scored = [(_r(composite(r, weights), 12), r["ticker"]) for r in rows]
     scored.sort(key=lambda t: (-t[0], t[1]))
     return [tk for _, tk in scored]
 

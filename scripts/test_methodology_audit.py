@@ -81,6 +81,15 @@ for ab in report["oneMetricAblation"]:
           f"ablation spearman 범위 벗어남: {ab['spearmanVsFull']}")
 check(dropped_seen == set(METRICS), f"ablation 이 모든 지표를 다루지 않음: {dropped_seen}")
 
+# 5a) 순위 동점 결정성 — 수학적으로 같은 0.1+0.2와 0.3이 마지막 float
+# 비트 때문에 갈리지 않고 ticker 오름차순으로 결정돼야 한다(교차 OS/Python 계약).
+near_tie_rows = [
+    {"ticker": "000002", "momentum": 0.1, "flow": 0.2, "value": 0.0, "volScore": 0.0},
+    {"ticker": "000001", "momentum": 0.3, "flow": 0.0, "value": 0.0, "volScore": 0.0},
+]
+check(ma.ranking(near_tie_rows, {k: 1.0 for k in METRICS}) == ["000001", "000002"],
+      "부동소수점 근사 동점이 ticker 결정 규칙보다 우선함")
+
 # 5b) 등가중 대안 — 각 대안 가중치는 하나만 2배, 나머지 1배.
 for alt in report["equalWeightAlternatives"]:
     w = alt["weights"]
