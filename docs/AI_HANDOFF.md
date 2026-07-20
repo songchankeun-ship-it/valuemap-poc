@@ -3903,3 +3903,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - `methodology_audit.ranking()` now normalizes diagnostic composite sums to 12 decimals before descending sort and uses ticker ascending for ties. Added an explicit `0.1 + 0.2` versus `0.3` near-tie regression. Public scoring code is untouched.
 - Current checks green: 20260720 methodology audit, Metrics 2.4 integrity 138/138, daily workflow source gate 6/6, and full daily-workflow negative-fixture self-test.
 - Next: commit/push the cross-platform correction, run a new manual daily workflow at that SHA, verify production date/marker, then run the private live adapter + orchestrator and confirm actualRuns 1/5.
+
+### 2026-07-20 - [codex] Daily recovery production proof and first real shadow date
+
+- GitHub Actions run `29749210538` at `970cdbd` completed all gates and pushed public-data commit `6899fbb` for snapshot `20260720`.
+- Follow-up run `29749782950` at `e72e706` passed generation/integrity and was correctly stopped by the same-day `STALE` delta guard; `20260720` had already been published, so the guard must remain fail-closed.
+- Production market-close health is `PASS / fresh_confirmed`: date `2026.07.20`, 138 stocks, Metrics 2.4, and all three sampled public routes return 200.
+- The live private envelope fetch validated 139 files and wrote only under `.metrics251-shadow`. Metrics 2.5.1 published the real `2026-07-20` shadow run; repeat execution is idempotent (`ALREADY_RECORDED`).
+- Preserved the pre-activation `2026-07-16` rehearsal under `.metrics251-shadow/preactivation-archive` and regenerated the active ledger from eligible evidence only. Current status is **actualRuns 1/5**, one distinct date (`2026-07-20`), no conflicts, no public promotion, and no public-path leakage.
+- Focused checks pass: orchestrator 22/22, ledger 9/9, live-input 8 scenarios, production market-close health PASS. Public Metrics 2.4 and tracked `public/data` remain unchanged by this private run.
+- Next: the weekday 19:20/20:00 automations continue without owner action. Await Naver re-review and the owner's Google Play address/card statement before that re-application.

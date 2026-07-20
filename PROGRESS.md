@@ -4886,3 +4886,15 @@ The repaired daily run `29749210538` completed all 16 steps and pushed data comm
 - **Regression**: a focused fixture proves mathematically equal `0.1 + 0.2` and `0.3` rank by ticker rather than binary float residue. The 20260720 generated report now reproduces locally with value-ablation changed positions 133.
 - **Verification**: methodology audit PASS on 20260720; Metrics 2.4 integrity 138/138; daily workflow verifier 6/6 and full negative-fixture self-test PASS.
 - **Next**: push this small determinism correction, dispatch the daily workflow once more at the corrected SHA, then verify production and record the first private Metrics 2.5.1 real date.
+
+### 2026-07-20 - Daily recovery production proof and first real shadow date [codex]
+
+Closed the daily-publication incident end to end after the methodology-audit workflow and cross-platform ranking repairs.
+
+- **Successful publication**: GitHub Actions run `29749210538` at repair SHA `970cdbd` passed all generation and release gates and pushed bot data commit `6899fbb` for snapshot `20260720`.
+- **Determinism confirmation**: follow-up run `29749782950` at SHA `e72e706` passed price, synchronization, Metrics, methodology-audit, alert, and integrity steps. The public-data delta gate then correctly rejected a second same-day mutation as `STALE` because the business date could not advance beyond `20260720`; this fail-closed result must not be weakened.
+- **Production proof**: `verify:market-close-health` reports `PASS / fresh_confirmed` for `https://ornscore.com`: expected and served date `2026.07.20`, 138 stocks, public Metrics 2.4, and HTTP 200 on `/`, `/stocks`, and `/stock/005930`.
+- **First real private date**: the bounded live-input fetch validated 138 stocks / 139 files / 8,403,690 bytes and wrote only `.metrics251-shadow/live-public/2026-07-20`. The private 2.5.1 orchestrator published market date `2026-07-20`; an idempotent rerun returned `ALREADY_RECORDED`.
+- **Legacy rehearsal isolation**: the pre-activation `2026-07-16` rehearsal run was preserved under `.metrics251-shadow/preactivation-archive` and removed from the active evidence set. The regenerated private ledger is exactly **actualRuns 1/5**, entry date `2026-07-20`, with no conflicts or public-path leakage.
+- **Focused gates**: Metrics 2.5.1 orchestrator 22/22, ledger 9/9, live-input 8 scenarios, and production market-close health all pass. Tracked worktree remains clean before this record-only update; public data and Metrics 2.4 are unchanged by the shadow collection.
+- **Next**: let the existing weekday 19:20 health check and 20:00 private collector continue. No owner action is required for collection. Naver re-review is pending; Google Play re-application waits for the requested address/card statement.
