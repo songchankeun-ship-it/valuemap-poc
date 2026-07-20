@@ -45,6 +45,8 @@
     "test:continuity-fault-matrix": "node scripts/test-continuity-fault-matrix.mjs",
     "verify:market-close-health": "node scripts/verify-market-close-health.mjs",
     "test:market-close-health": "node scripts/test-market-close-health.mjs",
+    "fetch:metrics251-live-input": "node scripts/fetch-metrics251-live-input.mjs",
+    "test:metrics251-live-input": "node scripts/test-fetch-metrics251-live-input.mjs",
     "verify:request-cache": "node scripts/verify-request-cache-semantics.mjs",
     "test:request-cache": "node scripts/test-request-cache-semantics.mjs",
     "verify:security-regression": "tsx scripts/verify-security-regression.ts",

@@ -368,3 +368,32 @@ Slice A–C source defect was demonstrated, so no Slice A–C source file was mo
 was activated and no genuine market-day run was performed. One local `[codex]` commit carries
 this dossier and the handoff updates; the worktree is left clean; `main` and every outside
 service are unchanged.
+
+---
+
+## 9. 2026-07-20 live-input amendment (supersedes the Schedule 2 command in 6.2)
+
+The first-run audit demonstrated that `--source public` without `--data-dir` reads the local
+checkout. A checkout that remains on 2026-07-16 cannot collect a later deployed market date.
+The active automation therefore uses this authoritative sequence:
+
+```bash
+PYTHONUTF8=1 npm run verify:market-close-health -- --base https://ornscore.com --json
+
+PYTHONUTF8=1 npm run fetch:metrics251-live-input -- \
+  --base https://ornscore.com --json
+
+PYTHONUTF8=1 npm run orchestrate:metrics251 -- \
+  --source public --data-dir <dataDir-from-fetch-step> \
+  --calendar .metrics251-shadow/inputs/krx-calendar-2026.json \
+  --config config/metrics/2.5.1.json --activation-date 2026-07-19 --json
+```
+
+Schedule 1 is weekdays at 19:20 KST; Schedule 2 is weekdays at 20:00 KST. After the
+19:00 publication deadline, health freshness is measured against the current KST trading date,
+not the checkout date. Schedule 2 runs only after health PASS. The fetch step is finite,
+same-origin, GET-only, and validates exactly 138 tickers, public Metrics 2.4, one common market
+date, all 138 price files, and response-size bounds. It writes a complete date-keyed envelope
+only below `.metrics251-shadow/live-public/`; a partial or conflicting envelope never reaches
+the orchestrator. PASS/WAIT/FAIL handling and the no-public-promotion rule in section 6 remain
+unchanged.

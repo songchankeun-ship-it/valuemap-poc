@@ -22,6 +22,7 @@ import {
   classifyTemporal,
   evaluateLocalData,
   classifyOverall,
+  deriveExpectedForTemporal,
   runMarketCloseHealth,
   kstParts,
   EXPECTED_UNIVERSE,
@@ -60,6 +61,7 @@ const NOW_ENFORCE = new Date("2026-07-16T10:30:00Z"); // Thu 19:30 KST -> enforc
 const NOW_GRACE = new Date("2026-07-16T08:30:00Z"); //   Thu 17:30 KST -> pre_publication (grace)
 const NOW_WEEKEND = new Date("2026-07-18T03:00:00Z"); //  Sat 12:00 KST -> non_trading_day
 const NOW_HOLIDAY = new Date("2026-08-17T03:00:00Z"); //  Mon 12:00 KST -> holiday (Liberation substitute)
+const NOW_MONDAY_ENFORCE = new Date("2026-07-20T10:30:00Z"); // Mon 19:30 KST -> current trading date due
 
 const EXPECT_LASTMOD = expectedLastmodIso(); // derived from the REAL public/data/stocks.json
 
@@ -205,11 +207,17 @@ async function main() {
   check("§2e enforcing + freshness -> FAIL", classifyOverall({ temporal: { window: "enforcing" }, findings: freshF }).verdict === "FAIL");
   check("§2f enforcing + clean -> PASS", classifyOverall({ temporal: { window: "enforcing" }, findings: [] }).verdict === "PASS");
 
+  check("enforcing freshness ignores stale checkout date",
+    deriveExpectedForTemporal(GOOD_DATA, classifyTemporal({ now: NOW_MONDAY_ENFORCE })).dataDate === "2026.07.20");
+
   const server = await startMock();
   const base = `http://127.0.0.1:${server.address().port}`;
   let serverStoppedProven = false;
 
   try {
+    const staleCheckout = await scenario(base, { now: NOW_MONDAY_ENFORCE });
+    check("enforcing uses current trading date, not stale checkout",
+      staleCheckout.verdict === "FAIL" && staleCheckout.reason === "stale_publication" && staleCheckout.expected.dataDate === "2026.07.20");
     check("§pre EXPECT_LASTMOD derivable from real data", typeof EXPECT_LASTMOD === "string" && EXPECT_LASTMOD.length > 0);
 
     // =======================================================================

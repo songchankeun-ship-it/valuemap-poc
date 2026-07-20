@@ -216,6 +216,17 @@ export function deriveExpected(data) {
   return { dataDate, metricsVersionLabel: v ? `Metrics ${v}` : null };
 }
 
+// After the publication deadline, the expected date comes from the trading-day
+// clock. A stale checkout must never validate the same stale date in production.
+export function deriveExpectedForTemporal(data, temporal) {
+  const expected = deriveExpected(data);
+  if (temporal?.window === "enforcing" && temporal?.isTradingDay &&
+      /^\d{4}-\d{2}-\d{2}$/.test(temporal?.kst?.dateIso ?? "")) {
+    expected.dataDate = temporal.kst.dateIso.replaceAll("-", ".");
+  }
+  return expected;
+}
+
 // ---------------------------------------------------------------------------
 // HTTP health checks (GET-only, bounded, read-only)
 // ---------------------------------------------------------------------------
@@ -361,7 +372,7 @@ export function classifyOverall({ temporal, findings }) {
 export async function runMarketCloseHealth({ base, expectedSha, now, temporalConfig, localData, bounds, counter, routes }) {
   const temporal = classifyTemporal({ now, ...(temporalConfig || {}) });
   const local = evaluateLocalData(localData);
-  const expected = deriveExpected(localData);
+  const expected = deriveExpectedForTemporal(localData, temporal);
   const health = await runHealthChecks({ base, expected, expectedSha, bounds, counter, routes });
   const findings = [...local.findings, ...health.findings];
   const overall = classifyOverall({ temporal, findings });

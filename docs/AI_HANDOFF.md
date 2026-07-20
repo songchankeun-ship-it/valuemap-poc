@@ -3865,3 +3865,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Frozen state preserved: 138-stock public data and Metrics 2.4, private Metrics 2.5.1 shadow state, auth/provider behavior, workflows, packages, runtime values, and outside search/app accounts.
 - Remaining external gates: Android signing fingerprint for `assetlinks.json`, Google Play identity/account readiness, Naver review, and five distinct real Metrics 2.5.1 trading dates.
 - Next: no further product changes without production evidence. Keep the private collector active and wait for the owner/external gates above.
+
+### 2026-07-20 - Metrics 2.5.1 live-input collection repair [codex]
+
+- Pre-first-run audit found the scheduled orchestrator still read local `public/data` (2026-07-16), while the health verifier used that same local date as the expected live date. This would have approved stale production and held the ledger at 0/5 via `PRE_ACTIVATION`.
+- Added `scripts/fetch-metrics251-live-input.mjs` plus its offline test and package aliases. It performs bounded, same-origin, GET-only retrieval of the deployed stocks file and all 138 price files, validates exact identity/Metrics/date/completeness, and atomically writes only `.metrics251-shadow/live-public/<date>` after every check passes.
+- Market-close health now derives the required data date from the KST trading-day clock after the 19:00 deadline, not from the checkout. A replay at 2026-07-20 19:20 KST correctly yields `FAIL / stale_publication` against the current 2026-07-16 deployment.
+- Updated both ACTIVE Codex automations. Schedule 1 remains weekdays 19:20 KST. Schedule 2 remains weekdays 20:00 KST and now runs health -> live envelope fetch -> orchestrator using only the returned private `dataDir`; any health/fetch failure stops the cycle.
+- Live GET rehearsal: 138 stocks, 139 files, 8,415,774 bytes, common date 2026-07-16, hash `98af3b44985ba8bd41368986325ea4ce77b9d0e4312bf01f516fcc59008dafc8`. No-write orchestration passed adapter checks and returned `WAIT / PRE_ACTIVATION`; real ledger remains **0/5**.
+- Gates: live-input 8-scenario test PASS; health fail-closed suite PASS; Metrics input 22/22; orchestrator 22/22; TypeScript, lint, and 192-page build PASS.
+- Frozen: public data/Metrics 2.4, tracked data, auth, workflows, packages/dependencies, outside accounts, and public promotion. Next entry point is the first post-activation trading date served complete by production; no owner action is required.
