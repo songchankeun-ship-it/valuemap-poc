@@ -3922,3 +3922,12 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Recovered the missed private date through the existing live-input adapter and orchestrator. Active Metrics 2.5.1 evidence is now **2/5**, exactly `2026-07-20` and `2026-07-21`; no conflicts, public promotion, or public-path leakage.
 - Green checks: release preflight 11/11 with 192-page build; reaudit 13/13; market-close health; live-input 8 scenarios; orchestrator 22/22; ledger 9/9; TypeScript; Node syntax; production public SEO 3/3; production health `PASS / fresh_confirmed` for `20260721`.
 - Both automations remain ACTIVE: weekdays 19:20 KST public health and 20:00 KST private collection. No owner action is required unless notified. Remaining waits are three genuine trading dates, Naver re-review, and the owner-requested Google Play address/card statement.
+
+## 2026-07-22 - Data-source rights recertification [codex]
+
+- Added the current implementation authority at `docs/ornscore-data-rights-decision-packet-2026-07-22.md`; prior data-rights documents now point to it as superseded history.
+- Verified that the daily Korean ticker path is FinanceDataReader `NaverDailyReader`, not a direct KRX feed, and that 138 raw close/volume histories are publicly served. `stocks.json` also contains Naver- and Yahoo/yfinance-derived fields. Do not treat public accessibility, attribution, or the FDR MIT license as upstream commercial-use permission.
+- Operational decision: Open DART may continue conditionally through the official API; Naver/Yahoo-derived collection must not expand; an authorized daily price/volume source is replacement priority 1. Naver financial scraping and yfinance fields follow. Scores/backtests inherit the unresolved source rights.
+- The packet includes exact provider questions, commercialization blocks, legal-review questions, and a phased replacement backlog. It expressly provides no legal opinion or commercial clearance.
+- Scope stayed documentation plus a static consistency guard. Public data, Metrics 2.4, the 138-stock output, workflows, auth/provider behavior, packages, runtime values, and external account state are unchanged.
+- Next agent: do not implement a source migration without the owner's provider/contract decision. The safest pre-migration implementation is a fail-closed rights manifest plus corrected source labels, reviewed against this packet. Continue existing Naver, Google Play, and Metrics 2.5.1 waits independently.

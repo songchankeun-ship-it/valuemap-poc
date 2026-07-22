@@ -7,9 +7,9 @@
 //     예외 사유(법령·보안·부정사용 방지·분쟁 대응)와 "제한적으로 보관" 문구를 공유한다.
 //   - /terms 는 현재 적용되는 무료 베타 정책을 본문 우선으로 두고, 미확정 유료 결제
 //     초안은 번호 조항(제1조~제8조) 밖으로 분리한다(유료 초안 헤딩이 제8조 뒤에 온다).
-//   - docs/data-rights-matrix.md 는 KRX·DART·Naver/FDR·Yahoo/yfinance 4개 묶음을
-//     분리하고, 증거 없는 칸은 unverified 로 두며 오너 조치를 명시한다.
-//     재배포·상업 이용 허가 같은 법적 클리어런스를 단정하지 않는다.
+//   - docs/data-rights-matrix.md 는 2026-07-22 데이터 권리 결정 패킷을 정본으로 연결한다.
+//   - 정본은 KRX·DART·Naver/FDR·Yahoo/yfinance를 분리하고, FDR bare ticker의
+//     실제 Naver 경로와 공개 원시 price files를 기록하며 법적 클리어런스를 단정하지 않는다.
 // 정적 소스/카피 고정만 수행한다. 점수식·데이터·라우트·인증 무변경.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -31,6 +31,7 @@ const privacy = read("src/app/privacy/page.tsx");
 const deletion = read("src/app/data-deletion/page.tsx");
 const terms = read("src/app/terms/page.tsx");
 const matrix = read("docs/data-rights-matrix.md");
+const dataRightsPacket = read("docs/ornscore-data-rights-decision-packet-2026-07-22.md");
 
 // 공유 정본 문구.
 const SHARED_GROUNDS = "법령, 보안, 부정사용 방지, 분쟁 대응";
@@ -79,6 +80,21 @@ const FORBIDDEN_CLAIMS = ["재배포 허용 확인됨", "상업적 이용 가능
 for (const bad of FORBIDDEN_CLAIMS) {
   check(`C4 matrix makes no clearance claim '${bad}'`, !matrix.includes(bad));
 }
+check("C5 matrix links current data-rights packet", matrix.includes("ornscore-data-rights-decision-packet-2026-07-22.md"));
+
+// ── D. 현재 데이터 권리 정본: 실제 전달 경로 + 공개 원시 데이터 + 결정 게이트 ──
+for (const src of ["KRX", "DART", "Naver", "FinanceDataReader", "Yahoo", "yfinance"]) {
+  check(`D1 packet separates source '${src}'`, dataRightsPacket.includes(src));
+}
+check("D2 packet records FDR bare-ticker Naver route", dataRightsPacket.includes("NaverDailyReader"));
+check("D3 packet records public raw price files", dataRightsPacket.includes("public/data/prices/{ticker}.json"));
+check("D4 packet records the 138-file public surface", dataRightsPacket.includes("138개 파일"));
+check("D5 packet includes official evidence register", dataRightsPacket.includes("공식 근거 대조"));
+check("D6 packet keeps legal-clearance disclaimer", dataRightsPacket.includes("법률 의견 아님") && dataRightsPacket.includes("상용화 클리어런스 미부여"));
+check("D7 packet defines commercialization gate", dataRightsPacket.includes("상용화 게이트"));
+for (const bad of FORBIDDEN_CLAIMS) {
+  check(`D8 packet makes no clearance claim '${bad}'`, !dataRightsPacket.includes(bad));
+}
 
 // ── 자기검증: 검사 로직이 실제로 동작함을 증명 ─────────────────────
 check("selftest: shared-grounds substring is non-trivial", SHARED_GROUNDS.length > 5);
@@ -89,5 +105,5 @@ if (failed > 0) {
   process.exit(1);
 }
 console.log(
-  "PASS: privacy/data-deletion deletion+exception alignment (no absolute purge, shared grounds) + terms free-beta primary with paid draft moved out of numbered articles + data-rights matrix (KRX/DART/Naver-FDR/Yahoo-yfinance) unverified with owner actions and no legal-clearance claim",
+  "PASS: privacy/data-deletion alignment + terms free-beta priority + current data-rights packet (actual FDR/Naver path, public raw prices, source decisions, commercialization gate, no legal-clearance claim)",
 );
