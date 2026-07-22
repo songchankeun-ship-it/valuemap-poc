@@ -402,7 +402,7 @@ export function WatchlistClient({
   function downloadWatchlistCsv() {
     if (watchlist.length === 0 || typeof window === "undefined") return;
 
-    const csv = buildWatchlistCsv(sortedWatchlistWithMeta, allStocks);
+    const csv = buildWatchlistCsv(sortedWatchlistWithMeta);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -739,11 +739,11 @@ export function WatchlistClient({
                 type="button"
                 onClick={downloadWatchlistCsv}
                 className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
-                aria-label="관심 종목 CSV 파일로 저장"
-                title="CSV로 저장"
+                aria-label="관심 종목 코드와 내 기록을 CSV 파일로 저장"
+                title="내 기록 CSV로 저장"
               >
                 <Download className="h-3.5 w-3.5" />
-                CSV 저장
+                내 기록 CSV
               </button>
               <div className="flex gap-0.5 text-[11px] bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5">
                 <button type="button" onClick={() => changeView("simple")} aria-pressed={view === "simple"} className={"px-2.5 py-1 rounded-md transition " + (view === "simple" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>간단</button>
@@ -827,7 +827,7 @@ export function WatchlistClient({
 
         {watchlist.length > 0 ? (
           <p className="mb-3 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-            그룹·메모는 이 브라우저에만 저장되고, CSV는 전체 관심 목록 기준으로 이 브라우저에서 만들어져요.
+            그룹·메모는 이 브라우저에만 저장됩니다. CSV에는 종목 코드와 내가 작성한 그룹·메모·추가일만 담기며 가격·점수 등 외부 데이터는 포함하지 않습니다.
             {" "}
             그룹 지정 {groupedWatchlistCount}개 · 메모 {notedWatchlistCount}개
             {activeGroupFilter !== GROUP_FILTER_ALL ? <> · 현재 {activeGroupFilterLabel} {filteredWatchlist.length}개 표시</> : null}

@@ -10,7 +10,8 @@
 //   - docs/data-rights-matrix.md 는 2026-07-22 데이터 권리 결정 패킷을 정본으로 연결한다.
 //   - 정본은 KRX·DART·Naver/FDR·Yahoo/yfinance를 분리하고, FDR bare ticker의
 //     실제 Naver 경로와 공개 원시 price files를 기록하며 법적 클리어런스를 단정하지 않는다.
-// 정적 소스/카피 고정만 수행한다. 점수식·데이터·라우트·인증 무변경.
+// 권리 정본의 법적 비주장과 상용화 게이트 문구를 고정한다. 실제 API·다운로드·출처
+// 표면의 방어 상태는 release preflight의 verify:data-rights가 별도로 fail-closed 검증한다.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";

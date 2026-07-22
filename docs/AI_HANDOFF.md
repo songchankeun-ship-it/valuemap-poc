@@ -3931,3 +3931,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - The packet includes exact provider questions, commercialization blocks, legal-review questions, and a phased replacement backlog. It expressly provides no legal opinion or commercial clearance.
 - Scope stayed documentation plus a static consistency guard. Public data, Metrics 2.4, the 138-stock output, workflows, auth/provider behavior, packages, runtime values, and external account state are unchanged.
 - Next agent: do not implement a source migration without the owner's provider/contract decision. The safest pre-migration implementation is a fail-closed rights manifest plus corrected source labels, reviewed against this packet. Continue existing Naver, Google Play, and Metrics 2.5.1 waits independently.
+
+## 2026-07-22 - Data-rights P0 containment [codex]
+
+- Runtime quote containment is complete. `src/components/LivePrice.tsx` no longer polls; `src/app/api/quote/[ticker]/route.ts` reads the published close from `realStockPool` and returns `published-close` with the dataset date. Do not reintroduce an external quote endpoint without a written provider decision and manifest review.
+- `config/data-rights-manifest.json` is the machine-readable no-expansion policy. `scripts/verify-data-rights.mjs` runs inside `release:preflight`, which means the daily publication workflow also fails closed on policy drift. Its self-test proves monetization, new API routes, unofficial polling, provider-derived CSV fields, and removal of no-expansion are rejected.
+- Public source copy now distinguishes KRX-listed market origin from Naver Finance delivery and FinanceDataReader collection. Yahoo/yfinance fields are explicitly under review; Open DART is official-API-conditional. This is transparency and technical containment, not legal clearance.
+- Watchlist CSV is limited to user-owned fields: ticker, group, note, and addedAt. Do not add stock name, score, price, valuation, or other provider-derived fields while the manifest block is active.
+- Full green evidence: release preflight 12/12 with 192 pages, reaudit 13/13, local route-health 6/6, smoke 25/25, TypeScript, direct `published-close` API assertions, and no frozen-boundary changes. Public data, Metrics 2.4, universe 138, workflows, auth/provider behavior, dependencies, and outside state are unchanged.
+- Private Metrics 2.5.1 is currently **3/5** on 2026-07-20/21/22. Existing schedules should collect the remaining two dates without owner action unless they alert.
+- Next agent: wait for a written price/volume provider decision before replacing the daily adapter. A private Open DART fundamentals parity adapter is the next safe implementation candidate; keep it out of public outputs until reviewed.

@@ -3,7 +3,7 @@
  * 클라이언트 컴포넌트가 stocks.json 번들 없이 읽도록 데이터 파생 문자열과 분리한다.
  * 데이터 파생값(상태 라벨·도메인 상태·출처 사용처·제한·고지·자동 점검 수치)은 dataStatus.ts의 dataStatusByLocale에서 온다.
  * ko = 화면 그대로(verbatim), en = 충실 번역. 금융 문구는 양쪽 모두 보수적·비자문(투자 추천 아님).
- * 출처/제품명(KRX·Naver·DART·FinanceDataReader)·날짜·숫자·산식 버전 표기는 원형 유지.
+ * 출처/제품명(KRX·Naver·DART·FinanceDataReader)·날짜·숫자·산식 버전은 시장 원천과 실제 전달 경로를 구분한다.
  * 내부 파이프라인 구현 세부(워크플로·저장 테이블·크론·코드 기대 산식 버전)는 공개 표면에 넣지 않고 보호된 /admin/status 에만 둔다.
  */
 import type { Locale } from "@/lib/i18n";
@@ -86,8 +86,8 @@ export const statusCopy = {
     // 데이터 소스
     sourcesHeading: "데이터 소스",
     sources: {
-      price: { name: "가격·지표 (FinanceDataReader)", detail: "매 영업일 장마감 후 자동 갱신" },
-      quote: { name: "현재가 (네이버 지연 시세)", detail: "페이지 열 때 실시간 조회 (참고용)" },
+      price: { name: "가격·지표 (Naver Finance 전달 · FDR 수집)", detail: "장마감 배치 · 권리 검토 중 · 기존 무료 베타만" },
+      quote: { name: "종목 표시 가격 (공개 장마감 종가)", detail: "별도 실시간 조회 없음 · 화면에 기준일 표시" },
       disclosure: { name: "공시 (DART)", detail: "DART 연동 상태: 정상" },
       alert: {
         name: "KRX 시장경보",
@@ -113,7 +113,7 @@ export const statusCopy = {
 
     // 푸터 + 하단 링크
     footerNote:
-      "데이터는 평일마다 장 마감 후 자동 갱신됩니다. 갱신 실패 시 직전 정상 데이터가 유지되며, 새 데이터는 자동 검증(정합성·브랜드)을 통과한 경우에만 반영됩니다. 모든 점수·순위는 종가 기준이며 투자 추천이 아닙니다.",
+      "데이터는 평일마다 장 마감 후 자동 갱신됩니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않으며, 별도 실시간 시세를 조회하지 않습니다. 모든 점수·순위는 공개 장마감 스냅샷 기준이며 투자 추천이 아닙니다.",
     linkMetricsGuide: "지표 계산 방식 보기 →",
     linkChangelog: "산식 변경 이력 →",
   },
@@ -187,8 +187,8 @@ export const statusCopy = {
 
     sourcesHeading: "Data sources",
     sources: {
-      price: { name: "Price · metrics (FinanceDataReader)", detail: "Auto-updated after each market close on business days" },
-      quote: { name: "Current price (Naver delayed quote)", detail: "Fetched live on page load (reference only)" },
+      price: { name: "Price · metrics (Delivered via Naver Finance · collected by FDR)", detail: "Market-close batch · rights under review · existing free beta only" },
+      quote: { name: "Displayed price (published market close)", detail: "No separate live quote request · as-of date shown on screen" },
       disclosure: { name: "Disclosures (DART)", detail: "DART connection: active" },
       alert: {
         name: "KRX market alerts",
@@ -213,7 +213,7 @@ export const statusCopy = {
     verifyOutbound: "Links open the external site in a new tab.",
 
     footerNote:
-      "Data is auto-updated after market close on weekdays. If an update fails, the last good data is kept, and new data is applied only after passing automated checks (consistency and branding). All scores and rankings are based on closing prices and are not investment advice.",
+      "Data updates after market close on business days. Sources under rights review are not expanded beyond the existing free beta, and no separate live quote is requested. Scores and rankings use the published market-close snapshot and are not investment advice.",
     linkMetricsGuide: "See how metrics are calculated →",
     linkChangelog: "Formula changelog →",
   },

@@ -210,7 +210,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
     footer: {
       sourcePrefix: "데이터 출처:",
       body: (count: number) =>
-        ` KRX 일별 종가 (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance 가격 보조 데이터. ${count}개 종목. 영업일 마감 후 자동 갱신.`,
+        ` KRX 상장 종목 가격·거래량(Naver Finance 전달, FinanceDataReader 수집), Naver Finance PER·PBR·ROE, yfinance 보조 필드. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않습니다. ${count}개 종목.`,
     },
     glossary: {
       title: "용어 한눈에",
@@ -356,7 +356,7 @@ export const metricsGuideCopy: Record<Locale, MetricsGuideCopy> = {
     footer: {
       sourcePrefix: "Data sources:",
       body: (count: number) =>
-        ` KRX daily close (FinanceDataReader), Naver Finance PER·PBR·ROE, yfinance supplementary price data. ${count} stocks. Updated automatically after market close on business days.`,
+        ` KRX-listed price and volume (Delivered via Naver Finance and collected by FinanceDataReader), Naver Finance PER·PBR·ROE, and yfinance supplementary fields. Sources under rights review are not expanded beyond the existing free beta. ${count} stocks.`,
     },
     glossary: {
       title: "Glossary at a glance",

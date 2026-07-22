@@ -133,7 +133,7 @@ export const todayCopy = {
 
     // ── 푸터 출처 ──
     sourceNote:
-      "본 페이지는 KRX 일별 종가(FinanceDataReader), Naver Finance 재무 지표, DART 공시 실데이터를 기반으로 자동 생성됩니다. 영업일 마감 후 자동 갱신. 본 도구는 투자 추천이 아니라 탐색 우선순위를 제시하는 분석 도구입니다.",
+      "본 페이지는 KRX 상장 종목의 일별 가격·거래량(Naver Finance 전달, FinanceDataReader 수집), Naver Finance 재무 지표, Open DART 공시를 기반으로 자동 생성됩니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않습니다. 본 도구는 투자 추천이 아니라 탐색 우선순위를 제시하는 분석 도구입니다.",
 
     // ── 동적 신호 문구(reason/note) ──
     reason: {
@@ -279,7 +279,7 @@ export const todayCopy = {
 
     // ── Footer source note ──
     sourceNote:
-      "This page is generated automatically from KRX daily close prices (FinanceDataReader), Naver Finance financial metrics, and real DART disclosure data. Updated automatically after market close on business days. This tool is not investment advice but an analysis tool that suggests research priorities.",
+      "This page uses KRX-listed daily price and volume (Delivered via Naver Finance and collected by FinanceDataReader), Naver Finance financial metrics, and Open DART disclosures. Sources under rights review are not expanded beyond the existing free beta. This is a research-priority tool, not investment advice.",
 
     // ── Dynamic signal text (reason/note) ──
     reason: {

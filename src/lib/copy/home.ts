@@ -185,7 +185,7 @@ export const homeCopy = {
       notAdvice: "제공하는 점수·지표·공시 분류는 종목 탐색을 돕는 참고 정보이며, 매수·매도 추천이나 수익 보장이 아닙니다. 최종 투자 판단과 책임은 이용자 본인에게 있습니다.",
       label: "데이터 출처:",
       bodyA:
-        "KRX 일별 종가 (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance 가격 보조 데이터, DART 공시 실데이터. ",
+        "KRX 상장 종목 가격·거래량(Naver Finance 전달, FinanceDataReader 수집), Naver Finance 재무 지표, yfinance 보조 필드, Open DART 공시. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않습니다. ",
       bodyMid: "개 종목 · 매일 갱신 · 데이터 기준 ",
       bodyEnd: " 장마감.",
       about: "서비스 소개",
@@ -352,7 +352,7 @@ export const homeCopy = {
       notAdvice: "The scores, metrics, and disclosure classifications provided are reference information to aid stock exploration — not buy/sell recommendations or profit guarantees. Final investment decisions and their consequences are your own.",
       label: "Data sources:",
       bodyA:
-        "KRX daily close (FinanceDataReader), Naver Finance PER/PBR/ROE, yfinance auxiliary price data, DART disclosure data. ",
+        "KRX-listed price and volume (Delivered via Naver Finance, collected by FinanceDataReader), Naver Finance financials, yfinance supplementary fields, and Open DART disclosures. Sources under rights review are not expanded beyond the existing free beta. ",
       bodyMid: " stocks · updated daily · data as of ",
       bodyEnd: " market close.",
       about: "About",

@@ -74,23 +74,23 @@ export default function AboutPage() {
         <ul className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>KRX 일별 종가</strong> (FinanceDataReader) — 매일 장 마감 후 자동 갱신</span>
+            <span><strong>일별 가격·거래량</strong> — KRX 상장 종목 · Naver Finance 전달 · FinanceDataReader(NaverDailyReader) 수집 · 권리 검토 중</span>
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>Naver Finance</strong> — PER · PBR · ROE · 배당수익률</span>
+            <span><strong>재무 지표</strong> — Naver Finance HTML 기반 PER · PBR · ROE · 배당수익률 · 권리 검토 중</span>
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>yfinance</strong> — 배당수익률·베타 등 가격·수익률 보조 데이터</span>
+            <span><strong>보조 필드</strong> — Yahoo Finance 전달 · yfinance 기반 배당수익률·베타·PEG · 권리 검토 중</span>
           </li>
           <li className="flex gap-2">
             <span className="text-zinc-400 dark:text-zinc-500 shrink-0">•</span>
-            <span><strong>DART</strong> — 공시 실데이터 (자기주식·임원·주요주주 보유변동·정정·계약·자금조달)</span>
+            <span><strong>Open DART 공식 API</strong> — 공시 원문과 자기주식·임원·주요주주 보유변동·정정·계약·자금조달 분류</span>
           </li>
         </ul>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
-          일부 데이터는 출처 시스템의 갱신 지연이나 휴장일 영향으로 1~2 영업일 지연될 수 있습니다. 데이터 기준일은 항상 상단 회색 바에 표시됩니다.
+          출처 표시는 이용·재배포 허가를 뜻하지 않습니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않으며, 데이터 기준일은 항상 상단 상태 바에 표시됩니다.
         </p>
       </section>
 

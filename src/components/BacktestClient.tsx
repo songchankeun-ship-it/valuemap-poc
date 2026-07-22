@@ -451,7 +451,7 @@ export function BacktestClient({ data, names = {}, siteDataAsOf }: { data: Backt
       {/* 세 가지 날짜를 분리 표기 — 백테스트 생성일 / 데이터 기간 / 사이트 현재 데이터 기준 (서로 다름) */}
       <section className="text-[11px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800 pt-4 space-y-1 leading-relaxed">
         <div>데이터 기간 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{data.period.from} ~ {data.period.to}</strong> ({data.period.years}년) · 유니버스 {data.universe}종목</div>
-        <div>백테스트 생성일 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{formatGeneratedAt(data.generatedAt)}</strong> · KRX 일별 종가(FDR)</div>
+        <div>백테스트 생성일 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{formatGeneratedAt(data.generatedAt)}</strong> · KRX 상장 종목 종가 · Naver Finance 전달/FDR 수집 · 권리 검토 중</div>
         {siteDataAsOf ? (
           <div>사이트 현재 데이터 기준 <strong className="text-zinc-700 dark:text-zinc-300 tabular-nums">{siteDataAsOf}</strong> 장마감 · 위 백테스트 기간과 다릅니다</div>
         ) : null}

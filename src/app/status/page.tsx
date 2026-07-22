@@ -16,7 +16,7 @@ import { trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const metadata = {
   title: "주식 데이터 기준일·출처 — 오른스코어",
-  description: "오른스코어의 주식 데이터 기준일, KRX·Naver Finance·DART 출처, 점수 산식 버전, 갱신 상태를 확인하는 데이터 상태 페이지.",
+  description: "오른스코어의 데이터 기준일, 실제 전달·수집 경로, Open DART 출처, 점수 산식 버전과 갱신 상태를 확인하는 페이지.",
   keywords: uniqueKeywords(trustKeywords),
 };
 

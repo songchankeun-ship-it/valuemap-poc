@@ -265,7 +265,7 @@ export const homeHeroCopy = {
     kpiVolume: "거래활성도 급증",
     kpiStrong: "종합 80↑",
     footerPrefix: "분석 종목",
-    footerSuffix: "개 · 영업일 장마감 후 자동 갱신 · KRX · Naver · DART",
+    footerSuffix: "개 · 영업일 장마감 후 자동 갱신 · 가격 Naver 전달/FDR · 공시 DART",
   },
   en: {
     badge: "OrnScore · Free beta",
@@ -307,7 +307,7 @@ export const homeHeroCopy = {
     kpiVolume: "Activity spikes",
     kpiStrong: "Composite 80+",
     footerPrefix: "Analyzed",
-    footerSuffix: "stocks · Updated after market close on business days · KRX · Naver · DART",
+    footerSuffix: "stocks · Updated after market close · Price delivered via Naver/FDR · Disclosures via DART",
   },
 } as const satisfies Record<Locale, unknown>;
 

@@ -39,7 +39,7 @@ export default function TermsPage() {
         <ul className="list-disc list-inside space-y-1 ml-1 text-[13px]">
           <li>본 서비스는 현재 <strong className="text-zinc-900 dark:text-zinc-100">무료 베타</strong>로 제공되며, <strong className="text-zinc-900 dark:text-zinc-100">유료 결제를 제공하지 않습니다.</strong></li>
           <li>로그인은 <strong className="text-zinc-900 dark:text-zinc-100">이메일 매직링크 또는 소셜 로그인(카카오·구글·네이버)</strong>으로만 처리하며, <strong className="text-zinc-900 dark:text-zinc-100">비밀번호를 저장하지 않습니다.</strong></li>
-          <li>제공 데이터의 출처는 <strong className="text-zinc-900 dark:text-zinc-100">KRX·DART·Naver Finance·yfinance</strong> 등 공개 데이터이며, 본 서비스는 데이터 분석 도구로서 투자자문·매수·매도 추천을 제공하지 않습니다.</li>
+          <li>제공 정보는 <strong className="text-zinc-900 dark:text-zinc-100">Naver Finance 전달·FinanceDataReader 수집 가격, Naver Finance 재무 지표, yfinance 보조 필드, Open DART 공시</strong> 등을 사용합니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않습니다.</li>
         </ul>
         <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2">향후 유료 기능을 도입하는 경우 결제·환불·청약철회 등 세부 조건은 사전에 확정·공지합니다. 현재는 미확정 상태입니다.</p>
       </section>
@@ -53,7 +53,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제2조 (서비스의 성격)</h2>
-          <p>본 서비스는 공개된 한국 주식 시장 데이터(KRX·DART·Naver Finance·yfinance 등)와 자체 산식에 따른 점수·신호를 제공하는 <strong className="text-zinc-900 dark:text-zinc-100">데이터 분석 도구</strong>입니다.</p>
+          <p>본 서비스는 외부에서 수집한 한국 주식 시장 정보와 Open DART 공시, 자체 산식에 따른 점수·신호를 제공하는 <strong className="text-zinc-900 dark:text-zinc-100">데이터 분석 도구</strong>입니다. 외부 접근 가능성이나 출처 표시는 상업 이용·재배포 허가를 의미하지 않습니다.</p>
           <p>본 서비스는 다음을 제공하지 않습니다:</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li>투자자문, 투자권유, 매수·매도 추천</li>
@@ -84,7 +84,7 @@ export default function TermsPage() {
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">제5조 (지적재산권)</h2>
           <p>본 서비스가 자체 개발한 점수 산식, UI 디자인, 코드는 운영자의 지적재산입니다. 무단 복제·배포·상업적 활용을 금지합니다.</p>
           <p>산식 검증을 위해 일부 계산 코드를 공개 저장소에 게시하나, 이는 오픈소스 라이선스 부여가 아니며 사용 조건은 본 약관과 저장소의 LICENSE를 따릅니다.</p>
-          <p>원본 데이터(KRX·DART·Naver Finance 등)의 저작권은 각 출처에 있습니다.</p>
+          <p>원본 데이터와 공시의 권리는 각 출처 및 권리자에게 있습니다. 권리 검토가 끝나지 않은 데이터는 유료 기능, 제공자 파생 데이터 다운로드, 신규 공개 API 또는 재배포 확대에 연결하지 않습니다.</p>
         </section>
 
         <section>

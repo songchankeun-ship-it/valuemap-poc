@@ -72,7 +72,7 @@ export function HeaderDataBar({
             )}
           </span>
           <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">·</span>
-          <span className="text-zinc-600 dark:text-zinc-300 hidden md:inline whitespace-nowrap">KRX · Naver · DART</span>
+          <span className="text-zinc-600 dark:text-zinc-300 hidden md:inline whitespace-nowrap">가격 Naver 전달/FDR · 공시 DART</span>
           <span className="hidden sm:inline-flex"><MetricsVersionBadge label={metricsVersionLabel} /></span>
           <LocalizedDataTrustModal
             statusByLocale={statusByLocale}

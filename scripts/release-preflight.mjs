@@ -20,8 +20,9 @@
 //   7. verify:admin-traffic-view  numeric dashboard shell view-model derivations
 //   8. verify:admin-resource-state operator diagnostics state classifier + labels
 //   9. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
-//  10. verify:reaudit        all public-reaudit source contracts (Slices A-M)
-//  11. build                 next build
+//  10. verify:data-rights    fail-closed source-rights manifest and surface guard
+//  11. verify:reaudit        all public-reaudit source contracts (Slices A-M)
+//  12. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -109,6 +110,7 @@ const OFFLINE_GATES = [
   { name: "verify:admin-traffic-view", command: "npm", args: ["run", "verify:admin-traffic-view"], shell: true },
   { name: "verify:admin-resource-state", command: "npm", args: ["run", "verify:admin-resource-state"], shell: true },
   { name: "verify:first-run-ux", command: "npm", args: ["run", "verify:first-run-ux"], shell: true },
+  { name: "verify:data-rights", command: "npm", args: ["run", "verify:data-rights"], shell: true },
   { name: "verify:reaudit", command: "npm", args: ["run", "verify:reaudit"], shell: true },
 ];
 if (RUN_BUILD) {

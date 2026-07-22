@@ -70,7 +70,7 @@ export default function BacktestPage() {
           <div>
             <h2 className="font-semibold text-amber-900 dark:text-amber-200 mb-2">실데이터 준비 중</h2>
             <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
-              5년치 KRX 일별 데이터로 가격 기반 신호 전략을 검증하는 엔진이 준비됐습니다.
+              KRX 상장 종목의 외부 수집 일별 데이터로 가격 기반 신호 전략을 검증하는 엔진이 준비됐습니다.
               데이터 수집 후 <code className="px-1 rounded bg-amber-100 dark:bg-amber-900/50">python scripts/backtest/run_real.py</code> 를 실행하면
               이 페이지에 실제 누적 수익률·MDD·Sharpe·알파가 자동으로 표시됩니다.
             </p>
@@ -96,7 +96,7 @@ export default function BacktestPage() {
       </section>
 
       <section className="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
-        <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 일별 종가 (FDR 경유). {realStockPool.length}개 종목.
+        <strong className="text-gray-700 dark:text-zinc-300">사용 데이터:</strong> KRX 상장 종목 일별 종가 · Naver Finance 전달 · FDR 수집 · 권리 검토 중. {realStockPool.length}개 종목.
         벤치마크는 분석 유니버스 {realStockPool.length}종목 동일가중 매수후보유 전략입니다 (KOSPI·KOSDAQ 같은 실제 시장지수가 아닙니다).
       </section>
 

@@ -16,7 +16,7 @@
 | FinanceDataReader 소프트웨어 | **GREEN · 코드만** | MIT 라이선스는 라이브러리 코드 사용에만 적용한다. 수집한 데이터 권리의 근거로 사용하지 않는다. |
 | 국내 일별 가격·거래량 | **RED · 교체 우선 1** | 현재 `fdr.DataReader(ticker)`는 KRX 직접 경로가 아니라 네이버 차트 경로다. 서면 허가 또는 계약된 소스로 교체하기 전 유료 기능·외부 다운로드·신규 재배포를 금지한다. |
 | Naver Finance 재무 HTML 수집 | **RED · 교체 우선 2** | 수동 재생성 경로를 확대하지 않는다. DART 기반 계산 또는 계약된 재무 공급자로 교체한다. |
-| Naver 지연 현재가 프록시 | **RED · 교체 또는 비노출** | 공개 페이지의 보조 기능으로도 권리 근거가 없다. 허가된 지연 시세가 없으면 마지막 승인 종가만 표시한다. |
+| Naver 지연 현재가 프록시 | **REMOVED · 2026-07-22 방어 완료** | 외부 폴링을 제거했다. 화면과 호환 API는 배포된 장마감 스냅샷 종가와 기준일만 사용한다. |
 | Yahoo / yfinance 필드 | **RED · 제거 우선 3** | 새 공개 스냅샷에 사용하지 않는다. 유료화 전 기존 `dividendYield`, `beta`, `peg`의 출처를 교체하거나 필드를 제거한다. |
 | KRX 시장경보 비공식 호출 | **RED · 비활성 유지** | 현재 결과가 비어 있는 상태를 유지하고, 허가·계약 전 활성화하지 않는다. |
 | 자체 점수·백테스트 | **AMBER · 원천 권리 상속** | 계산식은 자체 저작물이지만 입력 가격의 권리 문제가 해소될 때까지 상용화 근거로 사용하지 않는다. |
@@ -46,11 +46,11 @@
 | 공시 API 응답 | 접수번호, 보고서명, 제출인, 일자, 원문 링크, 규칙 기반 신호 | `src/lib/dart.ts`, `src/lib/corp-codes.ts`, `src/app/api/disclosures/**` → Open DART 공식 API | **GREEN · 조건부 유지**. |
 | 공시 상세 보조 파일 | 계약, 자본, 정정, 임원·주주, 자사주 관련 구조화 필드 | `scripts/fetch_*_details.py` → Open DART 공식 API | **GREEN · 조건부 유지**. 원문과 자동 해석을 구분한다. |
 
-### 2.2 라이브 호출
+### 2.2 런타임 호출
 
 | 기능 | 코드 | 엔드포인트 | 판정 |
 |---|---|---|---|
-| 지연 현재가 | `src/app/api/quote/[ticker]/route.ts` | `polling.finance.naver.com/api/realtime/domestic/stock/{ticker}` | **RED**. 비공식 엔드포인트를 브라우저 User-Agent와 Referer로 호출한다. |
+| 공개 종가 호환 API | `src/app/api/quote/[ticker]/route.ts` | 빌드에 포함된 `realStockPool` | **CONTAINED**. 외부 호출 없이 공개 장마감 종가와 기준일만 반환한다. 종목 화면은 API 폴링 없이 같은 스냅샷을 직접 표시한다. |
 | 최근 공시 | `src/app/api/disclosures/recent/route.ts` | `opendart.fss.or.kr/api/list.json` | **GREEN · 조건부 유지**. |
 | 종목별 공시 | `src/app/api/disclosures/[ticker]/route.ts` | Open DART 공시·기업 API | **GREEN · 조건부 유지**. |
 
@@ -83,7 +83,7 @@ KRX에서 거래된 종목이라는 사실만으로 Naver 전달 경로를 KRX �
 ### 3.2 Naver
 
 - [네이버 서비스 이용약관](https://policy.naver.com/policy/service.html)은 사전 허락 없는 자동화 수단 사용과 서비스 취지에 맞지 않는 자동 이용을 제한한다.
-- 현재 구현은 `finance.naver.com` HTML, `fchart.stock.naver.com`, `polling.finance.naver.com`을 자동 호출한다.
+- 일일 배치와 수동 생성기는 `finance.naver.com` HTML 및 `fchart.stock.naver.com`을 자동 호출한다. 런타임 `polling.finance.naver.com` 호출은 2026-07-22 제거했다.
 - 저장소에서 Naver Finance 데이터 수집·저장·공개 표시에 대한 별도 허가나 계약은 확인되지 않았다.
 
 **판정:** 기술적으로 접근된다는 사실만으로 공개 재배포나 상업 이용이 승인됐다고 볼 근거가 없다. 세 경로 모두 교체 대상이다.
@@ -119,7 +119,7 @@ KRX에서 거래된 종목이라는 사실만으로 Naver 전달 경로를 KRX �
 - `scripts/fetch_stock_data.py`를 운영 재생성 경로로 확대하지 않는다.
 - Naver·Yahoo 유래 필드에 신규 기능, 알림, 유료 플랜, 다운로드를 연결하지 않는다.
 - KRX 시장경보 비공식 수집은 비활성으로 유지한다.
-- 이 작업에서는 워크플로, 공개 데이터, 외부 계정 설정을 변경하지 않는다. 중단 여부는 오너가 이 패킷을 승인한 뒤 별도 변경으로 수행한다.
+- 2026-07-22 방어 작업은 워크플로, 공개 데이터, 외부 계정 설정을 변경하지 않고 런타임 폴링 제거, 출처 카피 정정, 권리 매니페스트와 릴리스 게이트만 적용했다.
 
 ### 단계 1. 가격·거래량 공급 계약
 
@@ -141,7 +141,7 @@ KRX에서 거래된 종목이라는 사실만으로 Naver 전달 경로를 KRX �
 
 ### 단계 3. Naver·Yahoo 제거
 
-- `src/app/api/quote/[ticker]/route.ts`는 허가된 지연 시세 어댑터로 교체하거나 제거한다.
+- **완료:** `src/app/api/quote/[ticker]/route.ts`의 Naver 지연 시세 호출을 제거하고 공개 장마감 스냅샷 응답으로 제한했다.
 - `fetch_stock_data.py`의 Naver HTML과 yfinance 호출을 운영 경로에서 제거한다.
 - 기존 `stocks.json`의 `dividendYield`, `beta`, `peg`는 새 출처로 재생성할 수 없으면 공개 스키마에서 단계적으로 제외한다.
 - 공개 출처 카피와 `/status`는 실제 전달 사업자와 라이선스 상태를 반영한다.
@@ -201,11 +201,11 @@ KRX 문의 기준 주소는 공식 사이트에 게시된 `krxdata@krx.co.kr`이
 
 | 순서 | 작업 | 완료 기준 |
 |---|---|---|
-| P0-1 | 공개 출처 문구 정정 | KRX 시장 원천, Naver 전달 경로, FDR 어댑터를 분리해 표시한다. |
-| P0-2 | 권리 프로필 계약 정의 | 공급자별 허용 필드·표시·저장·파생·유료 사용을 기계 판독형으로 관리한다. |
+| P0-1 | 공개 출처 문구 정정 | **완료.** KRX 시장 원천, Naver 전달 경로, FDR 어댑터를 분리해 표시한다. |
+| P0-2 | 권리 프로필 계약 정의 | **방어 단계 완료.** `config/data-rights-manifest.json`이 미확인 소스의 유료화·다운로드·신규 API·재배포·신규 필드를 차단한다. 계약 수신 후 허용 범위를 별도 갱신한다. |
 | P0-3 | 가격 공급자 어댑터 | fixture 비교 후 138종목의 종가·거래량·기업행사 정합성을 통과한다. |
 | P0-4 | 재무 공급자 어댑터 | PER/PBR/ROE/배당의 계산 기준일과 결측 정책을 재현한다. |
-| P1-1 | Naver 지연 시세 제거·교체 | 비공식 폴링 호출이 코드와 배포 산출물에서 사라진다. |
+| P1-1 | Naver 지연 시세 제거·교체 | **완료.** 비공식 폴링 호출을 제거하고 공개 장마감 종가로 대체했다. |
 | P1-2 | yfinance 제거 | 공개 데이터와 생성기에서 Yahoo 유래 필드·라이브러리가 사라진다. |
 | P1-3 | 기존 공개 데이터 처리 | 교체, 보관 또는 삭제 결정을 법률 검토와 계약에 따라 기록한다. |
 | P1-4 | 배포 게이트 | 계약 만료·권리 메타 누락·허용 외 필드가 있으면 배포를 차단한다. |
@@ -221,6 +221,8 @@ KRX 문의 기준 주소는 공식 사이트에 게시된 `krxdata@krx.co.kr`이
 ## 8. 변경 관리
 
 - 정본: 이 문서
+- 기계 판독형 방어 정책: `config/data-rights-manifest.json`
+- 릴리스 차단 검사: `npm run verify:data-rights` (전체 `release:preflight`와 일일 배포 게이트에 포함)
 - 역사 자료: `docs/data-rights-matrix.md`, `docs/data-source-commercial-risk.md`
 - 다음 재검토: 공급자 서면 답변 수신 시, 데이터 어댑터 교체 전, 유료 기능 공개 전, 약관 변경 감지 시
 - 승인 기록 필수값: 검토자, 검토일, 원문 URL/파일 해시, 계약 ID, 허용 범위, 만료일, 잔여 예외

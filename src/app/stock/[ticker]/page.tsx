@@ -533,7 +533,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         ticker={s.ticker}
         asOfLabel={globalAsOf}
         priceLagAsOf={priceLagAsOf}
-        priceSlot={<LivePrice ticker={s.ticker} fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={livePriceAsOf} />}
+        priceSlot={<LivePrice fallbackPrice={displayPrice} fallbackChangePct={displayChangePct} asOf={livePriceAsOf} />}
         actionsSlot={
           <>
             <AddToWatchlistButton ticker={s.ticker} name={s.name} />

@@ -65,10 +65,22 @@ export interface DataSource {
 
 /** 데이터 출처별 사용 목적 (설계서 §9). */
 export const DATA_SOURCES: DataSource[] = [
-  { id: "krx", label: "KRX", usage: "가격·거래량·종가 계산에 사용합니다." },
-  { id: "naver", label: "Naver Finance", usage: "PER·PBR·ROE·배당 등 재무 지표에 사용합니다." },
-  { id: "yfinance", label: "yfinance", usage: "보조 가격 데이터와 시계열 검증에 사용합니다." },
-  { id: "dart", label: "DART", usage: "공시 원문과 공시 신호 분류에 사용합니다." },
+  {
+    id: "price",
+    label: "Naver Finance 전달 · FinanceDataReader",
+    usage: "KRX 상장 종목의 일별 가격·거래량 수집 경로입니다. 권리 검토 중이며 기존 무료 베타 범위를 확대하지 않습니다.",
+  },
+  {
+    id: "naver",
+    label: "Naver Finance 재무 지표",
+    usage: "PER·PBR·ROE·배당 등 HTML 기반 필드입니다. 권리 검토 중이며 교체 대상입니다.",
+  },
+  {
+    id: "yfinance",
+    label: "Yahoo Finance 전달 · yfinance",
+    usage: "배당·베타·PEG 보조 필드입니다. 권리 검토 중이며 교체 또는 제거 대상입니다.",
+  },
+  { id: "dart", label: "Open DART 공식 API", usage: "공시 원문과 공시 신호 분류에 조건부로 사용합니다." },
 ];
 
 /**
@@ -172,7 +184,7 @@ export const domainStatuses: DomainStatus[] = [
     status,
     statusLabel: statusMeta.label,
     meaning: statusMeta.meaning,
-    detail: `${formatBizDateLong(asOf)} 장마감 · KRX`,
+    detail: `${formatBizDateLong(asOf)} 장마감 · Naver Finance 전달 · FDR 수집`,
   },
   {
     key: "financial",
@@ -389,10 +401,11 @@ const DATA_STATUS_META_EN: Record<DataStatusKind, { label: string; meaning: stri
 };
 
 const DATA_SOURCES_EN_USAGE: Record<string, string> = {
-  krx: "Used for price, volume, and close-based calculations.",
-  naver: "Used for PER, PBR, ROE, dividend, and other financial metrics.",
-  yfinance: "Used for supplementary price data and time-series validation.",
-  dart: "Used for disclosure text and disclosure-signal classification.",
+  price:
+    "KRX-listed daily price and volume, Delivered via Naver Finance and collected by FinanceDataReader. Rights are under review and the existing free-beta scope is not expanded.",
+  naver: "HTML-based PER, PBR, ROE, dividend and other fields. Rights are under review and this source is scheduled for replacement.",
+  yfinance: "Yahoo Finance dividend, beta and PEG fields delivered through yfinance. Rights are under review; replace or remove.",
+  dart: "Open DART official API for filing text and derived disclosure classification, subject to its API terms.",
 };
 
 const LIMIT_DISCLOSURE_EN =
@@ -444,7 +457,7 @@ const domainStatusesEn: DomainStatus[] = [
     status,
     statusLabel: DATA_STATUS_META_EN[status].label,
     meaning: DATA_STATUS_META_EN[status].meaning,
-    detail: `${formatBizDateLong(asOf)} market close · KRX`,
+    detail: `${formatBizDateLong(asOf)} market close · Delivered via Naver Finance · collected by FDR`,
   },
   {
     key: "financial",

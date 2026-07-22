@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-07-22",
+  "legalStatus": "technical-containment-not-legal-clearance",
+  "globalPolicy": {
+    "monetization": "blocked",
+    "providerDerivedBulkDownload": "blocked",
+    "newPublicDataApi": "blocked",
+    "redistributionExpansion": "blocked",
+    "newFieldsFromUnclearedSources": "blocked"
+  },
+  "existingApiRouteBaseline": [
+    "src/app/api/ai/analyze/route.ts",
+    "src/app/api/auth/naver/userinfo/route.ts",
+    "src/app/api/cron/daily-insight/route.ts",
+    "src/app/api/cron/evaluate-alerts/route.ts",
+    "src/app/api/cron/notify/route.ts",
+    "src/app/api/cron/save-scores/route.ts",
+    "src/app/api/dart/route.ts",
+    "src/app/api/disclosures/[ticker]/route.ts",
+    "src/app/api/disclosures/recent/route.ts",
+    "src/app/api/quote/[ticker]/route.ts",
+    "src/app/api/report-data-issue/route.ts",
+    "src/app/api/themes/route.ts",
+    "src/app/api/waitlist/route.ts"
+  ],
+  "datasets": [
+    {
+      "id": "daily-price-volume",
+      "marketOrigin": "KRX-listed securities",
+      "deliveryProvider": "Naver Finance",
+      "adapter": "FinanceDataReader NaverDailyReader",
+      "rightsStatus": "unverified",
+      "existingExposure": "documented-not-cleared",
+      "repositoryPolicy": ["existing-free-beta-only", "no-expansion", "replace-provider"],
+      "blockedOperations": ["monetization", "provider-derived-bulk-download", "new-public-data-api", "redistribution-expansion", "new-fields"],
+      "replacement": "written-permission-or-contracted-provider"
+    },
+    {
+      "id": "naver-financial-html",
+      "marketOrigin": "issuer financial facts",
+      "deliveryProvider": "Naver Finance HTML",
+      "adapter": "scripts/fetch_stock_data.py",
+      "rightsStatus": "unverified",
+      "existingExposure": "documented-not-cleared",
+      "repositoryPolicy": ["existing-free-beta-only", "no-expansion", "replace-provider"],
+      "blockedOperations": ["monetization", "provider-derived-bulk-download", "new-public-data-api", "redistribution-expansion", "new-fields"],
+      "replacement": "Open DART calculations or contracted provider"
+    },
+    {
+      "id": "yahoo-yfinance-fields",
+      "marketOrigin": "Yahoo Finance",
+      "deliveryProvider": "Yahoo Finance",
+      "adapter": "yfinance",
+      "rightsStatus": "unverified",
+      "existingExposure": "documented-not-cleared",
+      "repositoryPolicy": ["existing-free-beta-only", "no-expansion", "replace-or-remove"],
+      "blockedOperations": ["monetization", "provider-derived-bulk-download", "new-public-data-api", "redistribution-expansion", "new-fields"],
+      "replacement": "contracted provider or field removal"
+    },
+    {
+      "id": "open-dart-disclosures",
+      "marketOrigin": "Financial Supervisory Service filings",
+      "deliveryProvider": "Open DART official API",
+      "adapter": "src/lib/dart.ts",
+      "rightsStatus": "official-api-conditional",
+      "existingExposure": "official-api-contract",
+      "repositoryPolicy": ["existing-display", "existing-derived-classification", "respect-key-and-quota"],
+      "blockedOperations": ["api-key-sharing", "quota-bypass"],
+      "replacement": "none while official terms are satisfied"
+    }
+  ]
+}

@@ -564,7 +564,7 @@ export function StockPriceChart({ ticker, name, points }: Props) {
       </div>
 
       <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center mt-2">
-        출처: FinanceDataReader · 종가 기준 일별 데이터
+        출처: Naver Finance 전달 · FinanceDataReader 수집 · 종가 기준 일별 데이터 · 권리 검토 중
         {hasOverlay ? " · 주요 지점·구간은 가격·거래량에서 자동 표시한 참고용 위치(호재·악재 판단 아님)" : ""}
       </p>
     </div>

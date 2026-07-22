@@ -1,17 +1,13 @@
 import type { WatchlistItem } from "@/lib/watchlist";
 
-export type WatchlistCsvStock = {
-  ticker: string;
-  name: string;
-  compositeScore?: number | null;
-};
-
 type WatchlistCsvItem = WatchlistItem & {
   group?: string | null;
   note?: string | null;
 };
 
-const CSV_HEADERS = ["ticker", "name", "group", "note", "addedAt", "compositeScore"] as const;
+// Provider-derived stock names, prices, and scores are intentionally excluded.
+// This export contains only the saved ticker and user-authored watchlist metadata.
+const CSV_HEADERS = ["ticker", "group", "note", "addedAt"] as const;
 const UTF8_BOM = "\uFEFF";
 const FORMULA_PREFIX_PATTERN = /^[=+\-@]/;
 const LEADING_CONTROL_PATTERN = /^[\t\r\n]/;
@@ -27,17 +23,13 @@ function escapeCsvCell(value: string | number | null | undefined): string {
   return text;
 }
 
-export function buildWatchlistCsv(items: WatchlistCsvItem[], stocks: WatchlistCsvStock[]): string {
-  const stockByTicker = new Map(stocks.map((stock) => [stock.ticker, stock]));
+export function buildWatchlistCsv(items: WatchlistCsvItem[]): string {
   const rows = items.map((item) => {
-    const stock = stockByTicker.get(item.ticker);
     return [
       item.ticker,
-      stock?.name ?? item.ticker,
       item.group ?? "",
       item.note ?? "",
       item.addedAt,
-      stock?.compositeScore ?? "",
     ];
   });
 
