@@ -29,7 +29,7 @@ import {
   EXPECTED_METRICS,
   DEFAULT_HOLIDAYS_2026,
 } from "./verify-market-close-health.mjs";
-import { expectedLastmodIso } from "./verify-public-seo.mjs";
+import { lastmodIsoFromData } from "./verify-public-seo.mjs";
 import { looksLikeSecret } from "./verify-framework-baseline.mjs";
 
 let failed = 0;
@@ -55,6 +55,11 @@ const GOOD_DATA = Object.freeze({
 const DATA_UNIVERSE_DRIFT = { ...GOOD_DATA, count: 137, stocks: GOOD_DATA.stocks.slice(0, 137) };
 const DATA_METRICS_DRIFT = { ...GOOD_DATA, metricsVersion: "2.5" };
 const DATA_NODATE = { ...GOOD_DATA, asOfBusinessDate: undefined, generatedAt: "not-a-date" };
+const GOOD_DATA_NEXT = Object.freeze({
+  ...GOOD_DATA,
+  generatedAt: "2026-07-17T09:00:00",
+  asOfBusinessDate: "20260717",
+});
 
 // Injected instants (UTC) chosen so the KST wall-clock lands where we want.
 const NOW_ENFORCE = new Date("2026-07-16T10:30:00Z"); // Thu 19:30 KST -> enforcing (past 19:00)
@@ -62,13 +67,14 @@ const NOW_GRACE = new Date("2026-07-16T08:30:00Z"); //   Thu 17:30 KST -> pre_pu
 const NOW_WEEKEND = new Date("2026-07-18T03:00:00Z"); //  Sat 12:00 KST -> non_trading_day
 const NOW_HOLIDAY = new Date("2026-08-17T03:00:00Z"); //  Mon 12:00 KST -> holiday (Liberation substitute)
 const NOW_MONDAY_ENFORCE = new Date("2026-07-20T10:30:00Z"); // Mon 19:30 KST -> current trading date due
+const NOW_FRIDAY_ENFORCE = new Date("2026-07-17T10:30:00Z"); // Fri 19:30 KST -> next fixture date due
 
-const EXPECT_LASTMOD = expectedLastmodIso(); // derived from the REAL public/data/stocks.json
+const EXPECT_LASTMOD = lastmodIsoFromData(GOOD_DATA);
 
 // ---------------------------------------------------------------------------
 // task-owned loopback mock server (a single configurable server)
 // ---------------------------------------------------------------------------
-const MODE = { pages: "good", sitemap: "good", robots: "good", login: "good" };
+const MODE = { pages: "good", data: "good", sitemap: "good", robots: "good", login: "good" };
 
 function pageOpts(variant) {
   switch (variant) {
@@ -77,6 +83,7 @@ function pageOpts(variant) {
     case "no138": return { universe: "" };
     case "nometrics": return { metrics: "Metrics 9.9" };
     case "stale-date": return { date: "1999.01.01" };
+    case "next-day": return { date: "2026.07.17" };
     case "marker-absent": return { marker: "" };
     default: return {};
   }
@@ -115,7 +122,7 @@ const SITEMAP_PATHS = [
   "/stock/005930", "/topics/undervalued-stocks", "/compare/005930-vs-000660",
 ];
 function sitemapXml(variant) {
-  const lm = EXPECT_LASTMOD;
+  const lm = lastmodIsoFromData(MODE.data === "next-day" ? GOOD_DATA_NEXT : GOOD_DATA);
   let list = SITEMAP_PATHS.slice();
   if (variant === "drop-required") list = list.filter((p) => p !== "/pricing");
   if (variant === "leak") list.push("/login");
@@ -138,6 +145,11 @@ function startMock() {
       res.writeHead(status, { "content-type": type });
       res.end(body);
     };
+    if (p === "/data/stocks.json") {
+      if (MODE.data === "404") return send("no", 404, "application/json");
+      if (MODE.data === "malformed") return send("{", 200, "application/json");
+      return send(JSON.stringify(MODE.data === "next-day" ? GOOD_DATA_NEXT : GOOD_DATA), 200, "application/json");
+    }
     if (p === "/sitemap.xml") {
       if (MODE.sitemap === "404") return send("no", 404);
       return send(sitemapXml(MODE.sitemap), 200, "application/xml");
@@ -168,7 +180,7 @@ function closeServer(server) {
 
 // Drive one full verifier run with a scenario's mode overrides.
 async function scenario(base, { mode = {}, now = NOW_ENFORCE, expectedSha = null, localData = GOOD_DATA, temporalConfig } = {}) {
-  Object.assign(MODE, { pages: "good", sitemap: "good", robots: "good", login: "good" }, mode);
+  Object.assign(MODE, { pages: "good", data: "good", sitemap: "good", robots: "good", login: "good" }, mode);
   return runMarketCloseHealth({ base, expectedSha, now, localData, temporalConfig, counter: { requests: 0 } });
 }
 
@@ -218,7 +230,14 @@ async function main() {
     const staleCheckout = await scenario(base, { now: NOW_MONDAY_ENFORCE });
     check("enforcing uses current trading date, not stale checkout",
       staleCheckout.verdict === "FAIL" && staleCheckout.reason === "stale_publication" && staleCheckout.expected.dataDate === "2026.07.20");
-    check("§pre EXPECT_LASTMOD derivable from real data", typeof EXPECT_LASTMOD === "string" && EXPECT_LASTMOD.length > 0);
+    check("§pre EXPECT_LASTMOD derivable from fixture data", typeof EXPECT_LASTMOD === "string" && EXPECT_LASTMOD.length > 0);
+
+    const advancedLive = await scenario(base, {
+      mode: { pages: "next-day", data: "next-day" },
+      now: NOW_FRIDAY_ENFORCE,
+    });
+    check("deployed data/sitemap may advance beyond a stale local checkout",
+      advancedLive.verdict === "PASS" && advancedLive.expected.dataDate === "2026.07.17");
 
     // =======================================================================
     // §3  end-to-end PASS / WAIT (healthy)

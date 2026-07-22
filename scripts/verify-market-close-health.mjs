@@ -68,7 +68,7 @@ import {
   extractBuildMarker,
   DEFAULT_BOUNDS as HTTP_BOUNDS,
 } from "./verify-route-canary.mjs";
-import { checkSitemap, checkRobots, checkCrossConsistency } from "./verify-public-seo.mjs";
+import { checkSitemap, checkRobots, checkCrossConsistency, lastmodIsoFromData } from "./verify-public-seo.mjs";
 import { looksLikeSecret } from "./verify-framework-baseline.mjs";
 
 const REPO_ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -237,6 +237,48 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
   const observations = [];
   const expected7 = expectedSha ? String(expectedSha).toLowerCase().slice(0, 7) : null;
 
+  // The monitor may run from a checkout that predates the latest bot data commit.
+  // Read the deployed metadata once so runtime freshness and sitemap lastmod checks
+  // follow the served release, while the repo-local release gate stays exact/local.
+  const dataResp = await fetchBounded(base + "/data/stocks.json", b, c);
+  let liveLastmod = null;
+  if (dataResp.outcome !== "ok" || dataResp.finalStatus !== 200 || dataResp.truncated) {
+    findings.push({
+      dimension: "live_data",
+      severity: "hard",
+      ok: false,
+      code: "broken_route",
+      message: `/data/stocks.json ${dataResp.outcome}${dataResp.finalStatus ? ` status ${dataResp.finalStatus}` : ""}`,
+    });
+    observations.push({ path: "/data/stocks.json", status: dataResp.finalStatus ?? null, hops: dataResp.hops ?? 0, marker: null });
+  } else {
+    try {
+      const liveData = JSON.parse(dataResp.body || "");
+      const live = evaluateLocalData(liveData);
+      for (const finding of live.findings) {
+        findings.push({ ...finding, dimension: "live_data", message: finding.message.replace(/^local /, "served ") });
+      }
+      const liveExpected = deriveExpected(liveData);
+      if (expected.dataDate && liveExpected.dataDate && liveExpected.dataDate !== expected.dataDate) {
+        findings.push({
+          dimension: "live_data",
+          severity: "freshness",
+          ok: false,
+          code: "stale_publication",
+          message: `served data date "${liveExpected.dataDate}" != expected "${expected.dataDate}"`,
+        });
+      }
+      liveLastmod = lastmodIsoFromData(liveData);
+      if (!liveLastmod) {
+        findings.push({ dimension: "live_data", severity: "hard", ok: false, code: "malformed_data", message: "cannot derive deployed lastmod" });
+      }
+      observations.push({ path: "/data/stocks.json", status: dataResp.finalStatus, hops: dataResp.hops ?? 0, marker: null });
+    } catch {
+      findings.push({ dimension: "live_data", severity: "hard", ok: false, code: "malformed_data", message: "deployed stocks.json is not valid JSON" });
+      observations.push({ path: "/data/stocks.json", status: dataResp.finalStatus, hops: dataResp.hops ?? 0, marker: null });
+    }
+  }
+
   // --- routes ---------------------------------------------------------------
   for (const route of routes) {
     // eslint-disable-next-line no-await-in-loop
@@ -300,7 +342,7 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
   if (smResp.outcome !== "ok") {
     findings.push({ dimension: "sitemap", severity: "hard", ok: false, code: "broken_route", message: `/sitemap.xml ${smResp.outcome}${smResp.message ? `: ${smResp.message}` : ""}` });
   } else {
-    const sm = checkSitemap(smResp.finalStatus, smResp.body || "");
+    const sm = checkSitemap(smResp.finalStatus, smResp.body || "", { expectedLastmod: liveLastmod });
     sitemapPaths = sm.paths || [];
     for (const r of sm.reasons) findings.push({ dimension: "sitemap", severity: "hard", ok: false, code: "sitemap_contract", message: r });
   }

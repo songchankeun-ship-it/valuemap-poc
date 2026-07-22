@@ -4898,3 +4898,15 @@ Closed the daily-publication incident end to end after the methodology-audit wor
 - **Legacy rehearsal isolation**: the pre-activation `2026-07-16` rehearsal run was preserved under `.metrics251-shadow/preactivation-archive` and removed from the active evidence set. The regenerated private ledger is exactly **actualRuns 1/5**, entry date `2026-07-20`, with no conflicts or public-path leakage.
 - **Focused gates**: Metrics 2.5.1 orchestrator 22/22, ledger 9/9, live-input 8 scenarios, and production market-close health all pass. Tracked worktree remains clean before this record-only update; public data and Metrics 2.4 are unchanged by the shadow collection.
 - **Next**: let the existing weekday 19:20 health check and 20:00 private collector continue. No owner action is required for collection. Naver re-review is pending; Google Play re-application waits for the requested address/card statement.
+
+### 2026-07-22 - Live health checkout-decoupling and second shadow date recovery [codex]
+
+Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirming that production itself was healthy.
+
+- **Root cause**: production served a complete 138-stock Metrics 2.4 snapshot for `20260721`, but the scheduled health check compared the deployed sitemap timestamp with the prior day's local `public/data/stocks.json`. The resulting false `sitemap_contract` failure correctly stopped the collector, leaving the ledger at 1/5.
+- **Runtime contract repair**: `verify:market-close-health` now performs one bounded GET of deployed `/data/stocks.json`, validates its universe/version/date invariants, derives the exact sitemap `<lastmod>` from that deployed metadata, and compares live freshness with the KST trading-day expectation. The strict repository-local exact check remains the default for `verify:public-seo` release gates.
+- **Regression coverage**: the market-close suite now serves deployed metadata explicitly and proves a live deployment may advance beyond a stale local checkout without failing the sitemap contract.
+- **Recovery**: the bounded live-input fetch validated 138 stocks / 139 files / 8,403,957 bytes for `2026-07-21`; the private orchestrator appended that date with no conflicts, public-path leakage, promotion, or outside-service mutation. The active ledger is now exactly **actualRuns 2/5** for `2026-07-20` and `2026-07-21`.
+- **Verification**: release preflight PASS (all 11 offline gates, 192-page build); full reaudit 13/13; market-close health suite PASS; live-input 8 scenarios; orchestrator 22/22; ledger 9/9; TypeScript and Node syntax PASS; production public SEO 3/3 and market-close health `PASS / fresh_confirmed` for `20260721`.
+- **Automation state**: both local schedules remain ACTIVE at weekdays 19:20 and 20:00 Asia/Seoul. No owner action is required unless an automation sends a failure alert; the private collector remains self-limiting at five distinct real trading dates.
+- **Next**: allow the schedules to collect the remaining three distinct real trading dates. Naver re-review remains pending, and Google Play re-application remains owner-gated on the requested address/card statement.

@@ -3913,3 +3913,12 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Preserved the pre-activation `2026-07-16` rehearsal under `.metrics251-shadow/preactivation-archive` and regenerated the active ledger from eligible evidence only. Current status is **actualRuns 1/5**, one distinct date (`2026-07-20`), no conflicts, no public promotion, and no public-path leakage.
 - Focused checks pass: orchestrator 22/22, ledger 9/9, live-input 8 scenarios, production market-close health PASS. Public Metrics 2.4 and tracked `public/data` remain unchanged by this private run.
 - Next: the weekday 19:20/20:00 automations continue without owner action. Await Naver re-review and the owner's Google Play address/card statement before that re-application.
+
+### 2026-07-22 - [codex] Live health checkout-decoupling and second shadow date recovery
+
+- Production was healthy on `20260721` (138 stocks, public Metrics 2.4), but both scheduled runs stopped because the runtime sitemap check used the previous day's local `public/data/stocks.json` timestamp. This was a local-checkout coupling false failure, not a production publication failure.
+- `verify-market-close-health.mjs` now validates deployed `/data/stocks.json` through the existing bounded GET-only transport and uses its validated metadata for both freshness and exact deployed sitemap-lastmod checks. `verify-public-seo.mjs` keeps its strict local-data default for release certification.
+- Added a regression where deployed data/sitemap advance one day beyond the injected local fixture; runtime health passes only when deployed metadata, pages, and sitemap agree.
+- Recovered the missed private date through the existing live-input adapter and orchestrator. Active Metrics 2.5.1 evidence is now **2/5**, exactly `2026-07-20` and `2026-07-21`; no conflicts, public promotion, or public-path leakage.
+- Green checks: release preflight 11/11 with 192-page build; reaudit 13/13; market-close health; live-input 8 scenarios; orchestrator 22/22; ledger 9/9; TypeScript; Node syntax; production public SEO 3/3; production health `PASS / fresh_confirmed` for `20260721`.
+- Both automations remain ACTIVE: weekdays 19:20 KST public health and 20:00 KST private collection. No owner action is required unless notified. Remaining waits are three genuine trading dates, Naver re-review, and the owner-requested Google Play address/card statement.

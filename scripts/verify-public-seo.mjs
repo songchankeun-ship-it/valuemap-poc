@@ -74,13 +74,8 @@ const SITE = "https://ornscore.com";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_PATH = argValue("--data", resolve(__dirname, "..", "public", "data", "stocks.json"));
 
-export function expectedLastmodIso() {
-  let meta;
-  try {
-    meta = JSON.parse(readFileSync(DATA_PATH, "utf-8"));
-  } catch {
-    return null; // cannot load dataset -> skip strict equality, only structural checks apply
-  }
+export function lastmodIsoFromData(meta) {
+  if (!meta || typeof meta !== "object" || Array.isArray(meta)) return null;
   const iso = meta?.generatedAt;
   if (iso) {
     // Python dataset jobs emit a timezone-less ISO datetime in Korea time.
@@ -100,6 +95,16 @@ export function expectedLastmodIso() {
     if (!Number.isNaN(d.getTime())) return d.toISOString();
   }
   return null;
+}
+
+export function expectedLastmodIso() {
+  let meta;
+  try {
+    meta = JSON.parse(readFileSync(DATA_PATH, "utf-8"));
+  } catch {
+    return null; // cannot load dataset -> skip strict equality, only structural checks apply
+  }
+  return lastmodIsoFromData(meta);
 }
 
 // --- contract ---------------------------------------------------------------
@@ -226,7 +231,7 @@ export function parseRobots(text) {
 }
 
 // --- checks -----------------------------------------------------------------
-export function checkSitemap(status, xml) {
+export function checkSitemap(status, xml, { expectedLastmod } = {}) {
   const reasons = [];
   if (status !== 200) reasons.push(`status ${status} (expected 200)`);
 
@@ -284,7 +289,7 @@ export function checkSitemap(status, xml) {
     if (uniqueLastmods.length > 1) {
       reasons.push(`non-uniform <lastmod> values ${JSON.stringify(uniqueLastmods)} — must be one deterministic data-derived date`);
     }
-    const expected = expectedLastmodIso();
+    const expected = expectedLastmod === undefined ? expectedLastmodIso() : expectedLastmod;
     if (expected == null) {
       reasons.push(`cannot derive expected lastmod from ${DATA_PATH} — dataset missing generatedAt/asOfBusinessDate`);
     } else {
