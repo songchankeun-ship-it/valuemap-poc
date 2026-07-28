@@ -33,8 +33,8 @@ npm run verify:local -- --base http://localhost:4459
 npm run verify:local -- --base https://ornscore.com --no-perf
 ```
 
-- 로컬/127.0.0.1에서는 네이버가 기본적으로 `naverState=planned`라서 `설정 필요` 비활성 항목을 기대한다.
-- 운영 같은 비로컬 URL에서는 `naverState=either`라서 `설정 필요` 비활성 항목과 `네이버로 시작하기` 활성 버튼 중 하나를 정상으로 본다.
+- 로컬과 운영 모두 네이버가 기본적으로 `naverState=planned`라서 `검수 중` 비활성 항목을 기대한다.
+- 공개 검수 승인 뒤 두 환경변수를 모두 켠 배포만 `--naver-state enabled`로 별도 확인한다.
 - 강제로 특정 상태를 확인해야 하면 단독 게이트에 `--naver-state planned|enabled|either`를 붙인다. 예: `npm run verify:login-preflight -- --base https://ornscore.com --naver-state enabled`.
 - 그래도 이 검증은 SSR HTML 계약만 본다. 실제 카카오·구글·네이버·이메일 왕복, 앱스토어/콘솔/DNS/Search Console 같은 외부 설정은 아래 사람 확인 게이트로 남는다.
 

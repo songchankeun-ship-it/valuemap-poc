@@ -14,7 +14,7 @@
 | Kakao | ✅ | ✅ (운영 중) | 완료 (이미 연결됨) |
 | Google | ✅ | ✅ | ✅ 완료 — 2026-06-28 운영자 콘솔 설정 + 실로그인 확인 |
 | Apple | ✅ (타입 지원) | ❌ (의도적 비활성) | 보류 — Apple Developer Program 가입 후 결정 |
-| Naver | ✅ (`custom:naver`) / ❌ (네이티브 `naver`) | ✅ | ✅ 완료 — 2026-06-28 네이버 Developers + Supabase Custom OAuth2 + Vercel env + 실로그인 확인 |
+| Naver | ✅ (`custom:naver`) / ❌ (네이티브 `naver`) | ❌ (`검수 중`) | 설정 완료·공개 검수 재신청 대기 — 승인 확인 후 별도 활성화 |
 
 `enabled` 플래그를 켜기 전이라도 버튼이 보이는 제공자는, Supabase 콘솔 토글이
 꺼져 있으면 클릭 시 `provider is not enabled` 오류가 난다. 이 오류는 사용자에게
@@ -80,9 +80,9 @@
 `custom:${string}` provider가 포함되어 있다. 오른스코어는 **Supabase Custom OAuth2 provider
 `custom:naver`** 로 네이버 로그인을 연결한다.
 
-> 상태: **완료(2026-06-28)**. 운영자가 네이버 Developers 앱, Supabase Custom OAuth2 provider,
-> Vercel `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 설정을 마쳤고, 공개 사이트에서 실제 네이버 로그인
-> 왕복이 동작함을 확인했다.
+> 상태: **설정 완료·공개 검수 재신청 대기(2026-07-28 기준)**. 네이버 Developers 앱,
+> Supabase Custom OAuth2 provider, Vercel 설정과 개발자 로그인 왕복은 준비됐지만 공개 검수가
+> 승인됐다고 확인되기 전까지 일반 사용자용 버튼은 `검수 중` 비활성 상태로 둔다.
 
 ### 설정 기록: Supabase Custom OAuth2 Provider
 
@@ -105,9 +105,11 @@
    - UserInfo URL: `https://openapi.naver.com/v1/nid/me`
 7. 이메일 제공 동의가 필요하다. 네이버 프로필 API는 `response.email`을 반환하므로,
    네이버 앱 권한에서 이메일 제공을 켜고 실제 동의 화면에 노출되는지 확인한다.
-8. Supabase provider 저장/enable 후, Vercel 환경변수에
-   `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true` 를 추가하고 재배포한다.
-9. `/login`에서 "네이버로 시작하기" 클릭 → 네이버 동의 → `/auth/callback?next=...` 복귀 →
+8. Supabase provider 저장/enable 후, Vercel 환경변수 `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`를
+   설정한다. 네이버 공개 검수 승인 전에는 `NEXT_PUBLIC_NAVER_REVIEW_APPROVED=false`를 유지한다.
+9. 네이버가 공개 검수를 승인한 사실을 확인한 뒤에만
+   `NEXT_PUBLIC_NAVER_REVIEW_APPROVED=true`로 바꾸고 재배포한다.
+10. `/login`에서 "네이버로 시작하기" 클릭 → 네이버 동의 → `/auth/callback?next=...` 복귀 →
    사용자 세션 생성 여부를 확인한다.
 
 ### 검증 리스크
@@ -116,7 +118,8 @@
 `response.id`, `response.email`처럼 중첩되어 있다. Supabase Custom OAuth2 콘솔이 이 응답을
 정상 사용자 정보로 처리하는지는 실제 저장/로그인 왕복으로 검증해야 한다.
 
-- 현재 공개 웹 로그인 왕복은 성공 확인됨. 다만 홈 화면 추가/standalone 앱 컨텍스트에서 네이버 복귀는
+- 공개 검수 승인 전에는 개발자 계정의 성공 이력을 일반 사용자 가용성으로 간주하지 않는다.
+- 승인 후에도 홈 화면 추가/standalone 앱 컨텍스트에서 네이버 복귀는
   `docs/app-roadmap.md` §5-1 절차로 별도 실기기 확인이 필요하다.
 - 실패 회귀가 발생하면: `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`을 끄고 비활성 항목으로 되돌린 뒤,
   앱 자체 `/auth/naver/start` + `/auth/naver/callback` 어댑터 라우트 설계를 별도 작업으로 진행한다.
@@ -132,5 +135,6 @@
 - `/login`에서 활성 제공자 버튼이 모두 보이는지.
 - 각 버튼 클릭 시 제공자 동의 화면으로 이동 → 로그인 후 `/auth/callback?next=<원래 목적지>`로 복귀하는지.
 - 콘솔 토글 OFF 상태에서 클릭 시 빨간 박스에 "현재 이 로그인 방식은 설정 중이에요..."가 뜨는지.
-- `/privacy`·`/terms`의 소셜 로그인 제공자 표기가 실제 노출 버튼과 일치하는지(활성=카카오·구글·네이버).
-- `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`이 true인 배포에서 `/login`의 **"네이버로 시작하기" 버튼이 활성**으로 보이고, false인 배포에서는 "네이버 (설정 필요)" 비활성 항목만 보이는지.
+- `/privacy`·`/terms`는 연동 가능한 제공자를 설명하되, `/login` 활성 버튼은 현재 공개 검수 상태와 일치하는지.
+- 두 네이버 env가 모두 true인 승인 후 배포에서만 **"네이버로 시작하기" 버튼이 활성**으로 보이고,
+  둘 중 하나라도 false이면 "네이버 (검수 중)" 비활성 항목만 보이는지.

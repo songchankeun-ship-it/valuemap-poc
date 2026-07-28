@@ -47,6 +47,10 @@ venv/
 # Metrics 2.5.1 shadow snapshot store (Slice F) — 비공개 로컬 산출물, 절대 커밋하지 않음(§M251-D10)
 /.metrics251-shadow/
 
+# Private data-review workspaces — never publish or commit provider inputs/evidence
+/.universe-expansion/
+/.dart-fundamentals-shadow/
+
 # Misc
 *.bak
 /tmp/

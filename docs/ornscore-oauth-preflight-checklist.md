@@ -26,7 +26,7 @@ It fetches five `/login` states against an already-running server and asserts:
 | A1 | HTTP 200 on every `/login` state | route renders |
 | A2 | No critical runtime markers (`Application error`, `Hydration failed`, …) | shared with `smoke:check` / `verify:routes` |
 | A3 | Enabled provider buttons render: `카카오로 시작하기`, `구글로 시작하기` | `enabledOAuthProviders()` → i18n `providers[id].label` |
-| A4 | Planned-provider marker renders: `설정 필요` (Naver, no fake success path) | `plannedProviders()` + `PLANNED_PROVIDERS` |
+| A4 | Planned-provider marker renders: `검수 중` (Naver, no fake success path) | `plannedProviders()` + `PLANNED_PROVIDERS` |
 | A5 | Previous-page context copy per `next`: `/watchlist` → “관심 종목을 여러 기기에서…”, `/compare` → “비교 목록을 저장하려면…” | `loginCopy.contexts` |
 | A6 | Generic `contextFallback` for internal paths with no mapped context (e.g. `/stock/005930`) | `loginCopy.contextFallback` |
 | A7 | Root-origin (`next=/`) shows `홈으로`; internal-origin shows `이전 페이지로` | `next === "/" ? backHome : backPrevious` |
@@ -59,7 +59,8 @@ HTML bodies.
 - **Provider single source of truth.** Buttons/legal copy derive from
   `OAUTH_PROVIDERS` / `PLANNED_PROVIDERS`; there are no copy-pasted per-provider
   handlers. Enabled in local env = Kakao + Google; Apple is intentionally
-  `enabled:false`; Naver is `custom:naver`, gated by `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`.
+  `enabled:false`; Naver is `custom:naver`, gated by both `NEXT_PUBLIC_ENABLE_NAVER_LOGIN`
+  and `NEXT_PUBLIC_NAVER_REVIEW_APPROVED`.
 - **No label drift.** The UI reads i18n `loginCopy.providers[id]` for labels; every
   enabled/planned id (`kakao`, `google`, `custom:naver`, `apple`) has a matching i18n
   entry **and** an inline brand SVG in `LoginContent.tsx`.
@@ -84,8 +85,8 @@ Supabase project and provider consoles:
 - **B2. Google round-trip** — same, via `구글로 시작하기` (requires the Supabase Google
   provider toggle + Google Cloud OAuth client).
 - **B3. Naver round-trip** — only after Supabase Custom OAuth provider `custom:naver`
-  + Naver Developers app are configured **and** `NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true`.
-  With the flag off, confirm Naver stays the disabled `설정 필요` item (no auth call).
+  + Naver Developers app are configured, public review is approved, and both Naver flags are true.
+  Before approval, confirm Naver stays the disabled `검수 중` item (no auth call).
 - **B4. Magic-link email** — submit a real email, confirm the sign-in link is
   delivered (check spam), and that clicking it lands on `next` signed in.
 - **B5. Callback return-to-`next`** — after B1/B2/B4, confirm `/auth/callback` returns

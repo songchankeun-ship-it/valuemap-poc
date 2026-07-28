@@ -420,7 +420,7 @@ export const loginCopy = {
     errors: {
       noCode: "앱에서 로그인 후 돌아오지 못했어요. 다시 시도하거나 브라우저에서 로그인해 주세요.",
       callback: "로그인 처리 중 문제가 발생했어요. 다시 시도해 주세요.",
-      provider: "현재 이 로그인 방식은 설정 중이에요. 카카오·구글·네이버 또는 이메일로 로그인해 주세요.",
+      provider: "현재 이 로그인 방식은 설정 중이에요. 카카오·구글 또는 이메일로 로그인해 주세요.",
       rateLimit: "요청이 많아요. 잠시 후 다시 시도해 주세요.",
       invalidEmail: "이메일 주소를 다시 확인해 주세요.",
       unknown: "로그인 중 문제가 발생했어요. 잠시 후 다시 시도해 주세요.",
@@ -475,7 +475,7 @@ export const loginCopy = {
     errors: {
       noCode: "The app could not return after sign-in. Try again or sign in from the browser.",
       callback: "Something went wrong while completing sign-in. Please try again.",
-      provider: "This sign-in method is still being configured. Try Kakao, Google, Naver, or email.",
+      provider: "This sign-in method is still being configured. Try Kakao, Google, or email.",
       rateLimit: "Too many requests. Please try again shortly.",
       invalidEmail: "Please check the email address.",
       unknown: "Something went wrong while signing in. Please try again shortly.",

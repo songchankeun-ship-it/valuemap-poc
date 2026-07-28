@@ -1,5 +1,27 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-28 - [codex] P0 출시 복구 후보: 데이터 권리 방어 + 네이버 검수 게이트
+
+- 최신 운영 `origin/main` `502a9ee`에서 `codex/launch-p0-release`를 만들고, 미배포 데이터
+  권리 결정 패킷과 런타임 방어 커밋을 선별 통합했다. Metrics 2.5.1 준비 브랜치 전체를
+  섞지 않았고 공개 Metrics 2.4·138종목·2026-07-27 데이터는 그대로 유지했다.
+- 공개 런타임의 외부 Naver 현재가 폴링을 제거했다. `/api/quote/[ticker]`와 가격 UI는
+  배포된 장마감 스냅샷만 사용한다. 출처 문구는 KRX 상장 시장, Naver 전달 경로,
+  FinanceDataReader 수집 어댑터, Yahoo/yfinance 검토 상태를 구분한다.
+- `config/data-rights-manifest.json`과 `verify:data-rights`를 릴리스 프리플라이트에 연결해
+  미확인 데이터로 유료화·신규 API·다운로드·종목 확대·비공식 폴링을 다시 여는 변경을
+  fail-closed로 차단했다.
+- 네이버 로그인은 설정 토글과 별도의 공개 검수 승인 토글을 모두 요구한다.
+  `NEXT_PUBLIC_NAVER_REVIEW_APPROVED` 기본값은 false이며, 승인 전 `/login`은 클릭되지 않는
+  `네이버 (검수 중)` 상태를 표시한다. 4개 조합 회귀 테스트를 추가하고 오래된 완료 문서를
+  재검수 대기 상태로 정정했다.
+- 검증: Naver gate 4/4, data-rights, legal consistency, TypeScript, offline release preflight
+  12/12, Next build 192/192, live local release preflight 12/12, route-health 6/6,
+  smoke 25/25, routes 9/9, stocks SEO 13/13, public SEO 3/3, login 5/5, admin guard 4/4.
+  전용 포트 4478 서버만 중지했고 포트 해제를 확인했다.
+- 다음: 이 후보를 `main`에 push해 Vercel 배포를 기다린 뒤, 공개 데이터 날짜·출처 카피·
+  quote API·네이버 검수 상태·핵심 라우트·SEO를 캐시 우회로 재검증한다.
+
 ## 2026-07-19 - [codex] Task 368: 장마감 운영 자동화 Slice A — 읽기 전용 헬스 검증기
 
 - **Scope**: bounded 장마감 운영 자동화 배치의 **Slice A**. 소유자의 공개 ORNScore URL에 대한 **결정적·읽기 전용(GET only)** 헬스 검증기. 허용 경로만 편집: 신규 플랜 `docs/ornscore-market-close-automation-2026-07-19.md`, 신규 `scripts/verify-market-close-health.mjs` + `scripts/test-market-close-health.mjs`, `package.json`(dev 스크립트 2줄), PROGRESS·AI_HANDOFF. 직전 HEAD `e4ed741`. 브랜치 `ai-center/task-368-ornscore-market-ops-a-read-only-mark`.

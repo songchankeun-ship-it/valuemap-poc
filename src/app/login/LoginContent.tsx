@@ -67,7 +67,7 @@ function LoginForm() {
   const backLabel = backHref === "/" ? copy.backHome : copy.backPrevious;
 
   const providers = enabledOAuthProviders();
-  // "설정 필요"로만 노출하는 제공자(네이버 등) — env/콘솔 설정 전에는 클릭 불가.
+  // "검수 중"으로만 노출하는 제공자(네이버 등) — 설정·검수 승인 전에는 클릭 불가.
   const planned = plannedProviders();
   // 노출 문구(leadCopy)는 활성화된 제공자만으로 파생 → 화면에 없는/준비 중인 방식을 절대 광고하지 않음
   const providerNames = providers.map((p) => copy.providers[p.id].name).join(locale === "ko" ? "·" : ", ");
@@ -266,8 +266,8 @@ function LoginForm() {
                   );
                 })}
 
-                {/* 설정 필요 제공자(네이버 등) — 의도적으로 비활성. onClick·인증 호출 없음.
-                    실제 로그인 경로는 운영자 콘솔 설정 + env 토글 후 활성화된다
+                {/* 검수 중 제공자(네이버 등) — 의도적으로 비활성. onClick·인증 호출 없음.
+                    실제 로그인 경로는 운영자 콘솔 설정 + 검수 승인 env 토글 후 활성화된다
                     (docs/auth-providers-setup.md 네이버 섹션 참조). 가짜 성공 경로를 만들지 않는다. */}
                 {planned.map((p) => (
                   <div

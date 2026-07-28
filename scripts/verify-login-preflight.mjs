@@ -19,9 +19,8 @@
 //   (b) NONE of the critical runtime-failure markers appear,
 //   (c) the baseline enabled provider buttons render (Kakao + Google labels),
 //   (d) Naver renders in the expected provider state:
-//       - local URLs default to strict planned/"설정 필요" mode,
-//       - non-local URLs default to either planned OR enabled mode, because
-//         production can legitimately enable custom:naver before local env does,
+//       - every URL defaults to strict planned/"검수 중" mode,
+//       - an owner may explicitly request enabled mode only after review approval,
 //   (e) required per-state copy renders (previous-page context, contextFallback,
 //       friendly Korean error text),
 //   (f) NO raw provider error string leaks (e.g. "provider is not enabled"),
@@ -60,15 +59,6 @@ const BASE = (argValue("--base", process.env.VERIFY_BASE_URL) || "http://localho
 // deliberate negative self-check (e.g. --login-path /about proves the asserts bite).
 const LOGIN_PATH = argValue("--login-path", "/login").replace(/\/+$/, "") || "/login";
 
-function isLocalBase(base) {
-  try {
-    const host = new URL(base).hostname;
-    return host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]" || host.endsWith(".localhost");
-  } catch {
-    return false;
-  }
-}
-
 function normalizeNaverState(value) {
   const normalized = String(value || "").trim().toLowerCase();
   if (normalized === "planned" || normalized === "enabled" || normalized === "either") return normalized;
@@ -77,7 +67,7 @@ function normalizeNaverState(value) {
 }
 
 const NAVER_STATE = normalizeNaverState(
-  argValue("--naver-state", process.env.VERIFY_NAVER_STATE || (isLocalBase(BASE) ? "planned" : "either")),
+  argValue("--naver-state", process.env.VERIFY_NAVER_STATE || "planned"),
 );
 
 // --- shared marker contracts ------------------------------------------------
@@ -108,7 +98,7 @@ const RAW_PROVIDER_ERROR_MARKERS = [
 // planned locally or enabled in production, so it is checked separately below.
 const ENABLED_BUTTON_MARKERS = ["카카오로 시작하기", "구글로 시작하기"];
 const NAVER_ENABLED_MARKER = "네이버로 시작하기";
-const NAVER_PLANNED_MARKER = "설정 필요";
+const NAVER_PLANNED_MARKER = "검수 중";
 
 // --- states -----------------------------------------------------------------
 // Each state is a query variant of LOGIN_PATH plus the SSR-stable copy it must show.

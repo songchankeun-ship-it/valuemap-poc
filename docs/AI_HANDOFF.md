@@ -42,6 +42,21 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-28 - [codex] - P0 launch recovery candidate
+
+- Branched `codex/launch-p0-release` from deployed-data main `502a9ee` and selectively
+  integrated the data-rights decision/containment commits. Public `public/data` remains
+  byte-unchanged from main: 2026-07-27, Metrics 2.4, 138 stocks.
+- Removed runtime Naver quote polling, limited the quote API/UI to the published close,
+  corrected source transparency, and added a fail-closed rights manifest to release preflight.
+- Added a second Naver exposure gate: configuration and explicit public-review approval must
+  both be true. Until approval, `/login` renders a non-clickable `네이버 (검수 중)` item.
+- Green: Naver gate 4/4, data-rights, legal consistency, TypeScript, offline and running-server
+  release preflight 12/12, build 192/192, route-health 6/6, smoke 25/25, routes 9/9,
+  stocks SEO 13/13, public SEO 3/3, login 5/5, and logged-out admin guard 4/4.
+  The task-owned port 4478 preview was stopped and the port was verified free.
+- Next: commit, push this release to main, wait for Vercel, then cache-busted live verification.
+
 ### 2026-07-19 - [codex] - Task 370 Market-close ops Slice C: finite idempotent one-market-day private shadow orchestrator
 
 - Slice C of `docs/ornscore-market-close-automation-2026-07-19.md` — a finite, idempotent, fail-closed **orchestrator** that composes the already-shipped contract layers for **exactly one** market day into a three-way **PASS/WAIT/FAIL** verdict. No new formula/gate/storage logic: it only calls Slice B (real-input adapter) → Slice P (operator READY, read-only) → Slice N (atomic/idempotent run) → Slice O (append-only ledger) → Slice K (5-day AND gate) in sequence and reports. Writable paths limited to `scripts/metrics251_orchestrator.py` + `scripts/test_metrics251_orchestrator.py`, `package.json` (2 dev aliases), the plan doc Slice C section, the runbook §6.5 note, PROGRESS, and this handoff. Prior HEAD `ff1bbc5` (Slice B); branch `ai-center/task-370-ornscore-market-ops-c-private-one-da`.

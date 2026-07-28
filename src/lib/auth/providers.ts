@@ -13,12 +13,17 @@
 //   - apple  : 지원 ✅ (단, 의사결정상 기본 비활성 — 아래 주석 참조)
 //   - naver  : 네이티브 "naver" provider 는 없지만 `custom:naver` OAuth2 provider 로 연결 가능.
 //       Supabase Custom OAuth provider + Naver Developers 설정이 끝난 뒤
-//       NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true 로 켠다. 설정 전에는 아래 PLANNED_PROVIDERS 로
-//       "설정 필요" 비활성 항목만 노출한다(가짜 로그인 경로 없음).
+//       NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true 와 NEXT_PUBLIC_NAVER_REVIEW_APPROVED=true 를
+//       모두 켠다. 설정 또는 검수 승인 전에는 아래 PLANNED_PROVIDERS 로
+//       "검수 중" 비활성 항목만 노출한다(가짜 로그인 경로 없음).
 
 export type OAuthProviderId = "kakao" | "google" | "apple" | "custom:naver";
 
-const ENABLE_NAVER_LOGIN = process.env.NEXT_PUBLIC_ENABLE_NAVER_LOGIN === "true";
+export function isNaverLoginEnabled(env: Record<string, string | undefined> = process.env): boolean {
+  return env.NEXT_PUBLIC_ENABLE_NAVER_LOGIN === "true" && env.NEXT_PUBLIC_NAVER_REVIEW_APPROVED === "true";
+}
+
+const ENABLE_NAVER_LOGIN = isNaverLoginEnabled();
 
 export type OAuthProviderConfig = {
   id: OAuthProviderId;
@@ -85,8 +90,8 @@ export const OAUTH_PROVIDERS: OAuthProviderConfig[] = [
     brandClasses:
       "bg-[#03C75A] text-white hover:brightness-95 disabled:opacity-60 disabled:cursor-not-allowed",
     // Supabase Dashboard > Auth > Providers > Custom OAuth 에서 provider identifier 를
-    // "custom:naver" 로 만든 뒤, Vercel/로컬에 NEXT_PUBLIC_ENABLE_NAVER_LOGIN=true 를 켠다.
-    // env 가 꺼져 있으면 아래 plannedProviders()에서 "설정 필요" 비활성 항목만 보인다.
+    // "custom:naver" 로 만든 뒤, Vercel/로컬에서 설정 완료와 검수 승인을 각각 확인한다.
+    // 둘 중 하나라도 false 이면 아래 plannedProviders()에서 "검수 중" 비활성 항목만 보인다.
     enabled: ENABLE_NAVER_LOGIN,
   },
 ];
@@ -96,11 +101,12 @@ export function enabledOAuthProviders(): OAuthProviderConfig[] {
   return OAUTH_PROVIDERS.filter((p) => p.enabled);
 }
 
-// "설정 필요"(coming soon)로만 노출하는 제공자 — env/콘솔 설정 전에는 인증 호출을 하지 않는다.
+// "검수 중"(coming soon)으로만 노출하는 제공자 — 설정·검수 승인 전에는 인증 호출을 하지 않는다.
 //
 // 네이버는 네이티브 provider 이름 "naver" 는 없지만, Supabase Custom OAuth2 provider 를
 // "custom:naver" 로 등록하면 정식 OAuth 경로로 연결할 수 있다. 다만 Naver Developers 앱,
-// Supabase Custom Provider, Vercel env 설정 전에는 진짜 세션을 만들 수 없으므로
+// Supabase Custom Provider, Vercel env 설정 또는 Naver 검수 승인 전에는 공개 사용자가
+// 안정적으로 세션을 만들 수 있다고 약속할 수 없으므로
 // 사용자에게 솔직하게 비활성 항목으로만 보여준다(클릭해도 인증 호출 없음).
 export type PlannedProviderConfig = {
   /**
@@ -118,9 +124,9 @@ export type PlannedProviderConfig = {
 export const PLANNED_PROVIDERS: PlannedProviderConfig[] = [
   {
     id: "custom:naver",
-    label: "네이버 (설정 필요)",
+    label: "네이버 (검수 중)",
     shortName: "네이버",
-    note: "설정 필요",
+    note: "검수 중",
   },
 ];
 
