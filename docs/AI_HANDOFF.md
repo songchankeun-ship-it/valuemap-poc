@@ -60,9 +60,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
   release preflight 13/13, route-health 6/6, smoke 26/26, routes 9/9, stocks SEO 13/13,
   public SEO 3/3, login 5/5, and logged-out admin guard 4/4. Desktop 1280x800 and mobile
   390x844 visual checks found no horizontal overflow or console errors.
-- Next: deploy the exact commit, verify the live SHA and `/beta`, then invite only the
-  first wave of five people with `https://ornscore.com/beta?source=invite`. Review the
-  first 72 hours before sending wave two.
+- Deployed feature commit `b9a90ce` to remote `main` and verified Vercel served the
+  exact SHA. Production passed SEO release 11/11, smoke 26/26, and market-close health
+  `PASS/fresh_confirmed`. `/beta?source=invite` returned 200 with noindex; invalid
+  feedback returned 400 and the honeypot returned 200 without storage.
+- Next: invite only the first wave of five people with
+  `https://ornscore.com/beta?source=invite`. Review the first 72 hours before sending
+  wave two; do not add features during that observation window.
 
 ### 2026-07-28 - [codex] - P0 launch recovery deployed and live-verified
 

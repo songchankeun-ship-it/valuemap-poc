@@ -20,8 +20,12 @@
   smoke 26/26, routes 9/9, stocks SEO 13/13, public SEO 3/3, login 5/5,
   logged-out admin guard 4/4. 데스크톱 1280x800과 모바일 390x844에서 가로 넘침,
   콘솔 오류, 레이아웃 충돌 없이 확인했다.
-- 다음: 운영 배포와 exact-SHA 검증을 끝낸 뒤 1차 5명에게
-  `https://ornscore.com/beta?source=invite`를 보내고 72시간 동안 실제 막힘을 수집한다.
+- 운영 반영: 기능 커밋 `b9a90ce`를 원격 `main`에 push했고 Vercel 운영 배포를 확인했다.
+  운영 exact-SHA SEO release 11/11, smoke 26/26, market-close health
+  `PASS/fresh_confirmed`를 통과했다. `/beta?source=invite`는 200·noindex이며 잘못된 입력은
+  400, 허니팟 입력은 저장 없이 200으로 처리된다.
+- 다음: 1차 5명에게 `https://ornscore.com/beta?source=invite`를 보내고 72시간 동안
+  실제 막힘을 수집한다. 이 기간에는 새 기능을 더하지 않고 완료율과 의견을 먼저 본다.
 
 ## 2026-07-28 - [codex] P0 출시 복구 배포 완료: 데이터 권리 방어 + 네이버 검수 게이트
 
