@@ -42,7 +42,7 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
-### 2026-07-28 - [codex] - P0 launch recovery candidate
+### 2026-07-28 - [codex] - P0 launch recovery deployed and live-verified
 
 - Branched `codex/launch-p0-release` from deployed-data main `502a9ee` and selectively
   integrated the data-rights decision/containment commits. Public `public/data` remains
@@ -55,7 +55,17 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
   release preflight 12/12, build 192/192, route-health 6/6, smoke 25/25, routes 9/9,
   stocks SEO 13/13, public SEO 3/3, login 5/5, and logged-out admin guard 4/4.
   The task-owned port 4478 preview was stopped and the port was verified free.
-- Next: commit, push this release to main, wait for Vercel, then cache-busted live verification.
+- Deployed: commits `c0455cd`, `7426bba`, and `3942d1a` were pushed through
+  `codex/launch-p0-release` to remote `main`. Vercel served the new behavior at
+  `https://ornscore.com`.
+- Production verification: public SEO 3/3, login preflight 5/5 with Naver planned,
+  core routes 9/9, and market-close health `PASS/fresh_confirmed`. Cache-busted probes
+  confirmed 2026-07-27, Metrics 2.4, 138 stocks, `published-close` quotes, updated source
+  disclosure, and no clickable Naver login before review approval.
+- Residual external waits: Naver re-review, Google Play identity/account-type processing,
+  and written data-provider replies. None blocks the controlled free web beta.
+- Next: stop adding launch prerequisites. Recruit the first 20 controlled beta users and
+  measure activation through search, stock detail, watchlist, and return usage.
 
 ### 2026-07-19 - [codex] - Task 370 Market-close ops Slice C: finite idempotent one-market-day private shadow orchestrator
 

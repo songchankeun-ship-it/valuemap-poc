@@ -1,6 +1,6 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
-## 2026-07-28 - [codex] P0 출시 복구 후보: 데이터 권리 방어 + 네이버 검수 게이트
+## 2026-07-28 - [codex] P0 출시 복구 배포 완료: 데이터 권리 방어 + 네이버 검수 게이트
 
 - 최신 운영 `origin/main` `502a9ee`에서 `codex/launch-p0-release`를 만들고, 미배포 데이터
   권리 결정 패킷과 런타임 방어 커밋을 선별 통합했다. Metrics 2.5.1 준비 브랜치 전체를
@@ -19,8 +19,14 @@
   12/12, Next build 192/192, live local release preflight 12/12, route-health 6/6,
   smoke 25/25, routes 9/9, stocks SEO 13/13, public SEO 3/3, login 5/5, admin guard 4/4.
   전용 포트 4478 서버만 중지했고 포트 해제를 확인했다.
-- 다음: 이 후보를 `main`에 push해 Vercel 배포를 기다린 뒤, 공개 데이터 날짜·출처 카피·
-  quote API·네이버 검수 상태·핵심 라우트·SEO를 캐시 우회로 재검증한다.
+- 운영 반영: 릴리스 커밋 `3942d1a`를 원격 `main`에 push했고 Vercel 운영 배포를 확인했다.
+  `https://ornscore.com` 캐시 우회 검증에서 공개 데이터 2026-07-27·Metrics 2.4·138종목,
+  장마감 quote API, 출처 고지, 네이버 `검수 중` 상태와 버튼 비노출을 확인했다.
+- 운영 게이트: public SEO 3/3, login preflight 5/5, 핵심 routes 9/9,
+  market-close health `PASS/fresh_confirmed`. 네이버 재검수·Google Play 신원 확인·
+  데이터 제공자 서면 회신은 외부 대기이며, 현재 무료 웹 베타 운영을 막지 않는다.
+- 다음: 기능 추가나 Metrics 2.5.1 전환보다 20명 규모의 통제된 베타 유입을 먼저 시작하고,
+  가입·검색·관심종목·재방문 퍼널을 실제 사용자 기준으로 측정한다.
 
 ## 2026-07-19 - [codex] Task 368: 장마감 운영 자동화 Slice A — 읽기 전용 헬스 검증기
 
