@@ -58,7 +58,7 @@ export function CompareTray() {
         aria-label={t.ariaLabel}
         className="fixed right-3 z-30 bottom-[calc(3.5rem_+_env(safe-area-inset-bottom)_+_0.75rem)] lg:bottom-6"
       >
-        <div className="flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-3 py-2 shadow-lg max-w-[calc(100vw-1.5rem)]">
+        <div className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg max-w-[calc(100vw-1.5rem)]">
           <div className="flex items-center gap-1.5 min-w-0">
             <GitCompare className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
             <span className="text-xs font-medium text-zinc-700 dark:text-zinc-200 tabular-nums whitespace-nowrap">
@@ -71,7 +71,7 @@ export function CompareTray() {
           <button
             type="button"
             onClick={reset}
-            className="inline-flex items-center shrink-0 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 dark:hover:text-rose-400 px-3 min-h-[44px] text-xs font-medium whitespace-nowrap transition"
+            className="hidden sm:inline-flex items-center shrink-0 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 dark:hover:text-rose-400 px-3 min-h-[44px] text-xs font-medium whitespace-nowrap transition"
           >
             {t.reset}
           </button>
@@ -80,7 +80,7 @@ export function CompareTray() {
             prefetch={false}
             data-analytics-event="compare_tray_open"
             data-analytics-count={String(count)}
-            className="inline-flex items-center gap-1 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 text-white px-3 min-h-[44px] text-xs font-semibold whitespace-nowrap transition"
+            className="inline-flex items-center gap-1 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 text-white px-3 min-h-10 sm:min-h-[44px] text-xs font-semibold whitespace-nowrap transition"
           >
             {t.cta}
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />

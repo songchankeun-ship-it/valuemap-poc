@@ -36,6 +36,8 @@ const pageSrc = read("src/app/compare/page.tsx");
 const compareSrc = read("src/components/CompareClient.tsx");
 const accountSrc = read("src/components/AccountButtons.tsx");
 const mobileSrc = read("src/components/MobileNav.tsx");
+const compareBadgeSrc = read("src/components/CompareBadge.tsx");
+const compareTraySrc = read("src/components/stock/CompareTray.tsx");
 
 // ── A. 교차 업종 프리셋 제거 + 남는 예시는 같은 업종 근거 ─────────────
 // A1. 근거 약한 교차 업종 쌍(현대차 005380 vs KB금융 — 완성차 vs 금융)이 예시에서 사라진다.
@@ -90,6 +92,14 @@ check("E1 compare route keeps canonical /compare", pageSrc.includes('canonical: 
 check("E2 keeps the noscript empty-state fallback", pageSrc.includes("<noscript>"));
 check("E2 noscript keeps public escape links (stocks + today)", pageSrc.includes('href="/stocks"') && pageSrc.includes('href="/today"'));
 
+// ── F. 모바일 비교 UI는 헤더 폭과 핵심 콘텐츠를 과도하게 가리지 않음 ──
+// 비교함이 비어 있을 때는 기존처럼 렌더되지 않고, 담긴 뒤에도 모바일 헤더에는 중복 배지를
+// 숨긴다. 하단 트레이가 비교 진입점이므로 기능 접근성은 유지된다.
+check("F1 compare badge stays hidden below the sm breakpoint", compareBadgeSrc.includes('className="hidden sm:flex'));
+check("F2 mobile compare tray keeps the /compare entry point", compareTraySrc.includes('href="/compare"'));
+check("F3 mobile compare tray hides the secondary reset action", compareTraySrc.includes('className="hidden sm:inline-flex'));
+check("F4 desktop compare tray keeps the reset action", compareTraySrc.includes("sm:inline-flex") && compareTraySrc.includes("onClick={reset}"));
+
 // ── 자기검증: 탐지 로직이 실제로 동작함을 증명 ─────────────────────
 check("selftest: cross-sector detector fires on the old tuple", '["005380", "105560"]'.includes('"005380"'));
 check("selftest: today-preset detector fires on the old label", "오늘 후보 3개 비교".includes("오늘 후보 3개 비교"));
@@ -99,5 +109,5 @@ if (failed > 0) {
   process.exit(1);
 }
 console.log(
-  "PASS: cross-sector preset removed (same-sector examples only) + 5 simplified start paths (no 오늘-후보 preset) + local logged-out compare intact + header sync-intent vs returning-login CTAs distinguished + /compare route & noscript fallback",
+  "PASS: cross-sector preset removed (same-sector examples only) + 5 simplified start paths (no 오늘-후보 preset) + local logged-out compare intact + header sync-intent vs returning-login CTAs distinguished + /compare route & noscript fallback + mobile compare UI bounded",
 );

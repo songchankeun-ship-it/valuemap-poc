@@ -39,7 +39,7 @@ export function CompareBadge() {
   return (
     <Link
       href="/compare"
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"
+      className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"
       title={locale === "ko" ? "비교함 보기" : "View comparison"}
     >
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
