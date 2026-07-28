@@ -57,7 +57,7 @@ const artifact = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
 const facts = artifact.facts;
 
 // 2a. bumped runtime dependency version (the future drift this harness guards).
-// The baseline was re-based at Slice F to the certified next 15.5.18, so the
+// The baseline was re-based at Slice F to the certified next 15.5.22, so the
 // probe mutates to a version that differs from the current pin to prove a future
 // bump would still be flagged.
 {

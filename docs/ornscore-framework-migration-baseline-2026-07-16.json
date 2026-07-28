@@ -19,7 +19,7 @@
       "/robots.txt",
       "/sitemap.xml"
     ],
-    "staticRouteCount": 31,
+    "staticRouteCount": 32,
     "staticRoutePages": [
       "/",
       "/_not-found",
@@ -30,6 +30,7 @@
       "/admin/users",
       "/auth/callback",
       "/backtest",
+      "/beta",
       "/blog",
       "/compare",
       "/data-deletion",
@@ -77,7 +78,7 @@
         "@vercel/speed-insights": "^2.0.0",
         "jszip": "^3.10.1",
         "lucide-react": "^1.17.0",
-        "next": "15.5.18",
+        "next": "15.5.22",
         "next-themes": "^0.4.6",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
@@ -92,7 +93,7 @@
         "@vercel/speed-insights": "2.0.0",
         "jszip": "3.10.1",
         "lucide-react": "1.17.0",
-        "next": "15.5.18",
+        "next": "15.5.22",
         "next-themes": "0.4.6",
         "react": "19.2.7",
         "react-dom": "19.2.7",
@@ -100,7 +101,7 @@
       }
     },
     "sourceRoutes": {
-      "count": 44,
+      "count": 46,
       "metadataRoutes": [
         "/icon",
         "/manifest",
@@ -116,6 +117,7 @@
         "/admin/traffic",
         "/admin/users",
         "/backtest",
+        "/beta",
         "/blog",
         "/blog/[slug]",
         "/compare",
@@ -152,6 +154,7 @@
       "routeHandlers": [
         "/api/ai/analyze",
         "/api/auth/naver/userinfo",
+        "/api/beta-feedback",
         "/api/cron/daily-insight",
         "/api/cron/evaluate-alerts",
         "/api/cron/notify",
@@ -172,21 +175,21 @@
       "node": "v24.16.0",
       "npm": "11.13.0"
     },
-    "note": "Deterministic framework invariant baseline. First captured at Slice A as the pre-migration freeze (Next 14.2.13 / React 18.3.1); re-based at Slice F to the certified post-migration invariants (Next 15.5.18 / React 19) after the migration preserved the middleware boundary and all source routes. Freshness facts (runtimeDependencies, middlewareBoundary, sourceRoutes) are recomputed from committed repo files and diffed by verify-framework-baseline.mjs; productionAudit and buildClassification are recorded evidence.",
+    "note": "Deterministic framework invariant baseline. First captured at Slice A as the pre-migration freeze (Next 14.2.13 / React 18.3.1); re-based at Slice F to the certified post-migration invariants (Next 15.5.22 / React 19) after the migration preserved the middleware boundary and all source routes. Freshness facts (runtimeDependencies, middlewareBoundary, sourceRoutes) are recomputed from committed repo files and diffed by verify-framework-baseline.mjs; productionAudit and buildClassification are recorded evidence.",
     "originSlice": "A",
     "plan": "docs/ornscore-framework-security-hardening-2026-07-16.md",
     "readOnly": true,
     "reportKind": "framework-migration-baseline",
     "slice": "F (re-based from A)",
     "target": {
-      "next": "15.5.18",
+      "next": "15.5.22",
       "note": "Next 16 deferred (plan §5)",
       "react": "19"
     }
   },
   "productionAudit": {
     "command": "npm audit --omit=dev --json",
-    "note": "npm audit fix recommends a semver-MAJOR bump (Next 16), so `npm audit fix --force` is not the migration path; the batch targets Next 15.5.18 explicitly (plan §1).",
+    "note": "npm audit fix recommends a semver-MAJOR bump (Next 16), so `npm audit fix --force` is not the migration path; the batch targets the patched Next 15.5.22 line explicitly (plan §1).",
     "packages": [
       {
         "advisories": [],
@@ -197,11 +200,23 @@
         },
         "isDirect": true,
         "name": "next",
-        "range": "9.3.4-canary.0 - 16.3.0-canary.5",
-        "severity": "moderate"
+        "range": "9.3.4-canary.0 - 16.3.0-preview.7",
+        "severity": "high"
       },
       {
         "advisories": [
+          {
+            "cwe": [
+              "CWE-22",
+              "CWE-200"
+            ],
+            "ghsa": "GHSA-6g55-p6wh-862q",
+            "range": "<=8.5.11",
+            "severity": "high",
+            "source": 1124252,
+            "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+            "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q"
+          },
           {
             "cwe": [
               "CWE-79"
@@ -212,6 +227,17 @@
             "source": 1117015,
             "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
             "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+          },
+          {
+            "cwe": [
+              "CWE-22"
+            ],
+            "ghsa": "GHSA-r28c-9q8g-f849",
+            "range": "<=8.5.17",
+            "severity": "high",
+            "source": 1124288,
+            "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+            "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
           }
         ],
         "fixAvailable": {
@@ -221,17 +247,41 @@
         },
         "isDirect": false,
         "name": "postcss",
-        "range": "<8.5.10",
-        "severity": "moderate"
+        "range": "<=8.5.17",
+        "severity": "high"
+      },
+      {
+        "advisories": [
+          {
+            "cwe": [
+              "CWE-1395"
+            ],
+            "ghsa": "GHSA-f88m-g3jw-g9cj",
+            "range": "<0.35.0",
+            "severity": "high",
+            "source": 1124066,
+            "title": "sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+            "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
+          }
+        ],
+        "fixAvailable": {
+          "isSemVerMajor": true,
+          "name": "next",
+          "version": "9.3.3"
+        },
+        "isDirect": false,
+        "name": "sharp",
+        "range": "<0.35.0",
+        "severity": "high"
       }
     ],
     "summary": {
       "critical": 0,
-      "high": 0,
+      "high": 3,
       "info": 0,
       "low": 0,
-      "moderate": 2,
-      "total": 2
+      "moderate": 0,
+      "total": 3
     }
   }
 }
