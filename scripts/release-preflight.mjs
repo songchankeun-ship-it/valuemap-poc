@@ -22,7 +22,8 @@
 //   9. verify:first-run-ux    shared nav canon + home H1/CTA/removed-section guard
 //  10. verify:data-rights    fail-closed source-rights manifest and surface guard
 //  11. verify:reaudit        all public-reaudit source contracts (Slices A-M)
-//  12. build                 next build
+//  12. test:beta-feedback    controlled-beta validation and mail fallback
+//  13. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -112,6 +113,7 @@ const OFFLINE_GATES = [
   { name: "verify:first-run-ux", command: "npm", args: ["run", "verify:first-run-ux"], shell: true },
   { name: "verify:data-rights", command: "npm", args: ["run", "verify:data-rights"], shell: true },
   { name: "verify:reaudit", command: "npm", args: ["run", "verify:reaudit"], shell: true },
+  { name: "test:beta-feedback", command: "npm", args: ["run", "test:beta-feedback"], shell: true },
 ];
 if (RUN_BUILD) {
   OFFLINE_GATES.push({ name: "build", command: "npm", args: ["run", "build"], shell: true });

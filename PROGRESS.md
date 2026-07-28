@@ -1,5 +1,28 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-07-28 - [codex] 창립 베타 첫 20명 사용성 루프
+
+- `/beta?source=invite`에 첫 20명 전용 10분 체험 흐름을 추가했다. 사용자는 종목 검색,
+  점수 근거 확인, 관심종목 재방문의 세 단계를 직접 확인하고 기기 안에서 완료 상태를
+  표시할 수 있다. 페이지는 `noindex, nofollow`로 유지해 검색 유입과 초대 사용자를 분리한다.
+- 1~5점 재사용 의향, 가장 막힌 구간, 자유 의견, 선택 이메일을 받는 폼을 추가했다.
+  입력값은 서버에서 다시 검증하고 기존 `data_reports`의 `beta` 범주로 저장한다.
+  봇 방지 허니팟과 저장 실패 시 이메일 대체 경로를 포함했으며, 자유 의견과 이메일은
+  Vercel Analytics로 보내지 않는다.
+- `beta_start`, `beta_task_open`, `beta_task_complete`, `beta_feedback_submit`,
+  `beta_feedback_result`의 익명 이벤트 계약과 관리자 이벤트 지도를 추가했다.
+  `/admin/status`에서는 베타 의견을 오류 신고와 함께 조회할 수 있다.
+- `docs/ornscore-founding-20-beta-runbook-2026-07-28.md`에 5명씩 네 차례 초대하는 방식,
+  사용자 구성, 초대 문구, 72시간 판단 기준을 고정했다. 첫 운영 행동은 20명 전체 공개가
+  아니라 1차 5명에게 초대 링크를 보내는 것이다.
+- 검증: beta-feedback 단위 테스트, TypeScript, analytics 계약, data-rights containment,
+  Next build 194/194, 릴리스 프리플라이트 13/13, 로컬 route-health 6/6,
+  smoke 26/26, routes 9/9, stocks SEO 13/13, public SEO 3/3, login 5/5,
+  logged-out admin guard 4/4. 데스크톱 1280x800과 모바일 390x844에서 가로 넘침,
+  콘솔 오류, 레이아웃 충돌 없이 확인했다.
+- 다음: 운영 배포와 exact-SHA 검증을 끝낸 뒤 1차 5명에게
+  `https://ornscore.com/beta?source=invite`를 보내고 72시간 동안 실제 막힘을 수집한다.
+
 ## 2026-07-28 - [codex] P0 출시 복구 배포 완료: 데이터 권리 방어 + 네이버 검수 게이트
 
 - 최신 운영 `origin/main` `502a9ee`에서 `codex/launch-p0-release`를 만들고, 미배포 데이터

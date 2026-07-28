@@ -34,6 +34,7 @@ only report **presence or size**, never the raw value.
 | `/guide/metrics` | `metrics_guide` | — | |
 | `/login` | `login` | `hasQuery` | `hasQuery` = `next` or `error` present; the redirect target/URL is **not** sent. |
 | `/pricing` | `pricing` | — | |
+| `/beta` | `beta` | — | First-20 controlled beta entry; query values are never sent. |
 | `/about` | `about` | — | |
 | `/status` | `status` | — | |
 | any other public path | `other_public` | — | Fallback so unmapped routes still count without leaking the path. |

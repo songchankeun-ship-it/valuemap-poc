@@ -76,6 +76,7 @@ const EXTRA_ROUTES = [
   { path: "/compare", anchor: "비교", mustAbsent: ["비교 중인 종목"], why: "base compare shows only the start state (no results header)" },
   { path: "/compare?stocks=004170,078930,055550", anchor: "비교 중인 종목", mustAbsent: ["비교할 종목이 아직 없습니다"], why: "3 valid symbols render results, NOT the empty no-symbols block" },
   { path: "/pricing", anchor: "베타", why: "pricing shows the free-beta lead" },
+  { path: "/beta", anchor: "첫 20명", why: "controlled beta page renders its guided first-20 flow" },
   { path: "/status", anchor: "상태", why: "status page renders" },
   { path: "/backtest", anchor: "백테스트", why: "backtest page renders" },
   { path: "/manifest.webmanifest", anchor: "138", why: "manifest description mentions the 138-stock universe" },

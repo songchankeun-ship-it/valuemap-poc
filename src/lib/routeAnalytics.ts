@@ -79,6 +79,7 @@ export const ROUTE_CLASSIFIERS: Classifier[] = [
     props: (_parts, params) => ({ hasQuery: params.has("next") || params.has("error") }),
   },
   { kind: "pricing", match: (p) => p === "/pricing" },
+  { kind: "beta", match: (p) => p === "/beta" },
   { kind: "about", match: (p) => p === "/about" },
   { kind: "status", match: (p) => p === "/status" },
 ];

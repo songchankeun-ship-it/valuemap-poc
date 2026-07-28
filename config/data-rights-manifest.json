@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "reviewedAt": "2026-07-22",
+  "reviewedAt": "2026-07-28",
   "legalStatus": "technical-containment-not-legal-clearance",
   "globalPolicy": {
     "monetization": "blocked",
@@ -12,6 +12,7 @@
   "existingApiRouteBaseline": [
     "src/app/api/ai/analyze/route.ts",
     "src/app/api/auth/naver/userinfo/route.ts",
+    "src/app/api/beta-feedback/route.ts",
     "src/app/api/cron/daily-insight/route.ts",
     "src/app/api/cron/evaluate-alerts/route.ts",
     "src/app/api/cron/notify/route.ts",

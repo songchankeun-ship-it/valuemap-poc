@@ -44,6 +44,7 @@ const CASES: Array<{ path: string; expect: RouteAnalyticsProps | null }> = [
   { path: "/login", expect: { routeKind: "login", hasQuery: false } },
   { path: "/login?next=/watchlist", expect: { routeKind: "login", hasQuery: true } },
   { path: "/pricing", expect: { routeKind: "pricing" } },
+  { path: "/beta", expect: { routeKind: "beta" } },
   { path: "/about", expect: { routeKind: "about" } },
   { path: "/status", expect: { routeKind: "status" } },
   { path: "/some/unknown/page", expect: { routeKind: FALLBACK_ROUTE_KIND } },

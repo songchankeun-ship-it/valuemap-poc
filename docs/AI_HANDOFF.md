@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-19T10:42:59.385Z
+Last updated: 2026-07-28T15:27:51.6450394+09:00
 Project: OrnScore
 Path: C:\dev\OrnScore
 
@@ -41,6 +41,28 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-07-28 - [codex] - Founding 20 controlled beta loop ready for release
+
+- Added a noindex `/beta?source=invite` journey for the first 20 controlled users:
+  find a stock, understand score evidence, save/return through the watchlist, then leave
+  a 1-5 usefulness rating and one concrete friction point.
+- Feedback is server-validated and stored in the existing Supabase `data_reports` table
+  under category `beta`. The route includes a honeypot and an email fallback. Free text
+  and email are never sent to Vercel Analytics.
+- Added five bounded anonymous beta events, route classification, admin traffic mapping,
+  beta feedback visibility in `/admin/status`, a footer feedback entry, and a four-wave
+  founding-20 runbook at `docs/ornscore-founding-20-beta-runbook-2026-07-28.md`.
+- Data-rights containment remains closed: `/api/beta-feedback` is recorded as a
+  non-market-data route and does not expose or expand stock data. Public data stays
+  2026-07-27, Metrics 2.4, 138 stocks.
+- Green locally: TypeScript, focused beta/analytics/data-rights gates, Next build 194/194,
+  release preflight 13/13, route-health 6/6, smoke 26/26, routes 9/9, stocks SEO 13/13,
+  public SEO 3/3, login 5/5, and logged-out admin guard 4/4. Desktop 1280x800 and mobile
+  390x844 visual checks found no horizontal overflow or console errors.
+- Next: deploy the exact commit, verify the live SHA and `/beta`, then invite only the
+  first wave of five people with `https://ornscore.com/beta?source=invite`. Review the
+  first 72 hours before sending wave two.
 
 ### 2026-07-28 - [codex] - P0 launch recovery deployed and live-verified
 

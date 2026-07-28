@@ -59,6 +59,9 @@ export function AppFooter({
       <Link href="/status#report" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
         {copy.footer.report}
       </Link>
+      <Link href="/beta#feedback" className="inline-flex min-h-8 items-center hover:text-zinc-900 dark:hover:text-white underline">
+        {copy.footer.betaFeedback}
+      </Link>
     </footer>
   );
 }

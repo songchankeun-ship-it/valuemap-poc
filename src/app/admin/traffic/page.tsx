@@ -10,6 +10,7 @@ import {
   Gauge,
   GitCompare,
   ListChecks,
+  MessageSquare,
   Route,
   Search,
   ShieldCheck,
@@ -153,6 +154,19 @@ const EVENT_GROUPS: EventGroup[] = [
       { name: "report_data_issue_open", meaning: "데이터 신고 폼 열기 — ticker" },
       { name: "report_data_issue_submit", meaning: "신고 제출 시도 — category, ticker, hasEmail" },
       { name: "report_data_issue_result", meaning: "신고 결과 — result, category, ticker" },
+    ],
+  },
+  {
+    key: "beta",
+    title: "첫 20명 베타",
+    desc: "초대 사용자의 시작·체험 단계·의견 제출 흐름. 자유 의견과 이메일은 분석으로 보내지 않습니다.",
+    Icon: MessageSquare,
+    events: [
+      { name: "beta_start", meaning: "베타 시작 — source(invite/site)" },
+      { name: "beta_task_open", meaning: "체험 단계 열기 — step, source" },
+      { name: "beta_task_complete", meaning: "단계 완료 표시/취소 — step, action, completedSteps, source" },
+      { name: "beta_feedback_submit", meaning: "의견 제출 시도 — rating, friction, completedSteps, source" },
+      { name: "beta_feedback_result", meaning: "의견 저장 결과 — result, source" },
     ],
   },
 ];

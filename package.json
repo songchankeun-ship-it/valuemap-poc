@@ -74,6 +74,7 @@
     "verify:data-rights": "node scripts/verify-data-rights.mjs",
     "test:data-rights": "node scripts/test-data-rights.mjs",
     "test:naver-review-gate": "tsx scripts/test_naverReviewGate.ts",
+    "test:beta-feedback": "tsx scripts/test_betaFeedback.ts",
     "test:methodology-audit": "python scripts/test_methodology_audit.py",
     "test:metrics251-baseline": "python scripts/test_metrics251_baseline.py",
     "config:metrics251": "python scripts/metrics251_config.py",

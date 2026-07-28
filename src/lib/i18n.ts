@@ -107,6 +107,7 @@ export const commonCopy = {
       privacy: "개인정보",
       dataDeletion: "데이터 삭제",
       report: "오류 신고",
+      betaFeedback: "베타 의견",
       code: "코드",
     },
     search: {
@@ -204,6 +205,7 @@ export const commonCopy = {
       privacy: "Privacy",
       dataDeletion: "Data deletion",
       report: "Report issue",
+      betaFeedback: "Beta feedback",
       code: "Code",
     },
     search: {

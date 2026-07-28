@@ -57,6 +57,11 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |
 | `report_data_issue_submit` | Data issue form submit | `category`, `ticker`, `hasEmail` | User submits a data quality report attempt. |
 | `report_data_issue_result` | Data issue form result | `result`, `category`, `ticker` | Submission outcome without message/email content. |
+| `beta_start` | `/beta` client start | `source` | Beta participant opens the guided flow; source is the fixed enum `invite` or `site`. |
+| `beta_task_open` | `/beta` task link | `step`, `source` | Participant opens one of the three fixed product tasks. |
+| `beta_task_complete` | `/beta` task completion control | `step`, `action`, `completedSteps`, `source` | Participant marks or unmarks a fixed task as complete. |
+| `beta_feedback_submit` | `/beta` feedback form | `rating`, `friction`, `completedSteps`, `source` | Feedback submission attempt; free-form comment and email are never sent to analytics. |
+| `beta_feedback_result` | `/beta` feedback form | `result`, `source` | Feedback storage outcome without feedback text or email. |
 
 ## Implementation Notes
 

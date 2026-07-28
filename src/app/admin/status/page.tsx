@@ -4,7 +4,7 @@
  * 공개 사용자 페이지(/status)는 그대로 두고, 운영자가 한눈에 볼 수 있는 최소 현황만 모은다.
  * - 자동 점검 요약(selfCheck): 검증보류 수·재무 결측 수·산식 버전 일치
  * - 검증보류(suspect) 종목 리스트 / PER·PBR·ROE 결측 종목 리스트 (stocks.json 풀에서 실측)
- * - data_reports 테이블이 있으면 최근 신고 목록(없거나 env 미설정이면 graceful 안내)
+ * - data_reports 테이블이 있으면 최근 오류 신고·베타 의견 목록(없거나 env 미설정이면 graceful 안내)
  *
  * 배치 실행 이력·수집 실패 로그·수동 재수집·신고 상태 워크플로는 후속(backlog 문서 참조).
  * 검색 노출 차단(noindex). ADMIN_ENABLED=1 일 때만 신고 목록을 조회한다(개인정보 보호).
@@ -46,6 +46,7 @@ const REPORT_CATEGORY_LABELS: Record<string, string> = {
   score: "점수·순위",
   sector: "업종 분류",
   other: "기타",
+  beta: "베타 사용성",
 };
 
 // 신고 상태 코드 → 한글 라벨 + 뱃지 색. 상태 전이는 인앱 API가 없어 Supabase에서 직접 갱신한다(소유자 게이트).
@@ -143,7 +144,7 @@ export default async function AdminStatusPage() {
     ...Object.keys(statusCounts).filter((s) => !CANONICAL_STATUS_ORDER.includes(s)),
   ];
   // 분류는 존재하는 것만, 사용자 폼과 동일한 어휘 순서로.
-  const CANONICAL_CATEGORY_ORDER = ["price", "financial", "disclosure", "score", "sector", "other"];
+  const CANONICAL_CATEGORY_ORDER = ["beta", "price", "financial", "disclosure", "score", "sector", "other"];
   const categorySummary = [
     ...CANONICAL_CATEGORY_ORDER.filter((c) => categoryCounts[c]),
     ...Object.keys(categoryCounts).filter((c) => !CANONICAL_CATEGORY_ORDER.includes(c)),
@@ -201,7 +202,7 @@ export default async function AdminStatusPage() {
         )}
       </Panel>
 
-      <Panel title={`접수된 데이터 오류 신고 (${reports.length})`} desc="data_reports 최근 50건 · 미처리(신규·확인 중) 우선 정렬">
+      <Panel title={`접수된 오류·베타 의견 (${reports.length})`} desc="data_reports 최근 50건 · 미처리(신규·확인 중) 우선 정렬">
         <ResourceStateLine state={reportState} className="mb-3" />
         {reportNote ? (
           <Empty>{reportNote}</Empty>
@@ -245,7 +246,7 @@ export default async function AdminStatusPage() {
               className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
             >
             <table className="min-w-[560px] w-full text-left text-xs">
-              <caption className="sr-only">접수된 데이터 오류 신고: 접수일, 분류, 종목, 내용, 상태</caption>
+              <caption className="sr-only">접수된 오류·베타 의견: 접수일, 분류, 종목, 내용, 상태</caption>
               <thead className="text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
                 <tr>
                   <th className="py-1.5 pr-3 font-medium whitespace-nowrap">접수</th>
