@@ -42,6 +42,34 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-28 - [codex] - Owner-led QA and daily publication recovery
+
+- The owner chose not to recruit external beta users for now. Keep `/beta` available,
+  but use an owner-led loop: reproduce one reported friction, apply the smallest fix,
+  then verify locally and in production.
+- Mobile compare controls were bounded in `78b7b8e`: the header badge is hidden on
+  mobile, the fixed compare tray is compact, and reset is hidden there. Production
+  mobile measured `clientWidth=347`, `scrollWidth=347`, with one visible compare CTA.
+- Daily run #36 collected and validated 138 stocks for 2026-07-28 but publication was
+  blocked because `/beta` and `/api/beta-feedback` were absent from the framework
+  baseline. Commit `c252d2f` refreshed the route baseline and patched Next.js within
+  the existing major line from 15.5.18 to 15.5.22.
+- Local checks passed: Next build 194/194, framework self-test, freshness 3/3, and
+  release preflight 12/12. The patch itself did not change `public/data` or workflows.
+- Manual workflow `Daily data refresh #37` (`30368275362`) passed every collection,
+  Metrics 2.4, methodology, data-integrity, release, and framework gate. Bot commit
+  `1fa57f5` published the 2026-07-28 snapshot.
+- Production passed exact-SHA SEO release 11/11, smoke 26/26, and market-close health
+  `PASS/fresh_confirmed`. Public state is 2026-07-28, Metrics 2.4, 138 stocks, build
+  `1fa57f5`.
+- Production audit has no direct Next.js advisory after 15.5.22, but still reports
+  three high package findings through Next's `postcss` and `sharp` dependencies.
+  There is no verified safe Next 15 resolution; do not force a Next 9 downgrade or
+  jump to Next 16 without a separately scoped migration.
+- Next: wait for the owner's first concrete usability report and run one bounded
+  owner-led QA cycle. External waits remain Naver review, Google Play processing, and
+  written provider-rights replies.
+
 ### 2026-07-28 - [codex] - Founding 20 controlled beta loop ready for release
 
 - Added a noindex `/beta?source=invite` journey for the first 20 controlled users:
