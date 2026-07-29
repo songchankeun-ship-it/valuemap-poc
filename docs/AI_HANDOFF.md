@@ -60,9 +60,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 - Green locally: campaign route contract, TypeScript, 138-stock Metrics 2.4
   verification, public reaudit 13/13, release preflight 14/14, and Next build
   194/194. Public data, auth, workflows, and packages are unchanged.
-- Next: commit, run dedicated local route health, push/deploy, verify the exact
-  production SHA, then prepare the Disquiet product form and stop immediately
-  before the external publish action for owner confirmation.
+- Release commit `ad66b46` is on the remote feature branch and `main`. Vercel
+  reported success; production passed exact-SHA SEO 11/11 and market-close
+  health `PASS/fresh_confirmed`; the campaign URL returned 200 and the social
+  asset returned 200 at 1200x630.
+- Next: the Disquiet login page is handed to the owner. After login, fill the
+  product registration form and stop immediately before the external publish
+  action for owner confirmation.
 
 ### 2026-07-29 - [codex] - Score-to-next-check owner QA
 
