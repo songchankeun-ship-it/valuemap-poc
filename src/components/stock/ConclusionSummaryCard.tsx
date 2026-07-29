@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { conclusionSummaryCardCopy } from "@/lib/copy/stockDetail";
 
@@ -11,6 +12,7 @@ export function ConclusionSummaryCard({
   type,
   summary,
   riskNote,
+  nextHref,
   suspect,
   strengths,
   warnings,
@@ -18,6 +20,7 @@ export function ConclusionSummaryCard({
   type: string;
   summary: string;
   riskNote: string;
+  nextHref: "#summary" | "#financials" | "#disclosures";
   suspect: boolean;
   strengths: string[];
   warnings: string[];
@@ -71,9 +74,18 @@ export function ConclusionSummaryCard({
         </div>
       </div>
 
-      <div className="mt-3 flex items-start gap-1.5 border-l-2 border-zinc-300 bg-zinc-50 px-2.5 py-2 text-[11px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300 md:text-xs">
-        <span aria-hidden="true" className="shrink-0">⚠</span>
-        <span className="leading-snug"><strong className="font-semibold">{t.firstCheck}</strong> — {riskNote}</span>
+      <div className="mt-3 border border-blue-200 bg-blue-50 px-3 py-3 dark:border-blue-900 dark:bg-blue-950/30 md:px-4">
+        <div className="text-[11px] font-bold text-blue-700 dark:text-blue-300">{t.firstCheck}</div>
+        <p className="mt-1 text-sm font-semibold leading-relaxed text-zinc-900 dark:text-zinc-100 md:text-[15px]">
+          {riskNote}
+        </p>
+        <a
+          href={nextHref}
+          className="mt-2 inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-blue-700 underline decoration-blue-300 underline-offset-4 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100"
+        >
+          {t.openNext}
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </a>
       </div>
     </div>
   );

@@ -59,6 +59,7 @@
     "test:trading-activity": "tsx scripts/test_tradingActivityContract.ts",
     "test:today-insight": "tsx scripts/test_todayInsightProvenance.ts",
     "test:score-scale": "tsx scripts/test_scoreScaleContract.ts",
+    "test:next-action-guidance": "tsx scripts/test_nextActionGuidance.ts",
     "test:momentum-regime": "tsx scripts/test_momentumRegime.ts",
     "test:seo-stability": "tsx scripts/test_seoStability.ts",
     "test:seo-contract": "tsx scripts/test_seoContract.ts",

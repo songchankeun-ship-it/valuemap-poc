@@ -66,7 +66,7 @@ export const disclosureExplorerCopy = {
     // 헤더
     title: "공시 신호",
     within200: "최신 수집 200건 내",
-    periodScopeBadge: "최신 수집 200건 내",
+    periodScopeBadge: "전체 공시 아님 · 최신 수집 200건 내",
     periodScopeBadgeAria:
       "수집 범위 제한 안내입니다. 선택한 기간 전체 공시가 아니라 코스피와 코스닥 최신 100건씩, 합 200건 안에서만 표시하며, 필터 컨트롤이 아닙니다.",
     // 카드 위 공통 경고 박스 — 카드마다 반복되던 문구를 한곳에 모음
@@ -175,7 +175,7 @@ export const disclosureExplorerCopy = {
     errorRetry: "Try again",
     title: "Disclosure signals",
     within200: "Within latest collected 200",
-    periodScopeBadge: "Within latest collected 200",
+    periodScopeBadge: "Not all filings · latest collected 200",
     periodScopeBadgeAria:
       "Collection-scope limit. Shows only within the latest 100 KOSPI and 100 KOSDAQ filings, 200 total, not every filing in the selected period; this is not a filter control.",
     // Shared top warning box — hoists notes that used to repeat on every card

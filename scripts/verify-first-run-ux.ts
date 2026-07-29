@@ -86,6 +86,8 @@ check("home page.tsx adds no competing <h1>", pageH1 === 0);
 // --- 4. Home primary action + search contract (spec §6.3) --------------------
 check("HomeHero keeps the primary CTA into today's candidates", heroSrc.includes("#today-candidates"));
 check("HomeHero primary CTA uses copy.primaryCta", heroSrc.includes("copy.primaryCta"));
+check("HomeHero renders one highlighted primary action", (heroSrc.match(/ui-primary-action/g) ?? []).length === 1);
+check("HomeHero drops the competing browse-all CTA", !heroSrc.includes("copy.browseAll"));
 check("HomeHero keeps the hero search entry", heroSrc.includes('variant="hero"'));
 check("HomeHero labels the search entry (copy.searchLabel)", heroSrc.includes("copy.searchLabel"));
 

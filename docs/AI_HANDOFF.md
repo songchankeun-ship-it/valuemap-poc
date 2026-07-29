@@ -42,6 +42,26 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-29 - [codex] - Score-to-next-check owner QA
+
+- Owner feedback identified the core product promise as the next verification order,
+  not the score itself. Stock detail now derives one concrete next check from the
+  metric state and links directly to the relevant summary, financials, or disclosures
+  tab.
+- The top score card now states that risk-adjusted is not a safety score and shows
+  beginner aliases for all four metrics. About renders the shared business date in
+  page content; the home hero has one primary CTA; disclosures explicitly say the
+  view is not all filings and is limited to the latest collected 200.
+- The existing beta success confirmation already explains that feedback sets the next
+  improvement order, so it was preserved.
+- Green locally: focused contracts, TypeScript, release preflight 14/14, Next build
+  194/194, desktop/mobile no-overflow checks, direct next-tab transition, and zero
+  browser console errors. Public data, Metrics 2.4, 138-stock output, auth, and
+  workflows remain unchanged.
+- Next: fast-forward the feature branch and main, verify the exact Vercel SHA and
+  production SEO/smoke/market-close gates, then continue one owner-reported friction
+  at a time.
+
 ### 2026-07-28 - [codex] - Owner-led QA and daily publication recovery
 
 - The owner chose not to recruit external beta users for now. Keep `/beta` available,

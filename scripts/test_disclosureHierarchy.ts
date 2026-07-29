@@ -101,6 +101,16 @@ check("E2 explorer no longer renders t.limitBanner", !explorerSrc.includes("t.li
 // E3. 단일 정본 수집 범위 안내는 유지된다(공통 안내 박스 + 기간 배지).
 check("E3 keeps canonical scope in topNotice box", explorerSrc.includes("t.topNoticeBullets"));
 check("E3 keeps functional period-scope badge", explorerSrc.includes("t.periodScopeBadge"));
+check(
+  "E3 ko badge says this is not all filings and names the 200-item limit",
+  disclosureExplorerCopy.ko.periodScopeBadge.includes("전체 공시 아님") &&
+    disclosureExplorerCopy.ko.periodScopeBadge.includes("200건"),
+);
+check(
+  "E3 en badge says this is not all filings and names the 200-item limit",
+  disclosureExplorerCopy.en.periodScopeBadge.includes("Not all filings") &&
+    disclosureExplorerCopy.en.periodScopeBadge.includes("200"),
+);
 
 // ── F. 카운트 단위: 공시 '건'(filings) vs 묶음 '개'(groups) 구분 ──────
 // F1. 요약 카드(유형별 묶음 수)는 '건'을 쓰지 않는다 — '개/groups'.

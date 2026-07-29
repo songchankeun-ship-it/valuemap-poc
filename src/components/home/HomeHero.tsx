@@ -107,19 +107,11 @@ export function HomeHero({
             <span className="shrink-0 text-zinc-600 dark:text-zinc-300">· {copy.searchCodeNote}</span>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5 mt-3 md:mt-4">
+        <div className="mt-3 md:mt-4">
           <a href="#today-candidates" className="ui-primary-action text-center px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-2 rounded-md text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
             <span>{copy.primaryCta}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
-          <Link
-            prefetch={false}
-            href="/stocks"
-            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-sm text-sm font-semibold text-zinc-600 dark:text-zinc-300 underline decoration-zinc-300 dark:decoration-zinc-600 underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 hover:decoration-blue-400 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-          >
-            <Search className="h-4 w-4" aria-hidden="true" />
-            <span>{copy.browseAll}</span>
-          </Link>
         </div>
         <p className="mt-4 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-3 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
           {copy.note}

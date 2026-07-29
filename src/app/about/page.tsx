@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dataMetadata } from "@/lib/realStocks";
+import { dataMetadata, formatBizDateLong } from "@/lib/realStocks";
 import { Mail, Database, Code, AlertTriangle, Smartphone } from "lucide-react";
 import PwaInstallHelper from "@/components/PwaInstallHelper";
 import { brandKeywords, stockDiscoveryKeywords, trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
@@ -27,6 +27,8 @@ export const metadata = {
 };
 
 export default function AboutPage() {
+  const dataAsOf = formatBizDateLong(dataMetadata.asOfBusinessDate);
+
   return (
     <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-10 space-y-6 md:space-y-8">
       <header>
@@ -34,6 +36,9 @@ export default function AboutPage() {
         <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
           오른스코어는 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">&quot;오늘 어떤 종목부터 봐야 할지&quot;</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
         </p>
+        <div className="mt-3 inline-flex items-center border-l-2 border-blue-500 bg-blue-50 px-3 py-2 text-xs font-semibold tabular-nums text-blue-900 dark:bg-blue-950/30 dark:text-blue-200">
+          데이터 기준 {dataAsOf} 장마감
+        </div>
       </header>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 md:p-6">
@@ -46,7 +51,7 @@ export default function AboutPage() {
             대부분의 개인 투자자는 종목 후보를 좁히는 데 시간을 가장 많이 씁니다. PER만 보면 다른 지표를 놓치고, 모멘텀만 보면 고평가 위험을 놓칩니다. 그래서 <strong className="text-zinc-900 dark:text-zinc-100">한 종목을 여러 각도로 동시에 보는 도구</strong>가 필요했습니다.
           </p>
           <p>
-            오른스코어는 <strong>모멘텀(추세) · 거래활성도(거래) · 밸류(저평가) · 변동성조정(위험 대비)</strong> 네 지표로 종목을 입체적으로 봅니다. 각 점수는 공개된 산식으로 계산되며, 어떤 데이터로 어떻게 만들어졌는지 모두 투명하게 공개합니다.
+            오른스코어는 <strong>추세(최근 흐름) · 거래활성도(관심 증가) · 밸류(가격 부담) · 위험조정(출렁임 대비 효율)</strong> 네 지표로 종목을 입체적으로 봅니다. 위험조정은 안전 점수가 아니라 과거 수익 대비 출렁임의 효율을 비교한 값입니다. 각 점수는 공개된 산식으로 계산되며, 어떤 데이터로 어떻게 만들어졌는지 모두 투명하게 공개합니다.
           </p>
         </div>
       </section>
@@ -90,7 +95,7 @@ export default function AboutPage() {
           </li>
         </ul>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
-          출처 표시는 이용·재배포 허가를 뜻하지 않습니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않으며, 데이터 기준일은 항상 상단 상태 바에 표시됩니다.
+          출처 표시는 이용·재배포 허가를 뜻하지 않습니다. 권리 검토 중인 소스는 기존 무료 베타 범위를 확대하지 않으며, 이 페이지와 상단 상태 바는 같은 공통 데이터 기준일을 표시합니다.
         </p>
       </section>
 

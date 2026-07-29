@@ -62,7 +62,12 @@ export function StockConclusionHero({
   completeness: number;
   metricsVersion?: string | null;
   suspect: boolean;
-  conclusion: { type: string; summary: string; riskNote: string };
+  conclusion: {
+    type: string;
+    summary: string;
+    riskNote: string;
+    nextHref: "#summary" | "#financials" | "#disclosures";
+  };
   strengths: string[];
   warnings: string[];
   riskAlert: HeroRiskAlert | null;
@@ -103,6 +108,7 @@ export function StockConclusionHero({
             type={conclusion.type}
             summary={conclusion.summary}
             riskNote={conclusion.riskNote}
+            nextHref={conclusion.nextHref}
             suspect={suspect}
             strengths={strengths}
             warnings={warnings}

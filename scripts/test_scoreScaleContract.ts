@@ -33,6 +33,7 @@ function check(name: string, cond: boolean): void {
 const SURFACES = {
   guide: read("src/lib/copy/metricsGuide.ts"),
   stockDetail: read("src/lib/copy/stockDetail.ts"),
+  priorityCard: read("src/components/stock/PriorityScoreCard.tsx"),
   tooltip: read("src/components/ScoreTooltip.tsx"),
 };
 const ALL: Array<[string, string]> = [
@@ -88,6 +89,23 @@ check("5a: stock-detail keeps 순위 as 상대 위치 (ko)", /순위는[\s\S]{0,
 check("5a: stock-detail keeps rank as relative position (en)", /rank is the relative position/i.test(SURFACES.stockDetail));
 check("5b: guide keeps 상대순위 distinct (ko)", /상대순위/.test(SURFACES.guide));
 check("5b: guide keeps relative rank distinct (en)", /relative rank/i.test(SURFACES.guide));
+
+// ── 6. 상단 위험조정 의미 + 초보자 별칭 ────────────────────────────────────────
+check(
+  "6a: priority card always renders the risk-adjusted meaning",
+  SURFACES.priorityCard.includes("t.riskMeaning"),
+);
+check(
+  "6b: ko copy says risk-adjusted is not a safety score",
+  /위험조정은 안전 점수가 아니라/.test(SURFACES.stockDetail),
+);
+check(
+  "6b: en copy says risk-adjusted is not a safety score",
+  /Risk-adjusted is not a safety score/i.test(SURFACES.stockDetail),
+);
+for (const alias of ["최근 흐름", "관심 증가", "가격 부담", "출렁임 대비 효율"]) {
+  check(`6c: beginner alias exists (${alias})`, SURFACES.stockDetail.includes(alias));
+}
 
 if (failed > 0) {
   console.error(`\n${failed} check(s) failed.`);

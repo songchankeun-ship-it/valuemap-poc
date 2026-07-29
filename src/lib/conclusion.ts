@@ -13,6 +13,7 @@ export interface ConclusionResult {
   type: string;     // 종목 유형 문구
   summary: string;  // 한 줄 결론(강점·약점만, 방향 예측 금지)
   riskNote: string; // 주의점(확인 톤)
+  nextHref: "#summary" | "#financials" | "#disclosures";
 }
 
 // 페이지의 강점(>=70)·주의(<50) 기준과 동일하게 맞춤.
@@ -54,11 +55,29 @@ export function classifyConclusion({ momentum, flow, value, vol, surge3m }: Conc
 
   // 주의점 — '확인' 톤만(공포·매도 언어 금지). 무엇을 먼저 확인할지까지 안내한다.
   let riskNote: string;
-  if (surgeBig) riskNote = "최근 3개월 상승폭이 커요 — 무엇 때문에 올랐는지(실적·뉴스·테마) 급등 사유부터 확인하세요.";
-  else if (surgeWarm) riskNote = "최근 상승폭이 다소 커요 — 급등 사유와 상승이 이어질 근거가 있는지 먼저 확인하세요.";
-  else if (voDown) riskNote = "위험조정 지표가 약해요 — 실제 주가 출렁임(변동성)과 최대낙폭을 함께 확인하세요.";
-  else if (weak.includes("거래활성도")) riskNote = "거래활성도가 약해요 — 시장 관심이 계속 이어지는지 거래량 흐름을 확인하세요.";
-  else riskNote = "점수는 탐색 우선순위일 뿐이에요 — 공시와 재무(실적)를 함께 확인한 뒤 판단하세요.";
+  let nextHref: ConclusionResult["nextHref"];
+  if (surgeBig) {
+    riskNote = "최근 3개월 상승폭이 커요. 실적·뉴스·테마 중 무엇이 움직임을 만들었는지 차트에서 급등 구간부터 확인하세요.";
+    nextHref = "#summary";
+  } else if (surgeWarm) {
+    riskNote = "최근 상승폭이 다소 커요. 차트에서 상승 구간과 거래량이 함께 이어졌는지 먼저 보세요.";
+    nextHref = "#summary";
+  } else if (voDown) {
+    riskNote = "위험조정 지표가 약해요. 실제 주가 출렁임과 최대낙폭이 감당 가능한 범위인지 먼저 보세요.";
+    nextHref = "#summary";
+  } else if (flow < WEAK) {
+    riskNote = "거래활성도가 약해요. 최근 5일 평균 거래량이 20일 평균보다 다시 강해지는지 먼저 보세요.";
+    nextHref = "#summary";
+  } else if (value < WEAK) {
+    riskNote = "밸류 지표가 약해요. 현재 PER·PBR 부담이 최근 실적으로 설명되는지 먼저 보세요.";
+    nextHref = "#financials";
+  } else if (momentum < WEAK) {
+    riskNote = "추세 지표가 약해요. 최근 1개월·3개월 흐름이 멈추거나 돌아서는지 먼저 보세요.";
+    nextHref = "#summary";
+  } else {
+    riskNote = "점수만으로 판단하지 말고, 최근 공시에 새 실적·계약·자금조달 변화가 있는지 먼저 보세요.";
+    nextHref = "#disclosures";
+  }
 
-  return { type, summary, riskNote };
+  return { type, summary, riskNote, nextHref };
 }

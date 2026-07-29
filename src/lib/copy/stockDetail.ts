@@ -176,7 +176,7 @@ export const conclusionHeroCopy = {
   ko: {
     suspectBanner:
       "가격 데이터 검증 중 — 아래 점수는 임시 계산값이며, 공식 후보·순위에서 제외됩니다.",
-    nextToCheck: "다음으로 확인할 것",
+    nextToCheck: "추가로 확인할 메뉴",
     disclaimerMain: "매수·매도 추천이 아닌 탐색 우선순위입니다.",
     disclaimerSub:
       "아직 실험 단계 지표라 향후 수익률을 의미하지 않아요 — 결정 전 공시·재무 근거를 함께 확인하세요.",
@@ -184,7 +184,7 @@ export const conclusionHeroCopy = {
   en: {
     suspectBanner:
       "Price data under review — the score below is a provisional estimate and is excluded from official candidates and rankings.",
-    nextToCheck: "What to check next",
+    nextToCheck: "More checks",
     disclaimerMain: "A research priority, not a buy/sell recommendation.",
     disclaimerSub:
       "It's still an experimental metric and doesn't imply future returns — check the disclosures and financials before deciding.",
@@ -197,6 +197,14 @@ export const priorityScoreCardCopy = {
     title: "탐색 우선도",
     leadStrength: "대표 강점",
     leadCheck: "먼저 볼 지표",
+    metricAlias: (label: string) =>
+      ({
+        추세: "최근 흐름",
+        거래활성도: "관심 증가",
+        밸류: "가격 부담",
+        위험조정: "출렁임 대비 효율",
+      } as Record<string, string>)[label] ?? label,
+    riskMeaning: "위험조정은 안전 점수가 아니라 과거 수익 대비 출렁임 효율입니다.",
     rankLabel: "상대순위",
     rankParen: "(점수와 별개)",
     rankNoteToggle: "점수·순위 기준",
@@ -218,6 +226,14 @@ export const priorityScoreCardCopy = {
     title: "Research priority",
     leadStrength: "Top strength",
     leadCheck: "Check first",
+    metricAlias: (label: string) =>
+      ({
+        Trend: "recent direction",
+        "Trading activity": "attention change",
+        Value: "price burden",
+        "Risk-adjusted": "return vs. swings",
+      } as Record<string, string>)[label] ?? label,
+    riskMeaning: "Risk-adjusted is not a safety score; it compares past return with price swings.",
     rankLabel: "Relative rank",
     rankParen: "(separate from the score)",
     rankNoteToggle: "Score/rank basis",
@@ -244,7 +260,8 @@ export const conclusionSummaryCardCopy = {
     suspectPrefix: "데이터 검증 중 · 임시 점수 — ",
     goodPoints: "좋은 점",
     checkPoints: "확인할 점",
-    firstCheck: "먼저 확인",
+    firstCheck: "이 점수를 본 다음",
+    openNext: "여기부터 확인하기",
     strengthEmpty: "뚜렷한 강점 지표가 없습니다.",
     warningEmpty: "현재 자동 분류된 특이 주의 신호는 없어요. 다만 최근 공시와 실적은 직접 확인하세요.",
     moreSignals: (n: number) => `외 ${n}개는 지표 상세에서 확인`,
@@ -254,7 +271,8 @@ export const conclusionSummaryCardCopy = {
     suspectPrefix: "Data under review · provisional score — ",
     goodPoints: "Good points",
     checkPoints: "Check points",
-    firstCheck: "Check first",
+    firstCheck: "After reading this score",
+    openNext: "Check this first",
     strengthEmpty: "No standout strength metric.",
     warningEmpty: "No auto-classified caution signal right now. Still, check recent disclosures and results yourself.",
     moreSignals: (n: number) => `${n} more in metric detail`,

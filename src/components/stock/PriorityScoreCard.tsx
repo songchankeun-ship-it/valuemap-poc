@@ -103,19 +103,29 @@ export function PriorityScoreCard({
       <div className="mt-2.5 grid grid-cols-2 gap-2 text-[11px]">
         <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1.5">
           <div className="text-[10px] text-emerald-200 font-medium">{t.leadStrength}</div>
-          <div className="mt-0.5 flex items-baseline justify-between gap-2">
-            <span className="truncate text-white font-semibold">{leadStrength.label}</span>
+          <div className="mt-0.5 flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <div className="truncate font-semibold text-white">{leadStrength.label}</div>
+              <div className="truncate text-[9px] text-emerald-200/80">{t.metricAlias(leadStrength.label)}</div>
+            </div>
             <span className="shrink-0 tabular-nums text-emerald-100 font-bold">{Math.round(leadStrength.score)}</span>
           </div>
         </div>
         <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 py-1.5">
           <div className="text-[10px] text-amber-200 font-medium">{t.leadCheck}</div>
-          <div className="mt-0.5 flex items-baseline justify-between gap-2">
-            <span className="truncate text-white font-semibold">{leadCheck.label}</span>
+          <div className="mt-0.5 flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <div className="truncate font-semibold text-white">{leadCheck.label}</div>
+              <div className="truncate text-[9px] text-amber-200/80">{t.metricAlias(leadCheck.label)}</div>
+            </div>
             <span className="shrink-0 tabular-nums text-amber-100 font-bold">{Math.round(leadCheck.score)}</span>
           </div>
         </div>
       </div>
+
+      <p className="mt-2 border-l-2 border-blue-400/70 bg-blue-400/10 px-2.5 py-2 text-[10px] font-medium leading-relaxed text-blue-100">
+        {t.riskMeaning}
+      </p>
 
       <div className="mt-3 border-t border-white/10 pt-2.5">
         <div className="mb-1 text-[10px] font-medium text-zinc-400">{t.trustLabel}</div>
