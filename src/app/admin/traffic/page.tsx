@@ -59,7 +59,7 @@ const EVENT_GROUPS: EventGroup[] = [
     desc: "공개 페이지 방문 흐름. /admin 계열은 수집에서 제외됩니다.",
     Icon: Route,
     events: [
-      { name: "route_view_public", meaning: "공개 라우트 1회 진입 — routeKind, 공개 ticker/topic, hasQuery/hasFilters, compareCount만" },
+      { name: "route_view_public", meaning: "공개 라우트 1회 진입 — routeKind, 허용된 campaign, 공개 ticker/topic, hasQuery/hasFilters, compareCount만" },
     ],
   },
   {

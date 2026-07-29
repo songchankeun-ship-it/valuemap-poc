@@ -12,11 +12,16 @@ component `src/components/analytics/AnalyticsEventTracker.tsx` just imports
 
 `SAFE_ROUTE_PROP_KEYS` is the **only** set of keys `route_view_public` may emit:
 
-`routeKind`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount`
+`routeKind`, `campaign`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount`
 
 The verification script asserts no classifier can produce a key outside this list.
 Ticker and topic are public identifiers (path segments); the boolean/count props
 only report **presence or size**, never the raw value.
+
+`campaign` is optional and may be emitted on any public route only when `ref`
+matches the fixed allow-list: `disquiet`, `geeknews`, `naver-blog`, `threads`,
+`linkedin`, `kakao`, `community`, or `direct`. Unknown, mixed-case, URL-shaped,
+and free-form values are dropped.
 
 ## Path → routeKind → safe props
 
@@ -43,7 +48,8 @@ only report **presence or size**, never the raw value.
 ## What is never sent
 
 - Raw search text (`q=…`), report/free-form input, email or account identifiers.
-- Full URLs, redirect targets (`next=…`), or query values of any kind.
+- Full URLs, redirect targets (`next=…`), or query values other than a fixed,
+  allow-listed `ref` campaign label.
 - Operations/admin paths (`/admin/**` → `null`).
 
 ## Verify

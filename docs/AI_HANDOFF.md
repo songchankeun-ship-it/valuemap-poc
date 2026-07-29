@@ -42,6 +42,28 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-07-29 - [codex] - Measurable public launch preparation
+
+- Added a strict allow-list for `route_view_public.campaign`. Only the eight
+  documented public-launch `ref` values are emitted; arbitrary strings, emails,
+  search text, and URL-shaped values are dropped.
+- Replaced the stale social card with a 1200x630 asset built from the real current
+  Samsung Electronics detail screen. Its message is: after the score, show what
+  to verify next.
+- Added `docs/ornscore-public-launch-kit-2026-07-29.md` with ready copy for
+  Disquiet, GeekNews Show GN, Naver Blog, Threads, LinkedIn, and Kakao; fixed
+  campaign links; language guardrails; a seven-day sequence; and 24/48/72-hour
+  review steps.
+- Recommended organic order: Disquiet, personal channels, then GeekNews. Paid
+  promotion, repetitive finance-community distribution, monetization language,
+  and commercial data use stay deferred until rights/legal review.
+- Green locally: campaign route contract, TypeScript, 138-stock Metrics 2.4
+  verification, public reaudit 13/13, release preflight 14/14, and Next build
+  194/194. Public data, auth, workflows, and packages are unchanged.
+- Next: commit, run dedicated local route health, push/deploy, verify the exact
+  production SHA, then prepare the Disquiet product form and stop immediately
+  before the external publish action for owner confirmation.
+
 ### 2026-07-29 - [codex] - Score-to-next-check owner QA
 
 - Owner feedback identified the core product promise as the next verification order,

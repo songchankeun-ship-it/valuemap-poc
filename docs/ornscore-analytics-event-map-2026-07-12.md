@@ -14,7 +14,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 
 | Event | Source | Properties | Meaning |
 | --- | --- | --- | --- |
-| `route_view_public` | Root client analytics tracker | `routeKind`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount` | Sanitized public route visit signal for launch review. Admin routes are excluded; raw search text, full URLs, and auth/account identifiers are not sent. |
+| `route_view_public` | Root client analytics tracker | `routeKind`, `campaign`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount` | Sanitized public route visit signal for launch review. `campaign` is emitted only for the fixed `ref` allow-list (`disquiet`, `geeknews`, `naver-blog`, `threads`, `linkedin`, `kakao`, `community`, `direct`). Admin routes are excluded; unknown source values, raw search text, full URLs, and auth/account identifiers are not sent. |
 | `search_result_open` | Global search result click/Enter | `source`, `resultType`, `ticker`, `theme`, `queryLength` | User found a stock/theme through autocomplete. |
 | `search_view_all` | Global search "view all" row | `source`, `queryLength`, `resultCount` | User broadens autocomplete into `/stocks?q=...`. |
 | `search_empty_open_stocks` | Global search empty state CTA | `source`, `queryLength`, `stockCount` | User searches something outside autocomplete and opens the explorer. |

@@ -7,10 +7,12 @@
 //   3. Privacy: raw query text, emails, full URLs, and /admin paths never leak
 //      into the emitted props, whatever junk rides along in the query string.
 import {
+  CAMPAIGN_SOURCES,
   FALLBACK_ROUTE_KIND,
   ROUTE_CLASSIFIERS,
   ROUTE_KINDS,
   SAFE_ROUTE_PROP_KEYS,
+  campaignSourceOf,
   classifyRoute,
   type RouteAnalyticsProps,
 } from "../src/lib/routeAnalytics";
@@ -28,11 +30,17 @@ const SAFE_KEYS = new Set<string>(SAFE_ROUTE_PROP_KEYS);
 // (path, expected result). `null` means the route must not be tracked.
 const CASES: Array<{ path: string; expect: RouteAnalyticsProps | null }> = [
   { path: "/", expect: { routeKind: "home" } },
+  { path: "/?ref=disquiet", expect: { routeKind: "home", campaign: "disquiet" } },
+  { path: "/?ref=naver-blog", expect: { routeKind: "home", campaign: "naver-blog" } },
   { path: "/stocks", expect: { routeKind: "stocks", hasQuery: false, hasFilters: false } },
   { path: "/stocks?q=samsung", expect: { routeKind: "stocks", hasQuery: true, hasFilters: false } },
   { path: "/stocks?sector=IT", expect: { routeKind: "stocks", hasQuery: false, hasFilters: true } },
   { path: "/stocks?themes=ai&sort=score", expect: { routeKind: "stocks", hasQuery: false, hasFilters: true } },
   { path: "/stock/005930", expect: { routeKind: "stock_detail", ticker: "005930" } },
+  {
+    path: "/stock/005930?ref=geeknews",
+    expect: { routeKind: "stock_detail", campaign: "geeknews", ticker: "005930" },
+  },
   { path: "/topics/dividend", expect: { routeKind: "topic", topic: "dividend" } },
   { path: "/compare", expect: { routeKind: "compare", compareCount: 0 } },
   { path: "/compare?stocks=005930,000660", expect: { routeKind: "compare", compareCount: 2 } },
@@ -101,6 +109,19 @@ for (const base of ["/stocks", "/compare", "/login", "/stock/005930"]) {
   for (const secret of SENSITIVE) {
     check(`${base}${stressQuery} does not leak "${secret}"`, !serialized.includes(secret));
   }
+}
+
+for (const campaign of CAMPAIGN_SOURCES) {
+  check(
+    `campaign "${campaign}" is accepted exactly`,
+    campaignSourceOf(new URLSearchParams(`ref=${campaign}`)) === campaign,
+  );
+}
+for (const rejected of ["", "Disquiet", "naver_blog", "https://example.com", SENSITIVE[1]]) {
+  check(
+    `campaign "${rejected}" is rejected`,
+    campaignSourceOf(new URLSearchParams(`ref=${encodeURIComponent(rejected)}`)) === undefined,
+  );
 }
 
 // Coverage: every classifier kind (+fallback) is exercised by a case above, so a

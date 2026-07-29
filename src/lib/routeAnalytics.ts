@@ -10,6 +10,7 @@ export const ROUTE_VIEW_EVENT = "route_view_public";
 
 export type RouteAnalyticsProps = {
   routeKind: string;
+  campaign?: CampaignSource;
   ticker?: string;
   topic?: string;
   hasQuery?: boolean;
@@ -17,11 +18,25 @@ export type RouteAnalyticsProps = {
   compareCount?: number;
 };
 
+export const CAMPAIGN_SOURCES = [
+  "disquiet",
+  "geeknews",
+  "naver-blog",
+  "threads",
+  "linkedin",
+  "kakao",
+  "community",
+  "direct",
+] as const;
+
+export type CampaignSource = (typeof CAMPAIGN_SOURCES)[number];
+
 // The only property keys `route_view_public` is ever allowed to emit. The
 // verification script asserts that no classifier can produce a key outside this
 // list, so accidentally forwarding raw input (e.g. `q`, `email`) fails the gate.
 export const SAFE_ROUTE_PROP_KEYS = [
   "routeKind",
+  "campaign",
   "ticker",
   "topic",
   "hasQuery",
@@ -93,6 +108,13 @@ export const ROUTE_KINDS = [
   FALLBACK_ROUTE_KIND,
 ] as const;
 
+const CAMPAIGN_SOURCE_SET = new Set<string>(CAMPAIGN_SOURCES);
+
+export function campaignSourceOf(params: URLSearchParams): CampaignSource | undefined {
+  const value = params.get("ref");
+  return value && CAMPAIGN_SOURCE_SET.has(value) ? (value as CampaignSource) : undefined;
+}
+
 /**
  * Reduce a public route to its sanitized analytics props, or `null` when the
  * route must not be tracked (operations/admin surface).
@@ -107,11 +129,17 @@ export function classifyRoute(pathname: string, search: string): RouteAnalyticsP
 
   const parts = pathname.split("/").filter(Boolean);
   const params = new URLSearchParams(search);
+  const campaign = campaignSourceOf(params);
+  const campaignProps = campaign ? { campaign } : {};
 
   for (const classifier of ROUTE_CLASSIFIERS) {
     if (!classifier.match(pathname, parts)) continue;
-    return { routeKind: classifier.kind, ...(classifier.props?.(parts, params) ?? {}) };
+    return {
+      routeKind: classifier.kind,
+      ...campaignProps,
+      ...(classifier.props?.(parts, params) ?? {}),
+    };
   }
 
-  return { routeKind: FALLBACK_ROUTE_KIND };
+  return { routeKind: FALLBACK_ROUTE_KIND, ...campaignProps };
 }
