@@ -4108,3 +4108,34 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   dependencies, runtime/provider settings, and private Metrics state.
 - Next: fast-forward release, exact-SHA route/health verification, then align
   future outreach copy to `예측 대신 데이터` and `다음 확인 순서`.
+
+## 2026-11-17 - Organic acquisition baseline and first CTR experiment [codex]
+
+- Read-only Naver Search Advisor evidence shows 8 clicks, 1,200 impressions,
+  and 0.7% CTR over the recent 30 days (updated 2026-11-15). Crawl status shows
+  15 indexed pages with zero restrictions, exclusions, or SEO diagnoses.
+  Backlink reporting shows one external page/domain (`disquiet.io`) linking 64
+  ORNScore pages.
+- `/topics/low-per-stocks` is the first measurable opportunity: 652 impressions,
+  one click, 0.2% CTR. Visible low-PER query variants total at least 554
+  impressions and one click. The strongest comparison control is
+  `/compare/247540-vs-066970` at 203 impressions and three clicks.
+- Added the decision record at
+  `docs/ornscore-organic-acquisition-plan-2026-11-17.md`. It freezes the
+  baseline, page order, 14/30-day review window, downstream metrics, and
+  no-thin-content distribution rules.
+- The P0 implementation changes only search copy and crawl paths: the low-PER
+  page now uses the exact measured intent, states the live universe size, and
+  explains the next checks. Topic pages link to four related topics. A visual
+  QA finding also removed duplicate PER/PBR/ROE/dividend columns when one is
+  already the primary metric.
+- Focused assertions, TypeScript, SEO stability, full SEO release self-test,
+  Next build 194/194, release preflight 14/14, and local route-health 6/6 pass.
+  Desktop and 390px-class mobile checks show no
+  document overflow or related-link overlap. No public data, Metrics 2.4,
+  universe, formula, auth, workflow, dependency, hosting, or outside-account
+  setting changed.
+- Google Search Console remains unverified for the `ornscore.com` domain in the
+  signed-in account. Verification is an owner-only external step; do not infer
+  Google performance from Naver. Next code decision waits for at least 14 days
+  of post-release Naver evidence unless a production defect appears.

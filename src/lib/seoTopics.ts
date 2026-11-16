@@ -77,18 +77,18 @@ export const seoTopics: SeoTopic[] = [
   },
   {
     slug: "low-per-stocks",
-    title: "PER 낮은 종목 탐색 | 저PER 주식 비교",
-    h1: "PER 낮은 종목 탐색",
-    shortLabel: "PER 낮은 종목",
+    title: `저PER 종목 찾기 | ${realStockPool.length}개 한국 주식 PER 비교`,
+    h1: "저PER 종목 찾기",
+    shortLabel: "저PER 종목",
     category: "가치",
     description:
-      "PER 값이 낮은 종목을 PBR, ROE, 밸류 점수와 함께 비교해 숫자의 배경을 확인합니다.",
+      `한국 주식 ${realStockPool.length}개에서 PER이 0보다 큰 종목을 낮은 순으로 비교합니다. PBR·ROE·밸류 점수와 함께 낮은 PER의 배경과 다음 확인 순서를 점검하세요.`,
     intro:
-      "PER이 낮은 종목은 이익 대비 가격이 낮아 보일 수 있지만, 업황 둔화나 일회성 이익 때문에 낮아질 수도 있습니다. ROE와 PBR을 같이 확인하세요.",
+      `분석 대상 ${realStockPool.length}개 중 PER이 0보다 큰 종목을 낮은 순으로 보여줍니다. 낮은 PER은 이익 대비 가격이 낮다는 뜻이지만 업황 둔화나 일회성 이익의 결과일 수도 있으므로, PBR과 ROE를 다음 순서로 확인하세요.`,
     selectionLabel: "PER 낮은 순",
     filterNote: "PER이 0보다 큰 종목 중 낮은 PER을 우선 정렬하고, 밸류 점수로 보조 정렬합니다.",
     primaryMetric: "PER",
-    keywords: ["PER 낮은 종목", "저PER 주식", "PER 낮은 주식", "PER 비교", "가치주 스크리닝"],
+    keywords: ["저PER 종목", "저 per 종목", "PER 낮은 종목", "저PER 주식", "PER 낮은 주식", "PER 비교"],
     stocksHref: "/stocks",
     stockSelector: () =>
       takeTop(realStockPool.filter((stock) => stock.per > 0).sort((a, b) => a.per - b.per || b.value - a.value)),

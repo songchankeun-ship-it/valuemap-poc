@@ -124,8 +124,25 @@ async function main(): Promise<void> {
   // 리다이렉트 theme 도 색인 대상이 아님(메타도 noindex 신호).
   check("6 battery (redirected) metadata is noindex", (await robotsIndexOf("battery")) === false);
 
-  // ── 7. 자기검증: 계약 정본 자체가 정합 ────────────────────────────
-  check("7 all five legacy themes still have a disposition", (() => {
+  // ── 7. 실측 검색 의도 + 주제 간 크롤 경로 ─────────────────────────
+  const lowPer = getSeoTopic("low-per-stocks");
+  check("7 low-PER title starts with the measured query intent", lowPer?.title.startsWith("저PER 종목 찾기") === true);
+  check("7 low-PER snippet states the live universe size", lowPer?.description.includes(`${realStockPool.length}개`) === true);
+  check("7 low-PER opening copy gives the next checks", lowPer?.intro.includes("PBR과 ROE를 다음 순서로") === true);
+
+  const topicPageSrc = read("src/app/topics/[slug]/page.tsx");
+  check("7 topic pages derive crawlable related topics", /const relatedTopics = seoTopics/.test(topicPageSrc));
+  check("7 topic pages render related topic hrefs", topicPageSrc.includes("href={`/topics/${related.slug}`}"));
+  check("7 topic pages limit related links to four", /\.slice\(0, 4\)/.test(topicPageSrc));
+  check(
+    "7 topic tables suppress a duplicate primary metric column",
+    ["PER", "PBR", "ROE", "배당수익률"].every((metric) =>
+      topicPageSrc.includes(`topic.primaryMetric !== "${metric}"`),
+    ),
+  );
+
+  // ── 8. 자기검증: 계약 정본 자체가 정합 ────────────────────────────
+  check("8 all five legacy themes still have a disposition", (() => {
     const keys = Object.keys(LEGACY_THEME_MIGRATION);
     return ["battery", "semi-materials", "bio", "shipbuilding", "robot"].every((s) => keys.includes(s));
   })());
@@ -135,7 +152,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.log(
-    "PASS: real-data topic authority (bio-stocks, shipbuilding-stocks) + legacy /theme/* retirement (permanent redirects, robot noindex, sitemap removal, no mock fallback)",
+    "PASS: real-data topic authority + measured low-PER intent + related-topic crawl paths + legacy /theme/* retirement",
   );
 }
 

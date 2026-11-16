@@ -5105,3 +5105,34 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
   overflow or incoherent overlap on Home and About.
 - Next: publish the copy-only release, verify the exact production SHA and
   route health, then use the same claim consistently in distribution content.
+
+## 2026-11-17 - [codex] Search acquisition baseline and low-PER CTR experiment
+
+- Read the owner account's Naver Search Advisor reports without changing any
+  search-engine setting. Recent 30-day baseline (updated 2026-11-15): 8 clicks,
+  1,200 impressions, 0.7% CTR. Crawl status reports 15 indexed pages, zero
+  crawl limits/exclusions/SEO diagnoses. Content expansion reports one external
+  linking page: `disquiet.io`, linking 64 ORNScore pages.
+- The largest measurable leak is `/topics/low-per-stocks`: 652 impressions,
+  one click, 0.2% CTR. Visible low-PER query variants total at least 554
+  impressions and one click. `/compare/247540-vs-066970` is the strongest
+  comparison control at 203 impressions, three clicks, 1.5% CTR.
+- Added `docs/ornscore-organic-acquisition-plan-2026-11-17.md` with the verified
+  baseline, page priorities, 30-day thresholds, and distribution guardrails.
+- Updated only the low-PER search experiment: exact `저PER 종목` title/H1,
+  live 138-stock scope, and next-check language. All topic pages now expose four
+  server-rendered related-topic links, preferring the same category first.
+- Visual QA caught and removed a duplicate PER table column when PER is already
+  the topic's primary metric; the same rule covers PBR, ROE, and dividend.
+- Green: focused topic authority/acquisition assertions, TypeScript, SEO
+  stability, full SEO release self-test, Next production build 194/194, release
+  preflight 14/14, and local route-health 6/6.
+  Desktop and 390px-class mobile QA show one PER column, no document overflow,
+  and readable related links. The local preview used process-only dummy auth
+  values; no saved runtime setting changed.
+- Frozen: public data, Metrics 2.4, 138-stock universe, formulas, auth, workflows,
+  packages, hosting, and outside account settings.
+- Next: release this narrow experiment, then wait at least 14 days before
+  judging it. Re-read Naver at 14 and 30 days. Owner separately verifies the
+  Google Search Console domain property; it is currently unverified in the
+  signed-in account, so no Google query data is available yet.

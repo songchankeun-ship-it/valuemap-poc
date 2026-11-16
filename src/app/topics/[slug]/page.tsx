@@ -74,6 +74,14 @@ export default async function TopicPage({ params }: PageProps) {
   if (!topic) notFound();
 
   const stocks = topic.stockSelector();
+  const relatedTopics = seoTopics
+    .filter((candidate) => candidate.slug !== topic.slug)
+    .sort((a, b) => Number(b.category === topic.category) - Number(a.category === topic.category))
+    .slice(0, 4);
+  const showPerColumn = topic.primaryMetric !== "PER";
+  const showPbrColumn = topic.primaryMetric !== "PBR";
+  const showRoeColumn = topic.primaryMetric !== "ROE";
+  const showDividendColumn = topic.primaryMetric !== "배당수익률";
   const dataAsOf = formatBizDateLong(dataMetadata.asOfBusinessDate);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -223,10 +231,10 @@ export default async function TopicPage({ params }: PageProps) {
                 <th className="px-3 py-2.5 font-semibold">업종</th>
                 <th className="px-3 py-2.5 text-right font-semibold">현재가</th>
                 <th className="px-3 py-2.5 text-right font-semibold">{topic.primaryMetric}</th>
-                <th className="px-3 py-2.5 text-right font-semibold">PER</th>
-                <th className="px-3 py-2.5 text-right font-semibold">PBR</th>
-                <th className="px-3 py-2.5 text-right font-semibold">ROE</th>
-                <th className="px-3 py-2.5 text-right font-semibold">배당</th>
+                {showPerColumn ? <th className="px-3 py-2.5 text-right font-semibold">PER</th> : null}
+                {showPbrColumn ? <th className="px-3 py-2.5 text-right font-semibold">PBR</th> : null}
+                {showRoeColumn ? <th className="px-3 py-2.5 text-right font-semibold">ROE</th> : null}
+                {showDividendColumn ? <th className="px-3 py-2.5 text-right font-semibold">배당</th> : null}
                 <th className="px-4 py-2.5 text-right font-semibold">보기</th>
               </tr>
             </thead>
@@ -260,12 +268,26 @@ export default async function TopicPage({ params }: PageProps) {
                     <td className="px-3 py-3 text-right text-sm font-semibold tabular-nums text-blue-700 dark:text-blue-400">
                       {topicScore(stock, topic.primaryMetric)}
                     </td>
-                    <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(stock.per, 1)}</td>
-                    <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(stock.pbr, 2)}</td>
-                    <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(stock.roe, 1, "%")}</td>
-                    <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
-                      {formatNumber(stock.dividendYield, 1, "%")}
-                    </td>
+                    {showPerColumn ? (
+                      <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+                        {formatNumber(stock.per, 1)}
+                      </td>
+                    ) : null}
+                    {showPbrColumn ? (
+                      <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+                        {formatNumber(stock.pbr, 2)}
+                      </td>
+                    ) : null}
+                    {showRoeColumn ? (
+                      <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+                        {formatNumber(stock.roe, 1, "%")}
+                      </td>
+                    ) : null}
+                    {showDividendColumn ? (
+                      <td className="px-3 py-3 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+                        {formatNumber(stock.dividendYield, 1, "%")}
+                      </td>
+                    ) : null}
                     <td className="px-4 py-3 text-right">
                       <Link
                         href={`/stock/${stock.ticker}`}
@@ -306,6 +328,26 @@ export default async function TopicPage({ params }: PageProps) {
               데이터 기준일 확인
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="border-t border-zinc-200 pt-5 dark:border-zinc-800" aria-labelledby="related-topics-heading">
+        <h2 id="related-topics-heading" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          관련 조건도 비교하기
+        </h2>
+        <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          한 가지 지표만으로 결론 내리지 말고 가까운 조건의 후보를 함께 확인하세요.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+          {relatedTopics.map((related) => (
+            <Link
+              key={related.slug}
+              href={`/topics/${related.slug}`}
+              className="inline-flex min-h-10 items-center font-medium text-blue-700 hover:underline dark:text-blue-400"
+            >
+              {related.shortLabel} · {related.primaryMetric}
+            </Link>
+          ))}
         </div>
       </section>
     </main>
