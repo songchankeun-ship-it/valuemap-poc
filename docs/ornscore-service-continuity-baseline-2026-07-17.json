@@ -33,7 +33,7 @@
         "scripts/verify_metrics.py",
         "scripts/verify_public_data_delta.py"
       ],
-      "schedule": "0 8 * * 1-5",
+      "schedule": "17 8 * * 1-5",
       "stepNames": [
         "Checkout",
         "Setup Python",
@@ -72,7 +72,7 @@
       "login": [
         {
           "path": "src/app/login/LoginContent.tsx",
-          "sha": "fea64da6da8ba32d8b71f8bd6e278ecc5ff2afcd"
+          "sha": "b02be0d0340ab72b54303ff3da9b6cae73a38a1b"
         },
         {
           "path": "src/app/login/page.tsx",
@@ -92,11 +92,11 @@
       "universeCount": 138
     },
     "publicData": {
-      "marketAlerts": "fe19b90bda00d39c2f42585fa32fb989b82035d7",
+      "marketAlerts": "dd63a402d6009bb24aa71a43c56d5391fc36738c",
       "pricesFileCount": 138,
-      "pricesTree": "3ae0da2c96c429838696054914938905fe6ac58f",
-      "stocksJson": "c037daf4f61956a4cb7ac6292298ab65edfbe88d",
-      "treeSha": "24045925fcaaae2746609c4550ec89fb8cd39a45",
+      "pricesTree": "7cc9fae0a2b677c3b07bb6d10f0aab58271abdaf",
+      "stocksJson": "993de15c1aeb60b3558eab5ef12bb4d54d7cf0ef",
+      "treeSha": "0a3c0f92c10ff66165b307a50efc647f9d9db8ed",
       "worktreeClean": true
     },
     "routeCanary": {

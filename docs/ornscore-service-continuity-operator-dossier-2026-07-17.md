@@ -134,7 +134,7 @@ identity of `.github/workflows/daily-data.yml`.
 
 | Field | Value |
 | --- | --- |
-| Schedule | `0 8 * * 1-5` (workflow_dispatch also enabled) |
+| Schedule | `17 8 * * 1-5` (17:17 KST; workflow_dispatch also enabled) |
 | Concurrency | group `daily-data`, `cancel-in-progress: false` |
 | Permissions | `contents: write` |
 | Runner / timeout | `ubuntu-latest` / 30 min |

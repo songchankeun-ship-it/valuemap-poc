@@ -159,7 +159,7 @@ function main() {
   // §5  frozen fields
   // -------------------------------------------------------------------------
   {
-    const rep = evaluateWorkflow(VALID.replace("0 8 * * 1-5", "0 9 * * 1-5"));
+    const rep = evaluateWorkflow(VALID.replace("17 8 * * 1-5", "0 9 * * 1-5"));
     check("§5a changed cron -> frozen fails", groupFailed(rep, "frozen-fields") && !rep.ok);
   }
   {

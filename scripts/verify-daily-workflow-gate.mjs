@@ -44,7 +44,7 @@ import { WORKFLOW_FILE, parseWorkflowContract } from "./verify-continuity-baseli
 // ---------------------------------------------------------------------------
 export const FROZEN = {
   name: "Daily data refresh",
-  schedule: "0 8 * * 1-5",
+  schedule: "17 8 * * 1-5",
   workflowDispatch: true,
   permissionsContents: "write",
   concurrencyGroup: "daily-data",

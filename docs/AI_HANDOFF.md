@@ -4066,3 +4066,22 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Full green evidence: release preflight 12/12 with 192 pages, reaudit 13/13, local route-health 6/6, smoke 25/25, TypeScript, direct `published-close` API assertions, and no frozen-boundary changes. Public data, Metrics 2.4, universe 138, workflows, auth/provider behavior, dependencies, and outside state are unchanged.
 - Private Metrics 2.5.1 is currently **3/5** on 2026-07-20/21/22. Existing schedules should collect the remaining two dates without owner action unless they alert.
 - Next agent: wait for a written price/volume provider decision before replacing the daily adapter. A private Open DART fundamentals parity adapter is the next safe implementation candidate; keep it out of public outputs until reviewed.
+
+### 2026-11-16 - Codex - Daily refresh schedule reliability amendment
+
+- Production evidence: `/data/stocks.json` served 138 stocks, Metrics 2.4, and
+  business date `20261113`; Vercel was serving the latest published commit.
+- GitHub scheduled runs were commonly starting five to ten hours after the
+  intended 17:00 KST target, and no 2026-11-16 run was visible by about 22:45
+  KST. This was scheduler latency, not a hosting outage.
+- Owner authorized continued operational updates. The weekday cron now targets
+  17:17 KST (`17 8 * * 1-5`) to avoid minute-zero congestion. Matching workflow
+  gates, negative fixtures, continuity evidence, and runbooks were updated.
+- Scope remains narrow: no public-data/formula/universe change, no Metrics 2.5.1
+  promotion, no auth/package/hosting change, and no force push.
+- Verification green: workflow gate 6/6 plus negative fixtures, market-close
+  health regression, continuity self-test, freeze 2/2, full continuity 7/7,
+  release preflight 13/13, diff check, and Next build 194/194.
+- Next: commit with `[codex]`, fast-forward synchronize without force, then
+  verify the first run at the new schedule and the live production date. A
+  schedule is still best-effort; health monitoring remains the alerting layer.

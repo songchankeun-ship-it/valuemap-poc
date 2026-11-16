@@ -196,13 +196,14 @@ dirty the tracked worktree (`git status` = 0 lines).
 > ⚠️ **This task does not activate any scheduler and does not run a genuine market day.** The
 > controlling Codex watchdog installs the two schedules below **only after this recertification
 > is green**. All commands run from the repo root; on Windows prefix `PYTHONUTF8=1` for cp949
-> Korean safety. The KRX daily-data workflow is `0 8 * * 1-5` (17:00 KST); both schedules are
+> Korean safety. The KRX daily-data workflow is `17 8 * * 1-5` (17:17 KST, amended
+> 2026-11-16 to avoid top-of-hour scheduling congestion); both schedules are
 > weekday-only and fire **after** it, in the post-close grace window.
 
 ### 6.1 Schedule 1 — public health monitor (Slice A, read-only)
 
 Fires each weekday in the post-close grace window (e.g. **`30 10 * * 1-5`** UTC = **19:30 KST**,
-comfortably past the 17:00 KST publish cron + build/deploy lead). Read-only, GET-only.
+comfortably past the 17:17 KST publish cron + build/deploy lead). Read-only, GET-only.
 
 ```bash
 # Weekday market-close health probe (read-only). Optionally pin the deployed build SHA.

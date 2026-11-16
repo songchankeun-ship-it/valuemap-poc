@@ -85,7 +85,8 @@ in KST (fixed +09:00, no DST) and returns exactly one window:
 - `pre_publication` → **WAIT-eligible** — a trading day but KST time-of-day is
   before the **publication deadline** = `closeMinutes + graceMinutes`
   (default close 15:30 KST, grace 210 min → 19:00 KST, comfortably past the
-  17:00 KST `0 8 * * 1-5` cron plus build/deploy lead). This is the documented
+  17:17 KST `17 8 * * 1-5` cron plus build/deploy lead). The minute was amended
+  on 2026-11-16 to reduce top-of-hour GitHub Actions scheduling delays. This is the documented
   post-close publication grace window (it also covers any pre-close run, which
   is even more clearly "nothing fresh due yet").
 - `enforcing` → a trading day at/after the deadline; freshness must be live.

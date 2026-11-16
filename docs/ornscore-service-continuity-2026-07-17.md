@@ -38,6 +38,19 @@ Every slice must preserve all of these invariants:
 7. Each slice creates one local `[codex]` commit, updates `PROGRESS.md` and
    `docs/AI_HANDOFF.md`, and leaves a clean or precisely documented worktree.
 
+### 2.1 Owner-approved schedule amendment (2026-11-16)
+
+The owner explicitly authorized continued operational updates after production
+evidence showed that the weekday GitHub Actions schedule was routinely starting
+five to ten hours after its 17:00 KST target. The only amended boundary is the
+cron minute: `0 8 * * 1-5` becomes `17 8 * * 1-5` (17:17 KST) to avoid the
+top-of-hour scheduler congestion window.
+
+All other continuity boundaries remain frozen: workflow permissions,
+concurrency, generation commands, 138-stock universe, public Metrics 2.4,
+authentication, packages, hosting, and automatic push semantics. Revert this
+amendment by restoring the prior cron and its matching verifier/baseline values.
+
 ## 3. Ordered slices
 
 ### Slice A - continuity baseline and invariant harness

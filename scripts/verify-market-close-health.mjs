@@ -85,7 +85,7 @@ export const VERDICTS = Object.freeze(["PASS", "WAIT", "FAIL"]);
 // temporal config — KST (fixed +09:00, no DST). Every value overridable/injectable.
 //   closeMinutes : KRX market close (15:30 KST) as minutes-of-day.
 //   graceMinutes : publication grace after close. close(15:30) + 210 -> 19:00 KST
-//                  deadline, comfortably past the 17:00 KST `0 8 * * 1-5` cron plus
+//                  deadline, comfortably past the 17:17 KST `17 8 * * 1-5` cron plus
 //                  build/deploy lead. Before the deadline => WAIT window.
 // ---------------------------------------------------------------------------
 export const DEFAULT_TEMPORAL = Object.freeze({

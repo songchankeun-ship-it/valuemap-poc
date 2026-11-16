@@ -1,10 +1,11 @@
 name: Daily data refresh
 
-# 한국장 마감(15:30 KST) 후 데이터 정산 시간을 두고 17:00 KST(=08:00 UTC) 평일 실행.
+# 한국장 마감(15:30 KST) 후 데이터 정산 시간을 두고 17:17 KST(=08:17 UTC) 평일 실행.
+# GitHub Actions 예약 실행이 정각에 장시간 지연되는 현상을 줄이기 위해 정각을 피한다.
 # 수동 실행 버튼(workflow_dispatch)도 제공 — Actions 탭에서 "Run workflow"로 즉시 테스트 가능.
 on:
   schedule:
-    - cron: "0 8 * * 1-5"
+    - cron: "17 8 * * 1-5"
   workflow_dispatch: {}
 
 # 봇이 stocks.json/prices를 커밋·푸시할 수 있도록 쓰기 권한 부여

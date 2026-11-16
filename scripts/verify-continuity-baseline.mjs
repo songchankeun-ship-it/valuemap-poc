@@ -289,7 +289,7 @@ export function validateEvidence(facts, root = ROOT) {
     if (!cond) errors.push(msg);
   };
   const wf = facts.dailyWorkflow || {};
-  req(wf.schedule === "0 8 * * 1-5", `dailyWorkflow.schedule ${JSON.stringify(wf.schedule)} != "0 8 * * 1-5"`);
+  req(wf.schedule === "17 8 * * 1-5", `dailyWorkflow.schedule ${JSON.stringify(wf.schedule)} != "17 8 * * 1-5"`);
   req(wf.permissionsContents === "write", `dailyWorkflow.permissionsContents ${JSON.stringify(wf.permissionsContents)} != "write"`);
   req(wf.concurrency?.group === "daily-data", `dailyWorkflow.concurrency.group ${JSON.stringify(wf.concurrency?.group)} != "daily-data"`);
   req(wf.concurrency?.cancelInProgress === "false", `dailyWorkflow.concurrency.cancelInProgress ${JSON.stringify(wf.concurrency?.cancelInProgress)} != "false"`);

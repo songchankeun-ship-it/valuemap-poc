@@ -5059,3 +5059,22 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - Verification: data-rights gate PASS, negative fixtures PASS, TypeScript PASS, reaudit 13/13, release preflight 12/12 with 192-page build, local route-health 6/6, smoke 25/25, and direct quote/status/about assertions PASS. No diff in `public/data`, Metrics 2.4, 138-stock output, workflows, auth/provider behavior, dependencies, or external account/runtime settings.
 - Current private Metrics 2.5.1 ledger is **actualRuns 3/5** for 2026-07-20, 2026-07-21, and 2026-07-22. Existing schedules remain responsible for the final two dates.
 - Next: obtain a written price/volume provider decision, then implement the contracted adapter. In parallel, a private Open DART fundamentals adapter can replace Naver/yfinance fields without changing public data until parity and rights gates pass.
+
+## 2026-11-16 - [codex] Daily refresh schedule reliability amendment
+
+- Production was healthy and served 138 stocks on public Metrics 2.4 for
+  business date `20261113`, but recent GitHub scheduled runs routinely started
+  five to ten hours after the 17:00 KST target.
+- Changed only the weekday cron minute from `0 8 * * 1-5` to
+  `17 8 * * 1-5` (17:17 KST) to avoid top-of-hour scheduler congestion.
+- Updated the exact workflow gate, negative fixture, continuity verifier,
+  baseline evidence, continuity authorization, and operator documentation.
+- Frozen: generation commands, `public/data`, 138 stocks, Metrics 2.4,
+  authentication, packages, hosting configuration, and push semantics.
+- Verification: daily workflow gate 6/6, negative fixtures, market-close health,
+  continuity self-test, continuity freeze 2/2, full continuity 7/7, release
+  preflight 13/13, diff check, and Next production build 194/194 all passed.
+- Next: commit and fast-forward synchronize without force. Verify the first
+  `17 8 * * 1-5` scheduled run and the live production business date; if GitHub
+  still delays materially, keep the alerting layer and evaluate a separate
+  owner-approved scheduler rather than weakening freshness checks.
