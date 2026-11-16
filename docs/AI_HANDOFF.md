@@ -4082,6 +4082,11 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Verification green: workflow gate 6/6 plus negative fixtures, market-close
   health regression, continuity self-test, freeze 2/2, full continuity 7/7,
   release preflight 13/13, diff check, and Next build 194/194.
+- Same-session missed-date recovery: the new schedule landed after the
+  2026-11-16 trigger, so the existing finite pipeline was run once locally.
+  Fetch was 138/138, candidate date `20261116`, Metrics 2.4, candidate anomalies
+  0, release preflight 13/13, build 194/194, commit `dd6a21ce`. KRX alert helper
+  returned no parseable rows and emitted no fabricated alerts.
 - Next: commit with `[codex]`, fast-forward synchronize without force, then
   verify the first run at the new schedule and the live production date. A
   schedule is still best-effort; health monitoring remains the alerting layer.

@@ -5074,6 +5074,13 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - Verification: daily workflow gate 6/6, negative fixtures, market-close health,
   continuity self-test, continuity freeze 2/2, full continuity 7/7, release
   preflight 13/13, diff check, and Next production build 194/194 all passed.
+- Same-session recovery: because the amended schedule was published after its
+  2026-11-16 trigger time, ran the existing finite pipeline once from the clean
+  main worktree. Price fetch completed 138/138; the candidate advanced to
+  `20261116`, stayed on Metrics 2.4, passed integrity and candidate-delta gates
+  with zero anomalies, passed release preflight 13/13 and build 194/194, and was
+  committed as `dd6a21ce`. The KRX alert helper returned no parseable rows and
+  preserved the existing empty-alert contract without fabricated data.
 - Next: commit and fast-forward synchronize without force. Verify the first
   `17 8 * * 1-5` scheduled run and the live production business date; if GitHub
   still delays materially, keep the alerting layer and evaluate a separate
