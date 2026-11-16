@@ -81,13 +81,13 @@ function riskKindOf(s: { value: number; vol: number }, r3m: number | null): Risk
 }
 
 export const metadata = {
-  title: "오른스코어 — 한국 주식 탐색 도구 | 138개 종목 데이터 분석",
-  description: "한국 주식 스크리닝과 종목 검색을 한 화면에서. 코스피·코스닥 138개 종목의 추세·거래활성도·밸류·위험조정, PER·PBR·ROE·배당수익률, DART 공시 신호를 함께 확인하세요.",
+  title: "오른스코어 - 예측 대신 데이터로 보는 한국 주식 탐색 도구",
+  description: "수익률 전망·상승 확률 대신 과거 가격·거래량·밸류·위험조정·DART 공시를 같은 기준으로 비교해 오늘 확인할 한국 주식 후보를 좁혀보세요.",
   keywords: uniqueKeywords(brandKeywords, stockDiscoveryKeywords, metricKeywords, disclosureKeywords),
   authors: [{ name: "오른스코어 운영팀" }],
   openGraph: {
-    title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "한국 주식 스크리닝 · 종목 검색 · PER/PBR/ROE · DART 공시 신호를 한 화면에서. 종목 탐색 시간을 데이터로 줄여드립니다.",
+    title: "오른스코어 - 예측 대신 데이터로 보는 한국 주식",
+    description: "미래를 맞히는 대신 과거 가격·거래량·재무·공시를 같은 기준으로 비교해 확인할 후보와 다음 순서를 보여드립니다.",
     url: "https://ornscore.com",
     siteName: "오른스코어",
     locale: "ko_KR",
@@ -103,8 +103,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "오른스코어 — 한국 주식 탐색 도구",
-    description: "한국 주식 스크리닝과 종목 검색, 4대 지표와 공시 신호를 한 화면에서.",
+    title: "오른스코어 - 예측 대신 데이터로 보는 한국 주식",
+    description: "수익률 전망이나 상승 확률 대신 4대 지표와 공시로 확인할 후보를 좁혀보세요.",
     images: ["/social/ornscore-og-1200x630.jpg"],
   },
   alternates: {

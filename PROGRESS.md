@@ -5085,3 +5085,23 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
   `17 8 * * 1-5` scheduled run and the live production business date; if GitHub
   still delays materially, keep the alerting layer and evaluate a separate
   owner-approved scheduler rather than weakening freshness checks.
+
+## 2026-11-16 - [codex] Evidence-first positioning clarification
+
+- Sharpened the public promise from a generic scoring tool to an evidence-first
+  research workflow: ORNScore does not forecast returns, upside probability, or
+  a future price. It compares historical price, volume, valuation,
+  risk-adjusted behavior, and disclosures on one consistent basis.
+- Updated the Home hero, Home metadata, and About introduction in Korean and
+  English. The message now leads with verifiable inputs and the next-check
+  sequence, while keeping the product explicitly non-advisory.
+- Added focused regression assertions for the no-forecast statement, the
+  evidence-first headline, and the matching metadata contract.
+- Frozen: formulas, public Metrics 2.4, 138-stock data, `public/data`, auth,
+  workflows, packages, runtime values, and provider behavior.
+- Verification green: next-action guidance, first-run UX, SEO stability,
+  TypeScript, release preflight 13/13, and production build 194/194. Desktop
+  and 390px-class mobile visual checks found no document-level horizontal
+  overflow or incoherent overlap on Home and About.
+- Next: publish the copy-only release, verify the exact production SHA and
+  route health, then use the same claim consistently in distribution content.

@@ -4090,3 +4090,21 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next: commit with `[codex]`, fast-forward synchronize without force, then
   verify the first run at the new schedule and the live production date. A
   schedule is still best-effort; health monitoring remains the alerting layer.
+
+## 2026-11-16 - Evidence-first positioning clarification [codex]
+
+- Public positioning is now explicit: ORNScore is not a return forecast,
+  upside-probability model, or future-price service. It narrows candidates and
+  shows what to verify next using comparable historical market/fundamental data
+  and disclosures.
+- Changed only Home/About copy, route metadata, locale strings, and focused
+  guidance assertions. Do not weaken this into prediction language or claim
+  the inputs are future truth; scores remain relative within the 138-stock
+  universe and inherit their disclosed source/right limitations.
+- Green evidence: next-action guidance, first-run UX, SEO stability,
+  TypeScript, release preflight 13/13, build 194/194, and desktop/mobile visual
+  QA without document-level horizontal overflow.
+- Frozen: `public/data`, Metrics 2.4, score formulas, universe, auth, workflows,
+  dependencies, runtime/provider settings, and private Metrics state.
+- Next: fast-forward release, exact-SHA route/health verification, then align
+  future outreach copy to `예측 대신 데이터` and `다음 확인 순서`.

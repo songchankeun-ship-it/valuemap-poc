@@ -47,6 +47,21 @@ check(
   about.includes("formatBizDateLong(dataMetadata.asOfBusinessDate)") &&
     about.includes("데이터 기준 {dataAsOf} 장마감"),
 );
+check(
+  "about page states the no-forecast positioning",
+  about.includes("상승 확률을 계산하거나 특정 미래 가격을 제시하지 않습니다") &&
+    about.includes("왜 눈에 띄는지와 다음에 무엇을 확인할지"),
+);
+
+const homeCopy = read("src/lib/i18n.ts");
+check(
+  "home starts from data rather than a forecast claim",
+  homeCopy.includes("전망이 아닌 숫자에서 출발해") &&
+    homeCopy.includes("미래 수익률이나 상승 확률을 예측하지 않습니다"),
+);
+
+const homePage = read("src/app/page.tsx");
+check("home metadata preserves the same positioning", homePage.includes("수익률 전망·상승 확률 대신"));
 
 const beta = read("src/components/BetaProgramClient.tsx");
 check("beta feedback already confirms how the response helps", beta.includes("이 의견은 다음 개선 순서를 정하는 데 바로 반영할게요."));

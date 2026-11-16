@@ -5,12 +5,12 @@ import PwaInstallHelper from "@/components/PwaInstallHelper";
 import { brandKeywords, stockDiscoveryKeywords, trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
 export const metadata = {
-  title: "오른스코어 소개 — 한국 주식 탐색 도구",
-  description: "오른스코어는 한국 주식 스크리닝, 종목 검색, PER·PBR·ROE 지표, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
+  title: "오른스코어 소개 - 예측 대신 데이터로 보는 한국 주식",
+  description: "상승 확률을 계산하거나 특정 미래 가격을 제시하는 대신 과거 가격·거래량·재무·DART 공시를 같은 기준으로 비교해 확인할 후보와 다음 순서를 보여주는 탐색 도구입니다.",
   keywords: uniqueKeywords(brandKeywords, stockDiscoveryKeywords, trustKeywords),
   openGraph: {
-    title: "오른스코어 소개 — 한국 주식 탐색 도구",
-    description: "한국 주식 스크리닝, 종목 검색, 지표 비교, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
+    title: "오른스코어 소개 - 예측 대신 데이터로 보는 한국 주식",
+    description: "과거 시장 데이터와 공시를 같은 기준으로 비교해 왜 눈에 띄는지와 다음 확인 순서를 보여주는 탐색 도구입니다.",
     url: "/about",
     siteName: "오른스코어",
     locale: "ko_KR",
@@ -20,8 +20,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "오른스코어 소개 — 한국 주식 탐색 도구",
-    description: "한국 주식 스크리닝, 종목 검색, 지표 비교, DART 공시 신호를 함께 보는 데이터 탐색 도구입니다.",
+    title: "오른스코어 소개 - 예측 대신 데이터로 보는 한국 주식",
+    description: "상승 확률이나 특정 미래 가격 대신 과거 데이터와 공시로 확인할 후보와 다음 순서를 좁혀보세요.",
   },
   alternates: { canonical: "/about" },
 };
@@ -35,6 +35,9 @@ export default function AboutPage() {
         <h1 className="text-xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">서비스 소개</h1>
         <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
           오른스코어는 한국 개인 투자자가 <strong className="text-zinc-900 dark:text-zinc-100">&quot;오늘 어떤 종목부터 봐야 할지&quot;</strong>를 데이터로 빠르게 좁히는 분석 도구입니다.
+        </p>
+        <p className="mt-2 text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          상승 확률을 계산하거나 특정 미래 가격을 제시하지 않습니다. 과거 시장 데이터와 공시를 같은 기준으로 비교해 <strong className="text-zinc-900 dark:text-zinc-100">왜 눈에 띄는지와 다음에 무엇을 확인할지</strong> 보여줍니다.
         </p>
         <div className="mt-3 inline-flex items-center border-l-2 border-blue-500 bg-blue-50 px-3 py-2 text-xs font-semibold tabular-nums text-blue-900 dark:bg-blue-950/30 dark:text-blue-200">
           데이터 기준 {dataAsOf} 장마감
