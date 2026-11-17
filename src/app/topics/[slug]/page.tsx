@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, BarChart3, BookmarkPlus, Database, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, BarChart3, BookmarkPlus, Database, GitCompare, Search, ShieldCheck } from "lucide-react";
 import { dataMetadata, formatBizDateLong, type RealStock } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
 import { getSeoTopic, seoTopics } from "@/lib/seoTopics";
 import { metricKeywords, stockDiscoveryKeywords, trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
+import { buildTopicCompareStart } from "@/lib/topicCompare";
 
 export const revalidate = 3600;
 
@@ -73,6 +74,7 @@ export default async function TopicPage({ params }: PageProps) {
   if (!topic) notFound();
 
   const stocks = topic.stockSelector();
+  const compareStart = buildTopicCompareStart(stocks);
   const relatedTopics = seoTopics
     .filter((candidate) => candidate.slug !== topic.slug)
     .sort((a, b) => Number(b.category === topic.category) - Number(a.category === topic.category))
@@ -176,6 +178,29 @@ export default async function TopicPage({ params }: PageProps) {
             </div>
           </dl>
           <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+            {compareStart ? (
+              <div className="mb-4 border-b border-zinc-200 pb-4 dark:border-zinc-800">
+                <div className="flex gap-2 text-xs">
+                  <GitCompare className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                  <div>
+                    <div className="font-semibold text-zinc-900 dark:text-zinc-100">먼저 차이를 나란히 보기</div>
+                    <p className="mt-1 leading-5 text-zinc-500 dark:text-zinc-400">
+                      이 조건에서 앞에 표시된 후보 {compareStart.tickers.length}개를 같은 지표로 비교한 뒤 상세 근거를 확인하세요.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href={compareStart.href}
+                  data-analytics-event="topic_compare_start"
+                  data-analytics-topic={topic.slug}
+                  data-analytics-count={compareStart.tickers.length}
+                  className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                >
+                  앞의 {compareStart.tickers.length}개 비교
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </Link>
+              </div>
+            ) : null}
             <div className="flex gap-2 text-xs">
               <BookmarkPlus className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
               <div>
@@ -190,7 +215,7 @@ export default async function TopicPage({ params }: PageProps) {
               data-analytics-event="topic_saved_filter_start"
               data-analytics-topic={topic.slug}
               data-analytics-filtered={topic.stocksHref.includes("?") ? "true" : "false"}
-              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-md border border-zinc-200 px-3 text-xs font-semibold text-zinc-700 transition hover:border-blue-300 hover:text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-blue-700 dark:hover:text-blue-400"
             >
               조건 저장하러 가기
               <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

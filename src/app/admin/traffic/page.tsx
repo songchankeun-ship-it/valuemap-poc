@@ -84,6 +84,7 @@ const EVENT_GROUPS: EventGroup[] = [
       { name: "topic_stock_open", meaning: "주제 페이지에서 종목 상세 열기 — topic, ticker" },
       { name: "topic_all_stocks_click", meaning: "주제에서 전체 탐색으로 — topic" },
       { name: "topic_saved_filter_start", meaning: "주제에서 저장 필터 만들기로 — topic, filtered" },
+      { name: "topic_compare_start", meaning: "주제 상위 후보 비교 시작 — topic, count" },
     ],
   },
   {
@@ -93,6 +94,7 @@ const EVENT_GROUPS: EventGroup[] = [
     Icon: GitCompare,
     events: [
       { name: "compare_toggle", meaning: "비교 추가/제거 — action, ticker, compact" },
+      { name: "compare_curated_interactive_open", meaning: "큐레이션 비교에서 직접 비교 열기 — count" },
       { name: "compare_toast_open", meaning: "비교 토스트에서 /compare로 — ticker" },
       { name: "compare_tray_open", meaning: "플로팅 트레이에서 /compare 열기 — count" },
       { name: "compare_tray_reset", meaning: "비교 집합 비우기 — count" },
@@ -727,7 +729,7 @@ export default async function AdminTrafficPage() {
             <span className="font-medium text-zinc-800 dark:text-zinc-100">2. 발견 → 상세</span> — <span className="font-mono">home_candidate_open</span> · <span className="font-mono">search_result_open</span> · <span className="font-mono">topic_stock_open</span>. 가장 중요한 전환 지점.
           </li>
           <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
-            <span className="font-medium text-zinc-800 dark:text-zinc-100">3. 비교·관심 의도</span> — <span className="font-mono">compare_toggle</span> · <span className="font-mono">watchlist_toggle</span>. 상세는 오는데 이게 0에 가까우면 다음 행동 유도 점검.
+            <span className="font-medium text-zinc-800 dark:text-zinc-100">3. 비교·관심 의도</span> — <span className="font-mono">topic_compare_start</span> · <span className="font-mono">compare_toggle</span> · <span className="font-mono">watchlist_toggle</span>. 상세는 오는데 이게 0에 가까우면 다음 행동 유도 점검.
           </li>
           <li className="rounded-md border border-zinc-100 bg-zinc-50 p-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
             <span className="font-medium text-zinc-800 dark:text-zinc-100">4. 계정 의도</span> — <span className="font-mono">auth_cta_click</span>. 실제 가입은 <Link href="/admin/users" className="font-medium underline">가입자 운영 현황</Link>과 교차 확인.

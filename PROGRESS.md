@@ -1,5 +1,29 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-17 - [codex] Growth Sprint 4 topic-to-comparison activation
+
+- Kept the sprint on the strongest existing acquisition surface instead of
+  opening another channel: search-intent topic pages now offer one primary
+  action that opens the first three valid displayed candidates in the existing
+  interactive comparison.
+- Candidate selection is deterministic, deduplicated, six-digit-ticker only,
+  capped at three, and unavailable below two candidates. The saved-filter path
+  remains available as a secondary action.
+- Added `topic_compare_start(topic,count)` and
+  `compare_curated_interactive_open(count)`. Both join the typed action-intent
+  and compare-outcome contracts, including Sprint 3 same-tab campaign
+  attribution. No ticker list, pair slug, URL, or free-form value is emitted by
+  the two events.
+- Green: focused Sprint 4, click-contract, admin-metrics, TypeScript, build
+  194/194, release preflight 20/20, local route health 6/6, OG 3/3, and
+  desktop/mobile navigation QA without document overflow.
+- Frozen: public data, Metrics 2.4, 138 stocks, formulas, topic order, auth,
+  workflows, dependencies, provider/runtime values, hosting, and outside state.
+- **Next action**: obtain explicit exact-commit approval for `3dbeb60d`,
+  `0d601f26`, and this Sprint 4 commit before fast-forwarding `origin/main`.
+  Then require exact-SHA, production route health, topic CTA navigation, and OG
+  3/3.
+
 ## 2026-11-17 - [codex] Growth Sprint 3 campaign-to-action learning loop
 
 - Added privacy-bounded same-tab campaign continuity. Only the existing nine

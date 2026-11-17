@@ -4235,3 +4235,29 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   commit as outside the prior exact three-commit authorization. Sprint 3 must be
   committed separately. Ask the owner to explicitly approve both exact commits
   before pushing; then verify exact SHA, production route health, and OG 3/3.
+
+## 2026-11-17 - Growth Sprint 4 topic-to-comparison activation [codex]
+
+- Search-intent topic pages now turn the existing sorted list into one bounded
+  next action: compare the first three distinct valid six-digit tickers in the
+  interactive compare surface. Below two candidates the action does not render.
+  Saved-filter creation remains available as a secondary path.
+- Curated pair pages now mark their existing interactive-compare handoff as an
+  outcome. New delegated events are `topic_compare_start(topic,count)` and
+  `compare_curated_interactive_open(count)`; neither sends ticker lists, pair
+  slugs, URLs, referrers, or free-form values.
+- Both events are included in `action_intent` and the independent `compare`
+  outcome, so Sprint 3's same-tab campaign enum can connect qualified entry to
+  the actual comparison start.
+- Added `src/lib/topicCompare.ts`, `test:growth-sprint-4`, and
+  `docs/ornscore-growth-sprint-4-2026-11-17.md`. Green: TypeScript, focused
+  analytics tests, Next build 194/194, release preflight 20/20, route health
+  6/6, OG 3/3, and desktop/mobile topic-to-compare browser QA with no overflow.
+- Frozen: public data, Metrics 2.4, 138-stock universe, formulas, topic ranking,
+  auth, workflows, dependencies, provider/runtime values, hosting, and outside
+  state.
+- Release remains local. `3dbeb60d` and `0d601f26` were not pushed because the
+  protected-main reviewer did not treat the owner's short reply as exact commit
+  approval. Commit Sprint 4 separately, then ask the owner to explicitly name
+  all three exact commits for a fast-forward `origin/main` push. After deploy,
+  require exact-SHA, production route health, topic CTA navigation, and OG 3/3.

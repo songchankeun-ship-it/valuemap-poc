@@ -27,7 +27,9 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `topic_stock_open` | `/topics/[slug]` stock links | `topic`, `ticker` | Topic page successfully drives stock-detail exploration. |
 | `topic_all_stocks_click` | `/topics/[slug]` "전체 탐색" CTA | `topic` | User moves from landing page to broader explorer. |
 | `topic_saved_filter_start` | `/topics/[slug]` saved-filter handoff CTA | `topic`, `filtered` | User moves from a topic landing page toward saving a reusable stock filter. |
+| `topic_compare_start` | `/topics/[slug]` primary comparison CTA | `topic`, `count` | User opens the top two or three topic candidates in the interactive comparison; individual tickers are not sent by this event. |
 | `compare_toggle` | Add/remove compare button | `action`, `ticker`, `compact` | User attempts to build a comparison set. |
+| `compare_curated_interactive_open` | `/compare/[pair]` interactive comparison CTA | `count` | User continues from a curated pair into the adjustable comparison with the fixed pair count only. |
 | `compare_toast_open` | Compare toast link | `ticker` | User follows a compare add/remove toast to `/compare`. |
 | `compare_tray_open` | Floating compare tray CTA | `count` | User opens `/compare` after collecting candidates. |
 | `compare_tray_reset` | Floating compare tray reset | `count` | User clears a comparison set. |
@@ -78,7 +80,7 @@ shown unless a verified provider payload is supplied.
 
 | Outcome | Events |
 | --- | --- |
-| Compare | `compare_toggle`, `stock_recent_compare_open` |
+| Compare | `compare_toggle`, `stock_recent_compare_open`, `topic_compare_start`, `compare_curated_interactive_open` |
 | Save | `watchlist_toggle` |
 | Return | `watchlist_routine_complete` |
 | Share | `stock_share`, `compare_share` |

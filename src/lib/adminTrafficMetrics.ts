@@ -106,7 +106,10 @@ export interface TrafficMetricsProvider {
 export const FUNNEL_STAGE_DEFS = [
   { key: "entry", events: [ROUTE_VIEW_EVENT] },
   { key: "discover_to_detail", events: ["home_candidate_open", "search_result_open", "topic_stock_open"] },
-  { key: "action_intent", events: ["compare_toggle", "watchlist_toggle"] },
+  {
+    key: "action_intent",
+    events: ["compare_toggle", "topic_compare_start", "compare_curated_interactive_open", "watchlist_toggle"],
+  },
   { key: "account_intent", events: ["auth_cta_click"] },
 ] as const;
 
@@ -114,7 +117,15 @@ export const FUNNEL_STAGE_DEFS = [
 // share before saving, or return without comparing. Keep them as independent
 // counts so the owner sees real loop behavior without implying false ordering.
 export const GROWTH_OUTCOME_DEFS = [
-  { key: "compare", events: ["compare_toggle", "stock_recent_compare_open"] },
+  {
+    key: "compare",
+    events: [
+      "compare_toggle",
+      "stock_recent_compare_open",
+      "topic_compare_start",
+      "compare_curated_interactive_open",
+    ],
+  },
   { key: "save", events: ["watchlist_toggle"] },
   { key: "return", events: ["watchlist_routine_complete"] },
   { key: "share", events: ["stock_share", "compare_share"] },

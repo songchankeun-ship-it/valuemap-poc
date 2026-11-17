@@ -35,7 +35,9 @@ export const CLICK_EVENT_PROP_KEYS: Record<string, readonly string[]> = {
   topic_stock_open: ["topic", "ticker"],
   topic_all_stocks_click: ["topic"],
   topic_saved_filter_start: ["topic", "filtered"],
+  topic_compare_start: ["topic", "count"],
   // Compare intent
+  compare_curated_interactive_open: ["count"],
   compare_toast_open: ["ticker"],
   compare_tray_open: ["count"],
   // Watchlist intent

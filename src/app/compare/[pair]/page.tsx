@@ -198,6 +198,8 @@ export default async function ComparePairPage({ params }: PageProps) {
           </p>
           <Link
             href={data.interactiveHref}
+            data-analytics-event="compare_curated_interactive_open"
+            data-analytics-count={2}
             className="mt-3 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 text-xs font-semibold text-white transition hover:bg-blue-700"
           >
             인터랙티브 비교 열기
