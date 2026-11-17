@@ -14,6 +14,8 @@ import {
   comparisonStaticParams,
 } from "@/lib/comparison";
 import { conjunctionParticle } from "@/lib/particle";
+import { curatedCompareSharePath } from "@/lib/growthShare";
+import { EvidenceShareButton } from "@/components/EvidenceShareButton";
 
 // 허용목록의 7쌍만 정적 생성. 그 외 슬러그는 생성/색인되지 않는다.
 export const dynamicParams = false;
@@ -99,6 +101,13 @@ export default async function ComparePairPage({ params }: PageProps) {
           <span className="text-zinc-400">({data.b.sector})</span>
           {" 의 자체 지표 4종과 PER·PBR·ROE, 배당수익률, 시가총액을 나란히 봅니다. 어느 쪽이 높고 낮은지만 중립적으로 보여주며, 어떤 종목이 더 낫다는 판단은 하지 않습니다."}
         </p>
+        <EvidenceShareButton
+          path={curatedCompareSharePath(pair)}
+          title={`${data.a.name} vs ${data.b.name} — 오른스코어 비교`}
+          text="예측이나 추천 대신 같은 기준의 숫자와 다음 확인 순서를 나란히 비교해 보세요."
+          analytics={{ kind: "compare", count: 2, surface: "curated" }}
+          label="이 비교 공유"
+        />
       </header>
 
       {/* 두 종목 헤더 링크 — 각 종목 상세로 이어지는 서버 렌더 내부 링크 */}

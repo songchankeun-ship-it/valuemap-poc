@@ -13,6 +13,7 @@ import {
   MessageSquare,
   Route,
   Search,
+  Share2,
   ShieldCheck,
   Tag,
   UserPlus,
@@ -98,6 +99,16 @@ const EVENT_GROUPS: EventGroup[] = [
     ],
   },
   {
+    key: "share",
+    title: "공유·추천",
+    desc: "종목·비교 공유와 ref=share 재유입. 공유 대상의 이름이나 자유문구는 보내지 않습니다.",
+    Icon: Share2,
+    events: [
+      { name: "stock_share", meaning: "종목 상세 공유 — method, ticker" },
+      { name: "compare_share", meaning: "비교 공유 — method, count, surface" },
+    ],
+  },
+  {
     key: "watchlist",
     title: "관심 종목",
     desc: "관심 저장·복귀·로컬 메타 조작. 종목명·원문·라벨은 보내지 않습니다.",
@@ -113,6 +124,7 @@ const EVENT_GROUPS: EventGroup[] = [
       { name: "watchlist_csv_export", meaning: "관심 목록 CSV 내보내기 — count, loggedIn, sort" },
       { name: "watchlist_meta_update", meaning: "로컬 그룹/메모 변경 — field, ticker, hasValue, loggedIn" },
       { name: "watchlist_group_filter_change", meaning: "그룹 필터 좁히기 — filter, count, loggedIn" },
+      { name: "watchlist_routine_complete", meaning: "관심종목 점검 완료 — count, changed" },
     ],
   },
   {

@@ -56,7 +56,8 @@ check(
 const homeCopy = read("src/lib/i18n.ts");
 check(
   "home starts from data rather than a forecast claim",
-  homeCopy.includes("전망이 아닌 숫자에서 출발해") &&
+  homeCopy.includes("전망 대신 숫자로") &&
+    homeCopy.includes("오늘 먼저 볼 종목을 줄여줍니다") &&
     homeCopy.includes("미래 수익률이나 상승 확률을 예측하지 않습니다"),
 );
 

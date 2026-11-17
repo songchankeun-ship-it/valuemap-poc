@@ -15,7 +15,9 @@ import { sectorOf } from "@/lib/sector";
 import { getDataWarnings, isSuspect } from "@/lib/dataQuality";
 import { fmtMarketCap, fmtWon } from "@/lib/format";
 import { StockSearchBox } from "@/components/StockSearchBox";
+import { EvidenceShareButton } from "@/components/EvidenceShareButton";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
+import { compareSharePath } from "@/lib/growthShare";
 import { BarChart3, CheckCircle2, ExternalLink, AlertTriangle } from "lucide-react";
 
 interface RecommendedSet {
@@ -272,15 +274,6 @@ export function CompareClient({
     if (!confirm("비교 목록을 모두 비울까요?")) return;
     setTickers([]);
     await clearCompare();
-  }
-
-  function shareLink() {
-    const url = `${window.location.origin}/compare?stocks=${tickers.join(",")}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(() => alert("공유 링크가 복사됐어요"));
-    } else {
-      alert(url);
-    }
   }
 
   const stocks = tickers
@@ -553,7 +546,14 @@ export function CompareClient({
       <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
         <span>비교 중인 종목 <strong className="text-zinc-900 dark:text-zinc-100">{stocks.length}</strong>개</span>
         <div className="flex items-center gap-3">
-          <button onClick={shareLink} className="text-blue-600 dark:text-blue-400 hover:underline">공유 링크 복사</button>
+          <EvidenceShareButton
+            path={compareSharePath(tickers)}
+            title={`${stocks.map((stock) => stock.name).join(" vs ")} — 오른스코어 비교`}
+            text="예측이나 추천 대신 같은 기준의 숫자와 다음 확인 순서를 나란히 비교해 보세요."
+            analytics={{ kind: "compare", count: stocks.length, surface: "interactive" }}
+            label="비교 공유"
+            compact
+          />
           <button onClick={clearAll} className="text-zinc-500 dark:text-zinc-400 hover:text-red-600 transition">모두 비우기</button>
         </div>
       </div>

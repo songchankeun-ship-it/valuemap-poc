@@ -24,7 +24,9 @@
 //  11. verify:reaudit        all public-reaudit source contracts (Slices A-M)
 //  12. test:beta-feedback    controlled-beta validation and mail fallback
 //  13. test:next-action-guidance  concrete stock next step + shared About date
-//  14. build                 next build
+//  14. test:growth-content   deterministic, evidence-first distribution drafts
+//  15. verify:growth-sprint  first acquisition-loop source contract
+//  16. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -116,6 +118,8 @@ const OFFLINE_GATES = [
   { name: "verify:reaudit", command: "npm", args: ["run", "verify:reaudit"], shell: true },
   { name: "test:beta-feedback", command: "npm", args: ["run", "test:beta-feedback"], shell: true },
   { name: "test:next-action-guidance", command: "npm", args: ["run", "test:next-action-guidance"], shell: true },
+  { name: "test:growth-content", command: "npm", args: ["run", "test:growth-content"], shell: true },
+  { name: "verify:growth-sprint", command: "npm", args: ["run", "verify:growth-sprint"], shell: true },
 ];
 if (RUN_BUILD) {
   OFFLINE_GATES.push({ name: "build", command: "npm", args: ["run", "build"], shell: true });

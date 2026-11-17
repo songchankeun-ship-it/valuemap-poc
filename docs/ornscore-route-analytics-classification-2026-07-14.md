@@ -20,7 +20,7 @@ only report **presence or size**, never the raw value.
 
 `campaign` is optional and may be emitted on any public route only when `ref`
 matches the fixed allow-list: `disquiet`, `geeknews`, `naver-blog`, `threads`,
-`linkedin`, `kakao`, `community`, or `direct`. Unknown, mixed-case, URL-shaped,
+`linkedin`, `kakao`, `community`, `share`, or `direct`. Unknown, mixed-case, URL-shaped,
 and free-form values are dropped.
 
 ## Path → routeKind → safe props
@@ -31,6 +31,7 @@ and free-form values are dropped.
 | `/stocks` | `stocks` | `hasQuery`, `hasFilters` | `hasQuery` = `q` present; `hasFilters` = any of `sector`/`themes`/`market`/`sort` present. Raw query text is **not** sent. |
 | `/stock/:ticker` | `stock_detail` | `ticker` | Public ticker path segment only. |
 | `/topics/:slug` | `topic` | `topic` | Public topic slug only. |
+| `/compare/:pair` | `compare_pair` | — | Curated comparison page. The pair value is not emitted. |
 | `/compare` | `compare` | `compareCount` | Count of comma-separated `stocks` entries; raw list not sent. |
 | `/watchlist` | `watchlist` | — | |
 | `/today` | `today` | — | |

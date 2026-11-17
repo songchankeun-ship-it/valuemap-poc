@@ -14,7 +14,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 
 | Event | Source | Properties | Meaning |
 | --- | --- | --- | --- |
-| `route_view_public` | Root client analytics tracker | `routeKind`, `campaign`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount` | Sanitized public route visit signal for launch review. `campaign` is emitted only for the fixed `ref` allow-list (`disquiet`, `geeknews`, `naver-blog`, `threads`, `linkedin`, `kakao`, `community`, `direct`). Admin routes are excluded; unknown source values, raw search text, full URLs, and auth/account identifiers are not sent. |
+| `route_view_public` | Root client analytics tracker | `routeKind`, `campaign`, `ticker`, `topic`, `hasQuery`, `hasFilters`, `compareCount` | Sanitized public route visit signal for launch review. `campaign` is emitted only for the fixed `ref` allow-list (`disquiet`, `geeknews`, `naver-blog`, `threads`, `linkedin`, `kakao`, `community`, `share`, `direct`). Curated comparison pages use `compare_pair`; the pair value is not sent. Admin routes are excluded; unknown source values, raw search text, full URLs, and auth/account identifiers are not sent. |
 | `search_result_open` | Global search result click/Enter | `source`, `resultType`, `ticker`, `theme`, `queryLength` | User found a stock/theme through autocomplete. |
 | `search_view_all` | Global search "view all" row | `source`, `queryLength`, `resultCount` | User broadens autocomplete into `/stocks?q=...`. |
 | `search_empty_open_stocks` | Global search empty state CTA | `source`, `queryLength`, `stockCount` | User searches something outside autocomplete and opens the explorer. |
@@ -28,6 +28,8 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `compare_toast_open` | Compare toast link | `ticker` | User follows a compare add/remove toast to `/compare`. |
 | `compare_tray_open` | Floating compare tray CTA | `count` | User opens `/compare` after collecting candidates. |
 | `compare_tray_reset` | Floating compare tray reset | `count` | User clears a comparison set. |
+| `compare_share` | Interactive or curated comparison share | `method`, `count`, `surface` | User shares or copies a comparison link. The URL carries only the fixed `ref=share` campaign marker; `surface` is `interactive` or `curated`. |
+| `stock_share` | Stock detail share | `method`, `ticker` | User shares or copies a stock-detail link with the fixed `ref=share` campaign marker. |
 | `watchlist_toggle` | Add/remove/undo watchlist button | `action`, `ticker`, `compact`, `loggedOut` | User saves or removes a watchlist candidate. |
 | `watchlist_detail_open` | Stock detail saved-state CTA | `ticker` | User opens `/watchlist` from a stock that is already saved. |
 | `watchlist_toast_open` | Watchlist toast link | `ticker` | User follows save toast to `/watchlist`. |
@@ -38,6 +40,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `watchlist_csv_export` | `/watchlist` CSV export button | `count`, `loggedIn`, `sort` | User exports their current watchlist locally as a CSV file. |
 | `watchlist_meta_update` | `/watchlist` local group/note controls | `field`, `ticker`, `hasValue`, `loggedIn` | User updates browser-local watchlist metadata; note text and custom labels are not sent. |
 | `watchlist_group_filter_change` | `/watchlist` local group filter chips | `filter`, `count`, `loggedIn` | User narrows the visible watchlist by all/ungrouped/group; raw group labels are not sent. |
+| `watchlist_routine_complete` | `/watchlist` local check-in | `count`, `changed` | User marks the current watchlist review as complete. The timestamp stays only in local storage; analytics receives counts only. |
 | `saved_filter_watchlist_open` | `/watchlist` saved-filter card | `count`, `hasQuery`, `hasSector`, `themeCount` | User opens `/stocks` from a saved filter; no saved-filter name or raw query is sent. |
 | `saved_filter_watchlist_remove` | `/watchlist` saved-filter remove button | `count`, `hasQuery`, `hasSector`, `themeCount` | User removes a saved filter from the routine page; no saved-filter name or raw query is sent. |
 | `saved_filter_watchlist_rename` | `/watchlist` saved-filter rename form | `count`, `hasQuery`, `hasSector`, `themeCount` | User renames a saved filter from the routine page; no saved-filter name or raw query is sent. |

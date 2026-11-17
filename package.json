@@ -115,7 +115,10 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "seed:themes": "tsx scripts/seed-themes.ts",
-    "generate-insight": "tsx scripts/generate-daily-insight.ts"
+    "generate-insight": "tsx scripts/generate-daily-insight.ts",
+    "growth:content": "node scripts/generate-growth-content.mjs",
+    "test:growth-content": "node scripts/test-growth-content.mjs",
+    "verify:growth-sprint": "node scripts/verify-growth-sprint.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

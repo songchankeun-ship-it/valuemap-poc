@@ -5136,3 +5136,29 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
   judging it. Re-read Naver at 14 and 30 days. Owner separately verifies the
   Google Search Console domain property; it is currently unverified in the
   signed-in account, so no Google query data is available yet.
+
+## 2026-11-17 - [codex] Growth Sprint 1 acquisition loop
+
+- Shipped one coherent growth loop rather than five disconnected features:
+  discovery copy, deterministic distribution drafts, attributable sharing,
+  a watchlist return habit, and admin-visible growth events.
+- The canonical value proposition is `전망 대신 숫자로 오늘 먼저 볼 종목을
+  줄여줍니다.` Home copy, focused assertions, and the sprint decision record
+  keep this non-predictive and non-advisory.
+- `npm run growth:content` emits three reproducible Korean drafts from the
+  current 138-stock snapshot without writing files or posting externally.
+  Links use `ref=threads`; public stock/compare shares use `ref=share`.
+- Added `stock_share`, `compare_share`, and `watchlist_routine_complete` to the
+  existing analytics contract and admin view. No personal data or shared URL
+  contents are persisted in the event schema.
+- A watchlist check-in now appears only when at least one stock is saved. It
+  highlights changes and records the last local completion time so return
+  visits have a clear next action.
+- Verification green: growth content and contract tests, route analytics,
+  guidance/first-run/comparison/admin/click suites, TypeScript, lint, build
+  194/194, release preflight, route health 6/6, and desktop/mobile browser QA.
+- Frozen: public data, Metrics 2.4, 138 stocks, formulas, auth, workflows,
+  dependencies, provider/runtime values, hosting, and all outside accounts.
+- **Next action**: release this commit, run `npm run growth:content`, manually
+  review and publish one Threads draft, then compare Naver/Vercel evidence at
+  day 14. Do not add another channel or page family before that measurement.

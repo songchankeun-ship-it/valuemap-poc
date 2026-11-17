@@ -26,6 +26,7 @@ export const CAMPAIGN_SOURCES = [
   "linkedin",
   "kakao",
   "community",
+  "share",
   "direct",
 ] as const;
 
@@ -75,6 +76,10 @@ export const ROUTE_CLASSIFIERS: Classifier[] = [
     kind: "topic",
     match: (_p, parts) => parts[0] === "topics" && Boolean(parts[1]),
     props: (parts) => ({ topic: parts[1] }),
+  },
+  {
+    kind: "compare_pair",
+    match: (_p, parts) => parts[0] === "compare" && Boolean(parts[1]),
   },
   {
     kind: "compare",

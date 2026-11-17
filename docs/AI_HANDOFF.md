@@ -4139,3 +4139,33 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   signed-in account. Verification is an owner-only external step; do not infer
   Google performance from Naver. Next code decision waits for at least 14 days
   of post-release Naver evidence unless a production defect appears.
+
+## 2026-11-17 - Growth Sprint 1 acquisition loop [codex]
+
+- Reframed the first growth sprint as one measurable loop: discovery,
+  understanding, compare/save, return, and share. The canonical promise is now
+  `전망 대신 숫자로 오늘 먼저 볼 종목을 줄여줍니다.`
+- Added a deterministic, read-only content generator with three evidence-first
+  formats: neutral curated comparison, low-PER screen-and-check, and unusual
+  activity. Generated links use the fixed `ref=threads` campaign and never
+  auto-post or modify an outside account.
+- Added attributable stock and comparison sharing. Shared visits use
+  `ref=share`; `stock_share` and `compare_share` record method and non-sensitive
+  context. Curated comparison routes are classified separately as
+  `compare_pair`.
+- Added a local watchlist check-in routine. It summarizes changed items, stores
+  only the last completed check time in the browser, and records
+  `watchlist_routine_complete`; public data and user notes remain untouched.
+- The 14-day operating plan uses only Naver Search and Threads. It records the
+  baseline, cadence, decision thresholds, and owner-only manual publication
+  step in `docs/ornscore-growth-sprint-1-2026-11-17.md`.
+- Green evidence: focused content/sprint tests, route analytics 29 cases and 17
+  route kinds, next-action guidance, click/admin analytics, comparison suites,
+  TypeScript, lint, Next build 194/194, release preflight, and local route
+  health 6/6. Desktop and 425px-class mobile QA showed no document overflow;
+  share controls and the watchlist completion state rendered correctly.
+- Frozen: `public/data`, Metrics 2.4, 138-stock universe, score formulas, auth,
+  workflows, packages, providers, hosting, and outside account state.
+- Next: run `npm run growth:content`, review one generated draft, and have the
+  owner publish it manually on Threads. After release, review Naver and Vercel
+  evidence at day 14 before changing channels or page scope.

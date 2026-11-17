@@ -16,6 +16,7 @@ import {
   classifyRoute,
   type RouteAnalyticsProps,
 } from "../src/lib/routeAnalytics";
+import { compareSharePath, curatedCompareSharePath, stockSharePath } from "../src/lib/growthShare";
 
 let failed = 0;
 function check(name: string, cond: boolean): void {
@@ -42,6 +43,11 @@ const CASES: Array<{ path: string; expect: RouteAnalyticsProps | null }> = [
     expect: { routeKind: "stock_detail", campaign: "geeknews", ticker: "005930" },
   },
   { path: "/topics/dividend", expect: { routeKind: "topic", topic: "dividend" } },
+  { path: "/compare/005930-vs-000660", expect: { routeKind: "compare_pair" } },
+  {
+    path: "/compare/005930-vs-000660?ref=share",
+    expect: { routeKind: "compare_pair", campaign: "share" },
+  },
   { path: "/compare", expect: { routeKind: "compare", compareCount: 0 } },
   { path: "/compare?stocks=005930,000660", expect: { routeKind: "compare", compareCount: 2 } },
   { path: "/watchlist", expect: { routeKind: "watchlist" } },
@@ -123,6 +129,16 @@ for (const rejected of ["", "Disquiet", "naver_blog", "https://example.com", SEN
     campaignSourceOf(new URLSearchParams(`ref=${encodeURIComponent(rejected)}`)) === undefined,
   );
 }
+
+check("stock share path adds the fixed share campaign", stockSharePath("005930") === "/stock/005930?ref=share");
+check(
+  "interactive comparison share path preserves the stock set and adds the fixed campaign",
+  compareSharePath(["005930", "000660"]) === "/compare?stocks=005930%2C000660&ref=share",
+);
+check(
+  "curated comparison share path adds the fixed campaign",
+  curatedCompareSharePath("005930-vs-000660") === "/compare/005930-vs-000660?ref=share",
+);
 
 // Coverage: every classifier kind (+fallback) is exercised by a case above, so a
 // newly added route can't silently ship untested.
