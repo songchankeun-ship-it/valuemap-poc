@@ -1,5 +1,26 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-17 - [codex] Growth Sprint 3 campaign-to-action learning loop
+
+- Added privacy-bounded same-tab campaign continuity. Only the existing nine
+  allow-listed `ref` enums can be stored in versioned `sessionStorage`; URLs,
+  referrers, search text, user ids, and free-form values are never persisted.
+- Every later analytics event in that tab now receives the fixed campaign enum,
+  so entry traffic can be connected to compare, save, return, and share actions.
+  A newer valid campaign replaces the prior value; unknown values are ignored.
+- Extended the typed owner-dashboard contract with a complete 9×4
+  campaign-to-outcome matrix, safety validation, fixture coverage, deterministic
+  totals/ranking, and a responsive table. Production still renders the explicit
+  provider-not-configured state and invents no numbers.
+- Added `test:growth-sprint-3` to release preflight and documented measurement
+  rules. Build generated 194/194 pages; preflight 19/19, route health 6/6, OG
+  3/3, TypeScript, analytics contracts, and follow-up stock navigation pass.
+- Frozen: public data, Metrics 2.4, 138 stocks, formulas, auth, workflows,
+  dependencies, provider/runtime values, hosting, and outside account state.
+- **Next action**: owner explicitly approves the pending `3dbeb60d` production
+  OG hotfix plus this Sprint 3 commit before any fast-forward push. After deploy,
+  require exact-SHA, route health, and production OG 3/3.
+
 ## 2026-11-17 - [codex] Vercel OG font trace hotfix
 
 - Growth Sprint 2 reached production at exact SHA `5b5e8baf`; SEO release was

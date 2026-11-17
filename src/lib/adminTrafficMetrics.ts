@@ -60,6 +60,14 @@ export type GrowthOutcomeMetric = {
   count: number;
 };
 
+export type CampaignOutcomeMetric = {
+  campaign: string;
+  outcomes: Array<{
+    key: string;
+    count: number;
+  }>;
+};
+
 // The full numeric payload a "ready" dashboard would render. All numbers are
 // placeholders describing shape only — this module never populates them.
 export type TrafficMetricsSummary = {
@@ -69,6 +77,7 @@ export type TrafficMetricsSummary = {
   campaignViews: CampaignViewMetric[];
   funnel: FunnelStageMetric[];
   growthOutcomes: GrowthOutcomeMetric[];
+  campaignOutcomes: CampaignOutcomeMetric[];
 };
 
 // Discriminated result union. `not_configured` is the current, local reality:
@@ -192,6 +201,7 @@ export function buildTrafficMetricsSummary(
   funnelCounts: Readonly<Record<string, number>> = {},
   campaignViewCounts: Readonly<Record<string, number>> = {},
   growthOutcomeCounts: Readonly<Record<string, number>> = {},
+  campaignOutcomeCounts: Readonly<Record<string, Readonly<Record<string, number>>>> = {},
 ): TrafficMetricsSummary {
   return {
     window,
@@ -214,6 +224,13 @@ export function buildTrafficMetricsSummary(
       events: outcome.events,
       count: growthOutcomeCounts[outcome.key] ?? 0,
     })),
+    campaignOutcomes: DASHBOARD_CAMPAIGN_SOURCES.map((campaign) => ({
+      campaign,
+      outcomes: GROWTH_OUTCOME_DEFS.map((outcome) => ({
+        key: outcome.key,
+        count: campaignOutcomeCounts[campaign]?.[outcome.key] ?? 0,
+      })),
+    })),
   };
 }
 
@@ -232,6 +249,10 @@ function collectSummaryStrings(summary: TrafficMetricsSummary): string[] {
   }
   for (const outcome of summary.growthOutcomes) {
     out.push(outcome.key, ...outcome.events);
+  }
+  for (const campaign of summary.campaignOutcomes) {
+    out.push(campaign.campaign);
+    for (const outcome of campaign.outcomes) out.push(outcome.key);
   }
   return out;
 }
@@ -314,6 +335,41 @@ export function findUnsafeSummaryProblems(summary: TrafficMetricsSummary): strin
   }
   for (const outcomeKey of GROWTH_OUTCOME_KEYS) {
     if (!seenOutcomes.has(outcomeKey)) problems.push(`growth outcome "${outcomeKey}" is missing`);
+  }
+
+  const seenCampaignOutcomes = new Set<string>();
+  for (const row of summary.campaignOutcomes) {
+    if (!DASHBOARD_CAMPAIGN_SOURCES.includes(row.campaign)) {
+      problems.push(`campaign outcome row "${row.campaign}" is not allow-listed`);
+    }
+    if (seenCampaignOutcomes.has(row.campaign)) {
+      problems.push(`campaign outcome row "${row.campaign}" is duplicated`);
+    }
+    seenCampaignOutcomes.add(row.campaign);
+
+    const seenKeys = new Set<string>();
+    for (const outcome of row.outcomes) {
+      if (!GROWTH_OUTCOME_KEYS.includes(outcome.key)) {
+        problems.push(`campaign "${row.campaign}" has unknown outcome "${outcome.key}"`);
+      }
+      if (seenKeys.has(outcome.key)) {
+        problems.push(`campaign "${row.campaign}" outcome "${outcome.key}" is duplicated`);
+      }
+      seenKeys.add(outcome.key);
+      if (!isCount(outcome.count)) {
+        problems.push(`campaign "${row.campaign}" outcome "${outcome.key}" must be a non-negative integer`);
+      }
+    }
+    for (const outcomeKey of GROWTH_OUTCOME_KEYS) {
+      if (!seenKeys.has(outcomeKey)) {
+        problems.push(`campaign "${row.campaign}" outcome "${outcomeKey}" is missing`);
+      }
+    }
+  }
+  for (const campaign of DASHBOARD_CAMPAIGN_SOURCES) {
+    if (!seenCampaignOutcomes.has(campaign)) {
+      problems.push(`campaign outcome row "${campaign}" is missing`);
+    }
   }
 
   // No-identifier guarantee: every string in the payload is public vocabulary.
@@ -404,6 +460,11 @@ export const SAMPLE_TRAFFIC_METRICS_FIXTURE: TrafficMetricsFixture = {
         { entry: 400, discover_to_detail: 180, action_intent: 60, account_intent: 18 },
         { direct: 210, threads: 72, "naver-blog": 54, share: 28 },
         { compare: 64, save: 42, return: 18, share: 24 },
+        {
+          threads: { compare: 18, save: 11, return: 3, share: 6 },
+          "naver-blog": { compare: 10, save: 8, return: 2, share: 2 },
+          share: { compare: 14, save: 9, return: 4, share: 8 },
+        },
       ),
     },
     "72h": {
@@ -414,6 +475,11 @@ export const SAMPLE_TRAFFIC_METRICS_FIXTURE: TrafficMetricsFixture = {
         { entry: 1050, discover_to_detail: 470, action_intent: 160, account_intent: 44 },
         { direct: 570, threads: 190, "naver-blog": 142, share: 74 },
         { compare: 172, save: 111, return: 47, share: 63 },
+        {
+          threads: { compare: 48, save: 31, return: 11, share: 17 },
+          "naver-blog": { compare: 29, save: 21, return: 8, share: 7 },
+          share: { compare: 37, save: 24, return: 13, share: 20 },
+        },
       ),
     },
     "7d": {

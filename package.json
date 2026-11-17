@@ -120,7 +120,8 @@
     "test:growth-content": "node scripts/test-growth-content.mjs",
     "verify:growth-sprint": "node scripts/verify-growth-sprint.mjs",
     "test:growth-sprint-2": "tsx scripts/test-growth-sprint-2.ts",
-    "verify:growth-sprint-2-live": "node scripts/verify-growth-sprint-2-live.mjs"
+    "verify:growth-sprint-2-live": "node scripts/verify-growth-sprint-2-live.mjs",
+    "test:growth-sprint-3": "tsx scripts/test-growth-sprint-3.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

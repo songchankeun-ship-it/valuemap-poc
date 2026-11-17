@@ -22,12 +22,17 @@
 //     directly would mislead. Comparing funnel shape is the honest read.
 
 import type {
+  CampaignOutcomeMetric,
   CampaignViewMetric,
   GrowthOutcomeMetric,
   RouteViewMetric,
   TrafficMetricWindow,
   TrafficMetricsSummary,
 } from "./adminTrafficMetrics";
+
+export type CampaignOutcomeView = CampaignOutcomeMetric & {
+  total: number;
+};
 
 // A conversion rate in [0, ∞), or `null` when it cannot be computed truthfully
 // (non-finite input or a zero/negative denominator — divide-by-zero). Returning
@@ -63,6 +68,7 @@ export type TrafficSummaryView = {
   entryCount: number;
   stages: FunnelStageView[];
   growthOutcomes: GrowthOutcomeMetric[];
+  campaignOutcomes: CampaignOutcomeView[];
 };
 
 // Derive the view model from a ready summary. Pure: same input → same output,
@@ -75,6 +81,13 @@ export function toTrafficSummaryView(summary: TrafficMetricsSummary): TrafficSum
   const campaignViews = [...summary.campaignViews].sort(
     (a, b) => b.views - a.views || a.campaign.localeCompare(b.campaign),
   );
+  const campaignOutcomes = summary.campaignOutcomes
+    .map((row) => ({
+      campaign: row.campaign,
+      outcomes: row.outcomes.map((outcome) => ({ ...outcome })),
+      total: row.outcomes.reduce((sum, outcome) => sum + outcome.count, 0),
+    }))
+    .sort((a, b) => b.total - a.total || a.campaign.localeCompare(b.campaign));
   const entryCount = summary.funnel.length > 0 ? summary.funnel[0].count : 0;
   const stages: FunnelStageView[] = summary.funnel.map((stage, i) => {
     const isEntry = i === 0;
@@ -95,6 +108,7 @@ export function toTrafficSummaryView(summary: TrafficMetricsSummary): TrafficSum
     entryCount,
     stages,
     growthOutcomes: summary.growthOutcomes.map((outcome) => ({ ...outcome, events: [...outcome.events] })),
+    campaignOutcomes,
   };
 }
 

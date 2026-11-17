@@ -9,6 +9,9 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 - Public identifiers such as stock tickers and topic slugs are allowed.
 - Event tracking must never block navigation, form submission, watchlist saves, or compare actions.
 - External analytics/account settings remain owner-only.
+- Allow-listed campaign attribution may continue for the current browser tab
+  through `sessionStorage`; it never stores a URL, referrer, search term, user
+  identifier, or free-form value.
 
 ## Event Names
 
@@ -83,6 +86,16 @@ shown unless a verified provider payload is supplied.
 Campaign entry counts come only from `route_view_public.campaign` and its fixed
 allow-list. Do not infer campaign attribution from referrers, full URLs, search
 text, or other uncontracted properties.
+
+### Same-tab session attribution
+
+When a public route opens with an allow-listed `ref`, the client remembers only
+that fixed campaign enum in `sessionStorage`. Later analytics events in the same
+tab receive the same `campaign` property, allowing the owner to compare campaign
+entry with compare/save/return/share outcomes. A newer allow-listed `ref`
+replaces the prior value; an unknown value is ignored and never persisted. This
+is same-tab session attribution, not a person identity, unique-user count, or
+cross-device profile.
 
 ## Implementation Notes
 

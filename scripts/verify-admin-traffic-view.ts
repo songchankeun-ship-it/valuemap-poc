@@ -49,7 +49,18 @@ const routeCounts24 = { home: 120, stocks: 80, stock_detail: 140, topic: 40, com
 const funnelCounts24 = { entry: 400, discover_to_detail: 180, action_intent: 60, account_intent: 18 };
 const campaignCounts24 = { direct: 210, threads: 72, "naver-blog": 54, share: 28 };
 const outcomeCounts24 = { compare: 64, save: 42, return: 18, share: 24 };
-const summary24 = buildTrafficMetricsSummary("24h", routeCounts24, funnelCounts24, campaignCounts24, outcomeCounts24);
+const campaignOutcomeCounts24 = {
+  threads: { compare: 18, save: 11, return: 3, share: 6 },
+  "naver-blog": { compare: 10, save: 8, return: 2, share: 2 },
+};
+const summary24 = buildTrafficMetricsSummary(
+  "24h",
+  routeCounts24,
+  funnelCounts24,
+  campaignCounts24,
+  outcomeCounts24,
+  campaignOutcomeCounts24,
+);
 const view24 = toTrafficSummaryView(summary24);
 
 const expectedRouteTotal = DASHBOARD_ROUTE_KINDS.reduce(
@@ -67,6 +78,12 @@ check("view keeps one bucket per dashboard route kind (zeros retained)", view24.
 check("campaign buckets are sorted by views descending", view24.campaignViews[0].campaign === "direct" && view24.campaignViews[0].views === 210);
 check("growth outcomes keep canonical order", view24.growthOutcomes.every((outcome, index) => outcome.key === GROWTH_OUTCOME_DEFS[index].key));
 check("growth outcome counts stay faithful", view24.growthOutcomes.find((outcome) => outcome.key === "return")?.count === 18);
+check("campaign outcome rows are sorted by total descending", view24.campaignOutcomes[0].campaign === "threads");
+check("campaign outcome total is derived from its four counts", view24.campaignOutcomes[0].total === 38);
+check(
+  "campaign outcome counts stay faithful",
+  view24.campaignOutcomes.find((row) => row.campaign === "naver-blog")?.outcomes.find((outcome) => outcome.key === "save")?.count === 8,
+);
 
 check("entryCount is the first funnel stage count", view24.entryCount === 400);
 check("stage count matches the funnel def count", view24.stages.length === FUNNEL_STAGE_DEFS.length);
@@ -116,6 +133,10 @@ const summary72 = buildTrafficMetricsSummary(
   { entry: 1050, discover_to_detail: 470, action_intent: 160, account_intent: 44 },
   { direct: 570, threads: 190, "naver-blog": 142, share: 74 },
   { compare: 172, save: 111, return: 47, share: 63 },
+  {
+    threads: { compare: 48, save: 31, return: 11, share: 17 },
+    "naver-blog": { compare: 29, save: 21, return: 8, share: 7 },
+  },
 );
 const view72 = toTrafficSummaryView(summary72);
 const comparison = buildWindowComparison(view24, view72);
@@ -151,5 +172,5 @@ if (failed > 0) {
   process.exit(1);
 }
 console.log(
-  `PASS admin-traffic-view: totals, funnel step/entry conversion ratios (divide-by-zero → null), zero-entry safety, purity, and cross-window shape comparison verified over ${FUNNEL_STAGE_DEFS.length} funnel stages`,
+  `PASS admin-traffic-view: totals, campaign outcome ranking, funnel step/entry conversion ratios (divide-by-zero → null), zero-entry safety, purity, and cross-window shape comparison verified over ${FUNNEL_STAGE_DEFS.length} funnel stages`,
 );

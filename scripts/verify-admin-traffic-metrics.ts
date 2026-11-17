@@ -118,6 +118,7 @@ const builtSummary = buildTrafficMetricsSummary(
   { entry: 12, discover_to_detail: 4 },
   { threads: 3, share: 2 },
   { compare: 4, save: 3, return: 2, share: 1 },
+  { threads: { compare: 2, save: 1, return: 1, share: 0 } },
 );
 check("buildTrafficMetricsSummary yields a summary with zero problems", findUnsafeSummaryProblems(builtSummary).length === 0);
 check(
@@ -127,6 +128,15 @@ check(
 check("built summary carries one funnel stage per canonical def", builtSummary.funnel.length === FUNNEL_STAGE_DEFS.length);
 check("built summary carries one bucket per allow-listed campaign", builtSummary.campaignViews.length === DASHBOARD_CAMPAIGN_SOURCES.length);
 check("built summary carries one growth outcome per canonical def", builtSummary.growthOutcomes.length === GROWTH_OUTCOME_DEFS.length);
+check("built summary carries one outcome row per allow-listed campaign", builtSummary.campaignOutcomes.length === DASHBOARD_CAMPAIGN_SOURCES.length);
+check(
+  "each campaign outcome row carries every canonical outcome",
+  builtSummary.campaignOutcomes.every((row) => row.outcomes.length === GROWTH_OUTCOME_DEFS.length),
+);
+check(
+  "campaign outcome counts stay faithful",
+  builtSummary.campaignOutcomes.find((row) => row.campaign === "threads")?.outcomes.find((outcome) => outcome.key === "compare")?.count === 2,
+);
 
 // Injected identifier in a route kind must be caught (no-PII guarantee).
 const leakedIdentifier = {
@@ -147,6 +157,20 @@ const badCampaign = {
   campaignViews: [{ campaign: "raw-user-source", views: 1 }],
 };
 check("guard rejects a non-allow-listed campaign", findUnsafeSummaryProblems(badCampaign).length > 0);
+
+const badCampaignOutcome = {
+  ...builtSummary,
+  campaignOutcomes: builtSummary.campaignOutcomes.map((row, index) =>
+    index === 0 ? { ...row, outcomes: [{ key: "raw-user-action", count: 1 }] } : row,
+  ),
+};
+check("guard rejects a campaign outcome outside the closed vocabulary", findUnsafeSummaryProblems(badCampaignOutcome).length > 0);
+
+const missingCampaignOutcome = {
+  ...builtSummary,
+  campaignOutcomes: builtSummary.campaignOutcomes.slice(1),
+};
+check("guard rejects a missing campaign outcome row", findUnsafeSummaryProblems(missingCampaignOutcome).length > 0);
 
 // Drifted funnel events must be caught.
 const driftedEvents = {
@@ -231,7 +255,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.log(
-    `PASS admin-traffic-metrics: ${DASHBOARD_ROUTE_KINDS.length} route kinds, ${DASHBOARD_CAMPAIGN_SOURCES.length} campaign sources, ${FUNNEL_STAGE_DEFS.length} funnel stages, and ${GROWTH_OUTCOME_DEFS.length} growth outcomes checked against the event map; bounded-window guard, no-identifier summary guard, and the deterministic fixture provider (ready/unavailable/fail-closed) verified`,
+    `PASS admin-traffic-metrics: ${DASHBOARD_ROUTE_KINDS.length} route kinds, ${DASHBOARD_CAMPAIGN_SOURCES.length} campaign sources with outcome rows, ${FUNNEL_STAGE_DEFS.length} funnel stages, and ${GROWTH_OUTCOME_DEFS.length} growth outcomes checked against the event map; bounded-window guard, no-identifier summary guard, and the deterministic fixture provider (ready/unavailable/fail-closed) verified`,
   );
 }
 

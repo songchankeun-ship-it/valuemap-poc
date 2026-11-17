@@ -27,7 +27,8 @@
 //  14. test:growth-content   deterministic, evidence-first distribution drafts
 //  15. verify:growth-sprint  first acquisition-loop source contract
 //  16. test:growth-sprint-2  second activation-loop behavior + source contract
-//  17. build                 next build
+//  17. test:growth-sprint-3  same-tab campaign attribution + outcome matrix
+//  18. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -122,6 +123,7 @@ const OFFLINE_GATES = [
   { name: "test:growth-content", command: "npm", args: ["run", "test:growth-content"], shell: true },
   { name: "verify:growth-sprint", command: "npm", args: ["run", "verify:growth-sprint"], shell: true },
   { name: "test:growth-sprint-2", command: "npm", args: ["run", "test:growth-sprint-2"], shell: true },
+  { name: "test:growth-sprint-3", command: "npm", args: ["run", "test:growth-sprint-3"], shell: true },
 ];
 if (RUN_BUILD) {
   OFFLINE_GATES.push({ name: "build", command: "npm", args: ["run", "build"], shell: true });

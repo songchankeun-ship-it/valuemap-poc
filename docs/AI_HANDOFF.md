@@ -4209,3 +4209,29 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   manifest contains Pretendard Regular and Bold (2/2).
 - Next: run full preflight, commit/push the hotfix, then require production OG
   3/3. Do not begin Sprint 3 against a release with broken share previews.
+
+## 2026-11-17 - Growth Sprint 3 campaign-to-action learning loop [codex]
+
+- Added same-tab campaign continuity in `src/lib/campaignSession.ts`. It accepts
+  only `CAMPAIGN_SOURCES`, stores one enum in versioned `sessionStorage`, lets a
+  newer valid ref replace it, ignores unknown values, and fails open if storage
+  is unavailable. No persistent identity or raw navigation value is created.
+- `trackEvent` now enriches later events with that fixed campaign when the event
+  has no explicit campaign. This connects campaign entry to compare/save/
+  return/share outcomes without changing existing DOM event allow-lists.
+- The admin traffic summary now carries all nine campaign rows × four canonical
+  outcome keys. The safety guard rejects unknown/missing/duplicate rows or bad
+  counts; the view model derives totals and ranking; the ready dashboard renders
+  a responsive matrix. Production remains `not_configured` until an owner
+  approves a real vendor adapter, so no fixture or invented number is public.
+- Added `docs/ornscore-growth-sprint-3-2026-11-17.md` and
+  `test:growth-sprint-3`. Green: TypeScript, focused attribution/admin/route/
+  click tests, build 194/194, release preflight 19/19, local routes 6/6, OG 3/3,
+  and browser follow-up navigation without an error boundary.
+- Frozen: `public/data`, Metrics 2.4, 138-stock universe, formulas, auth,
+  workflows, dependencies, provider/runtime values, hosting, and outside state.
+- Important release state: `3dbeb60d` (Vercel OG font trace hotfix) is committed
+  locally but was not pushed because protected-main approval rejected the new
+  commit as outside the prior exact three-commit authorization. Sprint 3 must be
+  committed separately. Ask the owner to explicitly approve both exact commits
+  before pushing; then verify exact SHA, production route health, and OG 3/3.

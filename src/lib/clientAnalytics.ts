@@ -1,6 +1,7 @@
 "use client";
 
 import { track } from "@vercel/analytics";
+import { campaignContextFromWindow } from "./campaignSession";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = Record<string, AnalyticsValue>;
@@ -20,6 +21,10 @@ export function trackEvent(name: string, props: AnalyticsProps = {}) {
     for (const [key, value] of Object.entries(props)) {
       if (value === undefined) continue;
       cleanProps[key] = cleanValue(value);
+    }
+    const campaign = campaignContextFromWindow();
+    if (campaign && cleanProps.campaign === undefined) {
+      cleanProps.campaign = campaign;
     }
     track(name, cleanProps);
   } catch {

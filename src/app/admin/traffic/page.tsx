@@ -342,6 +342,7 @@ function ReadyDashboard({
   const view = toTrafficSummaryView(primary);
   const populated = view.routeViews.filter((rv) => rv.views > 0);
   const populatedCampaigns = view.campaignViews.filter((campaign) => campaign.views > 0);
+  const populatedCampaignOutcomes = view.campaignOutcomes.filter((campaign) => campaign.total > 0);
   const zeroCount = view.routeViews.length - populated.length;
   const comparisonView: TrafficSummaryView | null = isTrafficMetricsReady(comparison)
     ? toTrafficSummaryView(comparison.summary)
@@ -411,6 +412,49 @@ function ReadyDashboard({
           </dl>
           <p className="mt-1.5 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500">비교·저장·점검·공유는 순서가 고정된 퍼널이 아니므로 각각 독립 건수로 읽습니다.</p>
         </div>
+      </div>
+
+      <div>
+        <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">캠페인 → 실제 행동</h3>
+        {populatedCampaignOutcomes.length > 0 ? (
+          <div
+            role="region"
+            aria-label="캠페인별 성장 행동 (가로 스크롤)"
+            tabIndex={0}
+            className="-mx-1 overflow-x-auto rounded-md px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-zinc-500"
+          >
+            <table className="min-w-[520px] w-full text-left text-xs">
+              <caption className="sr-only">캠페인별 비교, 저장, 점검 재방문, 공유 이벤트 건수</caption>
+              <thead className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                <tr>
+                  <th scope="col" className="py-1.5 pr-3 font-medium">캠페인</th>
+                  {view.growthOutcomes.map((outcome) => (
+                    <th key={outcome.key} scope="col" className="py-1.5 pr-3 text-right font-medium">
+                      {GROWTH_OUTCOME_LABELS[outcome.key] ?? outcome.key}
+                    </th>
+                  ))}
+                  <th scope="col" className="py-1.5 text-right font-medium">합계</th>
+                </tr>
+              </thead>
+              <tbody className="text-zinc-700 dark:text-zinc-300">
+                {populatedCampaignOutcomes.map((campaign) => (
+                  <tr key={campaign.campaign} className="border-b border-zinc-100 last:border-0 dark:border-zinc-800">
+                    <th scope="row" className="py-2 pr-3 font-mono text-[11px] font-medium">ref={campaign.campaign}</th>
+                    {campaign.outcomes.map((outcome) => (
+                      <td key={outcome.key} className="py-2 pr-3 text-right tabular-nums">{fmtInt(outcome.count)}</td>
+                    ))}
+                    <td className="py-2 text-right font-semibold tabular-nums">{fmtInt(campaign.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">이 창에는 캠페인에 귀속된 성장 행동이 없습니다.</p>
+        )}
+        <p className="mt-1.5 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+          같은 탭에서 허용된 ref로 시작한 뒤 발생한 이벤트만 연결합니다. 사람 수나 순사용자 수가 아니라 이벤트 건수입니다.
+        </p>
       </div>
 
       <div>
