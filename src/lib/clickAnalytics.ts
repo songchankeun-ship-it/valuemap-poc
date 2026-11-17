@@ -60,6 +60,7 @@ export const CLICK_EVENT_PROP_KEYS: Record<string, readonly string[]> = {
   stock_checklist_next_open: ["ticker", "step"],
   stock_checklist_routine_open: ["ticker"],
   stock_checklist_reset: ["ticker", "done", "total"],
+  stock_recent_compare_open: ["ticker", "peerTicker"],
   // Header auth CTA
   auth_cta_click: ["source", "hasNext", "path"],
 };

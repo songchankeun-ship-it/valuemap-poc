@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getStockByTicker } from "@/lib/mockData";
+import { getOgImageFonts } from "@/lib/ogImageFonts";
 
 export const runtime = "nodejs";
 export const alt = "오른스코어 종목 분석";
@@ -9,6 +10,7 @@ export const contentType = "image/png";
 export default async function Image({ params }: { params: Promise<{ ticker: string }> }) {
   const { ticker } = await params;
   const s = getStockByTicker(ticker);
+  const fonts = await getOgImageFonts();
 
   if (!s) {
     return new ImageResponse(
@@ -28,7 +30,7 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
           종목을 찾을 수 없습니다
         </div>
       ),
-      { ...size }
+      { ...size, fonts }
     );
   }
 
@@ -55,6 +57,7 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
           background: "white",
           padding: "60px 80px",
           position: "relative",
+          fontFamily: "Pretendard",
         }}
       >
         {/* 헤더 — 오른스코어 로고 */}
@@ -77,28 +80,29 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
               justifyContent: "center",
               color: "white",
               fontSize: 28,
-              fontWeight: 800,
+              fontWeight: 700,
             }}
           >
-            V
+            O
           </div>
-          <div style={{ fontSize: 30, color: "#0F172A", fontWeight: 700 }}>
+          <div style={{ display: "flex", fontSize: 30, color: "#0F172A", fontWeight: 700 }}>
             오른스코어
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
-            <div style={{ fontSize: 18, color: "#64748B", fontWeight: 500 }}>ornscore.com</div>
+            <div style={{ display: "flex", fontSize: 18, color: "#64748B", fontWeight: 500 }}>ornscore.com</div>
           </div>
         </div>
 
         {/* 종목명 + 티커 */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 16 }}>
-          <div style={{ fontSize: 56, fontWeight: 800, color: "#0F172A" }}>{s.name}</div>
+          <div style={{ display: "flex", fontSize: 56, fontWeight: 700, color: "#0F172A" }}>{s.name}</div>
           <div
             style={{
               fontSize: 24,
               color: "#94A3B8",
               fontFamily: "monospace",
+              display: "flex",
               padding: "6px 14px",
               borderRadius: 8,
               background: "#F1F5F9",
@@ -110,11 +114,11 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
 
         {/* 가격 + 등락률 */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 40 }}>
-          <div style={{ fontSize: 44, fontWeight: 700, color: "#0F172A" }}>
-            {s.currentPrice.toLocaleString()}원
+          <div style={{ display: "flex", fontSize: 44, fontWeight: 700, color: "#0F172A" }}>
+            {`${s.currentPrice.toLocaleString()}원`}
           </div>
-          <div style={{ fontSize: 24, fontWeight: 600, color: isUp ? "#DC2626" : "#2563EB" }}>
-            {isUp ? "▲" : "▼"} {Math.abs(s.changePct).toFixed(2)}%
+          <div style={{ display: "flex", fontSize: 24, fontWeight: 600, color: isUp ? "#DC2626" : "#2563EB" }}>
+            {`${isUp ? "▲" : "▼"} ${Math.abs(s.changePct).toFixed(2)}%`}
           </div>
         </div>
 
@@ -134,15 +138,15 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
               color: "white",
             }}
           >
-            <div style={{ fontSize: 96, fontWeight: 800, lineHeight: 1 }}>{composite}</div>
-            <div style={{ fontSize: 16, opacity: 0.8, marginTop: 4 }}>/ 100</div>
+            <div style={{ display: "flex", fontSize: 96, fontWeight: 700, lineHeight: 1 }}>{composite}</div>
+            <div style={{ display: "flex", fontSize: 16, opacity: 0.8, marginTop: 4 }}>/ 100</div>
           </div>
 
           {/* 4지표 바 */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
             {metrics.map((m) => (
               <div key={m.label} style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 100, fontSize: 18, color: "#475569", fontWeight: 600 }}>
+                <div style={{ width: 100, display: "flex", fontSize: 18, color: "#475569", fontWeight: 600 }}>
                   {m.full}
                 </div>
                 <div
@@ -166,7 +170,8 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
                 <div
                   style={{
                     width: 40,
-                    textAlign: "right",
+                    display: "flex",
+                    justifyContent: "flex-end",
                     fontSize: 22,
                     fontWeight: 700,
                     color: "#0F172A",
@@ -192,11 +197,11 @@ export default async function Image({ params }: { params: Promise<{ ticker: stri
             color: "#64748B",
           }}
         >
-          <div>탐색 우선순위 · 매수·매도 추천이 아닙니다</div>
-          <div style={{ fontWeight: 600, color: "#0F172A" }}>오른스코어 · 한국 주식 탐색 도구</div>
+          <div style={{ display: "flex" }}>탐색 우선순위 · 매수·매도 추천이 아닙니다</div>
+          <div style={{ display: "flex", fontWeight: 600, color: "#0F172A" }}>오른스코어 · 한국 주식 탐색 도구</div>
         </div>
       </div>
     ),
-    { ...size }
+    { ...size, fonts }
   );
 }

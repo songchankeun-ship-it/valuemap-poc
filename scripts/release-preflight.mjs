@@ -26,7 +26,8 @@
 //  13. test:next-action-guidance  concrete stock next step + shared About date
 //  14. test:growth-content   deterministic, evidence-first distribution drafts
 //  15. verify:growth-sprint  first acquisition-loop source contract
-//  16. build                 next build
+//  16. test:growth-sprint-2  second activation-loop behavior + source contract
+//  17. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -120,6 +121,7 @@ const OFFLINE_GATES = [
   { name: "test:next-action-guidance", command: "npm", args: ["run", "test:next-action-guidance"], shell: true },
   { name: "test:growth-content", command: "npm", args: ["run", "test:growth-content"], shell: true },
   { name: "verify:growth-sprint", command: "npm", args: ["run", "verify:growth-sprint"], shell: true },
+  { name: "test:growth-sprint-2", command: "npm", args: ["run", "test:growth-sprint-2"], shell: true },
 ];
 if (RUN_BUILD) {
   OFFLINE_GATES.push({ name: "build", command: "npm", args: ["run", "build"], shell: true });
@@ -164,7 +166,7 @@ async function main() {
     results.push(runGate(gate));
   }
 
-  // --- route-health (delegated to verify:local; needs a running server) -----
+  // --- live route gates (need a running production server) ------------------
   let routeHealthPending = false;
   if (BASE) {
     if (await reachable(BASE)) {
@@ -179,6 +181,14 @@ async function main() {
       });
       const code = run.status ?? 1;
       results.push({ name: "verify:local", code, failed: code !== 0 });
+
+      console.log(`\n===== verify:growth-sprint-2-live =====`);
+      const growthRun = spawnSync(process.execPath, [resolve(SCRIPTS_DIR, "verify-growth-sprint-2-live.mjs"), "--base", BASE], {
+        stdio: "inherit",
+        cwd: ROOT,
+      });
+      const growthCode = growthRun.status ?? 1;
+      results.push({ name: "verify:growth-sprint-2-live", code: growthCode, failed: growthCode !== 0 });
     } else {
       console.log(`\nCould not reach ${BASE}/ -- is a local prod server running there?`);
       console.log("Start one from the fresh build: npx next start -p <port>  (NOT 3000 / NOT 4310).");

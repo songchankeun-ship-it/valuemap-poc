@@ -33,6 +33,7 @@ import { curatedPairsForTicker } from "@/lib/comparison";
 import { StockConclusionHero, type HeroRiskAlert } from "@/components/stock/StockConclusionHero";
 import { CompareTray } from "@/components/stock/CompareTray";
 import { StockChecklist } from "@/components/stock/StockChecklist";
+import { RecentComparePrompt } from "@/components/stock/RecentComparePrompt";
 import { classifyConclusion } from "@/lib/conclusion";
 import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
 import { buildScoreBasis } from "@/lib/scoreBasis";
@@ -558,6 +559,8 @@ export default async function StockDetailPage({ params }: PageProps) {
         leadStrength={leadStrengthSignal}
         leadCheck={leadCheckSignal}
       />
+
+      <RecentComparePrompt ticker={s.ticker} name={s.name} />
 
       {/* Slice F(설계서 §9.3): 결론(히어로) 다음의 '더 깊은 순서'를 근거 → 최근 변화 → 공시 →
           재무/밸류 → 차트/추가 분석으로 고정한다. 탭은 점진적 공개 수단으로 유지하되 좌→우 순서를

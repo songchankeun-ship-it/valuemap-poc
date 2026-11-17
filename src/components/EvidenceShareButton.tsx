@@ -72,20 +72,20 @@ export function EvidenceShareButton({
       onClick={() => { void handleShare(); }}
       className={
         compact
-          ? `inline-flex min-h-[44px] items-center gap-1.5 text-xs font-medium text-blue-700 hover:underline dark:text-blue-400 ${FOCUS_RING}`
-          : `inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-3.5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 ${FOCUS_RING}`
+          ? `inline-flex min-h-[44px] min-w-0 items-center gap-1.5 overflow-hidden text-xs font-medium text-blue-700 hover:underline dark:text-blue-400 ${FOCUS_RING}`
+          : `inline-flex min-h-[44px] min-w-0 items-center gap-1.5 overflow-hidden rounded-md border border-zinc-300 bg-white px-3.5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 ${FOCUS_RING}`
       }
       aria-label={label}
     >
       {copied ? (
         <>
           <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
-          링크 복사됨
+          <span className="truncate">링크 복사됨</span>
         </>
       ) : (
         <>
           <Share2 className="h-4 w-4" aria-hidden="true" />
-          {label}
+          <span className="truncate">{label}</span>
         </>
       )}
     </button>

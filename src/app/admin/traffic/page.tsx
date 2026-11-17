@@ -154,6 +154,7 @@ const EVENT_GROUPS: EventGroup[] = [
       { name: "stock_checklist_next_open", meaning: "다음 체크리스트 단계 — ticker, step" },
       { name: "stock_checklist_routine_open", meaning: "체크리스트 완료 후 루틴 열기 — ticker" },
       { name: "stock_checklist_reset", meaning: "로컬 체크리스트 초기화 — ticker, done, total" },
+      { name: "stock_recent_compare_open", meaning: "최근 본 두 종목 비교 제안 — ticker, peerTicker" },
     ],
   },
   {
@@ -202,6 +203,12 @@ const FUNNEL_STAGE_LABELS: Record<string, string> = {
   discover_to_detail: "발견 → 상세",
   action_intent: "비교·관심 의도",
   account_intent: "계정 의도",
+};
+const GROWTH_OUTCOME_LABELS: Record<string, string> = {
+  compare: "비교 행동",
+  save: "관심 저장",
+  return: "점검 재방문",
+  share: "공유",
 };
 const WINDOW_LABELS: Record<TrafficMetricWindow, string> = {
   "24h": "최근 24시간",
@@ -334,6 +341,7 @@ function ReadyDashboard({
 }) {
   const view = toTrafficSummaryView(primary);
   const populated = view.routeViews.filter((rv) => rv.views > 0);
+  const populatedCampaigns = view.campaignViews.filter((campaign) => campaign.views > 0);
   const zeroCount = view.routeViews.length - populated.length;
   const comparisonView: TrafficSummaryView | null = isTrafficMetricsReady(comparison)
     ? toTrafficSummaryView(comparison.summary)
@@ -373,6 +381,36 @@ function ReadyDashboard({
             )}
           </>
         )}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div>
+          <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">캠페인별 진입</h3>
+          {populatedCampaigns.length > 0 ? (
+            <ul className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-1">
+              {populatedCampaigns.map((campaign) => (
+                <li key={campaign.campaign} className="flex items-center justify-between gap-2 rounded-md border border-zinc-100 bg-zinc-50 px-2.5 py-1.5 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+                  <span className="font-mono text-[11px] text-zinc-700 dark:text-zinc-200">ref={campaign.campaign}</span>
+                  <span className="tabular-nums text-xs font-semibold text-zinc-900 dark:text-zinc-100">{fmtInt(campaign.views)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">이 창에 캠페인 값이 붙은 진입이 없습니다.</p>
+          )}
+        </div>
+        <div>
+          <h3 className="mb-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300">성장 루프 결과</h3>
+          <dl className="grid grid-cols-2 gap-1.5">
+            {view.growthOutcomes.map((outcome) => (
+              <div key={outcome.key} className="rounded-md border border-zinc-100 bg-zinc-50 px-2.5 py-2 dark:border-zinc-800/60 dark:bg-zinc-950/40">
+                <dt className="text-[11px] text-zinc-500 dark:text-zinc-400">{GROWTH_OUTCOME_LABELS[outcome.key] ?? outcome.key}</dt>
+                <dd className="mt-0.5 tabular-nums text-sm font-semibold text-zinc-900 dark:text-zinc-100">{fmtInt(outcome.count)}회</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-1.5 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500">비교·저장·점검·공유는 순서가 고정된 퍼널이 아니므로 각각 독립 건수로 읽습니다.</p>
+        </div>
       </div>
 
       <div>

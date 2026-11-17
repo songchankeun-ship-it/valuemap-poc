@@ -4169,3 +4169,28 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next: run `npm run growth:content`, review one generated draft, and have the
   owner publish it manually on Threads. After release, review Naver and Vercel
   evidence at day 14 before changing channels or page scope.
+
+## 2026-11-17 - Growth Sprint 2 activation and return loop [codex]
+
+- Sprint 2 stays inside the Sprint 1 funnel. It adds a verified campaign/outcome
+  summary contract, a recent-two-stock comparison prompt, and a versioned local
+  watchlist snapshot that explains changes since the previous completion.
+- Dynamic 1200x630 OG routes now exist for stock, curated comparison, and topic
+  pages. All use bundled Pretendard regular/bold assets and the included SIL OFL
+  license. The stock route's prior production 500 is covered by the new live
+  gate along with the two new route families.
+- `stock_recent_compare_open` accepts only `ticker` and `peerTicker`. The four
+  growth outcome groups are compare (`compare_toggle`, recent compare), save
+  (`watchlist_toggle`), return (`watchlist_routine_complete`), and share
+  (`stock_share`, `compare_share`). These are event counts, not unique users.
+- No provider was called and no traffic number was synthesized. Browser-local
+  recent views and snapshots remain outside analytics. Public data, Metrics
+  2.4, 138 stocks, formulas, auth, workflows, dependencies, provider/runtime
+  values, hosting, and outside accounts remain frozen.
+- Green: focused Sprint 2 test, production build 194/194, release preflight
+  18/18, local route health 6/6, live OG 3/3, and browser QA. The 390px-class
+  stock page has no document overflow and all three actions fit; the stock OG
+  renders Korean, the `O` logo, evidence, and disclaimer correctly.
+- Next agent: verify frozen-path diffs, commit with `[codex]`, and stop. Do not
+  push or deploy until the owner explicitly approves the exact commit set and
+  production impact.

@@ -12,6 +12,7 @@ import {
   buildTrafficMetricsSummary,
   SAMPLE_TRAFFIC_METRICS_FIXTURE,
   FUNNEL_STAGE_DEFS,
+  GROWTH_OUTCOME_DEFS,
   DASHBOARD_ROUTE_KINDS,
 } from "../src/lib/adminTrafficMetrics";
 import {
@@ -46,7 +47,9 @@ check("conversionRate returns 0 for an honest zero numerator over a real base", 
 // Mirror SAMPLE_TRAFFIC_METRICS_FIXTURE 24h counts.
 const routeCounts24 = { home: 120, stocks: 80, stock_detail: 140, topic: 40, compare: 20 };
 const funnelCounts24 = { entry: 400, discover_to_detail: 180, action_intent: 60, account_intent: 18 };
-const summary24 = buildTrafficMetricsSummary("24h", routeCounts24, funnelCounts24);
+const campaignCounts24 = { direct: 210, threads: 72, "naver-blog": 54, share: 28 };
+const outcomeCounts24 = { compare: 64, save: 42, return: 18, share: 24 };
+const summary24 = buildTrafficMetricsSummary("24h", routeCounts24, funnelCounts24, campaignCounts24, outcomeCounts24);
 const view24 = toTrafficSummaryView(summary24);
 
 const expectedRouteTotal = DASHBOARD_ROUTE_KINDS.reduce(
@@ -61,6 +64,9 @@ check(
 );
 check("top route bucket is stock_detail (140)", view24.routeViews[0].routeKind === "stock_detail" && view24.routeViews[0].views === 140);
 check("view keeps one bucket per dashboard route kind (zeros retained)", view24.routeViews.length === DASHBOARD_ROUTE_KINDS.length);
+check("campaign buckets are sorted by views descending", view24.campaignViews[0].campaign === "direct" && view24.campaignViews[0].views === 210);
+check("growth outcomes keep canonical order", view24.growthOutcomes.every((outcome, index) => outcome.key === GROWTH_OUTCOME_DEFS[index].key));
+check("growth outcome counts stay faithful", view24.growthOutcomes.find((outcome) => outcome.key === "return")?.count === 18);
 
 check("entryCount is the first funnel stage count", view24.entryCount === 400);
 check("stage count matches the funnel def count", view24.stages.length === FUNNEL_STAGE_DEFS.length);
@@ -108,6 +114,8 @@ const summary72 = buildTrafficMetricsSummary(
   "72h",
   { home: 300, stocks: 210, stock_detail: 360, topic: 110, compare: 55 },
   { entry: 1050, discover_to_detail: 470, action_intent: 160, account_intent: 44 },
+  { direct: 570, threads: 190, "naver-blog": 142, share: 74 },
+  { compare: 172, save: 111, return: 47, share: 63 },
 );
 const view72 = toTrafficSummaryView(summary72);
 const comparison = buildWindowComparison(view24, view72);

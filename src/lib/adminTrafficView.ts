@@ -22,6 +22,8 @@
 //     directly would mislead. Comparing funnel shape is the honest read.
 
 import type {
+  CampaignViewMetric,
+  GrowthOutcomeMetric,
   RouteViewMetric,
   TrafficMetricWindow,
   TrafficMetricsSummary,
@@ -56,9 +58,11 @@ export type TrafficSummaryView = {
   // Route buckets sorted by views desc (routeKind asc for ties). Zero-view
   // buckets are kept — an honest 0, not hidden.
   routeViews: RouteViewMetric[];
+  campaignViews: CampaignViewMetric[];
   // The funnel entry stage count (first stage), the denominator for entryRate.
   entryCount: number;
   stages: FunnelStageView[];
+  growthOutcomes: GrowthOutcomeMetric[];
 };
 
 // Derive the view model from a ready summary. Pure: same input → same output,
@@ -67,6 +71,9 @@ export function toTrafficSummaryView(summary: TrafficMetricsSummary): TrafficSum
   const totalRouteViews = summary.routeViews.reduce((sum, rv) => sum + rv.views, 0);
   const routeViews = [...summary.routeViews].sort(
     (a, b) => b.views - a.views || a.routeKind.localeCompare(b.routeKind),
+  );
+  const campaignViews = [...summary.campaignViews].sort(
+    (a, b) => b.views - a.views || a.campaign.localeCompare(b.campaign),
   );
   const entryCount = summary.funnel.length > 0 ? summary.funnel[0].count : 0;
   const stages: FunnelStageView[] = summary.funnel.map((stage, i) => {
@@ -80,7 +87,15 @@ export function toTrafficSummaryView(summary: TrafficMetricsSummary): TrafficSum
       entryRate: isEntry ? null : conversionRate(stage.count, entryCount),
     };
   });
-  return { window: summary.window, totalRouteViews, routeViews, entryCount, stages };
+  return {
+    window: summary.window,
+    totalRouteViews,
+    routeViews,
+    campaignViews,
+    entryCount,
+    stages,
+    growthOutcomes: summary.growthOutcomes.map((outcome) => ({ ...outcome, events: [...outcome.events] })),
+  };
 }
 
 // One row of the compact cross-window comparison: a funnel stage's entry-share

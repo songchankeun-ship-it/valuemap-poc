@@ -26,7 +26,7 @@
 //     newly added public route can't silently drift out of the dashboard
 //     contract; scripts/verify-admin-traffic-metrics.ts enforces this.
 
-import { ROUTE_KINDS, ROUTE_VIEW_EVENT } from "./routeAnalytics";
+import { CAMPAIGN_SOURCES, ROUTE_KINDS, ROUTE_VIEW_EVENT } from "./routeAnalytics";
 
 // Reporting windows a future dashboard would offer. Launch review leans on the
 // 24h/72h windows (see the first-72h playbook); 7d/30d are for later trend.
@@ -40,10 +40,21 @@ export type RouteViewMetric = {
   views: number;
 };
 
+export type CampaignViewMetric = {
+  campaign: string;
+  views: number;
+};
+
 // A launch-funnel stage: an ordered step whose volume is read from one or more
 // canonical events. Every name in `events` must exist in the analytics event map
 // (docs/ornscore-analytics-event-map-2026-07-12.md) — the verifier asserts this.
 export type FunnelStageMetric = {
+  key: string;
+  events: readonly string[];
+  count: number;
+};
+
+export type GrowthOutcomeMetric = {
   key: string;
   events: readonly string[];
   count: number;
@@ -55,7 +66,9 @@ export type TrafficMetricsSummary = {
   window: TrafficMetricWindow;
   routeViewEvent: typeof ROUTE_VIEW_EVENT;
   routeViews: RouteViewMetric[];
+  campaignViews: CampaignViewMetric[];
   funnel: FunnelStageMetric[];
+  growthOutcomes: GrowthOutcomeMetric[];
 };
 
 // Discriminated result union. `not_configured` is the current, local reality:
@@ -88,11 +101,23 @@ export const FUNNEL_STAGE_DEFS = [
   { key: "account_intent", events: ["auth_cta_click"] },
 ] as const;
 
+// Acquisition-loop outcomes are not a strict linear funnel: a visitor may
+// share before saving, or return without comparing. Keep them as independent
+// counts so the owner sees real loop behavior without implying false ordering.
+export const GROWTH_OUTCOME_DEFS = [
+  { key: "compare", events: ["compare_toggle", "stock_recent_compare_open"] },
+  { key: "save", events: ["watchlist_toggle"] },
+  { key: "return", events: ["watchlist_routine_complete"] },
+  { key: "share", events: ["stock_share", "compare_share"] },
+] as const;
+
 // Flat set of every event name the funnel references (verified against the map).
 export const FUNNEL_EVENT_NAMES: readonly string[] = FUNNEL_STAGE_DEFS.flatMap((s) => s.events);
+export const GROWTH_OUTCOME_EVENT_NAMES: readonly string[] = GROWTH_OUTCOME_DEFS.flatMap((s) => s.events);
 
 // Every routeKind the dashboard must carry a bucket for — derived, not copied.
 export const DASHBOARD_ROUTE_KINDS: readonly string[] = ROUTE_KINDS;
+export const DASHBOARD_CAMPAIGN_SOURCES: readonly string[] = CAMPAIGN_SOURCES;
 
 // The single reason string the default empty state reports, pointing operators
 // at where the real numbers live today and what wiring the numeric view requires.
@@ -139,6 +164,7 @@ export function isTrafficMetricWindow(value: string): value is TrafficMetricWind
 
 // Canonical funnel stage keys, derived (not copied) from the stage defs.
 export const FUNNEL_STAGE_KEYS: readonly string[] = FUNNEL_STAGE_DEFS.map((s) => s.key);
+export const GROWTH_OUTCOME_KEYS: readonly string[] = GROWTH_OUTCOME_DEFS.map((s) => s.key);
 
 // The CLOSED public vocabulary every string in a summary must be drawn from.
 // A summary has no free-form text field by design; this set is the machine-checkable
@@ -149,8 +175,11 @@ export const SAFE_SUMMARY_VOCABULARY: ReadonlySet<string> = new Set<string>([
   ...TRAFFIC_METRIC_WINDOWS,
   ROUTE_VIEW_EVENT,
   ...DASHBOARD_ROUTE_KINDS,
+  ...DASHBOARD_CAMPAIGN_SOURCES,
   ...FUNNEL_STAGE_KEYS,
   ...FUNNEL_EVENT_NAMES,
+  ...GROWTH_OUTCOME_KEYS,
+  ...GROWTH_OUTCOME_EVENT_NAMES,
 ]);
 
 // Build a summary whose route buckets and funnel stages are derived from the
@@ -161,6 +190,8 @@ export function buildTrafficMetricsSummary(
   window: TrafficMetricWindow,
   routeViewCounts: Readonly<Record<string, number>> = {},
   funnelCounts: Readonly<Record<string, number>> = {},
+  campaignViewCounts: Readonly<Record<string, number>> = {},
+  growthOutcomeCounts: Readonly<Record<string, number>> = {},
 ): TrafficMetricsSummary {
   return {
     window,
@@ -169,10 +200,19 @@ export function buildTrafficMetricsSummary(
       routeKind,
       views: routeViewCounts[routeKind] ?? 0,
     })),
+    campaignViews: DASHBOARD_CAMPAIGN_SOURCES.map((campaign) => ({
+      campaign,
+      views: campaignViewCounts[campaign] ?? 0,
+    })),
     funnel: FUNNEL_STAGE_DEFS.map((stage) => ({
       key: stage.key,
       events: stage.events,
       count: funnelCounts[stage.key] ?? 0,
+    })),
+    growthOutcomes: GROWTH_OUTCOME_DEFS.map((outcome) => ({
+      key: outcome.key,
+      events: outcome.events,
+      count: growthOutcomeCounts[outcome.key] ?? 0,
     })),
   };
 }
@@ -186,8 +226,12 @@ function isCount(n: unknown): boolean {
 function collectSummaryStrings(summary: TrafficMetricsSummary): string[] {
   const out: string[] = [summary.window, summary.routeViewEvent];
   for (const rv of summary.routeViews) out.push(rv.routeKind);
+  for (const campaign of summary.campaignViews) out.push(campaign.campaign);
   for (const stage of summary.funnel) {
     out.push(stage.key, ...stage.events);
+  }
+  for (const outcome of summary.growthOutcomes) {
+    out.push(outcome.key, ...outcome.events);
   }
   return out;
 }
@@ -216,6 +260,22 @@ export function findUnsafeSummaryProblems(summary: TrafficMetricsSummary): strin
     seenKinds.add(rv.routeKind);
     if (!isCount(rv.views)) problems.push(`views for "${rv.routeKind}" must be a non-negative integer`);
   }
+  for (const routeKind of DASHBOARD_ROUTE_KINDS) {
+    if (!seenKinds.has(routeKind)) problems.push(`routeKind "${routeKind}" bucket is missing`);
+  }
+
+  const seenCampaigns = new Set<string>();
+  for (const campaign of summary.campaignViews) {
+    if (!DASHBOARD_CAMPAIGN_SOURCES.includes(campaign.campaign)) {
+      problems.push(`campaign "${campaign.campaign}" is not an allow-listed campaign source`);
+    }
+    if (seenCampaigns.has(campaign.campaign)) problems.push(`campaign "${campaign.campaign}" is duplicated`);
+    seenCampaigns.add(campaign.campaign);
+    if (!isCount(campaign.views)) problems.push(`views for campaign "${campaign.campaign}" must be a non-negative integer`);
+  }
+  for (const campaign of DASHBOARD_CAMPAIGN_SOURCES) {
+    if (!seenCampaigns.has(campaign)) problems.push(`campaign "${campaign}" bucket is missing`);
+  }
 
   // Funnel: each stage is a canonical stage whose events are pinned to the defs.
   const defByKey = new Map<string, readonly string[]>(FUNNEL_STAGE_DEFS.map((s) => [s.key, s.events]));
@@ -232,6 +292,28 @@ export function findUnsafeSummaryProblems(summary: TrafficMetricsSummary): strin
       problems.push(`funnel stage "${stage.key}" events drifted from the canonical definition`);
     }
     if (!isCount(stage.count)) problems.push(`count for stage "${stage.key}" must be a non-negative integer`);
+  }
+  for (const stageKey of FUNNEL_STAGE_KEYS) {
+    if (!seenStages.has(stageKey)) problems.push(`funnel stage "${stageKey}" is missing`);
+  }
+
+  const outcomeDefByKey = new Map<string, readonly string[]>(GROWTH_OUTCOME_DEFS.map((outcome) => [outcome.key, outcome.events]));
+  const seenOutcomes = new Set<string>();
+  for (const outcome of summary.growthOutcomes) {
+    const def = outcomeDefByKey.get(outcome.key);
+    if (!def) {
+      problems.push(`growth outcome "${outcome.key}" is not canonical`);
+      continue;
+    }
+    if (seenOutcomes.has(outcome.key)) problems.push(`growth outcome "${outcome.key}" is duplicated`);
+    seenOutcomes.add(outcome.key);
+    if (outcome.events.length !== def.length || !outcome.events.every((event, index) => event === def[index])) {
+      problems.push(`growth outcome "${outcome.key}" events drifted from the canonical definition`);
+    }
+    if (!isCount(outcome.count)) problems.push(`count for growth outcome "${outcome.key}" must be a non-negative integer`);
+  }
+  for (const outcomeKey of GROWTH_OUTCOME_KEYS) {
+    if (!seenOutcomes.has(outcomeKey)) problems.push(`growth outcome "${outcomeKey}" is missing`);
   }
 
   // No-identifier guarantee: every string in the payload is public vocabulary.
@@ -320,6 +402,8 @@ export const SAMPLE_TRAFFIC_METRICS_FIXTURE: TrafficMetricsFixture = {
         "24h",
         { home: 120, stocks: 80, stock_detail: 140, topic: 40, compare: 20 },
         { entry: 400, discover_to_detail: 180, action_intent: 60, account_intent: 18 },
+        { direct: 210, threads: 72, "naver-blog": 54, share: 28 },
+        { compare: 64, save: 42, return: 18, share: 24 },
       ),
     },
     "72h": {
@@ -328,6 +412,8 @@ export const SAMPLE_TRAFFIC_METRICS_FIXTURE: TrafficMetricsFixture = {
         "72h",
         { home: 300, stocks: 210, stock_detail: 360, topic: 110, compare: 55 },
         { entry: 1050, discover_to_detail: 470, action_intent: 160, account_intent: 44 },
+        { direct: 570, threads: 190, "naver-blog": 142, share: 74 },
+        { compare: 172, save: 111, return: 47, share: 63 },
       ),
     },
     "7d": {

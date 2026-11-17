@@ -82,7 +82,7 @@ export function AddToCompareButton({ ticker, name, compact = false, label }: Pro
         type="button"
         onClick={toggle}
         disabled={loading}
-        className={"inline-flex items-center " + (compact && !label ? "justify-center w-11 px-0" : compact ? "gap-1 px-3" : "px-3.5") + " py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " + (
+        className={"inline-flex min-w-0 items-center overflow-hidden " + (compact && !label ? "justify-center w-11 px-0" : compact ? "gap-1 px-3" : "px-3.5") + " py-2.5 min-h-[44px] border rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " + (
           inBasket
             ? "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 text-blue-700 dark:text-blue-300"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-300 hover:text-blue-600 dark:hover:border-blue-700 dark:hover:text-blue-400"
@@ -95,7 +95,7 @@ export function AddToCompareButton({ ticker, name, compact = false, label }: Pro
         ) : compact ? (
           <span className="truncate">{label}</span>
         ) : (
-          <span className="ml-1.5">{inBasket ? "✓ 비교에서 빼기" : "+ 비교에 추가"}</span>
+          <span className="ml-1.5 truncate">{inBasket ? "✓ 비교에서 빼기" : "+ 비교에 추가"}</span>
         )}
       </button>
 

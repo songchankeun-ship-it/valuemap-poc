@@ -1,5 +1,30 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-17 - [codex] Growth Sprint 2 activation and return loop
+
+- Extended the existing growth loop instead of adding another channel. The
+  owner dashboard contract now separates allow-listed campaign entry from four
+  decision outcomes: compare, save, return, and share. It still displays no
+  invented provider numbers.
+- Stock detail now offers a comparison after two distinct stocks are viewed
+  within seven days. The new event sends only the current and peer tickers.
+- Watchlist completion now stores a bounded browser-local snapshot and the next
+  visit explains added stocks, rounded score changes, and signal changes.
+- Stock, comparison, and topic routes now own 1200x630 Korean OG images. Local
+  Pretendard fonts and the bundled SIL OFL license prevent missing-glyph and
+  production font-fetch failures. This also fixes the existing stock OG 500.
+- Added offline Sprint 2 contract coverage and a live three-route OG gate to
+  release preflight. Production build generated 194/194 pages; focused tests,
+  TypeScript, analytics verifiers, mobile visual QA, and live OG checks pass.
+  Final release preflight is 18/18 and local route health is 6/6. Mobile stock
+  actions have no document overflow or right-edge clipping.
+- Frozen: `public/data`, Metrics 2.4, 138-stock universe, formulas, auth,
+  workflows, packages, providers, hosting, and outside account state.
+- **Next action**: commit locally, present the exact three-commit release set to
+  the owner, and wait for explicit fast-forward push/deploy approval. After
+  release, verify exact SHA and read campaign/outcome evidence before selecting
+  another growth sprint.
+
 ## 2026-07-29 - [codex] 측정 가능한 공개 확산 준비
 
 - 외부 공개 링크의 `ref`를 `route_view_public.campaign`으로 기록하는 고정 허용 목록을

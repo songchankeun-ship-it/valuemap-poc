@@ -118,7 +118,9 @@
     "generate-insight": "tsx scripts/generate-daily-insight.ts",
     "growth:content": "node scripts/generate-growth-content.mjs",
     "test:growth-content": "node scripts/test-growth-content.mjs",
-    "verify:growth-sprint": "node scripts/verify-growth-sprint.mjs"
+    "verify:growth-sprint": "node scripts/verify-growth-sprint.mjs",
+    "test:growth-sprint-2": "tsx scripts/test-growth-sprint-2.ts",
+    "verify:growth-sprint-2-live": "node scripts/verify-growth-sprint-2-live.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

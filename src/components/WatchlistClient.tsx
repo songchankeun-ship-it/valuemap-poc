@@ -32,6 +32,12 @@ import {
 import { trackEvent } from "@/lib/clientAnalytics";
 import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
 import { type ComparisonBasis, UNAVAILABLE_BASIS, comparisonBasisLabel } from "@/lib/scoreComparison";
+import {
+  buildWatchlistRoutineSnapshot,
+  diffWatchlistRoutineSnapshot,
+  parseWatchlistRoutineSnapshot,
+  type WatchlistRoutineSnapshot,
+} from "@/lib/watchlistRoutine";
 
 const RECENT_KEY = "ornscore_recent_views";
 const VIEW_KEY = "ornscore_watchlist_view";
@@ -41,6 +47,7 @@ const GROUP_FILTER_KEY = "ornscore_watchlist_group_filter";
 const GROUP_FILTER_ALL = "__all__";
 const GROUP_FILTER_UNGROUPED = "__ungrouped__";
 const ROUTINE_CHECK_KEY = "ornscore_watchlist_routine_check_v1";
+const ROUTINE_SNAPSHOT_KEY = "ornscore_watchlist_routine_snapshot_v1";
 // StocksExplorer가 저장하는 최근 검색어 키를 그대로 읽어(표시 전용) 루틴 화면에서 재검색으로 잇는다.
 const RECENT_SEARCH_KEY = "ornscore_recent_stock_searches";
 
@@ -212,6 +219,7 @@ export function WatchlistClient({
   const [compareNotice, setCompareNotice] = useState<string | null>(null);
   const compareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [lastRoutineCheck, setLastRoutineCheck] = useState<string | null>(null);
+  const [routineSnapshot, setRoutineSnapshot] = useState<WatchlistRoutineSnapshot | null>(null);
 
   useEffect(() => {
     setHydrated(true);
@@ -235,8 +243,16 @@ export function WatchlistClient({
       // 저장소 사용 불가 — 기본 그룹 필터(전체) 유지
     }
     try {
-      const checkedAt = typeof window !== "undefined" ? localStorage.getItem(ROUTINE_CHECK_KEY) : null;
-      if (checkedAt && Number.isFinite(Date.parse(checkedAt))) setLastRoutineCheck(checkedAt);
+      const snapshot = typeof window !== "undefined"
+        ? parseWatchlistRoutineSnapshot(localStorage.getItem(ROUTINE_SNAPSHOT_KEY))
+        : null;
+      if (snapshot) {
+        setRoutineSnapshot(snapshot);
+        setLastRoutineCheck(snapshot.checkedAt);
+      } else {
+        const checkedAt = typeof window !== "undefined" ? localStorage.getItem(ROUTINE_CHECK_KEY) : null;
+        if (checkedAt && Number.isFinite(Date.parse(checkedAt))) setLastRoutineCheck(checkedAt);
+      }
     } catch {
       // 저장소 사용 불가 — 마지막 점검 표시는 생략
     }
@@ -563,17 +579,33 @@ export function WatchlistClient({
     })
     .slice(0, 3);
 
+  const currentRoutineStocks = watchlist.map((item) => {
+    const info = allStocks.find((stock) => stock.ticker === item.ticker);
+    return {
+      ticker: item.ticker,
+      compositeScore: info?.compositeScore,
+      signalType: tickerToSignal[item.ticker]?.signalType ?? null,
+    };
+  });
+  const sinceLastChanges = routineSnapshot
+    ? diffWatchlistRoutineSnapshot(routineSnapshot, currentRoutineStocks)
+    : [];
+  const routineChangeCount = routineSnapshot ? sinceLastChanges.length : changed.length;
+
   function completeRoutineCheck() {
     const checkedAt = new Date().toISOString();
+    const snapshot = buildWatchlistRoutineSnapshot(currentRoutineStocks, checkedAt);
     setLastRoutineCheck(checkedAt);
+    setRoutineSnapshot(snapshot);
     try {
       window.localStorage.setItem(ROUTINE_CHECK_KEY, checkedAt);
+      window.localStorage.setItem(ROUTINE_SNAPSHOT_KEY, JSON.stringify(snapshot));
     } catch {
       // 저장 실패여도 현재 화면의 완료 피드백은 유지
     }
     trackEvent("watchlist_routine_complete", {
       count: watchlist.length,
-      changed: changed.length,
+      changed: routineChangeCount,
     });
   }
 
@@ -731,13 +763,37 @@ export function WatchlistClient({
             <div className="min-w-0">
               <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">이번 관심종목 점검</p>
               <p className="mt-0.5 text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
-                변화 {changed.length}개를 먼저 보고, 필요한 종목만 상세·공시에서 확인하세요.
+                {routineSnapshot ? "마지막 점검 이후" : "오늘 변화 기준"} {routineChangeCount}개를 먼저 보고, 필요한 종목만 상세·공시에서 확인하세요.
               </p>
               <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
                 {lastRoutineCheck
                   ? `마지막 점검 ${fmtRelativeTime(lastRoutineCheck, { locale, absolute: "md" })}`
                   : "아직 완료한 점검이 없어요."}
               </p>
+              {routineSnapshot && sinceLastChanges.length > 0 ? (
+                <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="마지막 점검 이후 달라진 관심종목">
+                  {sinceLastChanges.slice(0, 3).map((change) => {
+                    const stock = allStocks.find((item) => item.ticker === change.ticker);
+                    const reasons = [
+                      change.addedSinceLastCheck ? "새로 담음" : null,
+                      change.scoreDelta !== null && change.scoreDelta !== 0
+                        ? `점수 ${change.scoreDelta > 0 ? "+" : ""}${change.scoreDelta}`
+                        : null,
+                      change.signalChanged ? "공시 신호 변경" : null,
+                    ].filter(Boolean);
+                    return (
+                      <li key={change.ticker}>
+                        <Link
+                          href={`/stock/${change.ticker}`}
+                          className="inline-flex min-h-[36px] items-center rounded-md border border-blue-200 bg-white px-2 text-[11px] font-medium text-blue-800 hover:border-blue-400 dark:border-blue-900 dark:bg-zinc-900 dark:text-blue-300"
+                        >
+                          {stock?.name ?? change.ticker} · {reasons.join(" · ")}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
             </div>
             <button
               type="button"

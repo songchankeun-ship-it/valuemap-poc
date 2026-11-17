@@ -56,6 +56,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `stock_checklist_next_open` | Stock detail checklist next-step CTA | `ticker`, `step` | User follows the next unchecked checklist item; only ticker and fixed checklist step id are sent. |
 | `stock_checklist_routine_open` | Stock detail checklist completion CTA | `ticker` | User finishes the local stock checklist and opens the personal routine page. |
 | `stock_checklist_reset` | Stock detail local checklist reset button | `ticker`, `done`, `total` | User clears local checklist progress for one stock; no checklist labels, notes, or free-form text are sent. |
+| `stock_recent_compare_open` | Stock detail recent-view comparison prompt | `ticker`, `peerTicker` | User opens comparison after viewing two distinct stocks within seven days; only the two public tickers are sent. |
 | `auth_cta_click` | Header login/start links | `source`, `hasNext`, `path` | User begins account/login flow. |
 | `report_data_issue_open` | Data issue form open | `ticker` | User starts a data quality report. |
 | `report_data_issue_submit` | Data issue form submit | `category`, `ticker`, `hasEmail` | User submits a data quality report attempt. |
@@ -65,6 +66,23 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `beta_task_complete` | `/beta` task completion control | `step`, `action`, `completedSteps`, `source` | Participant marks or unmarks a fixed task as complete. |
 | `beta_feedback_submit` | `/beta` feedback form | `rating`, `friction`, `completedSteps`, `source` | Feedback submission attempt; free-form comment and email are never sent to analytics. |
 | `beta_feedback_result` | `/beta` feedback form | `result`, `source` | Feedback storage outcome without feedback text or email. |
+
+## Growth Outcome Aggregation
+
+The owner dashboard groups existing events into four decision outcomes. These
+are event totals rather than unique users or conversion rates, and no number is
+shown unless a verified provider payload is supplied.
+
+| Outcome | Events |
+| --- | --- |
+| Compare | `compare_toggle`, `stock_recent_compare_open` |
+| Save | `watchlist_toggle` |
+| Return | `watchlist_routine_complete` |
+| Share | `stock_share`, `compare_share` |
+
+Campaign entry counts come only from `route_view_public.campaign` and its fixed
+allow-list. Do not infer campaign attribution from referrers, full URLs, search
+text, or other uncontracted properties.
 
 ## Implementation Notes
 

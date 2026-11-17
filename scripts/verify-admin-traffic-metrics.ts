@@ -14,9 +14,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  DASHBOARD_CAMPAIGN_SOURCES,
   DASHBOARD_ROUTE_KINDS,
   FUNNEL_EVENT_NAMES,
   FUNNEL_STAGE_DEFS,
+  GROWTH_OUTCOME_DEFS,
+  GROWTH_OUTCOME_EVENT_NAMES,
   SAMPLE_TRAFFIC_METRICS_FIXTURE,
   TRAFFIC_METRIC_WINDOWS,
   buildTrafficMetricsSummary,
@@ -27,7 +30,7 @@ import {
   notConfiguredTrafficMetricsProvider,
   type TrafficMetricWindow,
 } from "../src/lib/adminTrafficMetrics";
-import { ROUTE_KINDS } from "../src/lib/routeAnalytics";
+import { CAMPAIGN_SOURCES, ROUTE_KINDS } from "../src/lib/routeAnalytics";
 
 let failed = 0;
 function check(name: string, cond: boolean): void {
@@ -43,6 +46,11 @@ check(
   "DASHBOARD_ROUTE_KINDS equals ROUTE_KINDS exactly",
   DASHBOARD_ROUTE_KINDS.length === ROUTE_KINDS.length &&
     DASHBOARD_ROUTE_KINDS.every((k, i) => k === ROUTE_KINDS[i]),
+);
+check(
+  "DASHBOARD_CAMPAIGN_SOURCES equals CAMPAIGN_SOURCES exactly",
+  DASHBOARD_CAMPAIGN_SOURCES.length === CAMPAIGN_SOURCES.length &&
+    DASHBOARD_CAMPAIGN_SOURCES.every((source, index) => source === CAMPAIGN_SOURCES[index]),
 );
 
 // --- 2. Every funnel event exists in the canonical event map -----------------
@@ -61,12 +69,19 @@ check("event map yielded a non-trivial event set", documentedEvents.size >= 10);
 for (const event of FUNNEL_EVENT_NAMES) {
   check(`funnel event "${event}" is documented in the event map`, documentedEvents.has(event));
 }
+for (const event of GROWTH_OUTCOME_EVENT_NAMES) {
+  check(`growth outcome event "${event}" is documented in the event map`, documentedEvents.has(event));
+}
 
 // --- 3. Structural sanity on the funnel --------------------------------------
 
 check("funnel stage keys are unique", new Set(FUNNEL_STAGE_DEFS.map((s) => s.key)).size === FUNNEL_STAGE_DEFS.length);
 for (const stage of FUNNEL_STAGE_DEFS) {
   check(`funnel stage "${stage.key}" has at least one event`, stage.events.length > 0);
+}
+check("growth outcome keys are unique", new Set(GROWTH_OUTCOME_DEFS.map((outcome) => outcome.key)).size === GROWTH_OUTCOME_DEFS.length);
+for (const outcome of GROWTH_OUTCOME_DEFS) {
+  check(`growth outcome "${outcome.key}" has at least one event`, outcome.events.length > 0);
 }
 
 check("at least one reporting window is defined", TRAFFIC_METRIC_WINDOWS.length > 0);
@@ -101,6 +116,8 @@ const builtSummary = buildTrafficMetricsSummary(
   "24h",
   { home: 10, stock_detail: 5 },
   { entry: 12, discover_to_detail: 4 },
+  { threads: 3, share: 2 },
+  { compare: 4, save: 3, return: 2, share: 1 },
 );
 check("buildTrafficMetricsSummary yields a summary with zero problems", findUnsafeSummaryProblems(builtSummary).length === 0);
 check(
@@ -108,6 +125,8 @@ check(
   builtSummary.routeViews.length === DASHBOARD_ROUTE_KINDS.length,
 );
 check("built summary carries one funnel stage per canonical def", builtSummary.funnel.length === FUNNEL_STAGE_DEFS.length);
+check("built summary carries one bucket per allow-listed campaign", builtSummary.campaignViews.length === DASHBOARD_CAMPAIGN_SOURCES.length);
+check("built summary carries one growth outcome per canonical def", builtSummary.growthOutcomes.length === GROWTH_OUTCOME_DEFS.length);
 
 // Injected identifier in a route kind must be caught (no-PII guarantee).
 const leakedIdentifier = {
@@ -123,12 +142,26 @@ const badCount = {
 };
 check("guard rejects a negative funnel count", findUnsafeSummaryProblems(badCount).length > 0);
 
+const badCampaign = {
+  ...builtSummary,
+  campaignViews: [{ campaign: "raw-user-source", views: 1 }],
+};
+check("guard rejects a non-allow-listed campaign", findUnsafeSummaryProblems(badCampaign).length > 0);
+
 // Drifted funnel events must be caught.
 const driftedEvents = {
   ...builtSummary,
   funnel: builtSummary.funnel.map((s, i) => (i === 0 ? { ...s, events: ["not_a_real_event"] } : s)),
 };
 check("guard rejects funnel events drifted from the canonical definition", findUnsafeSummaryProblems(driftedEvents).length > 0);
+
+const driftedOutcome = {
+  ...builtSummary,
+  growthOutcomes: builtSummary.growthOutcomes.map((outcome, index) =>
+    index === 0 ? { ...outcome, events: ["not_a_real_event"] } : outcome,
+  ),
+};
+check("guard rejects growth outcome events drifted from the canonical definition", findUnsafeSummaryProblems(driftedOutcome).length > 0);
 
 // Out-of-range window on the summary itself must be caught.
 const badWindow = { ...builtSummary, window: "1h" as TrafficMetricWindow };
@@ -198,7 +231,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   console.log(
-    `PASS admin-traffic-metrics: ${DASHBOARD_ROUTE_KINDS.length} route kinds, ${FUNNEL_STAGE_DEFS.length} funnel stages, ${FUNNEL_EVENT_NAMES.length} funnel events checked against the event map; bounded-window guard, no-identifier summary guard, and the deterministic fixture provider (ready/unavailable/fail-closed) verified`,
+    `PASS admin-traffic-metrics: ${DASHBOARD_ROUTE_KINDS.length} route kinds, ${DASHBOARD_CAMPAIGN_SOURCES.length} campaign sources, ${FUNNEL_STAGE_DEFS.length} funnel stages, and ${GROWTH_OUTCOME_DEFS.length} growth outcomes checked against the event map; bounded-window guard, no-identifier summary guard, and the deterministic fixture provider (ready/unavailable/fail-closed) verified`,
   );
 }
 
