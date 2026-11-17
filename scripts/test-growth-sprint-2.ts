@@ -78,6 +78,7 @@ const topicImage = source("src/app/topics/[slug]/opengraph-image.tsx");
 const stockImage = source("src/app/stock/[ticker]/opengraph-image.tsx");
 const imageFonts = source("src/lib/ogImageFonts.ts");
 const fontLicense = source("assets/fonts/OFL.txt");
+const nextConfig = source("next.config.mjs");
 const watchlist = source("src/components/WatchlistClient.tsx");
 const metrics = source("src/lib/adminTrafficMetrics.ts");
 
@@ -90,6 +91,13 @@ for (const imageSource of [stockImage, compareImage, topicImage]) {
 assert.match(imageFonts, /readFile/);
 assert.match(imageFonts, /process\.cwd\(\)/);
 assert.match(fontLicense, /SIL OPEN FONT LICENSE/);
+for (const route of ["stock", "compare", "topics"]) {
+  assert.match(
+    nextConfig,
+    new RegExp(`/${route}/.*opengraph-image.*assets/fonts/\\*\\.woff`),
+    `${route} OG route must include local fonts in the server trace`,
+  );
+}
 assert.doesNotMatch(comparePage, /ornscore-og-1200x630\.jpg/);
 assert.doesNotMatch(topicPage, /ornscore-og-1200x630\.jpg/);
 assert.match(watchlist, /ornscore_watchlist_routine_snapshot_v1/);

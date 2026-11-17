@@ -4194,3 +4194,18 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next agent: verify frozen-path diffs, commit with `[codex]`, and stop. Do not
   push or deploy until the owner explicitly approves the exact commit set and
   production impact.
+
+## 2026-11-17 - Production OG font trace hotfix [codex]
+
+- The owner approved the three-commit growth release. `e25e1af2`, `c587e39b`,
+  and `5b5e8baf` were fast-forward pushed to `main`. Production exact-SHA SEO
+  passed 11/11 and route health passed 6/6.
+- The new production OG gate then caught all three dynamic image routes at
+  HTTP 500 even though they passed under local `next start`. Vercel's function
+  trace omitted the two font files referenced through a computed fs path.
+- `next.config.mjs` now uses stable, route-scoped
+  `outputFileTracingIncludes` for `assets/fonts/*.woff` on only the three OG
+  routes. Focused tests pin the configuration, and each generated route NFT
+  manifest contains Pretendard Regular and Bold (2/2).
+- Next: run full preflight, commit/push the hotfix, then require production OG
+  3/3. Do not begin Sprint 3 against a release with broken share previews.

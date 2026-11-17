@@ -42,6 +42,15 @@ export default function nextConfigFactory(phase) {
   // TTFB 영향이 사실상 없다.
   nextConfig.htmlLimitedBots = /.*/;
 
+  // Dynamic OG routes load local Korean fonts through fs at request time.
+  // Vercel serverless tracing cannot infer the computed process.cwd() path,
+  // so include only these two licensed font assets in the function bundle.
+  nextConfig.outputFileTracingIncludes = {
+    '/stock/\\[ticker\\]/opengraph-image': ['./assets/fonts/*.woff'],
+    '/compare/\\[pair\\]/opengraph-image': ['./assets/fonts/*.woff'],
+    '/topics/\\[slug\\]/opengraph-image': ['./assets/fonts/*.woff'],
+  };
+
   // 로컬 저메모리 빌드 보호용 — NEXT_BUILD_CPUS 설정 시에만 정적 생성 워커 수를 제한한다.
   // 환경변수가 없으면(예: Vercel) 기본 동작이라 운영 빌드에는 영향 없음.
   if (process.env.NEXT_BUILD_CPUS) {

@@ -1,5 +1,18 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-17 - [codex] Vercel OG font trace hotfix
+
+- Growth Sprint 2 reached production at exact SHA `5b5e8baf`; SEO release was
+  11/11 and route health 6/6, but the production-only OG gate caught HTTP 500
+  on stock, comparison, and topic image routes.
+- Root cause: computed `process.cwd()` font reads worked under `next start`,
+  while Vercel's serverless trace did not infer the two runtime font files.
+- Added route-scoped `outputFileTracingIncludes` for only the two Pretendard
+  WOFF files and extended the focused contract test. All three generated NFT
+  manifests now contain exactly both font assets.
+- **Next action**: complete preflight, fast-forward this hotfix, and require
+  production OG 3/3 before starting Growth Sprint 3.
+
 ## 2026-11-17 - [codex] Growth Sprint 2 activation and return loop
 
 - Extended the existing growth loop instead of adding another channel. The
