@@ -5261,6 +5261,11 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - Verification green: build 194/194, release preflight 22/22, route health 6/6,
   smoke 26/26, stock SEO 13/13, public SEO 3/3, login 5/5, admin guard 4/4,
   OG 3/3, and mobile/desktop browser QA without overflow or overlap.
+- Post-deploy monitoring found that the pre-publication window still trusted a
+  stale local checkout date. Market-close health now requires the previous KST
+  trading day before today's deadline, requires today after it, rejects future
+  dates, and fails an already-overdue snapshot. The focused self-test is part of
+  every release preflight.
 - **Next action**: commit and fast-forward this audited patch, verify production
-  exact SHA and all live gates, then run the existing daily refresh only when
-  the deployed business date is genuinely stale.
+  exact SHA and all live gates, then dispatch one normal daily refresh for the
+  confirmed stale snapshot and re-run market-close health.

@@ -150,6 +150,20 @@ export function kstParts(now, offsetMinutes = DEFAULT_TEMPORAL.kstOffsetMinutes)
   return { dateIso: `${y}-${pad2(m)}-${pad2(d)}`, dow, minutes };
 }
 
+export function previousTradingDateIso(dateIso, holidays = DEFAULT_HOLIDAYS_2026) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateIso || ""))) return null;
+  const holidaySet = holidays instanceof Set ? holidays : new Set(holidays || []);
+  const cursor = new Date(`${dateIso}T00:00:00Z`);
+  if (Number.isNaN(cursor.getTime())) return null;
+  for (let i = 0; i < 14; i++) {
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    const candidate = `${cursor.getUTCFullYear()}-${pad2(cursor.getUTCMonth() + 1)}-${pad2(cursor.getUTCDate())}`;
+    const dow = cursor.getUTCDay();
+    if (dow !== 0 && dow !== 6 && !holidaySet.has(candidate)) return candidate;
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // pure: temporal window classification (WAIT-eligibility from clock + calendar)
 // ---------------------------------------------------------------------------
@@ -164,14 +178,15 @@ export function classifyTemporal({ now, holidays, closeMinutes, graceMinutes, ks
   const deadlineMinutes = cfg.closeMinutes + cfg.graceMinutes;
   const isWeekend = parts.dow === 0 || parts.dow === 6;
   const isHoliday = holidaySet.has(parts.dateIso);
+  const previousTradingDate = previousTradingDateIso(parts.dateIso, holidaySet);
 
   if (isWeekend || isHoliday) {
-    return { window: "non_trading_day", reason: isWeekend ? "weekend" : "holiday", kst: parts, deadlineMinutes, isTradingDay: false };
+    return { window: "non_trading_day", reason: isWeekend ? "weekend" : "holiday", kst: parts, deadlineMinutes, isTradingDay: false, requiredBusinessDateIso: previousTradingDate };
   }
   if (parts.minutes < deadlineMinutes) {
-    return { window: "pre_publication", reason: "before_publication_deadline", kst: parts, deadlineMinutes, isTradingDay: true };
+    return { window: "pre_publication", reason: "before_publication_deadline", kst: parts, deadlineMinutes, isTradingDay: true, requiredBusinessDateIso: previousTradingDate };
   }
-  return { window: "enforcing", reason: "past_publication_deadline", kst: parts, deadlineMinutes, isTradingDay: true };
+  return { window: "enforcing", reason: "past_publication_deadline", kst: parts, deadlineMinutes, isTradingDay: true, requiredBusinessDateIso: parts.dateIso };
 }
 
 // ---------------------------------------------------------------------------
@@ -216,14 +231,18 @@ export function deriveExpected(data) {
   return { dataDate, metricsVersionLabel: v ? `Metrics ${v}` : null };
 }
 
-// After the publication deadline, the expected date comes from the trading-day
-// clock. A stale checkout must never validate the same stale date in production.
+// The minimum acceptable served date always comes from the trading-day clock:
+// previous trading day before today's deadline, current day after it. A stale
+// checkout must never validate the same stale date in production.
 export function deriveExpectedForTemporal(data, temporal) {
   const expected = deriveExpected(data);
-  if (temporal?.window === "enforcing" && temporal?.isTradingDay &&
-      /^\d{4}-\d{2}-\d{2}$/.test(temporal?.kst?.dateIso ?? "")) {
-    expected.dataDate = temporal.kst.dateIso.replaceAll("-", ".");
+  if (/^\d{4}-\d{2}-\d{2}$/.test(temporal?.requiredBusinessDateIso ?? "")) {
+    expected.dataDate = temporal.requiredBusinessDateIso.replaceAll("-", ".");
   }
+  expected.latestDataDate = /^\d{4}-\d{2}-\d{2}$/.test(temporal?.kst?.dateIso ?? "")
+    ? temporal.kst.dateIso.replaceAll("-", ".")
+    : null;
+  expected.enforceOverdue = temporal?.window !== "non_trading_day";
   return expected;
 }
 
@@ -236,6 +255,7 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
   const findings = [];
   const observations = [];
   const expected7 = expectedSha ? String(expectedSha).toLowerCase().slice(0, 7) : null;
+  let servedDataDate = null;
 
   // The monitor may run from a checkout that predates the latest bot data commit.
   // Read the deployed metadata once so runtime freshness and sitemap lastmod checks
@@ -259,13 +279,22 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
         findings.push({ ...finding, dimension: "live_data", message: finding.message.replace(/^local /, "served ") });
       }
       const liveExpected = deriveExpected(liveData);
-      if (expected.dataDate && liveExpected.dataDate && liveExpected.dataDate !== expected.dataDate) {
+      servedDataDate = liveExpected.dataDate;
+      if (expected.dataDate && servedDataDate && servedDataDate < expected.dataDate) {
         findings.push({
           dimension: "live_data",
-          severity: "freshness",
+          severity: expected.enforceOverdue ? "hard" : "freshness",
           ok: false,
           code: "stale_publication",
-          message: `served data date "${liveExpected.dataDate}" != expected "${expected.dataDate}"`,
+          message: `served data date "${servedDataDate}" is older than required "${expected.dataDate}"`,
+        });
+      } else if (expected.latestDataDate && servedDataDate && servedDataDate > expected.latestDataDate) {
+        findings.push({
+          dimension: "live_data",
+          severity: "hard",
+          ok: false,
+          code: "future_publication",
+          message: `served data date "${servedDataDate}" is later than KST date "${expected.latestDataDate}"`,
         });
       }
       liveLastmod = lastmodIsoFromData(liveData);
@@ -319,7 +348,8 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
       if (route.canonical && !hasCanonical(body)) push("hard", "broken_route", 'missing <link rel="canonical">');
       if (route.metrics && expected.metricsVersionLabel && !visible.includes(expected.metricsVersionLabel)) push("hard", "metrics_drift", `served page missing "${expected.metricsVersionLabel}"`);
       if (route.universeText && !visible.includes(String(EXPECTED_UNIVERSE))) push("hard", "universe_drift", `served page missing universe count "${EXPECTED_UNIVERSE}"`);
-      if (route.date && expected.dataDate && !visible.includes(expected.dataDate)) push("freshness", "stale_publication", `served data date != expected "${expected.dataDate}" (publication may be in flight)`);
+      const pageDataDate = servedDataDate ?? expected.dataDate;
+      if (route.date && pageDataDate && !visible.includes(pageDataDate)) push("freshness", "stale_publication", `served page date != deployed data date "${pageDataDate}" (publication may be in flight)`);
       if (route.marker && expected7) {
         const found = extractBuildMarker(body);
         if (found === null) {
@@ -379,7 +409,7 @@ export async function runHealthChecks({ base, expected, expectedSha, bounds, cou
     }
   }
 
-  return { findings, observations };
+  return { findings, observations, servedDataDate };
 }
 
 // ---------------------------------------------------------------------------
@@ -455,8 +485,10 @@ function assembleReport({ overall, temporal, local, expected, health, findings, 
       universe: EXPECTED_UNIVERSE,
       metrics: EXPECTED_METRICS,
       dataDate: expected.dataDate,
+      latestDataDate: expected.latestDataDate ?? null,
       metricsVersionLabel: expected.metricsVersionLabel,
     },
+    served: { dataDate: health.servedDataDate ?? null },
     local: { count: local.count, metricsVersion: local.metricsVersion, businessDate: local.businessDate },
     observations: health.observations,
     failures: findings.filter((f) => f && f.ok === false),
@@ -599,7 +631,7 @@ async function main() {
   } else {
     console.log("OrnScore market-close health (one-shot, read-only, GET-only)");
     console.log(`base=${report.base}  sha=${report.expectedSha ?? "(not checked)"}  now(KST)=${report.temporal.kstDate} ${pad(Math.floor(report.temporal.kstMinutes / 60), 2)}:${pad(report.temporal.kstMinutes % 60, 2)}`);
-    console.log(`window=${report.temporal.window} (${report.temporal.reason})  expectedDate=${report.expected.dataDate ?? "-"}  universe=${report.expected.universe}  metrics=${report.expected.metrics}`);
+    console.log(`window=${report.temporal.window} (${report.temporal.reason})  requiredDate=${report.expected.dataDate ?? "-"}  servedDate=${report.served.dataDate ?? "-"}  universe=${report.expected.universe}  metrics=${report.expected.metrics}`);
     console.log("");
     console.log(`${pad("route/dim", 22)}${pad("status", 8)}${pad("marker", 10)}note`);
     console.log("-".repeat(52));

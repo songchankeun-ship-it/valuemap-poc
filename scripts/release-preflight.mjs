@@ -30,8 +30,9 @@
 //  17. test:growth-sprint-3  same-tab campaign attribution + outcome matrix
 //  18. test:growth-sprint-4  search-intent landing → comparison activation
 //  19. test:post-audit-fixes mobile sticky/date/source/action/recency contracts
-//  20. verify:framework-baseline source-route baseline freshness (prevents daily-data blockage)
-//  21. build                 next build
+//  20. test:market-close-health trading-date freshness fail-closed contract
+//  21. verify:framework-baseline source-route baseline freshness (prevents daily-data blockage)
+//  22. build                 next build
 //
 // OPERATOR ACCEPTANCE: gates 3-8 above are exactly the offline half of the
 // operator-acceptance set. `npm run verify:operator-acceptance` is the
@@ -129,6 +130,7 @@ const OFFLINE_GATES = [
   { name: "test:growth-sprint-3", command: "npm", args: ["run", "test:growth-sprint-3"], shell: true },
   { name: "test:growth-sprint-4", command: "npm", args: ["run", "test:growth-sprint-4"], shell: true },
   { name: "test:post-audit-fixes", command: "npm", args: ["run", "test:post-audit-fixes"], shell: true },
+  { name: "test:market-close-health", command: "npm", args: ["run", "test:market-close-health"], shell: true },
   { name: "verify:framework-baseline", command: "npm", args: ["run", "verify:framework-baseline", "--", "--freshness-only"], shell: true },
 ];
 if (RUN_BUILD) {

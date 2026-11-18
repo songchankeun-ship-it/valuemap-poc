@@ -4287,6 +4287,13 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   admin guard 4/4, and live OG 3/3. Browser QA passed at 390x844 and 1280x720:
   no document overflow, the sticky tabs align at header bottom 61px, and the
   new next-check and mobile disclosure layouts render without overlap.
+- A live post-deploy check then exposed a separate monitor defect: before the
+  current day's publication deadline, market-close health trusted the checkout
+  date and could bless an older production snapshot. The monitor now derives a
+  minimum date from the KST trading calendar (previous trading day before the
+  deadline, current day after it), accepts a valid early current-day publish,
+  rejects future dates, and treats an already-overdue live snapshot as FAIL.
+  Its deterministic self-test is now mandatory in every release preflight.
 - Next: commit and fast-forward the audited patch, verify the deployed exact
-  SHA and production gates, then run one normal daily refresh only if the
-  production snapshot remains behind its expected business date.
+  SHA and production gates, then repair the now-confirmed stale public snapshot
+  with one normal daily refresh and re-run market-close health.

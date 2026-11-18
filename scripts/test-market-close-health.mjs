@@ -23,6 +23,7 @@ import {
   evaluateLocalData,
   classifyOverall,
   deriveExpectedForTemporal,
+  previousTradingDateIso,
   runMarketCloseHealth,
   kstParts,
   EXPECTED_UNIVERSE,
@@ -68,6 +69,8 @@ const NOW_WEEKEND = new Date("2026-07-18T03:00:00Z"); //  Sat 12:00 KST -> non_t
 const NOW_HOLIDAY = new Date("2026-08-17T03:00:00Z"); //  Mon 12:00 KST -> holiday (Liberation substitute)
 const NOW_MONDAY_ENFORCE = new Date("2026-07-20T10:30:00Z"); // Mon 19:30 KST -> current trading date due
 const NOW_FRIDAY_ENFORCE = new Date("2026-07-17T10:30:00Z"); // Fri 19:30 KST -> next fixture date due
+const NOW_MONDAY_PREPUBLICATION = new Date("2026-07-19T15:30:00Z"); // Mon 00:30 KST -> Friday due
+const NOW_NOV19_PREPUBLICATION = new Date("2026-11-18T15:52:00Z"); // Thu 00:52 KST -> Wednesday due
 
 const EXPECT_LASTMOD = lastmodIsoFromData(GOOD_DATA);
 
@@ -196,6 +199,8 @@ async function main() {
   check("§0f calendar override drops a holiday -> trading day", (() => { const t = classifyTemporal({ now: NOW_HOLIDAY, holidays: new Set() }); return t.isTradingDay === true && t.window !== "non_trading_day"; })());
   check("§0g grace/close override moves the deadline", classifyTemporal({ now: NOW_GRACE, closeMinutes: 0, graceMinutes: 0 }).window === "enforcing");
   check("§0h default holiday list is non-empty + ISO", DEFAULT_HOLIDAYS_2026.length > 0 && DEFAULT_HOLIDAYS_2026.every((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)));
+  check("§0i previous trading day skips a weekend", previousTradingDateIso("2026-07-20") === "2026-07-17");
+  check("§0j previous trading day skips a listed holiday", previousTradingDateIso("2026-08-18") === "2026-08-14");
 
   // =========================================================================
   // §1  pure: local-data invariants
@@ -221,6 +226,10 @@ async function main() {
 
   check("enforcing freshness ignores stale checkout date",
     deriveExpectedForTemporal(GOOD_DATA, classifyTemporal({ now: NOW_MONDAY_ENFORCE })).dataDate === "2026.07.20");
+  check("pre-publication Monday requires the previous Friday, not the checkout date",
+    deriveExpectedForTemporal(GOOD_DATA, classifyTemporal({ now: NOW_MONDAY_PREPUBLICATION })).dataDate === "2026.07.17");
+  check("midnight regression requires the immediately previous trading date",
+    deriveExpectedForTemporal(GOOD_DATA, classifyTemporal({ now: NOW_NOV19_PREPUBLICATION })).dataDate === "2026.11.18");
 
   const server = await startMock();
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -230,6 +239,9 @@ async function main() {
     const staleCheckout = await scenario(base, { now: NOW_MONDAY_ENFORCE });
     check("enforcing uses current trading date, not stale checkout",
       staleCheckout.verdict === "FAIL" && staleCheckout.reason === "stale_publication" && staleCheckout.expected.dataDate === "2026.07.20");
+    const overdueBeforeToday = await scenario(base, { now: NOW_MONDAY_PREPUBLICATION });
+    check("overdue prior-trading-day data fails even before today's publication deadline",
+      overdueBeforeToday.verdict === "FAIL" && overdueBeforeToday.reason === "stale_publication" && overdueBeforeToday.expected.dataDate === "2026.07.17");
     check("§pre EXPECT_LASTMOD derivable from fixture data", typeof EXPECT_LASTMOD === "string" && EXPECT_LASTMOD.length > 0);
 
     const advancedLive = await scenario(base, {
