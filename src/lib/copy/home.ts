@@ -77,6 +77,12 @@ export const homeCopy = {
         ],
       },
       checkpoints: ["최근 공시 원문", "실적·재무 변화"],
+      nextCheck: {
+        momentum: "최근 1·3개월 가격 흐름이 다시 강해지는지 먼저 확인하세요.",
+        flow: "최근 5일 거래량이 20일 평균을 다시 웃도는지 먼저 확인하세요.",
+        value: "PER·PBR이 낮거나 높은 이유를 최근 실적과 원문 재무에서 확인하세요.",
+        vol: "실제 변동폭과 최대낙폭이 감당 가능한 수준인지 먼저 확인하세요.",
+      } as Record<MetricKey, string>,
       risk: {
         surgeXl: "최근 상승폭이 매우 커서 급등 사유와 과열 여부 함께 확인 필요",
         surgeL: "단기 상승폭이 큰 편이라 급등 사유와 변동성 확인 필요",
@@ -246,6 +252,12 @@ export const homeCopy = {
         ],
       },
       checkpoints: ["Recent disclosures", "Financial changes"],
+      nextCheck: {
+        momentum: "Check whether the recent 1- and 3-month price trend is strengthening again.",
+        flow: "Check whether 5-day trading volume is moving back above its 20-day average.",
+        value: "Check recent earnings and source financials for why PER and PBR are low or high.",
+        vol: "Check whether the actual volatility and maximum drawdown fit your risk tolerance.",
+      } as Record<MetricKey, string>,
       risk: {
         surgeXl: "The recent rise is very large — check the reason for the surge and whether it is overheated.",
         surgeL: "The short-term rise is large — check the reason for the surge and its volatility.",

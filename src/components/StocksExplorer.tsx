@@ -316,6 +316,9 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   // 모바일에서 질문형 프리셋 카드가 결과 목록을 첫 화면 밖으로 밀지 않도록 기본 접힘(제목·펼치기만 노출).
   // 데스크톱(lg+)은 CSS로 항상 펼쳐 첫 상태에 프리셋을 그대로 노출한다(설계서 §8.2/§8.3).
   const [showMobilePresets, setShowMobilePresets] = useState(false);
+  // 저장·알림은 반복 사용 도구다. 모바일 첫 화면에서는 접어 결과 진입을 앞당기고,
+  // 데스크톱이나 사용자가 저장/알림을 요청했을 때는 즉시 펼친다.
+  const [showMobileSavedTools, setShowMobileSavedTools] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
@@ -413,12 +416,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
     return base === t.defaultSavedName ? t.defaultAlertName : `${base} ${t.alertNameSuffix}`;
   }
   function openSaveSearchForm() {
+    setShowMobileSavedTools(true);
     setSaveSearchStatus(null);
     setSaveSearchName((prev) => prev.trim() || suggestedSavedSearchName());
     setSaveSearchOpen(true);
     window.setTimeout(() => document.getElementById("stocks-save-search-name")?.focus(), 0);
   }
   function openAlertForm() {
+    setShowMobileSavedTools(true);
     setAlertName((prev) => prev.trim() || suggestedAlertName());
     setAlertStatus(null);
     setAlertFormOpen(true);
@@ -1225,11 +1230,25 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       <section className="border-y border-zinc-200 py-3 dark:border-zinc-800">
         <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
-          <div className="flex gap-1.5">
+          <button
+            type="button"
+            onClick={() => setShowMobileSavedTools((v) => !v)}
+            aria-expanded={showMobileSavedTools}
+            aria-controls="stocks-saved-tools"
+            className={`lg:hidden inline-flex min-h-[36px] items-center rounded-md border border-zinc-200 px-3 py-1.5 text-[11px] font-medium text-zinc-600 transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-blue-400 ${FOCUS_RING}`}
+          >
+            {showMobileSavedTools ? t.collapse : t.expand}
+          </button>
+          <div className="hidden gap-1.5 lg:flex">
             <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
             <button type="button" onClick={openAlertForm} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
           </div>
         </div>
+        <div id="stocks-saved-tools" className={(showMobileSavedTools ? "block" : "hidden") + " lg:block"}>
+          <div className="mb-2 flex gap-1.5 lg:hidden">
+            <button type="button" onClick={openSaveSearchForm} className="min-h-[40px] flex-1 rounded-md border border-blue-300 px-2.5 py-1.5 text-[11px] font-medium text-blue-700 transition hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30">{t.saveCurrent}</button>
+            <button type="button" onClick={openAlertForm} className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1 rounded-md border border-zinc-300 px-2.5 py-1.5 text-[11px] font-medium text-zinc-600 transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-blue-400"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
+          </div>
         {saveSearchOpen ? (
           <form onSubmit={submitSaveSearch} className="mb-2 flex flex-col gap-2 sm:flex-row">
             <input
@@ -1322,6 +1341,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             ))}
           </div>
         )}
+        </div>
       </section>
 
       {/* ── 정렬 · 필터 열기(검색창은 첫 화면 상단으로 이동) ── */}

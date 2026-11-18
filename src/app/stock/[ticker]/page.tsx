@@ -594,7 +594,7 @@ export default async function StockDetailPage({ params }: PageProps) {
       <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
 
       {scoreHistory.length > 0 ? (
-        <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} /></section>
+        <section><ScoreHistoryChart history={scoreHistory} currentScore={composite} currentAsOf={dataMetadata.asOfBusinessDate} /></section>
       ) : null}
       <section><StockEventTimelineLazy ticker={s.ticker} scores={scoreHistory} /></section>
               </>

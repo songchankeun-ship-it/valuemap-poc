@@ -49,12 +49,28 @@ function StatBox({ label, value, tone }: { label: string; value: string; tone?: 
   );
 }
 
+function compactDate(value?: string | null): string | null {
+  if (!value) return null;
+  const digits = value.replace(/[^0-9]/g, "");
+  if (digits.length !== 8) return value;
+  return `${digits.slice(4, 6)}.${digits.slice(6, 8)}`;
+}
+
 /**
  * 점수 변화 — '현재'는 페이지의 권위값(currentScore)을 그대로 쓰고,
  * '이전'은 기록을 4지표에서 재계산해 stale 저장값 혼선을 막는다.
  * 기록 10회 미만이면 추세 그래프 대신 숫자만 보여준다.
  */
-export function ScoreHistoryChart({ history, currentScore }: { history: ScorePoint[]; currentScore: number }) {
+export function ScoreHistoryChart({
+  history,
+  currentScore,
+  currentAsOf,
+}: {
+  history: ScorePoint[];
+  currentScore: number;
+  /** Public snapshot date (YYYYMMDD). History may legitimately lag this source. */
+  currentAsOf?: string | null;
+}) {
   const cur = Math.round(currentScore);
 
   if (history.length === 0) {
@@ -74,6 +90,12 @@ export function ScoreHistoryChart({ history, currentScore }: { history: ScorePoi
   }
 
   const comp = history.map((h) => compositeOf(h));
+  const historyAsOf = history[history.length - 1]?.date ?? null;
+  const currentDateLabel = compactDate(currentAsOf);
+  const historyDateLabel = compactDate(historyAsOf);
+  const currentDateKey = currentAsOf?.replace(/[^0-9]/g, "") ?? "";
+  const historyDateKey = historyAsOf?.replace(/[^0-9]/g, "") ?? "";
+  const sourceDatesDiffer = currentDateKey.length === 8 && historyDateKey.length === 8 && currentDateKey !== historyDateKey;
   const prevRec = comp.length >= 2 ? comp[comp.length - 2] : comp[comp.length - 1];
   const prev = Math.round(prevRec);
   const change = cur - prev;
@@ -92,9 +114,17 @@ export function ScoreHistoryChart({ history, currentScore }: { history: ScorePoi
       <div className="flex items-baseline justify-between mb-3 flex-wrap gap-1">
         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수 변화</div>
         <div className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">
-          기록 {history.length}회{enough ? "" : " · 10회부터 추세 그래프"}
+          {currentDateLabel ? `현재 ${currentDateLabel}` : "현재 스냅샷"}
+          {historyDateLabel ? ` · 이력 ${historyDateLabel}` : ""}
+          {` · 기록 ${history.length}회`}{enough ? "" : " · 10회부터 추세 그래프"}
         </div>
       </div>
+
+      {sourceDatesDiffer ? (
+        <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-2 text-[11px] leading-snug text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          현재 점수는 {currentDateLabel} 공개 스냅샷, 아래 변화 그래프는 {historyDateLabel}까지 저장된 이력 기준입니다. 현재 값은 상단 점수를 우선 확인하세요.
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-3 gap-2 mb-4">
         <StatBox label="현재" value={String(cur)} />

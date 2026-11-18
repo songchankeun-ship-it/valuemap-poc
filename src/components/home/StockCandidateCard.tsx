@@ -39,6 +39,12 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
   const reason = c.lead
     ? t.topCandidate.reason(labels[c.lead.key], c.lead.rank, c.lead.topPct)
     : t.topCandidate.noReason;
+  const weakestMetric = (["momentum", "flow", "value", "vol"] as const).reduce((weakest, key) =>
+    c.m[key] < c.m[weakest] ? key : weakest,
+  );
+  const firstCheck = c.riskKind.startsWith("surge")
+    ? t.topCandidate.risk[c.riskKind]
+    : t.topCandidate.nextCheck[weakestMetric];
   const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
   const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
   const cardClass = "ui-interactive-card flex h-full flex-col rounded-lg border bg-white p-4 dark:bg-zinc-900 " +
@@ -103,7 +109,7 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
         <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" strokeWidth={2} aria-hidden="true" />
         <div className="min-w-0">
           <div className="mb-0.5 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300">{t.topCandidate.firstCheck}</div>
-          <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">{t.topCandidate.risk[c.riskKind]}</p>
+          <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">{firstCheck}</p>
         </div>
       </div>
 

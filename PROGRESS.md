@@ -5245,3 +5245,22 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - **Next action**: release this commit, run `npm run growth:content`, manually
   review and publish one Threads draft, then compare Naver/Vercel evidence at
   day 14. Do not add another channel or page family before that measurement.
+
+## 2026-11-19 - [codex] Post-audit publication and mobile UX hardening
+
+- Repaired the stale framework baseline caused by the newer comparison/topic
+  OG routes and made baseline freshness plus the focused post-audit regression
+  mandatory in `release:preflight`.
+- Patched Next.js to 15.5.29 and Zod to 4.6.7. Production audit is now critical
+  0 / high 1 / moderate 1; the residual findings require a separate Next 16
+  migration because no compatible Next 15 fix is offered.
+- Improved mobile sticky tabs, collapsed saved-search tools, 90-day recent-view
+  retention, metric-specific candidate guidance, and score-history source-date
+  transparency. Public data, Metrics 2.4, 138 stocks, formulas, workflows,
+  auth/provider behavior, and outside services are unchanged.
+- Verification green: build 194/194, release preflight 22/22, route health 6/6,
+  smoke 26/26, stock SEO 13/13, public SEO 3/3, login 5/5, admin guard 4/4,
+  OG 3/3, and mobile/desktop browser QA without overflow or overlap.
+- **Next action**: commit and fast-forward this audited patch, verify production
+  exact SHA and all live gates, then run the existing daily refresh only when
+  the deployed business date is genuinely stale.

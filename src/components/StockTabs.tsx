@@ -72,7 +72,7 @@ export function StockTabs({ tabs }: { tabs: StockTab[] }) {
         role="tablist"
         aria-label={locale === "ko" ? "종목 상세 탭" : "Stock detail tabs"}
         aria-orientation="horizontal"
-        className="sticky top-0 z-10 flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800 bg-[var(--background)] -mx-3 md:-mx-4 px-3 md:px-4"
+        className="sticky top-[var(--app-header-sticky-offset)] z-30 flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800 bg-[var(--background)] -mx-3 md:-mx-4 px-3 md:px-4"
       >
         {tabs.map((t, i) => {
           const selected = active === t.id;

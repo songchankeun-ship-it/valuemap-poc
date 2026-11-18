@@ -4261,3 +4261,32 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   approval. Commit Sprint 4 separately, then ask the owner to explicitly name
   all three exact commits for a fast-forward `origin/main` push. After deploy,
   require exact-SHA, production route health, topic CTA navigation, and OG 3/3.
+
+## 2026-11-19 - Post-audit publication and mobile UX hardening [codex]
+
+- Regenerated the framework migration baseline after the dynamic comparison and
+  topic OG routes had made it stale, and added the freshness-only baseline gate
+  plus the focused post-audit regression to every release preflight. Future
+  route drift now fails before a daily publication can be blocked late.
+- Upgraded Next.js and `eslint-config-next` from 15.5.22 to 15.5.29 and Zod to
+  4.6.7. The production audit moved from one critical and five high findings to
+  zero critical, one high, and one moderate. The remaining pair is Next 15's
+  internal pinned PostCSS; npm offers only a Next 16 major upgrade, which stays
+  a separate migration rather than an in-place security patch.
+- Mobile stock tabs now stick immediately below the 61px app header, `/stocks`
+  keeps saved-search controls collapsed on mobile, recent views expire after 90
+  days, and Home candidate cards choose a concrete next check from the weakest
+  metric instead of repeating one generic action.
+- Score-history surfaces now expose both the current public snapshot date and
+  the latest stored-history date, with an explicit explanation when the source
+  dates differ. Public Metrics 2.4, the 138-stock universe, formulas, workflows,
+  auth/provider behavior, and `public/data` remain unchanged.
+- Green evidence: TypeScript, focused post-audit tests, framework baseline 3/3,
+  production build 194/194, release preflight 22/22, route health 6/6, smoke
+  26/26, stock SEO 13/13, public SEO 3/3 with 166 sitemap URLs, login 5/5,
+  admin guard 4/4, and live OG 3/3. Browser QA passed at 390x844 and 1280x720:
+  no document overflow, the sticky tabs align at header bottom 61px, and the
+  new next-check and mobile disclosure layouts render without overlap.
+- Next: commit and fast-forward the audited patch, verify the deployed exact
+  SHA and production gates, then run one normal daily refresh only if the
+  production snapshot remains behind its expected business date.

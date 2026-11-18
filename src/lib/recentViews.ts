@@ -11,6 +11,8 @@ export interface RecentView {
 
 const RECENT_KEY = "ornscore_recent_views";
 const LEGACY_RECENT_KEY = "valuemap_recent_views";
+export const RECENT_VIEW_MAX_AGE_DAYS = 90;
+const RECENT_VIEW_MAX_AGE_MS = RECENT_VIEW_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
 
 // viewedAt을 숫자(ms)로 정규화한다. 숫자면 그대로, ISO 문자열이면 Date.parse,
 // 그 외에는 비정상으로 보고 NaN을 돌려 상위에서 걸러내게 한다.
@@ -25,27 +27,31 @@ function normalizeViewedAt(value: unknown): number {
 }
 
 /**
- * 최근 본 종목 목록을 SSR-safe하게 읽는다(레거시 `valuemap_recent_views` 키 폴백, 최근 10개).
+ * 최근 본 종목 목록을 SSR-safe하게 읽는다(레거시 `valuemap_recent_views` 키 폴백, 90일 내 최근 10개).
  * 저장은 RecentViewTracker가 담당하며 여기서는 읽기만 한다(날조 없음).
  * viewedAt은 숫자(ms)로 정규화하고, 형식이 깨졌거나 비유한 값은 버린다.
  */
+export function parseRecentViews(parsed: unknown, now = Date.now()): RecentView[] {
+  if (!Array.isArray(parsed)) return [];
+  const cutoff = now - RECENT_VIEW_MAX_AGE_MS;
+  const cleaned: RecentView[] = [];
+  for (const item of parsed) {
+    if (!item || typeof item !== "object") continue;
+    const { ticker, name } = item as { ticker?: unknown; name?: unknown };
+    if (typeof ticker !== "string" || typeof name !== "string") continue;
+    const viewedAt = normalizeViewedAt((item as { viewedAt?: unknown }).viewedAt);
+    if (!Number.isFinite(viewedAt) || viewedAt < cutoff || viewedAt > now + 60_000) continue;
+    cleaned.push({ ticker, name, viewedAt });
+  }
+  return cleaned.sort((a, b) => b.viewedAt - a.viewedAt).slice(0, 10);
+}
+
 export function getRecentViews(): RecentView[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(RECENT_KEY) ?? localStorage.getItem(LEGACY_RECENT_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    const cleaned: RecentView[] = [];
-    for (const item of parsed) {
-      if (!item || typeof item !== "object") continue;
-      const { ticker, name } = item as { ticker?: unknown; name?: unknown };
-      if (typeof ticker !== "string" || typeof name !== "string") continue;
-      const viewedAt = normalizeViewedAt((item as { viewedAt?: unknown }).viewedAt);
-      if (!Number.isFinite(viewedAt)) continue;
-      cleaned.push({ ticker, name, viewedAt });
-    }
-    return cleaned.slice(0, 10);
+    return parseRecentViews(JSON.parse(raw));
   } catch {
     return [];
   }
