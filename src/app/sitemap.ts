@@ -1,10 +1,7 @@
 import type { MetadataRoute } from "next";
 import { realStockPool, dataMetadata } from "@/lib/realStocks";
 import { parseDatasetGeneratedAt } from "@/lib/datasetTimestamp";
-import { seoTopics } from "@/lib/seoTopics";
-import { curatedComparisonPaths } from "@/lib/seoContract";
-
-const SITE = "https://ornscore.com";
+import { SITE, indexableTopicSlugs, curatedComparisonPaths } from "@/lib/seoContract";
 
 /**
  * lastModified 계약(결정적) — Slice H:
@@ -83,6 +80,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${SITE}/guide/metrics/changelog`,
+      lastModified: dataDate,
+    },
+    {
+      url: `${SITE}/universe`,
+      lastModified: dataDate,
+    },
+    {
+      url: `${SITE}/status`,
+      lastModified: dataDate,
+    },
+    {
       url: `${SITE}/pricing`,
       lastModified: now,
       changeFrequency: "monthly",
@@ -119,8 +128,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   //    리다이렉트(next.config)되고, robot 은 실데이터 커버리지가 생길 때까지 noindex 다.
   //    따라서 어떤 /theme/* URL 도 sitemap 에 넣지 않는다(모의 종목/집계를 색인 근거로
   //    노출 금지). 색인 대상 테마 의도는 아래 topicPages(실데이터)가 소유한다.
-  const topicPages: MetadataRoute.Sitemap = seoTopics.map((topic) => ({
-    url: `${SITE}/topics/${topic.slug}`,
+  const topicPages: MetadataRoute.Sitemap = indexableTopicSlugs().map((slug) => ({
+    url: `${SITE}/topics/${slug}`,
     lastModified: dataDate,
     changeFrequency: "weekly" as const,
     priority: 0.62,

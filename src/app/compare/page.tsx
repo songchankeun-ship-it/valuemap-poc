@@ -1,4 +1,5 @@
 // /compare — 종목 비교 페이지
+import type { Metadata } from "next";
 import Link from "next/link";
 import { realStockPool } from "@/lib/realStocks";
 import { compositeOf } from "@/lib/score";
@@ -9,13 +10,14 @@ import { CompareClient } from "@/components/CompareClient";
 import { COMPARE_QUERY_MAX, parseCompareQuery } from "@/lib/compareQuery";
 import { metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 import { curatedComparisonCards } from "@/lib/comparison";
+import { compareSearchOwnership, type SeoSearchParams } from "@/lib/seoContract";
 
 const compareDescription = "선택한 종목의 PER·PBR·ROE, 배당수익률, 추세, 밸류, 위험조정, 최근 공시 신호를 한눈에 비교합니다.";
 
 // 공시 페이지와 동일하게 최근 신호를 서버에서 추출(라이브 실패 시 샘플 fallback). 30분 캐시.
 export const revalidate = 1800;
 
-export const metadata = {
+const metadata: Metadata = {
   title: "종목 비교·PER PBR ROE 비교 — 오른스코어",
   description: compareDescription,
   keywords: uniqueKeywords(["종목 비교", "주식 비교", "PER PBR ROE 비교"], metricKeywords, stockDiscoveryKeywords),
@@ -34,11 +36,20 @@ export const metadata = {
     title: "종목 비교·PER PBR ROE 비교 — 오른스코어",
     description: compareDescription,
   },
-  alternates: { canonical: "/compare" },
 };
 
 interface PageProps {
-  searchParams: Promise<{ stocks?: string | string[] }>;
+  searchParams: Promise<SeoSearchParams>;
+}
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { index, canonical } = compareSearchOwnership(await searchParams);
+  return {
+    ...metadata,
+    openGraph: { ...metadata.openGraph, url: canonical },
+    alternates: { canonical },
+    robots: { index, follow: true },
+  };
 }
 
 export default async function ComparePage({ searchParams }: PageProps) {

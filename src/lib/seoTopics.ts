@@ -1,4 +1,5 @@
 import { realStockPool, type RealStock } from "@/lib/realStocks";
+import { sectorOf } from "@/lib/sector";
 
 export interface SeoTopic {
   slug: string;
@@ -10,6 +11,7 @@ export interface SeoTopic {
   intro: string;
   selectionLabel: string;
   filterNote: string;
+  nextCheck?: string;
   primaryMetric: string;
   keywords: string[];
   stocksHref: string;
@@ -29,6 +31,16 @@ function takeTop(stocks: RealStock[]): RealStock[] {
 function matchesAnyTheme(stock: RealStock, terms: readonly string[]): boolean {
   return stock.themes.some((theme) => terms.some((term) => theme.includes(term)));
 }
+
+function sectorStocks(sector: string): RealStock[] {
+  return takeTop(realStockPool.filter((stock) => sectorOf(stock.themes, stock.ticker) === sector).sort(byComposite));
+}
+
+function exactThemeStocks(theme: string): RealStock[] {
+  return takeTop(realStockPool.filter((stock) => stock.themes.includes(theme)).sort(byComposite));
+}
+
+export const MIN_TOPIC_STOCKS = 5;
 
 export const seoTopics: SeoTopic[] = [
   {
@@ -217,12 +229,160 @@ export const seoTopics: SeoTopic[] = [
           .sort(byComposite),
       ),
   },
+  {
+    slug: "trading-activity-increase-stocks",
+    title: "거래량 증가 종목 | 5일·20일 거래활성도 비교",
+    h1: "거래량 증가 종목 탐색",
+    shortLabel: "거래량 증가 종목",
+    category: "거래활성도",
+    description: "최근 5거래일 평균 거래량이 20거래일 평균을 웃도는 한국 주식을 거래량 비율로 비교합니다.",
+    intro: "평소보다 거래가 활발해진 종목을 찾습니다. 거래활성도는 체결 수량의 변화이며 매수 우위나 주가 방향을 보여주지 않습니다.",
+    selectionLabel: "5일 ÷ 20일 평균 거래량 비율 높은 순",
+    filterNote: "유효한 5일·20일 평균 거래량과 1배 초과 비율이 확인되는 종목을 비율 높은 순으로 표시합니다.",
+    nextCheck: "공시나 지수 편입 등 거래량이 달라진 계기를 찾고, 하루에 거래가 몰렸는지 일별 차트에서 확인하세요.",
+    primaryMetric: "거래량 비율",
+    keywords: ["거래량 증가 종목", "거래활성도", "5일 20일 평균 거래량"],
+    stocksHref: "/stocks",
+    stockSelector: () => takeTop(realStockPool
+      .filter((stock) => {
+        const { recent5dAvg = 0, recent20dAvg = 0, ratio = 0 } = stock.flowStats ?? {};
+        return [recent5dAvg, recent20dAvg, ratio].every(Number.isFinite)
+          && recent5dAvg > 0 && recent20dAvg > 0 && ratio > 1;
+      })
+      .sort((a, b) => (b.flowStats?.ratio ?? 0) - (a.flowStats?.ratio ?? 0) || byComposite(a, b))),
+  },
+  {
+    slug: "trend-strength-stocks",
+    title: "주가 추세 강한 종목 | 1개월·3개월 가격 흐름",
+    h1: "주가 추세가 강한 종목 탐색",
+    shortLabel: "주가 추세 강한 종목",
+    category: "가격 흐름",
+    description: "1개월과 3개월 가격 변화율이 모두 양수인 한국 주식을 오른스코어 추세 점수로 비교합니다.",
+    intro: "서로 다른 두 기간에서 가격 흐름이 같은 방향이었던 종목을 모았습니다. 기간의 시작점을 바꾸면 비교 결과도 달라질 수 있습니다.",
+    selectionLabel: "추세 점수 높은 순",
+    filterNote: "1개월·3개월 가격 변화율이 모두 양수인 종목을 추세 점수 순으로 정렬합니다.",
+    nextCheck: "가격 차트에서 최근 상승이 특정 거래일에 집중됐는지 보고, 같은 업종의 흐름과 비교하세요.",
+    primaryMetric: "추세 점수",
+    keywords: ["주가 추세 강한 종목", "추세 점수", "주가 흐름 비교"],
+    stocksHref: "/stocks",
+    stockSelector: () => takeTop(realStockPool
+      .filter((stock) => (stock.returns?.r1m ?? 0) > 0 && (stock.returns?.r3m ?? 0) > 0)
+      .sort((a, b) => b.momentum - a.momentum || byComposite(a, b))),
+  },
+  {
+    slug: "risk-adjusted-strength-stocks",
+    title: "위험조정 점수 높은 종목 | 수익률과 변동성 비교",
+    h1: "위험조정 점수가 높은 종목 탐색",
+    shortLabel: "위험조정 강도",
+    category: "가격 흐름",
+    description: "수익률과 변동성 근거가 확인되는 한국 주식을 위험조정 점수로 비교하고 최대 낙폭을 확인합니다.",
+    intro: "변동성을 함께 고려했을 때 과거 가격 흐름이 두드러진 종목을 봅니다. 위험조정 점수가 높아도 큰 낙폭을 겪을 수 있습니다.",
+    selectionLabel: "위험조정 점수 높은 순",
+    filterNote: "관측일과 양의 변동성, 양의 샤프 값이 확인되는 종목을 위험조정 점수 순으로 정렬합니다.",
+    nextCheck: "금융·가격 지표에서 관측 기간과 최대 낙폭을 확인하고, 그 기간에 급락 구간이 있었는지 살펴보세요.",
+    primaryMetric: "위험조정 점수",
+    keywords: ["위험조정 점수 높은 종목", "위험조정 수익률 비교", "샤프 비율"],
+    stocksHref: "/stocks",
+    stockSelector: () => takeTop(realStockPool
+      .filter((stock) => {
+        const { days = 0, annualStd = 0, sharpe = 0 } = stock.volStats ?? {};
+        return [days, annualStd, sharpe].every(Number.isFinite) && days > 0 && annualStd > 0 && sharpe > 0;
+      })
+      .sort((a, b) => b.vol - a.vol || byComposite(a, b))),
+  },
+  {
+    slug: "financial-sector-stocks",
+    title: "금융주 비교 | 은행·증권·보험 종목",
+    h1: "금융 업종 종목 비교",
+    shortLabel: "금융주",
+    category: "업종",
+    description: "오른스코어 금융 업종 종목의 PBR, ROE, 배당수익률을 비교하고 사업 유형별로 확인할 지표를 살펴봅니다.",
+    intro: "금융 분류에는 은행뿐 아니라 증권·보험 등 사업 구조가 다른 종목도 들어갑니다. 같은 PBR도 자본 활용 방식에 따라 의미가 달라집니다.",
+    selectionLabel: "금융 업종 내 종합 점수 높은 순",
+    filterNote: "테마 기반 업종 분류가 금융인 종목을 종합 점수 순으로 정렬합니다.",
+    nextCheck: "은행은 연체율과 순이자마진, 증권은 수수료·운용손익, 보험은 지급여력 지표를 해당 기업 공시에서 확인하세요.",
+    primaryMetric: "종합 점수",
+    keywords: ["금융주 비교", "금융 업종 종목"],
+    stocksHref: `/stocks?sector=${encodeURIComponent("금융")}`,
+    stockSelector: () => sectorStocks("금융"),
+  },
+  {
+    slug: "automotive-sector-stocks",
+    title: "자동차주 비교 | 완성차·자동차부품 종목",
+    h1: "자동차 업종 종목 비교",
+    shortLabel: "자동차주",
+    category: "업종",
+    description: "자동차 업종으로 분류된 한국 완성차·부품 종목의 밸류와 주가 흐름을 함께 살펴봅니다.",
+    intro: "완성차와 부품사는 같은 판매 사이클에서도 매출과 원가가 달라지는 시점이 다릅니다. 테마 기반 분류는 각 회사의 자동차 매출 비중을 보여주지 않습니다.",
+    selectionLabel: "자동차 업종 내 종합 점수 높은 순",
+    filterNote: "테마 기반 업종 분류가 자동차인 종목을 종합 점수 순으로 정렬합니다.",
+    nextCheck: "완성차는 지역별 판매량과 제품 구성, 부품사는 고객사별 매출 비중과 납품 단가 변화를 확인하세요.",
+    primaryMetric: "종합 점수",
+    keywords: ["자동차주 비교", "자동차부품 주식"],
+    stocksHref: `/stocks?sector=${encodeURIComponent("자동차")}`,
+    stockSelector: () => sectorStocks("자동차"),
+  },
+  {
+    slug: "defense-stocks",
+    title: "방산 관련주 비교 | 국내 방산 테마 종목",
+    h1: "방산 관련주 탐색",
+    shortLabel: "방산 관련주",
+    category: "테마",
+    description: "방산주 태그가 붙은 국내 종목을 비교하고 수주 공시에서 계약과 매출 인식 시점을 확인합니다.",
+    intro: "방산 태그는 사업 노출의 단서입니다. 수출 협의, 계약 체결, 실제 납품은 서로 다른 단계라서 같은 테마 안에서도 실적 반영 시점이 다릅니다.",
+    selectionLabel: "방산주 태그 내 종합 점수 높은 순",
+    filterNote: "방산주 태그가 있는 종목만 포함해 종합 점수 순으로 정렬합니다.",
+    nextCheck: "단일판매·공급계약 공시에서 계약 금액과 기간을 확인하고, 방산 부문 매출에서 해당 계약이 차지하는 비중을 살펴보세요.",
+    primaryMetric: "종합 점수",
+    keywords: ["방산 관련주", "방산 테마 종목"],
+    stocksHref: `/stocks?theme=${encodeURIComponent("방산주")}`,
+    stockSelector: () => exactThemeStocks("방산주"),
+  },
+  {
+    slug: "game-stocks",
+    title: "게임주 비교 | 국내 게임 테마 주식",
+    h1: "게임 관련주 탐색",
+    shortLabel: "게임 관련주",
+    category: "테마",
+    description: "게임 태그가 붙은 한국 주식을 비교하고 신작 출시 일정과 기존 게임 매출의 비중을 점검합니다.",
+    intro: "신작 기대가 반영된 주가와 실제 게임 매출은 시점이 다를 수 있습니다. 게임 태그만으로 개발사와 퍼블리셔의 수익 구조를 구분할 수 없습니다.",
+    selectionLabel: "게임 태그 내 종합 점수 높은 순",
+    filterNote: "게임 태그가 있는 종목만 포함해 종합 점수 순으로 정렬합니다.",
+    nextCheck: "출시 일정 변경 여부를 확인하고 실적 발표에서 주요 타이틀 매출과 마케팅비의 흐름을 같이 보세요.",
+    primaryMetric: "종합 점수",
+    keywords: ["게임주 비교", "게임 관련주"],
+    stocksHref: `/stocks?theme=${encodeURIComponent("게임")}`,
+    stockSelector: () => exactThemeStocks("게임"),
+  },
+  {
+    slug: "materials-sector-stocks",
+    title: "소재·철강·화학주 비교 | 원재료와 제품 가격 점검",
+    h1: "소재·철강·화학 업종 종목 비교",
+    shortLabel: "소재·철강·화학주",
+    category: "업종",
+    description: "소재·철강·화학으로 분류된 한국 종목의 가격 부담을 비교하고 주력 제품과 원재료 노출을 점검합니다.",
+    intro: "제품 가격이 올라도 원재료 비용이 더 빠르게 오르면 수익성이 나빠질 수 있습니다. 이 분류는 테마 기반이며 제품별 노출을 직접 측정하지 않습니다.",
+    selectionLabel: "소재·철강·화학 업종 내 종합 점수 높은 순",
+    filterNote: "테마 기반 업종 분류가 소재·철강·화학인 종목을 종합 점수 순으로 정렬합니다.",
+    nextCheck: "사업보고서의 주요 제품과 원재료 항목에서 단가 변화를 보고, 최근 분기 영업이익률과 함께 확인하세요.",
+    primaryMetric: "종합 점수",
+    keywords: ["소재 철강 화학 주식", "철강 화학 업종 비교"],
+    stocksHref: `/stocks?sector=${encodeURIComponent("소재·철강·화학")}`,
+    stockSelector: () => sectorStocks("소재·철강·화학"),
+  },
 ];
 
+const realTickers = new Set(realStockPool.map((stock) => stock.ticker));
+
+function hasTopicCoverage(topic: SeoTopic): boolean {
+  const tickers = topic.stockSelector().map((stock) => stock.ticker);
+  return tickers.every((ticker) => realTickers.has(ticker)) && new Set(tickers).size >= MIN_TOPIC_STOCKS;
+}
+
 export function getSeoTopic(slug: string): SeoTopic | undefined {
-  return seoTopics.find((topic) => topic.slug === slug);
+  return seoTopics.find((topic) => topic.slug === slug && hasTopicCoverage(topic));
 }
 
 export function featuredSeoTopics(): SeoTopic[] {
-  return seoTopics;
+  return seoTopics.filter(hasTopicCoverage);
 }

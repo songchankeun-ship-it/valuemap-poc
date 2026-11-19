@@ -3,8 +3,8 @@
 // generateMetadata({ searchParams }) 가 방출하는 <head> 의 robots meta 와 canonical link 를
 // 실제 SSR HTML 에서 확인한다. verify-routes.mjs 는 visible text 만 보므로 head 메타를 못 잡는다 —
 // 이 스크립트는 raw HTML 을 파싱해 다음 계약을 강제한다:
-//   - 기본 /stocks 와 단일 업종/테마(결과 존재) 페이지는 색인 대상(noindex 아님) + 올바른 canonical.
-//   - 0건 조합 / 자유 검색어(q) / 다축 조합 / 과다·미인식 파라미터 URL 은 noindex + canonical=/stocks.
+//   - 기본 /stocks·/compare 와 깨끗한 주제·비교 경로가 색인 의도를 소유한다.
+//   - 파라미터가 붙은 탐색·비교 화면은 noindex 이며 해당 정규 경로를 가리킨다.
 //   - 종목 상세 description/OG/Twitter/JSON-LD 설명은 매일 바뀌는 점수·PER/PBR·수익률·옛 용어를
 //     노출하지 않고, 안정적인 지표/재무/공시/데이터 기준일/비자문 프레이밍을 유지한다.
 //   - 개명 종목(예: 352820 하이브)은 현재 사명을 canonical name/headline/title 로 유지하고,
@@ -148,57 +148,30 @@ function jsonLdKeyStrings(html, key) {
 }
 
 // --- expected cases ---------------------------------------------------------
-// Each case asserts the intended robots + canonical for one /stocks URL. Values
-// come straight from the acceptance checks: normal pages indexable, degenerate
-// filter combinations conservative (noindex + canonical=/stocks).
-// Real dataset values: "반도체" is a theme; sectorOf() emits the composite "반도체·IT부품".
-const VALID_THEME = "반도체";
-const VALID_SECTOR = "반도체·IT부품";
-
+// Known filter owners are clean topics. Every parameterized screen stays usable
+// but is excluded from the index.
 const CASES = [
-  {
-    label: "plain /stocks (baseline, must stay indexable)",
-    path: "/stocks",
-    expectIndexable: true,
-    expectCanonical: `${SITE}/stocks`,
-  },
-  {
-    label: "single valid sector (meaningful simple filter, indexable, self-canonical)",
-    path: "/stocks?sector=" + encodeURIComponent(VALID_SECTOR),
-    expectIndexable: true,
-    expectCanonical: `${SITE}/stocks?sector=${encodeURIComponent(VALID_SECTOR)}`,
-  },
-  {
-    label: "single valid theme (meaningful simple filter, indexable, self-canonical)",
-    path: "/stocks?theme=" + encodeURIComponent(VALID_THEME),
-    expectIndexable: true,
-    expectCanonical: `${SITE}/stocks?theme=${encodeURIComponent(VALID_THEME)}`,
-  },
-  {
-    label: "free-text search q (infinite URL space -> noindex, canonical=/stocks)",
-    path: "/stocks?q=" + encodeURIComponent("삼성"),
-    expectIndexable: false,
-    expectCanonical: `${SITE}/stocks`,
-  },
-  {
-    label: "zero-result theme (nonexistent -> noindex, canonical=/stocks)",
-    path: "/stocks?theme=" + encodeURIComponent("존재하지않는테마xyz"),
-    expectIndexable: false,
-    expectCanonical: `${SITE}/stocks`,
-  },
-  {
-    label: "multi-axis theme+q (2 filter dimensions -> noindex, canonical=/stocks)",
-    path: "/stocks?theme=" + encodeURIComponent(VALID_THEME) + "&q=" + encodeURIComponent("삼성"),
-    expectIndexable: false,
-    expectCanonical: `${SITE}/stocks`,
-  },
-  {
-    label: "valid sector + extra unknown params (over-parameterized -> noindex, canonical=/stocks)",
-    path: "/stocks?sector=" + encodeURIComponent(VALID_SECTOR) + "&utm_source=ad&utm_medium=cpc",
-    expectIndexable: false,
-    expectCanonical: `${SITE}/stocks`,
-  },
-];
+  ["/stocks", "/stocks", true],
+  ["/stocks?sector=금융", "/topics/financial-sector-stocks", false],
+  ["/stocks?theme=금융", "/topics/financial-sector-stocks", false],
+  ["/stocks?theme=반도체", "/topics/semiconductor-stocks", false],
+  ["/stocks?sector=인터넷·플랫폼", "/stocks", false],
+  ["/stocks?q=삼성", "/stocks", false],
+  ["/stocks?theme=존재하지않는테마xyz", "/stocks", false],
+  ["/stocks?theme=반도체&q=삼성", "/stocks", false],
+  ["/stocks?sector=금융&utm_source=", "/stocks", false],
+  ["/stocks?unknown=", "/stocks", false],
+  ["/stocks?theme=", "/stocks", false],
+  ["/stocks?theme=조선&theme=반도체", "/stocks", false],
+  ["/compare", "/compare", true],
+  ["/compare?stocks=000660,005930", "/compare/005930-vs-000660", false],
+  ["/compare?stocks=005930,035420", "/compare", false],
+].map(([path, owner, expectIndexable]) => ({
+  label: path,
+  path,
+  expectIndexable,
+  expectCanonical: SITE + owner,
+}));
 
 const STOCK_DETAIL_CASES = [
   {

@@ -42,6 +42,27 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 
 ## Manual Notes
 
+### 2026-11-19 - [codex] - Growth Sprint 5 C search ownership
+
+- Task C started from task B commit `e06fff27`. `seoContract.ts` owns
+  stocks and comparison query canonicals. All parameterized variants of
+  these two screens are noindex/follow. Covered single filters link to
+  their clean topic, while the general screens remain usable. Existing
+  legacy theme redirects and the seven clean curated pair owners are intact.
+- Added eight topics backed by five to twelve distinct real stocks each.
+  The five-stock minimum applies to route lookup, topic links, static
+  params and sitemap eligibility. The sitemap lists 177 clean owners.
+  See the current PROGRESS entry for the audited families and topic counts.
+- Green locally: focused topic/stocks/SEO contracts, TypeScript, Next
+  build 203/203, route health 9/9, stocks SEO 21/21, public SEO 3/3,
+  SEO release 11/11, OG 3/3 and git diff checks. Chromium verified two
+  clean topics and two filtered URLs at 1280×800 and 390×844 with no
+  horizontal document overflow.
+- Public data guard and Metrics 2.4 verify the same 138 stocks. Frozen
+  Metrics 2.5.1 and continuity-baseline diffs are empty against A3
+  (`9e333187`). Task 387 recorded their pre-existing failures. Task C
+  ran against loopback and did not deploy.
+
 ### 2026-07-29 - [codex] - Measurable public launch preparation
 
 - Added a strict allow-list for `route_view_public.campaign`. Only the eight

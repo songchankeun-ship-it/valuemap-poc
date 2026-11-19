@@ -95,9 +95,12 @@ import {
   indexableTopicSlugs,
   type ContractViolation,
 } from "@/lib/seoContract";
+import { MIN_TOPIC_STOCKS } from "@/lib/seoTopics";
+import { realStockPool } from "@/lib/realStocks";
 import { comparisonMetadata } from "@/lib/comparison";
 
 const SITE = "https://ornscore.com";
+const realStockPaths = new Set(realStockPool.map((stock) => `/stock/${stock.ticker}`));
 
 // ---------------------------------------------------------------------------
 // bounded fetch wrapper (reuses Slice B fetchBounded + a shared request counter)
@@ -281,16 +284,31 @@ export function evalContract(sitemapStaticPaths?: string[]): string[] {
 export function evalSitemapContractDrift(sitemapPaths: string[]): string[] {
   const reasons: string[] = [];
   const set = new Set(sitemapPaths);
+  const owners = new Set([
+    ...defaultContractInput().staticIndexablePaths,
+    ...curatedComparisonPaths(),
+    ...indexableTopicSlugs().map((slug) => `/topics/${slug}`),
+    ...realStockPaths,
+  ]);
   for (const p of curatedComparisonPaths()) {
     if (!set.has(p)) reasons.push(`curated comparison "${p}" missing from sitemap`);
   }
   for (const slug of indexableTopicSlugs()) {
     if (!set.has(`/topics/${slug}`)) reasons.push(`real topic "/topics/${slug}" missing from sitemap`);
   }
+  for (const p of realStockPaths) {
+    if (!set.has(p)) reasons.push(`real stock "${p}" missing from sitemap`);
+  }
   for (const p of sitemapPaths) {
     if (p === "/theme" || p.startsWith("/theme/")) reasons.push(`retired legacy theme "${p}" present in sitemap`);
+    else if (!owners.has(p)) reasons.push(`unregistered path "${p}" present in sitemap`);
   }
   return reasons;
+}
+
+function topicHeading(html: string): string {
+  const heading = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
+  return heading ? decodeHtml(heading[1].replace(/<[^>]+>/g, "").trim()) : "";
 }
 
 // A real, indexable topic landing page.
@@ -303,9 +321,11 @@ export function evalTopic(html: string, slug: string, status: number | null): st
   const want = `${SITE}/topics/${slug}`;
   if (canon !== want) reasons.push(`canonical "${canon ?? "(none)"}" != self "${want}"`);
   if (!jsonLdTypes(html).includes("CollectionPage")) reasons.push("missing CollectionPage JSON-LD");
-  if (!bodyLinks(html).some((h) => h.startsWith("/stock/") || h.includes("/stock/")))
-    reasons.push("no server-rendered /stock/ links (topic not backed by real stocks)");
+  const stockLinks = new Set(bodyLinks(html).filter((href) => realStockPaths.has(href)));
+  if (stockLinks.size < MIN_TOPIC_STOCKS) reasons.push(`fewer than ${MIN_TOPIC_STOCKS} distinct real stock links`);
   const desc = metaDescription(html) ?? "";
+  if (!desc) reasons.push("missing meta description");
+  if (!topicHeading(html)) reasons.push("missing topic H1");
   const vh = volatileHits(desc);
   if (vh.length) reasons.push(`volatile value(s) in description [${vh.join(", ")}]`);
   return reasons;
@@ -490,6 +510,9 @@ export async function runSeoRelease(opts: {
   // (4) topic authority
   {
     const reasons: string[] = [];
+    const seenTitle = new Set<string>();
+    const seenDescription = new Set<string>();
+    const seenHeading = new Set<string>();
     for (const slug of indexableTopicSlugs()) {
       const res = await getPath(base, `/topics/${slug}`, counter);
       if (!res.ok) {
@@ -497,6 +520,15 @@ export async function runSeoRelease(opts: {
         continue;
       }
       for (const r of evalTopic(res.body, slug, res.status)) reasons.push(`/topics/${slug}: ${r}`);
+      for (const [label, value, seen] of [
+        ["title", extractTitle(res.body), seenTitle],
+        ["description", metaDescription(res.body), seenDescription],
+        ["H1", topicHeading(res.body), seenHeading],
+      ] as const) {
+        if (!value) continue;
+        if (seen.has(value)) reasons.push(`/topics/${slug}: duplicate ${label}`);
+        seen.add(value);
+      }
     }
     checks.push(result(`topic authority (${indexableTopicSlugs().length} real topics: indexable, self-canonical, CollectionPage JSON-LD, real stock links)`, reasons));
   }

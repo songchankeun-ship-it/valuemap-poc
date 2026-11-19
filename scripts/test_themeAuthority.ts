@@ -131,7 +131,7 @@ async function main(): Promise<void> {
   check("7 low-PER opening copy gives the next checks", lowPer?.intro.includes("PBR과 ROE를 다음 순서로") === true);
 
   const topicPageSrc = read("src/app/topics/[slug]/page.tsx");
-  check("7 topic pages derive crawlable related topics", /const relatedTopics = seoTopics/.test(topicPageSrc));
+  check("7 topic pages derive crawlable related topics", /const relatedTopics = featuredSeoTopics/.test(topicPageSrc));
   check("7 topic pages render related topic hrefs", topicPageSrc.includes("href={`/topics/${related.slug}`}"));
   check("7 topic pages limit related links to four", /\.slice\(0, 4\)/.test(topicPageSrc));
   check(

@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
 import { featuredSeoTopics } from "@/lib/seoTopics";
 
-export function TopicLandingLinks() {
+export function TopicLandingLinks({ ownerPath }: { ownerPath: string }) {
   const topics = featuredSeoTopics();
+  const owner = topics.find((topic) => ownerPath === `/topics/${topic.slug}`);
 
   return (
     <section className="mx-auto mt-6 w-full max-w-6xl px-4 sm:px-6 lg:px-8" aria-labelledby="topic-search-heading">
@@ -24,6 +25,12 @@ export function TopicLandingLinks() {
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </div>
+      {owner ? (
+        <Link href={ownerPath} className="mb-3 inline-flex min-h-10 items-center gap-1 text-sm font-medium text-blue-700 hover:underline dark:text-blue-400">
+          {owner.shortLabel} 기준과 후보 보기
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      ) : null}
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-7">
         {topics.map((topic) => (
           <Link

@@ -22,9 +22,15 @@ import {
   realThemeMatchCount,
   defaultContractInput,
   verifySeoContract,
+  stocksSearchOwnership,
+  compareSearchOwnership,
   type ContractViolation,
   type SeoContractInput,
+  type SeoSearchParams,
 } from "../src/lib/seoContract";
+
+import sitemap from "../src/app/sitemap";
+import { featuredSeoTopics, getSeoTopic, MIN_TOPIC_STOCKS, seoTopics } from "../src/lib/seoTopics";
 
 let failed = 0;
 function check(name: string, cond: boolean): void {
@@ -166,6 +172,81 @@ check("4e active target missing detected", codes(mutate({ topicExists: () => fal
 // ── 5. 자기검증: 위 검사가 '항상 통과'가 아님을 증명 ────────────────
 check("selftest: base contract itself is clean", verifySeoContract(base).length === 0);
 check("selftest: parser found the sitemap static routes", sitemapStaticPaths.includes("/") && sitemapStaticPaths.includes("/pricing"));
+
+// Sprint 5 C: clean owners, topic copy and live-data eligibility.
+const topicFields = ["slug", "title", "h1", "description", "intro", "filterNote"] as const;
+for (const field of topicFields) {
+  const values = seoTopics.map((topic) => topic[field].trim());
+  check(`topic ${field} is non-empty and unique`, values.every(Boolean) && new Set(values).size === values.length);
+}
+const candidateSets = new Set<string>();
+for (const topic of seoTopics) {
+  const tickers = topic.stockSelector().map((stock) => stock.ticker);
+  const unique = new Set(tickers);
+  check(`${topic.slug} has at least five distinct real stocks`,
+    unique.size === tickers.length && unique.size >= MIN_TOPIC_STOCKS && tickers.every((ticker) => base.realTickers.has(ticker)));
+  const fingerprint = [...unique].sort().join(",");
+  check(`${topic.slug} has a distinct candidate set`, !candidateSets.has(fingerprint));
+  candidateSets.add(fingerprint);
+}
+const authoredTopics = seoTopics.filter((topic) => topic.nextCheck);
+check("8–12 new topics have distinct next checks", authoredTopics.length >= 8 && authoredTopics.length <= 12
+  && new Set(authoredTopics.map((topic) => topic.nextCheck)).size === authoredTopics.length);
+
+const sitemapPaths = () => sitemap().map(({ url }) => {
+  const parsed = new URL(url);
+  return parsed.pathname + parsed.search + parsed.hash;
+});
+const expectedPaths = [
+  ...STATIC_INDEXABLE_PATHS,
+  ...curatedComparisonPaths(),
+  ...seoTopics.map((topic) => `/topics/${topic.slug}`),
+  ...[...base.realTickers].map((ticker) => `/stock/${ticker}`),
+];
+check("sitemap contains exactly the clean owner set", JSON.stringify(sitemapPaths().sort()) === JSON.stringify(expectedPaths.sort()));
+for (const count of [0, MIN_TOPIC_STOCKS - 1]) {
+  const thin = { ...seoTopics[0], slug: `thin-fixture-${count}`, stockSelector: () => seoTopics[0].stockSelector().slice(0, count) };
+  seoTopics.push(thin);
+  check("empty/thin topic is excluded from route lookup, links and sitemap", !getSeoTopic(thin.slug)
+    && !featuredSeoTopics().includes(thin) && !sitemapPaths().includes(`/topics/${thin.slug}`));
+  seoTopics.pop();
+}
+
+const stocksCases: [SeoSearchParams, string][] = [
+  [{}, "/stocks"],
+  [{ theme: "반도체" }, "/topics/semiconductor-stocks"],
+  [{ theme: "조선" }, "/topics/shipbuilding-stocks"],
+  [{ theme: "금융" }, "/topics/financial-sector-stocks"],
+  [{ sector: "금융" }, "/topics/financial-sector-stocks"],
+  [{ sector: "자동차" }, "/topics/automotive-sector-stocks"],
+  [{ theme: "방산주" }, "/topics/defense-stocks"],
+  [{ theme: "로봇" }, "/stocks"],
+  [{ sector: "인터넷·플랫폼" }, "/stocks"],
+  [{ q: "005930" }, "/stocks"],
+  [{ sector: "" }, "/stocks"],
+  [{ unknown: "" }, "/stocks"],
+  [{ sector: "금융", unknown: "" }, "/stocks"],
+  [{ sector: "금융", theme: "반도체" }, "/stocks"],
+  [{ theme: ["반도체", "조선"] }, "/stocks"],
+];
+for (const [params, canonical] of stocksCases) {
+  const ownership = stocksSearchOwnership(params);
+  check(`stocks ownership for ${JSON.stringify(params)}`,
+    ownership.canonical === canonical && ownership.index === (Object.keys(params).length === 0));
+}
+for (const [params, canonical] of [
+  [{}, "/compare"],
+  [{ stocks: "005930,000660" }, "/compare/005930-vs-000660"],
+  [{ stocks: "000660,005930" }, "/compare/005930-vs-000660"],
+  [{ stocks: "005930,035420" }, "/compare"],
+  [{ stocks: "005930,000660,035420" }, "/compare"],
+  [{ stocks: "005930,000660", ref: "share" }, "/compare"],
+  [{ stocks: "" }, "/compare"],
+] as const) {
+  const ownership = compareSearchOwnership(params);
+  check(`compare ownership for ${JSON.stringify(params)}`,
+    ownership.canonical === canonical && ownership.index === (Object.keys(params).length === 0));
+}
 
 if (failed > 0) {
   console.error(`\n${failed} check(s) FAILED`);

@@ -1,3 +1,4 @@
+import { compareSearchOwnership } from "@/lib/seoContract";
 // 비교 시작·인증 CTA 명료화 계약 가드 (Slice J)
 // 실행: npx tsx scripts/test_compareEntry.ts — 성공 시 PASS 1줄, 실패 시 FAIL 출력 후 비정상 종료.
 //
@@ -87,7 +88,7 @@ check("D4 MobileNav still routes to /login", mobileSrc.includes("`/login${loginN
 
 // ── E. /compare 라우트 회귀 ─────────────────────────────────────────
 check("E1 compare route mounts CompareClient", pageSrc.includes("<CompareClient"));
-check("E1 compare route keeps canonical /compare", pageSrc.includes('canonical: "/compare"'));
+check("E1 compare route keeps canonical /compare", pageSrc.includes("compareSearchOwnership(await searchParams)") && compareSearchOwnership({}).canonical === "/compare");
 // E2. 무JS 빈 상태 회복(noscript)과 공개 탈출 링크가 유지된다.
 check("E2 keeps the noscript empty-state fallback", pageSrc.includes("<noscript>"));
 check("E2 noscript keeps public escape links (stocks + today)", pageSrc.includes('href="/stocks"') && pageSrc.includes('href="/today"'));

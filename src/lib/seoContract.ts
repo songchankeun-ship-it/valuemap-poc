@@ -10,7 +10,7 @@
 // 정확히 하나이며, 임의(비허용) 비교 쌍이나 모의 데이터로 뒷받침된 theme 은 색인되지
 // 않는다.
 import { realStockPool } from "@/lib/realStocks";
-import { seoTopics, getSeoTopic } from "@/lib/seoTopics";
+import { featuredSeoTopics, getSeoTopic } from "@/lib/seoTopics";
 import { mockTopNeglectedThemes } from "@/lib/mockData";
 
 export const SITE = "https://ornscore.com";
@@ -26,6 +26,9 @@ export const STATIC_INDEXABLE_PATHS: readonly string[] = [
   "/disclosures",
   "/backtest",
   "/guide/metrics",
+  "/guide/metrics/changelog",
+  "/universe",
+  "/status",
   "/pricing",
   "/about",
   "/terms",
@@ -144,8 +147,64 @@ export function legacyThemes(): { slug: string; name: string }[] {
   return mockTopNeglectedThemes.map((t) => ({ slug: t.slug, name: t.name }));
 }
 
+export type SeoSearchParams = Record<string, string | string[] | undefined>;
+
+const STOCK_THEME_OWNERS = new Map([
+  ["2차전지", "battery-stocks"],
+  ["배터리", "battery-stocks"],
+  ["전기차", "battery-stocks"],
+  ["2차전지 소재부품", "battery-stocks"],
+  ["반도체", "semiconductor-stocks"],
+  ["HBM", "semiconductor-stocks"],
+  ["DDR5", "semiconductor-stocks"],
+  ["반도체 소재", "semiconductor-stocks"],
+  ["반도체 후공정", "semiconductor-stocks"],
+  ["바이오", "bio-stocks"],
+  ["제약", "bio-stocks"],
+  ["조선", "shipbuilding-stocks"],
+  ["조선기자재", "shipbuilding-stocks"],
+  ["방산주", "defense-stocks"],
+  ["게임", "game-stocks"],
+  ["고배당", "dividend-stocks"],
+]);
+
+const STOCK_SECTOR_OWNERS = new Map([
+  ["금융", "financial-sector-stocks"],
+  ["자동차", "automotive-sector-stocks"],
+  ["소재·철강·화학", "materials-sector-stocks"],
+]);
+
+// Only the clean screen owns broad discovery. A recognized single filter may
+// point to a covered topic. Repeated, mixed and unknown axes use the clean hub.
+export function stocksSearchOwnership(params: SeoSearchParams): { index: boolean; canonical: string } {
+  const entries = Object.entries(params);
+  if (entries.length === 0) return { index: true, canonical: "/stocks" };
+  const [key, value] = entries[0];
+  if (entries.length === 1 && typeof value === "string" && value) {
+    const themeExists = realStockPool.some((stock) => stock.themes.includes(value));
+    const slug = key === "theme" && themeExists
+      ? STOCK_THEME_OWNERS.get(value)
+      : key === "sector" || key === "theme" ? STOCK_SECTOR_OWNERS.get(value) : undefined;
+    if (slug && getSeoTopic(slug)) return { index: false, canonical: `/topics/${slug}` };
+  }
+  return { index: false, canonical: "/stocks" };
+}
+
+export function compareSearchOwnership(params: SeoSearchParams): { index: boolean; canonical: string } {
+  const keys = Object.keys(params);
+  if (keys.length === 0) return { index: true, canonical: "/compare" };
+  const value = params.stocks;
+  if (keys.length === 1 && typeof value === "string" && /^\d{6},\d{6}$/.test(value)) {
+    const [a, b] = value.split(",");
+    const pair = CURATED_COMPARISON_PAIRS.find((pair) =>
+      (pair.a === a && pair.b === b) || (pair.a === b && pair.b === a));
+    if (pair) return { index: false, canonical: `/compare/${pair.slug}` };
+  }
+  return { index: false, canonical: "/compare" };
+}
+
 export function indexableTopicSlugs(): string[] {
-  return seoTopics.map((t) => t.slug);
+  return featuredSeoTopics().map((t) => t.slug);
 }
 
 // ── 6. 계약 검증기(순수·주입 가능) ─────────────────────────────────

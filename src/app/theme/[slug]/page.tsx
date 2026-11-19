@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getThemeBySlug } from "@/lib/mockData";
 import { realStockPool } from "@/lib/realStocks";
 import { keywordSentence, themeKeywords } from "@/lib/seoKeywords";
-import { legacyThemeRedirectTarget, isNoindexLegacyTheme } from "@/lib/seoContract";
+import { legacyThemeRedirectTarget } from "@/lib/seoContract";
 
 export const revalidate = 3600;
 
@@ -28,10 +28,6 @@ export async function generateMetadata({ params }: PageProps) {
   const theme = getThemeBySlug(slug);
   if (!theme) return { title: "테마를 찾을 수 없습니다 — 오른스코어", robots: { index: false, follow: true } };
 
-  // 실 커버리지가 없거나(noindex 처리) 실데이터 매칭이 0건이면 색인 금지 —
-  // 모의 종목/집계를 공개 근거로 노출하지 않는다.
-  const noindex = isNoindexLegacyTheme(slug) || realStocksForTheme(theme.name).length === 0;
-
   const keywords = themeKeywords(slug, theme.name);
   const title = `${theme.name} 관련주 테마 종목 — 오른스코어`;
   // 테마는 데이터 분류(그룹)일 뿐 투자 추천이 아니다 — 수익/급등/추천 표현 금지.
@@ -40,7 +36,7 @@ export async function generateMetadata({ params }: PageProps) {
     title,
     description,
     keywords,
-    robots: noindex ? { index: false, follow: true } : undefined,
+    robots: { index: false, follow: true },
     openGraph: {
       title,
       description,
@@ -56,8 +52,6 @@ export async function generateMetadata({ params }: PageProps) {
       title,
       description,
     },
-    // 색인 가능한 경우에만 self-canonical. noindex 상태에서는 canonical 을 두지 않는다.
-    alternates: noindex ? undefined : { canonical: `/theme/${slug}` },
   };
 }
 

@@ -254,6 +254,7 @@ export function checkSitemap(status, xml, { expectedLastmod } = {}) {
     }
     if (seen.has(url)) dupes.add(url);
     seen.add(url);
+    if (/[?#]/.test(url)) reasons.push(`parameterized or fragment <loc> "${url}"`);
     const p = pathOf(url);
     if (p) paths.push(p);
   }

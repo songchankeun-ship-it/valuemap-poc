@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BarChart3, BookmarkPlus, Database, GitCompare, Search, ShieldCheck } from "lucide-react";
 import { dataMetadata, formatBizDateLong, type RealStock } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
-import { getSeoTopic, seoTopics } from "@/lib/seoTopics";
+import { getSeoTopic, featuredSeoTopics } from "@/lib/seoTopics";
 import { metricKeywords, stockDiscoveryKeywords, trustKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 import { buildTopicCompareStart } from "@/lib/topicCompare";
 
@@ -29,12 +29,15 @@ function topicScore(stock: RealStock, metric: string): string {
   if (metric === "PBR") return formatNumber(stock.pbr, 2);
   if (metric === "ROE") return formatNumber(stock.roe, 1, "%");
   if (metric === "배당수익률") return formatNumber(stock.dividendYield, 1, "%");
+  if (metric === "거래량 비율") return formatNumber(stock.flowStats?.ratio ?? 0, 2, "배");
+  if (metric === "추세 점수") return String(Math.round(stock.momentum));
+  if (metric === "위험조정 점수") return String(Math.round(stock.vol));
   if (metric === "밸류") return String(Math.round(stock.value));
   return String(Math.round(stock.compositeScore ?? 0));
 }
 
 export function generateStaticParams() {
-  return seoTopics.map((topic) => ({ slug: topic.slug }));
+  return featuredSeoTopics().map((topic) => ({ slug: topic.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -75,7 +78,7 @@ export default async function TopicPage({ params }: PageProps) {
 
   const stocks = topic.stockSelector();
   const compareStart = buildTopicCompareStart(stocks);
-  const relatedTopics = seoTopics
+  const relatedTopics = featuredSeoTopics()
     .filter((candidate) => candidate.slug !== topic.slug)
     .sort((a, b) => Number(b.category === topic.category) - Number(a.category === topic.category))
     .slice(0, 4);
@@ -98,7 +101,8 @@ export default async function TopicPage({ params }: PageProps) {
     },
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: stocks.slice(0, 8).map((stock, index) => ({
+      numberOfItems: stocks.length,
+      itemListElement: stocks.map((stock, index) => ({
         "@type": "ListItem",
         position: index + 1,
         name: `${stock.name} (${stock.ticker})`,
@@ -335,8 +339,7 @@ export default async function TopicPage({ params }: PageProps) {
         <div className="rounded-md border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/40">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">이 화면을 보는 방법</h2>
           <p className="mt-2 text-xs leading-6 text-zinc-600 dark:text-zinc-300">
-            숫자가 좋아 보이는 종목도 업종, 최근 공시, 가격 기준일, 변동성을 함께 확인해야 합니다. 오른스코어의 점수는 종목을
-            더 빨리 좁히기 위한 보조 지표이며 매수·매도 판단을 대신하지 않습니다.
+            {topic.nextCheck ?? "숫자가 좋아 보이는 종목도 업종, 최근 공시, 가격 기준일, 변동성을 함께 확인해야 합니다. 오른스코어의 점수는 종목을 더 빨리 좁히기 위한 보조 지표입니다."}
           </p>
         </div>
         <div className="rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">

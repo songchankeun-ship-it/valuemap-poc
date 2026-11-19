@@ -99,11 +99,12 @@ function topicHtml(slug: string, opts: { noindex?: boolean; canonical?: string; 
       title: `주제 ${slug} | 오른스코어`,
       canonical: opts.canonical ?? `${SITE}/topics/${slug}`,
       noindex: opts.noindex,
-      description: opts.description ?? "실데이터 기반 종목 탐색 화면입니다.",
+      description: opts.description ?? `실데이터 기반 ${slug} 종목 탐색 화면입니다.`,
     }) +
     "<body>" +
     (opts.collection === false ? "" : jsonLd({ "@context": "https://schema.org", "@type": "CollectionPage", name: slug })) +
-    (opts.stockLink === false ? "" : link(`/stock/005930`)) +
+    `<h1>종목 탐색 ${slug}</h1>` +
+    (opts.stockLink === false ? "" : ["005930", "000660", "032830", "085620", "000990"].map((ticker) => link(`/stock/${ticker}`)).join("")) +
     "</body></html>"
   );
 }
@@ -250,7 +251,7 @@ check("A/contract: FAULT reverse-order pair detected", mutate({ pairs: [...CURAT
 
 // --- sitemap ⇄ contract drift ----------------------------------------------
 {
-  const good = [...curatedComparisonPaths(), ...indexableTopicSlugs().map((s) => `/topics/${s}`), "/", "/stocks"];
+  const good = [...curatedComparisonPaths(), ...indexableTopicSlugs().map((s) => `/topics/${s}`), ...[...defaultContractInput().realTickers].map((ticker) => `/stock/${ticker}`), "/", "/stocks"];
   check("A/drift: consistent sitemap passes", evalSitemapContractDrift(good).length === 0);
   check("A/drift: missing curated pair detected", evalSitemapContractDrift(good.filter((p) => p !== curatedComparisonPaths()[0])).some((r) => /missing from sitemap/.test(r)));
   check("A/drift: legacy /theme leak detected", evalSitemapContractDrift([...good, "/theme/battery"]).some((r) => /retired legacy theme/.test(r)));
@@ -306,11 +307,10 @@ function buildResponder(scenario: Scenario) {
 
   function sitemap(): string {
     const paths = [
-      "/", "/today", "/stocks", "/compare", "/disclosures", "/backtest", "/guide/metrics",
-      "/pricing", "/about", "/terms", "/privacy", "/data-deletion",
+      ...defaultContractInput().staticIndexablePaths,
       ...indexableTopicSlugs().map((s) => `/topics/${s}`),
       ...curatedComparisonPaths(),
-      "/stock/005930",
+      ...[...defaultContractInput().realTickers].map((ticker) => `/stock/${ticker}`),
     ];
     const urls = paths
       .map((p) => `<url><loc>${SITE}${p === "/" ? "/" : p}</loc><lastmod>${lastmod}</lastmod></url>`)

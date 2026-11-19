@@ -1,5 +1,40 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-19 - [codex] Growth Sprint 5 C search ownership
+
+- Consolidated the public index into 177 clean URLs. The static set includes
+  the data status, universe and methodology changelog reference pages.
+  The dynamic set contains 138 real stock details, 17 curated topics and
+  seven allow-listed comparison pairs. Tracking parameters on these other
+  families resolve to the same clean canonical path.
+- The clean screens `/stocks` and `/compare` own general stock discovery and
+  comparison. All parameterized variants of both screens return
+  `noindex, follow`. An explicitly mapped single stocks filter points to
+  its covered topic, and the filter screen links there. Free text, unknown
+  or blank keys, repeated keys, multiple axes and uncovered filters
+  canonicalize to `/stocks`. A two-ticker comparison matching a curated
+  pair points to that landing in either order. Other comparison queries
+  canonicalize to `/compare`.
+- Preserved the four permanent legacy theme redirects. The uncovered robot
+  theme stays noindex, and arbitrary or reversed clean comparison slugs
+  remain excluded. Private, offline and legacy blog surfaces remain outside
+  the sitemap.
+- Added trading-volume increase (12 displayed), trend strength (12),
+  risk-adjusted strength (12), financials (12), automotive (7), defense (5),
+  games (7) and materials/steel/chemicals (5). Each explains its rule,
+  limitation and next evidence check. Existing value topics cover low
+  valuation burden. The topic route, OG lookup, discovery links and sitemap
+  all require at least five distinct real candidates.
+- Passed focused topic, stock and SEO contracts, public-data delta fixtures,
+  TypeScript, and Next production build (203/203). The loopback build passed
+  routes 9/9, stocks/compare SEO 21/21, public SEO 3/3, SEO release 11/11
+  and OG 3/3. Chrome at 1280×800 and 390×844 verified two clean topics and
+  two filtered URLs without horizontal document overflow.
+- The committed snapshot verifies at 138 stocks and Metrics 2.4. Git checks
+  against A3 (`9e333187`) show no diff in the frozen Metrics 2.5.1 or
+  continuity-baseline files. Task 387's pre-existing failures remain out of
+  scope. Local checks used placeholder Supabase values and a local marker.
+
 ## 2026-11-19 - [codex] Growth Sprint 5 B home-to-detail activation
 
 - Replaced the home scroll action with `오늘 첫 종목 바로 보기`. It opens the
