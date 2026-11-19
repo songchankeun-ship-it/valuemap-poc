@@ -1,9 +1,9 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-07-28T15:27:51.6450394+09:00
+Last updated: 2026-11-19T05:36:50.685Z
 Project: OrnScore
-Path: C:\dev\OrnScore
+Path: C:\dev\OrnScore-ops-20261116
 
 ## Operating Agreement
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore
 
 ## Last AI Center Event
 
-- Task: 371 - ORNScore Market Ops D - five-day automation recertification and scheduler dossier
-- Run: 374
-- Status: completed
-- Agent: claude
-- Note: Development and all quality gates completed.
+- Task: n/a
+- Run: n/a
+- Status: connected
+- Agent: n/a
+- Note: Project folder connected in AI Dev Center.
 
 ## Next Agent Checklist
 
