@@ -4449,3 +4449,20 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - `c2c5b38e`, `8446bfb4`의 변경을 단일 Task E 커밋으로 통합했다. AI Center의 run 395 기록을 보존했다.
 - 확대 조건 집중 테스트, TypeScript, lint, Next 빌드 203/203, 데이터·SEO 가드 및 루프백 라우트 검사를 통과했다. 단일 Node 래퍼에서 Chrome 1280×800 및 390×844 홈 이동과 보호된 운영 패킷을 재검증했다.
 - 스키마 활성화와 Search Console 계정 접근은 오너 입력을 기다린다. 절차와 14일 목표는 `docs/ornscore-growth-sprint-5-owner-dossier-2026-11-19.md`에 있다.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 owner setup
+
+- Confirmed `contact@ornscore.com` has access to Search Console property
+  `sc-domain:ornscore.com`. Three-month evidence is 2 clicks / 568 impressions /
+  0.4% CTR / average position 8.6. The strongest unclicked surfaces are
+  `/disclosures` (197 impressions) and `/today` (143 impressions).
+- Search Console reports 70 indexed and 125 unindexed pages. Re-submitted the
+  current 177-URL sitemap successfully on 2026-11-19; Google still showed the
+  old 166-URL read from 2026-07-20 before submission.
+- Added explicit privacy copy for the optional daily aggregate and its 30-day
+  retention, plus disabled growth configuration placeholders in `.env.example`.
+  Legal consistency, TypeScript, and Next build 203/203 pass. No database,
+  hosting, or runtime setting was changed.
+- Next owner gate: provision and validate the dedicated staging PostgreSQL
+  login and infrastructure logging policy, then approve the KST measurement
+  start and first content draft. Keep collection disabled until that gate.

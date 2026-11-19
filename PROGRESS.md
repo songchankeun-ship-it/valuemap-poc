@@ -5433,3 +5433,24 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - `c2c5b38e`, `8446bfb4`의 변경을 단일 Task E 커밋으로 통합했다. AI Center의 run 395 기록을 보존했다.
 - 확대 조건 집중 테스트, TypeScript, lint, Next 빌드 203/203, 데이터·SEO 가드 및 루프백 라우트 검사를 통과했다. 단일 Node 래퍼에서 Chrome 1280×800 및 390×844 홈 이동과 보호된 운영 패킷을 재검증했다.
 - 스키마 활성화와 Search Console 계정 접근은 오너 입력을 기다린다. 절차와 14일 목표는 `docs/ornscore-growth-sprint-5-owner-dossier-2026-11-19.md`에 있다.
+
+## 2026-11-19 - [codex] Growth Sprint 5 owner setup
+
+- Confirmed owner access to Google Search Console property
+  `sc-domain:ornscore.com` with `contact@ornscore.com`. The three-month
+  baseline is 2 clicks, 568 impressions, 0.4% CTR, and average position 8.6.
+  `/topics/high-roe-stocks` and `/compare` produced one click each, while
+  `/disclosures` and `/today` produced 197 and 143 impressions with no click.
+- Google reports 70 indexed and 125 unindexed pages. One hundred are discovered
+  but not crawled and seven are crawled but not indexed. The three recorded 5xx
+  URLs are old stock Open Graph image variants, not public stock-detail pages.
+- Re-submitted `https://ornscore.com/sitemap.xml` successfully on 2026-11-19.
+  The previous read was 2026-07-20 with 166 URLs; the current local sitemap has
+  177 canonical URLs. Wait for Google to process it before judging coverage.
+- Added the disabled-by-default aggregate environment keys to `.env.example`
+  and disclosed the exact non-identifying daily fields and 30-day retention in
+  `/privacy`. Legal consistency, TypeScript, and Next build 203/203 pass.
+- **Next action**: review and prepare a dedicated staging PostgreSQL login,
+  verify request-body/IP/referrer logging is disabled for the aggregate route,
+  then choose the KST start date and first approved Threads draft. Do not enable
+  collection until the privacy update is released and the staging checks pass.

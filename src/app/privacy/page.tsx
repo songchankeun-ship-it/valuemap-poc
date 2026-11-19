@@ -29,7 +29,7 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-10">
       <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">개인정보처리방침</h1>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026-07-01</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">최종 갱신: 2026-11-19</p>
 
       <LegalEnSummary surface="privacy" />
 
@@ -45,6 +45,7 @@ export default function PrivacyPage() {
             <li><strong>이용자 제출 정보(선택)</strong> — 데이터 오류 제보 시 입력한 제보 유형·종목 코드·제보 내용과 회신용 이메일(선택), 유료 출시 대기 신청 시 입력한 이메일. 로그인 없이도 제출할 수 있으며, 회신·문의 처리 및 데이터 품질 개선·출시 안내 목적으로만 이용합니다.</li>
             <li><strong>접속 정보</strong> — IP 주소, 브라우저 정보 (Vercel Analytics 기반)</li>
             <li><strong>비식별 사용 이벤트</strong> — 검색 결과 선택, 주제 페이지 클릭, 비교함·관심종목 버튼, 로그인 CTA, 오류 제보 폼 상태 등 서비스 개선용 이벤트. 검색어 원문, 제보 메시지, 이메일 내용은 이벤트에 포함하지 않습니다.</li>
+            <li><strong>일별 비식별 집계</strong> — 집계 기능이 활성화된 경우 한국 시간 기준 날짜, 미리 정한 이벤트 유형·유입 캠페인·화면 유형별 횟수만 저장합니다. 계정 식별자, 쿠키, IP 주소, 원문 리퍼러, 검색어·메시지 같은 자유 입력은 이 집계에 저장하지 않습니다.</li>
           </ul>
         </section>
 
@@ -64,6 +65,7 @@ export default function PrivacyPage() {
           <p>회원 정보는 회원 탈퇴 시점까지 보관하며, 탈퇴 요청 시 지체 없이 파기합니다. 다만 법령, 보안, 부정사용 방지, 분쟁 대응 등 정당한 사유로 보관이 필요한 일부 기록은 필요한 기간 동안 제한적으로 보관한 뒤 파기합니다. 삭제 요청 절차와 예외 보관 기준은 <Link href="/data-deletion" className="text-blue-600 dark:text-blue-400 underline">계정 및 데이터 삭제 요청</Link> 안내와 동일하게 적용됩니다.</p>
           <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
             <li><strong>접속 로그·분석 데이터</strong>: 통계 목적으로만 사용하며 최대 12개월 내 파기 또는 익명화.</li>
+            <li><strong>일별 비식별 집계</strong>: 한국 시간 기준 최근 30일만 보관하고 그 이전 집계는 삭제합니다.</li>
             <li><strong>알림 메일 관련 이메일</strong>: 사용자가 알림 기능을 직접 켠 경우 발송 목적에 한해 이용하며, 알림 해제·회원 탈퇴 시 처리 중단.</li>
             <li><strong>오류 제보·출시 대기 신청 내역</strong>: 회신·문의 처리 및 출시 안내 목적으로 보관하며, 처리 완료 또는 <Link href="/data-deletion" className="text-blue-600 dark:text-blue-400 underline">삭제 요청</Link> 시 파기.</li>
           </ul>
