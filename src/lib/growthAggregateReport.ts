@@ -1,3 +1,4 @@
+import { PACKET_CAMPAIGN, PACKET_FORMATS } from "./growthPacket";
 import {
   buildTrafficMetricsSummary,
   findUnsafeSummaryProblems,
@@ -91,5 +92,31 @@ export async function readGrowthTraffic(store: GrowthAggregateStore | undefined,
   } catch {
     const result = { status: "unavailable", reason: "일별 집계 저장소의 연결 및 읽기 권한을 확인하세요." } as const;
     return { "7d": result, "30d": result };
+  }
+}
+
+export async function readGrowthPacketEvidence(store: GrowthAggregateStore | undefined, now = new Date()) {
+  const through = kstDay(now);
+  const from = dayOffset(through, -13);
+  const period = { from, through };
+  if (!store) return { ...period, status: "not_configured" } as const;
+  try {
+    const rows = validateRows(await store.read(from, through), from, through)
+      .filter((row) => row.campaign === PACKET_CAMPAIGN);
+    const count = (matches: (row: GrowthRow) => boolean) => {
+      const total = rows.filter(matches).reduce((sum, row) => sum + row.count, 0);
+      if (!Number.isSafeInteger(total)) throw new Error("Aggregate count overflow");
+      return total;
+    };
+    const routeCount = (kind: string) => count((row) => row.event === ROUTE_VIEW_EVENT && row.routeKind === kind);
+    return {
+      ...period, status: "ready",
+      entries: Object.fromEntries(PACKET_FORMATS.map(({ id, routeKind }) => [id, routeCount(routeKind)])),
+      downstream: Object.fromEntries(PACKET_FORMATS.map(({ id, downstreamEvent }) => [
+        id, count((row) => row.event === downstreamEvent),
+      ])),
+    } as const;
+  } catch {
+    return { ...period, status: "unavailable" } as const;
   }
 }

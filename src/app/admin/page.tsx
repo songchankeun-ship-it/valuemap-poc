@@ -101,6 +101,7 @@ export default async function AdminHomePage() {
 
   const links = [
     { href: "/admin/users", title: "가입자 운영 현황", desc: "최근 가입, 대기 신청, 저장 기능 사용", Icon: Users },
+    { href: "/admin/growth-packet", title: "성장 콘텐츠 패킷", desc: "데이터 기반 초안과 14일 운영 판단", Icon: FileSearch },
     { href: "/admin/traffic", title: "트래픽·이벤트 개요", desc: "무엇을 수집하는지, 실제 수치는 어디서 보는지", Icon: Activity },
     { href: "/admin/status", title: "데이터 상태판", desc: "검증 보류, 결측, 신고 목록", Icon: Database },
     { href: "/status", title: "공개 상태 페이지", desc: "사용자에게 보이는 기준일과 출처", Icon: ShieldCheck },

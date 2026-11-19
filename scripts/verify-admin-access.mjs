@@ -71,6 +71,7 @@ const DEFAULT_ROUTES = [
   { path: "/admin", leakMarker: "운영 홈" },
   { path: "/admin/status", leakMarker: "데이터 상태판 (관리자)" },
   { path: "/admin/traffic", leakMarker: "트래픽·이벤트 개요" },
+  { path: "/admin/growth-packet", leakMarker: "성장 콘텐츠 패킷" },
   { path: "/admin/users", leakMarker: "가입자 운영 현황" },
 ];
 

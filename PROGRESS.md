@@ -1,5 +1,52 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-19 - [codex] Growth Sprint 5 D acquisition packet
+
+- Sparse activity snapshots still produce six drafts. The shared builder
+  keeps any candidate with a usable surge ratio and fills empty activity slots
+  with measured candidate and snapshot coverage counts. The fallback drafts
+  ask readers to review and save a candidate if one is available on `/today`.
+  Regression fixtures cover zero Today candidates, candidates with zero usable
+  surge ratios, and one usable surge ratio. Focused tests, CLI JSON, TypeScript,
+  the 203-page build, local route/admin/SEO/OG checks, and data guards passed.
+  Loopback Chrome rechecked the current packet at 1280×800 and 390×844,
+  including exact clipboard readback on both copy paths and no overflow.
+- The CLI and protected `/admin/growth-packet` use one deterministic builder.
+  The 2026-11-18 snapshot produces two Korean drafts each for neutral
+  comparisons, low-PER screening and activity changes. Each includes a
+  current finding, a limitation, a next check and one canonical landing with
+  the existing `ref=threads`. The operator page shows candidate coverage
+  and the product action under test. Copy uses the local clipboard.
+- The 14-day KST view counts Threads entries by destination kind and each
+  format's downstream actions by its fixed event. Neutral comparison uses
+  `compare_curated_interactive_open`, screening uses `topic_stock_open`, and
+  activity change uses `watchlist_toggle`. The activity drafts ask readers to
+  review the candidate's evidence and save it to their watchlist. The existing
+  toggle aggregate also includes removals.
+  After collection coverage is confirmed, expand only when both counts for
+  the same format are positive. Stop after two uses with zero entries.
+  Missing or failed collection is shown explicitly. Uses reset on reload.
+  The regression gives every format entries and verifies that each mapped
+  Threads event can expand only its own row. It also excludes events from
+  other campaigns. The aggregate SQL matches Task C byte for byte, and
+  Home and Today use their Task C tracking behavior. All QA was local.
+- Local checks passed for growth/content/analytics, admin policy, TypeScript,
+  the production build (203/203), public routes (9/9), logged-out admin
+  routes (5/5), stocks SEO (21/21), public SEO (3/3), SEO release (11/11)
+  and dynamic OG (3/3). A loopback auth fixture verified owner and non-owner
+  access, and headless Chrome verified six cards, coverage
+  gating, expand/stop/observe decisions, and no horizontal overflow at
+  1280×800 and 390×844. The Today route rendered its existing stock-detail links.
+- Clipboard repair: if the Clipboard API rejects a write, the copy button
+  tries a local selection-based copy and restores focus. A trusted Chrome
+  click and real clipboard readback matched all six drafts at both widths,
+  including the full Korean text, line breaks, and campaign link, on both
+  the primary and fallback paths.
+- The data delta guard reports byte-identical public data and the Metrics
+  verifier reports 138 stocks on Metrics 2.4. Frozen Metrics 2.5.1 and
+  continuity-baseline paths have an empty diff against A3 (`9e333187`).
+  Task 387's known failures were out of scope. All activity was local.
+
 ## 2026-11-19 - [codex] Growth Sprint 5 C search ownership
 
 - Recovery after `31b6ebd0`: restored the homepage's non-advisory phrase in

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-11-19T07:19:57.554Z
+Last updated: 2026-11-19T07:54:27.014Z
 Project: OrnScore
 Path: C:\dev\OrnScore-ops-20261116
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore-ops-20261116
 
 ## Last AI Center Event
 
-- Task: 389 - ORNScore Growth Sprint 5 C - SEO index hygiene and intent expansion
-- Run: 391
-- Status: completed
+- Task: 390 - ORNScore Growth Sprint 5 D - repeatable acquisition packet
+- Run: 393
+- Status: failed
 - Agent: codex
-- Note: Development and all quality gates completed.
+- Note: Quality gate failed after 1 repair attempt(s): TESTER FAIL: Lint, TypeScript, focused tests, build, route, SEO, data, and desktop and 390px checks passed, but the existing database constraint rejects the proposed Today detail event, and the committed SQL changes the schema definition despite the no-schema-change requirement.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,62 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-11-19 - [codex] - Growth Sprint 5 D sparse activity repair
+
+- The CLI and protected operator page share the repaired builder. Zero or
+  one usable surge ratio now yields two activity drafts by filling empty
+  slots with coverage findings computed from the current snapshot. The
+  fallback copy keeps `/today?ref=threads` and asks readers to review and save
+  a candidate if available. Tests exercise both cases and an empty Today list.
+- Focused growth/content/analytics, CLI JSON, TypeScript, Next build
+  (203/203), loopback route/admin/SEO/OG, and data freeze gates passed.
+  Chrome rechecked the current packet at 1280×800 and 390×844 with no
+  overflow, exact clipboard readback on both copy paths, and owner access.
+  Task C SQL and runtime event definitions match their baseline. The task
+  remains one local commit above `b68c6e57`.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 D clipboard verification
+
+- The earlier browser check stubbed clipboard writes. The loopback Chrome
+  check now used trusted clicks and read the actual clipboard for each of
+  the six drafts at 1280×800 and 390×844. Exact draft text matched after
+  Windows newline normalization. Both layouts had no horizontal overflow.
+- The copy button falls back to local selection-based copying if the
+  Clipboard API fails. The browser check forced a Clipboard API rejection
+  and verified the actual fallback clipboard contents at both widths.
+- Focused growth and attribution checks, TypeScript, Next build (203/203),
+  loopback route, admin, SEO and OG checks, and public-data and Metrics
+  freeze checks passed. The task remains one local commit above Task C.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 D acquisition packet
+
+- Task C was committed at `b68c6e57`. The shared packet builder powers
+  `npm run growth:content -- --json` and `/admin/growth-packet` in the
+  operator home. Six Korean drafts use the 2026-11-18 snapshot, canonical
+  public landings and the existing Threads campaign. Copy is local.
+- The 14-day table reads Threads entry totals by route kind and downstream
+  totals by fixed event. Comparison uses `compare_curated_interactive_open`,
+  screening uses `topic_stock_open`, and activity uses `watchlist_toggle`.
+  Both activity drafts direct readers to review evidence on the candidate's
+  detail page and save the candidate to their watchlist. The existing toggle
+  count includes removals. Aggregate SQL matches Task C byte for byte, and
+  Home and Today use their Task C tracking behavior. No database changes
+  were performed.
+- The operator confirms coverage before making a decision. Expand requires
+  both positive counts for the same format, and stop requires two uses and
+  zero entries. The regression gives every format entries and confirms that
+  each mapped Threads event can expand only its own row. It also excludes
+  events from other campaigns. Uses reset on reload.
+- Focused growth/content/analytics, lint, TypeScript, Next production build,
+  and local route/admin/SEO/OG gates passed. Loopback owner and non-owner
+  fixtures verified access and no tracking. Chrome verified six drafts,
+  clipboard, all three decisions, and no overflow at 1280×800 and 390×844.
+- Public data was byte-identical. Metrics 2.4 verified 138 stocks and zero
+  errors. Frozen Metrics 2.5.1 and continuity-baseline diffs against A3
+  (`9e333187`) are empty. No deployment or external action took place.
+  The two earlier task commits and the recovery form one local commit on
+  top of task C.
 
 ### 2026-11-19 - [codex] - Growth Sprint 5 C search ownership
 
