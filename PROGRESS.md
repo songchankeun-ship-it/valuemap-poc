@@ -1,5 +1,29 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-19 - [codex] Growth Sprint 5 B home-to-detail activation
+
+- Replaced the home scroll action with `오늘 첫 종목 바로 보기`. It opens the
+  first eligible stock in the existing snapshot candidate order. The
+  `/stocks` fallback has its own label and emits no detail-open event.
+- Added a first-viewport preview using the detail page's conclusion and next
+  evidence guidance, including the same 63-session price input. The secondary
+  action focuses the existing search input. Example links still open detail.
+- The existing `home_candidate_open` event uses `slot=hero` for the hero.
+  Task A3's bridge counts it in discovery-to-detail using its existing
+  event, campaign, and route-kind enums.
+- Green locally: `npx tsx scripts/test-growth-sprint-5-b.tsx`, first-run,
+  Growth Sprints 1–4, aggregate and analytics regressions, TypeScript, Next
+  build 195/195, route checks 9/9, stocks SEO 13/13, public SEO 3/3, OG 3/3,
+  and data/SEO guards. Loopback route checks used placeholder Supabase
+  settings. Metrics 2.4 verified 138 stocks and zero errors.
+- Chromium at 1280×800 and 390×844 verified light/dark layout, 44px hero
+  targets, keyboard and touch navigation to `/stock/085620` on the
+  2026-11-18 snapshot, search focus, matching detail evidence, and the
+  mocked same-origin aggregate packet. No overlap or horizontal overflow.
+- The frozen Metrics 2.5.1 and continuity-baseline file diffs were empty
+  against A3 (`9e333187`). Task 387's baseline failures remain out of scope.
+  Local only. No deployment or external analytics configuration.
+
 ## 2026-11-17 - [codex] Growth Sprint 4 topic-to-comparison activation
 
 - Kept the sprint on the strongest existing acquisition surface instead of

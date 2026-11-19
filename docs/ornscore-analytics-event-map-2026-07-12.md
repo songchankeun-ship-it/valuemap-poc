@@ -21,7 +21,7 @@ Purpose: measure whether public launch traffic can move from discovery to actual
 | `search_result_open` | Global search result click/Enter | `source`, `resultType`, `ticker`, `theme`, `queryLength` | User found a stock/theme through autocomplete. |
 | `search_view_all` | Global search "view all" row | `source`, `queryLength`, `resultCount` | User broadens autocomplete into `/stocks?q=...`. |
 | `search_empty_open_stocks` | Global search empty state CTA | `source`, `queryLength`, `stockCount` | User searches something outside autocomplete and opens the explorer. |
-| `home_candidate_open` | Home "오늘의 후보" card primary CTA | `ticker`, `rank`, `slot` | User opens stock detail from a home today-candidate card; only the public ticker, fixed rank, and layout slot (`featured`/`list`) are sent. |
+| `home_candidate_open` | Home hero primary CTA or "오늘의 후보" card CTA | `ticker`, `rank`, `slot` | User opens stock detail from the home hero or a candidate card. Only the public ticker, fixed rank, and layout slot (`hero`/`featured`/`list`) are sent. The hero explorer fallback does not emit this event. |
 | `home_mystocks_open` | Home "내 종목"(관심·최근 본 종목) re-entry row | `ticker`, `source`, `rank`, `slot` | Returning user reopens a saved/recent stock from the home personalization section; only the public ticker, fixed `source` (`watchlist`/`recent`), row `rank`, and fixed layout `slot` (`mystocks`) are sent. Stock names, sectors, scores, and browsing text are not sent. |
 | `topic_link_click` | `/stocks` topic links | `source`, `topic` | User enters a search-intent landing page. |
 | `topic_stock_open` | `/topics/[slug]` stock links | `topic`, `ticker` | Topic page successfully drives stock-detail exploration. |

@@ -26,14 +26,16 @@ interface Props {
   stocks: StockItem[];
   themes: string[];
   variant?: "header" | "hero";
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
-export function GlobalSearch({ stocks, themes, variant = "header" }: Props) {
+export function GlobalSearch({ stocks, themes, variant = "header", inputRef: providedInputRef }: Props) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const listboxId = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const internalInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = providedInputRef ?? internalInputRef;
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { copy } = useLanguage();

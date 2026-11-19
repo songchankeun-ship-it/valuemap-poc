@@ -17,6 +17,16 @@ export interface PriceHistory {
   points: PricePoint[];
 }
 
+export function priceChange63Sessions(history: PriceHistory | null): number | null {
+  const points = history?.points;
+  if (!points || points.length <= 63) return null;
+  const lastClose = points[points.length - 1]?.c;
+  const pastClose = points[points.length - 1 - 63]?.c;
+  return lastClose && pastClose && pastClose > 0
+    ? ((lastClose - pastClose) / pastClose) * 100
+    : null;
+}
+
 /**
  * 특정 종목의 가격 시계열 로드. 데이터 없으면 null.
  */

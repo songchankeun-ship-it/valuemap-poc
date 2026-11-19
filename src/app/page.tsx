@@ -4,6 +4,9 @@ import { getPriceLagSummary } from "@/lib/priceLag";
 import { fmtWon } from "@/lib/format";
 import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
+import { pickHomeCandidates } from "@/lib/homeActivation";
+import { classifyConclusion } from "@/lib/conclusion";
+import { getPriceHistory, priceChange63Sessions } from "@/lib/priceHistory";
 import { activitySurge } from "@/lib/homeSnapshot";
 import { HomeHero } from "@/components/home/HomeHero";
 import { TopCandidateSection } from "@/components/home/TopCandidateSection";
@@ -29,13 +32,6 @@ export const revalidate = 3600;
 // 이유: 금융 서비스에서 "틀린 종목 하나"가 전체 점수 신뢰를 무너뜨린다. 지연 종목은 최신 종가가
 // 반영되지 않아 순위·점수 해석이 왜곡될 수 있으므로, 대표 후보 카드에서는 보수적으로 제외한다.
 // (전체 목록 /stocks 에서는 제외하지 않고 '데이터 지연' 배지로 표시해 탐색 가능성은 유지한다.)
-function pickTopStocks(n: number, exclude: Set<string>) {
-  return [...realStockPool]
-    .filter((s) => compositeOf(s) > 0 && !isSuspect(s) && !exclude.has(s.ticker))
-    .sort((a, b) => compositeOf(b) - compositeOf(a))
-    .slice(0, n);
-}
-
 // 홈의 "80+" 카운트는 카드에 보이는 정수 점수와 같은 기준을 쓴다.
 function displayCompositeScore(s: Parameters<typeof compositeOf>[0]): number {
   return Math.round(compositeOf(s));
@@ -113,9 +109,22 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  // 가격 기준일 지연(최신 배치 미반영) 종목은 오늘 후보·Top 카드에서 제외(정책은 pickTopStocks 주석 참조).
+  // 가격 기준일 지연(최신 배치 미반영) 종목은 오늘 후보·Top 카드에서 제외(위 정책 참조).
   const laggedTickers = new Set(getPriceLagSummary().laggedTickers);
-  const topCandidates = pickTopStocks(3, laggedTickers);
+  const topCandidates = pickHomeCandidates(realStockPool, laggedTickers);
+  const first = topCandidates[0];
+  const explanation = first
+    ? classifyConclusion({
+        ...first,
+        surge3m: priceChange63Sessions(await getPriceHistory(first.ticker)),
+      })
+    : null;
+  const detailPreview = first && explanation ? {
+    ticker: first.ticker,
+    name: first.name,
+    conclusion: explanation.summary.split(/(?<=\.) /)[0],
+    nextCheck: explanation.riskNote.split(/(?<=\.) /).at(-1) ?? explanation.riskNote,
+  } : null;
   const dataAsOf = formatBizDateShort(dataMetadata.asOfBusinessDate);
   const dataStale = isDataStale(dataMetadata.asOfBusinessDate);
   const searchStocks = realStockPool.map((s) => ({
@@ -194,6 +203,7 @@ export default async function HomePage() {
         searchStocks={searchStocks}
         searchThemes={allThemes()}
         marketPulse={marketPulse}
+        detailPreview={detailPreview}
       />
 
       <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} strongCount={strongCount} />

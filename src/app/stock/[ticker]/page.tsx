@@ -18,7 +18,7 @@ import {
 } from "@/lib/scoreComparison";
 import { StockPriceChartLazy } from "@/components/StockPriceChartLazy";
 import { StockPriceSummary } from "@/components/StockPriceSummary";
-import { getPriceHistory } from "@/lib/priceHistory";
+import { getPriceHistory, priceChange63Sessions } from "@/lib/priceHistory";
 import { BeginnerReading } from "@/components/BeginnerReading";
 import { getDataWarnings, dataCompleteness } from "@/lib/dataQuality";
 import { MetricInsightCards } from "@/components/stock/MetricInsightCards";
@@ -341,15 +341,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   const livePriceAsOf = priceLagAsOf ?? globalAsOf;
   const dataWarnings = getDataWarnings(s, priceHistory);
   // 3개월(약 63거래일) 급등 위험 — 점수보다 먼저 노출
-  let surge3m: number | null = null;
-  {
-    const pp = priceHistory?.points;
-    if (pp && pp.length > 63) {
-      const lastC = pp[pp.length - 1]?.c;
-      const pastC = pp[pp.length - 1 - 63]?.c;
-      if (lastC && pastC && pastC > 0) surge3m = ((lastC - pastC) / pastC) * 100;
-    }
-  }
+  const surge3m = priceChange63Sessions(priceHistory);
   const completeness = dataCompleteness(s, priceHistory);
   const sectorValue = sectorValueScore(s, realStockPool);
   const poolN = realStockPool.length;

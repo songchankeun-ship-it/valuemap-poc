@@ -84,7 +84,7 @@ check("HomeHero declares exactly one <h1>", heroH1 === 1);
 check("home page.tsx adds no competing <h1>", pageH1 === 0);
 
 // --- 4. Home primary action + search contract (spec §6.3) --------------------
-check("HomeHero keeps the primary CTA into today's candidates", heroSrc.includes("#today-candidates"));
+check("HomeHero primary CTA opens stock detail with an explorer fallback", heroSrc.includes('href={detailPreview ? "/stock/" + detailPreview.ticker : "/stocks"}'));
 check("HomeHero primary CTA uses copy.primaryCta", heroSrc.includes("copy.primaryCta"));
 check("HomeHero renders one highlighted primary action", (heroSrc.match(/ui-primary-action/g) ?? []).length === 1);
 check("HomeHero drops the competing browse-all CTA", !heroSrc.includes("copy.browseAll"));
@@ -412,8 +412,8 @@ check(
 // 10b. Single home primary CTA: the hero keeps exactly one primary action into
 // today's candidates, so no second CTA competes for the first-screen focus.
 check(
-  "home hero keeps exactly one primary CTA (single #today-candidates action)",
-  (heroSrc.match(/#today-candidates/g) ?? []).length === 1,
+  "home hero primary action no longer scrolls to the candidates",
+  !heroSrc.includes("#today-candidates"),
 );
 
 // 10c. Route-role separation: the home brand plus the five primary nav roles are
