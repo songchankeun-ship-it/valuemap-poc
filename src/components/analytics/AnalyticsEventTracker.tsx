@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { usePathname } from "next/navigation";
 import { datasetToAnalyticsProps, trackEvent } from "@/lib/clientAnalytics";
 import { sanitizeClickProps } from "@/lib/clickAnalytics";
@@ -40,4 +41,12 @@ export function AnalyticsEventTracker() {
   }, []);
 
   return null;
+}
+
+export function PublicWebAnalytics() {
+  return (
+    <Analytics beforeSend={(event) =>
+      new URL(event.url, window.location.origin).pathname.startsWith("/admin") ? null : event
+    } />
+  );
 }

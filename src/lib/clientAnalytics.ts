@@ -2,6 +2,7 @@
 
 import { track } from "@vercel/analytics";
 import { campaignContextFromWindow } from "./campaignSession";
+import { GROWTH_ENDPOINT, projectGrowthEvent } from "./growthAggregate";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = Record<string, AnalyticsValue>;
@@ -16,8 +17,10 @@ function cleanValue(value: AnalyticsValue): AnalyticsValue {
 
 export function trackEvent(name: string, props: AnalyticsProps = {}) {
   if (typeof window === "undefined") return;
+  if (window.location.pathname.startsWith("/admin")) return;
+  let cleanProps: AnalyticsProps;
   try {
-    const cleanProps: AnalyticsProps = {};
+    cleanProps = {};
     for (const [key, value] of Object.entries(props)) {
       if (value === undefined) continue;
       cleanProps[key] = cleanValue(value);
@@ -26,7 +29,28 @@ export function trackEvent(name: string, props: AnalyticsProps = {}) {
     if (campaign && cleanProps.campaign === undefined) {
       cleanProps.campaign = campaign;
     }
+  } catch {
+    return;
+  }
+  try {
     track(name, cleanProps);
+  } catch {
+    // Keep the aggregate path independent of the existing tracker.
+  }
+  try {
+    if (document.body.dataset.growthAggregate !== "enabled") return;
+    const payload = projectGrowthEvent(window.location.pathname, name, cleanProps);
+    if (!payload) return;
+    void fetch(GROWTH_ENDPOINT, {
+      method: "POST",
+      mode: "same-origin",
+      credentials: "omit",
+      referrerPolicy: "no-referrer",
+      redirect: "error",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
   } catch {
     // Analytics must never break navigation or product actions.
   }

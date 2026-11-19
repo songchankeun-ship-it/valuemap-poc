@@ -118,3 +118,38 @@ Any link/button that opts in with `data-analytics-event` fans out to four places
 - The first review target after deploy is not raw traffic volume. It is funnel shape: topic page -> stock detail, search -> stock detail, compare/watchlist intent, and login CTA intent.
 - `src/app/admin/traffic/page.tsx` is an owner-only (`requireAdminAccess`, `robots: noindex`) operator overview that restates these event groups compactly and links to the Vercel Analytics dashboard. It calls no outside API and stores nothing; it is display-only. When an event is added/renamed here, update its `EVENT_GROUPS` list too.
 - The first 24–72 hour review order (which surfaces to open, which events matter first, healthy vs concerning shapes, and what a direct in-app numeric dashboard would still require from the owner) is written in `docs/ornscore-launch-analytics-first-72h-playbook.md`. `src/app/admin/traffic/page.tsx` carries a compact inline summary of that order and cites the doc as the canonical source.
+
+## Growth Sprint 5 A3 daily aggregate contract
+
+The optional same-origin bridge sends compact JSON to `/api/growth-aggregate`.
+The accepted fields are `event`, `campaign`, and `routeKind` with a 160-byte
+body limit. The aggregate vocabulary derives from the launch funnel and growth
+outcome definitions in `src/lib/adminTrafficMetrics.ts`, plus the route and
+campaign enums in `src/lib/routeAnalytics.ts`. The endpoint requires the
+configured exact origin and browser same-origin fetch metadata.
+
+| Signal | Events |
+| --- | --- |
+| Public entry | `route_view_public`, split by the fixed route kind, including `stock_detail` |
+| Discovery to detail | `home_candidate_open`, stock-only `search_result_open`, `topic_stock_open` |
+| Compare/save intent | `compare_toggle`, `topic_compare_start`, `compare_curated_interactive_open`, `watchlist_toggle` |
+| Compare outcome | The three compare intent events plus `stock_recent_compare_open` |
+| Save, return, share | `watchlist_toggle`, `watchlist_routine_complete`, `stock_share`, `compare_share` |
+| Account intent | `auth_cta_click` |
+
+Each accepted POST increments one key consisting of the server-assigned KST
+date, event, campaign, and route kind. Actions use `routeKind=none`. Requests
+reuse the existing allow-listed same-tab campaign or use `unattributed`.
+There is no backfill, identity, person-level linking, retry, or deduplication.
+Toggle counts include changes, removals, and blocked attempts that the existing
+tracker emits. Account intent counts clicks. Counts represent event volume and
+cannot establish unique visitors, successful saves, signups, or conversions.
+Global outcome totals include unattributed events. The campaign matrix shows
+the nine explicit campaign values.
+
+The bridge omits credentials and referrer and drops all other existing
+tracking properties. Its tables hold only aggregate keys and counts. Operator
+routes are excluded. The existing Vercel Analytics event map above still
+describes the separate tracking path. See the
+[owner runbook](ornscore-growth-aggregate-owner-runbook.md) for enablement,
+retention, window definitions, and rollback.

@@ -5269,3 +5269,24 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - **Next action**: commit and fast-forward this audited patch, verify production
   exact SHA and all live gates, then dispatch one normal daily refresh for the
   confirmed stale snapshot and re-run market-close health.
+
+## 2026-11-19 - [codex] Growth Sprint 5 A3 daily aggregate funnel
+
+- Added an optional same-origin bridge and POST handler with a strict event,
+  campaign, and route-kind allow-list, a 160-byte payload limit, and one
+  atomic increment per accepted event on its server-assigned KST date.
+- The existing admin traffic page reports verified 7- and 30-day entry,
+  funnel-action, and campaign-by-outcome counts with independent unconfigured,
+  empty, and error states. Public tracking excludes admin routes.
+- Added the owner-only SQL packet and activation, grants, 30-day retention,
+  and rollback instructions. The SQL and deployment settings were not
+  applied. No nonlocal service was contacted. Existing Vercel collection is
+  independent of the new disabled-by-default path.
+- Offline checks passed: aggregate and Growth Sprint 2–4 fixtures, growth
+  content, analytics/admin checks, TypeScript, build (195/195), data-rights,
+  public-data and score-scale guards, SEO stability/contract/release, and
+  framework-baseline freshness. The SEO release fixture now keeps its legacy
+  redirect follow-up on loopback.
+- Owner follow-up is limited to reviewing and validating the packet before any
+  activation. Deployment, credentials, retention operations, and live counts
+  were outside this local task.

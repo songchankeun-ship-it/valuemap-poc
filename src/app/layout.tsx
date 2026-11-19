@@ -1,17 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { growthAggregateConfig } from "@/lib/growthAggregateConfig";
 import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { dataStatus } from "@/lib/dataStatus";
 import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 import { ownershipVerification } from "@/lib/seoVerification";
-import { AnalyticsEventTracker } from "@/components/analytics/AnalyticsEventTracker";
+import { AnalyticsEventTracker, PublicWebAnalytics } from "@/components/analytics/AnalyticsEventTracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ornscore.com"),
@@ -127,7 +127,10 @@ export default function RootLayout({
        * 둔다: <link rel=preconnect> 는 React 19 가 <head> 로 hoist 하고, 인라인 폰트 스크립트
        * 는 제자리에서 실행되며 런타임에 document.head 에 link 를 주입, noscript·JSON-LD 는
        * Next 문서 권장대로 컴포넌트(본문)에서 렌더한다. */}
-      <body className="bg-[var(--background)] text-[var(--foreground)] antialiased">
+      <body
+        className="bg-[var(--background)] text-[var(--foreground)] antialiased"
+        data-growth-aggregate={growthAggregateConfig() ? "enabled" : undefined}
+      >
         {/* Pretendard 웹폰트 — 비차단 로드(JS 주입 방식).
          * SSR 마크업에는 스타일시트 링크를 넣지 않고, 아래 인라인 스크립트가
          * media="print" 로 link 를 만든 뒤 onload 시 media='all' 로 승격한다.
@@ -195,7 +198,7 @@ export default function RootLayout({
             <MobileBottomNav />
             {process.env.VERCEL ? (
               <>
-                <Analytics />
+                <PublicWebAnalytics />
                 <SpeedInsights />
               </>
             ) : null}

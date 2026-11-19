@@ -70,7 +70,7 @@ const eventMap = source("docs/ornscore-analytics-event-map-2026-07-12.md");
 assert.match(clientAnalytics, /campaignContextFromWindow/);
 assert.match(campaignSession, /window\.sessionStorage/);
 assert.doesNotMatch(campaignSession, /window\.localStorage/);
-assert.match(adminPage, /캠페인 → 실제 행동/);
+assert.match(adminPage, /캠페인별 행동 건수/);
 assert.match(eventMap, /same-tab session attribution/i);
 
 console.log("PASS growth sprint 3: allow-listed same-tab attribution and campaign-to-outcome matrix");

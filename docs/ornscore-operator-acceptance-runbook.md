@@ -75,7 +75,7 @@ real value into notes, screenshots, or artifacts.**
 | 1 | **Allowed operator** | Sign in with an allow-listed admin email (e.g. `owner@example.test`) | `/admin` home + all four dashboards render; state badges visible | Redirect loop, 403, or blank/error page for an allow-listed email |
 | 2 | **Denied signed-in user** | Sign in with a logged-in but NON-allow-listed email (e.g. `visitor@example.test`) | Any `/admin*` returns **403 Forbidden** (noindex/no-store) | A login redirect loop, or any admin content rendering to a non-admin |
 | 3 | **Users data readiness** | As the allowed operator, open `/admin/users` | Auth-list, `waitlist`, and the five usage cards each show an honest state badge (healthy / configured-empty / disabled / unavailable / read-failure); **no email or row body shown** | A real outage rendering as a quiet empty state, or any PII/row leaking on screen |
-| 4 | **Traffic readiness** | As the allowed operator, open `/admin/traffic` | Numeric dashboard shell renders; provider state reads `ready` (with derived totals/funnel) or `not_configured` — never a fabricated number | A `not_configured` provider showing invented counts, or a divide-by-zero rendering as `0` |
+| 4 | **Traffic readiness** | As the allowed operator, open `/admin/traffic` | Each KST window shows verified totals as `ready`, or the explicit `not_configured`, `empty`, or `error` state | A `not_configured` provider showing invented counts, or a divide-by-zero rendering as `0` |
 | 5 | **Report readiness** | As the allowed operator, open `/admin/status` report panel | Report resource reflects its true diagnostic state (disabled vs configured-empty vs read-failure are distinguishable) | A disabled feature or failed read masquerading as a look-alike empty panel |
 
 ### Recording results
@@ -103,3 +103,9 @@ npm run release:preflight
 
 Related: `docs/ornscore-admin-operations-checklist.md`,
 `docs/ornscore-route-smoke-checklist.md`, `scripts/verify-operator-acceptance.mjs`.
+
+## Daily growth aggregate
+
+Run `npm run test:growth-aggregate` for the offline handler and dashboard state
+checks. Activation, privileges, retention, and rollback are covered in the
+[growth aggregate owner runbook](ornscore-growth-aggregate-owner-runbook.md).

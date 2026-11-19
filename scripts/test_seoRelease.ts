@@ -327,9 +327,10 @@ function buildResponder(scenario: Scenario) {
     if (pathname === "/robots.txt") return { status: 200, headers: H("text/plain"), body: robots() };
     if (pathname === "/sitemap.xml") return { status: 200, headers: H("application/xml"), body: sitemap() };
 
-    // Legacy theme permanent redirects.
-    if (redirectMap.has(pathname)) {
-      return { status: 308, headers: { location: `${SITE}${redirectMap.get(pathname)}`, connection: "close" }, body: "" };
+    // Keep the permanent redirect and its destination on the fixture server.
+    const redirectTarget = redirectMap.get(pathname);
+    if (redirectTarget) {
+      return { status: 308, headers: { location: redirectTarget, connection: "close" }, body: "" };
     }
     // Mock-only theme (robot): noindex, no self-canonical, empty state.
     if (pathname.startsWith("/theme/")) {

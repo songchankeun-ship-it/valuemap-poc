@@ -123,6 +123,7 @@
     "verify:growth-sprint-2-live": "node scripts/verify-growth-sprint-2-live.mjs",
     "test:growth-sprint-3": "tsx scripts/test-growth-sprint-3.ts",
     "test:growth-sprint-4": "tsx scripts/test-growth-sprint-4.ts",
+    "test:growth-aggregate": "tsx scripts/test-growth-aggregate.ts",
     "test:post-audit-fixes": "tsx scripts/test-post-audit-fixes.ts"
   },
   "dependencies": {

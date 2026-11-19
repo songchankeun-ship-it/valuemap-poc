@@ -20,6 +20,7 @@
     "src/app/api/dart/route.ts",
     "src/app/api/disclosures/[ticker]/route.ts",
     "src/app/api/disclosures/recent/route.ts",
+    "src/app/api/growth-aggregate/route.ts",
     "src/app/api/quote/[ticker]/route.ts",
     "src/app/api/report-data-issue/route.ts",
     "src/app/api/themes/route.ts",

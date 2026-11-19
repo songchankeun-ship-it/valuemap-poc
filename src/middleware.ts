@@ -3,6 +3,9 @@ import { createServerClient } from "@supabase/ssr";
 import { adminDecision, isAdminRoute } from "@/lib/adminPolicy";
 
 export async function middleware(request: NextRequest) {
+  // The aggregate endpoint is credential-free and does not refresh sessions.
+  if (request.nextUrl.pathname === "/api/growth-aggregate") return NextResponse.next();
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

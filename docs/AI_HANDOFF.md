@@ -4297,3 +4297,17 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next: commit and fast-forward the audited patch, verify the deployed exact
   SHA and production gates, then repair the now-confirmed stale public snapshot
   with one normal daily refresh and re-run market-close health.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 A3 local implementation
+
+- Completed task 387 on this worktree. The three AI Center documentation
+  commits preceding this implementation remain in the branch history.
+- The optional same-origin aggregate path stores only a KST day, enum event,
+  enum campaign, enum route kind, and count. Admin Traffic now reads 7/30 KST
+  windows and shows explicit unconfigured, empty, and error states.
+- Offline tests, TypeScript, 195-page build, data/SEO and framework guards passed.
+  Data, Metrics 2.4, 138 tickers, formulas, auth, jobs and runtime configuration
+  remained frozen. The SQL packet was not applied and no live system was used.
+- Next owner-only action, if approved, is staging validation and activation
+  using `docs/ornscore-growth-aggregate-owner-runbook.md`. Leave the managed AI
+  Center event record intact.

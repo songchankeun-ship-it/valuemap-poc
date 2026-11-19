@@ -28,6 +28,7 @@ import type {
   RouteViewMetric,
   TrafficMetricWindow,
   TrafficMetricsSummary,
+  TrafficMetricsResult,
 } from "./adminTrafficMetrics";
 
 export type CampaignOutcomeView = CampaignOutcomeMetric & {
@@ -144,4 +145,19 @@ export function buildWindowComparison(
   for (const stage of primary.stages) ensure(stage.key).primaryRate = stage.entryRate;
   for (const stage of comparison.stages) ensure(stage.key).comparisonRate = stage.entryRate;
   return order.map((key) => byKey.get(key)!);
+}
+
+export function toTrafficDashboardState(result: TrafficMetricsResult) {
+  switch (result.status) {
+    case "not_configured":
+      return { status: "not_configured", title: "일별 집계 미연동", body: result.reason } as const;
+    case "unavailable":
+      return { status: "error", title: "일별 집계를 불러올 수 없습니다", body: result.reason } as const;
+    case "ready":
+      if (result.summary.funnel.every(({ count }) => count === 0) &&
+          result.summary.growthOutcomes.every(({ count }) => count === 0)) {
+        return { status: "empty", title: "집계된 이벤트가 없습니다", body: "이 기간의 저장소 조회가 완료되었습니다." } as const;
+      }
+      return { status: "ready", summary: result.summary } as const;
+  }
 }

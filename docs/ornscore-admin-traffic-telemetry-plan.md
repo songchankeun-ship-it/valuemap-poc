@@ -97,3 +97,12 @@
 - [x] 프라이버시·데이터 보존 주의 6항(referrer·IP·자유입력 금지·보존기간·고지 일관성·동의).
 - [x] 미래 관리자 트래픽 대시보드 4선택지 + 권장 경로, 전부 오너 게이트 명시.
 - [x] 새 추적·테이블·API·계정·설정 변경 0 — docs-only 설계 노트.
+
+## Growth Sprint 5 A3 follow-up (2026-11-19)
+
+The repository now includes an opt-in path for daily counters using only fixed
+event, campaign, and route-kind enums. The operator page uses the existing
+summary contract and reads 7 and 30 KST calendar days from the counter store.
+The store holds daily aggregates only. The design options above describe the
+original planning context. The deployment and retention steps are in the
+[aggregate owner runbook](ornscore-growth-aggregate-owner-runbook.md).
