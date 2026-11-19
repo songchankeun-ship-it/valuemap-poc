@@ -2,6 +2,14 @@
 
 ## 2026-11-19 - [codex] Growth Sprint 5 C search ownership
 
+- Recovery after `31b6ebd0`: restored the homepage's non-advisory phrase in
+  the metadata description while retaining the stock screener, comparison,
+  stock score and trading-activity wording. Next-action guidance, focused
+  SEO/topic/stocks checks, TypeScript, the 203-page build and data freeze
+  guards passed again. The execution environment blocked starting a fresh
+  loopback server. Route and viewport evidence below is from the original
+  implementation run.
+
 - Consolidated the public index into 177 clean URLs. The static set includes
   the data status, universe and methodology changelog reference pages.
   The dynamic set contains 138 real stock details, 17 curated topics and

@@ -77,7 +77,7 @@ function riskKindOf(s: { value: number; vol: number }, r3m: number | null): Risk
 }
 
 const homeTitle = "오른스코어 | 한국 주식 스크리너와 종목 비교";
-const homeDescription = "추세, 거래활성도, 밸류, 위험조정으로 구성된 종목 점수와 DART 공시를 함께 살펴보세요. 한국 주식 후보를 좁히고 같은 기준으로 비교할 수 있습니다.";
+const homeDescription = "수익률 전망·상승 확률 대신 추세, 거래활성도, 밸류, 위험조정을 반영한 종목 점수와 DART 공시를 살펴보세요. 한국 주식 후보를 좁히고 같은 기준으로 비교할 수 있습니다.";
 
 export const metadata = {
   title: homeTitle,

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-11-19T06:52:17.167Z
+Last updated: 2026-11-19T07:11:27.389Z
 Project: OrnScore
 Path: C:\dev\OrnScore-ops-20261116
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore-ops-20261116
 
 ## Last AI Center Event
 
-- Task: 388 - ORNScore Growth Sprint 5 B - direct first-stock activation
-- Run: 389
-- Status: completed
+- Task: 389 - ORNScore Growth Sprint 5 C - SEO index hygiene and intent expansion
+- Run: 390
+- Status: failed
 - Agent: codex
-- Note: Development and all quality gates completed.
+- Note: Quality gate failed after 1 repair attempt(s): TESTER FAIL: The revised home metadata fails the existing `test:next-action-guidance` positioning check, while lint, TypeScript, build, focused SEO tests, route and sitemap checks, data freeze guards, and desktop and mobile layout checks passed.
 
 ## Next Agent Checklist
 
@@ -43,6 +43,13 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 ## Manual Notes
 
 ### 2026-11-19 - [codex] - Growth Sprint 5 C search ownership
+
+- Local recovery for AI Center run 390 restored the required non-advisory
+  phrase in `homeDescription`. The next-action regression, focused
+  SEO/topic/stocks checks, TypeScript, Next build (203/203), public-data
+  delta and Metrics 2.4 guards passed. The managed failure event records the
+  earlier run. A fresh loopback server launch was blocked by execution
+  policy, so the original route and browser results below were not rerun.
 
 - Task C started from task B commit `e06fff27`. `seoContract.ts` owns
   stocks and comparison query canonicals. All parameterized variants of
