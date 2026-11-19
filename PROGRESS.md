@@ -1,5 +1,15 @@
 # 오른스코어 안정화·고도화 PROGRESS
 
+## 2026-11-19 - [codex] Growth Sprint 5 E 확대 조건 수정
+
+- 운영 패킷은 수집을 확인하고 해당 형식의 게시 횟수가 1회 이상이며 유입과 후속 행동이 모두 집계된 경우에만 확대를 권고한다. 세 형식 모두 게시 0회에서 유입과 후속 행동이 집계되어도 관찰을 유지하는 회귀 검증을 추가했다.
+
+## 2026-11-19 - [codex] Growth Sprint 5 E 로컬 재인증
+
+- A3–D 12개 커밋과 시작 작업 트리 상태를 확인했다. D의 운영 페이지가 빠진 프레임워크 라우트 기준표만 보정했다.
+- Sprint 1–5, 공개 데이터·SEO·분석·권한 가드, TypeScript, lint, Next 빌드 203/203, 루프백 라우트 및 1280px·390px 브라우저 검증을 통과했다. Metrics 2.4의 실종목 138개를 확인했고 Metrics 2.5.1 및 continuity-baseline 동결 경로의 Git diff는 비어 있다.
+- 집계 SQL 적용과 Search Console 속성 접근은 오너 단계다. 실서비스 수치와 외부 상태는 확인하지 않았다. [오너 인계 문서](docs/ornscore-growth-sprint-5-owner-dossier-2026-11-19.md)에 검증 결과, 14일 목표와 중단·확대 조건을 정리했다.
+
 ## 2026-11-19 - [codex] Growth Sprint 5 D acquisition packet
 
 - Sparse activity snapshots still produce six drafts. The shared builder
@@ -5417,3 +5427,9 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - Passed offline: security regression, aggregate and framework fixtures,
   TypeScript, build (195/195), SEO contract and release fixtures, public-data
   delta fixtures, Metrics 2.4 verification (138 stocks), and diff checks.
+
+## 2026-11-19 - [codex] Growth Sprint 5 E run 395 복구
+
+- `c2c5b38e`, `8446bfb4`의 변경을 단일 Task E 커밋으로 통합했다. AI Center의 run 395 기록을 보존했다.
+- 확대 조건 집중 테스트, TypeScript, lint, Next 빌드 203/203, 데이터·SEO 가드 및 루프백 라우트 검사를 통과했다. 단일 Node 래퍼에서 Chrome 1280×800 및 390×844 홈 이동과 보호된 운영 패킷을 재검증했다.
+- 스키마 활성화와 Search Console 계정 접근은 오너 입력을 기다린다. 절차와 14일 목표는 `docs/ornscore-growth-sprint-5-owner-dossier-2026-11-19.md`에 있다.

@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-11-19T08:10:09.347Z
+Last updated: 2026-11-19T08:26:28.434Z
 Project: OrnScore
 Path: C:\dev\OrnScore-ops-20261116
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore-ops-20261116
 
 ## Last AI Center Event
 
-- Task: 390 - ORNScore Growth Sprint 5 D - repeatable acquisition packet
-- Run: 394
-- Status: completed
+- Task: 391 - ORNScore Growth Sprint 5 E - final local recertification
+- Run: 395
+- Status: failed
 - Agent: codex
-- Note: Development and all quality gates completed.
+- Note: Quality gate failed after 1 repair attempt(s): TESTER FAIL: Lint, TypeScript, focused tests, the production build, and loopback route checks passed, but browser verification remained incomplete and task E contains two commits where one was required.
 
 ## Next Agent Checklist
 
@@ -41,6 +41,16 @@ Add stable human notes below this managed block or in separate docs. The AI Dev 
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:END -->
 
 ## Manual Notes
+
+### 2026-11-19 - [codex] - Growth Sprint 5 E 확대 조건 수정
+
+- Threads 집계에 유입과 후속 행동이 있어도 해당 형식의 게시 횟수가 0회 또는 미입력이면 운영 패킷은 관찰을 표시한다. 운영 화면과 오너 인계 문서에 게시 1회 이상 조건을 반영했다. 형식별 회귀 테스트, 집계·SEO·공개 데이터 가드, TypeScript 및 lint를 통과했다.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 E 로컬 재인증
+
+- `06b025ca`의 깨끗한 작업 트리에서 A3–D를 재검증했다. D에서 추가한 `/admin/growth-packet`을 프레임워크 라우트 기준표에 반영했고 기준표 검증 9/9를 통과했다.
+- Sprint 1–5 회귀, 공개 데이터·SEO·분석·권한 가드, TypeScript, lint, Next 빌드, 루프백 라우트 및 데스크톱·390px 브라우저 검증을 통과했다. 공개 스냅샷은 138종목·Metrics 2.4이며 Metrics 2.5.1 및 continuity-baseline 동결 경로의 Git diff는 비어 있다.
+- 다음 오너 입력은 집계 SQL 스테이징 적용 승인, Search Console의 `sc-domain:ornscore.com` 접근 계정, 14일 측정 시작일 및 발행 승인이다. [오너 인계 문서](ornscore-growth-sprint-5-owner-dossier-2026-11-19.md)에 절차와 판단 기준이 있다. 이번 작업은 루프백 검증으로 완료했다.
 
 ### 2026-11-19 - [codex] - Growth Sprint 5 D sparse activity repair
 
@@ -4433,3 +4443,9 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - The frozen Metrics 2.5.1 and continuity-baseline file diffs were empty
   against A3 (`9e333187`). Task 387's baseline failures remain out of scope.
   Local only. No deployment or external analytics configuration.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 E run 395 복구
+
+- `c2c5b38e`, `8446bfb4`의 변경을 단일 Task E 커밋으로 통합했다. AI Center의 run 395 기록을 보존했다.
+- 확대 조건 집중 테스트, TypeScript, lint, Next 빌드 203/203, 데이터·SEO 가드 및 루프백 라우트 검사를 통과했다. 단일 Node 래퍼에서 Chrome 1280×800 및 390×844 홈 이동과 보호된 운영 패킷을 재검증했다.
+- 스키마 활성화와 Search Console 계정 접근은 오너 입력을 기다린다. 절차와 14일 목표는 `docs/ornscore-growth-sprint-5-owner-dossier-2026-11-19.md`에 있다.

@@ -21,12 +21,13 @@
       "/robots.txt",
       "/sitemap.xml"
     ],
-    "staticRouteCount": 32,
+    "staticRouteCount": 33,
     "staticRoutePages": [
       "/",
       "/_not-found",
       "/about",
       "/admin",
+      "/admin/growth-packet",
       "/admin/status",
       "/admin/traffic",
       "/admin/users",
@@ -103,7 +104,7 @@
       }
     },
     "sourceRoutes": {
-      "count": 47,
+      "count": 48,
       "metadataRoutes": [
         "/compare/[pair]/opengraph-image",
         "/icon",
@@ -117,6 +118,7 @@
         "/",
         "/about",
         "/admin",
+        "/admin/growth-packet",
         "/admin/status",
         "/admin/traffic",
         "/admin/users",

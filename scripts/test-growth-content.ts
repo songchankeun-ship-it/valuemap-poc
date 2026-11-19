@@ -158,6 +158,7 @@ async function main() {
     for (const format of PACKET_FORMATS) {
       assert.equal(evidence.entries[format.id], 1);
       assert.equal(evidence.downstream[format.id], format.id === id ? 1 : 0);
+      assert.equal(growthPacketDecision(0, evidence.entries[format.id], evidence.downstream[format.id]), "관찰");
       assert.equal(
         growthPacketDecision(1, evidence.entries[format.id], evidence.downstream[format.id]),
         format.id === id ? "확대" : "관찰",

@@ -62,7 +62,7 @@ export function GrowthPacketView({ packet, evidence }: { packet: GrowthPacket; e
       <section className="my-5 space-y-2 rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
         <h2 className="text-lg font-semibold">14일 운영 판단</h2>
         <p className="text-xs">{evidence.from} ~ {evidence.through} KST · 오늘 진행분 포함</p>
-        <p className="text-sm">14일 동안 두 번 사용하고 진입이 0건이면 중단합니다. 수집을 확인한 뒤 같은 형식에서 진입과 후속 행동이 모두 측정되면 확대합니다.</p>
+        <p className="text-sm">수집을 확인한 뒤 14일 동안 같은 형식을 두 번 이상 게시하고 진입이 0건이면 중단합니다. 같은 형식의 게시 횟수가 1회 이상이고 진입과 후속 행동이 모두 측정되면 확대합니다.</p>
         <p className="text-sm">진입은 Threads 캠페인과 도착 화면 유형별 이벤트 수입니다. 후속 행동은 비교 화면 열기, 주제에서 상세 열기, 검토한 거래량 후보의 관심종목 저장을 형식별로 살펴봅니다. 관심종목 집계에는 저장과 해제가 모두 포함됩니다. 같은 유형의 다른 Threads 링크나 행동도 집계에 포함될 수 있습니다.</p>
         {counts ? (
           <label className="flex items-start gap-2 text-sm">
