@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-11-19T05:46:13.948Z
+Last updated: 2026-11-19T05:48:22.550Z
 Project: OrnScore
 Path: C:\dev\OrnScore-ops-20261116
 
@@ -22,9 +22,9 @@ Path: C:\dev\OrnScore-ops-20261116
 ## Last AI Center Event
 
 - Task: 387 - ORNScore Growth Sprint 5 A3 - aggregate funnel measurement
-- Run: 384
+- Run: 385
 - Status: failed
-- Agent: claude
+- Agent: codex
 - Note: Development process exited with code 1
 
 ## Next Agent Checklist
