@@ -1,6 +1,7 @@
 // Security-boundary regression pack — Slice E of the 2026-07-16 framework
 // security hardening plan (docs/ornscore-framework-security-hardening-2026-07-16.md).
 // Run: npm run verify:security-regression            (offline half)
+//      npm run verify:security-regression -- --audit <npm-audit.json>   (+ strict audit gate)
 //      npm run verify:security-regression -- --base http://127.0.0.1:<port>   (+ live half)
 //
 // WHY THIS EXISTS
@@ -9,7 +10,7 @@
 // React 19 to remove the production `next` CRITICAL audit finding without a
 // `--force` graph bypass. Slice E re-certifies that the security boundaries the
 // migration had to preserve still hold ON the migrated framework, and it maps the
-// CURRENTLY reported production advisories to actual ORNScore code-path
+// supplied production audit findings to actual ORNScore code-path
 // reachability so no residual is waved away with a generic claim.
 //
 // This pack ADDS regression coverage ONLY for paths an actual Next advisory or a
@@ -20,7 +21,8 @@
 // public-route availability) — those are run alongside this pack by the slice.
 //
 // COVERAGE (each maps to a re-certification item in the slice brief)
-//   §A Advisory reachability map — production critical/high MUST be 0 on the
+//   §A Advisory reachability map — offline source proofs run by default.
+//      With supplied audit JSON, production critical/high MUST be 0 on the
 //      migrated graph; every remaining finding is classified APPLICABLE (backed by
 //      a live/offline regression here) or NON-APPLICABLE (with concrete
 //      source/config evidence). An unmapped finding fails the gate (forces triage).
@@ -42,7 +44,6 @@
 // account / schema / runtime setting. Exit 1 on any failure; without --base the
 // offline half still runs and the live half is reported NOT RUN.
 
-import { spawnSync } from "node:child_process";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -54,13 +55,16 @@ const repo = join(here, "..");
 function read(rel: string): string {
   return readFileSync(join(repo, rel), "utf8");
 }
-function argValue(flag: string, fallback: string | null): string | null {
-  const i = process.argv.indexOf(flag);
-  return i !== -1 && i + 1 < process.argv.length ? process.argv[i + 1] : fallback;
+function argValue(flag: string): string | null {
+  const index = process.argv.indexOf(flag);
+  if (index === -1) return null;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${flag} requires a value`);
+  return value;
 }
-const BASE_RAW = argValue("--base", process.env.VERIFY_BASE_URL ?? null);
+const BASE_RAW = argValue("--base");
 const BASE = BASE_RAW ? BASE_RAW.replace(/\/+$/, "") : null;
-const AUDIT_FILE = argValue("--audit", null);
+const AUDIT_FILE = argValue("--audit");
 
 let failed = 0;
 const notes: string[] = [];
@@ -93,15 +97,23 @@ type AdvisoryRule = {
   proof: () => boolean;
 };
 
-// postcss@8.4.31 is bundled INSIDE next (node_modules/next/node_modules/postcss);
-// the top-level postcss is already >=8.5.10 (patched). The advisory is a CSS
-// *stringify* XSS: it can only bite if untrusted CSS is stringified through this
-// postcss. ORNScore imports postcss nowhere at runtime and feeds the build only
-// first-party Tailwind/autoprefixer input — so it is a build-time-only transitive
-// finding with no runtime ORNScore code path. Fix is a later Next patch bumping
-// its bundled postcss (npm's `next@9.3.3` isSemVerMajor suggestion is a downgrade,
-// not a fix); Next 16 is deferred by the plan.
+// Check the repository build configuration and scan for direct runtime imports.
+function postcssBuildOnly(): boolean {
+  const runtimeImports = grepSrc(/(?:from\s*|import\s*(?:\(\s*)?|require\(\s*)["']postcss(?:\/|["'])/);
+  const cfg = read("postcss.config.mjs");
+  return runtimeImports.length === 0 && /tailwindcss/.test(cfg) && /autoprefixer/.test(cfg);
+}
+
 const ADVISORY_RULES: AdvisoryRule[] = [
+  ...["GHSA-6g55-p6wh-862q", "GHSA-fxqj-rqcc-2cmp", "GHSA-r28c-9q8g-f849"].map(
+    (ghsa): AdvisoryRule => ({
+      ghsa,
+      pkg: "postcss",
+      applicability: "non-applicable",
+      evidence: "Source-map handling is in the Tailwind/autoprefixer build path. No direct runtime PostCSS import found under src/.",
+      proof: postcssBuildOnly,
+    }),
+  ),
   {
     ghsa: "GHSA-qx2v-qp2m-jg93",
     pkg: "postcss",
@@ -109,23 +121,16 @@ const ADVISORY_RULES: AdvisoryRule[] = [
     evidence:
       "postcss is a build-time CSS transform (postcss.config.mjs → tailwindcss+autoprefixer); " +
       "no runtime `postcss` import in src/; no user-controlled CSS is stringified at runtime.",
-    proof: () => {
-      // No runtime postcss import anywhere under src/.
-      const srcHasPostcss = grepSrc(/from\s+["']postcss["']|require\(\s*["']postcss["']/);
-      // postcss appears only as a build-time config (tailwind/autoprefixer plugins).
-      const cfg = existsSync(join(repo, "postcss.config.mjs")) ? read("postcss.config.mjs") : "";
-      const buildTimeOnly = /tailwindcss/.test(cfg) && /autoprefixer/.test(cfg);
-      return srcHasPostcss.length === 0 && buildTimeOnly;
-    },
+    proof: postcssBuildOnly,
   },
 ];
 
 // A recognised transitive alias: npm reports `next` moderate ONLY "via postcss"
-// (next has no own advisory on 15.5.18). We collapse that to the postcss rule
+// (next has no direct Next advisory in supplied report). We collapse that to the postcss rule
 // rather than treat it as a distinct next finding.
 function isNextViaPostcssOnly(auditPkg: any): boolean {
-  const via = auditPkg?.via ?? [];
-  return via.length > 0 && via.every((v: any) => v === "postcss" || (typeof v === "object" && v?.name === "postcss"));
+  const via = auditPkg?.via;
+  return Array.isArray(via) && via.length === 1 && via[0] === "postcss";
 }
 
 function grepSrc(re: RegExp): string[] {
@@ -144,26 +149,32 @@ function grepSrc(re: RegExp): string[] {
   return hits;
 }
 
-function loadAudit(): any {
-  if (AUDIT_FILE) return JSON.parse(readFileSync(AUDIT_FILE, "utf8"));
-  const run = spawnSync("npm", ["audit", "--omit=dev", "--json"], {
-    cwd: repo,
-    shell: true,
-    encoding: "utf8",
-    maxBuffer: 32 * 1024 * 1024,
-  });
-  // npm audit exits non-zero when findings exist; the JSON is still on stdout.
-  const out = run.stdout || "";
-  if (!out.trim()) throw new Error(`npm audit produced no JSON output (status ${run.status})`);
-  return JSON.parse(out);
-}
-
 function sectionAdvisoryMap(): void {
-  console.log("\n===== §A advisory reachability map (migrated graph) =====");
-  const audit = loadAudit();
-  const meta = audit.metadata?.vulnerabilities ?? {};
-  const critical = meta.critical ?? 0;
-  const high = meta.high ?? 0;
+  console.log("\n===== §A advisory reachability map =====");
+  if (!AUDIT_FILE) {
+    console.log("  Production audit gate: NOT RUN (supply local JSON with --audit).");
+    for (const rule of ADVISORY_RULES) {
+      check(`§A ${rule.ghsa} local source evidence still holds (${rule.pkg})`, rule.proof());
+      notes.push(`${rule.pkg} ${rule.ghsa}: ${rule.evidence}`);
+    }
+    return;
+  }
+
+  const audit = JSON.parse(readFileSync(AUDIT_FILE, "utf8"));
+  const meta = audit?.metadata?.vulnerabilities;
+  const severities = ["info", "low", "moderate", "high", "critical"];
+  const pkgs = audit?.vulnerabilities;
+  if (audit?.error || !meta ||
+      ![...severities, "total"].every((key) => Number.isSafeInteger(meta[key]) && meta[key] >= 0) ||
+      !pkgs || typeof pkgs !== "object" || Array.isArray(pkgs) ||
+      meta.total !== severities.reduce((sum, key) => sum + meta[key], 0) ||
+      !severities.every((key) => Object.values<{ severity?: string }>(pkgs)
+        .filter((pkg) => pkg?.severity === key).length === meta[key]) ||
+      Object.keys(pkgs).length !== meta.total) {
+    check("§A supplied audit contains consistent vulnerability counts and findings", false);
+    return;
+  }
+  const { critical, high } = meta;
   console.log(
     `  production audit: critical=${critical} high=${high} moderate=${meta.moderate ?? 0} low=${meta.low ?? 0} (total ${meta.total ?? 0})`,
   );
@@ -171,12 +182,11 @@ function sectionAdvisoryMap(): void {
   check("§A critical production findings == 0", critical === 0);
   check("§A high production findings == 0", high === 0);
 
-  const pkgs = audit.vulnerabilities ?? {};
   for (const [name, info] of Object.entries<any>(pkgs)) {
     // Fold "next via postcss only" into the postcss rule.
-    if (name === "next" && isNextViaPostcssOnly(info)) {
+    if (name === "next" && Object.prototype.hasOwnProperty.call(pkgs, "postcss") && isNextViaPostcssOnly(info)) {
       check(`§A ${name} finding is a transitive alias of postcss (no own next advisory)`, true);
-      notes.push(`${name}: transitive-only via postcss (no own advisory on 15.5.18) → covered by postcss rule`);
+      notes.push(`${name}: transitive-only via postcss (no direct Next advisory in supplied report) → covered by postcss rule`);
       continue;
     }
     const ghsaIds = (info.via ?? [])
@@ -188,7 +198,7 @@ function sectionAdvisoryMap(): void {
       continue;
     }
     for (const ghsa of ghsaIds) {
-      const rule = ADVISORY_RULES.find((r) => r.ghsa === ghsa);
+      const rule = ADVISORY_RULES.find((r) => r.pkg === name && r.ghsa === ghsa);
       check(`§A ${name} ${ghsa} is mapped in the reachability table`, Boolean(rule));
       if (!rule) continue;
       if (rule.applicability === "non-applicable") {
@@ -364,11 +374,9 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  console.log(
-    BASE
-      ? "SECURITY REGRESSION PACK PASSED — advisory map + cron/API auth + safe redirects + live CVE-2025-29927 bypass regression all green."
-      : "SECURITY REGRESSION PACK: offline half PASSED (advisory map + cron/API auth + safe redirects). LIVE middleware-bypass half NOT RUN (pass --base).",
-  );
+  console.log("SECURITY REGRESSION PACK: local source checks PASSED.");
+  console.log(`Supplied production audit gate: ${AUDIT_FILE ? "PASSED" : "NOT RUN"}.`);
+  console.log(`Live middleware regression: ${BASE ? "PASSED" : "NOT RUN"}.`);
   process.exitCode = 0;
 }
 

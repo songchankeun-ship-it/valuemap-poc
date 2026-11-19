@@ -5290,3 +5290,16 @@ Recovered the missed 2026-07-21 private Metrics 2.5.1 collection after confirmin
 - Owner follow-up is limited to reviewing and validating the packet before any
   activation. Deployment, credentials, retention operations, and live counts
   were outside this local task.
+
+## 2026-11-19 - [codex] Growth Sprint 5 A3 offline security gate repair
+
+- The default security regression command now runs local source checks for
+  the four recorded PostCSS advisories, cron auth, and safe redirects without
+  launching npm audit. Live verification requires an explicit `--base`.
+- The strict `--audit` gate takes local JSON. Offline fixtures confirm that
+  clean evidence passes and recorded high severity, an unknown advisory, and
+  an audit error fail. The committed dependency record still contains one
+  high-severity package finding.
+- Passed offline: security regression, aggregate and framework fixtures,
+  TypeScript, build (195/195), SEO contract and release fixtures, public-data
+  delta fixtures, Metrics 2.4 verification (138 stocks), and diff checks.

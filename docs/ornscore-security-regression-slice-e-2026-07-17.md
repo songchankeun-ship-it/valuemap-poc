@@ -89,3 +89,16 @@ Slice E security-boundary defect:
 runtime settings, Supabase schema/RLS, cron schedules, public Metrics 2.4,
 `public/data`, 138-stock output, analytics event names, SEO/public URLs. Package
 versions unchanged (next 15.5.18, react/react-dom ^19.2.0). Publication/deploy excluded.
+
+## Offline execution update (2026-11-19)
+
+`npm run verify:security-regression` checks local source evidence for the four
+recorded PostCSS advisories, cron authorization, and redirect handling. It
+reports the production audit gate and live middleware check as `NOT RUN`.
+
+For strict production audit validation, supply an owner-provided npm production
+audit JSON file with `npm run verify:security-regression -- --audit path/to/audit.json`.
+The verifier reads the file locally. A critical or high finding, an unmapped
+finding, or invalid audit data fails the gate. The committed framework baseline
+records one high-severity package finding. The offline source pass does not
+clear it. The optional live check requires an explicit `--base` argument.

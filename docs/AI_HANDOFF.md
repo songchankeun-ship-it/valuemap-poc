@@ -4311,3 +4311,17 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next owner-only action, if approved, is staging validation and activation
   using `docs/ornscore-growth-aggregate-owner-runbook.md`. Leave the managed AI
   Center event record intact.
+
+### 2026-11-19 - [codex] - Growth Sprint 5 A3 offline security gate repair
+
+- Task 387's tester exposed an npm registry call in the default security
+  regression command. The default now verifies local source evidence for the
+  four recorded PostCSS advisory IDs and reports the audit and live gates as
+  `NOT RUN`. The live check requires explicit `--base`.
+- The explicit `--audit` path preserves the zero-critical/high policy. A local
+  fixture reconstructed from the committed audit record mapped all four
+  advisories and failed only the high-severity policy. The dependency graph is
+  frozen for A3 and that recorded finding remains open.
+- Passed offline: security regression, aggregate and framework fixtures,
+  TypeScript, build (195/195), SEO contract and release fixtures, public-data
+  delta fixtures, Metrics 2.4 verification (138 stocks), and diff checks.
