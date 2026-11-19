@@ -1,7 +1,7 @@
 <!-- AI-DEV-CENTER:PROJECT-HANDOFF:v1:BEGIN -->
 # AI Handoff
 
-Last updated: 2026-11-19T06:23:30.339Z
+Last updated: 2026-11-19T06:39:39.228Z
 Project: OrnScore
 Path: C:\dev\OrnScore-ops-20261116
 
@@ -21,11 +21,11 @@ Path: C:\dev\OrnScore-ops-20261116
 
 ## Last AI Center Event
 
-- Task: 387 - ORNScore Growth Sprint 5 A3 - aggregate funnel measurement
-- Run: 387
-- Status: completed
+- Task: 388 - ORNScore Growth Sprint 5 B - direct first-stock activation
+- Run: 388
+- Status: failed
 - Agent: codex
-- Note: Development and all quality gates completed.
+- Note: Quality gate error: 개발 서버 준비 시간 초과: HTTP 500
 
 ## Next Agent Checklist
 
