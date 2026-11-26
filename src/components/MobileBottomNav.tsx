@@ -13,12 +13,12 @@ import { getFocusableElements, trapTabKey } from "@/lib/focusTrap";
 const PRIMARY = [
   { href: "/today", Icon: CalendarDays, key: "today" },
   { href: "/stocks", Icon: Search, key: "stocks" },
+  { href: "/compare", Icon: GitCompare, key: "compare" },
   { href: "/watchlist", Icon: Heart, key: "watchlist" },
-  { href: "/disclosures", Icon: Megaphone, key: "disclosures" },
 ] satisfies Array<{ href: string; Icon: LucideIcon; key: NavShortKey }>;
 
 const MORE = [
-  { href: "/compare", Icon: GitCompare, key: "compare" },
+  { href: "/disclosures", Icon: Megaphone, key: "disclosures" },
   { href: "/backtest", Icon: FlaskConical, key: "backtest" },
   { href: "/pricing", Icon: CreditCard, key: "pricing" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide" },
@@ -72,7 +72,7 @@ export function MobileBottomNav() {
             role="menu"
             aria-label={copy.nav.more}
             tabIndex={-1}
-            className="absolute bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))] inset-x-0 bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 rounded-t-2xl p-3 grid grid-cols-3 gap-2"
+            className="desk-chrome desk-sheet absolute bottom-[calc(3.5rem_+_env(safe-area-inset-bottom))] inset-x-0 p-3 grid grid-cols-3 gap-2"
             onClick={(e) => e.stopPropagation()}
           >
             {MORE.map(({ href, Icon, key }) => (
@@ -81,7 +81,8 @@ export function MobileBottomNav() {
                 role="menuitem"
                 prefetch={false} href={href}
                 onClick={() => setMoreOpen(false)}
-                className={"flex flex-col items-center gap-1 py-3 rounded-lg text-[11px] " + (active(href) ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-600 dark:text-zinc-300")}
+                aria-current={active(href) ? "page" : undefined}
+                className="desk-sheet-link"
               >
                 <Icon className="w-5 h-5" />
                 <span className="px-1 text-center leading-tight">{copy.nav[key]}</span>
@@ -91,13 +92,13 @@ export function MobileBottomNav() {
         </div>
       ) : null}
 
-      <nav aria-label={copy.chrome.bottomNavLabel} className="lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-white/95 dark:bg-zinc-950/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800">
+      <nav aria-label={copy.chrome.bottomNavLabel} className="desk-chrome desk-bottom lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
         {PRIMARY.map(({ href, Icon, key }) => (
           <Link
             key={href}
             prefetch={false} href={href}
             aria-current={active(href) ? "page" : undefined}
-            className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (active(href) ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
+            className="desk-bottom-link"
           >
             <Icon className="w-5 h-5" />
             <span className="max-w-full truncate px-0.5">{copy.navShort[key]}</span>
@@ -107,7 +108,8 @@ export function MobileBottomNav() {
           ref={moreButtonRef}
           type="button"
           onClick={() => setMoreOpen((v) => !v)}
-          className={"flex flex-col items-center justify-center gap-0.5 text-[10px] " + (moreOpen ? "text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-400")}
+          className="desk-bottom-link"
+          data-active={moreOpen || MORE.some(({ href }) => active(href))}
           aria-label={copy.nav.more}
           aria-haspopup="menu"
           aria-expanded={moreOpen}

@@ -128,6 +128,7 @@ export function AddToWatchlistButton({
             ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         }`}
+        aria-pressed={isAdded}
         aria-label={isAdded ? "관심 종목에서 제거" : "관심 종목에 추가"}
       >
         <Heart

@@ -25,7 +25,7 @@ export type NavKey =
 
 // 모바일 하단 바처럼 폭이 좁은 곳에서 쓰는 축약 라벨 키(설계서 §12.2).
 // 데스크톱/드로어는 역할이 드러나는 긴 라벨(nav)을, 하단 바는 이 짧은 라벨(navShort)을 쓴다.
-export type NavShortKey = "today" | "stocks" | "watchlist" | "disclosures";
+export type NavShortKey = "today" | "stocks" | "watchlist" | "disclosures" | "compare";
 
 export const commonCopy = {
   ko: {
@@ -52,11 +52,12 @@ export const commonCopy = {
       about: "서비스 소개",
       more: "더보기",
     },
-    // 모바일 하단 바 축약 라벨(설계서 §12.2): 오늘 · 찾기 · 관심 · 공시.
+    // 모바일 하단 바 축약 라벨(설계서 §12.2): 오늘 · 찾기 · 비교 · 관심.
     navShort: {
       today: "오늘",
       stocks: "찾기",
       watchlist: "관심",
+      compare: "비교",
       disclosures: "공시",
     },
     auth: {
@@ -155,6 +156,7 @@ export const commonCopy = {
       today: "Today",
       stocks: "Find",
       watchlist: "Saved",
+      compare: "Compare",
       disclosures: "Filings",
     },
     auth: {

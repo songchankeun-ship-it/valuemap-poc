@@ -87,6 +87,7 @@ export function AddToCompareButton({ ticker, name, compact = false, label }: Pro
             ? "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-900 text-blue-700 dark:text-blue-300"
             : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-blue-300 hover:text-blue-600 dark:hover:border-blue-700 dark:hover:text-blue-400"
         )}
+        aria-pressed={inBasket}
         title={name + " 비교 바스켓 " + (inBasket ? "제거" : "추가")}
       >
         <GitCompare className="h-4 w-4 shrink-0" aria-hidden="true" />

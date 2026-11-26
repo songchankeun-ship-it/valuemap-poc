@@ -196,7 +196,7 @@ export const priorityScoreCardCopy = {
   ko: {
     title: "탐색 우선도",
     leadStrength: "대표 강점",
-    leadCheck: "먼저 볼 지표",
+    leadCheck: "약한 지표",
     metricAlias: (label: string) =>
       ({
         추세: "최근 흐름",
@@ -225,7 +225,7 @@ export const priorityScoreCardCopy = {
   en: {
     title: "Research priority",
     leadStrength: "Top strength",
-    leadCheck: "Check first",
+    leadCheck: "Weaker metric",
     metricAlias: (label: string) =>
       ({
         Trend: "recent direction",
@@ -260,7 +260,7 @@ export const conclusionSummaryCardCopy = {
     suspectPrefix: "데이터 검증 중 · 임시 점수 — ",
     goodPoints: "좋은 점",
     checkPoints: "확인할 점",
-    firstCheck: "이 점수를 본 다음",
+    firstCheck: "먼저 확인할 것",
     openNext: "여기부터 확인하기",
     strengthEmpty: "뚜렷한 강점 지표가 없습니다.",
     warningEmpty: "현재 자동 분류된 특이 주의 신호는 없어요. 다만 최근 공시와 실적은 직접 확인하세요.",
@@ -271,7 +271,7 @@ export const conclusionSummaryCardCopy = {
     suspectPrefix: "Data under review · provisional score — ",
     goodPoints: "Good points",
     checkPoints: "Check points",
-    firstCheck: "After reading this score",
+    firstCheck: "Check first",
     openNext: "Check this first",
     strengthEmpty: "No standout strength metric.",
     warningEmpty: "No auto-classified caution signal right now. Still, check recent disclosures and results yourself.",

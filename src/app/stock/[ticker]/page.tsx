@@ -519,7 +519,7 @@ export default async function StockDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="space-y-3 md:space-y-4">
+    <div className="research-desk research-stock space-y-3 md:space-y-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

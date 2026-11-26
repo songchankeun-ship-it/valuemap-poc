@@ -16,9 +16,7 @@ export interface HeroRiskAlert {
 }
 
 /**
- * 종목 상세 상단 결론 카드 영역(설계서 §4·§14).
- * 모바일 순서: 종목명/현재가 → 현재 결론/좋은 점/확인할 점 → 점수·순위 → 다음 확인 버튼 → 고지.
- * 위험 경고(급등/과열)는 점수 카드와 분리해 별도 바로 노출.
+ * 종목 상세 첫 화면: 종가 → 다음 확인 항목 → 점수·순위.
  */
 export function StockConclusionHero({
   sector,
@@ -77,7 +75,7 @@ export function StockConclusionHero({
   const { locale } = useLanguage();
   const t = conclusionHeroCopy[locale];
   return (
-    <section className="-mx-3 md:-mx-4 space-y-3 border-y border-zinc-200 bg-white/70 px-3 py-3 dark:border-zinc-800 dark:bg-zinc-950/50 md:px-4 md:py-4">
+    <section className="research-stock-overview">
       <StockHeader
         sector={sector}
         name={name}
@@ -102,19 +100,15 @@ export function StockConclusionHero({
         </div>
       ) : null}
 
-      <div className="grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_19rem]">
-        <div className="order-1">
-          <ConclusionSummaryCard
-            type={conclusion.type}
-            summary={conclusion.summary}
-            riskNote={conclusion.riskNote}
-            nextHref={conclusion.nextHref}
-            suspect={suspect}
-            strengths={strengths}
-            warnings={warnings}
-          />
-        </div>
-        <div className="order-2">
+      <ConclusionSummaryCard
+        type={conclusion.type}
+        summary={conclusion.summary}
+        riskNote={conclusion.riskNote}
+        nextHref={conclusion.nextHref}
+        suspect={suspect}
+        strengths={strengths}
+        warnings={warnings}
+        scoreSlot={
           <PriorityScoreCard
             score={score}
             overallRank={overallRank}
@@ -130,16 +124,14 @@ export function StockConclusionHero({
             leadStrength={leadStrength}
             leadCheck={leadCheck}
           />
-        </div>
-        <div className="order-3 rounded-lg border border-zinc-200 bg-white/85 px-2.5 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/50 md:px-3 lg:col-span-2">
-          <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2">{t.nextToCheck}</div>
-          <StockDetailActionButtons />
-        </div>
-      </div>
+        }
+      />
 
-      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/40 px-3 py-2">
-        <p className="text-[11px] text-zinc-600 dark:text-zinc-300 font-medium">{t.disclaimerMain}</p>
-        <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-snug">{t.disclaimerSub}</p>
+      <StockDetailActionButtons />
+
+      <div className="research-stock-disclaimer">
+        <p>{t.disclaimerMain}</p>
+        <p>{t.disclaimerSub}</p>
       </div>
     </section>
   );

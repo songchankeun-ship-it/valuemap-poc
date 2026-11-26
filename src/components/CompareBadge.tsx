@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { GitCompare } from "lucide-react";
 import { getCompareList } from "@/lib/compare";
 import { useLanguage } from "./LanguageProvider";
 
@@ -39,12 +40,10 @@ export function CompareBadge() {
   return (
     <Link
       href="/compare"
-      className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition"
+      className="hidden sm:flex desk-compare-badge items-center gap-1.5 px-2.5 py-1 text-xs font-semibold"
       title={locale === "ko" ? "비교함 보기" : "View comparison"}
     >
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M2 3h8M2 6h6M2 9h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
+      <GitCompare size={14} aria-hidden="true" />
       <span className="tabular-nums">{copy.nav.compare} {count}</span>
     </Link>
   );

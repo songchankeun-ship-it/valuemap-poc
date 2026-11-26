@@ -65,18 +65,18 @@ export async function AppHeader() {
 
   return (
     <>
-      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
+      <header className="desk-chrome desk-header sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
         <div className="px-3 md:px-4 py-2 md:py-2.5 flex items-center gap-2 md:gap-3">
           <MobileNav userEmail={userEmail} />
-          <Link href="/" className="lg:flex hidden items-center gap-2 shrink-0 w-48">
+          <Link href="/" className="lg:flex hidden items-center gap-2.5 shrink-0 desk-header-brand">
             <BrandMark className="h-7 w-7" />
-            <span className="text-base font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">오른스코어</span>
+            <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">오른스코어</span>
           </Link>
           <Link href="/" className="lg:hidden flex min-h-11 min-w-11 items-center justify-center shrink-0 rounded-md" aria-label="홈">
             <BrandMark className="h-7 w-7" />
           </Link>
 
-          <div className="flex-1 flex justify-center max-w-2xl xl:max-w-3xl mx-auto min-w-[9.5rem]">
+          <div className="flex-1 max-w-2xl xl:max-w-3xl min-w-0 mr-auto">
             <GlobalSearch stocks={stocks} themes={themes} />
           </div>
 

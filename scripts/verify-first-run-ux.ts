@@ -53,8 +53,8 @@ const NAV_CANON = {
   en: { today: "Today briefing", stocks: "Find stocks", watchlist: "Watchlist", disclosures: "Disclosures", compare: "Compare" },
 } as const;
 const NAV_SHORT_CANON = {
-  ko: { today: "오늘", stocks: "찾기", watchlist: "관심", disclosures: "공시" },
-  en: { today: "Today", stocks: "Find", watchlist: "Saved", disclosures: "Filings" },
+  ko: { today: "오늘", stocks: "찾기", watchlist: "관심", disclosures: "공시", compare: "비교" },
+  en: { today: "Today", stocks: "Find", watchlist: "Saved", disclosures: "Filings", compare: "Compare" },
 } as const;
 
 for (const locale of ["ko", "en"] as const) {
@@ -67,6 +67,11 @@ for (const locale of ["ko", "en"] as const) {
     check(`navShort.${key} (${locale}) == "${expected}"`, (navShort as Record<string, string>)[key] === expected);
   }
 }
+
+const bottomNavSrc = read("src/components/MobileBottomNav.tsx");
+const bottomNavPrimary = bottomNavSrc.slice(bottomNavSrc.indexOf("const PRIMARY"), bottomNavSrc.indexOf("const MORE"));
+check("mobile bottom navigation gives compare a direct slot", bottomNavPrimary.includes('href: "/compare"'));
+check("mobile navigation keeps disclosures in the More menu", bottomNavSrc.slice(bottomNavSrc.indexOf("const MORE")).includes('href: "/disclosures"'));
 
 // --- 2. Home / today / stocks read as three distinct destinations ------------
 for (const locale of ["ko", "en"] as const) {
@@ -451,5 +456,5 @@ if (failed > 0) {
   process.exit(1);
 }
 console.log(
-  `PASS first-run-ux: nav canon (5 primary + 4 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup), watchlist/compare/login boundary (two empty-state actions, on-device vs login value, Supabase guard + escape links, /admin absent from public nav/SEO), full-journey re-authentication (home = 4 regions, single primary CTA, 6 distinct route roles x2 locales, home↔today separation, admin auth-fallback wiring)`,
+  `PASS first-run-ux: nav canon (5 primary + 5 compact x2 locales), home H1=1, primary CTA+search contract, ${REMOVED_HOME_SECTIONS.length + 1} removed-section guard(s), today change-briefing (summary/order/no-fabricated-change), stocks find-screen (H1 term, search-first, ${qPresetCount} question presets, zero-result relax+reset, mobile-collapsible presets), stock-detail deeper order (evidence→recent change→disclosures→financials→chart, top/summary dedup), watchlist/compare/login boundary (two empty-state actions, on-device vs login value, Supabase guard + escape links, /admin absent from public nav/SEO), full-journey re-authentication (home = 4 regions, single primary CTA, 6 distinct route roles x2 locales, home↔today separation, admin auth-fallback wiring)`,
 );

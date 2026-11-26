@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import type { ReactNode } from "react";
+import { ArrowRight, Check, CornerDownRight } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { conclusionSummaryCardCopy } from "@/lib/copy/stockDetail";
 
@@ -16,6 +17,7 @@ export function ConclusionSummaryCard({
   suspect,
   strengths,
   warnings,
+  scoreSlot,
 }: {
   type: string;
   summary: string;
@@ -24,68 +26,47 @@ export function ConclusionSummaryCard({
   suspect: boolean;
   strengths: string[];
   warnings: string[];
+  scoreSlot: ReactNode;
 }) {
   const { locale } = useLanguage();
   const t = conclusionSummaryCardCopy[locale];
-  const goodItems = strengths.length > 0 ? strengths : [t.strengthEmpty];
-  const checkItems = warnings.length > 0 ? warnings : [t.warningEmpty];
-  const visibleGoodItems = goodItems.slice(0, 1);
-  const visibleCheckItems = checkItems.slice(0, 1);
-  const extraGoodCount = Math.max(0, strengths.length - visibleGoodItems.length);
-  const extraCheckCount = Math.max(0, warnings.length - visibleCheckItems.length);
   return (
-    <div className="rounded-lg border border-blue-100 bg-white/95 p-3.5 dark:border-blue-950 dark:bg-zinc-950/70 md:p-5">
-      <div className="text-[11px] font-semibold uppercase text-blue-700 dark:text-blue-400">{t.title}</div>
-      <div className="mt-1 text-xl md:text-3xl font-black text-zinc-950 dark:text-zinc-50 leading-tight break-keep">
-        {suspect ? <span className="text-amber-600 dark:text-amber-400">{t.suspectPrefix}</span> : null}
-        {type}
-      </div>
-      <p className="mt-1.5 text-xs md:text-[15px] text-zinc-700 dark:text-zinc-300 leading-relaxed">{summary}</p>
-
-      <div className="mt-3 grid grid-cols-2 divide-x divide-zinc-200 border-y border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-        <div className="min-w-0 bg-emerald-50/40 px-2.5 py-2.5 dark:bg-emerald-950/10 md:px-3 md:py-3">
-          <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1">{t.goodPoints}</div>
-          <ul className="space-y-1">
-            {visibleGoodItems.map((item) => (
-              <li key={item} className="flex items-start gap-1.5 text-[11px] md:text-xs leading-snug text-emerald-800 dark:text-emerald-200">
-                <span aria-hidden="true" className="shrink-0">✓</span>
-                <span>{item}</span>
-              </li>
-            ))}
-            {extraGoodCount > 0 ? (
-              <li className="text-[10px] text-emerald-800 dark:text-emerald-300">{t.moreSignals(extraGoodCount)}</li>
-            ) : null}
-          </ul>
+    <div className="research-stock-grid">
+      <div className="research-stock-next">
+        <div className="research-section-label flex items-center gap-2">
+          <CornerDownRight size={16} aria-hidden="true" />
+          {t.firstCheck}
         </div>
-
-        <div className="min-w-0 bg-amber-50/50 px-2.5 py-2.5 dark:bg-amber-950/10 md:px-3 md:py-3">
-          <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 mb-1">{t.checkPoints}</div>
-          <ul className="space-y-1">
-            {visibleCheckItems.map((item) => (
-              <li key={item} className="flex items-start gap-1.5 text-[11px] md:text-xs leading-snug text-amber-800 dark:text-amber-300">
-                <span aria-hidden="true" className="shrink-0">!</span>
-                <span>{item}</span>
-              </li>
-            ))}
-            {extraCheckCount > 0 ? (
-              <li className="text-[10px] text-amber-800 dark:text-amber-300">{t.moreSignals(extraCheckCount)}</li>
-            ) : null}
-          </ul>
-        </div>
-      </div>
-
-      <div className="mt-3 border border-blue-200 bg-blue-50 px-3 py-3 dark:border-blue-900 dark:bg-blue-950/30 md:px-4">
-        <div className="text-[11px] font-bold text-blue-700 dark:text-blue-300">{t.firstCheck}</div>
-        <p className="mt-1 text-sm font-semibold leading-relaxed text-zinc-900 dark:text-zinc-100 md:text-[15px]">
-          {riskNote}
-        </p>
-        <a
-          href={nextHref}
-          className="mt-2 inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-blue-700 underline decoration-blue-300 underline-offset-4 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-100"
-        >
+        <h2>{riskNote}</h2>
+        <a href={nextHref} className="research-button">
           {t.openNext}
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight size={15} aria-hidden="true" />
         </a>
+      </div>
+
+      {scoreSlot}
+
+      <div className="research-stock-summary">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{t.title}</span>
+          <h2 className="font-bold">
+            {suspect ? <span className="text-amber-700 dark:text-amber-300">{t.suspectPrefix}</span> : null}
+            {type}
+          </h2>
+        </div>
+        <p className="research-stock-summary-copy">{summary}</p>
+        <dl className="research-stock-signals">
+          <div>
+            <dt><Check size={14} aria-hidden="true" />{t.goodPoints}</dt>
+            <dd>{strengths[0] ?? t.strengthEmpty}</dd>
+            {strengths.length > 1 ? <dd className="research-signal-more">{t.moreSignals(strengths.length - 1)}</dd> : null}
+          </div>
+          <div data-tone="check">
+            <dt><CornerDownRight size={14} aria-hidden="true" />{t.checkPoints}</dt>
+            <dd>{warnings[0] ?? t.warningEmpty}</dd>
+            {warnings.length > 1 ? <dd className="research-signal-more">{t.moreSignals(warnings.length - 1)}</dd> : null}
+          </div>
+        </dl>
       </div>
     </div>
   );

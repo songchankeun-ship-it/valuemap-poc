@@ -4314,3 +4314,15 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - URLs, canonical metadata, data, score formulas and analytics events are
   unchanged. This is a local preview only: no push, release, or experiment
   changes. Use the owner's visual review before extending to other pages.
+
+## 2026-11-26 - Stock detail and navigation preview [codex]
+
+- The research desk preview now leads detail pages with a direct next check,
+  then score and rank context. Price, evidence tabs, disclosures, and existing
+  watchlist, compare and share behavior are retained.
+- The sidebar, header, drawer and mobile bar share the research desk colors.
+  Compare is in the mobile bar; disclosures stay in the drawer and More.
+- Checked desktop and 390px/320px detail layouts, dark mode, evidence-tab
+  jumping, mobile compare routing, and keyboard focus restoration.
+- Next: review `http://127.0.0.1:4487/stock/005930` locally with the owner.
+  Do not push or deploy this preview. No data, formulas or auth flow changed.

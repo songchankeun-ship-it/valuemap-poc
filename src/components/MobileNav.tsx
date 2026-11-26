@@ -17,10 +17,10 @@ const ITEMS = [
   // 1차 메뉴 — 핵심 기능
   { href: "/today", Icon: CalendarDays, key: "today", group: "" },
   { href: "/stocks", Icon: Search, key: "stocks", group: "" },
+  { href: "/compare", Icon: GitCompare, key: "compare", group: "" },
   { href: "/watchlist", Icon: Heart, key: "watchlist", group: "" },
   { href: "/disclosures", Icon: Megaphone, key: "disclosures", group: "" },
   // 더보기 — 보조 기능
-  { href: "/compare", Icon: GitCompare, key: "compare", group: "more" },
   { href: "/backtest", Icon: FlaskConical, key: "backtest", group: "more" },
   { href: "/pricing", Icon: CreditCard, key: "pricing", group: "more" },
   { href: "/guide/metrics", Icon: BookOpen, key: "metricsGuide", group: "more" },
@@ -111,7 +111,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
         <>
           <div
             onClick={() => setOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/70 z-[60] backdrop-blur-sm"
+            className="lg:hidden fixed inset-0 bg-black/50 z-[60]"
             aria-hidden
           />
           <div
@@ -120,7 +120,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             aria-modal="true"
             aria-label={copy.brand}
             tabIndex={-1}
-            className="lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] bg-white dark:bg-zinc-950 z-[61] shadow-2xl flex flex-col border-r-2 border-zinc-900/10 dark:border-zinc-100/10"
+            className="desk-chrome desk-drawer lg:hidden fixed inset-y-0 left-0 w-[min(340px,calc(100vw-48px))] z-[61] flex flex-col"
           >
             <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex min-h-11 items-center gap-2 rounded-md">
@@ -146,18 +146,13 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
                 return (
                   <div key={item.href}>
                     {showGroup ? (
-                      <div className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider px-3 pt-3 pb-1">{copy.nav.more}</div>
+                      <div className="desk-nav-group">{copy.nav.more}</div>
                     ) : null}
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
                       aria-current={active ? "page" : undefined}
-                      className={
-                        "flex items-center gap-3 px-3 py-3 rounded-md text-sm transition " +
-                        (active
-                          ? "bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 font-semibold shadow-[inset_2px_0_0_#2563eb]"
-                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800")
-                      }
+                      className="desk-nav-link"
                     >
                       <Icon className="w-5 h-5 shrink-0" strokeWidth={1.8} />
                       <span className="flex-1">{copy.nav[item.key]}</span>
@@ -213,7 +208,7 @@ export function MobileNav({ userEmail }: { userEmail: string | null }) {
             </div>
 
             <div className="flex shrink-0 items-start gap-2 border-t border-zinc-200 bg-zinc-50 px-4 py-3 text-[11px] leading-relaxed text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 desk-accent" aria-hidden="true" />
               <span>{copy.chrome.explorationNotice}</span>
             </div>
           </div>
