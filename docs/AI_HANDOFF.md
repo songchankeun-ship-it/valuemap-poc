@@ -4368,3 +4368,25 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   DART link destination, not the external document contents.
 - Next: review `http://127.0.0.1:4487/disclosures` with the owner. No
   deployment or changes to data collection, classification, or SEO metadata.
+
+## 2026-11-26 - Research desk cross-screen review [codex]
+
+- Reviewed Home, Today, Finder, Detail, curated Compare, direct Compare,
+  Watchlist and Disclosures at 1280, 390 and 320 CSS px. No page-level
+  horizontal overflow. Checked search and recovery, evidence navigation,
+  four-column compare scrolling with a fixed label column, watchlist row
+  editing, disclosures filters and DART link targets, and dark mode.
+- Release blockers: a shared compare link can show unrelated tickers when
+  the local basket is full; Today does not label the sample disclosures it
+  uses for its KPI and filing section. Mobile compare tray also overlaps the
+  stock detail rank on first view with a populated basket.
+- Repro: on the isolated local origin with four other tickers already
+  saved, open the KB Financial / Hana Financial curated pair and choose
+  direct comparison. The URL and banner name the requested pair but the
+  matrix shows the previous four tickers. Prioritize requested tickers
+  without overwriting the unrelated saved basket.
+- TypeScript, first-run UX, score scale, next-action, compare/query,
+  disclosure hierarchy, Today insight, analytics, growth, data-rights and
+  SEO contract checks passed. Existing checks do not cover the two blockers.
+- No application changes or deployment during this review. Next: resolve
+  comparison seeding and sample attribution, then recheck tray placement.
