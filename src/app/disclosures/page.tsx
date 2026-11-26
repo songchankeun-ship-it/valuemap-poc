@@ -4,15 +4,16 @@ import { realStockPool } from "@/lib/realStocks";
 import { DisclosuresIntroHeader, DisclosuresIntroNote } from "@/components/disclosures/DisclosuresIntro";
 import { disclosureKeywords, uniqueKeywords } from "@/lib/seoKeywords";
 
+const disclosuresTitle = "DART 공시: 자사주 취득·지분 변동·공급계약 — 오른스코어";
 const disclosuresDescription =
-  "DART 공시 분석을 위한 신호 페이지. 최신 수집 200건 내에서 자사주 취득, 자기주식 처분, 임원·주요주주 보유변동, 정정공시, 단일판매·공급계약, 전환사채·유상증자 공시를 유형별로 정리합니다.";
+  "자사주 취득, 임원·주요주주 지분 변동, 공급계약 등 공시를 유형별로 보고 DART 원문에서 확인할 항목을 살펴보세요. 코스피·코스닥 최신 수집 200건 내에서 제공합니다.";
 
 export const metadata = {
-  title: "DART 공시 신호 분석 — 오른스코어",
+  title: disclosuresTitle,
   description: disclosuresDescription,
   keywords: uniqueKeywords(disclosureKeywords),
   openGraph: {
-    title: "DART 공시 신호 분석 — 오른스코어",
+    title: disclosuresTitle,
     description: disclosuresDescription,
     url: "/disclosures",
     siteName: "오른스코어",
@@ -23,7 +24,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DART 공시 신호 분석 — 오른스코어",
+    title: disclosuresTitle,
     description: disclosuresDescription,
   },
   alternates: { canonical: "/disclosures" },
