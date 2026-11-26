@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox, Info } from "lucide-react";
+import Link from "next/link";
+import { Heart, ExternalLink, ArrowRight, AlertTriangle, RefreshCw, Inbox, Info, ChevronDown, FileCheck2 } from "lucide-react";
 import { SignalGuideExpand } from "./SignalGuideExpand";
 import { findGuideByLabel } from "@/lib/signalGuide";
 import { DISCLOSURE_TYPE_ORDER, typeMetaOf } from "@/lib/disclosureType";
 import { isCorrectionFiling } from "@/lib/disclosureHierarchy";
+import { dartFilingUrl, selectDisclosureHighlights } from "@/lib/disclosureHighlights";
 import { addToWatchlist, removeFromWatchlist, isInWatchlist, getWatchlist } from "@/lib/watchlist";
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosureExplorerCopy } from "@/lib/copy/disclosures";
@@ -64,12 +66,17 @@ function directionLabel(dir: string | undefined, t: ExplorerCopy): string {
   return t.directionUnknown;
 }
 
-function openExternal(url: string) {
-  window.open(url, "_blank", "noopener,noreferrer");
+function filingDate(value: string) {
+  return /^\d{8}$/.test(value) ? `${value.slice(0, 4)}.${value.slice(4, 6)}.${value.slice(6, 8)}` : value;
 }
 
-function goToStock(code: string) {
-  window.location.href = "/stock/" + code;
+function FilingSource({ filing, t }: { filing: GroupedSignal; t: ExplorerCopy }) {
+  const href = dartFilingUrl(filing.representative.disclosure.rcept_no);
+  return href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={t.viewSourceAria(filing.corp_name)} className="research-filings-source">
+      {t.viewSource}<ExternalLink size={15} aria-hidden="true" />
+    </a>
+  ) : <span className="research-filings-source-missing">{t.unavailableSource}</span>;
 }
 
 // 공시 카드용 컴팩트 관심 토글 — 분석 대상(유니버스) 종목에만 노출
@@ -106,11 +113,9 @@ function WatchlistToggle({ code, name, t }: { code: string; name: string; t: Exp
       type="button"
       onClick={toggle}
       disabled={loading}
+      aria-pressed={added}
       aria-label={added ? t.watchRemoveAriaFor(name) : t.watchAddAriaFor(name)}
-      className={"inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium border transition disabled:opacity-50 disabled:cursor-not-allowed " + FOCUS_RING + " " +
-        (added
-          ? "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900 text-pink-700 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-950/50"
-          : "bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-pink-300 hover:text-pink-600 dark:hover:text-pink-400")}
+      className={`research-filings-control ${FOCUS_RING}`}
     >
       <Heart className="w-3.5 h-3.5" fill={added ? "currentColor" : "none"} strokeWidth={added ? 0 : 1.8} />
       {added ? t.watchAdded : t.watch}
@@ -294,168 +299,100 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
     ? grouped.filter((g) => g.stock_code && watchTickers.has(g.stock_code))
     : typeScopeBase;
   const filtered = isWatchTab || filterType === "all" ? scoped : scoped.filter((g) => g.signalType === filterType);
-  const collectedAt = fmtKST(data.fetchedAt);
+  const isSample = data.source?.startsWith("sample") ?? false;
+  const collectedAt = isSample ? null : fmtKST(data.fetchedAt);
   const collectedSource = sourceLabel(data.source, t);
-  const disclosureBasis = [collectedAt ?? t.collectedAtUnknown, collectedSource].filter(Boolean).join(" · ");
+  const disclosureBasis = isSample ? t.sourceSample : [collectedAt ?? t.collectedAtUnknown, collectedSource].filter(Boolean).join(" · ");
   const priceScoreBasis = `${formatBizDateLong(dataMetadata.asOfBusinessDate)} ${t.marketClose}`;
+  const highlights = selectDisclosureHighlights(filtered);
+  const tabs = [
+    { key: "all", label: t.tabAll, count: typeScopeBase.length },
+    { key: "watchlist", label: t.tabWatchlist, count: watchlistCount },
+    ...DISCLOSURE_TYPE_ORDER.map((type) => ({
+      key: type,
+      label: typeMetaOf(type).shortLabel,
+      count: signalCounts[type] ?? 0,
+    })),
+  ];
 
   return (
     <div className="space-y-4">
-      <header className="border-y border-zinc-200 py-3 dark:border-zinc-800 md:py-4">
-        <div className="flex items-baseline justify-between mb-1 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.title}</h2>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
-            {/* 수집 범위 반복 고지는 아래 공통 안내 박스 한 곳으로 모음(재검수 Slice K) — 여기선 카운트만. */}
-            <span className="tabular-nums">{t.summary(days, data.signalCount, scope === "all", scoped.length)}</span>
-          </div>
-        </div>
-        <dl className="mb-3 grid grid-cols-1 border-y border-zinc-200 text-[11px] tabular-nums dark:border-zinc-800 sm:grid-cols-2 sm:divide-x sm:divide-zinc-200 sm:dark:divide-zinc-800">
-          <div className="flex items-center justify-between gap-2 px-2.5 py-2">
-            <dt className="text-zinc-500 dark:text-zinc-400">{t.priceScoreBasis}</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{priceScoreBasis}</dd>
-          </div>
-          <div className="flex items-center justify-between gap-2 border-t border-zinc-200 px-2.5 py-2 dark:border-zinc-800 sm:border-t-0">
-            <dt className="text-zinc-500 dark:text-zinc-400">{t.disclosureCollectionBasis}</dt>
-            <dd className="font-medium text-zinc-700 dark:text-zinc-200 text-right">{disclosureBasis}</dd>
-          </div>
-        </dl>
-        <div className="flex gap-2 flex-wrap items-center mb-3">
-          {[3, 7, 14, 30].map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => setDays(d)}
-              className={"px-3 py-1.5 text-xs rounded-md border transition " + FOCUS_RING + " " +
-                (days === d
-                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                  : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
-            >
-              {t.dayUnit(d)}
-            </button>
-          ))}
-          {/* 기간 필터가 '전체 기간 공시'로 오해되지 않도록 항상 보이는 수집 범위 배지(컨트롤 아님) */}
-          <span
-            role="note"
-            aria-label={t.periodScopeBadgeAria}
-            className="inline-flex items-center gap-1 border-l border-slate-300 px-2 py-1 text-[11px] font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300"
-          >
-            <Info className="w-3 h-3 shrink-0 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
-            {t.periodScopeBadge}
-          </span>
-        </div>
-
-        {/* 상단 탭(§7-3) — 전체 / 내 관심종목 / 유형별. 유형색은 중립(호재·악재 배제), 가로 스크롤. */}
-        <div
-          role="group"
-          aria-label={t.title}
-          className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-1 mb-3"
-        >
-          {(() => {
-            const tabs: { key: string; label: string; count: number; dot?: string }[] = [
-              { key: "all", label: t.tabAll, count: typeScopeBase.length },
-              { key: "watchlist", label: t.tabWatchlist, count: watchlistCount },
-              ...DISCLOSURE_TYPE_ORDER.map((type) => ({
-                key: type,
-                label: typeMetaOf(type).shortLabel,
-                count: signalCounts[type] ?? 0,
-                dot: typeMetaOf(type).dot,
-              })),
-            ];
-            return tabs.map((tab) => {
-              const active = filterType === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setFilterType(tab.key)}
-                  aria-pressed={active}
-                  className={"inline-flex items-center gap-1.5 min-h-[40px] px-3 py-2 rounded-md border text-xs font-medium whitespace-nowrap shrink-0 transition " + FOCUS_RING + " " +
-                    (active
-                      ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                      : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-500")}
-                >
-                  {tab.dot ? (
-                    <span className={"w-1.5 h-1.5 rounded-full shrink-0 " + (active ? "bg-white/70 dark:bg-zinc-900/70" : tab.dot)} aria-hidden="true" />
-                  ) : null}
-                  {tab.label}
-                  <span className={"tabular-nums text-[11px] " +
-                    (active
-                      ? "bg-white/20 text-white dark:bg-zinc-900/20 dark:text-zinc-900"
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400")}>
-                    {tab.count}
-                  </span>
-                </button>
-              );
-            });
-          })()}
-        </div>
-
-        {/* 분석 대상만 / 전체 시장 (설계서 §15) — '내 관심종목' 탭에서는 숨김(관심 집합이 이미 범위) */}
-        {!isWatchTab ? (
-          <div className="mb-1">
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{t.scopeLabel}</span>
-              <div
-                role="group"
-                aria-label={t.scopeGroupAria}
-                className="inline-flex rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 p-0.5"
-              >
-                {([
-                  { key: "universe", label: t.scopeUniverse, count: universeCount },
-                  { key: "all", label: t.scopeAll, count: grouped.length },
-                ] as const).map((opt) => {
-                  const active = scope === opt.key;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setScope(opt.key)}
-                      aria-pressed={active}
-                      className={"inline-flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-md text-xs font-medium transition " + FOCUS_RING + " " +
-                        (active
-                          ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600"
-                          : "bg-transparent text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100")}
-                    >
-                      {opt.label}
-                      <span className={"tabular-nums text-[11px] px-1.5 py-0.5 rounded-full " +
-                        (active
-                          ? "bg-white/20 text-white"
-                          : "bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300")}>
-                        {opt.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed break-words">
-              <strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeUniverseStrong}</strong>{t.scopeUniverseDesc}<strong className="font-medium text-zinc-600 dark:text-zinc-300">{t.scopeAllStrong}</strong>{t.scopeAllDesc}
-            </p>
-          </div>
-        ) : null}
-      </header>
-
-      {/* 카드 공통 경고 박스(재검수 5-4 밀도) — DART 원문/수집 제한/호재·악재 아님을 한곳에 모아 카드 반복 축소 */}
-      <details className="border-l-2 border-slate-300 bg-slate-50 px-3 py-2 text-[11px] leading-relaxed text-slate-600 dark:border-slate-700 dark:bg-slate-800/30 dark:text-slate-300">
-        <summary className="cursor-pointer select-none font-semibold text-slate-500 dark:text-slate-400">{t.topNoticeTitle}</summary>
-        <ul className="mt-1 space-y-0.5">
-          {t.topNoticeBullets.map((bullet, i) => (
-            <li key={i} className="flex gap-1.5">
-              <span className="text-slate-400 shrink-0" aria-hidden="true">·</span>
-              <span className="break-words">{bullet}</span>
-            </li>
-          ))}
-        </ul>
-      </details>
-
-      {/* 예시(샘플) 데이터 안내 — source가 "sample*"일 때만 카드 목록 위에 노출(재검수 P0C) */}
-      {data.source?.startsWith("sample") ? (
-        <div className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 leading-relaxed">
-          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" strokeWidth={1.8} aria-hidden="true" />
-          <span className="break-words">{t.sampleNotice}</span>
-        </div>
+      {isSample ? (
+        <p className="research-filings-sample"><Info size={15} aria-hidden="true" />{t.sampleNotice}</p>
       ) : null}
 
+      <section className="research-filings-priority" aria-labelledby="disclosure-priority-heading">
+        <div className="research-filings-priority-heading">
+          <FileCheck2 size={20} aria-hidden="true" />
+          <div>
+            <h2 id="disclosure-priority-heading">{t.priorityTitle}</h2>
+            <p>{t.priorityRule}</p>
+          </div>
+        </div>
+        {highlights.length > 0 ? (
+          <ul className="research-filings-priority-list">
+            {highlights.map((g) => (
+              <li key={g.key}>
+                <div className="research-filings-identity">
+                  <p className="research-filings-meta">
+                    <strong>{g.corp_name}</strong>
+                    <span>{g.signalLabel}</span>
+                    <span className="tabular-nums">{filingDate(g.rcept_dt_latest)}</span>
+                  </p>
+                  <p className="research-filing-title">{g.representative.disclosure.report_nm}</p>
+                </div>
+                <FilingSource filing={g} t={t} />
+              </li>
+            ))}
+          </ul>
+        ) : <p className="research-filings-priority-empty">{t.priorityEmpty}</p>}
+      </section>
+
+      <section className="research-filings-toolbar" aria-label={t.title}>
+        <div className="research-filings-controls">
+          <div role="group" aria-label={t.periodGroupAria} className="research-filings-options">
+            {[3, 7, 14, 30].map((d) => (
+              <button key={d} type="button" onClick={() => setDays(d)} aria-pressed={days === d} className="research-filings-control">
+                {t.dayUnit(d)}
+              </button>
+            ))}
+          </div>
+          {!isWatchTab ? (
+            <div role="group" aria-label={t.scopeGroupAria} className="research-filings-options">
+              {([
+                { key: "universe", label: t.scopeUniverse, count: universeCount },
+                { key: "all", label: t.scopeAll, count: grouped.length },
+              ] as const).map((opt) => (
+                <button key={opt.key} type="button" onClick={() => setScope(opt.key)} aria-pressed={scope === opt.key} className="research-filings-control">
+                  {opt.label}<span className="tabular-nums">{opt.count}</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        <div role="group" aria-label={t.typeGroupAria} className="research-filings-options">
+          {tabs.map((tab) => (
+            <button key={tab.key} type="button" onClick={() => setFilterType(tab.key)} aria-pressed={filterType === tab.key} className="research-filings-control">
+              {tab.label}<span className="tabular-nums">{tab.count}</span>
+            </button>
+          ))}
+        </div>
+
+        <dl className="research-filings-basis">
+          <div><dt>{t.disclosureCollectionBasis}</dt><dd>{disclosureBasis}</dd></div>
+          <div><dt>{t.priceScoreBasis}</dt><dd>{priceScoreBasis}</dd></div>
+        </dl>
+        <span role="note" aria-label={t.periodScopeBadgeAria} className="research-filings-limit">
+          <Info size={14} aria-hidden="true" />{t.periodScopeBadge}
+        </span>
+      </section>
+
+      <div className="research-band-heading">
+        <h2>{t.resultTitle}</h2>
+        <span className="text-xs text-[var(--muted)]" role="status">
+          {t.listCount(filtered.length)} · {t.dateOrder}
+        </span>
+      </div>
       <div className="space-y-2">
         {filtered.length === 0 ? (
           isWatchTab && watchTickers.size === 0 ? (
@@ -502,142 +439,76 @@ export function DisclosureExplorer({ initialData, universe = [] }: { initialData
           )
         ) : (
           filtered.map((g) => {
+            const { disclosure, direction, note } = g.representative;
             const meta = typeMetaOf(g.signalType);
             const Icon = meta.Icon;
             const desc = t.descriptions[g.signalLabel] || t.descFallback;
             const guide = findGuideByLabel(g.signalLabel);
-            const checkLine = guide?.checkPoints?.[0] ?? null;
-            const checkPoint = checkLine ?? desc;
-            const dt = g.rcept_dt_latest;
-            const date = dt.length >= 8 ? dt.slice(0, 4) + "." + dt.slice(4, 6) + "." + dt.slice(6, 8) : dt;
+            const checkPoint = guide?.checkPoints?.[0] ?? desc;
+            const code = g.stock_code;
+            const inUniverse = code !== undefined && universeSet.has(code);
+            const filer = disclosure.flr_nm && disclosure.flr_nm !== g.corp_name ? disclosure.flr_nm : null;
             return (
-              <div key={g.key} className={"bg-white dark:bg-zinc-900 border rounded-lg p-3 md:p-4 transition hover:shadow-sm " + meta.cardBorder}>
-                {/* 상단: 공시 유형 / 제출일 / 자동분류 */}
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                    <span className={"inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded font-medium border " + meta.badgeBg + " " + meta.badgeText + " " + meta.badgeBorder}>
-                      <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
-                      {meta.label} · {t.autoClassified}
-                    </span>
-                    {g.representative.direction ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" aria-hidden="true" />
-                        {directionLabel(g.representative.direction, t)}
-                      </span>
-                    ) : null}
-                    {g.count > 1 ? (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium tabular-nums bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                        {g.hasRevision ? t.revisionIncluded : ""}{t.countUnit(g.count)}
-                      </span>
+              <article key={g.key} className="research-filing">
+                <div className="research-filing-head">
+                  <div className="research-filings-identity">
+                    <p className="research-filings-meta">
+                      <span className="research-filings-type"><Icon size={15} aria-hidden="true" />{g.signalType === "correction" ? g.signalLabel : meta.label} · {t.autoClassified}</span>
+                      <span className="tabular-nums">{filingDate(g.rcept_dt_latest)} {t.submitted}</span>
+                      {g.count > 1 || g.hasRevision ? <span>{g.hasRevision ? t.revisionIncluded : ""}{t.countUnit(g.count)}</span> : null}
+                    </p>
+                    <p className="research-filing-company">
+                      {g.signalType === "insider_buy" && filer ? <small>{t.targetCompanyLabel}</small> : null}
+                      <strong>{g.corp_name}</strong>{code ? <small className="font-mono">{code}</small> : null}
+                    </p>
+                    <h3 className="research-filing-title">{disclosure.report_nm}</h3>
+                    {filer || direction ? (
+                      <p className="research-filing-extra">
+                        {filer ? <span>{t.reporterLabel} {filer}</span> : null}
+                        {direction ? <span>{directionLabel(direction, t)}</span> : null}
+                      </p>
                     ) : null}
                   </div>
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0">{date} {t.submitted}</span>
+                  <FilingSource filing={g} t={t} />
                 </div>
 
-                {/* 회사명 / 공시명 */}
-                <div className="mb-2 min-w-0">
-                  {(() => {
-                    const flr = g.representative.disclosure.flr_nm;
-                    // 보고자가 대상 회사와 다를 때만 제출자로 취급(회사 자체 제출 공시는 중복 표기 생략).
-                    const reporterDiffers = Boolean(flr) && flr !== g.corp_name;
-                    // 보유 변동(소유상황보고서)은 '대상 회사'와 '보고자'가 헷갈리므로 명시적으로 분리 표기한다.
-                    if (g.signalType === "insider_buy" && reporterDiffers) {
-                      return (
-                        <div className="flex flex-col gap-0.5 min-w-0">
-                          <div className="flex items-baseline gap-1.5 flex-wrap min-w-0">
-                            <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 shrink-0">{t.targetCompanyLabel}</span>
-                            <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
-                            {g.stock_code ? (
-                              <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
-                            ) : null}
-                          </div>
-                          <div className="flex items-baseline gap-1.5 flex-wrap min-w-0">
-                            <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 shrink-0">{t.reporterLabel}</span>
-                            <span className="text-xs text-zinc-600 dark:text-zinc-300 break-words">{flr}</span>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="flex items-baseline gap-2 flex-wrap min-w-0">
-                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 break-words">{g.corp_name}</span>
-                        {g.stock_code ? (
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums">{g.stock_code}</span>
-                        ) : null}
-                        {reporterDiffers ? (
-                          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate max-w-[160px]">· {flr}</span>
-                        ) : null}
-                      </div>
-                    );
-                  })()}
-                  <p className="mt-1 text-sm font-medium text-zinc-800 dark:text-zinc-200 leading-snug break-words line-clamp-2">
-                    {g.representative.disclosure.report_nm}
-                  </p>
+                <div className="research-filings-check">
+                  <strong>{t.checkLabel}</strong><p>{checkPoint}</p>
                 </div>
-
-                {/* 자동분류 보조 해석 */}
-                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words">{desc}</p>
-                {g.representative.note && g.representative.note !== desc ? (
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2 leading-relaxed break-words line-clamp-2">{g.representative.note}</p>
-                ) : null}
-
-                {/* 확인할 것 — 중립 확인 포인트 (반복 '주의' 문구는 상단 공통 경고 박스로 이동) */}
-                <div className="flex gap-1.5 text-[11px] text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-100 dark:border-zinc-800 rounded-md px-2.5 py-1.5 mb-3 leading-relaxed">
-                  <span className="font-semibold text-zinc-500 dark:text-zinc-400 shrink-0">{t.checkLabel}</span>
-                  <span className="break-words">{checkPoint}</span>
-                </div>
-
-                {/* 액션 행 (§7-4): 종목 보기 → DART 원문 → 관심 */}
-                <ul className="flex items-center gap-2 flex-wrap list-none">
-                  {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => goToStock(g.stock_code!)}
-                        aria-label={t.viewStockAria(g.corp_name)}
-                        className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-700 transition ${FOCUS_RING}`}
-                      >
-                        {t.viewStock} <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-                      </button>
-                    </li>
+                <div className="research-filings-row-tools">
+                  {guide ? (
+                    <SignalGuideExpand
+                      guide={guide}
+                      ariaLabel={t.explainAria(g.corp_name, g.signalLabel)}
+                      openLabel={t.expandLabel}
+                      closeLabel={t.collapseLabel}
+                      context={note && note !== desc ? <p>{note}</p> : undefined}
+                    />
+                  ) : note && note !== desc ? (
+                    <details className="research-filings-footnotes">
+                      <summary><ChevronDown size={15} aria-hidden="true" />{t.expandLabel}</summary>
+                      <p>{note}</p>
+                    </details>
                   ) : null}
-                  <li>
-                    <button
-                      type="button"
-                      onClick={() => openExternal(g.representative.disclosure.url)}
-                      aria-label={t.viewSourceAria(g.corp_name)}
-                      className={`inline-flex items-center gap-1 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50 active:bg-blue-200 transition ${FOCUS_RING}`}
-                    >
-                      {t.viewSource} <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-                    </button>
-                  </li>
-                  {g.stock_code && universeSet.has(g.stock_code) ? (
-                    <li>
-                      <WatchlistToggle code={g.stock_code} name={g.corp_name} t={t} />
-                    </li>
-                  ) : null}
-                </ul>
-                {/* 상태 배지는 'DART 원문' 액션과 DOM·시각·텍스트 추출에서 분리 — 버튼 줄 아래 별도 줄(재검수 P2-3) */}
-                {g.stock_code && !universeSet.has(g.stock_code) ? (
-                  <div className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.notInUniverse}</div>
-                ) : null}
-                {/* 이 공시 이해하기 — 차별점 */}
-                {guide ? (
-                  <SignalGuideExpand
-                    guide={guide}
-                    url={g.representative.disclosure.url}
-                    ariaLabel={t.explainAria(g.corp_name, g.signalLabel)}
-                    sourceAriaLabel={t.explainSourceAria(g.corp_name)}
-                  />
-                ) : null}
-              </div>
+                  {code && inUniverse ? (
+                    <div className="research-filings-options">
+                      <Link href={`/stock/${code}`} aria-label={t.viewStockAria(g.corp_name)} className="research-filings-control">
+                        {t.viewStock}<ArrowRight size={15} aria-hidden="true" />
+                      </Link>
+                      <WatchlistToggle code={code} name={g.corp_name} t={t} />
+                    </div>
+                  ) : code ? <span className="research-filing-extra">{t.notInUniverse}</span> : null}
+                </div>
+              </article>
             );
           })
         )}
       </div>
 
-      {/* 하단 제한 안내는 상단 공통 안내 박스(topNotice) + 기간 배지로 이미 1회 고지되므로 제거해
-          같은 수집 범위 문구가 4곳→2곳으로 줄었다(재검수 Slice K: 반복 고지 축소). */}
+      <details className="research-filings-footnotes">
+        <summary><ChevronDown size={15} aria-hidden="true" />{t.topNoticeTitle}</summary>
+        <ul>{t.topNoticeBullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+      </details>
     </div>
   );
 }

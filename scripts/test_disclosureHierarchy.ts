@@ -22,6 +22,7 @@ import {
   classificationBasisOf,
 } from "../src/lib/disclosureHierarchy";
 import { firstSignalOf } from "../src/lib/disclosure-signals";
+import { dartFilingUrl, selectDisclosureHighlights } from "../src/lib/disclosureHighlights";
 import type { Disclosure } from "../src/lib/dart";
 import { disclosureExplorerCopy, disclosureSummaryCopy } from "../src/lib/copy/disclosures";
 import { stockDisclosuresCopy } from "../src/lib/copy/stockDetail";
@@ -130,6 +131,36 @@ check("G1 no longer reads raw d.signal.note directly", !stockSrc.includes("d.sig
 check("G2 renders deterministic correction badge", stockSrc.includes("isCorrectionFiling(d.report_nm)") && stockSrc.includes("t.correctionBadge"));
 check("G2 correction copy exists in both locales", typeof stockDisclosuresCopy.ko.correctionBadge === "string" && typeof stockDisclosuresCopy.en.correctionBadge === "string");
 check("G3 DART original access stays prominent", stockSrc.includes("t.dartOriginal") && explorerSrc.includes("t.viewSource"));
+
+// ── H. Direct source and priority shelf ───────────────────────────────
+const filing = (signalType: string, receipt: string) => ({
+  signalType,
+  rcept_dt_latest: receipt.slice(0, 8),
+  representative: { disclosure: { rcept_no: receipt } },
+});
+const priorityInput = [
+  filing("capital_raise", "20260723000001"),
+  filing("correction", "20260725000002"),
+  filing("single_contract", "20260726000001"),
+  filing("single_contract", "20260725000002"),
+  filing("capital_raise", "20260725000003"),
+  filing("insider_buy", "20260727000001"),
+  filing("correction", "20260728000001&next=other"),
+];
+const receipts = selectDisclosureHighlights(priorityInput).map((item) => item.representative.disclosure.rcept_no);
+eq("H1 limited to 3 unique valid receipts from priority types in newest-first order",
+  receipts, ["20260726000001", "20260725000003", "20260725000002"]);
+eq("H2 a non-priority filter does not add unrelated filings",
+  selectDisclosureHighlights([filing("insider_buy", "20260727000001")]), []);
+eq("H3 valid receipt opens its canonical DART original",
+  dartFilingUrl("20260726000001"), "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260726000001");
+check("H4 invalid receipt is not rendered as a link",
+  dartFilingUrl("20260726000001?redirect=example.com") === undefined);
+check("H5 direct source is a native link and the shelf respects the active filter",
+  explorerSrc.includes('<a href={href} target="_blank" rel="noopener noreferrer"') &&
+  explorerSrc.includes("selectDisclosureHighlights(filtered)"));
+check("H6 sample provenance is visible before the highlighted filings",
+  explorerSrc.indexOf("t.sampleNotice") < explorerSrc.indexOf("t.priorityTitle"));
 
 // ── 자기검증: 탐지 로직이 실제로 동작함을 증명 ─────────────────────
 check("selftest: correction detector fires on '정정'", "사업보고서(정정)".includes("정정"));

@@ -36,7 +36,7 @@ export default async function DisclosuresPage() {
   const initial = await getRecentSignals(7);
   const universe = realStockPool.map((s) => s.ticker);
   return (
-    <div className="space-y-4">
+    <div className="research-desk research-disclosure space-y-4">
       <DisclosuresIntroHeader />
 
       <DisclosureExplorer initialData={initial} universe={universe} />

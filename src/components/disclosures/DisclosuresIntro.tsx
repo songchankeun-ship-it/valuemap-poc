@@ -5,6 +5,7 @@
 // 서버 로직(getRecentSignals/revalidate/metadata)은 페이지에 그대로 둔다.
 
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { DataStatusBadge } from "@/components/trust/badges";
 import { useLanguage } from "@/components/LanguageProvider";
 import { disclosuresIntroCopy } from "@/lib/copy/disclosures";
@@ -26,38 +27,16 @@ export function DisclosuresIntroHeader() {
         </span>
       </nav>
 
-      <header>
-        <div className="flex items-center gap-2 flex-wrap mb-1">
-          <h1 className="text-xl font-medium">{t.title}</h1>
+      <header className="research-screen-heading">
+        <div className="flex items-center gap-x-3 gap-y-1 flex-wrap">
+          <h1>{t.title}</h1>
           <DataStatusBadge
             tone="limited"
             label={t.limitedBadge}
-            className="text-[11px] rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5"
+            className="research-filings-scope"
           />
         </div>
-        <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-          {t.desc}
-        </p>
       </header>
-
-      {/* 기간/공시 필터 근처 — 수집 제한 보조 설명 (접근 가능한 visible note) */}
-      <details className="text-xs text-gray-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-md px-3 py-2">
-        <summary className="cursor-pointer select-none font-medium text-gray-700 dark:text-zinc-200">
-          {t.collapseSummary}
-        </summary>
-        <p className="mt-2 leading-relaxed text-gray-600 dark:text-zinc-400">
-          {t.collapseBody}
-        </p>
-      </details>
-
-      <details className="border-l-2 border-amber-200 py-1 pl-3 dark:border-amber-900">
-        <summary className="cursor-pointer select-none text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">{t.typeGuide.title}</summary>
-        <ul className="mt-1 space-y-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-          {t.typeGuide.items.map((item) => (
-            <li key={item}>· {item}</li>
-          ))}
-        </ul>
-      </details>
     </>
   );
 }
@@ -66,8 +45,18 @@ export function DisclosuresIntroNote() {
   const { locale } = useLanguage();
   const t = disclosuresIntroCopy[locale];
   return (
-    <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-relaxed">
-      {t.bottomNote}
-    </p>
+    <div className="research-filings-footnotes">
+      <details>
+        <summary><ChevronDown size={15} aria-hidden="true" />{t.collapseSummary}</summary>
+        <p>{t.collapseBody}</p>
+      </details>
+      <details>
+        <summary><ChevronDown size={15} aria-hidden="true" />{t.typeGuide.title}</summary>
+        <ul>
+          {t.typeGuide.items.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      </details>
+      <p>{t.bottomNote}</p>
+    </div>
   );
 }

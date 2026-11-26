@@ -3,6 +3,7 @@ import "./globals.css";
 import "./research-desk.css";
 import "./research-workspaces.css";
 import "./research-collections.css";
+import "./research-disclosures.css";
 import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
 import { LanguageProvider } from "@/components/LanguageProvider";

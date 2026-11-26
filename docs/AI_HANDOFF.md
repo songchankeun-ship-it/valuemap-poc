@@ -4354,3 +4354,17 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   compare handoff, and the 2/4-column table on desktop and 320px/390px.
 - Next: owner review at `http://127.0.0.1:4487/compare` and
   `http://127.0.0.1:4487/watchlist`. No push or deployment.
+
+## 2026-11-26 - DART disclosures preview [codex]
+
+- The existing disclosures route shows up to three eligible contracts,
+  financing disclosures or corrections from the active filter, newest first.
+  Selection uses report types and receipt dates, not advisory ratings.
+- Valid receipt numbers become native DART links in both the highlights and
+  the chronological list. The sample badge and collection limit stay visible;
+  company, reporter, filing date and optional interpretation remain distinct.
+- Checked desktop and 320px/390px layouts, original-link navigation, type and
+  watchlist filters, date range, and the explanation disclosure. Verified the
+  DART link destination, not the external document contents.
+- Next: review `http://127.0.0.1:4487/disclosures` with the owner. No
+  deployment or changes to data collection, classification, or SEO metadata.
