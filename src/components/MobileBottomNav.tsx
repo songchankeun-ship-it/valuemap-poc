@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, Search, Heart, Menu, X, GitCompare, Megaphone, FlaskConical, CreditCard, BookOpen, Info, type LucideIcon } from "lucide-react";
 import type { NavKey, NavShortKey } from "@/lib/i18n";
 import { useLanguage } from "./LanguageProvider";
+import { useCompareCount } from "./CompareCountProvider";
 import { getFocusableElements, trapTabKey } from "@/lib/focusTrap";
 
 // 하단 바는 폭이 좁아 축약 라벨(navShort)을 쓴다. 데스크톱/드로어(Sidebar·MobileNav)는
@@ -29,6 +30,8 @@ export function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname() || "";
   const { copy } = useLanguage();
+  const compareCount = useCompareCount();
+  const compareCountId = useId();
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
 
@@ -93,17 +96,27 @@ export function MobileBottomNav() {
       ) : null}
 
       <nav aria-label={copy.chrome.bottomNavLabel} className="desk-chrome desk-bottom lg:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 h-[calc(3.5rem_+_env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
-        {PRIMARY.map(({ href, Icon, key }) => (
-          <Link
-            key={href}
-            prefetch={false} href={href}
-            aria-current={active(href) ? "page" : undefined}
-            className="desk-bottom-link"
-          >
-            <Icon className="w-5 h-5" />
-            <span className="max-w-full truncate px-0.5">{copy.navShort[key]}</span>
-          </Link>
-        ))}
+        {PRIMARY.map(({ href, Icon, key }) => {
+          const count = key === "compare" ? compareCount : 0;
+          return (
+            <Link
+              key={href}
+              prefetch={false} href={href}
+              aria-current={active(href) ? "page" : undefined}
+              aria-describedby={count > 0 ? compareCountId : undefined}
+              data-analytics-event={count > 0 ? "compare_tray_open" : undefined}
+              data-analytics-count={count > 0 ? String(count) : undefined}
+              className="desk-bottom-link"
+            >
+              <span className="desk-bottom-icon" aria-hidden="true">
+                <Icon className="w-5 h-5" />
+                {count > 0 ? <span className="desk-bottom-compare-count">{count}</span> : null}
+              </span>
+              <span className="max-w-full truncate px-0.5">{copy.navShort[key]}</span>
+              {count > 0 ? <span id={compareCountId} className="sr-only" aria-hidden="true">{copy.nav.compare} {count}</span> : null}
+            </Link>
+          );
+        })}
         <button
           ref={moreButtonRef}
           type="button"

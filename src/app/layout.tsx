@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { CompareCountProvider } from "@/components/CompareCountProvider";
 import { Sidebar } from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
@@ -178,31 +179,33 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <LanguageProvider>
-            <AnalyticsEventTracker />
-            <AppHeader />
-            <div className="flex">
-              <Sidebar />
-              <main
-                id="main-content"
-                tabIndex={-1}
-                className="flex-1 min-w-0 pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0 focus:outline-none"
-              >
-                <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
-                <AppFooter
-                  globalAsOfLabel={dataStatus.globalAsOfLabel}
-                  metricsVersionLabel={dataStatus.metricsVersionLabel}
-                  dataStale={dataStatus.dataStale}
-                  commitSha={process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)}
-                />
-              </main>
-            </div>
-            <MobileBottomNav />
-            {process.env.VERCEL ? (
-              <>
-                <Analytics />
-                <SpeedInsights />
-              </>
-            ) : null}
+            <CompareCountProvider>
+              <AnalyticsEventTracker />
+              <AppHeader />
+              <div className="flex">
+                <Sidebar />
+                <main
+                  id="main-content"
+                  tabIndex={-1}
+                  className="flex-1 min-w-0 pb-[calc(4rem_+_env(safe-area-inset-bottom))] lg:pb-0 focus:outline-none"
+                >
+                  <div className="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-6">{children}</div>
+                  <AppFooter
+                    globalAsOfLabel={dataStatus.globalAsOfLabel}
+                    metricsVersionLabel={dataStatus.metricsVersionLabel}
+                    dataStale={dataStatus.dataStale}
+                    commitSha={process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7)}
+                  />
+                </main>
+              </div>
+              <MobileBottomNav />
+              {process.env.VERCEL ? (
+                <>
+                  <Analytics />
+                  <SpeedInsights />
+                </>
+              ) : null}
+            </CompareCountProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

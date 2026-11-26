@@ -1,5 +1,6 @@
 import { realStockPool, dataMetadata, formatBizDateLong, isDataStale } from "@/lib/realStocks";
 import { getRecentSignals } from "@/lib/recentSignals";
+import { summarizeTodayDisclosures } from "@/lib/todayDisclosure";
 import {
   getScoreChangesBatch,
   getMetricChangesBatch,
@@ -136,8 +137,7 @@ export default async function TodayPage() {
     metricChanges[t] = { momentum: e.momentum, flow: e.flow, value: e.value, vol: e.vol };
   }
   const comparisonBasis = scoreBatch.sharedBasis;
-  const signalCount = recentSig.signalCount ?? (recentSig.signals?.length ?? 0);
-  const briefingSignalCount = (recentSig.signals ?? []).length;
+  const disclosureSummary = summarizeTodayDisclosures(recentSig);
   const universeTickers = new Set(realStockPool.map((x) => x.ticker));
 
   // ── 신호별 섹션용 원시 데이터 빌더(현지화는 클라이언트에서) ──
@@ -284,7 +284,7 @@ export default async function TodayPage() {
       totalCount={dataMetadata.count}
       strongCount={strongCount}
       activitySurgeCount={activitySurgeCount}
-      signalCount={signalCount}
+      disclosureSummary={disclosureSummary}
       top3={top3Raw}
       composite={compositeData}
       volume={volumeData}
@@ -297,7 +297,6 @@ export default async function TodayPage() {
       upCount={upCount}
       downCount={downCount}
       flatCount={flatCount}
-      briefingSignalCount={briefingSignalCount}
       breadthPct={breadthPct}
       hasDeltas={hasDeltas}
       comparisonBasis={comparisonBasis}

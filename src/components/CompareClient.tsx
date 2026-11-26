@@ -18,7 +18,8 @@ import { StockSearchBox } from "@/components/StockSearchBox";
 import { EvidenceShareButton } from "@/components/EvidenceShareButton";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 import { compareSharePath } from "@/lib/growthShare";
-import { CheckCircle2, ChevronDown, ExternalLink, AlertTriangle, Plus, Trash2, X } from "lucide-react";
+import { appendLinkedSelection } from "@/lib/compareQuery";
+import { ArrowRight, CheckCircle2, ChevronDown, ExternalLink, AlertTriangle, Plus, Trash2, X } from "lucide-react";
 
 interface RecommendedSet {
   label: string;
@@ -195,7 +196,7 @@ export function CompareClient({
   exampleSets = [],
   disclosureByTicker = {},
   showSampleDisclosures = false,
-  initialTickers = [],
+  linkedTickers,
 }: {
   stockMap: Record<string, CompareStock>;
   top5?: Array<{ ticker: string; name: string }>;
@@ -203,11 +204,11 @@ export function CompareClient({
   exampleSets?: RecommendedSet[];
   disclosureByTicker?: Record<string, CompareDisclosure[]>;
   showSampleDisclosures?: boolean;
-  initialTickers?: string[];
+  linkedTickers?: string[];
 }) {
-  const [tickers, setTickers] = useState<string[]>(() =>
-    initialTickers.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX)
-  );
+  const isLinkedCompare = linkedTickers !== undefined;
+  // The route key resets this selection when a different comparison link is opened.
+  const [tickers, setTickers] = useState<string[]>(() => linkedTickers ?? []);
   const [watchlist, setWatchlist] = useState<Array<{ ticker: string; name: string }>>([]);
   const [recentViews, setRecentViews] = useState<Array<{ ticker: string; name: string }>>([]);
   // 담기/빼기 피드백 — 최대 초과, 이미 담음 등 안내(3초 자동 소멸)
@@ -220,10 +221,10 @@ export function CompareClient({
   useEffect(() => {
     let active = true;
 
-    function reload(fallback = initialTickers) {
+    function reloadBasket() {
+      if (isLinkedCompare) return;
       getCompareList().then((list) => {
-        if (!active) return;
-        setTickers(list.length > 0 ? list : fallback.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX));
+        if (active) setTickers(list.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX));
       });
     }
 
@@ -236,7 +237,7 @@ export function CompareClient({
       setRecentViews(mapped);
     }
 
-    reload();
+    reloadBasket();
     loadRecent();
 
     // 관심 종목에서 추가 — 마운트 시 1회 로드(이름은 stockMap으로 매핑, 풀에 없으면 제외)
@@ -248,50 +249,27 @@ export function CompareClient({
       setWatchlist(mapped);
     });
 
-    // 공유 링크(?stocks=005930,000660)에서 비교 바스켓 시드.
-    // addToCompare는 현재 로컬 바스켓을 읽고 쓰므로 병렬 호출하면 마지막 쓰기만 남을 수 있다.
-    // 추천 세트 추가와 같이 순차 호출해 2~4개 시드가 안정적으로 채워지게 한다.
-    try {
-      const shared = new URLSearchParams(window.location.search).get("stocks");
-      if (shared) {
-        const codes = initialTickers.filter((ticker) => Boolean(stockMap[ticker])).slice(0, COMPARE_MAX);
-        if (codes.length) {
-          (async () => {
-            for (const code of codes) {
-              await addToCompare(code);
-            }
-            if (active) reload(codes);
-          })().catch(() => {
-            if (active) reload();
-          });
-        }
-      }
-    } catch {
-      /* noop */
-    }
-
-    function onUpdate() {
-      reload();
-    }
-    // 최근 본 종목이 바뀌거나(다른 탭/상세 방문) storage 이벤트가 오면 최근 목록도 갱신
     function onStorage() {
-      reload();
+      reloadBasket();
       loadRecent();
     }
-    window.addEventListener("compare-basket-changed", onUpdate);
-    window.addEventListener("ornscore:compare-updated", onUpdate);
-    window.addEventListener("valuemap:compare-updated", onUpdate);
+
+    if (!isLinkedCompare) {
+      window.addEventListener("compare-basket-changed", reloadBasket);
+      window.addEventListener("ornscore:compare-updated", reloadBasket);
+      window.addEventListener("valuemap:compare-updated", reloadBasket);
+    }
     window.addEventListener("recent-views-changed", loadRecent);
     window.addEventListener("storage", onStorage);
     return () => {
       active = false;
-      window.removeEventListener("compare-basket-changed", onUpdate);
-      window.removeEventListener("ornscore:compare-updated", onUpdate);
-      window.removeEventListener("valuemap:compare-updated", onUpdate);
+      window.removeEventListener("compare-basket-changed", reloadBasket);
+      window.removeEventListener("ornscore:compare-updated", reloadBasket);
+      window.removeEventListener("valuemap:compare-updated", reloadBasket);
       window.removeEventListener("recent-views-changed", loadRecent);
       window.removeEventListener("storage", onStorage);
     };
-  }, [initialTickers, stockMap]);
+  }, [isLinkedCompare, stockMap]);
 
   // 타이머 정리 — 언마운트 시 대기 중인 자동 소멸 타이머를 해제
   useEffect(() => {
@@ -309,6 +287,12 @@ export function CompareClient({
 
   // 모든 담기 동작의 공통 경로 — 상한 초과/중복이면 조용히 안내만 띄운다.
   async function tryAdd(ticker: string) {
+    if (isLinkedCompare) {
+      if (tickers.includes(ticker)) flashNotice("이미 담은 종목이에요");
+      else if (tickers.length >= COMPARE_MAX) flashNotice(`비교는 최대 ${COMPARE_MAX}개까지 담을 수 있어요 — 하나를 빼고 추가하세요`);
+      else setTickers((current) => appendLinkedSelection(current, [ticker]));
+      return;
+    }
     const res = await addToCompare(ticker);
     if (!res.ok && res.reason === "max") {
       flashNotice(`비교는 최대 ${COMPARE_MAX}개까지 담을 수 있어요 — 하나를 빼고 추가하세요`);
@@ -320,7 +304,7 @@ export function CompareClient({
   async function remove(ticker: string) {
     const name = stockMap[ticker]?.name ?? ticker;
     setTickers((prev) => prev.filter((t) => t !== ticker));
-    await removeFromCompare(ticker);
+    if (!isLinkedCompare) await removeFromCompare(ticker);
     // 방금 뺀 종목을 되돌릴 수 있게 잠시 보관
     setUndoStock({ ticker, name });
     if (undoTimer.current) clearTimeout(undoTimer.current);
@@ -332,13 +316,20 @@ export function CompareClient({
     if (!target) return;
     setUndoStock(null);
     if (undoTimer.current) clearTimeout(undoTimer.current);
-    await addToCompare(target.ticker);
+    await tryAdd(target.ticker);
   }
 
   // 추천 세트 추가 — addToCompare가 매번 현재 목록을 읽으므로 순차 호출로 4개 상한을 지킨다.
-  async function addSet(setTickers: string[]) {
+  async function addSet(selection: string[]) {
+    if (isLinkedCompare) {
+      if (new Set([...tickers, ...selection]).size > COMPARE_MAX) {
+        flashNotice(`최대 ${COMPARE_MAX}개까지 담을 수 있어 일부만 추가됐어요`);
+      }
+      setTickers((current) => appendLinkedSelection(current, selection));
+      return;
+    }
     let hitMax = false;
-    for (const t of setTickers) {
+    for (const t of selection) {
       const res = await addToCompare(t);
       if (!res.ok && res.reason === "max") {
         hitMax = true;
@@ -349,9 +340,9 @@ export function CompareClient({
   }
 
   async function clearAll() {
-    if (!confirm("비교 목록을 모두 비울까요?")) return;
+    if (!confirm(isLinkedCompare ? "이 비교에 선택한 종목을 모두 비울까요?" : "비교 목록을 모두 비울까요?")) return;
     setTickers([]);
-    await clearCompare();
+    if (!isLinkedCompare) await clearCompare();
   }
 
   const stocks = tickers
@@ -399,6 +390,15 @@ export function CompareClient({
       </div>
     ) : null;
 
+  const linkedContext = isLinkedCompare ? (
+    <div className="research-linked-compare">
+      <p><strong>링크로 열린 비교</strong> · 이 화면에서 바꾼 종목은 저장된 비교함에 반영되지 않아요.</p>
+      <Link href="/compare" className="research-link" prefetch={false}>
+        저장된 비교함 보기 <ArrowRight size={14} aria-hidden="true" />
+      </Link>
+    </div>
+  ) : null;
+
   // 비교는 최소 2개부터 의미가 있으므로, 2개 미만이면 시작 화면을 보여준다.
   if (stocks.length < 2) {
     const selected = stocks[0]; // 0개 또는 1개
@@ -411,7 +411,7 @@ export function CompareClient({
           </div>
           <StockSearchBox stocks={Object.entries(stockMap).map(([ticker, st]) => ({ ticker, name: st.name }))} onPick={(t) => { void tryAdd(t); }} placeholder="예: 삼성전자, 005930" />
         </div>
-        <p className="research-matrix-note">비교 목록은 로그인 없이 이 기기에 저장돼요. 로그인하면 여러 기기에서 이어봅니다.</p>
+        {linkedContext ?? <p className="research-matrix-note">비교 목록은 로그인 없이 이 기기에 저장돼요. 로그인하면 여러 기기에서 이어봅니다.</p>}
         <div className="space-y-4">
           {feedbackRegion}
 
@@ -588,6 +588,7 @@ export function CompareClient({
 
   return (
     <div className="space-y-3 md:space-y-4">
+      {linkedContext}
       <div className="research-comparison-toolbar">
         <div>
           <p className="research-section-label">비교 중인 종목 {stocks.length}/{COMPARE_MAX}</p>

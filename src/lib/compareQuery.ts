@@ -40,3 +40,7 @@ export function parseCompareQuery(
   }
   return { initialTickers, invalidTickers, truncatedTickers };
 }
+
+export function appendLinkedSelection(current: readonly string[], additions: readonly string[]): string[] {
+  return Array.from(new Set([...current, ...additions])).slice(0, COMPARE_QUERY_MAX);
+}

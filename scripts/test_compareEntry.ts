@@ -38,6 +38,7 @@ const accountSrc = read("src/components/AccountButtons.tsx");
 const mobileSrc = read("src/components/MobileNav.tsx");
 const compareBadgeSrc = read("src/components/CompareBadge.tsx");
 const compareTraySrc = read("src/components/stock/CompareTray.tsx");
+const bottomNavSrc = read("src/components/MobileBottomNav.tsx");
 
 // ── A. 교차 업종 프리셋 제거 + 남는 예시는 같은 업종 근거 ─────────────
 // A1. 근거 약한 교차 업종 쌍(현대차 005380 vs KB금융 — 완성차 vs 금융)이 예시에서 사라진다.
@@ -93,12 +94,15 @@ check("E2 keeps the noscript empty-state fallback", pageSrc.includes("<noscript>
 check("E2 noscript keeps public escape links (stocks + today)", pageSrc.includes('href="/stocks"') && pageSrc.includes('href="/today"'));
 
 // ── F. 모바일 비교 UI는 헤더 폭과 핵심 콘텐츠를 과도하게 가리지 않음 ──
-// 비교함이 비어 있을 때는 기존처럼 렌더되지 않고, 담긴 뒤에도 모바일 헤더에는 중복 배지를
-// 숨긴다. 하단 트레이가 비교 진입점이므로 기능 접근성은 유지된다.
+// Mobile uses the existing bottom nav. Only desktop renders the floating tray.
 check("F1 compare badge stays hidden below the sm breakpoint", compareBadgeSrc.includes('className="hidden sm:flex'));
-check("F2 mobile compare tray keeps the /compare entry point", compareTraySrc.includes('href="/compare"'));
-check("F3 mobile compare tray hides the secondary reset action", compareTraySrc.includes('className="hidden sm:inline-flex'));
-check("F4 desktop compare tray keeps the reset action", compareTraySrc.includes("sm:inline-flex") && compareTraySrc.includes("onClick={reset}"));
+check("F2 mobile count augments the compare tab", bottomNavSrc.includes('href: "/compare", Icon: GitCompare, key: "compare"') && bottomNavSrc.includes("desk-bottom-compare-count") && bottomNavSrc.includes("aria-describedby"));
+check("F3 no floating tray or reserved tray space on mobile", compareTraySrc.includes("desk-compare-tray hidden lg:block") && compareTraySrc.includes("hidden lg:block lg:h-16"));
+check("F4 desktop tray keeps entry and reset", compareTraySrc.includes('href="/compare"') && compareTraySrc.includes("onClick={reset}"));
+
+check("G1 link selection remounts independently of the saved basket", pageSrc.includes("key={linkedTickers") && pageSrc.includes("linkedTickers={linkedTickers}"));
+check("G2 link selection skips reading the saved basket", /if \(isLinkedCompare\) return;\s*getCompareList\(\)/.test(compareSrc));
+check("G3 link removals and resets do not mutate the basket", compareSrc.includes("if (!isLinkedCompare) await removeFromCompare") && compareSrc.includes("if (!isLinkedCompare) await clearCompare"));
 
 // ── 자기검증: 탐지 로직이 실제로 동작함을 증명 ─────────────────────
 check("selftest: cross-sector detector fires on the old tuple", '["005380", "105560"]'.includes('"005380"'));

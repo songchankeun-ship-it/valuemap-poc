@@ -1,43 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, GitCompare } from "lucide-react";
-import { getCompareList, clearCompare, COMPARE_MAX } from "@/lib/compare";
+import { useCompareCount } from "@/components/CompareCountProvider";
+import { clearCompare, COMPARE_MAX } from "@/lib/compare";
 import { useLanguage } from "@/components/LanguageProvider";
 import { compareTrayCopy } from "@/lib/copy/stockDetail";
 import { trackEvent } from "@/lib/clientAnalytics";
 
-/**
- * 설계서 5-8: 종목 상세 하단 비교 유도.
- * 비교함에 담긴 종목 수를 반영(비교함 N/4)하고 /compare로 연결만 한다.
- * 담기/빼기 상태(local/session·Supabase)는 compare.ts가 소유하며 이 컴포넌트는 재구현하지 않는다.
- * count 0에서 시작해 마운트 후 이벤트로 갱신 → SSR/CSR 모두 처음엔 null이라 하이드레이션 불일치 없음.
- * z-index는 AddToCompareButton 토스트(z-[100])보다 낮게 두고 모바일 하단 탭 위에 뜨게 한다.
- */
+// Desktop keeps the tray. Mobile shows the same basket count in bottom navigation.
 export function CompareTray() {
   const { locale } = useLanguage();
   const t = compareTrayCopy[locale];
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let mounted = true;
-    function update() {
-      getCompareList().then((list) => {
-        if (mounted) setCount(list.length);
-      });
-    }
-    update();
-    window.addEventListener("compare-basket-changed", update);
-    window.addEventListener("ornscore:compare-updated", update);
-    window.addEventListener("valuemap:compare-updated", update);
-    return () => {
-      mounted = false;
-      window.removeEventListener("compare-basket-changed", update);
-      window.removeEventListener("ornscore:compare-updated", update);
-      window.removeEventListener("valuemap:compare-updated", update);
-    };
-  }, []);
+  const count = useCompareCount();
 
   // 비우기 — 결과 화면 '모두 비우기'와 동일하게 확인 후 비교함을 초기화한다.
   // 실제 비우기/브로드캐스트는 compare.ts가 소유하고, count는 basket-changed 이벤트로 갱신된다.
@@ -52,11 +27,11 @@ export function CompareTray() {
   return (
     <>
       {/* 고정 트레이가 마지막 콘텐츠를 가리지 않도록 흐름 내 여백 확보(보일 때만 렌더) */}
-      <div aria-hidden="true" className="h-16" />
+      <div aria-hidden="true" className="hidden lg:block lg:h-16" />
       <div
         role="region"
         aria-label={t.ariaLabel}
-        className="desk-chrome desk-compare-tray fixed right-3 z-30 bottom-[calc(3.5rem_+_env(safe-area-inset-bottom)_+_0.75rem)] lg:bottom-6"
+        className="desk-chrome desk-compare-tray hidden lg:block fixed bottom-6 right-3 z-30"
       >
         <div className="flex items-center gap-1.5 sm:gap-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-2 py-1.5 sm:px-3 sm:py-2 shadow-lg max-w-[calc(100vw-1.5rem)]">
           <div className="flex items-center gap-1.5 min-w-0">
@@ -71,7 +46,7 @@ export function CompareTray() {
           <button
             type="button"
             onClick={reset}
-            className="hidden sm:inline-flex items-center shrink-0 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 dark:hover:text-rose-400 px-3 min-h-[44px] text-xs font-medium whitespace-nowrap transition"
+            className="inline-flex items-center shrink-0 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-rose-600 hover:border-rose-300 dark:hover:text-rose-400 px-3 min-h-[44px] text-xs font-medium whitespace-nowrap transition"
           >
             {t.reset}
           </button>

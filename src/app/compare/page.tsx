@@ -195,7 +195,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
     stocksParam,
     (code) => Boolean(stockMap[code])
   );
-  const initialNames = initialTickers.map((ticker) => stockMap[ticker].name);
+  const linkedTickers = stocksParam === undefined ? undefined : initialTickers;
   // 상한 초과로 잘라낸 종목은 유효 코드이므로 이름으로 안내한다.
   const truncatedNames = truncatedTickers.map((ticker) => stockMap[ticker].name);
 
@@ -212,11 +212,6 @@ export default async function ComparePage({ searchParams }: PageProps) {
 
       <header className="research-screen-heading">
         <h1>종목 비교</h1>
-        {initialTickers.length >= 2 ? (
-          <p className="mt-2 research-section-label">
-            공유 링크에서 불러온 비교: <strong>{initialNames.join(" · ")}</strong>
-          </p>
-        ) : null}
       </header>
 
       {invalidTickers.length > 0 ? (
@@ -238,7 +233,8 @@ export default async function ComparePage({ searchParams }: PageProps) {
         exampleSets={exampleSets}
         disclosureByTicker={disclosureByTicker}
         showSampleDisclosures={showSampleDisclosures}
-        initialTickers={initialTickers}
+        key={linkedTickers === undefined ? "basket" : `link:${linkedTickers.join(",")}`}
+        linkedTickers={linkedTickers}
       />
 
       {compareCards.length > 0 ? (

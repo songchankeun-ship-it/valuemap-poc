@@ -128,6 +128,7 @@
 }
 
 .desk-chrome [aria-current="page"] > svg,
+.desk-bottom-link[aria-current="page"] .desk-bottom-icon svg,
 .desk-bottom-link[data-active="true"] > svg {
   color: currentColor;
 }
@@ -155,6 +156,24 @@
 }
 
 .desk-bottom-link { border-top: 2px solid transparent; }
+.desk-bottom-icon { display: block; position: relative; width: 20px; height: 20px; }
+.desk-bottom-compare-count {
+  position: absolute;
+  top: -4px;
+  left: 13px;
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 15px;
+  border: 1px solid var(--surface);
+  border-radius: 50%;
+  padding-inline: .1rem;
+  background: var(--research-action);
+  color: white;
+  font-size: .625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
 .desk-sheet { box-shadow: 0 -8px 24px rgb(0 0 0 / .08); }
 
 .research-stock-overview {

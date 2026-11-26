@@ -1,39 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GitCompare } from "lucide-react";
-import { getCompareList } from "@/lib/compare";
+import { useCompareCount } from "./CompareCountProvider";
 import { useLanguage } from "./LanguageProvider";
 
 export function CompareBadge() {
-  const [count, setCount] = useState(0);
+  const count = useCompareCount();
   const { locale, copy } = useLanguage();
-
-  useEffect(() => {
-    let mounted = true;
-
-    function update() {
-      getCompareList().then((list) => {
-        if (mounted) setCount(list.length);
-      });
-    }
-    update();
-
-    function onCustom() {
-      update();
-    }
-
-    window.addEventListener("compare-basket-changed", onCustom);
-    window.addEventListener("ornscore:compare-updated", onCustom);
-    window.addEventListener("valuemap:compare-updated", onCustom);
-    return () => {
-      mounted = false;
-      window.removeEventListener("compare-basket-changed", onCustom);
-      window.removeEventListener("ornscore:compare-updated", onCustom);
-      window.removeEventListener("valuemap:compare-updated", onCustom);
-    };
-  }, []);
 
   if (count === 0) return null;
 

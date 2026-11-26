@@ -20,6 +20,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { summarizeTodayDisclosures } from "../src/lib/todayDisclosure";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, "..");
@@ -87,6 +88,16 @@ check("3b: generator generateThemeInsight retained", /export async function gene
 // ── 4. 대체용 가짜/일반 카드로 바꾸지 않았는가(근거 없는 설명 카드 금지) ────────────────
 // 인사이트를 없앤 자리에 '오늘의 AI 요약' 헤딩 등 새 일반 카드를 넣지 않았는지 최소 확인.
 check("4a: no reintroduced AI-summary heading label on today content", !/aiThemeSummary/.test(todayContent));
+
+const sample = summarizeTodayDisclosures({ source: "sample_bundled", signalCount: 9 });
+const live = summarizeTodayDisclosures({ source: "live", signalCount: 0, signals: [{}] });
+const cache = summarizeTodayDisclosures({ source: "cache", signals: [{}, {}] });
+const unknown = summarizeTodayDisclosures({ source: "unknown", signalCount: 9 });
+check("5a: sample total is not a live count", sample.source === "sample" && sample.count === 9);
+check("5b: live zero remains a collected count", live.source === "live" && live.count === 0);
+check("5c: cached snapshot has its own source and count", cache.source === "cache" && cache.count === 2);
+check("5d: unknown or missing source is not counted", unknown.source === "unavailable" && unknown.count === null && summarizeTodayDisclosures({}).count === null);
+check("5e: source is used both in the KPI and next to the filing list", todayPage.includes("summarizeTodayDisclosures(recentSig)") && read("src/components/home/MarketSnapshotCards.tsx").includes("data-disclosure-source={source}") && todayContent.includes("t.disclosureNotes[disclosureSource]"));
 
 if (failed > 0) {
   console.error(`\n${failed} check(s) failed.`);

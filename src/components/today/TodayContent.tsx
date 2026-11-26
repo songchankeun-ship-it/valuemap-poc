@@ -6,6 +6,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { todayCopy } from "@/lib/copy/today";
 import { TodayStatusBar } from "@/components/today/TodayStatusBar";
 import { MarketSnapshotCards } from "@/components/home/MarketSnapshotCards";
+import type { TodayDisclosureSummary } from "@/lib/todayDisclosure";
 import { TodayTopSection } from "@/components/today/TodayTopSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
 import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
@@ -80,7 +81,7 @@ export interface TodayContentProps {
   strongCount: number;
   /** 거래활성도 급증 종목 수 — 요약 KPI와 브리핑 숫자가 공유하는 단일 값(별도 재계산 금지). */
   activitySurgeCount: number;
-  signalCount: number;
+  disclosureSummary: TodayDisclosureSummary;
   // 섹션 데이터
   top3: TodayTopRaw[];
   composite: TodayStockRaw[];
@@ -95,7 +96,6 @@ export interface TodayContentProps {
   upCount: number;
   downCount: number;
   flatCount: number;
-  briefingSignalCount: number;
   breadthPct: number;
   // 장마감 변화
   hasDeltas: boolean;
@@ -226,6 +226,8 @@ export function TodayContent(props: TodayContentProps) {
     toVM(s, t.reason.overheatedNote(Math.round(s.returns?.r3m ?? 0)), true),
   );
   const disclosureVMs = props.disclosure.map((d) => toVM(d.raw, t.reason.disclosureNote(d.signalLabel)));
+  const disclosureSource = props.disclosureSummary.source;
+  const sourceNote = disclosureSource === "live" ? null : t.disclosureNotes[disclosureSource];
 
   // 최근 변화(basis 기준) 실제 행이 하나라도 있는지(가짜 변화 금지 — 없으면 '현재 강점' 문구로 구분).
   const hasChangeRows =
@@ -279,7 +281,7 @@ export function TodayContent(props: TodayContentProps) {
           totalCount={props.totalCount}
           strongCount={props.strongCount}
           volumeSpikeCount={props.activitySurgeCount}
-          signalCount={props.signalCount}
+          disclosureSummary={props.disclosureSummary}
         />
       </div>
 
@@ -375,13 +377,29 @@ export function TodayContent(props: TodayContentProps) {
       {/* ── 구간 3 · 관심종목 변화는 /today에 데이터 소스가 없어 의도적으로 생략(가짜 빈 카드 금지) ── */}
 
       {/* ── 구간 4 · 확인할 공시 신호 ── */}
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.disclosureHeading}</h2>
-        <SignalSection title={t.sections.disclosure.title} caption={t.sections.disclosure.caption} items={disclosureVMs} footnote={t.sections.disclosure.footnote} emptyText={t.sectionEmpty} />
+      <section className="space-y-3" aria-labelledby="today-disclosures-heading">
+        <h2 id="today-disclosures-heading" className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          {disclosureSource === "live" ? t.disclosureHeading : t.disclosureSourceLabels[disclosureSource]}
+        </h2>
+        {sourceNote ? (
+          <p className="research-today-disclosure-note">
+            {sourceNote}{" "}
+            <Link href="/disclosures" className="research-link">{t.disclosuresLink}</Link>
+          </p>
+        ) : null}
+        {disclosureSource !== "unavailable" ? (
+          <SignalSection
+            title={disclosureSource === "live" ? t.sections.disclosure.title : t.disclosureStocksLabel}
+            caption={disclosureSource === "live" ? t.sections.disclosure.caption : t.disclosureSourceLabels[disclosureSource]}
+            items={disclosureVMs}
+            footnote={t.sections.disclosure.footnote}
+            emptyText={t.sectionEmpty}
+          />
+        ) : null}
       </section>
 
       {/* ── 구간 5 · 데이터 기준/주의 사항 ── */}
-      <TodayStatusBar />
+      <TodayStatusBar disclosureLabel={disclosureSource === "unavailable" ? t.disclosureCountUnavailable : disclosureSource === "live" ? "" : t.disclosureSourceLabels[disclosureSource]} />
       <section className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-3">
         {t.sourceNote}
       </section>

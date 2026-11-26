@@ -25,8 +25,10 @@ function Divider() {
 
 export function TodayStatusBarContent({
   dataStatusByLocale,
+  disclosureLabel,
 }: {
   dataStatusByLocale: Record<Locale, LocalizedDataStatus>;
+  disclosureLabel: string;
 }) {
   const { locale } = useLanguage();
   const t = todayStatusBarCopy[locale];
@@ -47,7 +49,7 @@ export function TodayStatusBarContent({
         </Field>
         <Divider />
         <Field label={t.disclosureBasis}>
-          <strong className="text-zinc-700 dark:text-zinc-300 font-medium">{t.recentUpdate}</strong>
+          <strong className="text-zinc-700 dark:text-zinc-300 font-medium">{disclosureLabel || t.recentUpdate}</strong>
         </Field>
         <Divider />
         <Field label={t.metricsVersion}>

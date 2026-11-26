@@ -29,13 +29,22 @@ export const todayCopy = {
     // ── 오늘 한 줄 요약(변화 중심 · 첫 문장) ──
     // 변화 데이터가 있으면 변화를, 없으면 현재 강점 기준임을 솔직히 밝힌다(가짜 변화 금지).
     // basis = 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). "전일"이라 단정하지 않는다.
-    summaryWithDeltas: (basis: string) => `${basis} 달라진 후보와 공시 신호를 정리했습니다. 변화가 큰 종목부터 확인하세요.`,
+    summaryWithDeltas: (basis: string) => `${basis} 점수가 달라진 후보를 정리했습니다. 변화가 큰 종목부터 확인하세요.`,
     summaryNoDeltas: "아직 비교할 최근 변화 데이터가 없어, 오늘은 현재 강점이 큰 후보를 기준으로 정리했습니다.",
     // 변화 데이터가 없을 때 후보 목록이 '변화'가 아니라 '현재 강점'임을 명시.
     strengthFallbackNote: "최근 변화 데이터가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다 — 변화가 아닙니다.",
     noChangeNote: (basis: string) => `${basis} 뚜렷한 변화가 없어 아래 후보는 현재 강점(점수·지표) 기준입니다.`,
     signalsStrengthNote: "아래 목록은 최근 변화가 아니라 현재 강점(점수·지표) 기준입니다.",
     disclosureHeading: "확인할 공시 신호",
+    disclosureSourceLabels: { sample: "예시 공시", cache: "저장된 공시", unavailable: "공시 신호" },
+    disclosureNotes: {
+      sample: "최신 공시를 불러오지 못해 예시 자료를 표시합니다. 실제 수집 건수에 포함되지 않습니다.",
+      cache: "마지막으로 저장된 공시를 표시합니다.",
+      unavailable: "공시 수집 결과가 없어 건수를 집계하지 않았습니다.",
+    },
+    disclosureCountUnavailable: "미집계",
+    disclosuresLink: "공시 화면 보기",
+    disclosureStocksLabel: "관련 분석 종목",
 
     // ── 오늘 확인 순서(재방문 스캔 순서 안내) ──
     routine: {
@@ -176,12 +185,21 @@ export const todayCopy = {
     // When change data exists, describe the change against its actual basis; otherwise say plainly
     // that the list is by current strength (never fabricate a previous-day delta).
     // basis = the actual comparison label (previous trading day / N trading days ago / recent stored data).
-    summaryWithDeltas: (basis: string) => `We've gathered the candidates and disclosure signals that changed ${basis}. Start with the biggest movers.`,
+    summaryWithDeltas: (basis: string) => `We've gathered the candidates whose scores changed ${basis}. Start with the biggest movers.`,
     summaryNoDeltas: "There's no recent change data to compare yet, so today's list is ordered by current strength, not by change.",
     strengthFallbackNote: "No recent change data, so the candidates below reflect current strength (score/metrics) — not change.",
     noChangeNote: (basis: string) => `No notable change ${basis}, so the candidates below reflect current strength (score/metrics).`,
     signalsStrengthNote: "The lists below reflect current strength (score/metrics), not recent change.",
     disclosureHeading: "Disclosure signals to check",
+    disclosureSourceLabels: { sample: "Sample filings", cache: "Cached filings", unavailable: "Disclosure signals" },
+    disclosureNotes: {
+      sample: "Live filings could not be loaded. These examples are not part of the live count.",
+      cache: "Showing the last saved filings.",
+      unavailable: "A filing count is unavailable because the collection result is missing.",
+    },
+    disclosureCountUnavailable: "Not available",
+    disclosuresLink: "View disclosures",
+    disclosureStocksLabel: "Related stocks in coverage",
 
     // ── Today's check order (returning-user scan order) ──
     routine: {

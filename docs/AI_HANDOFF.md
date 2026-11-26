@@ -4390,3 +4390,19 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   SEO contract checks passed. Existing checks do not cover the two blockers.
 - No application changes or deployment during this review. Next: resolve
   comparison seeding and sample attribution, then recheck tray placement.
+
+## 2026-11-26 - Research desk preview fixes [codex]
+
+- Shared compare URLs now open their own selection, even with a full saved
+  basket. Local edits to a link comparison do not change the saved basket.
+- Today labels bundled example filings in the KPI and filing list and
+  separates them from actual collection totals. Cached and uncounted
+  sources also have distinct labels.
+- Mobile uses a count on its existing Compare tab instead of a floating
+  tray. Desktop retains its tray and reset action.
+- Browser QA: 1280px desktop and 390px/320px mobile; verified curated link,
+  refresh, editing then returning to an intact 4-stock basket, example
+  filings, mobile tab navigation, stock ranks and no page-level overflow.
+  TypeScript, 12 focused checks, diff and frozen-file checks passed.
+- Next: owner review at `http://127.0.0.1:4487/compare?stocks=105560,086790`,
+  `/today`, and `/stock/005930`. No push or deployment.

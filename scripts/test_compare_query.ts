@@ -8,7 +8,7 @@
 //   /compare?stocks=004170,INVALID              → 유효 1개 + invalid 경고
 //   /compare?stocks=중복                         → dedupe
 //   /compare?stocks=5개                          → 최대 4개 반영 + 초과 안내
-import { COMPARE_QUERY_MAX, parseCompareQuery } from "../src/lib/compareQuery";
+import { COMPARE_QUERY_MAX, appendLinkedSelection, parseCompareQuery } from "../src/lib/compareQuery";
 
 let failed = 0;
 function check(name: string, cond: boolean): void {
@@ -95,6 +95,14 @@ check("empty string → no tickers", parseCompareQuery("", isValid).initialTicke
 {
   const r = parseCompareQuery(["004170,078930", "055550"], isValid);
   check("array param: uses first only", eq(r.initialTickers, ["004170", "078930"]));
+}
+
+// Link edits preserve their own order and never mutate the incoming selection.
+{
+  const original = ["005930", "000660"];
+  const updated = appendLinkedSelection(original, ["000660", "055550", "004170", "078930"]);
+  check("linked edits: deduplicate and cap without changing order", eq(updated, ["005930", "000660", "055550", "004170"]));
+  check("linked edits: input is unchanged", eq(original, ["005930", "000660"]));
 }
 
 if (failed > 0) {

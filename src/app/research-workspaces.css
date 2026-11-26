@@ -471,3 +471,20 @@
   }
   .research-question-option:last-child { border-right: 0; }
 }
+
+.research-market-kpis [data-disclosure-source="sample"] span,
+.research-market-kpis [data-disclosure-source="sample"] svg,
+.research-market-kpis [data-disclosure-source="sample"] strong { color: #865328; }
+.dark .research-market-kpis [data-disclosure-source="sample"] span,
+.dark .research-market-kpis [data-disclosure-source="sample"] svg,
+.dark .research-market-kpis [data-disclosure-source="sample"] strong { color: #ffcea6; }
+.research-market-kpis [data-disclosure-source="unavailable"] strong { color: var(--muted); }
+
+.research-today-disclosure-note {
+  padding: .45rem .65rem;
+  border-inline-start: 2px solid var(--research-accent);
+  background: var(--research-tint);
+  color: var(--foreground);
+  font-size: .75rem;
+  line-height: 1.55;
+}
