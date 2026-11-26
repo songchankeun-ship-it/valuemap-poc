@@ -4340,3 +4340,17 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   searches, preset switching, table mode and mobile market filtering.
 - Next: review `http://127.0.0.1:4487/today` and
   `http://127.0.0.1:4487/stocks` locally with the owner. No push or deployment.
+
+## 2026-11-26 - Interactive comparison and watchlist preview [codex]
+
+- Interactive compare now uses one aligned evidence matrix for the existing
+  composite score, close, indicators, financials and returns. A focusable
+  horizontal scroll area keeps the metric labels fixed at narrow widths.
+- Watchlist puts score movement and saved stocks first, keeps group/note
+  editing inside each row and keeps unavailable score history out of the
+  unchanged count. Example disclosures are explicitly labeled in both views.
+- Browser verification covered the isolated local empty and populated
+  watchlist, code lookup, group/note editor and note persistence, analysis view,
+  compare handoff, and the 2/4-column table on desktop and 320px/390px.
+- Next: owner review at `http://127.0.0.1:4487/compare` and
+  `http://127.0.0.1:4487/watchlist`. No push or deployment.

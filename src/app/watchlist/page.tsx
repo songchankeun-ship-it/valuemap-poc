@@ -127,12 +127,9 @@ export default async function WatchlistPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-0 md:px-4 py-4 md:py-8">
-      <header className="mb-4 md:mb-6">
-        <h1 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">관심 종목</h1>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed break-words">
-          담은 종목의 점수 변화·공시 신호를 이 화면에서 바로 추적해요. 오늘의 변화부터 훑고, 정렬·비교로 이어보세요.
-        </p>
+    <div className="research-desk research-watch space-y-4">
+      <header className="research-screen-heading">
+        <h1>관심 종목</h1>
       </header>
       <WatchlistClient allStocks={allStocks} matchPool={matchPool} tickerToSignal={tickerToSignal} tickerToDelta={tickerToDelta} changeBasis={changeBasis} isLoggedIn={isLoggedIn} exampleStocks={exampleStocks} todayCompareTickers={todayCompareTickers} />
 

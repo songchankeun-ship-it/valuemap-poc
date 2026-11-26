@@ -64,6 +64,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
         value: s.value,
         vol: s.vol,
         neglectScore: s.neglectScore,
+        compositeScore: Math.round(compositeOf(s)),
         themes: s.themes,
         returns: s.returns ?? {},
       },
@@ -165,8 +166,10 @@ export default async function ComparePage({ searchParams }: PageProps) {
   // 최근 공시 신호(최근 14일) — 비교 종목별 컨텍스트로 노출. 표시 전용(수집·점수 로직 무변경).
   // getRecentSignals는 라이브 DART 실패 시 샘플로 graceful fallback하며, 여기선 풀에 있는 종목만 남긴다.
   const disclosureByTicker: Record<string, Array<{ label: string; type: string; direction?: string; date: string; url: string }>> = {};
+  let showSampleDisclosures = false;
   try {
     const recent = await getRecentSignals(14);
+    showSampleDisclosures = recent.source?.startsWith("sample") ?? false;
     for (const sig of recent.signals) {
       const code = sig.disclosure.stock_code;
       if (!code || !stockMap[code]) continue;
@@ -200,21 +203,17 @@ export default async function ComparePage({ searchParams }: PageProps) {
   const compareCards = curatedComparisonCards();
 
   return (
-    <div className="space-y-4">
+    <div className="research-desk research-direct space-y-4">
       <nav className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
         <Link href="/" className="hover:text-zinc-700">홈</Link>
         <span>›</span>
         <span className="text-zinc-900 dark:text-zinc-100">종목 비교</span>
       </nav>
 
-      <header>
-        <h1 className="text-xl font-medium mb-1">종목 비교</h1>
-        <p className="text-sm text-gray-500 dark:text-zinc-400">
-          검색하거나 종목 페이지에서 &quot;비교에 추가&quot; 한 종목들을 나란히 봅니다.
-          비교 기준은 자체 지표 4종 + 재무 + 수익률이며, 탐색용입니다.
-        </p>
+      <header className="research-screen-heading">
+        <h1>종목 비교</h1>
         {initialTickers.length >= 2 ? (
-          <p className="mt-2 text-xs text-blue-700 dark:text-blue-300">
+          <p className="mt-2 research-section-label">
             공유 링크에서 불러온 비교: <strong>{initialNames.join(" · ")}</strong>
           </p>
         ) : null}
@@ -238,11 +237,12 @@ export default async function ComparePage({ searchParams }: PageProps) {
         recommendedSets={recommendedSets}
         exampleSets={exampleSets}
         disclosureByTicker={disclosureByTicker}
+        showSampleDisclosures={showSampleDisclosures}
         initialTickers={initialTickers}
       />
 
       {compareCards.length > 0 ? (
-        <section aria-label="추천 비교" className="border-y border-zinc-200 py-4 dark:border-zinc-800">
+        <section aria-label="추천 비교" className="research-comparison-block">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">바로 보는 종목 비교</h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
             같은 업종 대표 종목을 미리 정리한 비교 페이지입니다. 어느 쪽이 높고 낮은지 중립적으로 나란히 봅니다.
@@ -252,7 +252,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
               <li key={c.slug} className="border-b border-zinc-200 last:border-b-0 dark:border-zinc-800">
                 <Link
                   href={`/compare/${c.slug}`}
-                  className="flex items-center justify-between gap-2 px-1 py-2.5 text-xs transition hover:text-blue-700 dark:hover:text-blue-400"
+                  className="research-comparison-row"
                 >
                   <span className="font-medium text-zinc-800 dark:text-zinc-200">{c.a.name} vs {c.b.name}</span>
                   <span aria-hidden="true" className="text-zinc-400">›</span>

@@ -345,6 +345,17 @@ check(
   !watchSrc.includes("오늘 후보 3개 비교"),
 );
 
+check("interactive compare uses one scrollable evidence matrix with row and column labels",
+  compareSrc.includes("research-compare-matrix") && compareSrc.includes('scope="row"') &&
+  compareSrc.includes('scope="col"') && compareSrc.includes('aria-label="종목별 비교표"'));
+check("compare labels fallback disclosure examples separately from recent filings",
+  compareSrc.includes('showSampleDisclosures ? "예시 공시" : "최근 공시 신호"'));
+check("watchlist keeps missing score comparisons out of unchanged counts",
+  /missingDeltaCount \+= 1;\s+continue;/.test(watchSrc) &&
+  watchSrc.includes('["비교 자료 없음", missingDeltaCount'));
+check("watchlist keeps metadata editable within each stock row",
+  watchSrc.includes('className="research-watch-meta"') && watchSrc.includes("updateWatchlistMeta(item.ticker"));
+
 // 9c. Compare stays startable from search/today/watchlist (spec §10.2) and now
 // states the logged-out on-device storage vs login sync boundary.
 check(

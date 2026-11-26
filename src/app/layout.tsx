@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./research-desk.css";
 import "./research-workspaces.css";
+import "./research-collections.css";
 import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
 import { LanguageProvider } from "@/components/LanguageProvider";

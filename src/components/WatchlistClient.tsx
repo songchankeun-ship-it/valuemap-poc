@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import Link from "next/link";
-import { Heart, X, Clock, ArrowRight, SlidersHorizontal, LayoutDashboard, Bell, ArrowUpDown, Scale, Search, Download, FolderOpen, Pencil, Check } from "lucide-react";
+import { Heart, X, Clock, ArrowRight, SlidersHorizontal, ChevronDown, Bell, ArrowUpDown, Scale, Search, Download, FolderOpen, Pencil, Check } from "lucide-react";
 import { StockSearchBox } from "@/components/StockSearchBox";
 import {
   getWatchlist,
@@ -543,15 +543,19 @@ export function WatchlistClient({
 
   // 점수 델타의 실제 비교 기준 라벨(전 거래일 / N거래일 전 / 최근 저장 데이터). "오늘 변화"가 무엇 대비인지 명시.
   const changeBasisLabel = comparisonBasisLabel(changeBasis, "ko");
-  const changeBasisSuffix = changeBasis.kind === "unavailable" ? "" : ` · ${changeBasisLabel}`;
 
   // 관심 종목 점수 변화 요약(오늘 기준 · 중립 표현)
   let upCount = 0;
   let downCount = 0;
   let flatCount = 0;
+  let missingDeltaCount = 0;
   for (const item of watchlist) {
     const d = tickerToDelta[item.ticker];
-    const r = d === undefined ? 0 : Math.round(d);
+    if (typeof d !== "number" || !Number.isFinite(d)) {
+      missingDeltaCount += 1;
+      continue;
+    }
+    const r = Math.round(d);
     if (r > 0) upCount += 1;
     else if (r < 0) downCount += 1;
     else flatCount += 1;
@@ -699,8 +703,6 @@ export function WatchlistClient({
   // 없으면 오늘 브리핑으로. 비교는 담을 종목이 없는 빈 상태의 시작 행동이 아니므로 여기서 노출하지 않는다.
   const addFromCandidatesHref = exampleStocks.length > 0 ? "#watchlist-samples" : "/today";
 
-  const hasAnything = watchlist.length > 0 || recent.length > 0 || savedSearches.length > 0;
-
   // 오늘 점수 델타 칩(표시 전용 · 종합 점수 델타만 · 0이면 표시 안 함 · 매수·매도 추천 아님)
   const deltaChip = (ticker: string) => {
     const raw = tickerToDelta[ticker];
@@ -712,58 +714,31 @@ export function WatchlistClient({
       </span>
     );
   };
-  // 최근 본 종목 중 오늘 점수가 움직인 개수 — 담은 종목이 없어도 루틴 요약을 보여주기 위한 참고 표시
-  const recentMoved = recent.filter((r) => Math.round(tickerToDelta[r.ticker] ?? 0) !== 0).length;
-
   return (
-    <div className="space-y-8">
-      {/* 내 현황 요약 — 재방문 개인화 출발점 */}
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <LayoutDashboard className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">내 현황</h2>
-        </div>
-        {!hasAnything ? (
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed break-words">
-            여기는 다시 방문했을 때 <strong className="text-zinc-800 dark:text-zinc-200">내 관심 종목·최근 본 종목·저장한 필터</strong>를 한곳에서 보는 개인 출발점이에요. 종목을 관심에 담거나 탐색 조건을 저장하면 다음 방문부터 이 화면이 채워집니다.
-          </p>
-        ) : (
-          <div className="space-y-2.5">
-            <div className="flex items-stretch gap-2 flex-wrap">
-              {([
-                ["관심 종목", watchlist.length],
-                ["최근 본 종목", recent.length],
-                ["저장한 필터", savedSearches.length],
-              ] as const).map(([label, n]) => (
-                <div key={label} className="flex-1 min-w-[90px] bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-3 py-2 text-center">
-                  <div className="text-lg font-bold tabular-nums text-zinc-900 dark:text-zinc-100">{n}</div>
-                  <div className="text-[11px] text-zinc-500 dark:text-zinc-400 break-keep">{label}</div>
-                </div>
-              ))}
+    <div className="space-y-5 md:space-y-6">
+      {watchlist.length > 0 ? (
+        <section className="research-watch-overview" aria-labelledby="watchlist-overview-title">
+          <div className="research-watch-pulse">
+            <div>
+              <h2 id="watchlist-overview-title">내 관심종목 변화</h2>
+              <p>{changeBasis.kind === "unavailable" ? "비교할 이전 점수 데이터 없음" : changeBasisLabel}</p>
             </div>
-            {watchlist.length > 0 ? (
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug break-words tabular-nums">
-                <span className="text-zinc-500 dark:text-zinc-500">관심 종목 변화(오늘{changeBasisSuffix}):</span>{" "}
-                점수 오른 종목 <strong className="text-red-600 dark:text-red-400">{upCount}</strong> ·
-                내린 종목 <strong className="text-blue-600 dark:text-blue-400">{downCount}</strong> ·
-                변동 없음 <strong className="text-zinc-700 dark:text-zinc-300">{flatCount}</strong>
-                <span className="block mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</span>
-              </p>
-            ) : recent.length > 0 ? (
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug break-words tabular-nums">
-                <span className="text-zinc-500 dark:text-zinc-500">최근 본 종목 오늘 변화:</span>{" "}
-                점수가 움직인 종목 <strong className="text-zinc-800 dark:text-zinc-200">{recentMoved}</strong> / {recent.length}
-                <span className="block mt-0.5 text-[11px] text-zinc-400 dark:text-zinc-500">아래에서 바로 관심 종목에 담아 이 화면에서 추적을 시작할 수 있어요.</span>
-              </p>
-            ) : null}
+            <dl>
+              {([["상승", upCount, "up"], ["하락", downCount, "down"], ["보합", flatCount, "flat"], ["비교 자료 없음", missingDeltaCount, "missing"]] as const).map(([label, count, tone]) => (
+                <div key={tone} data-tone={tone}><dt>{label}</dt><dd>{count}</dd></div>
+              ))}
+            </dl>
           </div>
-        )}
-        {watchlist.length > 0 ? (
-          <div className="mt-3 flex flex-col gap-3 rounded-lg border border-blue-200 bg-blue-50/60 px-3 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-blue-900 dark:bg-blue-950/20">
+          <nav className="research-watch-index" aria-label="내 관심 화면">
+            <a href="#watchlist-stocks">관심 종목 <strong>{watchlist.length}</strong></a>
+            <a href="#watchlist-saved-filters">저장한 필터 <strong>{savedSearches.length}</strong></a>
+            <a href="#recent-views">최근 본 종목 <strong>{recent.length}</strong></a>
+          </nav>
+          <div className="research-watch-routine flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">이번 관심종목 점검</p>
               <p className="mt-0.5 text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
-                {routineSnapshot ? "마지막 점검 이후" : "오늘 변화 기준"} {routineChangeCount}개를 먼저 보고, 필요한 종목만 상세·공시에서 확인하세요.
+                {routineSnapshot ? "마지막 점검 이후" : "현재 점검 대상"} {routineChangeCount}개
               </p>
               <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
                 {lastRoutineCheck
@@ -779,7 +754,7 @@ export function WatchlistClient({
                       change.scoreDelta !== null && change.scoreDelta !== 0
                         ? `점수 ${change.scoreDelta > 0 ? "+" : ""}${change.scoreDelta}`
                         : null,
-                      change.signalChanged ? "공시 신호 변경" : null,
+                      change.signalChanged ? "예시 공시 변경" : null,
                     ].filter(Boolean);
                     return (
                       <li key={change.ticker}>
@@ -798,37 +773,20 @@ export function WatchlistClient({
             <button
               type="button"
               onClick={completeRoutineCheck}
-              className={`inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 ${FOCUS_RING}`}
+              className={`research-button ${FOCUS_RING}`}
             >
               <Check className="h-4 w-4" aria-hidden="true" />
               이번 점검 완료
             </button>
           </div>
-        ) : null}
-        {/* 알림 설정 연결 — 관심 종목·저장 필터 변화를 알림으로 (중립 안내, 압박 문구 없음) */}
-        <Link
-          href="/settings/notifications"
-          className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/40 px-3 py-2.5 min-h-[44px] hover:border-blue-300 dark:hover:border-blue-800 transition group"
-        >
-          <span className="flex items-center gap-2 min-w-0 text-xs text-zinc-600 dark:text-zinc-300">
-            <Bell className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
-            <span className="break-words">관심 종목·저장 필터 변화를 알림으로 받기</span>
-          </span>
-          <span className="shrink-0 inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">
-            알림 설정 보기 <ArrowRight className="w-3.5 h-3.5" />
-          </span>
-        </Link>
-        {/* 지금 되는 것 vs 준비 중 — 담기 자체는 로컬 추적, 알림은 이메일만 동작(정직 프레이밍) */}
-        <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
-          관심 종목을 담으면 점수 변화·공시 신호를 이 화면에서 바로 추적해요(별도 알림 없이 로컬 기록). 공시·조건 충족을 메일로도 받으려면 알림 설정에서 이메일 알림을 켜세요(임시·베타). 카카오톡·푸시 알림은 준비 중이에요.
-        </p>
-      </section>
+        </section>
+      ) : null}
 
       {/* 관심 종목 */}
-      <section>
+      <section id="watchlist-stocks" className="scroll-mt-24">
         <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
-            <Heart className="w-4 h-4 text-pink-600" fill="currentColor" />
+            <Heart className="w-4 h-4 research-accent" aria-hidden="true" />
             관심 종목
             <span className="text-xs text-zinc-500 dark:text-zinc-400 font-normal">
               {watchlist.length}개
@@ -851,6 +809,15 @@ export function WatchlistClient({
                 <button type="button" onClick={() => changeView("analysis")} aria-pressed={view === "analysis"} className={"px-2.5 py-1 rounded-md transition " + (view === "analysis" ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium shadow-sm" : "text-zinc-500 dark:text-zinc-400")}>분석</button>
               </div>
             </div>
+          ) : null}
+        </div>
+
+        <div className="research-comparison-toolbar research-watch-search">
+          <StockSearchBox stocks={allStocks} onPick={(ticker) => { void addToWatchlist(ticker); }} placeholder="관심 종목 검색해서 추가" />
+          {filteredWatchlist.length > 1 ? (
+            <Link href={`/compare?stocks=${compareSeed.join(",")}`} className="research-button">
+              <Scale size={16} aria-hidden="true" /> 관심 종목 비교하기
+            </Link>
           ) : null}
         </div>
 
@@ -909,13 +876,13 @@ export function WatchlistClient({
 
         {/* 로그인 전/후 저장 안내 — 상태별 한 문장으로 통일(비로그인=이 기기 저장·로그인 시 이어짐, 로그인=다기기, 압박·팝업 없음) */}
         {!isLoggedIn ? (
-          <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5 text-xs">
-            <span className="min-w-0 break-words text-blue-800 dark:text-blue-300 leading-snug">
+          <div className="research-watch-sync">
+            <span className="min-w-0 break-words leading-snug">
               {authCopy.syncLocalNote}
             </span>
             <Link
               href="/login?next=/watchlist"
-              className="inline-flex items-center gap-1 shrink-0 font-medium text-blue-700 dark:text-blue-400 hover:underline"
+              className="research-link inline-flex min-h-9 items-center gap-1"
             >
               {authCopy.syncCta} <ArrowRight className="w-3 h-3" />
             </Link>
@@ -1007,20 +974,20 @@ export function WatchlistClient({
         {/* 오늘 변화가 있는 종목 — 관심 종목이 있을 때 목록보다 먼저, 오늘의 변화부터 훑도록 */}
         {watchlist.length > 0 ? (
           changed.length > 0 ? (
-            <div className="mb-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
-              <div className="mb-0.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">오늘 변화가 있는 종목</div>
-              <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 break-words">담아둔 종목의 점수·공시 변화를 모아봤어요{changeBasis.kind === "unavailable" ? "" : ` (점수 ${changeBasisLabel})`}.</p>
+            <div className="research-watch-changes mb-4">
+              <div className="mb-0.5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">점수 변화 · 예시 공시</div>
+              <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 break-words">{changeBasis.kind === "unavailable" ? "비교할 점수 기록 없음" : `점수 ${changeBasisLabel}`}</p>
               <ul className="space-y-1">
                 {changed.map((c) => (
                   <li key={c.ticker}>
                     <Link
                       href={`/stock/${c.ticker}`}
-                      className="flex items-center justify-between gap-2 rounded-md px-2 py-2 min-h-[44px] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group"
+                      className="research-comparison-row group"
                     >
                       <span className="min-w-0 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                         {c.name}
                       </span>
-                      <span className="flex shrink-0 items-center gap-1.5">
+                      <span className="flex min-w-0 flex-wrap items-center gap-1.5">
                         {/* 판정 가능한 범위만 라벨링 — 종합 점수 5점 이상 변동(기존 델타), 공시 발생(기존 신호). 지표별 급증은 표시 안 함(아래 고지) */}
                         {Math.abs(c.delta) >= 5 ? (
                           <span className="text-[10px] px-1.5 py-0.5 rounded border font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900">
@@ -1029,7 +996,7 @@ export function WatchlistClient({
                         ) : null}
                         {c.signal ? (
                           <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[c.signal.signalType] || "bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700")}>
-                            🔔 공시 발생 · {c.signal.signalLabel}
+                            예시 공시 · {c.signal.signalLabel}
                           </span>
                         ) : null}
                         {c.delta !== 0 ? (
@@ -1045,38 +1012,37 @@ export function WatchlistClient({
               <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500 break-words">점수 변화는 참고 정보이며 매수·매도 추천이 아닙니다.</p>
               {/* 제한 고지 — 판정 가능한 항목만 표시. 거래활성도 급증 등 지표별 하루 변화는 일자별 지표 델타를 따로 기록하지 않아 표시하지 않는다(날조 없음). */}
               <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 break-words leading-snug">
-                여기서는 종합 점수 5점 이상 변동과 공시 발생만 판정해 보여줘요. 거래활성도 급증처럼 지표별 하루 변화는 일자별 기록이 없어 아직 표시하지 않아요.
+                공시 표시는 예시 자료이며 새 공시 발생을 뜻하지 않습니다.
               </p>
             </div>
           ) : (
             <div className="mb-4">
               <p className="text-xs text-zinc-500 dark:text-zinc-400 break-words leading-snug">
-                오늘은 담아둔 종목에서 눈에 띄는 점수·공시 변화가 없어요. 이렇게 한 번에 확인하는 게 관심 목록의 쓸모예요 — 이 기기에 저장돼 있어 다시 들를 때마다 오늘 바뀐 것만 빠르게 볼 수 있어요.
-              </p>
-              <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 break-words leading-snug">
-                아래 목록에서 종목을 열어 지표·공시를 살펴보거나, 정렬·비교로 이어볼 수 있어요.
+                {missingDeltaCount === watchlist.length
+                  ? "비교할 점수 기록이나 표시할 예시 공시가 없어요."
+                  : "확인 가능한 점수 변화와 예시 공시가 없어요."}
               </p>
             </div>
           )
         ) : null}
 
         {watchlist.length === 0 ? (
-          <div className="bg-zinc-50 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg p-6 md:p-8 text-center">
-            <Heart className="w-8 h-8 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" strokeWidth={1.5} />
+          <div className="research-watch-empty">
+            <Heart className="w-5 h-5 research-accent mb-2" aria-hidden="true" />
             <p className="text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-1.5">아직 담은 종목이 없어요.</p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 max-w-sm mx-auto leading-relaxed break-keep">
+            <p className="text-xs text-[var(--muted)] mb-3 leading-relaxed break-keep">
               관심에 담으면 <strong className="text-zinc-700 dark:text-zinc-300">점수 변화 · 공시 신호 · 저평가 여부</strong>를 이 화면에서 바로 확인할 수 있어요.
             </p>
             {/* 시작 행동은 두 가지만(§10.1): 오늘 후보에서 담기 · 종목 찾아보기. 비교는 담은 종목이 있어야 의미가 있어 빈 상태에서는 노출하지 않는다. */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 max-w-md mx-auto">
+            <div className="flex flex-wrap items-stretch gap-2">
               <a
                 href={addFromCandidatesHref}
-                className={`flex-1 inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition whitespace-nowrap ${FOCUS_RING}`}
+                className={`research-button ${FOCUS_RING}`}
               >
                 <Heart className="w-3.5 h-3.5" /> 오늘 후보에서 담기
               </a>
-              <Link href="/stocks" className={`flex-1 inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 text-sm font-medium hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition whitespace-nowrap ${FOCUS_RING}`}>
-                종목 찾아보기
+              <Link href="/stocks" className={`research-saved-tool ${FOCUS_RING}`}>
+                <Search size={16} aria-hidden="true" /> 종목 찾아보기
               </Link>
             </div>
             {/* 자동 저장 없이 미리보기와 개별 추가만 제공한다. 사용자가 담기를 누른 종목만 이 기기에 저장된다. */}
@@ -1084,7 +1050,7 @@ export function WatchlistClient({
             {/* 최근 본 종목 이어담기 — 담지 않고 둘러본 종목을 빈 상태에서 바로 1탭 담기로 잇는다.
                 (아래 스크롤 안내 대신 실제 액션. 담기를 누른 종목만 이 기기에 저장된다.) */}
             {recent.length > 0 ? (
-              <div className="mt-5 text-left max-w-md mx-auto">
+              <div className="mt-4 text-left">
                 <div className="mb-1.5 flex items-center gap-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
                   <Clock className="w-3 h-3" /> 최근 본 종목 이어담기
                 </div>
@@ -1111,7 +1077,7 @@ export function WatchlistClient({
             ) : null}
             {/* 예시 종목 — 서버에서 실제 필드로 뽑은 3개. 각 항목이 한 줄 근거와 1탭 담기 버튼을 가진다(매수·매도 추천 아님) */}
             {exampleStocks.length > 0 ? (
-              <div id="watchlist-samples" className="mt-5 text-left max-w-md mx-auto scroll-mt-20">
+              <div id="watchlist-samples" className="mt-4 text-left scroll-mt-20">
                 <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">담아볼 만한 예시</div>
                 <ul className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800">
                   {exampleStocks.map((ex) => (
@@ -1137,10 +1103,6 @@ export function WatchlistClient({
                 <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500 break-keep">예시는 참고용이며 매수·매도 추천이 아닙니다.</p>
               </div>
             ) : null}
-            <div className="mt-5 text-left max-w-md mx-auto">
-              <div className="mb-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">검색해서 관심 종목에 담기</div>
-              <StockSearchBox stocks={allStocks} onPick={(t) => { void addToWatchlist(t); }} placeholder="관심 종목 검색해서 추가" />
-            </div>
           </div>
         ) : filteredWatchlist.length === 0 ? (
           <div className="rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-5 text-center">
@@ -1155,7 +1117,7 @@ export function WatchlistClient({
             </button>
           </div>
         ) : (
-          <ul className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-100 dark:divide-zinc-800">
+          <ul className="research-watch-list">
             {filteredWatchlist.map((item) => {
               const info = allStocks.find((s) => s.ticker === item.ticker);
               const name = info?.name ?? item.ticker;
@@ -1164,7 +1126,7 @@ export function WatchlistClient({
               const noteInputId = `watchlist-${item.ticker}-note`;
               const note = item.note ?? "";
               return (
-                <li key={item.ticker} className="px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                <li key={item.ticker} className="research-watch-stock">
                   <div className="flex items-start justify-between gap-2">
                     <Link
                       href={`/stock/${item.ticker}`}
@@ -1177,7 +1139,7 @@ export function WatchlistClient({
                           </span>
                           {signal ? (
                             <span className={"text-[10px] px-1.5 py-0.5 rounded border font-medium " + (SIGNAL_TONE[signal.signalType] || "bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700")}>
-                              🔔 {signal.signalLabel}
+                              예시 공시 · {signal.signalLabel}
                             </span>
                           ) : null}
                         </div>
@@ -1186,7 +1148,7 @@ export function WatchlistClient({
                           {info?.compositeScore !== undefined ? (
                             <>
                               <span className="text-zinc-300 dark:text-zinc-600">·</span>
-                              <span>점수 <strong className="text-zinc-700 dark:text-zinc-300">{info.compositeScore}</strong>{tickerToDelta[item.ticker] !== undefined && Math.round(tickerToDelta[item.ticker]) !== 0 ? <span className={"ml-0.5 " + (tickerToDelta[item.ticker] > 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{tickerToDelta[item.ticker] > 0 ? "▲" : "▼"}{Math.abs(Math.round(tickerToDelta[item.ticker]))}</span> : null}</span>
+                              <span>점수 <strong className="research-watch-score">{info.compositeScore}</strong>{tickerToDelta[item.ticker] !== undefined && Math.round(tickerToDelta[item.ticker]) !== 0 ? <span className={"ml-0.5 " + (tickerToDelta[item.ticker] > 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400")}>{tickerToDelta[item.ticker] > 0 ? "▲" : "▼"}{Math.abs(Math.round(tickerToDelta[item.ticker]))}</span> : null}</span>
                             </>
                           ) : null}
                           <span className="text-zinc-300 dark:text-zinc-600">·</span>
@@ -1194,7 +1156,7 @@ export function WatchlistClient({
                         </div>
                         {view === "analysis" && info ? (
                           <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1.5">
-                            {([["추세", info.momentum], ["거래", info.flow], ["밸류", info.value], ["위험", info.vol]] as const).map(([l, v]) => (
+                            {([["추세", info.momentum], ["거래활성도", info.flow], ["밸류", info.value], ["위험조정", info.vol]] as const).map(([l, v]) => (
                               <div key={l} className="bg-zinc-50 dark:bg-zinc-800/50 rounded px-1.5 py-1 text-center">
                                 <div className="text-[9px] text-zinc-400 dark:text-zinc-500">{l}</div>
                                 <div className="text-[11px] font-semibold tabular-nums text-zinc-700 dark:text-zinc-300">{v !== undefined ? Math.round(v) : "—"}</div>
@@ -1219,52 +1181,61 @@ export function WatchlistClient({
                         onClick={() => handleRemove(item.ticker, name)}
                         className="flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition"
                         aria-label={`${name} 관심 종목에서 제거`}
+                        title="관심 종목에서 제거"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <div className="mt-2 grid gap-2 sm:grid-cols-[150px_minmax(0,1fr)]">
-                    <label className="min-w-0" htmlFor={groupInputId}>
-                      <span className="mb-1 block text-[10px] font-medium text-zinc-400 dark:text-zinc-500">그룹</span>
-                      <select
-                        id={groupInputId}
-                        value={item.group ?? ""}
-                        onChange={(event) => updateWatchlistMeta(item.ticker, { group: event.target.value })}
-                        className={`min-h-[44px] w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2.5 text-xs text-zinc-700 dark:text-zinc-200 ${FOCUS_RING}`}
-                        aria-label={`${name} 관심 그룹`}
-                      >
-                        <option value="">미분류</option>
-                        {WATCHLIST_GROUP_OPTIONS.map((group) => (
-                          <option key={group} value={group}>{group}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="min-w-0" htmlFor={noteInputId}>
-                      <span className="mb-1 flex items-center justify-between gap-2 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
-                        <span>메모</span>
-                        <span className="tabular-nums">{note.length}/{WATCHLIST_NOTE_MAX_LENGTH}</span>
-                      </span>
-                      <textarea
-                        id={noteInputId}
-                        value={note}
-                        maxLength={WATCHLIST_NOTE_MAX_LENGTH}
-                        rows={2}
-                        onChange={(event) => updateWatchlistMeta(item.ticker, { note: event.target.value }, false)}
-                        onBlur={(event) => {
-                          trackEvent("watchlist_meta_update", {
-                            field: "note",
-                            ticker: item.ticker,
-                            hasValue: event.currentTarget.value.trim().length > 0,
-                            loggedIn: isLoggedIn,
-                          });
-                        }}
-                        placeholder="확인할 포인트 메모"
-                        className={`min-h-[44px] w-full resize-y rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2.5 py-2 text-xs leading-relaxed text-zinc-700 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 ${FOCUS_RING}`}
-                        aria-label={`${name} 관심 메모`}
-                      />
-                    </label>
-                  </div>
+                  <details className="research-watch-meta">
+                    <summary>
+                      <Pencil size={14} aria-hidden="true" />
+                      <span>{item.group || "그룹·메모"}</span>
+                      {note ? <span className="research-watch-note-preview">{note}</span> : null}
+                      <ChevronDown size={14} aria-hidden="true" />
+                    </summary>
+                    <div className="grid gap-2 sm:grid-cols-[150px_minmax(0,1fr)]">
+                      <label className="min-w-0" htmlFor={groupInputId}>
+                        <span className="mb-1 block text-[10px] font-medium text-zinc-400 dark:text-zinc-500">그룹</span>
+                        <select
+                          id={groupInputId}
+                          value={item.group ?? ""}
+                          onChange={(event) => updateWatchlistMeta(item.ticker, { group: event.target.value })}
+                          className={`min-h-[44px] w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2.5 text-xs text-zinc-700 dark:text-zinc-200 ${FOCUS_RING}`}
+                          aria-label={`${name} 관심 그룹`}
+                        >
+                          <option value="">미분류</option>
+                          {WATCHLIST_GROUP_OPTIONS.map((group) => (
+                            <option key={group} value={group}>{group}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="min-w-0" htmlFor={noteInputId}>
+                        <span className="mb-1 flex items-center justify-between gap-2 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+                          <span>메모</span>
+                          <span className="tabular-nums">{note.length}/{WATCHLIST_NOTE_MAX_LENGTH}</span>
+                        </span>
+                        <textarea
+                          id={noteInputId}
+                          value={note}
+                          maxLength={WATCHLIST_NOTE_MAX_LENGTH}
+                          rows={2}
+                          onChange={(event) => updateWatchlistMeta(item.ticker, { note: event.target.value }, false)}
+                          onBlur={(event) => {
+                            trackEvent("watchlist_meta_update", {
+                              field: "note",
+                              ticker: item.ticker,
+                              hasValue: event.currentTarget.value.trim().length > 0,
+                              loggedIn: isLoggedIn,
+                            });
+                          }}
+                          placeholder="확인할 포인트 메모"
+                          className={`min-h-[44px] w-full resize-y rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2.5 py-2 text-xs leading-relaxed text-zinc-700 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 ${FOCUS_RING}`}
+                          aria-label={`${name} 관심 메모`}
+                        />
+                      </label>
+                    </div>
+                  </details>
                 </li>
               );
             })}
@@ -1274,12 +1245,6 @@ export function WatchlistClient({
         {/* 관심 종목 비교하기 — 담아둔 종목 앞에서부터 최대 N개를 한 번에 비교 화면에 시드(1탭 이동) */}
         {filteredWatchlist.length > 1 ? (
           <div className="mt-3">
-            <Link
-              href={`/compare?stocks=${compareSeed.join(",")}`}
-              className={`flex items-center justify-center gap-1.5 w-full min-h-[44px] px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-blue-400 dark:hover:border-blue-700 hover:text-blue-700 dark:hover:text-blue-400 transition ${FOCUS_RING}`}
-            >
-              <Scale className="w-4 h-4" /> 관심 종목 비교하기
-            </Link>
             <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500 leading-snug break-words">
               {activeGroupFilter === GROUP_FILTER_ALL ? "앞에서부터" : `${activeGroupFilterLabel}에서 앞에서부터`} 최대 {COMPARE_MAX}개를 비교 화면에 담아요 · 비교는 참고용이며 매수·매도 추천이 아닙니다.
             </p>
@@ -1288,7 +1253,7 @@ export function WatchlistClient({
       </section>
 
       {/* 저장한 필터 */}
-      <section>
+      <section id="watchlist-saved-filters" className="scroll-mt-24">
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100">
             <SlidersHorizontal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -1576,6 +1541,20 @@ export function WatchlistClient({
           </ul>
         )}
       </section>
+
+        <Link
+          href="/settings/notifications"
+          className="research-comparison-row"
+        >
+          <span className="flex items-center gap-2 min-w-0 text-xs text-zinc-600 dark:text-zinc-300">
+            <Bell className="w-4 h-4 research-accent shrink-0" />
+            <span className="break-words">이메일 알림 설정</span>
+          </span>
+          <span className="shrink-0 inline-flex items-center gap-0.5 text-xs font-medium research-accent group-hover:translate-x-0.5 transition-transform">
+            <ArrowRight className="w-3.5 h-3.5" />
+          </span>
+        </Link>
+      <p className="research-matrix-note">공시·조건 충족 알림은 이메일로 받을 수 있습니다. 카카오톡·푸시 알림은 준비 중입니다.</p>
 
       {/* 최근 검색 — 탐색에서 저장된 검색어를 그대로 눌러 재검색으로 잇기(표시 전용, 있을 때만) */}
       {recentSearches.length > 0 ? (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { Search } from "lucide-react";
 
 interface Item { ticker: string; name: string }
 
@@ -24,18 +25,21 @@ export function StockSearchBox({
 
   return (
     <div className="max-w-sm mx-auto text-left">
-      <input
-        type="search"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder={placeholder}
-        aria-label={placeholder}
-        role="combobox"
-        aria-autocomplete="list"
-        aria-controls={listId}
-        aria-expanded={matches.length > 0}
-        className="w-full px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
-      />
+      <div className="relative">
+        <Search className="research-accent pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" size={17} aria-hidden="true" />
+        <input
+          type="search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={placeholder}
+          aria-label={placeholder}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-controls={listId}
+          aria-expanded={matches.length > 0}
+          className="w-full pl-10 pr-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
+        />
+      </div>
       {matches.length > 0 ? (
         <ul
           id={listId}
