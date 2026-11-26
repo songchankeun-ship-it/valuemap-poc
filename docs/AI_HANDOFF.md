@@ -4326,3 +4326,17 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   jumping, mobile compare routing, and keyboard focus restoration.
 - Next: review `http://127.0.0.1:4487/stock/005930` locally with the owner.
   Do not push or deploy this preview. No data, formulas or auth flow changed.
+
+## 2026-11-26 - Briefing and finder preview [codex]
+
+- Today shows actual directional stock counts in the breadth rail, keeps
+  change availability explicit and puts verified changes before the shared
+  candidate rows. Data sources and candidate rules are unchanged.
+- The finder groups search, sort and filters into one toolbar and presents
+  matching stocks in compact rows. Existing presets, filtering, list/table
+  modes, saved searches and alerts are preserved. Mobile filter Escape and
+  trigger focus restoration are covered.
+- Checked desktop and 390px/320px preview layouts, known-code and empty
+  searches, preset switching, table mode and mobile market filtering.
+- Next: review `http://127.0.0.1:4487/today` and
+  `http://127.0.0.1:4487/stocks` locally with the owner. No push or deployment.

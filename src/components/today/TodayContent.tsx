@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Activity, ArrowRight, GitCompareArrows } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { todayCopy } from "@/lib/copy/today";
 import { TodayStatusBar } from "@/components/today/TodayStatusBar";
@@ -235,12 +236,12 @@ export function TodayContent(props: TodayContentProps) {
       props.bigMovers.length > 0);
 
   return (
-    <div className="space-y-5 md:space-y-7">
+    <div className="research-desk research-today space-y-5 md:space-y-6">
       {/* ── 구간 1 · 오늘 한 줄 요약(변화 중심) ── */}
-      <header className="border-b border-zinc-200 dark:border-zinc-800 pb-3 md:pb-4">
-        <div className="text-[10px] md:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-1">{t.eyebrow}</div>
-        <h1 className="text-lg md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{today}</h1>
-        <p className="text-[11px] md:text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 md:mt-2">
+      <header className="research-screen-heading">
+        <p className="research-section-label tabular-nums">{today}</p>
+        <h1>{t.briefingTitle}</h1>
+        <p className="research-screen-deck">
           {props.hasDeltas ? t.summaryWithDeltas(basisLabel) : t.summaryNoDeltas}
         </p>
         {props.isClosed ? (
@@ -251,113 +252,116 @@ export function TodayContent(props: TodayContentProps) {
         ) : null}
       </header>
 
-      {/* 데이터 상태 바 (타 에이전트가 현지화) */}
-      <TodayStatusBar />
-
-      {/* 시장 요약 KPI 카드 */}
-      <MarketSnapshotCards
-        totalCount={props.totalCount}
-        strongCount={props.strongCount}
-        volumeSpikeCount={props.activitySurgeCount}
-        signalCount={props.signalCount}
-      />
-
-      {/* 오늘의 브리핑 */}
-      <section className="border-l-2 border-blue-500 bg-blue-50/50 px-3 py-3 dark:bg-blue-950/20 md:px-4">
-        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-          <span className="text-sm">📋</span>
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.briefingTitle}</h2>
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 tabular-nums">{props.dataAsOf}{t.briefingAsOfSuffix}</span>
-        </div>
-        <p className="text-[11px] text-zinc-600 dark:text-zinc-300 tabular-nums">
-          {t.briefingMoveLabel(props.totalCount)} · {t.briefingUp(props.upCount)} · {t.briefingDownFlat(props.downCount, props.flatCount)} · {t.briefingFlowLabel} {props.activitySurgeCount}{t.briefingCountSuffix}
-        </p>
-        {/* 저장된 일일 AI 인사이트는 출처·구성종목·계산시각·규칙/모델 역할의 타입화된
-            프로버넌스가 없어 공개 표시하지 않는다(Slice E). 근거 없는 대체 카드도 넣지 않는다.
-            재도입 방지 가드: scripts/test_todayInsightProvenance.ts. */}
-        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">{t.breadthLine(props.breadthPct)}</p>
-      </section>
-
-      {/* ── 구간 2 · 오늘 후보와 최근 변화(basis 기준) ── */}
-      <TodayTopSection candidates={top3Candidates} />
+      <div>
+        <section className="research-market-pulse" aria-labelledby="market-breadth-title">
+          <div>
+            <h2 id="market-breadth-title" className="flex items-center gap-2">
+              <Activity size={17} aria-hidden="true" />
+              {t.briefingMoveLabel(props.totalCount)}
+            </h2>
+            <p className="research-market-asof">{props.dataAsOf}{t.briefingAsOfSuffix}</p>
+          </div>
+          <div className="min-w-0">
+            <div className="research-market-meter" aria-hidden="true">
+              {[["up", props.upCount], ["down", props.downCount], ["flat", props.flatCount]].map(([tone, count]) => Number(count) > 0 ? (
+                <span key={tone} data-tone={tone} style={{ flexGrow: Number(count) }} />
+              ) : null)}
+            </div>
+            <p className="research-market-counts">
+              <strong>{t.briefingUp(props.upCount)}</strong>
+              <span>{t.briefingDownFlat(props.downCount, props.flatCount)}</span>
+            </p>
+            {/* Only published counts are shown here; no inferred daily commentary. */}
+            <p className="research-market-asof">{t.breadthLine(props.breadthPct)}</p>
+          </div>
+        </section>
+        <MarketSnapshotCards
+          totalCount={props.totalCount}
+          strongCount={props.strongCount}
+          volumeSpikeCount={props.activitySurgeCount}
+          signalCount={props.signalCount}
+        />
+      </div>
 
       {hasChangeRows ? (
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-5">
-          <div className="flex items-center gap-1.5 mb-3">
-            <span className="text-sm">🔔</span>
-            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.changeTitle}</h2>
+        <section className="research-market-changes">
+          <div className="research-band-heading">
+            <GitCompareArrows className="research-section-label shrink-0" size={17} aria-hidden="true" />
+            <h2>{t.changeTitle}</h2>
             <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{basisLabel}</span>
           </div>
-          {props.newEntrants.length > 0 ? (
-            <div className="mb-3">
-              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">{t.newEntrants}</div>
-              <div className="flex flex-wrap gap-1.5">
-                {props.newEntrants.map((s) => (
-                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:border-emerald-400 transition">
-                    {s.name} <span className="tabular-nums">{s.composite} (▲{Math.round(s.delta)})</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {props.dropouts.length > 0 ? (
-            <div className="mb-3">
-              <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-400 mb-1.5">{t.dropouts}</div>
-              <div className="flex flex-wrap gap-1.5">
-                {props.dropouts.map((s) => (
-                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:border-blue-400 transition">
-                    {s.name} <span className="tabular-nums">{s.composite} (▼{Math.abs(Math.round(s.delta))})</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {props.rankRisers.length > 0 ? (
-            <div className="mb-3">
-              <div className="text-[11px] font-semibold text-red-700 dark:text-red-400 mb-1.5">{t.rankRisers(basisLabel)}</div>
-              <div className="flex flex-wrap gap-1.5">
-                {props.rankRisers.map((s) => (
-                  <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="text-xs px-2.5 py-1 rounded-full border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition">
-                    {s.name} <span className="tabular-nums">▲{s.change}{t.rankStepSuffix}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {props.bigMovers.length > 0 ? (
-            <div>
-              <div className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">{t.bigMovers}</div>
-              <div className="flex flex-wrap gap-1.5">
-                {props.bigMovers.map((s) => {
-                  const up = s.delta >= 0;
-                  const mc = s.metricChange;
-                  const cause = mc ? `${M.momentum} ${fmtSigned(mc.momentum)} · ${M.flow} ${fmtSigned(mc.flow)} · ${M.value} ${fmtSigned(mc.value)} · ${M.vol} ${fmtSigned(mc.vol)}` : undefined;
-                  return (
-                    <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} title={cause} className={"text-xs px-2.5 py-1 rounded-full border transition " + (up ? "border-red-200 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900" : "border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900")}>
-                      {s.name} <span className="tabular-nums">{up ? "▲" : "▼"}{Math.abs(Math.round(s.delta))}</span>
+          <div className="research-change-grid">
+            {props.newEntrants.length > 0 ? (
+              <div className="mb-3">
+                <div className="research-change-label">{t.newEntrants}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {props.newEntrants.map((s) => (
+                    <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="research-change-link">
+                      {s.name} <span className="tabular-nums">{s.composite} (▲{Math.round(s.delta)})</span>
                     </Link>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : null}
-          <p className="text-[10px] text-zinc-600 dark:text-zinc-300 mt-3">{t.watchHint}</p>
+            ) : null}
+            {props.dropouts.length > 0 ? (
+              <div className="mb-3">
+                <div className="research-change-label">{t.dropouts}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {props.dropouts.map((s) => (
+                    <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="research-change-link">
+                      {s.name} <span className="tabular-nums">{s.composite} (▼{Math.abs(Math.round(s.delta))})</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {props.rankRisers.length > 0 ? (
+              <div className="mb-3">
+                <div className="research-change-label">{t.rankRisers(basisLabel)}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {props.rankRisers.map((s) => (
+                    <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} className="research-change-link">
+                      {s.name} <span className="tabular-nums">▲{s.change}{t.rankStepSuffix}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {props.bigMovers.length > 0 ? (
+              <div>
+                <div className="research-change-label">{t.bigMovers}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {props.bigMovers.map((s) => {
+                    const up = s.delta >= 0;
+                    const mc = s.metricChange;
+                    const cause = mc ? `${M.momentum} ${fmtSigned(mc.momentum)} · ${M.flow} ${fmtSigned(mc.flow)} · ${M.value} ${fmtSigned(mc.value)} · ${M.vol} ${fmtSigned(mc.vol)}` : undefined;
+                    return (
+                      <Link key={s.ticker} prefetch={false} href={"/stock/" + s.ticker} title={cause} className="research-change-link">
+                        {s.name} <span data-tone={up ? "up" : "down"} className="tabular-nums">{up ? "▲" : "▼"}{Math.abs(Math.round(s.delta))}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </div>
+          <p className="text-xs text-[var(--muted)]">{t.watchHint}</p>
         </section>
-      ) : (
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 px-3 py-2">
-          {props.hasDeltas ? t.noChangeNote(basisLabel) : t.strengthFallbackNote}
-        </p>
-      )}
+      ) : props.hasDeltas ? (
+        <p className="text-xs text-[var(--muted)]">{t.noChangeNote(basisLabel)}</p>
+      ) : null}
+
+      <TodayTopSection candidates={top3Candidates} />
 
       {/* 현재 강점 기준 후보 목록 — 최근 변화가 아님을 캡션으로 구분 */}
       <section className="space-y-5 md:space-y-6">
         <div className="flex items-baseline justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{t.signalsHeading}</h2>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{t.signalsStrengthNote}</p>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{props.hasDeltas ? t.signalsStrengthNote : t.strengthFallbackNote}</p>
           </div>
-          <Link prefetch={false} href="/stocks" className="text-[12px] font-medium text-blue-700 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0">
-            {t.exploreAll}
+          <Link prefetch={false} href="/stocks" className="research-link inline-flex min-h-11 items-center gap-1 text-xs">
+            {t.exploreAll}<ArrowRight size={14} className="shrink-0" aria-hidden="true" />
           </Link>
         </div>
 
@@ -377,6 +381,7 @@ export function TodayContent(props: TodayContentProps) {
       </section>
 
       {/* ── 구간 5 · 데이터 기준/주의 사항 ── */}
+      <TodayStatusBar />
       <section className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-relaxed border-t border-zinc-200 dark:border-zinc-800 pt-3">
         {t.sourceNote}
       </section>

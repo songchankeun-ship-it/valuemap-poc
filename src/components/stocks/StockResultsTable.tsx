@@ -81,7 +81,7 @@ export function StockResultsTable({ rows, laggedTickers = [] }: { rows: StockRow
   const t = stocksCopy[locale];
   const lagged = new Set(laggedTickers);
   return (
-    <div className="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900">
+    <div className="research-finder-table overflow-x-auto">
       <table className="w-full text-left text-xs border-collapse">
         <thead>
           <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/70">
@@ -109,10 +109,10 @@ export function StockResultsTable({ rows, laggedTickers = [] }: { rows: StockRow
             const up = s.changePct >= 0;
             return (
               <tr key={s.ticker} className="border-b border-zinc-100 dark:border-zinc-800/60 even:bg-zinc-50/50 dark:even:bg-zinc-900/30 hover:bg-blue-50/50 dark:hover:bg-zinc-800/50 transition">
-                <td className={TD}>
+                <td className={TD + " research-finder-symbol"}>
                   <Link prefetch={false} href={"/stock/" + s.ticker} className="group inline-flex flex-col">
                     <span className="inline-flex items-center gap-1.5 flex-wrap">
-                      <span className="font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400">{s.name}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100 research-result-name">{s.name}</span>
                       {lagged.has(s.ticker) ? <DataLagBadge label={t.dataLag.badge} title={t.dataLag.tooltip} /> : null}
                     </span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono tabular-nums">{s.ticker} · {s.market}</span>

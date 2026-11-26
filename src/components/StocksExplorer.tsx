@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect, type FormEvent } from "react";
+import { useState, useMemo, useEffect, useRef, type FormEvent } from "react";
 import Link from "next/link";
-import { Activity, AlertTriangle, Bell, BookmarkPlus, Check, Search, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
+import { Activity, AlertTriangle, Bell, BookmarkPlus, Check, Search, SlidersHorizontal, Table2, LayoutList, ChevronDown, X, ShieldCheck, Sprout, TrendingUp, type LucideIcon } from "lucide-react";
 import { fmtWon } from "@/lib/format";
 import { listSavedSearches, addSavedSearch, removeSavedSearch, consumeQueuedSavedSearch, type SavedSearch, type SavedSearchConfig } from "@/lib/savedSearches";
 import { getRecentViews, type RecentView } from "@/lib/recentViews";
@@ -13,6 +13,7 @@ import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stocksCopy } from "@/lib/copy/stocks";
 import type { Locale } from "@/lib/i18n";
+import { getFocusableElements, trapTabKey } from "@/lib/focusTrap";
 import { FOCUS_RING, INPUT_FOCUS } from "@/components/ui/controlStyles";
 
 interface Stock {
@@ -311,13 +312,30 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   const [themeQuery, setThemeQuery] = useState("");
   const [showAllThemes, setShowAllThemes] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const filterToggleRef = useRef<HTMLButtonElement>(null);
+  const filterDialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const opener = filterToggleRef.current;
+    const dialog = filterDialogRef.current;
+    getFocusableElements(dialog)[0]?.focus();
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setDrawerOpen(false);
+      else trapTabKey(event, dialog);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      opener?.focus();
+    };
+  }, [drawerOpen]);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showQuickPresets, setShowQuickPresets] = useState(false);
   // 모바일에서 질문형 프리셋 카드가 결과 목록을 첫 화면 밖으로 밀지 않도록 기본 접힘(제목·펼치기만 노출).
   // 데스크톱(lg+)은 CSS로 항상 펼쳐 첫 상태에 프리셋을 그대로 노출한다(설계서 §8.2/§8.3).
   const [showMobilePresets, setShowMobilePresets] = useState(false);
-  // 저장·알림은 반복 사용 도구다. 모바일 첫 화면에서는 접어 결과 진입을 앞당기고,
-  // 데스크톱이나 사용자가 저장/알림을 요청했을 때는 즉시 펼친다.
+  // Keep saved searches collapsed until the user opens them or requests an action.
   const [showMobileSavedTools, setShowMobileSavedTools] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
@@ -755,14 +773,14 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       const { strengths, warnings } = deriveSignals(s, t.signal);
       const lagged = laggedSet.has(s.ticker);
       return (
-        <div key={s.ticker} className="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition">
+        <div key={s.ticker} className="research-finder-stock">
           {/* 카드 전체는 상세 링크(stretched-link: ::after가 카드를 덮어 어디를 눌러도 상세로 이동).
               담기 버튼만 z-10으로 그 위에 떠 별도 클릭을 받아, 중첩된 인터랙티브 요소 없이 목록에서 바로 관심 담기. */}
-          <Link prefetch={false} href={"/stock/" + s.ticker} className="block rounded-lg after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
-          <div className="flex items-start justify-between gap-3">
+          <Link prefetch={false} href={"/stock/" + s.ticker} className="research-finder-row-link after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+          <div className="research-finder-row-main flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline gap-2 mb-1 flex-wrap">
-                <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{s.name}</span>
+                <span className="text-[15px] font-bold text-zinc-900 dark:text-zinc-100 break-words">{s.name}</span>
                 <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums shrink-0 font-mono">{s.ticker}</span>
                 {lagged ? <DataLagBadge label={t.dataLag.badge} title={t.dataLag.tooltip} /> : null}
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500 shrink-0">{s.market}</span>
@@ -778,7 +796,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             </div>
             <div className="text-right shrink-0">
               <div className="flex items-baseline gap-1 justify-end">
-                <span className="text-2xl font-bold text-blue-700 dark:text-blue-400 tabular-nums leading-none">{s.compositeScore || 0}</span>
+                <span className="text-2xl font-bold research-finder-score tabular-nums leading-none">{s.compositeScore || 0}</span>
                 <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/100</span>
               </div>
               <div className="mt-0.5 text-[10px] text-zinc-400 dark:text-zinc-500">{t.table.composite}</div>
@@ -786,7 +804,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           </div>
           {/* 카드형(초보자용): 원점수·재무 나열 대신 '왜 후보인지(강점)·먼저 확인할 점(주의)'를 전면에. 세부 지표·재무 스캔은 표형이 담당. */}
           {strengths.length > 0 || warnings.length > 0 ? (
-            <div className="flex flex-col gap-1.5 mt-2.5">
+            <div className="research-finder-row-reasons flex flex-col gap-1.5">
               {strengths.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 shrink-0 md:min-w-[2.75rem]"><Check aria-hidden size={11} strokeWidth={2.5} />{t.card.strength}</span>
@@ -805,16 +823,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               ) : null}
             </div>
           ) : (
-            <div className="mt-2.5 text-[11px] text-zinc-400 dark:text-zinc-500">{t.card.neutral}</div>
+            <div className="research-finder-row-reasons text-[11px] text-[var(--muted)]">{t.card.neutral}</div>
           )}
           {s.themes.length > 0 ? (
-            <div className="flex gap-1 flex-wrap mt-2">
+            <div className="research-finder-row-themes flex gap-1 flex-wrap">
               {s.themes.slice(0, 3).map((t) => (<span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">{t}</span>))}
               {s.themes.length > 3 ? (<span className="text-[10px] text-zinc-400 dark:text-zinc-500">+{s.themes.length - 3}</span>) : null}
             </div>
           ) : null}
           </Link>
-          <div className="relative z-10 mt-3 flex justify-end">
+          <div className="research-finder-row-action relative z-10 flex justify-end">
             <AddToWatchlistButton ticker={s.ticker} name={s.name} compact label={t.card.save} />
           </div>
         </div>
@@ -993,11 +1011,11 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
   }
 
   return (
-    <div className="space-y-4 md:space-y-5">
+    <div className="research-desk research-finder space-y-3 md:space-y-4">
       {/* ── 페이지 헤더 ── */}
-      <header className="space-y-2">
+      <header className="research-screen-heading space-y-1.5">
         <div className="flex items-baseline justify-between flex-wrap gap-x-3 gap-y-1.5">
-          <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t.headerTitle}</h1>
+          <h1>{t.headerTitle}</h1>
           <div className="flex items-center gap-2 flex-wrap">
             {pureBrowse && qualityFilterOn ? (
               <span className="text-sm font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.qualityHeadline(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.qualityHeadline(sorted.length, total).b}</span></span>
@@ -1015,7 +1033,6 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             ) : null}
           </div>
         </div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{t.headerDesc(total)}</p>
         <div className="flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
           {asOf ? <span className="tabular-nums">{asOf} {t.marketCloseSuffix}</span> : null}
           {metricsVersion ? <><span aria-hidden>·</span><span>{t.metricsPrefix} {metricsVersion}</span></> : null}
@@ -1027,9 +1044,6 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
           {/* 무JS·키보드·스크린리더가 긴 필터 UI를 건너뛰고 종목 목록으로 바로 이동(인페이지 앵커라 JS 없이도 동작) */}
           <a href="#stock-results" className={`inline-flex items-center border-b border-blue-300 py-0.5 text-blue-700 dark:border-blue-700 dark:text-blue-400 ${FOCUS_RING}`}>{t.skipToList}</a>
         </div>
-        {nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && sorted.length < stocks.length ? (
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
-        ) : null}
         {showThemeQualityEmpty ? (
           <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 px-3 py-2.5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -1058,18 +1072,75 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
       </header>
 
       {/* ── 검색 먼저(첫 화면 단순화: 검색창 → 질문형 프리셋 → 상세 필터 순) ── */}
-      <div className="relative">
-        <Search aria-hidden size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
-        <input
-          type="search"
-          placeholder={t.searchPlaceholder}
-          value={query}
-          onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
-          onBlur={(e) => rememberRecentSearch(e.currentTarget.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") rememberRecentSearch(e.currentTarget.value); }}
-          suppressHydrationWarning
-          className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
-        />
+      <div className="research-finder-searchbar">
+        <div className="research-finder-search relative">
+          <Search aria-hidden size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
+          <input
+            type="search"
+            aria-label={t.searchPlaceholder}
+            placeholder={t.searchPlaceholder}
+            value={query}
+            onChange={(e) => { setActivePreset(null); setQuery(e.target.value); }}
+            onBlur={(e) => rememberRecentSearch(e.currentTarget.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") rememberRecentSearch(e.currentTarget.value); }}
+            suppressHydrationWarning
+            className="w-full pl-10 pr-3 py-3 min-h-[44px] text-sm md:text-base border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
+          />
+        </div>
+        <div className="research-finder-tools">
+          <select aria-label={t.sortAria} value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="research-finder-control">
+            <optgroup label={t.sortGroupScore}>
+              <option value="compositeScore-desc">{t.sortOpt.compositeDesc}</option>
+              <option value="momentum-desc">{t.sortOpt.momentumDesc}</option>
+              <option value="value-desc">{t.sortOpt.valueDesc}</option>
+              <option value="vol-desc">{t.sortOpt.volDesc}</option>
+              <option value="flow-desc">{t.sortOpt.flowDesc}</option>
+            </optgroup>
+            <optgroup label={t.sortGroupFinance}>
+              <option value="roe-desc">{t.sortOpt.roeDesc}</option>
+              <option value="per-asc">{t.sortOpt.perAsc}</option>
+              <option value="pbr-asc">{t.sortOpt.pbrAsc}</option>
+              <option value="dividendYield-desc">{t.sortOpt.divDesc}</option>
+              <option value="marketCap-desc">{t.sortOpt.capDesc}</option>
+            </optgroup>
+            <optgroup label={t.sortGroupMove}>
+              <option value="r3m-desc">{t.sortOpt.r3mDesc}</option>
+            </optgroup>
+          </select>
+          <button type="button" ref={filterToggleRef} onClick={() => setDrawerOpen(true)} aria-label={t.openFilterAria} aria-haspopup="dialog" aria-expanded={drawerOpen} className="research-finder-control lg:hidden">
+            <SlidersHorizontal size={15} className="shrink-0" aria-hidden="true" />
+            <span>{t.filterShort}</span>
+            {activeFilterCount > 0 ? (
+              <span className="research-finder-count" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
+            ) : null}
+          </button>
+          <button type="button" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced} className="research-finder-control hidden lg:inline-flex">
+            <SlidersHorizontal size={15} className="shrink-0" aria-hidden="true" />
+            <span>{showAdvanced ? t.closeFilter : t.openFilter}</span>
+            {activeFilterCount > 0 ? (
+              <span className="research-finder-count" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
+            ) : null}
+          </button>
+          {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
+          <div role="group" aria-label={t.viewModeAria} className="research-finder-view hidden lg:inline-flex">
+            {([
+              { id: "card", label: t.viewCard, hint: t.viewCardHint },
+              { id: "table", label: t.viewTable, hint: t.viewTableHint },
+            ] as { id: ViewMode; label: string; hint: string }[]).map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                aria-pressed={viewMode === o.id}
+                title={o.hint}
+                aria-label={o.label + " — " + o.hint}
+                onClick={() => changeViewMode(o.id)}
+                className="research-view-option"
+              >
+                {o.id === "table" ? <Table2 size={17} aria-hidden="true" /> : <LayoutList size={17} aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {showInitialFilterHandoff ? (
@@ -1085,55 +1156,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         </div>
       ) : null}
 
-      <section aria-label={t.entry.label} className="-mt-2">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5">
-          <Link
-            href="/watchlist"
-            className={`shrink-0 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
-          >
-            {t.entry.watchlist}
-          </Link>
-          {recentSearches.slice(0, 3).map((q) => (
-            <button
-              key={q}
-              type="button"
-              onClick={() => { setActivePreset(null); setQuery(q); }}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
-            >
-              <span className="truncate">{t.entry.recentSearchPrefix}{q}</span>
-            </button>
-          ))}
-          {recentViewLinks.map((s) => (
-            <Link
-              key={"recent-" + s.ticker}
-              href={"/stock/" + s.ticker}
-              prefetch={false}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
-            >
-              <span className="truncate">{t.entry.recentViewedPrefix}{s.name}</span>
-            </Link>
-          ))}
-          {popularEntryStocks.map((s) => (
-            <Link
-              key={"popular-" + s.ticker}
-              href={"/stock/" + s.ticker}
-              prefetch={false}
-              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
-            >
-              <span className="truncate">{t.entry.popularPrefix}{s.name}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* ── 질문형 프리셋 카드(핵심 시작점) ── */}
       {/* 모바일은 기본 접힘(제목 + 펼치기 토글) → 결과 수·현재 조건·목록이 첫 화면 안으로 들어온다.
           데스크톱(lg+)은 항상 grid로 노출(빠른 프리셋 접힘 패턴과 동일한 idiom). */}
-      <section>
+      <section className="research-question-band">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-100">{t.questionHeading}</h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{t.questionDesc}</p>
           </div>
           <button
             type="button"
@@ -1145,7 +1174,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             {showMobilePresets ? t.collapse : t.expand}
           </button>
         </div>
-        <div id="question-presets" className={(showMobilePresets ? "grid" : "hidden") + " lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 mt-3"}>
+        <div id="question-presets" className={(showMobilePresets ? "grid" : "hidden") + " lg:grid research-question-grid"}>
           {QUESTION_PRESETS.map((p) => {
             const selected = activePreset === p.id;
             const badges = badgesFromConfig(p.config, t);
@@ -1157,18 +1186,16 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 type="button"
                 aria-pressed={selected}
                 onClick={() => togglePreset(p)}
-                className={"text-left rounded-lg border p-3 transition min-h-[44px] " +
-                  (selected
-                    ? "border-blue-500 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-500/40"
-                    : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-blue-300 dark:hover:border-blue-700")}
+                title={qc.desc}
+                className="research-question-option"
               >
                 <div className="flex items-start gap-2">
-                  <span aria-hidden className={"mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md " + (selected ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200" : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300")}>
+                  <span aria-hidden className="research-question-icon">
                     <Icon size={15} strokeWidth={2} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{qc.label}</div>
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">{qc.desc}</p>
+                    <span className="research-question-count">{t.expectedResults(presetCounts[p.id] ?? 0).a}<strong>{t.expectedResults(presetCounts[p.id] ?? 0).b}</strong></span>
                   </div>
                   {selected ? <Check aria-hidden size={16} strokeWidth={2.5} className="shrink-0 text-blue-600 dark:text-blue-400" /> : null}
                 </div>
@@ -1182,233 +1209,177 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                 {selected && qc.caution ? (
                   <div className="flex items-start gap-1 text-[10px] text-amber-700 dark:text-amber-400 mt-1.5 leading-snug"><AlertTriangle aria-hidden size={11} strokeWidth={2.5} className="mt-px shrink-0" /><span>{qc.caution}</span></div>
                 ) : null}
-                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 tabular-nums">{t.expectedResults(presetCounts[p.id] ?? 0).a}<strong className="text-zinc-700 dark:text-zinc-200">{t.expectedResults(presetCounts[p.id] ?? 0).b}</strong></div>
+                <span className="sr-only">{qc.desc}</span>
               </button>
             );
           })}
         </div>
       </section>
 
-      {/* ── 빠른 프리셋 칩(보조 필터) — 기본 접힘, 필요할 때만 펼치는 보조 도구 ── */}
-      <section className="border-y border-zinc-200 py-3 dark:border-zinc-800">
-        <button
-          type="button"
-          onClick={() => setShowQuickPresets((v) => !v)}
-          aria-expanded={showQuickPresets}
-          className="w-full flex items-center justify-between gap-2 text-left"
-        >
-          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.quickPresetsLabel} <span className="font-normal normal-case text-zinc-400 dark:text-zinc-500">{t.quickPresetsHint}</span></span>
-          <span className="shrink-0 text-[10px] text-zinc-400 dark:text-zinc-500">{showQuickPresets ? t.collapse : t.expand}</span>
-        </button>
-        {showQuickPresets ? (
-          <div className="flex gap-1.5 flex-wrap mt-2.5">
-            {PRESETS.map((p) => {
-              const selected = activePreset === p.id;
-              const pc = t.preset[p.id];
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => togglePreset(p)}
-                  title={t.quickTitle(pc.desc, presetCounts[p.id] ?? 0)}
-                  className={"text-xs px-3 py-1.5 rounded-full border transition " +
-                    (selected
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
-                >
-                  {pc.label}
-                  {selected ? <Check aria-hidden size={12} strokeWidth={2.5} className="inline-block ml-1 align-middle" /> : null}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-      </section>
-
-      {/* ── 내 검색 조건(저장/알림) ── */}
-      <section className="border-y border-zinc-200 py-3 dark:border-zinc-800">
-        <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.mySearchLabel}</span>
+      <div className="research-finder-secondary">
+        {/* ── 빠른 프리셋 칩(보조 필터) — 기본 접힘, 필요할 때만 펼치는 보조 도구 ── */}
+        <section className="research-finder-quick">
           <button
             type="button"
-            onClick={() => setShowMobileSavedTools((v) => !v)}
-            aria-expanded={showMobileSavedTools}
-            aria-controls="stocks-saved-tools"
-            className={`lg:hidden inline-flex min-h-[36px] items-center rounded-md border border-zinc-200 px-3 py-1.5 text-[11px] font-medium text-zinc-600 transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-blue-400 ${FOCUS_RING}`}
+            onClick={() => setShowQuickPresets((v) => !v)}
+            aria-expanded={showQuickPresets}
+            className="w-full flex items-center justify-between gap-2 text-left"
           >
-            {showMobileSavedTools ? t.collapse : t.expand}
+            <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.quickPresetsLabel}</span>
+            <ChevronDown size={16} className={showQuickPresets ? "rotate-180" : ""} aria-hidden="true" />
           </button>
-          <div className="hidden gap-1.5 lg:flex">
-            <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-full border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition">{t.saveCurrent}</button>
-            <button type="button" onClick={openAlertForm} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
-          </div>
-        </div>
-        <div id="stocks-saved-tools" className={(showMobileSavedTools ? "block" : "hidden") + " lg:block"}>
-          <div className="mb-2 flex gap-1.5 lg:hidden">
-            <button type="button" onClick={openSaveSearchForm} className="min-h-[40px] flex-1 rounded-md border border-blue-300 px-2.5 py-1.5 text-[11px] font-medium text-blue-700 transition hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30">{t.saveCurrent}</button>
-            <button type="button" onClick={openAlertForm} className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1 rounded-md border border-zinc-300 px-2.5 py-1.5 text-[11px] font-medium text-zinc-600 transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-blue-400"><Bell aria-hidden size={12} strokeWidth={2} />{t.alertThis}</button>
-          </div>
-        {saveSearchOpen ? (
-          <form onSubmit={submitSaveSearch} className="mb-2 flex flex-col gap-2 sm:flex-row">
-            <input
-              id="stocks-save-search-name"
-              value={saveSearchName}
-              onChange={(e) => setSaveSearchName(e.target.value)}
-              onInput={(e) => setSaveSearchName(e.currentTarget.value)}
-              aria-label={t.saveNameAria}
-              placeholder={t.saveNamePlaceholder}
-              disabled={saveSearchBusy}
-              className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
-            />
-            <div className="flex gap-1.5">
-              <button
-                type="submit"
-                disabled={saveSearchBusy || !saveSearchName.trim()}
-                className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-900 transition ${FOCUS_RING}`}
-              >
-                {saveSearchBusy ? saveSearchStatusCopy.saving : t.saveNameSubmit}
-              </button>
-              <button
-                type="button"
-                disabled={saveSearchBusy}
-                onClick={() => { setSaveSearchOpen(false); setSaveSearchStatus(null); }}
-                className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-60 transition ${FOCUS_RING}`}
-              >
-                {t.saveNameCancel}
-              </button>
+          {showQuickPresets ? (
+            <div className="flex gap-1.5 flex-wrap mt-2.5">
+              {PRESETS.map((p) => {
+                const selected = activePreset === p.id;
+                const pc = t.preset[p.id];
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => togglePreset(p)}
+                    title={t.quickTitle(pc.desc, presetCounts[p.id] ?? 0)}
+                    className={"text-xs px-3 py-1.5 rounded-full border transition " +
+                      (selected
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400 hover:text-blue-700")}
+                  >
+                    {pc.label}
+                    {selected ? <Check aria-hidden size={12} strokeWidth={2.5} className="inline-block ml-1 align-middle" /> : null}
+                  </button>
+                );
+              })}
             </div>
-          </form>
-        ) : null}
-        {saveSearchStatus ? (
-          <div
-            role="status"
-            className={
-              "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
-              (saveSearchStatus === "ok"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
-                : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
-            }
-          >
-            {saveSearchStatus === "ok" ? saveSearchStatusCopy.ok : saveSearchStatusCopy.error}
-          </div>
-        ) : null}
-        {alertFormOpen ? (
-          <form onSubmit={submitConditionAlert} className="mb-2 flex flex-col gap-2 sm:flex-row">
-            <input
-              id="stocks-alert-name"
-              value={alertName}
-              onChange={(e) => setAlertName(e.target.value)}
-              aria-label={t.alertNameAria}
-              placeholder={t.alertNamePlaceholder}
-              className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
-            />
-            <div className="flex gap-1.5">
-              <button type="submit" className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 transition ${FOCUS_RING}`}>{t.alertNameSubmit}</button>
-              <button type="button" onClick={() => { setAlertFormOpen(false); setAlertStatus(null); }} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.alertNameCancel}</button>
-            </div>
-          </form>
-        ) : null}
-        {alertStatus ? (
-          <div
-            role="status"
-            className={
-              "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
-              (alertStatus === "ok"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
-                : alertStatus === "login"
-                  ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-300"
-                  : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
-            }
-          >
-            {alertStatus === "ok" ? t.alertCreated : alertStatus === "login" ? (
-              <>
-                {t.alertLoginRequired}{" "}
-                <Link href="/login?next=/stocks" className="font-semibold underline underline-offset-2">{t.alertLoginCta}</Link>
-              </>
-            ) : t.alertFailed}
-          </div>
-        ) : null}
-        {savedSearches.length === 0 ? (
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.savedEmpty}</p>
-        ) : (
-          <div className="flex gap-1.5 flex-wrap">
-            {savedSearches.map((sv) => (
-              <span key={sv.id} className="inline-flex items-center gap-1 text-xs pl-3 pr-1 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800">
-                <button type="button" onClick={() => applySavedConfig(sv.config)} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400">{sv.name}</button>
-                <button type="button" onClick={() => handleRemoveSaved(sv.id)} aria-label={t.removeSaved} className="w-4 h-4 flex items-center justify-center rounded-full text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 dark:hover:bg-zinc-700">×</button>
-              </span>
-            ))}
-          </div>
-        )}
-        </div>
-      </section>
+          ) : null}
+        </section>
 
-      {/* ── 정렬 · 필터 열기(검색창은 첫 화면 상단으로 이동) ── */}
-      <div className="flex gap-2 flex-wrap">
-        <select aria-label={t.sortAria} value={sortKey + "-" + sortDir} onChange={(e) => { setActivePreset(null); const [k, d] = e.target.value.split("-"); setSortKey(k as SortKey); setSortDir(d as SortDir); }} className="px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900">
-          <optgroup label={t.sortGroupScore}>
-            <option value="compositeScore-desc">{t.sortOpt.compositeDesc}</option>
-            <option value="momentum-desc">{t.sortOpt.momentumDesc}</option>
-            <option value="value-desc">{t.sortOpt.valueDesc}</option>
-            <option value="vol-desc">{t.sortOpt.volDesc}</option>
-            <option value="flow-desc">{t.sortOpt.flowDesc}</option>
-          </optgroup>
-          <optgroup label={t.sortGroupFinance}>
-            <option value="roe-desc">{t.sortOpt.roeDesc}</option>
-            <option value="per-asc">{t.sortOpt.perAsc}</option>
-            <option value="pbr-asc">{t.sortOpt.pbrAsc}</option>
-            <option value="dividendYield-desc">{t.sortOpt.divDesc}</option>
-            <option value="marketCap-desc">{t.sortOpt.capDesc}</option>
-          </optgroup>
-          <optgroup label={t.sortGroupMove}>
-            <option value="r3m-desc">{t.sortOpt.r3mDesc}</option>
-          </optgroup>
-        </select>
-        <button type="button" onClick={() => setDrawerOpen(true)} aria-label={t.openFilterAria} className="lg:hidden px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 flex items-center gap-1.5">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>{t.filterShort}</span>
-          {activeFilterCount > 0 ? (
-            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
-          ) : null}
-        </button>
-        <button type="button" onClick={() => setShowAdvanced((v) => !v)} aria-expanded={showAdvanced} className="hidden lg:inline-flex px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 items-center gap-1.5">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          <span>{showAdvanced ? t.closeFilter : t.openFilter}</span>
-          {activeFilterCount > 0 ? (
-            <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-600 text-white font-medium tabular-nums" aria-label={t.appliedFilterAria(activeFilterCount)}>{activeFilterCount}</span>
-          ) : null}
-        </button>
-        {/* 보기 방식 전환(데스크톱 전용) — 모바일은 카드형 고정 */}
-        <div role="group" aria-label={t.viewModeAria} className="hidden lg:inline-flex items-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
-          {([
-            { id: "card", label: t.viewCard, hint: t.viewCardHint },
-            { id: "table", label: t.viewTable, hint: t.viewTableHint },
-          ] as { id: ViewMode; label: string; hint: string }[]).map((o) => (
+        {/* ── 내 검색 조건(저장/알림) ── */}
+        <section className="research-finder-saved">
+          <div className="research-finder-saved-heading">
+            <span>{t.mySearchLabel}</span>
             <button
-              key={o.id}
               type="button"
-              aria-pressed={viewMode === o.id}
-              title={o.hint}
-              aria-label={o.label + " — " + o.hint}
-              onClick={() => changeViewMode(o.id)}
-              className={"px-3 py-2 text-sm transition " + (viewMode === o.id ? "bg-blue-600 text-white" : "text-zinc-600 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400")}
+              onClick={() => setShowMobileSavedTools((v) => !v)}
+              aria-expanded={showMobileSavedTools}
+              aria-controls="stocks-saved-tools"
+              className="research-finder-disclosure"
             >
-              {o.label}
+              {showMobileSavedTools ? t.collapse : t.expand}
+              <ChevronDown size={14} className={showMobileSavedTools ? "rotate-180" : ""} aria-hidden="true" />
             </button>
-          ))}
-        </div>
+          </div>
+          <div id="stocks-saved-tools" className={showMobileSavedTools ? "block" : "hidden"}>
+            <div className="research-finder-saved-actions">
+              <button type="button" onClick={openSaveSearchForm} className="research-finder-control"><BookmarkPlus size={15} aria-hidden="true" />{t.saveCurrent}</button>
+              <button type="button" onClick={openAlertForm} className="research-finder-control"><Bell size={15} aria-hidden="true" />{t.alertThis}</button>
+            </div>
+          {saveSearchOpen ? (
+            <form onSubmit={submitSaveSearch} className="mb-2 flex flex-col gap-2 sm:flex-row">
+              <input
+                id="stocks-save-search-name"
+                value={saveSearchName}
+                onChange={(e) => setSaveSearchName(e.target.value)}
+                onInput={(e) => setSaveSearchName(e.currentTarget.value)}
+                aria-label={t.saveNameAria}
+                placeholder={t.saveNamePlaceholder}
+                disabled={saveSearchBusy}
+                className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
+              />
+              <div className="flex gap-1.5">
+                <button
+                  type="submit"
+                  disabled={saveSearchBusy || !saveSearchName.trim()}
+                  className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-900 transition ${FOCUS_RING}`}
+                >
+                  {saveSearchBusy ? saveSearchStatusCopy.saving : t.saveNameSubmit}
+                </button>
+                <button
+                  type="button"
+                  disabled={saveSearchBusy}
+                  onClick={() => { setSaveSearchOpen(false); setSaveSearchStatus(null); }}
+                  className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-60 transition ${FOCUS_RING}`}
+                >
+                  {t.saveNameCancel}
+                </button>
+              </div>
+            </form>
+          ) : null}
+          {saveSearchStatus ? (
+            <div
+              role="status"
+              className={
+                "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
+                (saveSearchStatus === "ok"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+                  : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
+              }
+            >
+              {saveSearchStatus === "ok" ? saveSearchStatusCopy.ok : saveSearchStatusCopy.error}
+            </div>
+          ) : null}
+          {alertFormOpen ? (
+            <form onSubmit={submitConditionAlert} className="mb-2 flex flex-col gap-2 sm:flex-row">
+              <input
+                id="stocks-alert-name"
+                value={alertName}
+                onChange={(e) => setAlertName(e.target.value)}
+                aria-label={t.alertNameAria}
+                placeholder={t.alertNamePlaceholder}
+                className={`min-h-[44px] flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ${INPUT_FOCUS}`}
+              />
+              <div className="flex gap-1.5">
+                <button type="submit" className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 transition ${FOCUS_RING}`}>{t.alertNameSubmit}</button>
+                <button type="button" onClick={() => { setAlertFormOpen(false); setAlertStatus(null); }} className={`min-h-[44px] flex-1 sm:flex-none px-3 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-600 transition ${FOCUS_RING}`}>{t.alertNameCancel}</button>
+              </div>
+            </form>
+          ) : null}
+          {alertStatus ? (
+            <div
+              role="status"
+              className={
+                "mb-2 rounded-md border px-3 py-2 text-xs leading-snug " +
+                (alertStatus === "ok"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300"
+                  : alertStatus === "login"
+                    ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-300"
+                    : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300")
+              }
+            >
+              {alertStatus === "ok" ? t.alertCreated : alertStatus === "login" ? (
+                <>
+                  {t.alertLoginRequired}{" "}
+                  <Link href="/login?next=/stocks" className="font-semibold underline underline-offset-2">{t.alertLoginCta}</Link>
+                </>
+              ) : t.alertFailed}
+            </div>
+          ) : null}
+          {savedSearches.length === 0 ? (
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.savedEmpty}</p>
+          ) : (
+            <div className="flex gap-1.5 flex-wrap">
+              {savedSearches.map((sv) => (
+                <span key={sv.id} className="inline-flex items-center gap-1 text-xs pl-3 pr-1 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800">
+                  <button type="button" onClick={() => applySavedConfig(sv.config)} className="text-zinc-700 dark:text-zinc-300 hover:text-blue-700 dark:hover:text-blue-400">{sv.name}</button>
+                  <button type="button" onClick={() => handleRemoveSaved(sv.id)} aria-label={t.removeSaved} className="w-4 h-4 flex items-center justify-center rounded-full text-zinc-400 hover:text-rose-600 hover:bg-zinc-100 dark:hover:bg-zinc-700">×</button>
+                </span>
+              ))}
+            </div>
+          )}
+          </div>
+        </section>
+
       </div>
 
       {/* ── 현재 적용 조건 요약 바(결과 바로 위, 항상 노출) ── */}
-      <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3">
-        <div className="flex items-start justify-between gap-3 flex-wrap">
+      <section className="research-finder-conditions">
+        <div className="research-finder-cond-toolbar">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
               <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t.currentCond}</span>
               <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 tabular-nums">{t.matchCountShort(sorted.length, total).a}<span className="text-zinc-400 dark:text-zinc-500 font-normal">{t.matchCountShort(sorted.length, total).b}</span></span>
             </div>
-            <div className="flex flex-col gap-1 text-[11px] mb-1.5">
+            <div className="research-finder-condition-lines">
               {/* (a) 극단값 제외 행 — 사용자 상세 필터와 명확히 분리 */}
               <div className="text-zinc-500 dark:text-zinc-400">{qualityFilterOn ? t.qualityRowOn : t.qualityRowOff}</div>
               {/* (b) 상세 필터 행 — 칩이 있으면 칩, 없으면 '없음' */}
@@ -1421,7 +1392,7 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
                       type="button"
                       onClick={c.onRemove}
                       aria-label={t.removeFilterAria(c.label)}
-                      className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 transition tabular-nums"
+                      className="research-filter-chip"
                     >
                       <span className="truncate max-w-[160px]">{c.label}</span>
                       <span aria-hidden className="w-3.5 h-3.5 flex items-center justify-center rounded-full text-blue-500 dark:text-blue-400">×</span>
@@ -1434,7 +1405,13 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
               {/* (c) 정렬 행 */}
               <div className="text-zinc-500 dark:text-zinc-400">{t.sortRowLabel}: <span className="text-zinc-600 dark:text-zinc-300">{sortOptionLabel()}</span></div>
             </div>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-snug">{describeConditions()}</p>
+            <details className="research-filter-explanation">
+              <summary>{t.detailRowLabel}<ChevronDown size={13} aria-hidden="true" /></summary>
+              <p>{describeConditions()}</p>
+              {nonThemeFilterCount === 0 && themeFilterCount === 0 && sectorFilterCount === 0 && !query && sorted.length < stocks.length ? (
+                <p className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.baseScreenNote(stocks.length - sorted.length)}</p>
+              ) : null}
+            </details>
           </div>
           <div className="flex gap-1.5 shrink-0 flex-wrap">
             <button type="button" onClick={openSaveSearchForm} className="text-[11px] px-2.5 py-1.5 rounded-md border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition whitespace-nowrap">{t.saveCond}</button>
@@ -1444,20 +1421,20 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         </div>
       </section>
 
-      <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-md px-3 py-2 text-[10px] text-blue-800 dark:text-blue-300 flex items-center justify-between md:hidden">
+      <div className="research-finder-legend flex items-center justify-between md:hidden">
         <span><strong>{t.legend.momentumFull}</strong> · <strong>{t.legend.flowFull}</strong> · <strong>{t.legend.valueFull}</strong> · <strong>{t.legend.volFull}</strong></span>
         <Link href="/guide/metrics" className="text-blue-700 dark:text-blue-400 underline shrink-0 ml-2">{t.legendMore}</Link>
       </div>
 
-      <div className={"grid gap-6 " + (showAdvanced ? "lg:grid-cols-[280px_1fr]" : "lg:grid-cols-1")}>
+      <div className={"grid min-w-0 gap-4 " + (showAdvanced ? "lg:grid-cols-[minmax(13rem,1fr)_minmax(0,3fr)]" : "lg:grid-cols-[minmax(0,1fr)]")}>
         {showAdvanced ? (
-          <aside className="hidden lg:block bg-zinc-50/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 h-fit sticky top-24">
+          <aside className="research-finder-filter hidden lg:block">
             <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">{t.filterDetailTitle}</h3>
             <FilterPanel />
           </aside>
         ) : null}
 
-        <section id="stock-results" aria-label={t.resultsRegionLabel} className="space-y-2 scroll-mt-20">
+        <section id="stock-results" aria-label={t.resultsRegionLabel} className="min-w-0 space-y-2 scroll-mt-20">
           {/* 결과 목록 제목 — 무JS/스크린리더가 필터 UI 다음에 '종목 목록' 시작을 바로 인지 + '138종목 내' 범위 재고지 */}
           {sorted.length > 0 ? (
             <div className="flex items-baseline justify-between gap-3">
@@ -1548,10 +1525,10 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
             <>
               {/* 표형: 데스크톱은 점수 히트맵 테이블, 모바일(<lg)은 카드형 유지 */}
               <div className="hidden lg:block"><StockResultsTable rows={sorted.slice(0, visibleCount)} laggedTickers={laggedTickers} /></div>
-              <div className="lg:hidden space-y-2">{renderCards()}</div>
+              <div className="lg:hidden research-finder-list">{renderCards()}</div>
             </>
           ) : (
-            renderCards()
+            <div className="research-finder-list">{renderCards()}</div>
           )}
           {/* 유한 '더 보기' — 첫 20개 이후 남은 결과를 필터·정렬 유지한 채 이어서 보고, 표시량은 상태(status)로 안내. */}
           {sorted.length > 0 ? (
@@ -1574,16 +1551,57 @@ export function StocksExplorer({ stocks, allThemes, initialThemes, initialSector
         </section>
       </div>
 
+      <section aria-label={t.entry.label} className="research-finder-links">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5">
+          <Link
+            href="/watchlist"
+            className={`shrink-0 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 hover:border-blue-400 dark:hover:border-blue-600 transition ${FOCUS_RING}`}
+          >
+            {t.entry.watchlist}
+          </Link>
+          {recentSearches.slice(0, 3).map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => { setActivePreset(null); setQuery(q); }}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.recentSearchPrefix}{q}</span>
+            </button>
+          ))}
+          {recentViewLinks.map((s) => (
+            <Link
+              key={"recent-" + s.ticker}
+              href={"/stock/" + s.ticker}
+              prefetch={false}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.recentViewedPrefix}{s.name}</span>
+            </Link>
+          ))}
+          {popularEntryStocks.map((s) => (
+            <Link
+              key={"popular-" + s.ticker}
+              href={"/stock/" + s.ticker}
+              prefetch={false}
+              className={`shrink-0 inline-flex min-h-[36px] max-w-[12rem] items-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-700 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 transition ${FOCUS_RING}`}
+            >
+              <span className="truncate">{t.entry.popularPrefix}{s.name}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {drawerOpen ? (
         <>
           <div onClick={() => setDrawerOpen(false)} className="lg:hidden fixed inset-0 bg-black/50 z-50" aria-hidden />
-          <div role="dialog" aria-modal="true" aria-labelledby="stocks-filter-sheet-title" className="lg:hidden fixed inset-x-0 bottom-0 max-h-[88svh] bg-white dark:bg-zinc-950 z-50 rounded-t-2xl shadow-2xl flex flex-col">
+          <div ref={filterDialogRef} role="dialog" aria-modal="true" aria-labelledby="stocks-filter-sheet-title" className="research-finder-drawer lg:hidden fixed inset-x-0 bottom-0 max-h-[88svh] z-50 flex flex-col">
             <div className="px-4 pt-3 pb-3 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
               <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" aria-hidden />
               <div className="flex items-center justify-between">
                 <h3 id="stocks-filter-sheet-title" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.filterDetailTitle}</h3>
-                <button type="button" aria-label={t.closeFilter} onClick={() => setDrawerOpen(false)} className="w-8 h-8 flex items-center justify-center rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                <button type="button" aria-label={t.closeFilter} onClick={() => setDrawerOpen(false)} className="w-11 h-11 flex items-center justify-center rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500">
+                  <X size={17} aria-hidden="true" />
                 </button>
               </div>
             </div>

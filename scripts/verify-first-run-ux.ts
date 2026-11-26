@@ -176,6 +176,11 @@ check(
 // 6d. Spec §7 render order: summary → change → current-strength lists → disclosure → caveat.
 const iSummary = todaySrc.indexOf("t.summaryWithDeltas");
 const iChange = todaySrc.indexOf("t.changeTitle");
+const iTopCandidates = todaySrc.indexOf("<TodayTopSection candidates=");
+check("today prices and recent changes precede the stock shortlist",
+  todaySrc.indexOf("research-market-meter") < iChange && iChange < iTopCandidates);
+check("today market breadth uses published directional counts",
+  ["upCount", "downCount", "flatCount"].every((key) => todaySrc.includes(`props.${key}`)));
 const iStrength = todaySrc.indexOf("t.signalsStrengthNote");
 const iDisclosure = todaySrc.indexOf("t.disclosureHeading");
 const iCaveat = todaySrc.indexOf("t.sourceNote");
@@ -238,6 +243,12 @@ check("stocks keeps a search input up top", stocksSrc.includes('type="search"') 
 const qPresetCount = Object.keys(stocksCopy.ko.qPreset).length;
 check("stocks offers 3–5 question presets", qPresetCount >= 3 && qPresetCount <= 5);
 check("stocks renders the question presets", stocksSrc.includes("QUESTION_PRESETS.map"));
+
+const finderToolbar = stocksSrc.slice(stocksSrc.indexOf('className="research-finder-searchbar"'), stocksSrc.indexOf("showInitialFilterHandoff ?", stocksSrc.indexOf('className="research-finder-searchbar"')));
+check("finder toolbar groups search, sort, and detailed filters",
+  ["t.searchPlaceholder", "t.sortAria", "t.openFilterAria"].every((key) => finderToolbar.includes(key)));
+check("finder mobile filter sheet traps focus and restores the trigger",
+  stocksSrc.includes("trapTabKey(event, dialog)") && stocksSrc.includes("opener?.focus()"));
 
 // 7c. Recoverable zero-result: relax the strongest single condition + full reset.
 check("stocks zero-result offers relax + reset", stocksSrc.includes("t.relaxStrongest") && stocksSrc.includes("resetFilters"));

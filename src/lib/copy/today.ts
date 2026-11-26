@@ -86,7 +86,7 @@ export const todayCopy = {
     },
 
     // ── Top 3 ──
-    top3Title: "오늘의 Top 3",
+    top3Title: "먼저 살펴볼 3종목",
     top3Caption: "종합점수 상위 · 탐색 우선순위",
     top3Desc:
       "여러 지표에서 상대적으로 강점이 확인된 오늘의 탐색 우선 후보입니다. 매수 추천이 아니라 먼저 살펴볼 순서를 제안합니다.",
@@ -112,8 +112,8 @@ export const todayCopy = {
 
     // ── 최근 장마감 변화 ── (캡션은 실제 비교 기준을 컴포넌트에서 basis 라벨로 렌더)
     changeTitle: "최근 장마감 변화",
-    newEntrants: "🆕 오늘 종합 80+ 신규 편입",
-    dropouts: "↘ 오늘 종합 80+ 이탈",
+    newEntrants: "종합 80+ 신규 편입",
+    dropouts: "종합 80+ 이탈",
     rankRisers: (basis: string) => `↑ ${basis} 순위 상승 (5단계+)`,
     bigMovers: "📊 점수 급변 종목",
     rankStepSuffix: "단계",
@@ -232,7 +232,7 @@ export const todayCopy = {
     },
 
     // ── Top 3 ──
-    top3Title: "Today's Top 3",
+    top3Title: "Three stocks to review first",
     top3Caption: "Top composite scores · research priority",
     top3Desc:
       "Today's research-priority candidates with relative strengths across several metrics. This is not a buy recommendation, just a suggested order to look at first.",
@@ -258,8 +258,8 @@ export const todayCopy = {
 
     // ── Recent market-close changes ── (caption rendered from the actual basis label in the component)
     changeTitle: "Recent market-close changes",
-    newEntrants: "🆕 Newly entered composite 80+ today",
-    dropouts: "↘ Dropped out of composite 80+ today",
+    newEntrants: "Entered composite 80+",
+    dropouts: "Dropped out of composite 80+",
     rankRisers: (basis: string) => `↑ Rank up ${basis} (5+ steps)`,
     bigMovers: "📊 Large score change",
     rankStepSuffix: " steps",
