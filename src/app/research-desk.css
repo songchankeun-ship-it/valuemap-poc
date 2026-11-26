@@ -1,0 +1,199 @@
+.research-desk {
+  --research-accent: #086b59;
+  --research-action: #07584b;
+  --research-action-hover: #06453c;
+  --research-line: #d7e0dc;
+  --research-tint: #f0f6f3;
+  min-width: 0;
+}
+
+.dark .research-desk {
+  --research-accent: #82debe;
+  --research-line: #30443e;
+  --research-tint: #172721;
+}
+
+.research-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: .65rem;
+  border-block: 1px solid var(--research-line);
+  background: var(--surface);
+  padding: .875rem;
+}
+
+.research-entry [data-search-variant="hero"] input {
+  min-height: 48px;
+  border-color: var(--research-line);
+  border-radius: 6px;
+  background: var(--surface);
+  padding-block: .6rem;
+  font-size: .875rem;
+  font-weight: 550;
+  box-shadow: none;
+}
+
+.research-entry [data-search-variant="hero"] input:focus {
+  border-color: var(--research-accent);
+  box-shadow: 0 0 0 2px var(--research-tint);
+}
+
+.research-entry [data-search-variant="hero"] input + svg {
+  color: var(--research-accent);
+}
+
+.research-section-label {
+  color: var(--research-accent);
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.research-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border-radius: 6px;
+  padding: .55rem .875rem;
+  background: var(--research-action);
+  color: white;
+  font-size: .875rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.research-button:hover {
+  background: var(--research-action-hover);
+}
+
+.research-link {
+  color: var(--research-accent);
+  font-weight: 650;
+}
+
+.research-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.research-chart {
+  min-width: 0;
+  background: #14251f;
+  color: #f0faf5;
+  border: 1px solid #2d463c;
+  border-radius: 6px;
+  padding: .875rem;
+}
+
+.research-chart-empty {
+  display: grid;
+  align-content: center;
+  gap: .5rem;
+  min-height: 12rem;
+}
+
+.research-chart-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  border-block: 1px solid #365047;
+  margin-block-start: .625rem;
+  padding-block: .45rem;
+}
+
+.research-chart-legend .break-keep {
+  overflow-wrap: anywhere;
+}
+
+.research-chart-key {
+  display: inline-block;
+  flex: 0 0 .65rem;
+  height: 0;
+  border-top: 2px solid currentColor;
+}
+
+.research-series-a { color: #83e8c0; }
+.research-series-b { color: #ffbf89; }
+.research-chart-key.research-series-b { border-top-style: dashed; }
+
+.research-chart-plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 44 / 15;
+  margin-block: .3rem .125rem;
+}
+
+.research-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-block: 1px solid var(--research-line);
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.research-table th,
+.research-table td {
+  padding: .6rem .625rem;
+  border-bottom: 1px solid var(--research-line);
+  overflow-wrap: anywhere;
+}
+
+.research-table thead {
+  background: var(--research-tint);
+}
+
+.research-table th:first-child {
+  width: 34%;
+}
+
+.research-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.research-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .6rem 1rem;
+  padding: .875rem .75rem;
+  border-bottom: 1px solid var(--research-line);
+}
+
+.research-row:hover {
+  background: var(--research-tint);
+}
+
+.research-row-score { text-align: right; }
+.research-row-evidence, .research-row-actions { grid-column: 1 / -1; }
+
+@media (min-width: 680px) {
+  .research-entry {
+    padding: 1.5rem;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+  }
+
+  .research-chart {
+    padding: 1rem;
+  }
+
+  .research-row {
+    align-items: center;
+    grid-template-columns: minmax(8.25rem, 1fr) 4rem minmax(0, 1.9fr) auto;
+  }
+
+  .research-row-score { text-align: left; }
+  .research-row-evidence, .research-row-actions { grid-column: auto; }
+}
+
+@media (min-width: 840px) {
+  .research-split {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  }
+}

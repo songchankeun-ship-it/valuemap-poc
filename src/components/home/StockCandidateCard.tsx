@@ -31,7 +31,11 @@ export interface StockCandidate {
 
 // 오늘 추가 확인 후보 카드 — 홈에서는 "점수 → 강점 → 먼저 확인할 것"만 남기고,
 // 가격/4지표 상세는 종목 상세에서 보게 해 첫 화면의 판단 밀도를 낮춘다.
-export function StockCandidateCard({ c, featured = false }: { c: StockCandidate; featured?: boolean }) {
+export function StockCandidateCard({
+  c,
+  featured = false,
+  row = false,
+}: { c: StockCandidate; featured?: boolean; row?: boolean }) {
   const { locale } = useLanguage();
   const t = homeCopy[locale];
   const labels = t.metricLabels;
@@ -47,6 +51,45 @@ export function StockCandidateCard({ c, featured = false }: { c: StockCandidate;
     : t.topCandidate.nextCheck[weakestMetric];
   const changeTone = c.changePct >= 0 ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400";
   const changeLabel = `${c.changePct >= 0 ? "▲" : "▼"}${Math.abs(c.changePct).toFixed(2)}%`;
+  if (row) {
+    return (
+      <article className="research-row">
+        <div className="min-w-0">
+          <Link
+            href={`/stock/${c.ticker}`}
+            prefetch={false}
+            data-analytics-event="home_candidate_open"
+            data-analytics-ticker={c.ticker}
+            data-analytics-rank={String(c.rank)}
+            data-analytics-slot={featured ? "featured" : "list"}
+            className="research-link inline-flex min-h-9 items-center gap-1.5 text-[16px]"
+          >
+            <span className="font-mono text-[11px] text-[var(--muted)] tabular-nums">{String(c.rank).padStart(2, "0")}</span>
+            <span className="min-w-0 break-keep">{c.name}</span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          </Link>
+          <p className="flex flex-wrap items-baseline gap-x-1.5 text-xs tabular-nums">
+            <span className="text-[var(--muted)]">{c.priceLabel}</span>
+            <span className={`font-medium ${changeTone}`}>{changeLabel}</span>
+          </p>
+        </div>
+        <div className="research-row-score self-center tabular-nums">
+          <div className="text-[11px] text-[var(--muted)]">{t.topCandidate.compositeLabel}</div>
+          <div className="text-2xl font-bold leading-tight">{c.score}</div>
+        </div>
+        <div className="research-row-evidence min-w-0">
+          <p className="text-xs leading-relaxed text-[var(--muted)] break-keep">{reason}</p>
+          <p className="mt-0.5 text-[13px] leading-relaxed break-keep">
+            <span className="research-section-label">{t.topCandidate.firstCheck}</span>{" "}{firstCheck}
+          </p>
+        </div>
+        <div className="research-row-actions flex flex-wrap gap-1.5">
+          <AddToCompareButton ticker={c.ticker} name={c.name} compact />
+          <AddToWatchlistButton ticker={c.ticker} name={c.name} compact />
+        </div>
+      </article>
+    );
+  }
   const cardClass = "ui-interactive-card flex h-full flex-col rounded-lg border bg-white p-4 dark:bg-zinc-900 " +
     (featured
       ? "border-zinc-300 dark:border-zinc-700"

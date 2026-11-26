@@ -44,6 +44,8 @@ export const homeCopy = {
     },
     topCandidate: {
       heading: "오늘 먼저 볼 후보",
+      compositeLabel: "종합 점수",
+      researchScope: "종합 점수 순 · 가격 지연 및 검증 보류 제외",
       stepEyebrow: "먼저 볼 것",
       tag: "3개만 먼저",
       // 홈의 "종합 80+ 후보 N개"(시장 스냅샷)와 여기 대표 카드 수의 관계를 명시(초보자 혼동 완화).
@@ -220,6 +222,8 @@ export const homeCopy = {
     },
     topCandidate: {
       heading: "Candidates to check first today",
+      compositeLabel: "Composite",
+      researchScope: "By composite score · excludes delayed or unverified data",
       stepEyebrow: "First check",
       tag: "Top 3 first",
       poolRelation: (strong: number, shown: number) =>

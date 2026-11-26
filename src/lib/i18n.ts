@@ -228,7 +228,8 @@ export const commonCopy = {
 
 export const homeHeroCopy = {
   ko: {
-    badge: "오른스코어 · 예측 대신 데이터",
+    badge: "종목 리서치",
+    brand: "오른스코어",
     dataPrefix: "데이터 기준",
     marketClose: "장마감",
     delayed: "갱신 지연",
@@ -237,7 +238,7 @@ export const homeHeroCopy = {
     titleAccent: "전망 대신 숫자로",
     titleAfter: "오늘 먼저 볼 종목을 줄여줍니다.",
     description:
-      "과거 가격 흐름, 거래량, 밸류, 위험조정과 공시를 같은 기준으로 비교해 왜 눈에 띄는지와 다음 확인 순서를 보여줍니다.",
+      "가격·거래량·재무로 한국 주식 후보를 좁혀보세요.",
     primaryCta: "오늘 후보 3개 보기",
     secondaryCta: "지표 이해하기",
     note: "미래 수익률이나 상승 확률을 예측하지 않습니다. 투자 추천이 아니라 확인 순서를 돕는 탐색 도구입니다.",
@@ -269,7 +270,8 @@ export const homeHeroCopy = {
     footerSuffix: "개 · 영업일 장마감 후 자동 갱신 · 가격 Naver 전달/FDR · 공시 DART",
   },
   en: {
-    badge: "OrnScore · Evidence over forecasts",
+    badge: "Equity research",
+    brand: "OrnScore",
     dataPrefix: "Data as of",
     marketClose: "market close",
     delayed: "delayed",
@@ -278,7 +280,7 @@ export const homeHeroCopy = {
     titleAccent: "numbers instead of forecasts",
     titleAfter: "to narrow the Korean stocks worth checking first today.",
     description:
-      "Compare historical price trends, trading activity, value, risk-adjusted efficiency and disclosures on one basis to see why a stock stands out and what to check next.",
+      "Compare price, volume and financials to narrow down which Korean stocks to research first.",
     primaryCta: "See today's 3 candidates",
     secondaryCta: "Understand metrics",
     note: "OrnScore does not predict future returns or upside probabilities. It helps set a research order, not give investment advice.",

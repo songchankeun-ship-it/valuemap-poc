@@ -4297,3 +4297,20 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Next: commit and fast-forward the audited patch, verify the deployed exact
   SHA and production gates, then repair the now-confirmed stale public snapshot
   with one normal daily refresh and re-run market-close health.
+
+## 2026-11-26 - Research desk design preview [codex]
+
+- In the local design branch, Home now opens with research search and a real
+  pair-price chart; the same candidate selection is presented as a compact
+  evidence list. The existing Today cards are unchanged.
+- Curated comparison pages surface financial values and the interactive
+  comparison action first. A shared chart uses at most 20 common published
+  sessions, normalized separately to a first close of 100. Missing series
+  show a fallback; the chart never estimates or retrieves missing prices.
+- Passed TypeScript, pair-price alignment, first-run UX, comparison page and
+  language, SEO ownership, click analytics and post-audit regression checks.
+  Browser QA covered desktop, 390px and 320px, dark mode, stock-code search
+  and the selected-pair transition.
+- URLs, canonical metadata, data, score formulas and analytics events are
+  unchanged. This is a local preview only: no push, release, or experiment
+  changes. Use the owner's visual review before extending to other pages.

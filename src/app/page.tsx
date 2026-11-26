@@ -6,6 +6,8 @@ import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 import { activitySurge } from "@/lib/homeSnapshot";
 import { HomeHero } from "@/components/home/HomeHero";
+import { PairPriceChart } from "@/components/research/PairPriceChart";
+import { resolveComparison } from "@/lib/comparison";
 import { TopCandidateSection } from "@/components/home/TopCandidateSection";
 import type { StockCandidate } from "@/components/home/StockCandidateCard";
 import { MyStocksSection, type PoolEntry } from "@/components/home/MyStocksSection";
@@ -16,12 +18,7 @@ import { brandKeywords, disclosureKeywords, metricKeywords, stockDiscoveryKeywor
 // 캐시 갱신: 1시간 (정적 빌드 캐시가 너무 오래 안 갱신되는 문제 방지)
 export const revalidate = 3600;
 
-// 첫 방문 UX 대정리 Slice C(설계서 §6.2): 홈 기본 본문을 네 구간(시작 영역 · 실제 후보
-// 미리보기 최대 3개 · 확인 순서 · 조건부 개인 루틴)으로 제한한다. 시장 스냅샷 카드/공시 목록/
-// 온보딩/기능 소개/사용법/큰 위험 고지는 홈 기본 흐름에서 제거하거나 /today·상세로 이동시켰다.
-// 공시 신호 같은 외부 조회형 섹션은 홈에서 렌더하지 않는다. 다만 첫 화면의 시각적 근거를 위해
-// 이미 메모리에 있는 동일 stocks.json에서만 파생한 네 숫자를 HomeHero 안의 얇은 시장 단면으로
-// 표시한다(별도 홈 섹션/외부 호출/점수 산식 변경 없음, /today가 상세 변화 중심으로 담당).
+// 홈의 시장 단면과 비교 차트는 저장소에 공개된 데이터만 읽는다.
 
 // 오늘 후보·Top 목록 정책(재검수 P0 #2):
 //  - 검증 보류(isSuspect) 종목 제외(기존)
@@ -113,6 +110,7 @@ export const metadata = {
 };
 
 export default async function HomePage() {
+  const featuredPair = resolveComparison("005930-vs-000660");
   // 가격 기준일 지연(최신 배치 미반영) 종목은 오늘 후보·Top 카드에서 제외(정책은 pickTopStocks 주석 참조).
   const laggedTickers = new Set(getPriceLagSummary().laggedTickers);
   const topCandidates = pickTopStocks(3, laggedTickers);
@@ -182,11 +180,8 @@ export default async function HomePage() {
       ? `/compare?stocks=${topCandidates.slice(0, 3).map((s) => s.ticker).join(",")}`
       : undefined;
 
-  // 홈 기본 본문 4구간(설계서 §6.2): 1) 시작 영역(HomeHero) · 2) 실제 후보 미리보기 최대 3개 +
-  // 3) 확인 순서(TopCandidateSection이 카드 아래 컴팩트 가이드로 함께 렌더) · 4) 조건부 개인 루틴
-  // (MyStocksSection은 로컬 관심/최근 데이터가 있을 때만 스스로 렌더). 하단은 짧은 비자문 + 데이터 출처.
   return (
-    <div className="space-y-5 md:space-y-7">
+    <div className="research-desk space-y-5 md:space-y-6">
       <HomeHero
         dataAsOf={dataAsOf}
         dataAsOfRaw={dataMetadata.asOfBusinessDate ?? ""}
@@ -194,9 +189,14 @@ export default async function HomePage() {
         searchStocks={searchStocks}
         searchThemes={allThemes()}
         marketPulse={marketPulse}
+        comparison={featuredPair ? {
+          href: `/compare/${featuredPair.slug}`,
+          label: `${featuredPair.a.name} vs ${featuredPair.b.name}`,
+          chart: <PairPriceChart a={featuredPair.a} b={featuredPair.b} asOf={dataMetadata.asOfBusinessDate} />,
+        } : undefined}
       />
 
-      <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} strongCount={strongCount} />
+      <TopCandidateSection candidates={candidates} compareHref={todayCompareHref} />
 
       <MyStocksSection lookup={poolLookup} />
 
