@@ -1,7 +1,7 @@
 // activitySurge 단일 소스 회귀 가드 (Slice A) — 실행: npx tsx scripts/test_activitySurge.ts
 // 성공 시 PASS 1줄, 실패 시 FAIL 출력 후 비정상 종료.
 //
-// /today의 '거래활성도 급증'은 요약 KPI 카드·브리핑 숫자·표시 목록 세 곳에 나타난다.
+// /today의 '거래활성도 급증'은 요약 KPI와 신호 목록이 같은 결과를 사용한다.
 // 과거에는 각각 다른 필터(ratio||flow / flow>=70 / ratio||flow+suspect제외)로 세어 한 라벨이
 // 서로 다른 집단을 가리켰다. 이 테스트는 (1) 단일 결과의 count===items.length 불변식과
 // (2) 페이지/컴포넌트 소스에 독립적인 재계산이 되살아나지 않았는지를 함께 고정한다.
@@ -93,6 +93,7 @@ function stock(p: {
 {
   const page = readFileSync(join(repo, "src/app/today/page.tsx"), "utf8");
   const content = readFileSync(join(repo, "src/components/today/TodayContent.tsx"), "utf8");
+  const kpis = readFileSync(join(repo, "src/components/home/MarketSnapshotCards.tsx"), "utf8");
 
   // 단일 소스: activitySurge를 정확히 한 번만 호출.
   const surgeCalls = (page.match(/activitySurge\(/g) ?? []).length;
@@ -109,9 +110,19 @@ function stock(p: {
   check("E: component exposes single activitySurgeCount prop", /activitySurgeCount/.test(content));
   check("E: no legacy spikeCount prop in component", !/props\.spikeCount/.test(content));
   check("E: no legacy flowSurgeCount prop in component", !/props\.flowSurgeCount/.test(content));
-  // KPI 카드와 브리핑 숫자가 같은 prop을 렌더 — 두 렌더 지점 모두 activitySurgeCount 참조.
-  const propRefs = (content.match(/props\.activitySurgeCount/g) ?? []).length;
-  check("E: both render locations consume activitySurgeCount", propRefs >= 2);
+  // Catch a disconnected consumer, not the removal of a redundant label.
+  check("E: KPI count comes from the same result as the bounded list",
+    page.includes("const activitySurgeCount = surge.count;") &&
+    page.includes("activitySurgeCount={activitySurgeCount}") &&
+    page.includes("const volumeSpikeStocks = surge.items.slice(0, 6);") &&
+    page.includes("const volumeData = volumeSpikeStocks.map(toRaw);") &&
+    page.includes("volume={volumeData}"));
+  check("E: the activity KPI renders the supplied count",
+    /<MarketSnapshotCards[^>]*volumeSpikeCount=\{props\.activitySurgeCount\}/.test(content) &&
+    /title: s\.cards\.spike\.title, value: `\$\{volumeSpikeCount\}\$\{stock\}`/.test(kpis));
+  check("E: the volume list renders the supplied items",
+    content.includes("const volumeVMs = props.volume.map(") &&
+    /<SignalSection title=\{t\.sections\.volume\.title\}[^>]*items=\{volumeVMs\}/.test(content));
 }
 
 if (failed > 0) {

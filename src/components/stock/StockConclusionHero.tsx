@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { conclusionHeroCopy } from "@/lib/copy/stockDetail";
+import type { ValuationBasis } from "@/lib/financialEvidence";
 import { StockHeader } from "./StockHeader";
 import { PriorityScoreCard, type PrioritySignal } from "./PriorityScoreCard";
 import { ConclusionSummaryCard } from "./ConclusionSummaryCard";
@@ -35,6 +36,7 @@ export function StockConclusionHero({
   sectorCount,
   completeness,
   metricsVersion,
+  valuationBasis,
   suspect,
   conclusion,
   strengths,
@@ -59,6 +61,7 @@ export function StockConclusionHero({
   sectorCount: number;
   completeness: number;
   metricsVersion?: string | null;
+  valuationBasis: ValuationBasis;
   suspect: boolean;
   conclusion: {
     type: string;
@@ -120,6 +123,7 @@ export function StockConclusionHero({
             sector={sector}
             completeness={completeness}
             metricsVersion={metricsVersion}
+            valuationBasis={valuationBasis}
             suspect={suspect}
             leadStrength={leadStrength}
             leadCheck={leadCheck}

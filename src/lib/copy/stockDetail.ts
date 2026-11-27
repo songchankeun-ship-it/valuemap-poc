@@ -81,7 +81,7 @@ export const stockDetailCopy = {
       dividendYield: "배당수익률",
       perUnit: "배",
       pbrUnit: "배",
-      note: "PER·PBR은 최근 실적(후행) 기준이며 현재가에 따라 매일 달라집니다. 향후 이익을 반영한 예상(Forward) PER과는 다릅니다. 적자(EPS 0 이하)·결측 종목은 밸류 점수를 임의값으로 채우지 않고 —로 표시합니다.",
+      note: "재무 지표는 저장된 수치예요. 장마감 가격이 갱신돼도 PER·PBR이 매일 다시 계산되는 것은 아닙니다. 확인할 수 없는 값은 —로 표시해요.",
       themesPrefix: "소속 테마",
     },
     basis: {
@@ -162,7 +162,7 @@ export const stockDetailCopy = {
       dividendYield: "Dividend yield",
       perUnit: "x",
       pbrUnit: "x",
-      note: "PER/PBR are based on trailing results and change daily with the current price. They differ from forward PER, which reflects expected future earnings. For loss-making (EPS ≤ 0) or missing stocks, the Value score is shown as — rather than filled with an arbitrary value.",
+      note: "These are stored figures. The market-close price update does not recalculate P/E or P/B each day. A dash marks an unverified figure.",
       themesPrefix: "Themes",
     },
     basis: {

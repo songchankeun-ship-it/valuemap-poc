@@ -37,6 +37,7 @@ import { RecentComparePrompt } from "@/components/stock/RecentComparePrompt";
 import { classifyConclusion } from "@/lib/conclusion";
 import { ScoreBasisBreakdown } from "@/components/stock/ScoreBasisBreakdown";
 import { buildScoreBasis } from "@/lib/scoreBasis";
+import { valuationBasisOf } from "@/lib/financialEvidence";
 import {
   StockBreadcrumb,
   MetricsSectionHeader,
@@ -123,13 +124,13 @@ interface RecentChangeItem {
   href?: string;
 }
 
-function composeReasonV2(m: number, f: number, v: number, vo: number): ReasonV2 {
+function composeReasonV2(m: number, f: number, v: number, vo: number, valuationUnavailable: boolean): ReasonV2 {
   const metrics = [
     { metric: "추세", score: m },
     { metric: "거래활성도", score: f },
     { metric: "밸류", score: v },
     { metric: "위험조정", score: vo },
-  ];
+  ].filter(({ metric }) => !valuationUnavailable || metric !== "밸류");
   const strengths = metrics.filter(x => x.score >= 70).map(x => ({ metric: x.metric, score: x.score }));
   const cautions = metrics.filter(x => x.score < 50).map(x => ({ metric: x.metric, score: x.score }));
 
@@ -303,7 +304,9 @@ export default async function StockDetailPage({ params }: PageProps) {
   const s = getStockByTicker(ticker);
   if (!s) notFound();
   const composite = Math.round(compositeOf(s));
-  const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol);
+  const valuationBasis = valuationBasisOf(realStockPool.find((stock) => stock.ticker === ticker) ?? s);
+  const valuationUnavailable = valuationBasis !== "measured";
+  const reason = composeReasonV2(s.momentum, s.flow, s.value, s.vol, valuationUnavailable);
   const [scoreHistory, priceHistory] = await Promise.all([
     // 유일한 요청 시점 원격 호출(Supabase daily_scores). 캐시 적중 시 즉시 반환되고,
     // 원격이 느리거나 멈추면 4초 후 빈 배열로 떨어져 렌더(및 빌드/ISR 재생성)가 막히지
@@ -405,13 +408,13 @@ export default async function StockDetailPage({ params }: PageProps) {
 
   // ── 상단 결론 카드(StockConclusionHero) 입력값 ──────────────────────
   const suspect = dataWarnings.length > 0;
-  const conclusion = classifyConclusion({ momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol, surge3m });
+  const conclusion = classifyConclusion({ momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol, surge3m, valuationUnavailable });
   const metricSignals = [
     { metric: "추세", score: s.momentum },
     { metric: "거래활성도", score: s.flow },
     { metric: "밸류", score: s.value },
     { metric: "위험조정", score: s.vol },
-  ];
+  ].filter(({ metric }) => !valuationUnavailable || metric !== "밸류");
   const sortedStrengths = [...reason.strengths].sort((a, b) => b.score - a.score);
   const sortedCautions = [...reason.cautions].sort((a, b) => a.score - b.score);
   const strongestMetric = [...metricSignals].sort((a, b) => b.score - a.score)[0]!;
@@ -551,6 +554,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         sectorCount={sectorCount}
         completeness={completeness}
         metricsVersion={dataStatus.metricsVersionLabel}
+        valuationBasis={valuationBasis}
         suspect={suspect}
         conclusion={conclusion}
         strengths={heroStrengths}
@@ -576,19 +580,19 @@ export default async function StockDetailPage({ params }: PageProps) {
       <DataWarningsBanner warnings={dataWarnings} />
 
       {/* 왜 이 점수? — 종합 점수 근거 보기(설계서 2 §5.1~5.2). 결론 다음 첫 깊이 = 근거 */}
-      <ScoreBasisBreakdown basis={scoreBasis} />
+      <ScoreBasisBreakdown basis={scoreBasis} valuationBasis={valuationBasis} />
 
       {/* 업종 대비 밸류 — 이미 계산된 같은 업종 상대 밸류(sectorValueScore)를 근거 탭(기본/첫 탭)
           에서 항상 보이게 배치해 접근성을 높인다(Slice G). 종합 점수식에 들어가지 않는 별도 참고
           지표이며(표시/문구만, 산식 무변경), 상세 순위 비교는 요약 탭의 '같은 업종 비교' 표로 잇는다. */}
-      <SectorValueCard
+      {!valuationUnavailable ? <SectorValueCard
         hasScore={sectorValue.score >= 0}
         sectorName={sectorValue.sector}
         peers={sectorValue.peers}
         score={sectorValue.score}
         poolN={poolN}
         valueScore={s.value}
-      />
+      /> : null}
 
       {/* 최근 변화 — 근거 바로 뒤(설계서 §9.3 순서 2). 점수·거래활성도·가격·공시 변화 요약. */}
       <RecentChangeSummary ticker={s.ticker} items={recentChangeItems} />
@@ -646,6 +650,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         per: s.per,
         pbr: s.pbr,
         roe: s.roe,
+        valuationUnavailable,
       }} />
 
       {/* 확인 완료 체크리스트 — 직접 확인한 항목(공시·실적·밸류·업종 비교)을 이 기기에만 기록하는 재방문 장치.
@@ -658,7 +663,7 @@ export default async function StockDetailPage({ params }: PageProps) {
         {/* 자체 지표 4종 (점수 카드) */}
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
           <MetricsSectionHeader poolN={poolN} />
-          <MetricInsightCards metrics={[
+          <MetricInsightCards valuationUnavailable={valuationUnavailable} metrics={[
             { label: "추세", kind: "momentum", score: s.momentum, topPct: topPctOf(s.momentum, "momentum"), rank: rankOf(s.momentum, "momentum"), total: poolN },
             { label: "거래활성도", kind: "flow", score: s.flow, topPct: topPctOf(s.flow, "flow"), rank: rankOf(s.flow, "flow"), total: poolN },
             { label: "밸류", kind: "value", score: s.value, topPct: topPctOf(s.value, "value"), rank: rankOf(s.value, "value"), total: poolN, per: s.per, pbr: s.pbr },

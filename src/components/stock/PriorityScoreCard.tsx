@@ -3,6 +3,7 @@
 import { AlertTriangle, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { priorityScoreCardCopy } from "@/lib/copy/stockDetail";
+import { financialEvidenceCopy, type ValuationBasis } from "@/lib/financialEvidence";
 
 export interface PrioritySignal {
   label: string;
@@ -20,6 +21,7 @@ export function PriorityScoreCard({
   sector,
   completeness,
   metricsVersion,
+  valuationBasis,
   suspect,
   leadStrength,
   leadCheck,
@@ -34,6 +36,7 @@ export function PriorityScoreCard({
   sector: string;
   completeness: number;
   metricsVersion?: string | null;
+  valuationBasis: ValuationBasis;
   suspect: boolean;
   leadStrength: PrioritySignal;
   leadCheck: PrioritySignal;
@@ -49,6 +52,9 @@ export function PriorityScoreCard({
         <span>/ 100</span>
         {suspect ? <AlertTriangle size={16} aria-hidden="true" /> : null}
       </div>
+      {valuationBasis === "three-factors" ? (
+        <p className="text-xs leading-relaxed">{financialEvidenceCopy[locale].threeFactors}</p>
+      ) : null}
 
       <dl className="research-stock-ranks">
         <div>

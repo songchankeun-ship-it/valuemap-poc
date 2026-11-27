@@ -27,6 +27,7 @@ export interface LaggedSymbol {
 export interface PriceLagSummary {
   /** 전역 기준일 YYYYMMDD(비교 기준). 판정 불가 시 null. */
   referenceDate: string | null;
+  priceDates: Readonly<Record<string, string>>;
   /** 지연 종목 수. */
   count: number;
   /** 지연 종목 상세(기준일 과거 순 → 티커 순). */
@@ -35,7 +36,7 @@ export interface PriceLagSummary {
   laggedTickers: string[];
 }
 
-const EMPTY: PriceLagSummary = { referenceDate: null, count: 0, lagged: [], laggedTickers: [] };
+const EMPTY: PriceLagSummary = { referenceDate: null, priceDates: {}, count: 0, lagged: [], laggedTickers: [] };
 
 function isYmd(s: string | null | undefined): s is string {
   return !!s && /^\d{8}$/.test(s);
@@ -69,7 +70,7 @@ function lastPriceDate(ticker: string): string | null {
       to?: string;
       points?: { d?: string }[];
     };
-    const raw = parsed?.to ?? (parsed?.points?.length ? parsed.points[parsed.points.length - 1]?.d : null);
+    const raw = parsed?.points?.at(-1)?.d;
     const digits = raw ? raw.replace(/-/g, "") : null;
     return isYmd(digits) ? digits : null;
   } catch {
@@ -91,9 +92,11 @@ export function getPriceLagSummary(): PriceLagSummary {
     return cache;
   }
   const lagged: LaggedSymbol[] = [];
+  const priceDates: Record<string, string> = {};
   for (const s of realStockPool) {
     const priceDate = lastPriceDate(s.ticker);
     if (!priceDate) continue; // 파일 없음/형식 오류 → 판정 불가(정상 취급, 상세 페이지와 동일)
+    priceDates[s.ticker] = priceDate;
     if (priceDate >= reference) continue; // 동일·미래 → 정상
     lagged.push({
       ticker: s.ticker,
@@ -105,6 +108,7 @@ export function getPriceLagSummary(): PriceLagSummary {
   lagged.sort((a, b) => (a.priceDate === b.priceDate ? a.ticker.localeCompare(b.ticker) : a.priceDate.localeCompare(b.priceDate)));
   cache = {
     referenceDate: reference,
+    priceDates,
     count: lagged.length,
     lagged,
     laggedTickers: lagged.map((l) => l.ticker),

@@ -12,6 +12,7 @@
 import { realStockPool, type RealStock } from "@/lib/realStocks";
 import { sectorOf } from "@/lib/sector";
 import { compositeOf } from "@/lib/score";
+import { financialEvidenceCopy, valuationBasisOf, type ValuationBasis } from "@/lib/financialEvidence";
 import { topicParticle, subjectParticle, conjunctionParticle } from "@/lib/particle";
 import {
   comparisonPairBySlug,
@@ -49,6 +50,7 @@ export interface ComparisonStock {
   ticker: string;
   name: string;
   sector: string;
+  valuationBasis: ValuationBasis;
 }
 
 export interface ResolvedComparison {
@@ -64,6 +66,12 @@ export interface ResolvedComparison {
 function scoreValue(v: number): MetricValue {
   const valid = Number.isFinite(v);
   return { valid, raw: v, display: valid ? String(Math.round(v)) : "—" };
+}
+
+function valuationValue(stock: RealStock): MetricValue {
+  return valuationBasisOf(stock) === "measured"
+    ? scoreValue(stock.value)
+    : { valid: false, raw: 0, display: financialEvidenceCopy.ko.noValue };
 }
 
 function ratioValue(v: number, digits: number, suffix: string): MetricValue {
@@ -120,17 +128,17 @@ function metricRow(
 }
 
 function toComparisonStock(s: RealStock): ComparisonStock {
-  return { ticker: s.ticker, name: s.name, sector: sectorOf(s.themes, s.ticker) };
+  return { ticker: s.ticker, name: s.name, sector: sectorOf(s.themes, s.ticker), valuationBasis: valuationBasisOf(s) };
 }
 
 // 두 종목의 지표를 나란히 만든 행 목록. 자체 지표 4종 + 종합 + 재무 + 시총.
 function buildMetrics(sa: RealStock, sb: RealStock): ComparisonMetric[] {
   const n = { a: sa.name, b: sb.name };
   return [
-    metricRow("composite", "종합 점수", "자체 지표 4종의 평균(0~100)", scoreValue(compositeOf(sa)), scoreValue(compositeOf(sb)), n.a, n.b),
+    metricRow("composite", "종합 점수", "산출 가능한 지표 기준(0~100)", scoreValue(compositeOf(sa)), scoreValue(compositeOf(sb)), n.a, n.b),
     metricRow("momentum", "추세", "가격 추세 강도(0~100)", scoreValue(sa.momentum), scoreValue(sb.momentum), n.a, n.b),
     metricRow("flow", "거래활성도", "최근 거래량 활성도(0~100)", scoreValue(sa.flow), scoreValue(sb.flow), n.a, n.b),
-    metricRow("value", "밸류", "이익·자산 대비 저평가 정도(0~100)", scoreValue(sa.value), scoreValue(sb.value), n.a, n.b),
+    metricRow("value", "밸류", "이익·자산 대비 저평가 정도(0~100)", valuationValue(sa), valuationValue(sb), n.a, n.b),
     metricRow("vol", "위험조정", "변동성 대비 수익 안정성(0~100)", scoreValue(sa.vol), scoreValue(sb.vol), n.a, n.b),
     metricRow("per", "PER", "주가수익비율(배)", ratioValue(sa.per, 1, "배"), ratioValue(sb.per, 1, "배"), n.a, n.b),
     metricRow("pbr", "PBR", "주가순자산비율(배)", ratioValue(sa.pbr, 2, "배"), ratioValue(sb.pbr, 2, "배"), n.a, n.b),
@@ -143,7 +151,7 @@ function buildMetrics(sa: RealStock, sb: RealStock): ComparisonMetric[] {
 const LIMITATIONS: readonly string[] = [
   "비교는 두 종목을 나란히 보는 탐색 보조이며 매수·매도 추천이 아닙니다.",
   "지표가 높거나 낮다는 것이 곧 더 좋거나 나쁜 종목을 뜻하지 않습니다 — 업종·시점·투자 전략에 따라 해석이 달라집니다.",
-  "가격·점수·재무 수치는 데이터 기준일 기준이며 시장 상황에 따라 바뀝니다.",
+  "가격·점수 스냅샷과 재무 수치의 기준 기간은 다를 수 있습니다.",
   "두 종목의 업종·사업 구조가 다르면 단순 수치 비교의 의미가 제한됩니다.",
 ];
 

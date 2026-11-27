@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockDetailCopy, priceBasisLagCopy } from "@/lib/copy/stockDetail";
+import { financialEvidenceCopy } from "@/lib/financialEvidence";
 
 /**
  * 종목 상세 서버 페이지가 직접 그리던 한글 JSX 블록을 다국어로 옮긴 클라이언트 자식들.
@@ -211,11 +212,12 @@ export function FinancialsSection({
 }) {
   const { locale } = useLanguage();
   const t = stockDetailCopy[locale].financials;
+  const basis = financialEvidenceCopy[locale];
   const cells = [
     { l: t.per, v: per > 0 ? per.toFixed(1) + t.perUnit : "—" },
     { l: t.pbr, v: pbr > 0 ? pbr.toFixed(2) + t.pbrUnit : "—" },
     { l: t.roe, v: roe !== 0 ? roe.toFixed(1) + "%" : "—" },
-    { l: t.dividendYield, v: dividendYield > 0 ? dividendYield.toFixed(2) + "%" : "0%" },
+    { l: t.dividendYield, v: dividendYield > 0 ? dividendYield.toFixed(2) + "%" : "—" },
   ];
   return (
     <>
@@ -228,7 +230,8 @@ export function FinancialsSection({
         ))}
       </section>
 
-      <p className="text-[10px] text-zinc-600 dark:text-zinc-300 leading-relaxed">{t.note}</p>
+      <p className="text-xs text-[var(--muted)] leading-relaxed">{basis.financialPeriod} · {basis.financialSources}</p>
+      <p className="text-[11px] text-[var(--muted)] leading-relaxed">{t.note}</p>
 
       <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4">
         <div className="text-sm font-semibold mb-2 text-zinc-900 dark:text-zinc-100">{t.themesPrefix} {themes.length}</div>

@@ -44,13 +44,13 @@ function readingFor(m: MetricInsight): Reading {
  * 각 카드: 지표명 + 설명 툴팁, 점수·상위/하위 백분위, 구간색 막대, 한 줄 해석, 주의/확인 문구.
  * 문구는 @/lib/metricReadings 단일 소스(초보자 해석 카드와 공유) — 표시 전용, 점수 계산 무변경.
  */
-export function MetricInsightCards({ metrics }: { metrics: MetricInsight[] }) {
+export function MetricInsightCards({ metrics, valuationUnavailable }: { metrics: MetricInsight[]; valuationUnavailable?: boolean }) {
   const { locale } = useLanguage();
   const t = metricInsightCardsCopy[locale];
   const metricLabels = stockDetailCopy[locale].metricLabels;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-      {metrics.map((m) => {
+      {metrics.filter((m) => !valuationUnavailable || m.kind !== "value").map((m) => {
         const v = Math.max(0, Math.min(100, Math.round(m.score)));
         const c = scoreColorOf(v);
         const r = readingFor(m);

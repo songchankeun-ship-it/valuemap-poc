@@ -39,7 +39,7 @@ export const statusCopy = {
     daysAgo: (n: number) => ` (${n}일 전)`,
     stocksUnit: (n: number) => `${n}종목`,
     snapshotNote:
-      "가격·점수는 마지막 장마감 배치 기준이고, 공시는 페이지를 열 때 DART에서 라이브로 조회합니다.",
+      "가격·점수는 마지막 장마감 배치 기준입니다. 재무는 별도 수집한 저장본이고, 공시의 수집 상태는 공시 화면에서 확인할 수 있어요.",
     scoreTimeBatchNote: "장마감 후 배치",
     scoreTimeUtcLabel: "원본 배치",
     dataCadenceNote:
@@ -144,7 +144,7 @@ export const statusCopy = {
     daysAgo: (n: number) => ` (${n} days ago)`,
     stocksUnit: (n: number) => `${n} stocks`,
     snapshotNote:
-      "Prices and scores are from the last market-close batch; disclosures are fetched live from DART when the page opens.",
+      "Prices and scores use the last market-close batch. Financials are collected separately. Check the disclosures page for the current filing source.",
     scoreTimeBatchNote: "after market-close batch",
     scoreTimeUtcLabel: "Source batch",
     dataCadenceNote:

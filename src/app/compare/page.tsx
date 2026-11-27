@@ -1,6 +1,8 @@
 // /compare — 종목 비교 페이지
 import Link from "next/link";
-import { realStockPool } from "@/lib/realStocks";
+import { dataMetadata, formatBizDateLong, realStockPool } from "@/lib/realStocks";
+import { valuationBasisOf } from "@/lib/financialEvidence";
+import { getPriceLagSummary } from "@/lib/priceLag";
 import { compositeOf } from "@/lib/score";
 import { isSuspect } from "@/lib/dataQuality";
 import { sectorOf } from "@/lib/sector";
@@ -44,6 +46,7 @@ interface PageProps {
 export default async function ComparePage({ searchParams }: PageProps) {
   const { stocks: stocksParam } = await searchParams;
   const allStocks = realStockPool;
+  const { priceDates } = getPriceLagSummary();
 
   // 비교용 최소 정보만 직렬화
   const stockMap = Object.fromEntries(
@@ -62,6 +65,8 @@ export default async function ComparePage({ searchParams }: PageProps) {
         momentum: s.momentum,
         flow: s.flow,
         value: s.value,
+        valuationBasis: valuationBasisOf(s),
+        priceDate: priceDates[s.ticker] ? formatBizDateLong(priceDates[s.ticker]) : null,
         vol: s.vol,
         neglectScore: s.neglectScore,
         compositeScore: Math.round(compositeOf(s)),
@@ -228,6 +233,7 @@ export default async function ComparePage({ searchParams }: PageProps) {
 
       <CompareClient
         stockMap={stockMap}
+        priceBasisDate={formatBizDateLong(dataMetadata.asOfBusinessDate)}
         top5={top5}
         recommendedSets={recommendedSets}
         exampleSets={exampleSets}

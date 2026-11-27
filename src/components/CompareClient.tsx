@@ -19,6 +19,7 @@ import { EvidenceShareButton } from "@/components/EvidenceShareButton";
 import { FOCUS_RING } from "@/components/ui/controlStyles";
 import { compareSharePath } from "@/lib/growthShare";
 import { appendLinkedSelection } from "@/lib/compareQuery";
+import { financialEvidenceCopy, type ValuationBasis } from "@/lib/financialEvidence";
 import { ArrowRight, CheckCircle2, ChevronDown, ExternalLink, AlertTriangle, Plus, Trash2, X } from "lucide-react";
 
 interface RecommendedSet {
@@ -54,6 +55,8 @@ interface CompareStock {
   momentum: number;
   flow: number;
   value: number;
+  valuationBasis: ValuationBasis;
+  priceDate: string | null;
   vol: number;
   neglectScore: number;
   compositeScore: number;
@@ -80,6 +83,7 @@ function CompareColumns({ count, children }: { count: number; children: React.Re
 }
 
 function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (ticker: string) => void }) {
+  const basis = financialEvidenceCopy.ko;
   return (
     <section className="research-comparison-block" aria-labelledby="compare-evidence-title">
       <div className="research-band-heading">
@@ -117,6 +121,7 @@ function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (t
               {stocks.map((s) => (
                 <td key={s.ticker} className="research-matrix-score">
                   <strong>{s.compositeScore}</strong><small> / 100</small>
+                  {s.valuationBasis === "three-factors" ? <small className="research-matrix-basis">{basis.threeFactors}</small> : null}
                 </td>
               ))}
             </tr>
@@ -128,6 +133,7 @@ function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (t
                   <span className="research-matrix-change" data-direction={s.changePct > 0 ? "up" : s.changePct < 0 ? "down" : "flat"}>
                     {s.changePct > 0 ? "+" : ""}{s.changePct.toFixed(2)}%
                   </span>
+                  <small className="research-matrix-basis">{s.priceDate ?? basis.unverifiedCloseDate}</small>
                 </td>
               ))}
             </tr>
@@ -146,6 +152,9 @@ function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (t
               <tr key={key}>
                 <th scope="row" className="research-matrix-label">{label}</th>
                 {stocks.map((s, index) => {
+                  if (key === "value" && s.valuationBasis !== "measured") {
+                    return <td key={s.ticker} data-series={index}><span className="research-matrix-basis">{basis.noValue}</span></td>;
+                  }
                   const value = Math.max(0, Math.min(100, s[key]));
                   return (
                     <td key={s.ticker} data-series={index}>
@@ -184,6 +193,8 @@ function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (t
           </tbody>
         </table>
       </div>
+      <p className="research-matrix-note">{basis.priceSource}</p>
+      <p className="research-matrix-note">{basis.financialPeriod} · {basis.financialSources}</p>
       <p className="research-matrix-note">오른스코어 내부 업종 분류 기준 · 지표는 탐색용이며 매수·매도 추천이 아닙니다. 위험조정 점수는 안전도를 뜻하지 않습니다.</p>
     </section>
   );
@@ -191,6 +202,7 @@ function EvidenceMatrix({ stocks, remove }: { stocks: CompareStock[]; remove: (t
 
 export function CompareClient({
   stockMap,
+  priceBasisDate,
   top5 = [],
   recommendedSets = [],
   exampleSets = [],
@@ -199,6 +211,7 @@ export function CompareClient({
   linkedTickers,
 }: {
   stockMap: Record<string, CompareStock>;
+  priceBasisDate: string;
   top5?: Array<{ ticker: string; name: string }>;
   recommendedSets?: RecommendedSet[];
   exampleSets?: RecommendedSet[];
@@ -592,6 +605,7 @@ export function CompareClient({
       <div className="research-comparison-toolbar">
         <div>
           <p className="research-section-label">비교 중인 종목 {stocks.length}/{COMPARE_MAX}</p>
+          <p className="text-xs text-[var(--muted)]">{financialEvidenceCopy.ko.priceBasis} · {priceBasisDate}</p>
           <p className="text-xs text-[var(--muted)]">
             {sameSector ? compareSectors[0] : "업종 혼합 · PER·PBR은 업종 차이 고려"}
             {perRange ? ` · PER ${perRange.min.toFixed(1)}~${perRange.max.toFixed(1)}배` : ""}

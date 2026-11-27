@@ -102,9 +102,10 @@ export function StatusContent({
   // 방문 시각 기준 신선도 — 전 거래일 종가만 있고 오늘 장마감 수집 전이면 "정상"으로만 보이지 않게 한다.
   // 파이프라인 지연(priceStale)이 우선, 그다음 오늘 마감 수집 대기(awaiting_close)를 경고로 노출.
   const freshness = useMarketFreshness(ds.globalAsOfDate);
-  const awaitingClose = freshness?.state === "awaiting_close" && !priceStale;
-  const snapshotWarn = priceStale || awaitingClose;
-  const snapshotBadge = priceStale ? t.snapshotStale : awaitingClose ? f.awaitingBadge : t.snapshotOk;
+  const stale = priceStale || freshness?.state === "stale";
+  const awaitingClose = freshness?.state === "awaiting_close" && !stale;
+  const snapshotWarn = stale || awaitingClose;
+  const snapshotBadge = stale ? t.snapshotStale : awaitingClose ? f.awaitingBadge : t.snapshotOk;
 
   // 사용자 향 상태 6차원(Slice C) — 단일 초록 대신 차원별 명시적 날짜·상태(정상/제한/확인 필요).
   // 가격 신선도는 클라이언트 신선도 훅(awaitingClose)까지 반영해 조립한다. 이력 연속성은 Slice B basis 소비.
@@ -112,7 +113,7 @@ export function StatusContent({
     {
       price: {
         asOfLabel: ds.globalAsOfLabel,
-        stale: priceStale,
+        stale,
         awaitingClose,
         ageLabel: priceAge !== null ? t.daysAgo(priceAge) : "",
       },
@@ -141,7 +142,7 @@ export function StatusContent({
   );
 
   const sources: { name: string; detail: string; tone: Tone }[] = [
-    { name: t.sources.price.name, detail: t.sources.price.detail, tone: priceStale ? "warn" : "ok" },
+    { name: t.sources.price.name, detail: t.sources.price.detail, tone: snapshotWarn ? "warn" : "ok" },
     { name: t.sources.quote.name, detail: t.sources.quote.detail, tone: "ok" },
     { name: t.sources.disclosure.name, detail: t.sources.disclosure.detail, tone: "ok" },
     {
@@ -149,7 +150,7 @@ export function StatusContent({
       detail: alertedCount > 0 ? t.sources.alert.detailActive(alertedCount) : t.sources.alert.detailIdle,
       tone: alertedCount > 0 ? "ok" : "off",
     },
-    { name: t.sources.scores.name, detail: t.sources.scores.detail, tone: "ok" },
+    { name: t.sources.scores.name, detail: t.sources.scores.detail, tone: dimensions.some((d) => d.key === "score" && d.state !== "ok") ? "warn" : "ok" },
   ];
 
   const toc: { href: string; label: string }[] = [

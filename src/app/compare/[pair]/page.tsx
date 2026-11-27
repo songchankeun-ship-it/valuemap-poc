@@ -20,6 +20,7 @@ import { conjunctionParticle } from "@/lib/particle";
 import { curatedCompareSharePath } from "@/lib/growthShare";
 import { EvidenceShareButton } from "@/components/EvidenceShareButton";
 import { PairPriceChart } from "@/components/research/PairPriceChart";
+import { financialEvidenceCopy } from "@/lib/financialEvidence";
 
 // 허용목록의 7쌍만 정적 생성. 그 외 슬러그는 생성/색인되지 않는다.
 export const dynamicParams = false;
@@ -59,6 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 function ComparisonTable({ rows, data }: { rows: ComparisonMetric[]; data: ResolvedComparison }) {
+  const basis = financialEvidenceCopy.ko;
   const columns = [
     { stock: data.a, href: `/stock/${data.a.ticker}` },
     { stock: data.b, href: `/stock/${data.b.ticker}` },
@@ -83,8 +85,14 @@ function ComparisonTable({ rows, data }: { rows: ComparisonMetric[]; data: Resol
               {metric.label}
               <span className="block text-[10px] font-normal leading-tight text-[var(--muted)]">{metric.hint}</span>
             </th>
-            <td className={`text-right font-mono text-[13px] ${metric.higher === "a" && metric.a.display !== metric.b.display ? "font-bold" : "text-[var(--muted)]"}`}>{metric.a.display}</td>
-            <td className={`text-right font-mono text-[13px] ${metric.higher === "b" && metric.a.display !== metric.b.display ? "font-bold" : "text-[var(--muted)]"}`}>{metric.b.display}</td>
+            {(["a", "b"] as const).map((side) => (
+              <td key={side} className={`text-right font-mono text-[13px] ${metric.higher === side && metric.a.display !== metric.b.display ? "font-bold" : "text-[var(--muted)]"}`}>
+                {metric[side].display}
+                {metric.key === "composite" && data[side].valuationBasis === "three-factors" ? (
+                  <small className="research-matrix-basis">{basis.threeFactors}</small>
+                ) : null}
+              </td>
+            ))}
           </tr>
         ))}
       </tbody>
@@ -120,10 +128,10 @@ export default async function ComparePairPage({ params }: PageProps) {
       </nav>
 
       <header className="border-b border-[var(--research-line)] pb-4">
-        <p className="research-section-label tabular-nums">{dataAsOf} 기준</p>
+        <p className="research-section-label tabular-nums">{financialEvidenceCopy.ko.priceBasis} · {dataAsOf}</p>
         <h1 className="mt-1 text-[29px] font-extrabold leading-tight text-[var(--foreground)] break-keep">{meta.h1}</h1>
         <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--muted)] break-keep">
-          {`${data.a.name}${conjunctionParticle(data.a.name)} ${data.b.name}의 재무 지표와 종가 흐름을 같은 날짜 기준으로 비교합니다.`}
+          {`${data.a.name}${conjunctionParticle(data.a.name)} ${data.b.name}의 재무 지표와 공통 거래일의 종가 흐름을 비교합니다.`}
         </p>
         <div className="mt-3 flex flex-wrap items-stretch gap-2">
           <Link
@@ -148,6 +156,7 @@ export default async function ComparePairPage({ params }: PageProps) {
       <div className="research-split">
         <section aria-labelledby="pair-fundamentals" className="min-w-0">
           <h2 id="pair-fundamentals" className="text-lg font-bold">재무 지표</h2>
+          <p className="mt-1 text-xs text-[var(--muted)]">{financialEvidenceCopy.ko.financialPeriod} · {financialEvidenceCopy.ko.financialSources}</p>
           <ComparisonTable rows={fundamentals} data={data} />
         </section>
         <PairPriceChart a={data.a} b={data.b} asOf={dataMetadata.asOfBusinessDate} />

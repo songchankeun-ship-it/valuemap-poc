@@ -4,6 +4,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classifyConclusion } from "../src/lib/conclusion";
+import { valuationBasisOf } from "../src/lib/financialEvidence";
+import { readingsOf } from "../src/lib/metricReadings";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, "..");
@@ -36,6 +38,23 @@ check("weak risk-adjusted links to the summary/chart tab", risk.nextHref === "#s
 const neutral = classifyConclusion({ momentum: 60, flow: 60, value: 60, vol: 60 });
 check("neutral result asks for a recent disclosure check", neutral.riskNote.includes("최근 공시"));
 check("neutral result links to disclosures", neutral.nextHref === "#disclosures");
+
+check("a confirmed replacement is not measured valuation", valuationBasisOf({ per: null, pbr: null, valueNA: true }) === "three-factors");
+check("unknown weighting is not inferred from a missing multiple", valuationBasisOf({ per: 15, pbr: null }) === "unavailable");
+check("invalid multiples do not establish a valuation", valuationBasisOf({ per: Infinity, pbr: 1 }) === "unavailable");
+check("positive multiples keep measured valuation", valuationBasisOf({ per: 15, pbr: 1 }) === "measured");
+const noValuation = { momentum: 60, flow: 60, value: 10, vol: 60, valuationUnavailable: true };
+check("missing valuation does not send users to financials based on a synthetic low score",
+  classifyConclusion(noValuation).nextHref === "#disclosures");
+check("the beginner interpretation does not report a synthetic valuation",
+  !readingsOf({ ...noValuation, per: 0, pbr: 0, roe: 0 }).some(({ label }) => label === "밸류"));
+const comparison = read("src/components/CompareClient.tsx");
+check("comparison guards the valuation bar and explains the three-factor composite",
+  comparison.includes('key === "value" && s.valuationBasis !== "measured"') &&
+  comparison.includes('s.valuationBasis === "three-factors"') && comparison.includes("basis.threeFactors"));
+check("comparison uses separate close and financial bases",
+  comparison.includes("s.priceDate ?? basis.unverifiedCloseDate") &&
+  comparison.includes("basis.financialPeriod") && comparison.includes("basis.financialSources"));
 
 const summaryCard = read("src/components/stock/ConclusionSummaryCard.tsx");
 check("top conclusion renders the direct next-action copy", summaryCard.includes("riskNote"));

@@ -21,6 +21,7 @@ export interface StockShape {
   per: number;
   pbr: number;
   roe: number;
+  valuationUnavailable?: boolean;
 }
 
 export function readMomentum(score: number): Reading {
@@ -111,7 +112,7 @@ export function readingsOf(s: StockShape): Reading[] {
   return [
     readMomentum(s.momentum),
     readFlow(s.flow),
-    readValue(s.value, s.per, s.pbr),
+    ...(s.valuationUnavailable ? [] : [readValue(s.value, s.per, s.pbr)]),
     readVol(s.vol),
   ];
 }
@@ -123,14 +124,14 @@ export function getChecklistByPattern(s: StockShape): { headline: string; items:
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
     { k: "Vo", v: s.vol, label: "위험조정" },
-  ].filter((x) => x.v >= 70);
+  ].filter((x) => x.v >= 70 && (!s.valuationUnavailable || x.k !== "V"));
 
   const weak = [
     { k: "M", v: s.momentum, label: "추세" },
     { k: "F", v: s.flow, label: "거래활성도" },
     { k: "V", v: s.value, label: "밸류" },
     { k: "Vo", v: s.vol, label: "위험조정" },
-  ].filter((x) => x.v < 40);
+  ].filter((x) => x.v < 40 && (!s.valuationUnavailable || x.k !== "V"));
 
   const hasMomentum = strong.find((x) => x.k === "M");
   const hasValue = strong.find((x) => x.k === "V");
@@ -180,7 +181,7 @@ export function getChecklistByPattern(s: StockShape): { headline: string; items:
   }
   if (strong.length === 0) {
     return {
-      headline: "관망형 종목 — 네 지표 모두 중립이라, 지금은 뚜렷한 이유보다 지켜볼 단계에 가까워요",
+      headline: "관망형 종목 — 산출 가능한 지표에서 뚜렷한 강점이 없어 지켜볼 단계에 가까워요",
       items: [
         "왜 이 종목을 보는지 본인 이유 정리",
         "촉매 (실적·공시·테마)가 있는지 점검",

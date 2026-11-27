@@ -3,6 +3,7 @@
 import { type ReactNode } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { stockHeaderCopy, priceBasisLagCopy } from "@/lib/copy/stockDetail";
+import { financialEvidenceCopy } from "@/lib/financialEvidence";
 
 /**
  * 종목 헤더 — 업종 태그 · 종목명(가장 크게) · 종목코드 + 현재가/액션 슬롯.
@@ -43,6 +44,7 @@ export function StockHeader({
         ) : asOfLabel ? (
           <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400 tabular-nums">{asOfLabel} {t.asOfSuffix}</p>
         ) : null}
+        <p className="mt-1 text-[11px] text-[var(--muted)]">{financialEvidenceCopy[locale].priceSource}</p>
       </div>
       <div className="research-stock-actions">{actionsSlot}</div>
     </div>

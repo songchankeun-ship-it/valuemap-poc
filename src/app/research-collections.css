@@ -387,3 +387,13 @@
 .research-linked-compare p { padding-block: .25rem; }
 .research-linked-compare strong { color: var(--foreground); }
 .research-linked-compare a { display: inline-flex; align-items: center; min-height: 44px; gap: .25rem; }
+.research-matrix-basis {
+  display: block;
+  margin-top: .15rem;
+  color: var(--muted);
+  font-size: .6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

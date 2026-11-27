@@ -16,6 +16,7 @@
  * 런타임 데이터를 지어내지 않는다. 외부 의존이 없어 순수 테스트(scripts/test_statusDimensions.ts)가 가능하다.
  */
 import type { Locale } from "./i18n";
+import { financialEvidenceCopy } from "./financialEvidence";
 import {
   classifyComparisonBasis,
   comparisonBasisLabel,
@@ -141,12 +142,14 @@ export function buildStatusDimensions(
           ? " · 오늘 마감 수집 전"
           : "");
 
-  // 2) 점수 신선도 — 생성 메타가 없으면 확인 필요, 있으면 정상. 산식 버전 라벨만 병기(코드 기대값 비교는 admin).
-  const scoreState: DimensionState = input.score.generated ? "ok" : "attention";
+  // A successful calculation does not make its market-close input current.
+  const scoreState: DimensionState = input.score.generated ? priceState : "attention";
   const scoreDetail = input.score.generated
-    ? en
-      ? `Computed ${input.score.computedLabel} KST · ${input.score.metricsVersionLabel}`
-      : `${input.score.computedLabel} KST 계산 · ${input.score.metricsVersionLabel}`
+    ? (en
+      ? `Computed ${input.score.computedLabel} KST · ${input.score.metricsVersionLabel} · Price input: ${input.price.asOfLabel}`
+      : `${input.score.computedLabel} KST 계산 · ${input.score.metricsVersionLabel} · 입력 가격: ${input.price.asOfLabel}`) +
+      (input.price.stale ? (en ? " · older close" : " · 가격 입력 갱신 지연") :
+        input.price.awaitingClose ? (en ? " · today's close pending" : " · 오늘 종가 반영 전") : "")
     : en
       ? "No score-generation metadata — needs review"
       : "점수 생성 메타 없음 — 확인 필요";
@@ -208,7 +211,7 @@ export function buildStatusDimensions(
     { key: "price", label: dl.price, state: priceState, stateLabel: sl[priceState], asOf: input.price.asOfLabel, detail: priceDetail },
     { key: "score", label: dl.score, state: scoreState, stateLabel: sl[scoreState], asOf: input.score.generated ? `${input.score.computedLabel} KST` : null, detail: scoreDetail },
     { key: "history", label: dl.history, state: histState, stateLabel: sl[histState], asOf: histAsOf, detail: histDetail, basisKind: basis.kind },
-    { key: "financial", label: dl.financial, state: finState, stateLabel: sl[finState], asOf: null, detail: finDetail },
+    { key: "financial", label: dl.financial, state: finState, stateLabel: sl[finState], asOf: null, detail: `${finDetail} · ${financialEvidenceCopy[locale].financialPeriod}` },
     { key: "disclosure", label: dl.disclosure, state: "limited", stateLabel: sl.limited, asOf: null, detail: discDetail },
     { key: "themeFlow", label: dl.themeFlow, state: tfState, stateLabel: sl[tfState], asOf: null, detail: tfDetail },
   ];

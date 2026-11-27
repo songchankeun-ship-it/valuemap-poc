@@ -4406,3 +4406,19 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   TypeScript, 12 focused checks, diff and frozen-file checks passed.
 - Next: owner review at `http://127.0.0.1:4487/compare?stocks=105560,086790`,
   `/today`, and `/stock/005930`. No push or deployment.
+
+## 2026-11-27 - Market-close gate and numeric provenance [codex]
+
+- The daily-data run `45875596006` stopped before publication. The release
+  gate now verifies that the activity KPI and list both consume the same
+  reducer output without expecting a duplicate render removed by the redesign.
+  The pre-publication gate remains in place.
+- Detail and comparisons distinguish a missing valuation from a measured
+  score. The existing three-factor composite is labeled; stock scores,
+  tracked data, workflows and dependencies are unchanged by this patch.
+- Close dates come from the stored price series. Financial fields show their
+  collection path and an unverified reference period, not the price date.
+  Status reports the input-price freshness separately from calculation time.
+- Browser checks covered dynamic comparison at desktop and mobile widths,
+  detail tabs and the stale-price status. Verify the first updated daily
+  publication separately from the code rollout.

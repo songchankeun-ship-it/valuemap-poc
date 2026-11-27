@@ -76,6 +76,16 @@ function byKey(dims: ReturnType<typeof buildStatusDimensions>) {
   check("score carries computed time as-of", ok.asOf === "2026-07-15 18:40 KST");
   check("score detail mentions metrics version", ok.detail.includes("Metrics 2.4"));
 
+  const delayed = baseInput();
+  delayed.price.stale = true;
+  const delayedScore = byKey(buildStatusDimensions(delayed, "ko")).score;
+  check("generated score still inherits delayed input price", delayedScore.state === "attention" && delayedScore.detail.includes("입력 가격: 2026.07.15"));
+  check("fresh calculation timestamp is not reported as fresh prices", delayedScore.detail.includes("가격 입력 갱신 지연"));
+
+  const pendingClose = baseInput();
+  pendingClose.price.awaitingClose = true;
+  check("prior-close score remains available but not current", byKey(buildStatusDimensions(pendingClose, "en")).score.state === "limited");
+
   const missing = baseInput();
   missing.score.generated = false;
   const s = byKey(buildStatusDimensions(missing, "ko")).score;

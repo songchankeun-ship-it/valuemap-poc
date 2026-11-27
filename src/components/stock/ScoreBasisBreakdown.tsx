@@ -7,6 +7,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { scoreBasisCopy, stockDetailCopy } from "@/lib/copy/stockDetail";
 import type { Locale } from "@/lib/i18n";
 import type { ScoreBasis, BasisPart } from "@/lib/scoreBasis";
+import { financialEvidenceCopy, type ValuationBasis } from "@/lib/financialEvidence";
 
 /**
  * 종합 점수 근거 보기(설계서 2 §5.1~5.2).
@@ -18,9 +19,12 @@ import type { ScoreBasis, BasisPart } from "@/lib/scoreBasis";
  *  - 강점/주의 한 줄(metricReadings 단일 소스 재사용)
  * 를 보여준다. 순수 HTML/Tailwind — 신규 npm 0, 반응형(390px) 가드.
  */
-export function ScoreBasisBreakdown({ basis }: { basis: ScoreBasis }) {
+export function ScoreBasisBreakdown({ basis, valuationBasis }: { basis: ScoreBasis; valuationBasis: ValuationBasis }) {
   const { locale } = useLanguage();
   const t = scoreBasisCopy[locale];
+  const evidence = financialEvidenceCopy[locale];
+  const measured = valuationBasis === "measured";
+  const threeFactors = valuationBasis === "three-factors";
   return (
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 md:p-4 space-y-3">
       <div className="flex items-center gap-1.5">
@@ -29,8 +33,9 @@ export function ScoreBasisBreakdown({ basis }: { basis: ScoreBasis }) {
       </div>
 
       <p className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-        {t.introBefore} <strong className="tabular-nums">{basis.composite}{t.introPoint}</strong> {t.introMid}{" "}
-        <strong>{t.introWeight}</strong>{t.introAfter}
+        {t.introBefore} <strong className="tabular-nums">{basis.composite}{t.introPoint}</strong>{" "}
+        {measured ? <>{t.introMid}{" "}<strong>{t.introWeight}</strong>{t.introAfter}</> :
+          threeFactors ? evidence.threeFactorDetail : evidence.noValueDetail}
       </p>
 
       {/* 점수 ≠ 순위 — 카드 내 1곳에만 명시(과잉 반복 금지) */}
@@ -39,9 +44,12 @@ export function ScoreBasisBreakdown({ basis }: { basis: ScoreBasis }) {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        {basis.parts.map((p) => (
-          <BasisRow key={p.kind} part={p} locale={locale} />
-        ))}
+        {basis.parts.map((p) => p.kind === "value" && !measured ? (
+          <div key={p.kind} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-3 space-y-1">
+            <p className="text-xs font-semibold">{stockDetailCopy[locale].metricLabels.value} · {evidence.noValue}</p>
+            <p className="text-xs text-[var(--muted)]">{evidence.noValueDetail}</p>
+          </div>
+        ) : <BasisRow key={p.kind} part={p} locale={locale} showContribution={measured} />)}
       </div>
 
       <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2.5">
@@ -54,7 +62,7 @@ export function ScoreBasisBreakdown({ basis }: { basis: ScoreBasis }) {
   );
 }
 
-function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
+function BasisRow({ part, locale, showContribution }: { part: BasisPart; locale: Locale; showContribution: boolean }) {
   const t = scoreBasisCopy[locale];
   const label = stockDetailCopy[locale].metricLabels[part.kind];
   const v = part.score;
@@ -85,9 +93,11 @@ function BasisRow({ part, locale }: { part: BasisPart; locale: Locale }) {
       </div>
 
       {/* 종합 기여 + 상대순위 */}
-      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums leading-snug">
-        {t.contributionPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.contributionPts}{t.contributionPoint}</strong> <span className="text-zinc-600 dark:text-zinc-300">{t.weightPrefix} {part.weightPct}{t.weightSuffix}</span>
-      </div>
+      {showContribution ? (
+        <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums leading-snug">
+          {t.contributionPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.contributionPts}{t.contributionPoint}</strong> <span className="text-zinc-600 dark:text-zinc-300">{t.weightPrefix} {part.weightPct}{t.weightSuffix}</span>
+        </div>
+      ) : null}
       <div className="text-[11px] text-zinc-500 dark:text-zinc-400 tabular-nums leading-snug">
         {t.rankPrefix} <strong className="text-zinc-700 dark:text-zinc-300">{part.rank}</strong> / {part.total}{t.rankSuffix}
         <span className="text-zinc-600 dark:text-zinc-300"> · {isTop ? `${t.topPctPrefix} ${part.topPct}%` : `${t.bottomPctPrefix} ${100 - part.topPct}%`}</span>
