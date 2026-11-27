@@ -4,6 +4,7 @@ import { summarizeTodayDisclosures } from "@/lib/todayDisclosure";
 import {
   getScoreChangesBatch,
   getMetricChangesBatch,
+  getCandidateScoresOn,
   EMPTY_SCORE_CHANGES_BATCH,
   EMPTY_METRIC_CHANGES_BATCH,
   type MetricChange,
@@ -13,6 +14,9 @@ import { compositeOf } from "@/lib/score";
 import { sectorOf } from "@/lib/sector";
 import { fmtWon } from "@/lib/format";
 import { activitySurge } from "@/lib/homeSnapshot";
+import { getPriceHistory } from "@/lib/priceHistory";
+import { valuationBasisOf } from "@/lib/financialEvidence";
+import { buildTodayCandidateEvidence, snapshotIsoDate, verifiedPreviousSession } from "@/lib/todayCandidateEvidence";
 import type { MetricKey } from "@/lib/copy/home";
 import { TodayContent } from "@/components/today/TodayContent";
 import type {
@@ -124,10 +128,23 @@ export default async function TodayPage() {
   // 코드(src/lib/ai-insight.ts, cron)는 프로버넌스 계약이 갖춰진 뒤 재도입을 위해 보존한다.
   // 재도입 방지 가드: scripts/test_todayInsightProvenance.ts.
   const tickers = realStockPool.map((s) => s.ticker);
-  const [recentSig, scoreBatch, metricBatch] = await Promise.all([
+  const asOf = snapshotIsoDate(dataMetadata.asOfBusinessDate);
+  const referenceTickers = ["005930", "000660"];
+  const historyTickers = [...new Set([...referenceTickers, ...top3.map((s) => s.ticker)])];
+  const candidateInputs = Promise.all(historyTickers.map(async (ticker) => [ticker, await getPriceHistory(ticker)] as const))
+    .then(async (entries) => {
+      const prices = new Map(entries);
+      const previousDate = verifiedPreviousSession(asOf, referenceTickers.map((ticker) => prices.get(ticker)?.points));
+      const previousScores = previousDate
+        ? await withTimeout(getCandidateScoresOn(top3.map((s) => s.ticker), previousDate), 4000, [])
+        : [];
+      return { prices, previousDate, previousScores };
+    });
+  const [recentSig, scoreBatch, metricBatch, topInputs] = await Promise.all([
     withTimeout(getRecentSignals(7), 4000, { days: 7, totalDisclosures: 0, signalCount: 0, signals: [] } as Awaited<ReturnType<typeof getRecentSignals>>),
     withTimeout(getScoreChangesBatch(tickers), 4000, EMPTY_SCORE_CHANGES_BATCH),
     withTimeout(getMetricChangesBatch(tickers), 4000, EMPTY_METRIC_CHANGES_BATCH),
+    candidateInputs,
   ]);
   // 델타는 숫자 맵으로 투영해 기존 선정 로직을 그대로 유지하되, 비교 날짜(basis)는 batch 에 실려 이동한다.
   const scoreDeltas: Record<string, number> = {};
@@ -180,6 +197,7 @@ export default async function TodayPage() {
   // ── 오늘의 Top 3 후보(카드 표시값 + note 빌더용 원시값) ──
   const top3Raw: TodayTopRaw[] = top3.map((s, i) => {
     const r3m = typeof s.returns?.r3m === "number" ? s.returns.r3m : null;
+    const measuredValuation = valuationBasisOf(s) === "measured";
     return {
       rank: i + 1,
       name: s.name,
@@ -198,6 +216,19 @@ export default async function TodayPage() {
       value: s.value,
       vol: s.vol,
       lead: leadOf(s),
+      evidence: buildTodayCandidateEvidence({
+        ticker: s.ticker,
+        asOf,
+        previousDate: topInputs.previousDate,
+        current: { composite: compositeOf(s), momentum: s.momentum, flow: s.flow, value: s.value, vol: s.vol },
+        currentClose: s.currentPrice,
+        points: topInputs.prices.get(s.ticker)?.points,
+        previousScores: topInputs.previousScores,
+        measuredValuation,
+        volumeStats: s.flowStats,
+        filingSource: disclosureSummary.source,
+        filings: recentSig.signals,
+      }),
     };
   });
 

@@ -100,6 +100,33 @@ export const todayCopy = {
     top3Desc:
       "여러 지표에서 상대적으로 강점이 확인된 오늘의 탐색 우선 후보입니다. 매수 추천이 아니라 먼저 살펴볼 순서를 제안합니다.",
     top3Empty: "표시할 후보 데이터를 준비 중입니다. 잠시 후 다시 확인해 주세요.",
+    topEvidence: {
+      scoreChange: "전 거래일 대비 점수",
+      points: "점",
+      unchanged: "변화 없음",
+      largestMove: "가장 큰 지표 변화",
+      metricUnknown: "미확인",
+      missing: {
+        session: "전 거래일 기준을 확인할 수 없어 점수를 비교하지 않았어요.",
+        prices: "두 거래일의 종가 자료가 맞지 않아 점수를 비교하지 않았어요.",
+        score: "전 거래일에 비교할 수 있는 저장 점수가 없어요.",
+      },
+      avg5: "5일 평균 거래량",
+      avg20: "20일 평균",
+      shares: "주",
+      times: "배",
+      volumeUnavailable: "5일·20일 평균 거래량을 확인할 수 없어요.",
+      nextLabel: "다음 확인",
+      next: {
+        "volume-spike": "거래량 증가가 하루에 몰렸는지 보기",
+        filing: "기준일 DART 공시 원문 보기",
+        momentum: "최근 종가 흐름 보기",
+        flow: "거래량 추세 차트 보기",
+        value: "재무에서 PER·PBR 확인",
+        vol: "차트에서 최근 낙폭 확인",
+        basis: "종목 상세에서 점수 근거 확인",
+      },
+    },
 
     // ── SignalSection 빈 상태 ──
     sectionEmpty: "아직 해당하는 종목이 없습니다. 데이터가 갱신되면 다시 채워집니다.",
@@ -255,6 +282,33 @@ export const todayCopy = {
     top3Desc:
       "Today's research-priority candidates with relative strengths across several metrics. This is not a buy recommendation, just a suggested order to look at first.",
     top3Empty: "Candidate data is being prepared. Please check back shortly.",
+    topEvidence: {
+      scoreChange: "Score vs. previous session",
+      points: " pts",
+      unchanged: "Unchanged",
+      largestMove: "Largest indicator move",
+      metricUnknown: "Unverified",
+      missing: {
+        session: "Previous session unverified; no score comparison shown.",
+        prices: "Closing data does not match both sessions; no score comparison shown.",
+        score: "No comparable stored score for the previous session.",
+      },
+      avg5: "5-session average volume",
+      avg20: "20-session average",
+      shares: " shares",
+      times: "×",
+      volumeUnavailable: "5- and 20-session average volume unavailable.",
+      nextLabel: "Check next",
+      next: {
+        "volume-spike": "See if volume jumped on just one session",
+        filing: "Open the same-date DART filing",
+        momentum: "Review recent closes",
+        flow: "Review the volume chart",
+        value: "Check PER and PBR in Financials",
+        vol: "Review recent drawdowns on the chart",
+        basis: "Review the stock's score breakdown",
+      },
+    },
 
     // ── SignalSection empty state ──
     sectionEmpty: "No matching stocks yet. This will be filled again once data is refreshed.",

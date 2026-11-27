@@ -3,8 +3,10 @@
 import { StockCandidateCard, type StockCandidate } from "@/components/home/StockCandidateCard";
 import { useLanguage } from "@/components/LanguageProvider";
 import { todayCopy } from "@/lib/copy/today";
+import { TodayTopEvidence } from "@/components/today/TodayTopEvidence";
+import type { TodayCandidateEvidence } from "@/lib/todayCandidateEvidence";
 
-export function TodayTopSection({ candidates }: { candidates: StockCandidate[] }) {
+export function TodayTopSection({ candidates }: { candidates: (StockCandidate & { evidence: TodayCandidateEvidence })[] }) {
   const { locale } = useLanguage();
   const t = todayCopy[locale];
   return (
@@ -20,7 +22,7 @@ export function TodayTopSection({ candidates }: { candidates: StockCandidate[] }
       {candidates.length > 0 ? (
         <div className="research-today-shortlist">
           {candidates.map((c) => (
-            <StockCandidateCard key={c.ticker} c={c} row />
+            <StockCandidateCard key={c.ticker} c={c} row rowEvidence={<TodayTopEvidence evidence={c.evidence} />} />
           ))}
         </div>
       ) : (

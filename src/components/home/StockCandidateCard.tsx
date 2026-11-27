@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowRight, CheckCircle2, CircleAlert } from "lucide-react";
 import { AddToCompareButton } from "@/components/AddToCompareButton";
 import { AddToWatchlistButton } from "@/components/AddToWatchlistButton";
@@ -35,7 +36,8 @@ export function StockCandidateCard({
   c,
   featured = false,
   row = false,
-}: { c: StockCandidate; featured?: boolean; row?: boolean }) {
+  rowEvidence,
+}: { c: StockCandidate; featured?: boolean; row?: boolean; rowEvidence?: ReactNode }) {
   const { locale } = useLanguage();
   const t = homeCopy[locale];
   const labels = t.metricLabels;
@@ -78,10 +80,14 @@ export function StockCandidateCard({
           <div className="text-2xl font-bold leading-tight">{c.score}</div>
         </div>
         <div className="research-row-evidence min-w-0">
-          <p className="text-xs leading-relaxed text-[var(--muted)] break-keep">{reason}</p>
-          <p className="mt-0.5 text-[13px] leading-relaxed break-keep">
-            <span className="research-section-label">{t.topCandidate.firstCheck}</span>{" "}{firstCheck}
-          </p>
+          {rowEvidence ?? (
+            <>
+              <p className="text-xs leading-relaxed text-[var(--muted)] break-keep">{reason}</p>
+              <p className="mt-0.5 text-[13px] leading-relaxed break-keep">
+                <span className="research-section-label">{t.topCandidate.firstCheck}</span>{" "}{firstCheck}
+              </p>
+            </>
+          )}
         </div>
         <div className="research-row-actions flex flex-wrap gap-1.5">
           <AddToCompareButton ticker={c.ticker} name={c.name} compact />

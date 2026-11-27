@@ -13,6 +13,7 @@ import type { StrongMetric, RiskKind, MetricKey } from "@/lib/copy/home";
 import { SignalSection } from "@/components/today/SignalSection";
 import type { SignalStockVM } from "@/components/today/SignalStockCard";
 import { type ComparisonBasis, comparisonBasisLabel } from "@/lib/scoreComparison";
+import type { TodayCandidateEvidence } from "@/lib/todayCandidateEvidence";
 
 /** 신호별 VM을 만들기 위해 서버에서 넘기는 종목 원시 데이터(점수·지표는 서버 계산값). */
 export interface TodayStockRaw {
@@ -47,6 +48,7 @@ export interface TodayTopRaw {
   vol: number;
   /** "왜 후보인지" 근거 — 가장 강한 지표의 전체 풀 상대순위(서버 계산, 없으면 null). */
   lead: { key: MetricKey; rank: number; topPct: number } | null;
+  evidence: TodayCandidateEvidence;
 }
 
 export interface TodayDisclosureRaw {
@@ -202,7 +204,7 @@ export function TodayContent(props: TodayContentProps) {
   });
 
   // ── Top 3 후보 카드 뷰모델 ──
-  const top3Candidates: StockCandidate[] = props.top3.map((s) => ({
+  const top3Candidates: (StockCandidate & { evidence: TodayCandidateEvidence })[] = props.top3.map((s) => ({
     rank: s.rank,
     name: s.name,
     ticker: s.ticker,
@@ -216,6 +218,7 @@ export function TodayContent(props: TodayContentProps) {
     m: s.m,
     riskKind: riskKindOf({ value: s.value, vol: s.vol }, s.r3m),
     highReturn: s.r3m !== null && s.r3m >= 80,
+    evidence: s.evidence,
   }));
 
   const compositeVMs = props.composite.map((s) => toVM(s, compositeReason(s)));

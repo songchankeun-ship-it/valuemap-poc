@@ -4422,3 +4422,19 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
 - Browser checks covered dynamic comparison at desktop and mobile widths,
   detail tabs and the stale-price status. Verify the first updated daily
   publication separately from the code rollout.
+
+## 2026-11-28 - Today shortlist evidence preview [codex]
+
+- The existing top three show exact-date composite and indicator moves when
+  available, current five- and twenty-session average share volumes, and one
+  next check each. Only a same-date live filing can link directly to DART.
+- Previous scores are read for the exact date corroborated by two liquid
+  chart histories. Missing rows, publication mismatches and unverified
+  weekday gaps do not use an older substitute. The November 27 guest
+  preview uses the published quotes and shows the missing-history branch
+  without connecting to the production database.
+- Reviewed the dated numbers, single next-check link, selected detail tab,
+  and layout at desktop and narrow mobile widths. No score formula, data,
+  service settings or workflow changes.
+- Next: owner review at `http://127.0.0.1:4495/today#today-top3`. Local only;
+  no push or deployment.

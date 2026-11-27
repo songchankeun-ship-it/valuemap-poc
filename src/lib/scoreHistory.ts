@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
+import type { CandidateScoreRow } from "@/lib/todayCandidateEvidence";
 import {
   type ComparisonBasis,
   UNAVAILABLE_BASIS,
@@ -165,6 +166,18 @@ export const EMPTY_METRIC_CHANGES_BATCH: MetricChangesBatch = {
   marketDates: [],
   sharedBasis: UNAVAILABLE_BASIS,
 };
+
+/** Exact date only: never substitute the last stored row for a missing trading day. */
+export async function getCandidateScoresOn(tickers: string[], date: string): Promise<CandidateScoreRow[]> {
+  if (!tickers.length) return [];
+  const { data, error } = await getClient()
+    .from("daily_scores")
+    .select("ticker,business_date,composite,momentum,flow,value,vol")
+    .eq("business_date", date)
+    .in("ticker", tickers);
+  if (error) throw error;
+  return data ?? [];
+}
 
 /** 지표별(추세·거래활성도·밸류·위험조정) 최근 저장 2행 변화 + 비교 날짜. daily_scores 기준. */
 export async function getMetricChangesBatch(tickers: string[]): Promise<MetricChangesBatch> {

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { classifyConclusion } from "../src/lib/conclusion";
 import { valuationBasisOf } from "../src/lib/financialEvidence";
 import { readingsOf } from "../src/lib/metricReadings";
+import { buildTodayCandidateEvidence, snapshotIsoDate, verifiedPreviousSession } from "../src/lib/todayCandidateEvidence";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, "..");
@@ -86,11 +87,74 @@ check("home metadata preserves the same positioning", homePage.includes("수익�
 const beta = read("src/components/BetaProgramClient.tsx");
 check("beta feedback already confirms how the response helps", beta.includes("이 의견은 다음 개선 순서를 정하는 데 바로 반영할게요."));
 
+const points = [
+  { d: "2026-11-26", c: 100, v: 49 },
+  { d: "2026-11-27", c: 110, v: 53 },
+];
+const asOf = snapshotIsoDate("20261127");
+const previousDate = verifiedPreviousSession(asOf, [points, points]);
+check("Today uses both market reference histories and rejects unproven dates",
+  previousDate === "2026-11-26" && snapshotIsoDate("20260231") === null &&
+    verifiedPreviousSession(asOf, [points, undefined]) === null &&
+    verifiedPreviousSession(asOf, [points, [{ ...points[0], d: "2026-11-25" }, points[1]]]) === null);
+const monday = [{ ...points[0], d: "2026-11-27" }, { ...points[1], d: "2026-11-30" }];
+check("Today previous trading session crosses the weekend without substituting weekdays",
+  verifiedPreviousSession("2026-11-30", [monday, monday]) === "2026-11-27");
+
+const stored = { ticker: "005930", business_date: "2026-11-26", composite: "60.5", momentum: 62, flow: 35, value: 80, vol: 65 };
+const input = {
+  ticker: stored.ticker, asOf, previousDate, currentClose: 110, points, measuredValuation: true,
+  current: { composite: 68.1, momentum: 61, flow: 64, value: 80, vol: 67 },
+  previousScores: [stored], volumeStats: { recent5dAvg: 120, recent20dAvg: 100, ratio: 1.2 },
+  filingSource: "unavailable", filings: [],
+} satisfies Parameters<typeof buildTodayCandidateEvidence>[0];
+const compared = buildTodayCandidateEvidence(input);
+check("Today compares exact session scores and shows actual largest component move",
+  compared.change.kind === "compared" && compared.change.before === 60.5 && compared.change.after === 68.1 &&
+    compared.change.delta === 7.6 && compared.change.metrics.flow === 29 && compared.change.leadingMetric === "flow" &&
+    compared.change.metrics.momentum === -1 && compared.change.metrics.value === 0 &&
+    compared.next.kind === "flow" && compared.next.href === "/stock/005930#summary");
+check("Today does not use older scores, another ticker, null or ambiguous duplicate scores",
+  [
+    [{ ...stored, business_date: "2026-11-25" }],
+    [{ ...stored, ticker: "000660" }],
+    [{ ...stored, composite: null }],
+    [stored, stored],
+    [],
+  ].every((previousScores) => {
+    const { change } = buildTodayCandidateEvidence({ ...input, previousScores });
+    return change.kind === "missing" && change.reason === "score" && !("delta" in change);
+  }));
+const flat = buildTodayCandidateEvidence({ ...input, current: { ...input.current, composite: 60.5 } });
+check("Today keeps valid unchanged separate from absent history", flat.change.kind === "compared" && flat.change.delta === 0);
+const noHistoryPriceMove = buildTodayCandidateEvidence({ ...input, previousScores: [] });
+check("A verified large close move guides the check even without stored scores",
+  noHistoryPriceMove.change.kind === "missing" && noHistoryPriceMove.next.kind === "momentum");
+const staleCandidate = buildTodayCandidateEvidence({ ...input, points: [points[0]] });
+check("Today does not attach current volume or deltas to a stale candidate",
+  staleCandidate.change.kind === "missing" && staleCandidate.change.reason === "prices" &&
+    staleCandidate.volume === null && staleCandidate.next.href === "/stock/005930#basis");
+const syntheticPrior = buildTodayCandidateEvidence({ ...input, previousScores: [{ ...stored, value: 54 }] });
+const missingCurrent = buildTodayCandidateEvidence({ ...input, measuredValuation: false });
+check("Today does not attribute a move to unverified valuation",
+  [syntheticPrior, missingCurrent].every(({ change }) => change.kind === "compared" && change.metrics.value === undefined));
+const filings = [{ disclosure: { stock_code: input.ticker, rcept_dt: "20261127", rcept_no: "20261127000333", report_nm: "fixture filing" } }];
+const live = buildTodayCandidateEvidence({ ...input, filingSource: "live", filings });
+const example = buildTodayCandidateEvidence({ ...input, filingSource: "sample", filings });
+const malformed = buildTodayCandidateEvidence({ ...input, filingSource: "live", filings: [{ disclosure: { ...filings[0].disclosure, rcept_no: "20261126000333" } }] });
+const spike = buildTodayCandidateEvidence({ ...input, filingSource: "live", filings, volumeStats: { recent5dAvg: 150, recent20dAvg: 100, ratio: 1.5 } });
+check("Today next check uses only a same-date live filing and prioritizes actual volume spikes",
+  live.next.kind === "filing" && live.next.href === "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000333" &&
+    example.next.kind !== "filing" && malformed.next.kind !== "filing" && spike.next.kind === "volume-spike");
+check("Today requests scores only for the exact previous date",
+  read("src/lib/scoreHistory.ts").includes('.eq("business_date", date)') &&
+    read("src/app/today/page.tsx").includes("getCandidateScoresOn(top3.map((s) => s.ticker), previousDate)"));
+
 if (failed > 0) {
   console.error(`\n${failed} check(s) failed.`);
   process.exit(1);
 }
 
 console.log(
-  "PASS: stock-detail next-action guidance (one concrete check + correct evidence tab), common About date, and useful beta confirmation",
+  "PASS: stock-detail next-action guidance, exact-date briefing evidence and missing-data cases, common About date, and beta confirmation",
 );
