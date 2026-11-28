@@ -9,10 +9,6 @@
       "schedule": "30 7 * * *"
     },
     {
-      "path": "/api/cron/save-scores",
-      "schedule": "0 8 * * *"
-    },
-    {
       "path": "/api/cron/evaluate-alerts",
       "schedule": "0 9 * * 1-5"
     }

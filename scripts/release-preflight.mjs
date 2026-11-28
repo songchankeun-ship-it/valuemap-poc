@@ -124,6 +124,8 @@ const OFFLINE_GATES = [
   { name: "verify:reaudit", command: "npm", args: ["run", "verify:reaudit"], shell: true },
   { name: "test:beta-feedback", command: "npm", args: ["run", "test:beta-feedback"], shell: true },
   { name: "test:next-action-guidance", command: "npm", args: ["run", "test:next-action-guidance"], shell: true },
+  { name: "test:published-score-persistence", command: "npm", args: ["run", "test:published-score-persistence"], shell: true },
+  { name: "verify:daily-workflow-gate", command: "npm", args: ["run", "verify:daily-workflow-gate"], shell: true },
   { name: "test:growth-content", command: "npm", args: ["run", "test:growth-content"], shell: true },
   { name: "verify:growth-sprint", command: "npm", args: ["run", "verify:growth-sprint"], shell: true },
   { name: "test:growth-sprint-2", command: "npm", args: ["run", "test:growth-sprint-2"], shell: true },

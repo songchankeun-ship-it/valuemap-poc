@@ -21,6 +21,8 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      published_sha: ${{ steps.publish.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,6 +79,7 @@ jobs:
         run: npm run verify:framework-baseline -- --freshness-only
 
       - name: Commit and push if data changed
+        id: publish
         run: |
           git config user.name "ornscore-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -86,5 +89,29 @@ jobs:
           else
             git commit -m "chore(data): daily refresh $(date -u +%Y-%m-%dT%H:%MZ)"
             git push
+            published_sha=$(git rev-parse HEAD)
+            echo "sha=$published_sha" >> "$GITHUB_OUTPUT"
             echo "Pushed — Vercel will auto-deploy."
           fi
+
+  persist-published-scores:
+    name: Verify production and persist scores
+    needs: refresh
+    if: github.ref == 'refs/heads/main' && needs.refresh.outputs.published_sha != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.refresh.outputs.published_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Save and verify the published score snapshot
+        env:
+          PUBLISHED_SCORE_SHA: ${{ needs.refresh.outputs.published_sha }}
+          SCORE_PERSIST_SECRET: ${{ secrets.SCORE_PERSIST_SECRET }}
+        run: node scripts/persist-published-scores.mjs

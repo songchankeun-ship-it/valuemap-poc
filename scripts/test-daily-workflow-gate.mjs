@@ -65,6 +65,8 @@ const METHODOLOGY_BLOCK =
 const MARKET_ALERT = 'python scripts/fetch_market_alerts.py || echo "market-alerts skipped"';
 const ADD_LINE =
   "          git add public/data/stocks.json public/data/prices public/data/market-alerts.json docs/methodology-audit.md";
+const WRITER = "\n  persist-published-scores:\n";
+const appendRefreshStep = (src, step) => src.replace(WRITER, "\n" + step + "\n" + WRITER);
 
 function must(anchor) {
   if (!VALID.includes(anchor)) throw new Error(`fixture anchor missing from real workflow:\n${anchor}`);
@@ -90,17 +92,26 @@ function main() {
   // §2  ordering violations
   // -------------------------------------------------------------------------
   {
-    // Move the candidate guard to AFTER the commit step (append at end of file).
-    const moved = VALID.replace("\n" + CANDIDATE_BLOCK, "") + "\n" + CANDIDATE_BLOCK + "\n";
+    const moved = appendRefreshStep(VALID.replace("\n" + CANDIDATE_BLOCK, ""), CANDIDATE_BLOCK);
     const rep = evaluateWorkflow(moved);
     check("§2a gate after commit -> ordering fails", groupFailed(rep, "ordering") && !rep.ok);
     check("§2b gate still located exactly once (presence OK)", !groupFailed(rep, "gate-presence") && rep.locate.candidate > rep.locate.commit);
   }
   {
     // A trailing no-op step after commit makes commit no longer last.
-    const trailer = VALID + "\n      - name: Trailing step\n        run: echo done\n";
+    const trailer = appendRefreshStep(VALID, "      - name: Trailing step\n        run: echo done");
     const rep = evaluateWorkflow(trailer);
     check("§2c extra step after commit -> ordering fails (commit not last)", groupFailed(rep, "ordering") && !rep.ok);
+  }
+
+  for (const [title, mutation] of [
+    ["no downstream job", VALID.split(WRITER)[0]],
+    ["wrong dependency", VALID.replace("needs: refresh", "needs: another-job")],
+    ["always even if refresh failed", VALID.replace("if: github.ref ==", "if: always() && github.ref ==")],
+    ["unchecked branch head", VALID.replace("ref: ${{ needs.refresh.outputs.published_sha }}", "ref: main")],
+    ["masked storage failure", VALID.replace("run: node scripts/persist-published-scores.mjs", "run: node scripts/persist-published-scores.mjs || true")],
+  ]) {
+    check(`published writer rejects ${title}`, groupFailed(evaluateWorkflow(mutation), "published-score-writer"));
   }
 
   // -------------------------------------------------------------------------

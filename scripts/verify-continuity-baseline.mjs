@@ -118,26 +118,35 @@ export const WORKFLOW_FILE = ".github/workflows/daily-data.yml";
 export function parseDailyWorkflow(root = ROOT) {
   return parseWorkflowContract(readText(WORKFLOW_FILE, root));
 }
+
+export function workflowJobSource(src, job) {
+  const lines = src.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trimEnd() === `  ${job}:`);
+  if (start < 0) return "";
+  const stop = lines.findIndex((line, i) => i > start && /^ {2}[\w-]+:[ \t]*$/.test(line));
+  return lines.slice(start + 1, stop < 0 ? undefined : stop).join("\n");
+}
 // Text-based parse of the daily workflow contract. Split out so a source-level
 // verifier (Slice D) can parse fixture workflow text through the exact same
 // contract extraction this baseline uses, instead of keeping a second copy.
 export function parseWorkflowContract(src) {
-  const first = (re) => {
-    const m = src.match(re);
+  const refresh = workflowJobSource(src, "refresh");
+  const first = (re, text = src) => {
+    const m = text.match(re);
     return m ? m[1] : null;
   };
-  // ordered step names (the only `- name:` entries in the file are steps)
+  // The baseline freezes the existing collection job, not downstream jobs.
   const stepNames = [];
   const stepRe = /^\s*-\s*name:\s*(.+?)\s*$/gm;
   let sm;
-  while ((sm = stepRe.exec(src)) !== null) stepNames.push(sm[1]);
+  while ((sm = stepRe.exec(refresh)) !== null) stepNames.push(sm[1]);
   // ordered data-generation commands (the deterministic pipeline order)
   const pipeline = [];
   const cmdRe = /python\s+(scripts\/[\w./-]+\.py)/g;
   let cm;
-  while ((cm = cmdRe.exec(src)) !== null) pipeline.push(cm[1]);
+  while ((cm = cmdRe.exec(refresh)) !== null) pipeline.push(cm[1]);
   // commit-and-push contract
-  const addLine = first(/git add\s+(.+)/);
+  const addLine = first(/git add\s+(.+)/, refresh);
   const addPaths = addLine ? addLine.trim().split(/\s+/) : [];
   return {
     file: WORKFLOW_FILE,
@@ -150,17 +159,17 @@ export function parseWorkflowContract(src) {
       cancelInProgress: first(/cancel-in-progress:\s*(\w+)/),
     },
     job: {
-      runsOn: first(/runs-on:\s*(\S+)/),
-      timeoutMinutes: Number(first(/timeout-minutes:\s*(\d+)/)),
+      runsOn: first(/runs-on:\s*(\S+)/, refresh),
+      timeoutMinutes: Number(first(/timeout-minutes:\s*(\d+)/, refresh)),
     },
     stepNames,
     pipeline,
     commit: {
       addPaths,
-      botName: first(/user\.name\s+"([^"]+)"/),
-      botEmail: first(/user\.email\s+"([^"]+)"/),
-      messagePrefix: first(/git commit -m\s+"([^"$]+)/)?.trim() ?? null,
-      pushes: /\bgit push\b/.test(src),
+      botName: first(/user\.name\s+"([^"]+)"/, refresh),
+      botEmail: first(/user\.email\s+"([^"]+)"/, refresh),
+      messagePrefix: first(/git commit -m\s+"([^"$]+)/, refresh)?.trim() ?? null,
+      pushes: /\bgit push\b/.test(refresh),
     },
   };
 }

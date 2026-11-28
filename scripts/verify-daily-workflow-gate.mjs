@@ -37,7 +37,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { ROOT, looksLikeSecret, aggregate } from "./verify-framework-baseline.mjs";
-import { WORKFLOW_FILE, parseWorkflowContract } from "./verify-continuity-baseline.mjs";
+import { WORKFLOW_FILE, parseWorkflowContract, workflowJobSource } from "./verify-continuity-baseline.mjs";
 
 // ---------------------------------------------------------------------------
 // frozen contract the workflow must preserve byte-for-byte where practical
@@ -88,6 +88,8 @@ export const FROZEN_COMMIT_SCRIPT = [
   "          else",
   '            git commit -m "chore(data): daily refresh $(date -u +%Y-%m-%dT%H:%MZ)"',
   "            git push",
+  "            published_sha=$(git rev-parse HEAD)",
+  '            echo "sha=$published_sha" >> "$GITHUB_OUTPUT"',
   '            echo "Pushed — Vercel will auto-deploy."',
   "          fi",
 ].join("\n");
@@ -131,7 +133,7 @@ const COMMIT_MATCH = (t) => /\bgit\s+commit\b/.test(t) && /\bgit\s+push\b/.test(
 // their properties are indented deeper, so a step block runs until the next marker.
 export function parseWorkflowSteps(src) {
   const marker = src.search(/\n {4}steps:\s*(?:\n|$)/);
-  const body = marker === -1 ? src : src.slice(marker);
+  const body = marker === -1 ? src : src.slice(marker).split(/\n {2}[\w-]+:\s*\n/)[0];
   const lines = body.split("\n");
   const blocks = [];
   let cur = null;
@@ -234,6 +236,7 @@ export function checkFailClosed(steps, locate) {
 export function checkFrozenFields(src) {
   const errors = [];
   const wf = parseWorkflowContract(src);
+  const refresh = workflowJobSource(src, "refresh");
   const eq = (got, want, label) => {
     if (got !== want) errors.push(`${label} ${JSON.stringify(got)} != ${JSON.stringify(want)}`);
   };
@@ -257,7 +260,7 @@ export function checkFrozenFields(src) {
   // market-alert `|| echo` policy preserved.
   let cursor = -1;
   for (const cmd of FROZEN_DATA_COMMANDS) {
-    const at = src.indexOf(cmd);
+    const at = refresh.indexOf(cmd);
     if (at === -1) {
       errors.push(`frozen data command missing or altered: ${JSON.stringify(cmd)}`);
     } else if (at <= cursor) {
@@ -268,7 +271,7 @@ export function checkFrozenFields(src) {
   }
 
   // Byte-for-byte successful-path commit/synchronize script.
-  if (!src.includes(FROZEN_COMMIT_SCRIPT)) {
+  if (!refresh.includes(FROZEN_COMMIT_SCRIPT)) {
     errors.push("commit-and-push script drifted from the frozen byte-for-byte block");
   }
   return errors;
@@ -296,6 +299,35 @@ export function checkNoSecret(src) {
   return looksLikeSecret(src) ? ["workflow source contains a secret-looking value"] : [];
 }
 
+function checkPublishedWriter(src, steps, locate) {
+  const downstream = "\n  persist-published-scores:\n";
+  const [refresh, writer] = src.split(downstream);
+  const errors = [];
+  if (!writer || src.split(downstream).length !== 2) return ["expected one downstream published score job"];
+  const outputBinding = "    outputs:\n      published_sha: ${{ steps.publish.outputs.sha }}";
+  if (!refresh.includes(outputBinding) || !steps[locate.commit]?.text.includes("\n        id: publish\n")) {
+    errors.push("only the commit-and-push step may supply the published SHA");
+  }
+  const required = [
+    "    needs: refresh",
+    "    if: github.ref == 'refs/heads/main' && needs.refresh.outputs.published_sha != ''",
+    "    timeout-minutes: 15",
+    "    permissions:\n      contents: read",
+    "          ref: ${{ needs.refresh.outputs.published_sha }}",
+    "          persist-credentials: false",
+    "          PUBLISHED_SCORE_SHA: ${{ needs.refresh.outputs.published_sha }}",
+    "          SCORE_PERSIST_SECRET: ${{ secrets.SCORE_PERSIST_SECRET }}",
+    "        run: node scripts/persist-published-scores.mjs",
+  ];
+  for (const line of required) {
+    if (!(`\n${writer}\n`).includes(`\n${line}\n`)) errors.push(`published score job missing: ${line.trim()}`);
+  }
+  const writerSteps = parseWorkflowSteps("\n" + writer);
+  if (writerSteps.length !== 3 || writerSteps.some((step) => step.continueOnError || step.ifCond) ||
+      /continue-on-error:|\|\||^\s*if:.*\balways\(/m.test(writer)) errors.push("published score job must not suppress failure");
+  return errors;
+}
+
 // ---------------------------------------------------------------------------
 // evaluate — pure: workflow text -> {results, errors, ok}
 // ---------------------------------------------------------------------------
@@ -308,6 +340,7 @@ export function evaluateWorkflow(src) {
     { name: "fail-closed", errors: checkFailClosed(steps, locate) },
     { name: "frozen-fields", errors: checkFrozenFields(src) },
     { name: "node-setup", errors: checkNodeSetup(steps, locate) },
+    { name: "published-score-writer", errors: checkPublishedWriter(src, steps, locate) },
     { name: "no-secret", errors: checkNoSecret(src) },
   ];
   const results = groups.map((g) => ({ name: g.name, code: g.errors.length ? 1 : 0, failed: g.errors.length > 0 }));

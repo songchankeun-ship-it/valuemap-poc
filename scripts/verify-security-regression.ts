@@ -232,6 +232,20 @@ function sectionCronContract(): void {
   for (const route of routes) {
     const rel = `src/app/api/cron${route.slice("/api/cron".length)}/route.ts`;
     const src = existsSync(join(repo, rel)) ? read(rel) : "";
+    if (route === "/api/cron/save-scores") {
+      const handler = read("src/lib/publishedScorePersistence.ts");
+      const cron = JSON.parse(read("vercel.json")) as { crons: { path: string }[] };
+      check("§B published scores require POST and a dedicated secret",
+        /export async function POST\(/.test(src) && !/export async function GET\(/.test(src) &&
+        src.includes("secret: process.env.SCORE_PERSIST_SECRET") &&
+        !cron.crons.some((entry) => entry.path === route));
+      check("§B missing or mismatched score secret fails closed before reading or opening storage",
+        handler.includes('failure("unauthorized", 401)') && handler.includes("!options.secret") &&
+        handler.includes('req.headers.get("authorization")') &&
+        handler.indexOf('failure("unauthorized", 401)') < handler.indexOf("await options.readSnapshot()") &&
+        handler.indexOf("await options.readSnapshot()") < handler.indexOf("options.openStore()"));
+      continue;
+    }
     check(`§B ${route} reads Authorization header`, /req\.headers\.get\(\s*["']authorization["']\s*\)/.test(src));
     check(`§B ${route} compares against Bearer ${"${"}CRON_SECRET${"}"}`, /Bearer \$\{process\.env\.CRON_SECRET/.test(src));
     check(`§B ${route} returns 401 when secret set and auth mismatches`, /process\.env\.CRON_SECRET\s*&&\s*auth\s*!==\s*expected/.test(src) && /status:\s*401/.test(src));

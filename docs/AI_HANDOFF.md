@@ -4438,3 +4438,24 @@ Closed the visual-refresh work on `codex/visual-hierarchy-core` with accessibili
   service settings or workflow changes.
 - Next: owner review at `http://127.0.0.1:4495/today#today-top3`. Local only;
   no push or deployment.
+
+## 2026-11-28 - Verified publication to score history [codex]
+
+- The collection job retains its original schedule and release checks. After
+  a successful push, a separate main-only job waits for the production build
+  marker and matching stocks.json bytes before requesting score storage.
+- The authenticated POST checks the full production SHA, snapshot digest,
+  date and 138 unique tickers. One upsert uses the existing date/ticker key;
+  readback must match the composite and four indicators for every ticker.
+  Missing or changed rows return failure. The old scheduled score GET is
+  removed, with the other Vercel cron entries left intact.
+- Cutover evidence: at 18:00 KST on November 28, the deployed November 27
+  snapshot matched all 138 stored rows and five scores. The owner confirmed
+  the dedicated secret was configured in GitHub Actions and Vercel
+  Production. No data refresh or DB write is needed for this code release.
+- Local tests cover exact publication and all-record readback, stale
+  deployment, partial storage, wrong values and authentication. The previous
+  historical data baseline drift and dependency advisories were not changed.
+- Next: on the first successful scheduled publication, confirm the new
+  workflow job reports the exact date, SHA and 138 verified rows, then
+  check the briefing. Do not substitute a different date for a missed one.
